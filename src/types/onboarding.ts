@@ -57,30 +57,42 @@ export interface BusinessLocation {
   openingHours: string;
   seasonality: 'year-round' | 'seasonal';
   seasonalWeeks?: number;
-  assignedPersons: string[]; // IDs of assigned persons
+  assignedPersons: string[];
+}
+
+export interface DeviceCard {
+  id: string;
+  type: 'device';
+  category: string;
+  name: string;
+  description: string;
+  image?: string;
+  count: number;
+  monthlyFee: number;
+  simCards?: number;
+  specifications: string[];
+}
+
+export interface ServiceCard {
+  id: string;
+  type: 'service';
+  category: string;
+  name: string;
+  description: string;
+  count: number;
+  monthlyFee: number;
+  customValue?: string;
 }
 
 export interface DeviceSelection {
-  terminals: {
-    paxA920Pro: { count: number; monthlyFee: number; simCards: number };
-    paxA80: { count: number; monthlyFee: number };
-  };
-  tablets: {
-    tablet10: { count: number; monthlyFee: number };
-    tablet15: { count: number; monthlyFee: number };
-    tabletPro15: { count: number; monthlyFee: number };
-  };
-  softwareLicenses: string[];
-  accessories: string[];
-  ecommerce: string[];
-  technicalService: string[];
-  mifFees: {
-    regulatedCards: number;
-    unregulatedCards: number;
-    dccRabat: number;
-  };
-  transactionTypes: string[];
+  selectedSolutions: string[];
+  dynamicCards: Array<DeviceCard | ServiceCard>;
   note: string;
+}
+
+export interface Fees {
+  regulatedCards: number;
+  unregulatedCards: number;
 }
 
 export interface AuthorizedPerson {
@@ -131,6 +143,7 @@ export interface OnboardingData {
   companyInfo: CompanyInfo;
   businessLocations: BusinessLocation[];
   deviceSelection: DeviceSelection;
+  fees: Fees;
   authorizedPersons: AuthorizedPerson[];
   actualOwners: ActualOwner[];
   consents: Consents;

@@ -4,6 +4,7 @@ import ContactInfoStep from "../ContactInfoStep";
 import CompanyInfoStep from "../CompanyInfoStep";
 import BusinessLocationStep from "../BusinessLocationStep";
 import DeviceSelectionStep from "../DeviceSelectionStep";
+import FeesStep from "../FeesStep";
 import AuthorizedPersonsStep from "../AuthorizedPersonsStep";
 import ActualOwnersStep from "../ActualOwnersStep";
 import ConsentsStep from "../ConsentsStep";
@@ -42,10 +43,12 @@ const OnboardingStepRenderer = ({
     case 3:
       return <DeviceSelectionStep {...commonProps} />;
     case 4:
-      return <AuthorizedPersonsStep {...commonProps} />;
+      return <FeesStep {...commonProps} />;
     case 5:
-      return <ActualOwnersStep {...commonProps} />;
+      return <AuthorizedPersonsStep {...commonProps} />;
     case 6:
+      return <ActualOwnersStep {...commonProps} />;
+    case 7:
       return <ConsentsStep {...commonProps} onComplete={onComplete} />;
     default:
       return null;

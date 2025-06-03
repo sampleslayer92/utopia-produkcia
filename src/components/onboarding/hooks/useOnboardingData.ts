@@ -40,26 +40,13 @@ const initialData: OnboardingData = {
   },
   businessLocations: [],
   deviceSelection: {
-    terminals: {
-      paxA920Pro: { count: 0, monthlyFee: 0, simCards: 0 },
-      paxA80: { count: 0, monthlyFee: 0 }
-    },
-    tablets: {
-      tablet10: { count: 0, monthlyFee: 0 },
-      tablet15: { count: 0, monthlyFee: 0 },
-      tabletPro15: { count: 0, monthlyFee: 0 }
-    },
-    softwareLicenses: [],
-    accessories: [],
-    ecommerce: [],
-    technicalService: [],
-    mifFees: {
-      regulatedCards: 0,
-      unregulatedCards: 0,
-      dccRabat: 0
-    },
-    transactionTypes: [],
+    selectedSolutions: [],
+    dynamicCards: [],
     note: ''
+  },
+  fees: {
+    regulatedCards: 0.90,
+    unregulatedCards: 0.90
   },
   authorizedPersons: [],
   actualOwners: [],
@@ -78,7 +65,15 @@ export const useOnboardingData = () => {
     const saved = localStorage.getItem('onboarding_data');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsedData = JSON.parse(saved);
+        // Ensure the data has the new structure
+        if (!parsedData.fees) {
+          parsedData.fees = initialData.fees;
+        }
+        if (!parsedData.deviceSelection.selectedSolutions) {
+          parsedData.deviceSelection = initialData.deviceSelection;
+        }
+        return parsedData;
       } catch (error) {
         console.error('Error parsing saved onboarding data:', error);
         return initialData;
