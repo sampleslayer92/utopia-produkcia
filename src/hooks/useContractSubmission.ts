@@ -59,6 +59,11 @@ export const useContractSubmission = () => {
       }
 
       // 3. Insert company info with safe defaults
+      const registryType = onboardingData.companyInfo.registryType;
+      const validRegistryType = registryType === 'public' || registryType === 'business' || registryType === 'other' 
+        ? registryType 
+        : 'other';
+
       const { error: companyError } = await supabase
         .from('company_info')
         .insert({
@@ -66,9 +71,7 @@ export const useContractSubmission = () => {
           ico: safeString(onboardingData.companyInfo.ico, '00000000'),
           dic: safeString(onboardingData.companyInfo.dic, '00000000'),
           company_name: safeString(onboardingData.companyInfo.companyName, 'Test Company'),
-          registry_type: onboardingData.companyInfo.registryType && onboardingData.companyInfo.registryType !== '' 
-            ? onboardingData.companyInfo.registryType 
-            : 'other',
+          registry_type: validRegistryType,
           court: onboardingData.companyInfo.court || null,
           section: onboardingData.companyInfo.section || null,
           insert_number: onboardingData.companyInfo.insertNumber || null,
