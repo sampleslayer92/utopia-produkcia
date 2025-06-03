@@ -1,12 +1,13 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Users, UserPlus, UserCheck, FileText, Fingerprint, Flag, AlertTriangle } from "lucide-react";
 import { OnboardingData, AuthorizedPerson } from "@/types/onboarding";
+import OnboardingInput from "./ui/OnboardingInput";
+import OnboardingSelect from "./ui/OnboardingSelect";
+import OnboardingSection from "./ui/OnboardingSection";
+import { useState } from "react";
 
 interface AuthorizedPersonsStepProps {
   data: OnboardingData;
@@ -16,6 +17,8 @@ interface AuthorizedPersonsStepProps {
 }
 
 const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps) => {
+  const [expandedPersonId, setExpandedPersonId] = useState<string | null>(null);
+
   const addAuthorizedPerson = () => {
     const newPerson: AuthorizedPerson = {
       id: Date.now().toString(),
@@ -42,12 +45,18 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
     updateData({
       authorizedPersons: [...data.authorizedPersons, newPerson]
     });
+    
+    // Automatically expand the new person
+    setExpandedPersonId(newPerson.id);
   };
 
   const removeAuthorizedPerson = (id: string) => {
     updateData({
       authorizedPersons: data.authorizedPersons.filter(person => person.id !== id)
     });
+    if (expandedPersonId === id) {
+      setExpandedPersonId(null);
+    }
   };
 
   const updateAuthorizedPerson = (id: string, field: string, value: any) => {
@@ -58,269 +67,335 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
     });
   };
 
+  const togglePerson = (id: string) => {
+    setExpandedPersonId(expandedPersonId === id ? null : id);
+  };
+
+  const documentTypeOptions = [
+    { value: "OP", label: "Občiansky preukaz" },
+    { value: "Pas", label: "Cestovný pas" }
+  ];
+
   return (
-    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="text-slate-900">Oprávnené osoby</CardTitle>
-        <CardDescription className="text-slate-600">
-          Osoby oprávnené konať v mene spoločnosti
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {data.authorizedPersons.length === 0 && (
-          <div className="text-center py-8 text-slate-500">
-            Zatiaľ neboli pridané žiadne oprávnené osoby
-          </div>
-        )}
-
-        {data.authorizedPersons.map((person, index) => (
-          <div key={person.id} className="border border-slate-200 rounded-lg p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-slate-900">
-                Oprávnená osoba {index + 1}
-              </h3>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => removeAuthorizedPerson(person.id)}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`firstName-${person.id}`}>Meno *</Label>
-                <Input
-                  id={`firstName-${person.id}`}
-                  value={person.firstName}
-                  onChange={(e) => updateAuthorizedPerson(person.id, 'firstName', e.target.value)}
-                  placeholder="Zadajte meno"
-                  className="border-slate-300 focus:border-blue-500"
-                />
+    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
+      <CardContent className="p-0">
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          {/* Left sidebar */}
+          <div className="bg-gradient-to-br from-purple-50 to-violet-50 p-6 md:p-8">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-purple-600" />
+                </div>
+                <h3 className="font-medium text-purple-900">Oprávnené osoby</h3>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor={`lastName-${person.id}`}>Priezvisko *</Label>
-                <Input
-                  id={`lastName-${person.id}`}
-                  value={person.lastName}
-                  onChange={(e) => updateAuthorizedPerson(person.id, 'lastName', e.target.value)}
-                  placeholder="Zadajte priezvisko"
-                  className="border-slate-300 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`email-${person.id}`}>Email *</Label>
-                <Input
-                  id={`email-${person.id}`}
-                  type="email"
-                  value={person.email}
-                  onChange={(e) => updateAuthorizedPerson(person.id, 'email', e.target.value)}
-                  placeholder="email@priklad.sk"
-                  className="border-slate-300 focus:border-blue-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor={`phone-${person.id}`}>Telefón *</Label>
-                <Input
-                  id={`phone-${person.id}`}
-                  value={person.phone}
-                  onChange={(e) => updateAuthorizedPerson(person.id, 'phone', e.target.value)}
-                  placeholder="+421 123 456 789"
-                  className="border-slate-300 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor={`maidenName-${person.id}`}>Rodné priezvisko</Label>
-              <Input
-                id={`maidenName-${person.id}`}
-                value={person.maidenName}
-                onChange={(e) => updateAuthorizedPerson(person.id, 'maidenName', e.target.value)}
-                placeholder="Rodné priezvisko"
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`birthDate-${person.id}`}>Dátum narodenia *</Label>
-                <Input
-                  id={`birthDate-${person.id}`}
-                  type="date"
-                  value={person.birthDate}
-                  onChange={(e) => updateAuthorizedPerson(person.id, 'birthDate', e.target.value)}
-                  className="border-slate-300 focus:border-blue-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor={`birthPlace-${person.id}`}>Miesto narodenia *</Label>
-                <Input
-                  id={`birthPlace-${person.id}`}
-                  value={person.birthPlace}
-                  onChange={(e) => updateAuthorizedPerson(person.id, 'birthPlace', e.target.value)}
-                  placeholder="Bratislava"
-                  className="border-slate-300 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`birthNumber-${person.id}`}>Rodné číslo *</Label>
-                <Input
-                  id={`birthNumber-${person.id}`}
-                  value={person.birthNumber}
-                  onChange={(e) => updateAuthorizedPerson(person.id, 'birthNumber', e.target.value)}
-                  placeholder="123456/7890"
-                  className="border-slate-300 focus:border-blue-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor={`position-${person.id}`}>Funkcia *</Label>
-                <Input
-                  id={`position-${person.id}`}
-                  value={person.position}
-                  onChange={(e) => updateAuthorizedPerson(person.id, 'position', e.target.value)}
-                  placeholder="Konateľ"
-                  className="border-slate-300 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor={`permanentAddress-${person.id}`}>Trvalé bydlisko *</Label>
-              <Input
-                id={`permanentAddress-${person.id}`}
-                value={person.permanentAddress}
-                onChange={(e) => updateAuthorizedPerson(person.id, 'permanentAddress', e.target.value)}
-                placeholder="Hlavná 123, 010 01 Bratislava"
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-medium text-slate-900">Doklad totožnosti</h4>
               
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor={`documentType-${person.id}`}>Typ dokladu *</Label>
-                  <Select
-                    value={person.documentType}
-                    onValueChange={(value) => updateAuthorizedPerson(person.id, 'documentType', value as 'OP' | 'Pas')}
-                  >
-                    <SelectTrigger className="border-slate-300 focus:border-blue-500">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-slate-200">
-                      <SelectItem value="OP">Občiansky preukaz</SelectItem>
-                      <SelectItem value="Pas">Cestovný pas</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor={`documentNumber-${person.id}`}>Číslo dokladu *</Label>
-                  <Input
-                    id={`documentNumber-${person.id}`}
-                    value={person.documentNumber}
-                    onChange={(e) => updateAuthorizedPerson(person.id, 'documentNumber', e.target.value)}
-                    placeholder="AB123456"
-                    className="border-slate-300 focus:border-blue-500"
-                  />
-                </div>
+              <p className="text-sm text-purple-800">
+                Oprávnené osoby sú štatutári alebo splnomocnené osoby, ktoré môžu konať v mene spoločnosti.
+              </p>
+              
+              <div className="bg-purple-100/50 border border-purple-200 rounded-lg p-4 text-xs text-purple-800">
+                <p className="font-medium mb-2">Dôležité informácie</p>
+                <ul className="space-y-2 list-disc list-inside">
+                  <li>Údaje musia byť v súlade s oficiálnymi dokumentami</li>
+                  <li>Pre každú oprávnenú osobu je potrebný platný doklad totožnosti</li>
+                  <li>Minimálne jedna oprávnená osoba musí byť uvedená</li>
+                </ul>
               </div>
-
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor={`documentValidity-${person.id}`}>Platnosť do *</Label>
-                  <Input
-                    id={`documentValidity-${person.id}`}
-                    type="date"
-                    value={person.documentValidity}
-                    onChange={(e) => updateAuthorizedPerson(person.id, 'documentValidity', e.target.value)}
-                    className="border-slate-300 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor={`documentIssuer-${person.id}`}>Vydal *</Label>
-                  <Input
-                    id={`documentIssuer-${person.id}`}
-                    value={person.documentIssuer}
-                    onChange={(e) => updateAuthorizedPerson(person.id, 'documentIssuer', e.target.value)}
-                    placeholder="Obvodný úrad Bratislava"
-                    className="border-slate-300 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor={`documentCountry-${person.id}`}>Štát vydania *</Label>
-                  <Input
-                    id={`documentCountry-${person.id}`}
-                    value={person.documentCountry}
-                    onChange={(e) => updateAuthorizedPerson(person.id, 'documentCountry', e.target.value)}
-                    placeholder="Slovensko"
-                    className="border-slate-300 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor={`citizenship-${person.id}`}>Občianstvo *</Label>
-              <Input
-                id={`citizenship-${person.id}`}
-                value={person.citizenship}
-                onChange={(e) => updateAuthorizedPerson(person.id, 'citizenship', e.target.value)}
-                placeholder="Slovensko"
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id={`isPoliticallyExposed-${person.id}`}
-                  checked={person.isPoliticallyExposed}
-                  onCheckedChange={(checked) => updateAuthorizedPerson(person.id, 'isPoliticallyExposed', checked)}
-                />
-                <Label htmlFor={`isPoliticallyExposed-${person.id}`}>
-                  Politicky exponovaná osoba
-                </Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id={`isUSCitizen-${person.id}`}
-                  checked={person.isUSCitizen}
-                  onCheckedChange={(checked) => updateAuthorizedPerson(person.id, 'isUSCitizen', checked)}
-                />
-                <Label htmlFor={`isUSCitizen-${person.id}`}>
-                  Štátny občan USA
-                </Label>
+              
+              <div className="mt-4">
+                <Button
+                  onClick={addAuthorizedPerson}
+                  variant="outline"
+                  className="w-full border-2 border-purple-200 hover:border-purple-300 hover:bg-purple-50 text-purple-700 flex items-center justify-center gap-2"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Pridať osobu
+                </Button>
               </div>
             </div>
           </div>
-        ))}
+          
+          {/* Main content */}
+          <div className="col-span-1 md:col-span-2 p-6 md:p-8">
+            <OnboardingSection>
+              {data.authorizedPersons.length === 0 && (
+                <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
+                  <Users className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-slate-700 mb-2">Zatiaľ žiadne oprávnené osoby</h3>
+                  <p className="text-sm text-slate-500 mb-6">Pridajte aspoň jedného štatutára alebo oprávnenú osobu</p>
+                  <Button 
+                    onClick={addAuthorizedPerson}
+                    variant="outline" 
+                    className="border-purple-200 hover:border-purple-300 hover:bg-purple-50 text-purple-700"
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Pridať oprávnenú osobu
+                  </Button>
+                </div>
+              )}
 
-        <Button
-          onClick={addAuthorizedPerson}
-          variant="outline"
-          className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Pridať oprávnenú osobu
-        </Button>
+              {data.authorizedPersons.map((person, index) => (
+                <div key={person.id} className="mb-6 overflow-hidden border border-slate-200 rounded-lg shadow-sm bg-white">
+                  <div 
+                    onClick={() => togglePerson(person.id)}
+                    className={`flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 ${
+                      expandedPersonId === person.id ? 'bg-slate-50 border-b border-slate-200' : ''
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                        person.firstName && person.lastName ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-400'
+                      }`}>
+                        {person.firstName && person.lastName ? (
+                          <UserCheck className="h-5 w-5" />
+                        ) : (
+                          <UserPlus className="h-5 w-5" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-slate-900">
+                          {person.firstName && person.lastName 
+                            ? `${person.firstName} ${person.lastName}`
+                            : `Oprávnená osoba ${index + 1}`}
+                        </h3>
+                        {person.position && (
+                          <p className="text-xs text-slate-500">{person.position}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeAuthorizedPerson(person.id);
+                        }}
+                        className="p-2 hover:bg-red-50 text-red-600 rounded-full transition-colors mr-2"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                      <div className="w-6 text-slate-400 transition-transform duration-200 transform">
+                        {expandedPersonId === person.id ? '▲' : '▼'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {expandedPersonId === person.id && (
+                    <div className="p-4 animate-fade-in">
+                      <div className="space-y-6">
+                        <div>
+                          <h4 className="text-sm font-medium text-purple-700 flex items-center gap-2 mb-4">
+                            <UserCheck className="h-4 w-4" />
+                            Základné údaje
+                          </h4>
+                          
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <OnboardingInput
+                              label="Meno *"
+                              value={person.firstName}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'firstName', e.target.value)}
+                              placeholder="Zadajte meno"
+                            />
+
+                            <OnboardingInput
+                              label="Priezvisko *"
+                              value={person.lastName}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'lastName', e.target.value)}
+                              placeholder="Zadajte priezvisko"
+                            />
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-4 mt-4">
+                            <OnboardingInput
+                              label="Email *"
+                              type="email"
+                              value={person.email}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'email', e.target.value)}
+                              placeholder="email@priklad.sk"
+                            />
+
+                            <OnboardingInput
+                              label="Telefón *"
+                              value={person.phone}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'phone', e.target.value)}
+                              placeholder="+421 123 456 789"
+                            />
+                          </div>
+
+                          <OnboardingInput
+                            label="Rodné priezvisko"
+                            value={person.maidenName}
+                            onChange={(e) => updateAuthorizedPerson(person.id, 'maidenName', e.target.value)}
+                            placeholder="Rodné priezvisko"
+                            className="mt-4"
+                          />
+                        </div>
+
+                        <div className="border-t border-slate-100 pt-4">
+                          <h4 className="text-sm font-medium text-purple-700 flex items-center gap-2 mb-4">
+                            <Fingerprint className="h-4 w-4" />
+                            Osobné údaje
+                          </h4>
+
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <OnboardingInput
+                              label="Dátum narodenia *"
+                              type="date"
+                              value={person.birthDate}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'birthDate', e.target.value)}
+                            />
+
+                            <OnboardingInput
+                              label="Miesto narodenia *"
+                              value={person.birthPlace}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'birthPlace', e.target.value)}
+                              placeholder="Bratislava"
+                            />
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-4 mt-4">
+                            <OnboardingInput
+                              label="Rodné číslo *"
+                              value={person.birthNumber}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'birthNumber', e.target.value)}
+                              placeholder="123456/7890"
+                            />
+
+                            <OnboardingInput
+                              label="Funkcia *"
+                              value={person.position}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'position', e.target.value)}
+                              placeholder="Konateľ"
+                            />
+                          </div>
+
+                          <OnboardingInput
+                            label="Trvalé bydlisko *"
+                            value={person.permanentAddress}
+                            onChange={(e) => updateAuthorizedPerson(person.id, 'permanentAddress', e.target.value)}
+                            placeholder="Hlavná 123, 010 01 Bratislava"
+                            className="mt-4"
+                          />
+                        </div>
+
+                        <div className="border-t border-slate-100 pt-4">
+                          <h4 className="text-sm font-medium text-purple-700 flex items-center gap-2 mb-4">
+                            <FileText className="h-4 w-4" />
+                            Doklad totožnosti
+                          </h4>
+                          
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <OnboardingSelect
+                              label="Typ dokladu *"
+                              value={person.documentType}
+                              onValueChange={(value) => updateAuthorizedPerson(person.id, 'documentType', value)}
+                              options={documentTypeOptions}
+                            />
+
+                            <OnboardingInput
+                              label="Číslo dokladu *"
+                              value={person.documentNumber}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'documentNumber', e.target.value)}
+                              placeholder="AB123456"
+                            />
+                          </div>
+
+                          <div className="grid md:grid-cols-3 gap-4 mt-4">
+                            <OnboardingInput
+                              label="Platnosť do *"
+                              type="date"
+                              value={person.documentValidity}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'documentValidity', e.target.value)}
+                            />
+
+                            <OnboardingInput
+                              label="Vydal *"
+                              value={person.documentIssuer}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'documentIssuer', e.target.value)}
+                              placeholder="Obvodný úrad Bratislava"
+                            />
+
+                            <OnboardingInput
+                              label="Štát vydania *"
+                              value={person.documentCountry}
+                              onChange={(e) => updateAuthorizedPerson(person.id, 'documentCountry', e.target.value)}
+                              placeholder="Slovensko"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="border-t border-slate-100 pt-4">
+                          <h4 className="text-sm font-medium text-purple-700 flex items-center gap-2 mb-4">
+                            <Flag className="h-4 w-4" />
+                            Ďalšie informácie
+                          </h4>
+
+                          <OnboardingInput
+                            label="Občianstvo *"
+                            value={person.citizenship}
+                            onChange={(e) => updateAuthorizedPerson(person.id, 'citizenship', e.target.value)}
+                            placeholder="Slovensko"
+                          />
+
+                          <div className="mt-4 space-y-4">
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`isPoliticallyExposed-${person.id}`}
+                                checked={person.isPoliticallyExposed}
+                                onCheckedChange={(checked) => updateAuthorizedPerson(person.id, 'isPoliticallyExposed', checked)}
+                              />
+                              <div>
+                                <label htmlFor={`isPoliticallyExposed-${person.id}`} className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                  Politicky exponovaná osoba
+                                  {person.isPoliticallyExposed && <AlertTriangle className="h-3 w-3 text-amber-500" />}
+                                </label>
+                                {person.isPoliticallyExposed && (
+                                  <p className="text-xs text-slate-500 mt-1">
+                                    Politicky exponovanou osobou je osoba vo významnej verejnej funkcii.
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`isUSCitizen-${person.id}`}
+                                checked={person.isUSCitizen}
+                                onCheckedChange={(checked) => updateAuthorizedPerson(person.id, 'isUSCitizen', checked)}
+                              />
+                              <div>
+                                <label htmlFor={`isUSCitizen-${person.id}`} className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                  Štátny občan USA
+                                  {person.isUSCitizen && <AlertTriangle className="h-3 w-3 text-amber-500" />}
+                                </label>
+                                {person.isUSCitizen && (
+                                  <p className="text-xs text-slate-500 mt-1">
+                                    Osoby s občianstvom USA podliehajú špeciálnym reportovacím povinnostiam.
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {data.authorizedPersons.length > 0 && (
+                <Button
+                  onClick={addAuthorizedPerson}
+                  variant="outline"
+                  className="w-full border-dashed border-2 border-slate-300 hover:border-purple-500 hover:bg-purple-50 mt-4"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Pridať ďalšiu oprávnenú osobu
+                </Button>
+              )}
+            </OnboardingSection>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
