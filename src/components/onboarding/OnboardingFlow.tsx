@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingData } from "@/types/onboarding";
@@ -87,7 +88,22 @@ const OnboardingFlow = () => {
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        setOnboardingData(parsed);
+        // Ensure all arrays exist to prevent undefined errors
+        const safeData = {
+          ...parsed,
+          businessLocations: parsed.businessLocations || [],
+          authorizedPersons: parsed.authorizedPersons || [],
+          actualOwners: parsed.actualOwners || [],
+          deviceSelection: {
+            ...parsed.deviceSelection,
+            softwareLicenses: parsed.deviceSelection?.softwareLicenses || [],
+            accessories: parsed.deviceSelection?.accessories || [],
+            ecommerce: parsed.deviceSelection?.ecommerce || [],
+            technicalService: parsed.deviceSelection?.technicalService || [],
+            transactionTypes: parsed.deviceSelection?.transactionTypes || []
+          }
+        };
+        setOnboardingData(safeData);
         setCurrentStep(parsed.currentStep || 0);
       } catch (error) {
         console.error('Error loading onboarding data:', error);
@@ -191,10 +207,10 @@ const OnboardingFlow = () => {
             <div className="max-w-4xl mx-auto">
               <div className="mb-6">
                 <h1 className="text-2xl font-bold text-slate-900 mb-2">
-                  {steps[currentStep].title}
+                  {steps[currentStep]?.title || 'Loading...'}
                 </h1>
                 <p className="text-slate-600">
-                  {steps[currentStep].description}
+                  {steps[currentStep]?.description || ''}
                 </p>
               </div>
               
