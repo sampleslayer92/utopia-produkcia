@@ -16,11 +16,11 @@ export const useContractSubmission = () => {
       // 1. Create main contract
       const { data: contract, error: contractError } = await supabase
         .from('contracts')
-        .insert([{
+        .insert({
           status: 'submitted',
           submitted_at: new Date().toISOString(),
           notes: 'Contract submitted via onboarding portal'
-        }])
+        })
         .select('id, contract_number')
         .single();
 
@@ -35,7 +35,7 @@ export const useContractSubmission = () => {
       // 2. Insert contact info
       const { error: contactError } = await supabase
         .from('contact_info')
-        .insert([{
+        .insert({
           contract_id: contractId,
           salutation: onboardingData.contactInfo.salutation || null,
           first_name: onboardingData.contactInfo.firstName,
@@ -44,19 +44,19 @@ export const useContractSubmission = () => {
           phone: onboardingData.contactInfo.phone,
           phone_prefix: onboardingData.contactInfo.phonePrefix,
           sales_note: onboardingData.contactInfo.salesNote || null
-        }]);
+        });
 
       if (contactError) throw contactError;
 
       // 3. Insert company info
       const { error: companyError } = await supabase
         .from('company_info')
-        .insert([{
+        .insert({
           contract_id: contractId,
           ico: onboardingData.companyInfo.ico,
           dic: onboardingData.companyInfo.dic,
           company_name: onboardingData.companyInfo.companyName,
-          registry_type: onboardingData.companyInfo.registryType,
+          registry_type: onboardingData.companyInfo.registryType || 'other',
           court: onboardingData.companyInfo.court || null,
           section: onboardingData.companyInfo.section || null,
           insert_number: onboardingData.companyInfo.insertNumber || null,
@@ -71,7 +71,7 @@ export const useContractSubmission = () => {
           contact_person_email: onboardingData.companyInfo.contactPerson.email,
           contact_person_phone: onboardingData.companyInfo.contactPerson.phone,
           contact_person_is_technical: onboardingData.companyInfo.contactPerson.isTechnicalPerson
-        }]);
+        });
 
       if (companyError) throw companyError;
 
@@ -79,7 +79,7 @@ export const useContractSubmission = () => {
       for (const location of onboardingData.businessLocations) {
         const { error: locationError } = await supabase
           .from('business_locations')
-          .insert([{
+          .insert({
             contract_id: contractId,
             location_id: location.id,
             name: location.name,
@@ -97,7 +97,7 @@ export const useContractSubmission = () => {
             opening_hours: location.openingHours,
             seasonality: location.seasonality,
             seasonal_weeks: location.seasonalWeeks || null
-          }]);
+          });
 
         if (locationError) throw locationError;
 
@@ -105,11 +105,11 @@ export const useContractSubmission = () => {
         for (const personId of location.assignedPersons) {
           const { error: assignmentError } = await supabase
             .from('location_assignments')
-            .insert([{
+            .insert({
               contract_id: contractId,
               person_id: personId,
               location_id: location.id
-            }]);
+            });
 
           if (assignmentError) throw assignmentError;
         }
@@ -118,7 +118,7 @@ export const useContractSubmission = () => {
       // 5. Insert device selection
       const { error: deviceError } = await supabase
         .from('device_selection')
-        .insert([{
+        .insert({
           contract_id: contractId,
           pax_a920_pro_count: onboardingData.deviceSelection.terminals.paxA920Pro.count,
           pax_a920_pro_monthly_fee: onboardingData.deviceSelection.terminals.paxA920Pro.monthlyFee,
@@ -140,7 +140,7 @@ export const useContractSubmission = () => {
           mif_unregulated_cards: onboardingData.deviceSelection.mifFees.unregulatedCards,
           mif_dcc_rabat: onboardingData.deviceSelection.mifFees.dccRabat,
           note: onboardingData.deviceSelection.note || null
-        }]);
+        });
 
       if (deviceError) throw deviceError;
 
@@ -148,7 +148,7 @@ export const useContractSubmission = () => {
       for (const person of onboardingData.authorizedPersons) {
         const { error: personError } = await supabase
           .from('authorized_persons')
-          .insert([{
+          .insert({
             contract_id: contractId,
             person_id: person.id,
             first_name: person.firstName,
@@ -169,7 +169,7 @@ export const useContractSubmission = () => {
             citizenship: person.citizenship,
             is_politically_exposed: person.isPoliticallyExposed,
             is_us_citizen: person.isUSCitizen
-          }]);
+          });
 
         if (personError) throw personError;
       }
@@ -178,7 +178,7 @@ export const useContractSubmission = () => {
       for (const owner of onboardingData.actualOwners) {
         const { error: ownerError } = await supabase
           .from('actual_owners')
-          .insert([{
+          .insert({
             contract_id: contractId,
             owner_id: owner.id,
             first_name: owner.firstName,
@@ -190,7 +190,7 @@ export const useContractSubmission = () => {
             citizenship: owner.citizenship,
             permanent_address: owner.permanentAddress,
             is_politically_exposed: owner.isPoliticallyExposed
-          }]);
+          });
 
         if (ownerError) throw ownerError;
       }
@@ -198,14 +198,14 @@ export const useContractSubmission = () => {
       // 8. Insert consents
       const { error: consentsError } = await supabase
         .from('consents')
-        .insert([{
+        .insert({
           contract_id: contractId,
           gdpr_consent: onboardingData.consents.gdpr,
           terms_consent: onboardingData.consents.terms,
           electronic_communication_consent: onboardingData.consents.electronicCommunication,
           signature_date: onboardingData.consents.signatureDate || null,
           signing_person_id: onboardingData.consents.signingPersonId || null
-        }]);
+        });
 
       if (consentsError) throw consentsError;
 
