@@ -35,6 +35,11 @@ const ProductDetailModal = ({
       return editingCard;
     }
     
+    // Add null check for product
+    if (!product) {
+      return null;
+    }
+    
     if (productType === 'device') {
       return {
         ...product,
@@ -59,6 +64,11 @@ const ProductDetailModal = ({
 
   const [pricingMode, setPricingMode] = useState<'rental' | 'purchase'>('rental');
   const [isSpecsOpen, setIsSpecsOpen] = useState(false);
+
+  // Don't render if product is null or formData is null
+  if (!product || !formData) {
+    return null;
+  }
 
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
