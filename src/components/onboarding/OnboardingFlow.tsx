@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -94,7 +93,6 @@ const OnboardingFlow = () => {
   const totalSteps = steps.length;
   const progressPercentage = ((currentStep + 1) / totalSteps) * 100;
 
-  // Load data from localStorage on mount
   useEffect(() => {
     const savedData = localStorage.getItem('onboarding_data');
     if (savedData) {
@@ -108,7 +106,6 @@ const OnboardingFlow = () => {
     }
   }, []);
 
-  // Save data to localStorage whenever it changes
   useEffect(() => {
     const dataToSave = { ...onboardingData, currentStep };
     localStorage.setItem('onboarding_data', JSON.stringify(dataToSave));
@@ -143,6 +140,13 @@ const OnboardingFlow = () => {
     // Store user role and redirect
     localStorage.setItem('utopia_user_role', 'merchant');
     navigate('/merchant');
+  };
+
+  const handleStepClick = (stepNumber: number) => {
+    // Allow navigation to completed steps
+    if (stepNumber <= currentStep) {
+      setCurrentStep(stepNumber);
+    }
   };
 
   const renderStep = () => {
@@ -194,97 +198,113 @@ const OnboardingFlow = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-8">
-        {/* Progress Section */}
-        <div className="max-w-6xl mx-auto mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-slate-900">
-              {steps[currentStep].title}
-            </h1>
-            <span className="text-sm text-slate-600">
-              Krok {currentStep + 1} z {totalSteps}
-            </span>
-          </div>
-          
-          <Progress value={progressPercentage} className="h-2 mb-6" />
-          
-          {/* Steps Overview */}
-          <div className="grid grid-cols-7 gap-2 mb-8">
-            {steps.map((step) => (
-              <div
-                key={step.number}
-                className={`text-center p-3 rounded-lg transition-all duration-200 ${
-                  step.number === currentStep
-                    ? 'bg-blue-100 border-2 border-blue-300'
-                    : step.number < currentStep
-                    ? 'bg-green-50 border border-green-200'
-                    : 'bg-slate-50 border border-slate-200'
-                }`}
-              >
+      <div className="flex min-h-[calc(100vh-80px)]">
+        {/* Left Sidebar - Steps */}
+        <div className="w-80 bg-white/60 backdrop-blur-sm border-r border-slate-200/60 p-6">
+          <div className="sticky top-6">
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-slate-900 mb-2">Registračný proces</h2>
+              <div className="text-sm text-slate-600 mb-4">
+                Krok {currentStep + 1} z {totalSteps}
+              </div>
+              <Progress value={progressPercentage} className="h-2" />
+            </div>
+
+            {/* Vertical Steps */}
+            <div className="space-y-3">
+              {steps.map((step) => (
                 <div
-                  className={`w-8 h-8 rounded-full mx-auto mb-2 flex items-center justify-center text-sm font-medium ${
+                  key={step.number}
+                  onClick={() => handleStepClick(step.number)}
+                  className={`flex items-start space-x-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
                     step.number === currentStep
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-blue-100 border-2 border-blue-300 shadow-sm'
                       : step.number < currentStep
-                      ? 'bg-green-600 text-white'
-                      : 'bg-slate-300 text-slate-600'
+                      ? 'bg-green-50 border border-green-200 hover:bg-green-100'
+                      : 'bg-slate-50 border border-slate-200 hover:bg-slate-100'
                   }`}
                 >
-                  {step.number < currentStep ? <Check className="h-4 w-4" /> : step.number + 1}
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0 ${
+                      step.number === currentStep
+                        ? 'bg-blue-600 text-white'
+                        : step.number < currentStep
+                        ? 'bg-green-600 text-white'
+                        : 'bg-slate-300 text-slate-600'
+                    }`}
+                  >
+                    {step.number < currentStep ? <Check className="h-4 w-4" /> : step.number + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-slate-900 mb-1">
+                      {step.title}
+                    </div>
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      {step.description}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-xs font-medium text-slate-900 mb-1">
-                  {step.title}
-                </div>
-                <div className="text-xs text-slate-600">
-                  {step.description}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Step Content */}
-        <div className="max-w-6xl mx-auto">
-          {renderStep()}
-        </div>
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col">
+          {/* Content */}
+          <div className="flex-1 p-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold text-slate-900 mb-2">
+                  {steps[currentStep].title}
+                </h1>
+                <p className="text-slate-600">
+                  {steps[currentStep].description}
+                </p>
+              </div>
+              
+              {renderStep()}
+            </div>
+          </div>
 
-        {/* Navigation */}
-        <div className="max-w-6xl mx-auto mt-8">
-          <div className="flex justify-between">
-            <Button
-              variant="outline"
-              onClick={prevStep}
-              disabled={currentStep === 0}
-              className="flex items-center"
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Späť
-            </Button>
-            
-            <div className="flex space-x-3">
+          {/* Bottom Navigation */}
+          <div className="border-t border-slate-200 bg-white/80 backdrop-blur-sm p-6">
+            <div className="max-w-4xl mx-auto flex justify-between">
               <Button
                 variant="outline"
-                onClick={() => navigate('/')}
+                onClick={prevStep}
+                disabled={currentStep === 0}
+                className="flex items-center"
               >
-                Uložiť a ukončiť
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Späť
               </Button>
               
-              {currentStep === totalSteps - 1 ? (
+              <div className="flex space-x-3">
                 <Button
-                  onClick={handleComplete}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                  variant="outline"
+                  onClick={() => navigate('/')}
                 >
-                  Dokončiť registráciu
+                  Uložiť a ukončiť
                 </Button>
-              ) : (
-                <Button
-                  onClick={nextStep}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center"
-                >
-                  Ďalej
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-              )}
+                
+                {currentStep === totalSteps - 1 ? (
+                  <Button
+                    onClick={handleComplete}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                  >
+                    Dokončiť registráciu
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={nextStep}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center"
+                  >
+                    Ďalej
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
