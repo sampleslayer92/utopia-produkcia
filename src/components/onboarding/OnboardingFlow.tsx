@@ -56,8 +56,8 @@ const OnboardingFlow = () => {
       },
       tablets: {
         tablet10: { count: 0, monthlyFee: 0 },
-        tablet15: { count: number; monthlyFee: number };
-        tabletPro15: { count: number; monthlyFee: number }
+        tablet15: { count: 0, monthlyFee: 0 },
+        tabletPro15: { count: 0, monthlyFee: 0 }
       },
       softwareLicenses: [],
       accessories: [],
