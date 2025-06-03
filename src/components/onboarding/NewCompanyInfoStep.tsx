@@ -21,7 +21,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         companyInfo: {
           ...data.companyInfo,
           [parent]: {
-            ...data.companyInfo[parent as keyof typeof data.companyInfo],
+            ...(data.companyInfo[parent as keyof typeof data.companyInfo] as any),
             [child]: value
           }
         }

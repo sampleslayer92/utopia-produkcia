@@ -22,7 +22,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
         businessLocation: {
           ...data.businessLocation,
           [parent]: {
-            ...data.businessLocation[parent as keyof typeof data.businessLocation],
+            ...(data.businessLocation[parent as keyof typeof data.businessLocation] as any),
             [child]: value
           }
         }
