@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -50,8 +49,23 @@ export const useContractsData = () => {
         throw error;
       }
 
-      console.log('Contracts data fetched:', data);
-      return data as ContractWithInfo[];
+      // Transform the data to match our interface
+      const transformedData: ContractWithInfo[] = data?.map(contract => ({
+        id: contract.id,
+        contract_number: contract.contract_number,
+        status: contract.status,
+        created_at: contract.created_at,
+        submitted_at: contract.submitted_at,
+        contact_info: Array.isArray(contract.contact_info) && contract.contact_info.length > 0 
+          ? contract.contact_info[0] 
+          : null,
+        company_info: Array.isArray(contract.company_info) && contract.company_info.length > 0 
+          ? contract.company_info[0] 
+          : null,
+      })) || [];
+
+      console.log('Contracts data fetched and transformed:', transformedData);
+      return transformedData;
     },
   });
 };
