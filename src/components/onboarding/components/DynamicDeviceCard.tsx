@@ -18,7 +18,7 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove }: DynamicDeviceCardProp
   };
 
   return (
-    <Card className="border-slate-200/60 bg-white shadow-md">
+    <Card className="border-slate-200/60 bg-white shadow-md hover:shadow-lg transition-shadow">
       <CardHeader className="relative pb-3">
         <Button
           variant="outline"
@@ -29,21 +29,38 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove }: DynamicDeviceCardProp
           <X className="h-4 w-4 text-red-500" />
         </Button>
         <div className="flex items-start space-x-4">
-          <div className="w-20 h-20 bg-slate-100 rounded-lg flex items-center justify-center">
+          <div className="w-24 h-24 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden">
             {device.image ? (
-              <img src={device.image} alt={device.name} className="w-16 h-16 object-contain" />
-            ) : (
-              <span className="text-xs text-slate-500">{device.name}</span>
-            )}
+              <img 
+                src={device.image} 
+                alt={device.name} 
+                className="w-20 h-20 object-contain hover:scale-110 transition-transform cursor-pointer" 
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.nextElementSibling!.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <span className={`text-xs text-slate-500 text-center ${device.image ? 'hidden' : ''}`}>
+              {device.name}
+            </span>
           </div>
           <div className="flex-1">
             <CardTitle className="text-lg text-slate-900">{device.name}</CardTitle>
             <p className="text-sm text-slate-600 mt-1">{device.description}</p>
             {device.specifications.length > 0 && (
               <div className="mt-2">
-                {device.specifications.map((spec, index) => (
-                  <p key={index} className="text-xs text-slate-500">• {spec}</p>
-                ))}
+                <details className="group">
+                  <summary className="text-xs text-blue-600 cursor-pointer hover:text-blue-800">
+                    Zobraziť špecifikácie
+                  </summary>
+                  <div className="mt-2 space-y-1">
+                    {device.specifications.map((spec, index) => (
+                      <p key={index} className="text-xs text-slate-500">• {spec}</p>
+                    ))}
+                  </div>
+                </details>
               </div>
             )}
           </div>
