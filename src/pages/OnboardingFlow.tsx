@@ -30,13 +30,13 @@ const OnboardingFlow = () => {
   });
 
   const steps = [
-    { number: 1, title: "Company Information", description: "Basic business details" },
-    { number: 2, title: "Locations", description: "Business locations and addresses" },
-    { number: 3, title: "Devices", description: "Payment processing equipment" },
-    { number: 4, title: "Services", description: "Select your service plan" },
-    { number: 5, title: "Owners", description: "Business ownership information" },
-    { number: 6, title: "Billing", description: "Payment and banking details" },
-    { number: 7, title: "Contract", description: "Review and sign agreement" }
+    { number: 1, title: "Informácie o spoločnosti", description: "Základné údaje o podniku" },
+    { number: 2, title: "Lokality", description: "Adresy a lokality podnikania" },
+    { number: 3, title: "Zariadenia", description: "Platobné terminály a zariadenia" },
+    { number: 4, title: "Služby", description: "Výber servisného balíka" },
+    { number: 5, title: "Vlastníci", description: "Informácie o vlastníkoch" },
+    { number: 6, title: "Fakturácia", description: "Platobné a bankové údaje" },
+    { number: 7, title: "Zmluva", description: "Kontrola a podpis zmluvy" }
   ];
 
   const totalSteps = steps.length;
@@ -61,9 +61,9 @@ const OnboardingFlow = () => {
   };
 
   const handleComplete = () => {
-    console.log('Onboarding completed:', onboardingData);
-    // Here you would typically submit the data to your backend
-    navigate('/merchant'); // Redirect to merchant dashboard by default
+    console.log('Onboarding dokončený:', onboardingData);
+    // Tu by ste typicky odoslali dáta na backend
+    navigate('/merchant'); // Presmerovanie na merchant dashboard
   };
 
   const renderStep = () => {
@@ -109,7 +109,7 @@ const OnboardingFlow = () => {
               </span>
             </div>
             <Badge variant="outline" className="border-blue-200 text-blue-700">
-              Onboarding
+              Registrácia
             </Badge>
           </div>
         </div>
@@ -123,7 +123,7 @@ const OnboardingFlow = () => {
               {steps[currentStep - 1].title}
             </h1>
             <span className="text-sm text-slate-600">
-              Step {currentStep} of {totalSteps}
+              Krok {currentStep} z {totalSteps}
             </span>
           </div>
           
@@ -179,7 +179,7 @@ const OnboardingFlow = () => {
               className="flex items-center"
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
-              Previous
+              Späť
             </Button>
             
             <div className="flex space-x-3">
@@ -187,7 +187,7 @@ const OnboardingFlow = () => {
                 variant="outline"
                 onClick={() => navigate('/')}
               >
-                Save & Exit
+                Uložiť a ukončiť
               </Button>
               
               {currentStep === totalSteps ? (
@@ -195,14 +195,14 @@ const OnboardingFlow = () => {
                   onClick={handleComplete}
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
                 >
-                  Complete Onboarding
+                  Dokončiť registráciu
                 </Button>
               ) : (
                 <Button
                   onClick={nextStep}
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center"
                 >
-                  Next
+                  Ďalej
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
               )}

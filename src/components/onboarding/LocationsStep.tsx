@@ -57,10 +57,10 @@ const LocationsStep = ({ data, updateData }: LocationsStepProps) => {
         <CardHeader>
           <CardTitle className="text-slate-900 flex items-center">
             <MapPin className="mr-2 h-5 w-5 text-blue-600" />
-            Business Locations
+            Lokality podnikania
           </CardTitle>
           <CardDescription className="text-slate-600">
-            Add all locations where you'll be processing payments
+            Pridajte všetky lokality, kde budete spracovávať platby
           </CardDescription>
         </CardHeader>
       </Card>
@@ -71,11 +71,11 @@ const LocationsStep = ({ data, updateData }: LocationsStepProps) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <CardTitle className="text-lg text-slate-900">
-                  Location {index + 1}
+                  Lokalita {index + 1}
                 </CardTitle>
                 {location.isHeadquarters && (
                   <Badge className="bg-blue-100 text-blue-700 border-blue-200">
-                    Headquarters
+                    Sídlo
                   </Badge>
                 )}
               </div>
@@ -93,69 +93,69 @@ const LocationsStep = ({ data, updateData }: LocationsStepProps) => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor={`locationName-${index}`}>Location Name *</Label>
+              <Label htmlFor={`locationName-${index}`}>Názov lokality *</Label>
               <Input
                 id={`locationName-${index}`}
                 value={location.name || ''}
                 onChange={(e) => updateLocation(index, 'name', e.target.value)}
-                placeholder="Main Store, Branch Office, etc."
+                placeholder="Hlavná predajňa, Pobočka, atď."
                 className="border-slate-300 focus:border-blue-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor={`address-${index}`}>Street Address *</Label>
+              <Label htmlFor={`address-${index}`}>Adresa *</Label>
               <Input
                 id={`address-${index}`}
                 value={location.address || ''}
                 onChange={(e) => updateLocation(index, 'address', e.target.value)}
-                placeholder="123 Main Street"
+                placeholder="Hlavná 123"
                 className="border-slate-300 focus:border-blue-500"
               />
             </div>
 
             <div className="grid md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor={`city-${index}`}>City *</Label>
+                <Label htmlFor={`city-${index}`}>Mesto *</Label>
                 <Input
                   id={`city-${index}`}
                   value={location.city || ''}
                   onChange={(e) => updateLocation(index, 'city', e.target.value)}
-                  placeholder="City"
+                  placeholder="Bratislava"
                   className="border-slate-300 focus:border-blue-500"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor={`state-${index}`}>State *</Label>
+                <Label htmlFor={`state-${index}`}>Kraj *</Label>
                 <Input
                   id={`state-${index}`}
                   value={location.state || ''}
                   onChange={(e) => updateLocation(index, 'state', e.target.value)}
-                  placeholder="State"
+                  placeholder="Bratislavský"
                   className="border-slate-300 focus:border-blue-500"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor={`zipCode-${index}`}>ZIP Code *</Label>
+                <Label htmlFor={`zipCode-${index}`}>PSČ *</Label>
                 <Input
                   id={`zipCode-${index}`}
                   value={location.zipCode || ''}
                   onChange={(e) => updateLocation(index, 'zipCode', e.target.value)}
-                  placeholder="12345"
+                  placeholder="81101"
                   className="border-slate-300 focus:border-blue-500"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor={`phone-${index}`}>Phone Number *</Label>
+              <Label htmlFor={`phone-${index}`}>Telefónne číslo *</Label>
               <Input
                 id={`phone-${index}`}
                 value={location.phone || ''}
                 onChange={(e) => updateLocation(index, 'phone', e.target.value)}
-                placeholder="(555) 123-4567"
+                placeholder="+421 903 123 456"
                 className="border-slate-300 focus:border-blue-500"
               />
             </div>
@@ -167,7 +167,7 @@ const LocationsStep = ({ data, updateData }: LocationsStepProps) => {
                 onCheckedChange={() => toggleHeadquarters(index)}
               />
               <Label htmlFor={`headquarters-${index}`} className="text-sm">
-                This is the company headquarters
+                Toto je sídlo spoločnosti
               </Label>
             </div>
           </CardContent>
@@ -182,7 +182,7 @@ const LocationsStep = ({ data, updateData }: LocationsStepProps) => {
             className="w-full border-slate-300 text-slate-700 hover:bg-slate-100"
           >
             <Plus className="mr-2 h-4 w-4" />
-            Add Another Location
+            Pridať ďalšiu lokalitu
           </Button>
         </CardContent>
       </Card>

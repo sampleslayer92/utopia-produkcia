@@ -16,38 +16,38 @@ const ServicesStep = ({ data, updateData }: ServicesStepProps) => {
   const servicePlans = [
     {
       id: 'basic',
-      name: 'Basic',
+      name: 'Základný',
       monthlyFee: 29,
       transactionFee: 2.9,
       icon: Shield,
       popular: false,
-      description: 'Perfect for small businesses getting started',
+      description: 'Ideálny pre malé firmy, ktoré začínajú',
       features: [
-        'Payment processing',
-        'Basic reporting',
-        'Email support',
-        'Up to 2 locations',
-        'Standard devices',
-        'Basic fraud protection'
+        'Spracovanie platieb',
+        'Základné reporty',
+        'Email podpora',
+        'Do 2 lokalít',
+        'Štandardné zariadenia',
+        'Základná ochrana proti podvodom'
       ]
     },
     {
       id: 'premium',
-      name: 'Premium',
+      name: 'Prémiový',
       monthlyFee: 79,
       transactionFee: 2.6,
       icon: Star,
       popular: true,
-      description: 'Most popular for growing businesses',
+      description: 'Najpopulárnejší pre rastúce firmy',
       features: [
-        'Everything in Basic',
-        'Advanced analytics',
-        'Priority phone support',
-        'Up to 10 locations',
-        'Premium devices',
-        'Advanced fraud protection',
-        'Custom reporting',
-        'API access'
+        'Všetko zo Základného',
+        'Pokročilé analýzy',
+        'Prioritná telefonická podpora',
+        'Do 10 lokalít',
+        'Prémiové zariadenia',
+        'Pokročilá ochrana proti podvodom',
+        'Vlastné reporty',
+        'API prístup'
       ]
     },
     {
@@ -57,16 +57,16 @@ const ServicesStep = ({ data, updateData }: ServicesStepProps) => {
       transactionFee: 2.3,
       icon: Zap,
       popular: false,
-      description: 'For large organizations with complex needs',
+      description: 'Pre veľké organizácie s komplexnými potrebami',
       features: [
-        'Everything in Premium',
-        'Dedicated account manager',
-        '24/7 phone support',
-        'Unlimited locations',
-        'Custom integrations',
-        'White-label options',
-        'Volume discounts',
-        'SLA guarantees'
+        'Všetko z Prémiového',
+        'Dedikovaný account manager',
+        '24/7 telefonická podpora',
+        'Neobmedzené lokality',
+        'Vlastné integrácie',
+        'White-label možnosti',
+        'Zľavy za objem',
+        'SLA záruky'
       ]
     }
   ];
@@ -79,9 +79,9 @@ const ServicesStep = ({ data, updateData }: ServicesStepProps) => {
     <div className="space-y-6">
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-slate-900 text-2xl">Choose Your Service Plan</CardTitle>
+          <CardTitle className="text-slate-900 text-2xl">Vyberte si servisný balík</CardTitle>
           <CardDescription className="text-slate-600">
-            Select the plan that best fits your business needs. You can upgrade or downgrade anytime.
+            Zvoľte balík, ktorý najlepšie vyhovuje potrebám vašej firmy. Kedykoľvek môžete zmeniť balík.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -104,7 +104,7 @@ const ServicesStep = ({ data, updateData }: ServicesStepProps) => {
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-1">
-                    Most Popular
+                    Najpopulárnejší
                   </Badge>
                 </div>
               )}
@@ -126,11 +126,11 @@ const ServicesStep = ({ data, updateData }: ServicesStepProps) => {
                 
                 <div className="text-center mb-4">
                   <span className="text-3xl font-bold text-slate-900">
-                    ${plan.monthlyFee}
+                    {plan.monthlyFee}€
                   </span>
-                  <span className="text-slate-600">/month</span>
+                  <span className="text-slate-600">/mesiac</span>
                   <div className="text-sm text-slate-600 mt-1">
-                    + {plan.transactionFee}% per transaction
+                    + {plan.transactionFee}% za transakciu
                   </div>
                 </div>
                 
@@ -151,7 +151,7 @@ const ServicesStep = ({ data, updateData }: ServicesStepProps) => {
                     selectPlan(plan.id);
                   }}
                 >
-                  {isSelected ? 'Selected' : 'Select Plan'}
+                  {isSelected ? 'Vybraný' : 'Vybrať balík'}
                 </Button>
                 
                 <ul className="space-y-3">
@@ -183,10 +183,10 @@ const ServicesStep = ({ data, updateData }: ServicesStepProps) => {
               </div>
               <div>
                 <h3 className="font-medium text-green-900">
-                  {servicePlans.find(p => p.id === data.servicePlan)?.name} Plan Selected
+                  {servicePlans.find(p => p.id === data.servicePlan)?.name} balík vybraný
                 </h3>
                 <p className="text-sm text-green-700">
-                  You can review and modify your plan selection before finalizing your contract.
+                  Môžete skontrolovať a upraviť svoj výber pred dokončením zmluvy.
                 </p>
               </div>
             </div>
