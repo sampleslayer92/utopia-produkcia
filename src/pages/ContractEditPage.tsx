@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,12 +11,15 @@ import OnboardingStepRenderer from "@/components/onboarding/components/Onboardin
 import OnboardingSidebar from "@/components/onboarding/ui/OnboardingSidebar";
 import { onboardingSteps } from "@/components/onboarding/config/onboardingSteps";
 import { OnboardingData } from "@/types/onboarding";
+import { Database } from "@/integrations/supabase/types";
+
+type ContractStatus = Database['public']['Enums']['contract_status'];
 
 const ContractEditPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<ContractStatus>("draft");
 
   const { data: contractData, isLoading, error } = useContractData(id!);
   const updateContract = useContractUpdate(id!);
@@ -129,7 +131,7 @@ const ContractEditPage = () => {
                 {getStatusBadge(contractData.contract.status)}
               </div>
               
-              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              <Select value={selectedStatus} onValueChange={(value: ContractStatus) => setSelectedStatus(value)}>
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Zmeniť stav" />
                 </SelectTrigger>
