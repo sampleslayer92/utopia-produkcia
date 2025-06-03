@@ -1,9 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
-import { toast } from "sonner";
 
-const initialOnboardingData: OnboardingData = {
+const initialData: OnboardingData = {
   contactInfo: {
     salutation: '',
     firstName: '',
@@ -21,10 +20,23 @@ const initialOnboardingData: OnboardingData = {
     court: '',
     section: '',
     insertNumber: '',
-    address: { street: '', city: '', zipCode: '' },
-    contactAddress: { street: '', city: '', zipCode: '' },
+    address: {
+      street: '',
+      city: '',
+      zipCode: ''
+    },
+    contactAddress: {
+      street: '',
+      city: '',
+      zipCode: ''
+    },
     contactAddressSameAsMain: true,
-    contactPerson: { name: '', email: '', phone: '', isTechnicalPerson: false }
+    contactPerson: {
+      name: '',
+      email: '',
+      phone: '',
+      isTechnicalPerson: false
+    }
   },
   businessLocations: [],
   deviceSelection: {
@@ -41,7 +53,11 @@ const initialOnboardingData: OnboardingData = {
     accessories: [],
     ecommerce: [],
     technicalService: [],
-    mifFees: { regulatedCards: 0, unregulatedCards: 0, dccRabat: 0 },
+    mifFees: {
+      regulatedCards: 0,
+      unregulatedCards: 0,
+      dccRabat: 0
+    },
     transactionTypes: [],
     note: ''
   },
@@ -58,49 +74,35 @@ const initialOnboardingData: OnboardingData = {
 };
 
 export const useOnboardingData = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [onboardingData, setOnboardingData] = useState<OnboardingData>(initialOnboardingData);
-
-  useEffect(() => {
-    const savedData = localStorage.getItem('onboarding_data');
-    if (savedData) {
+  const [onboardingData, setOnboardingData] = useState<OnboardingData>(() => {
+    const saved = localStorage.getItem('onboarding_data');
+    if (saved) {
       try {
-        const parsed = JSON.parse(savedData);
-        const safeData = {
-          ...parsed,
-          businessLocations: parsed.businessLocations || [],
-          authorizedPersons: parsed.authorizedPersons || [],
-          actualOwners: parsed.actualOwners || [],
-          deviceSelection: {
-            ...parsed.deviceSelection,
-            softwareLicenses: parsed.deviceSelection?.softwareLicenses || [],
-            accessories: parsed.deviceSelection?.accessories || [],
-            ecommerce: parsed.deviceSelection?.ecommerce || [],
-            technicalService: parsed.deviceSelection?.technicalService || [],
-            transactionTypes: parsed.deviceSelection?.transactionTypes || []
-          }
-        };
-        setOnboardingData(safeData);
-        setCurrentStep(parsed.currentStep || 0);
+        return JSON.parse(saved);
       } catch (error) {
-        console.error('Error loading onboarding data:', error);
+        console.error('Error parsing saved onboarding data:', error);
+        return initialData;
       }
     }
-  }, []);
+    return initialData;
+  });
 
-  useEffect(() => {
-    const dataToSave = { ...onboardingData, currentStep };
-    localStorage.setItem('onboarding_data', JSON.stringify(dataToSave));
-  }, [onboardingData, currentStep]);
+  const updateData = (data: Partial<OnboardingData>) => {
+    setOnboardingData(prev => {
+      const updated = { ...prev, ...data };
+      localStorage.setItem('onboarding_data', JSON.stringify(updated));
+      return updated;
+    });
+  };
 
-  const updateData = (stepData: Partial<OnboardingData>) => {
-    setOnboardingData(prev => ({ ...prev, ...stepData }));
+  const clearData = () => {
+    localStorage.removeItem('onboarding_data');
+    setOnboardingData(initialData);
   };
 
   return {
-    currentStep,
-    setCurrentStep,
     onboardingData,
-    updateData
+    updateData,
+    clearData
   };
 };

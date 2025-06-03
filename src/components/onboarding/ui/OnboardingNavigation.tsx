@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Loader2 } from "lucide-react";
 
 interface OnboardingNavigationProps {
   currentStep: number;
@@ -9,6 +9,7 @@ interface OnboardingNavigationProps {
   onNextStep: () => void;
   onComplete: () => void;
   onSaveAndExit: () => void;
+  isSubmitting?: boolean;
 }
 
 const OnboardingNavigation = ({
@@ -17,7 +18,8 @@ const OnboardingNavigation = ({
   onPrevStep,
   onNextStep,
   onComplete,
-  onSaveAndExit
+  onSaveAndExit,
+  isSubmitting = false
 }: OnboardingNavigationProps) => {
   return (
     <div className="border-t border-slate-200 bg-white/80 backdrop-blur-sm p-6 sticky bottom-0">
@@ -25,7 +27,7 @@ const OnboardingNavigation = ({
         <Button
           variant="outline"
           onClick={onPrevStep}
-          disabled={currentStep === 0}
+          disabled={currentStep === 0 || isSubmitting}
           className="flex items-center gap-2 hover:bg-slate-50"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -36,6 +38,7 @@ const OnboardingNavigation = ({
           <Button
             variant="outline"
             onClick={onSaveAndExit}
+            disabled={isSubmitting}
             className="hover:bg-slate-50"
           >
             Uložiť a ukončiť
@@ -44,14 +47,25 @@ const OnboardingNavigation = ({
           {currentStep === totalSteps - 1 ? (
             <Button
               onClick={onComplete}
+              disabled={isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
             >
-              Dokončiť registráciu
-              <Check className="ml-2 h-4 w-4" />
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Odosiela sa...
+                </>
+              ) : (
+                <>
+                  Dokončiť registráciu
+                  <Check className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
           ) : (
             <Button
               onClick={onNextStep}
+              disabled={isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
             >
               Ďalej
