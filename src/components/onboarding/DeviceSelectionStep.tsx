@@ -184,7 +184,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
       <div className="grid lg:grid-cols-5 gap-6 min-h-[600px]">
         {/* Left Panel - Catalog */}
         <div className={`lg:col-span-2 ${currentMode === 'selection' ? 'lg:col-span-3' : ''}`}>
-          <Card className="h-full border-slate-200/60 bg-white/80 backdrop-blur-sm">
+          <Card className="h-full border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
             <DeviceCatalogPanel
               selectedSolutions={data.deviceSelection.selectedSolutions}
               onAddDevice={addDevice}
@@ -195,7 +195,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
 
         {/* Right Panel - Live Preview */}
         <div className={`lg:col-span-3 ${currentMode === 'selection' ? 'lg:col-span-2' : ''}`}>
-          <Card className="h-full border-slate-200/60 bg-white/80 backdrop-blur-sm">
+          <Card className="h-full border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
             <LivePreviewPanel
               dynamicCards={data.deviceSelection.dynamicCards}
               onUpdateCard={updateCard}

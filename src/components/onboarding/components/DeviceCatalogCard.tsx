@@ -28,12 +28,12 @@ const DeviceCatalogCard = ({ device, onAdd }: DeviceCatalogCardProps) => {
       <CardContent className="p-4">
         <div className="flex items-start space-x-4">
           {/* Device Image */}
-          <div className="w-20 h-20 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden shrink-0">
+          <div className="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden shrink-0">
             {device.image ? (
               <img 
                 src={device.image} 
                 alt={device.name} 
-                className="w-16 h-16 object-contain hover:scale-110 transition-transform cursor-pointer" 
+                className="w-14 h-14 object-contain hover:scale-110 transition-transform cursor-pointer" 
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -49,14 +49,14 @@ const DeviceCatalogCard = ({ device, onAdd }: DeviceCatalogCardProps) => {
           {/* Device Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between mb-2">
-              <div>
+              <div className="flex-1">
                 <h4 className="font-semibold text-slate-900 truncate">{device.name}</h4>
-                <p className="text-sm text-slate-600 mt-1">{device.description}</p>
+                <p className="text-sm text-slate-600 mt-1 line-clamp-2">{device.description}</p>
               </div>
               <Button
                 onClick={onAdd}
                 size="sm"
-                className="ml-2 bg-blue-600 hover:bg-blue-700 shrink-0"
+                className="ml-3 bg-blue-600 hover:bg-blue-700 shrink-0"
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Pridať
@@ -64,10 +64,10 @@ const DeviceCatalogCard = ({ device, onAdd }: DeviceCatalogCardProps) => {
             </div>
 
             {/* Pricing */}
-            <div className="flex items-center gap-4 mb-3">
+            <div className="flex items-center gap-3 mb-3">
               {device.rentalPrice && (
                 <div className="flex items-center gap-1">
-                  <Badge variant="outline" className="text-emerald-600 border-emerald-300">
+                  <Badge variant="outline" className="text-emerald-600 border-emerald-300 text-xs">
                     {device.rentalPrice} €/mes
                   </Badge>
                   <span className="text-xs text-slate-500">prenájom</span>
@@ -75,7 +75,7 @@ const DeviceCatalogCard = ({ device, onAdd }: DeviceCatalogCardProps) => {
               )}
               {device.purchasePrice && (
                 <div className="flex items-center gap-1">
-                  <Badge variant="outline" className="text-blue-600 border-blue-300">
+                  <Badge variant="outline" className="text-blue-600 border-blue-300 text-xs">
                     {device.purchasePrice} €
                   </Badge>
                   <span className="text-xs text-slate-500">kúpa</span>

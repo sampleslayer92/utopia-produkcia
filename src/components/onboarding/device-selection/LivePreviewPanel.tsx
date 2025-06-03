@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2, Calculator, ShoppingCart } from "lucide-react";
+import { Trash2, Calculator, ShoppingCart, Package, Wrench } from "lucide-react";
 import { DeviceCard, ServiceCard } from "@/types/onboarding";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import EnhancedDeviceCard from "../components/EnhancedDeviceCard";
@@ -24,10 +24,31 @@ const LivePreviewPanel = ({
   const deviceCards = dynamicCards.filter(card => card.type === 'device') as DeviceCard[];
   const serviceCards = dynamicCards.filter(card => card.type === 'service') as ServiceCard[];
   
+  // Group services by category
+  const servicesByCategory = serviceCards.reduce((acc, service) => {
+    if (!acc[service.category]) {
+      acc[service.category] = [];
+    }
+    acc[service.category].push(service);
+    return acc;
+  }, {} as Record<string, ServiceCard[]>);
+
   const totalDevices = deviceCards.reduce((sum, card) => sum + card.count, 0);
   const totalServices = serviceCards.reduce((sum, card) => sum + card.count, 0);
   const totalMonthlyFee = dynamicCards.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0);
   const totalYearlyFee = totalMonthlyFee * 12;
+
+  const categoryIcons = {
+    software: <Package className="h-4 w-4" />,
+    technical: <Wrench className="h-4 w-4" />,
+    accessories: <ShoppingCart className="h-4 w-4" />
+  };
+
+  const categoryNames = {
+    software: 'Softvérové riešenia',
+    technical: 'Technické služby',
+    accessories: 'Príslušenstvo'
+  };
 
   if (dynamicCards.length === 0) {
     return (
@@ -46,7 +67,7 @@ const LivePreviewPanel = ({
   return (
     <div className="h-full flex flex-col">
       {/* Sticky Header with Summary */}
-      <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b p-6">
+      <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b p-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-slate-900">Vaša objednávka</h3>
           <Button
@@ -94,21 +115,22 @@ const LivePreviewPanel = ({
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <Accordion type="multiple" defaultValue={["devices", "services"]} className="space-y-4">
+      <div className="flex-1 overflow-y-auto p-4">
+        <Accordion type="multiple" defaultValue={["devices", "software", "technical", "accessories"]} className="space-y-4">
           {/* Devices Section */}
           {deviceCards.length > 0 && (
-            <AccordionItem value="devices">
-              <AccordionTrigger className="hover:no-underline">
+            <AccordionItem value="devices" className="border rounded-lg">
+              <AccordionTrigger className="px-4 py-3 hover:no-underline">
                 <div className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
                   <h4 className="font-semibold text-slate-900">Zariadenia</h4>
                   <Badge variant="secondary">{deviceCards.length} typov</Badge>
-                  <Badge variant="outline" className="text-blue-600 border-blue-300">
+                  <Badge variant="outline" className="text-blue-600 border-blue-300 ml-auto">
                     {deviceCards.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €/mes
                   </Badge>
                 </div>
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="px-4 pb-4">
                 <div className="space-y-4 mt-4">
                   {deviceCards.map((card) => (
                     <EnhancedDeviceCard
@@ -123,21 +145,24 @@ const LivePreviewPanel = ({
             </AccordionItem>
           )}
 
-          {/* Services Section */}
-          {serviceCards.length > 0 && (
-            <AccordionItem value="services">
-              <AccordionTrigger className="hover:no-underline">
+          {/* Service Categories */}
+          {Object.entries(servicesByCategory).map(([category, services]) => (
+            <AccordionItem key={category} value={category} className="border rounded-lg">
+              <AccordionTrigger className="px-4 py-3 hover:no-underline">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-semibold text-slate-900">Služby</h4>
-                  <Badge variant="secondary">{serviceCards.length} typov</Badge>
-                  <Badge variant="outline" className="text-green-600 border-green-300">
-                    {serviceCards.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €/mes
+                  {categoryIcons[category as keyof typeof categoryIcons]}
+                  <h4 className="font-semibold text-slate-900">
+                    {categoryNames[category as keyof typeof categoryNames]}
+                  </h4>
+                  <Badge variant="secondary">{services.length} typov</Badge>
+                  <Badge variant="outline" className="text-green-600 border-green-300 ml-auto">
+                    {services.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €/mes
                   </Badge>
                 </div>
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="px-4 pb-4">
                 <div className="space-y-4 mt-4">
-                  {serviceCards.map((card) => (
+                  {services.map((card) => (
                     <EnhancedServiceCard
                       key={card.id}
                       service={card}
@@ -148,7 +173,7 @@ const LivePreviewPanel = ({
                 </div>
               </AccordionContent>
             </AccordionItem>
-          )}
+          ))}
         </Accordion>
       </div>
     </div>

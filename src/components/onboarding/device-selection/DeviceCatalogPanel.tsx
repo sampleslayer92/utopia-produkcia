@@ -1,10 +1,10 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Plus, Zap, CreditCard, Monitor, Globe, Smartphone } from "lucide-react";
-import { DeviceCard, ServiceCard } from "@/types/onboarding";
+import { Zap, CreditCard, Monitor, Globe, Smartphone } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import DeviceCatalogCard from "../components/DeviceCatalogCard";
+import ServiceCatalogGroup from "../components/ServiceCatalogGroup";
 
 interface DeviceCatalogPanelProps {
   selectedSolutions: string[];
@@ -17,6 +17,8 @@ const DeviceCatalogPanel = ({
   onAddDevice, 
   onAddService 
 }: DeviceCatalogPanelProps) => {
+  const [openGroups, setOpenGroups] = useState<string[]>(['terminals', 'pos', 'software']);
+
   const solutionIcons = {
     terminal: <CreditCard className="h-4 w-4" />,
     pos: <Monitor className="h-4 w-4" />,
@@ -109,154 +111,135 @@ const DeviceCatalogPanel = ({
     ]
   };
 
-  const availableServices = {
-    software: [
-      { id: 'pos-software', name: 'POS Software', description: 'Komplexný pokladničný systém' },
-      { id: 'inventory', name: 'Správa skladu', description: 'Sledovanie zásob a produktov' },
-      { id: 'reporting', name: 'Reporting a analytika', description: 'Detailné reporty a štatistiky' }
-    ],
-    technical: [
-      { id: 'installation', name: 'Inštalácia a nastavenie', description: 'Profesionálna inštalácia' },
-      { id: 'training', name: 'Školenie personálu', description: 'Komplexné zaškolenie' },
-      { id: 'support', name: '24/7 Technická podpora', description: 'Nepretržitá podpora' }
-    ],
-    accessories: [
-      { id: 'receipt-printer', name: 'Tlačiareň účteniek', description: 'Termálna tlačiareň 80mm' },
-      { id: 'cash-drawer', name: 'Pokladničná zásuvka', description: 'Bezpečná kovová zásuvka' },
-      { id: 'barcode-scanner', name: 'Čítačka čiarových kódov', description: '2D/1D skener' }
-    ]
+  const serviceGroups = {
+    software: {
+      title: 'Softvérové riešenia',
+      icon: <Monitor className="h-5 w-5 text-green-600" />,
+      items: [
+        { id: 'pos-software', name: 'POS Software', description: 'Komplexný pokladničný systém' },
+        { id: 'inventory', name: 'Správa skladu', description: 'Sledovanie zásob a produktov' },
+        { id: 'reporting', name: 'Reporting a analytika', description: 'Detailné reporty a štatistiky' }
+      ]
+    },
+    technical: {
+      title: 'Technické služby',
+      icon: <Zap className="h-5 w-5 text-orange-600" />,
+      items: [
+        { id: 'installation', name: 'Inštalácia a nastavenie', description: 'Profesionálna inštalácia' },
+        { id: 'training', name: 'Školenie personálu', description: 'Komplexné zaškolenie' },
+        { id: 'support', name: '24/7 Technická podpora', description: 'Nepretržitá podpora' }
+      ]
+    },
+    accessories: {
+      title: 'Príslušenstvo',
+      icon: <CreditCard className="h-5 w-5 text-purple-600" />,
+      items: [
+        { id: 'receipt-printer', name: 'Tlačiareň účteniek', description: 'Termálna tlačiareň 80mm' },
+        { id: 'cash-drawer', name: 'Pokladničná zásuvka', description: 'Bezpečná kovová zásuvka' },
+        { id: 'barcode-scanner', name: 'Čítačka čiarových kódov', description: '2D/1D skener' }
+      ]
+    }
   };
 
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="p-6 space-y-6">
-        {/* Solution Types Header */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 pb-4 border-b">
-          <h3 className="text-lg font-semibold text-slate-900 mb-3">Katalóg zariadení a služieb</h3>
-          <div className="flex flex-wrap gap-2">
-            {selectedSolutions.map((solution) => (
-              <Badge key={solution} variant="secondary" className="flex items-center gap-1">
-                {solutionIcons[solution as keyof typeof solutionIcons]}
-                {solution === 'terminal' && 'Platobné terminály'}
-                {solution === 'pos' && 'POS systémy'}
-                {solution === 'gateway' && 'Platobná brána'}
-                {solution === 'softpos' && 'SoftPOS'}
-                {solution === 'charging' && 'Nabíjacie stanice'}
-              </Badge>
-            ))}
-          </div>
+    <div className="h-full flex flex-col">
+      {/* Sticky Header */}
+      <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b p-4">
+        <h3 className="text-lg font-semibold text-slate-900 mb-3">Katalóg zariadení a služieb</h3>
+        <div className="flex flex-wrap gap-2">
+          {selectedSolutions.map((solution) => (
+            <Badge key={solution} variant="secondary" className="flex items-center gap-1">
+              {solutionIcons[solution as keyof typeof solutionIcons]}
+              {solution === 'terminal' && 'Platobné terminály'}
+              {solution === 'pos' && 'POS systémy'}
+              {solution === 'gateway' && 'Platobná brána'}
+              {solution === 'softpos' && 'SoftPOS'}
+              {solution === 'charging' && 'Nabíjanie'}
+            </Badge>
+          ))}
         </div>
+      </div>
 
-        {/* Devices Section */}
-        {selectedSolutions.includes('terminal') && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-blue-600" />
-                Platobné terminály
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {availableDevices.terminal.map((device) => (
-                <DeviceCatalogCard
-                  key={device.id}
-                  device={device}
-                  onAdd={() => onAddDevice(device)}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto p-4">
+        <Accordion 
+          type="multiple" 
+          value={openGroups} 
+          onValueChange={setOpenGroups}
+          className="space-y-4"
+        >
+          {/* Hardware Groups */}
+          {selectedSolutions.includes('terminal') && (
+            <AccordionItem value="terminals" className="border rounded-lg">
+              <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                <div className="flex items-center gap-3">
+                  <CreditCard className="h-5 w-5 text-blue-600" />
+                  <span className="font-semibold">Platobné terminály</span>
+                  <Badge variant="outline" className="ml-auto">
+                    {availableDevices.terminal.length} zariadení
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <div className="space-y-3">
+                  {availableDevices.terminal.map((device) => (
+                    <DeviceCatalogCard
+                      key={device.id}
+                      device={device}
+                      onAdd={() => onAddDevice(device)}
+                    />
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+
+          {selectedSolutions.includes('pos') && (
+            <AccordionItem value="pos" className="border rounded-lg">
+              <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                <div className="flex items-center gap-3">
+                  <Monitor className="h-5 w-5 text-green-600" />
+                  <span className="font-semibold">POS Tablety</span>
+                  <Badge variant="outline" className="ml-auto">
+                    {availableDevices.pos.length} zariadení
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <div className="space-y-3">
+                  {availableDevices.pos.map((device) => (
+                    <DeviceCatalogCard
+                      key={device.id}
+                      device={device}
+                      onAdd={() => onAddDevice(device)}
+                    />
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+
+          {/* Service Groups */}
+          {Object.entries(serviceGroups).map(([key, group]) => (
+            <AccordionItem key={key} value={key} className="border rounded-lg">
+              <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                <div className="flex items-center gap-3">
+                  {group.icon}
+                  <span className="font-semibold">{group.title}</span>
+                  <Badge variant="outline" className="ml-auto">
+                    {group.items.length} služieb
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <ServiceCatalogGroup
+                  services={group.items}
+                  onAddService={(service) => onAddService(service, key)}
                 />
-              ))}
-            </CardContent>
-          </Card>
-        )}
-
-        {selectedSolutions.includes('pos') && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Monitor className="h-5 w-5 text-green-600" />
-                POS Tablety
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {availableDevices.pos.map((device) => (
-                <DeviceCatalogCard
-                  key={device.id}
-                  device={device}
-                  onAdd={() => onAddDevice(device)}
-                />
-              ))}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Services Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Softvérové riešenia</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-3">
-            {availableServices.software.map((service) => (
-              <div key={service.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50">
-                <div>
-                  <h4 className="font-medium">{service.name}</h4>
-                  <p className="text-sm text-slate-600">{service.description}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onAddService(service, 'software')}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Technické služby</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-3">
-            {availableServices.technical.map((service) => (
-              <div key={service.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50">
-                <div>
-                  <h4 className="font-medium">{service.name}</h4>
-                  <p className="text-sm text-slate-600">{service.description}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onAddService(service, 'technical')}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Príslušenstvo</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-3">
-            {availableServices.accessories.map((service) => (
-              <div key={service.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50">
-                <div>
-                  <h4 className="font-medium">{service.name}</h4>
-                  <p className="text-sm text-slate-600">{service.description}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onAddService(service, 'accessories')}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </div>
   );
