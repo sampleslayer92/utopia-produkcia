@@ -1,10 +1,4 @@
-
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, CreditCard, Check, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingData } from "@/types/onboarding";
 import { toast } from "sonner";
@@ -15,6 +9,9 @@ import DeviceSelectionStep from "./DeviceSelectionStep";
 import AuthorizedPersonsStep from "./AuthorizedPersonsStep";
 import ActualOwnersStep from "./ActualOwnersStep";
 import ConsentsStep from "./ConsentsStep";
+import OnboardingHeader from "./ui/OnboardingHeader";
+import OnboardingSidebar from "./ui/OnboardingSidebar";
+import OnboardingNavigation from "./ui/OnboardingNavigation";
 
 const OnboardingFlow = () => {
   const navigate = useNavigate();
@@ -59,8 +56,8 @@ const OnboardingFlow = () => {
       },
       tablets: {
         tablet10: { count: 0, monthlyFee: 0 },
-        tablet15: { count: 0, monthlyFee: 0 },
-        tabletPro15: { count: 0, monthlyFee: 0 }
+        tablet15: { count: number; monthlyFee: number };
+        tabletPro15: { count: number; monthlyFee: number }
       },
       softwareLicenses: [],
       accessories: [],
@@ -93,7 +90,6 @@ const OnboardingFlow = () => {
   ];
 
   const totalSteps = steps.length;
-  const progressPercentage = ((currentStep + 1) / totalSteps) * 100;
 
   useEffect(() => {
     const savedData = localStorage.getItem('onboarding_data');
@@ -150,15 +146,12 @@ const OnboardingFlow = () => {
   };
 
   const handleStepClick = (stepNumber: number) => {
-    // Allow navigation to completed steps or only one step ahead
-    if (stepNumber <= currentStep + 1) {
-      setCurrentStep(stepNumber);
-      window.scrollTo(0, 0);
-    } else {
-      toast.warning("Najprv dokončite aktuálny krok", {
-        description: "Nemôžete preskočiť viacero krokov naraz"
-      });
-    }
+    setCurrentStep(stepNumber);
+    window.scrollTo(0, 0);
+  };
+
+  const handleSaveAndExit = () => {
+    navigate('/');
   };
 
   const renderStep = () => {
@@ -191,106 +184,14 @@ const OnboardingFlow = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-      {/* Header */}
-      <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Utopia
-              </span>
-            </div>
-            <Badge variant="outline" className="border-blue-200 text-blue-700">
-              Registrácia obchodníka
-            </Badge>
-          </div>
-        </div>
-      </header>
+      <OnboardingHeader />
 
       <div className="flex min-h-[calc(100vh-80px)]">
-        {/* Left Sidebar - Steps */}
-        <div className="w-80 bg-white/60 backdrop-blur-sm border-r border-slate-200/60 p-6 sticky top-[77px] h-[calc(100vh-77px)] overflow-y-auto">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-slate-900 mb-2">Registračný proces</h2>
-            <div className="text-sm text-slate-600 mb-4">
-              Krok {currentStep + 1} z {totalSteps}
-            </div>
-            <Progress value={progressPercentage} className="h-2" />
-          </div>
-
-          {/* Vertical Steps */}
-          <div className="space-y-3">
-            {steps.map((step) => {
-              // Determine if this step is clickable
-              const isClickable = step.number <= currentStep + 1;
-
-              return (
-                <div
-                  key={step.number}
-                  onClick={() => isClickable && handleStepClick(step.number)}
-                  className={`flex items-start space-x-3 p-3 rounded-lg transition-all duration-200 
-                    ${isClickable ? "cursor-pointer" : "opacity-70 cursor-not-allowed"}
-                    ${
-                      step.number === currentStep
-                        ? "bg-blue-100 border-2 border-blue-300 shadow-sm"
-                        : step.number < currentStep
-                        ? "bg-green-50 border border-green-200 hover:bg-green-100"
-                        : step.number === currentStep + 1
-                        ? "bg-slate-50 border border-slate-200 hover:bg-slate-100 animate-pulse"
-                        : "bg-slate-50/50 border border-slate-200"
-                    }`}
-                >
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0 ${
-                      step.number === currentStep
-                        ? "bg-blue-600 text-white"
-                        : step.number < currentStep
-                        ? "bg-green-600 text-white"
-                        : step.number === currentStep + 1
-                        ? "bg-amber-500 text-white"
-                        : "bg-slate-300 text-slate-600"
-                    }`}
-                  >
-                    {step.number < currentStep ? <Check className="h-4 w-4" /> : step.number + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-slate-900 mb-1">
-                      {step.title}
-                    </div>
-                    <div className="text-xs text-slate-600 leading-relaxed">
-                      {step.description}
-                    </div>
-
-                    {/* Progress indicator for current step */}
-                    {step.number === currentStep && (
-                      <div className="w-full h-1 bg-blue-100 rounded mt-3">
-                        <div className="h-full bg-blue-500 rounded animate-pulse" style={{ width: '60%' }}></div>
-                      </div>
-                    )}
-
-                    {/* Next up indicator */}
-                    {step.number === currentStep + 1 && (
-                      <div className="flex items-center mt-2 text-xs text-amber-600">
-                        <AlertCircle className="h-3 w-3 mr-1" />
-                        <span>Nasledujúci krok</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          
-          <div className="mt-10 p-4 bg-blue-50 border border-blue-100 rounded-lg">
-            <h3 className="font-medium text-blue-800 text-sm mb-2">Potrebujete pomoc?</h3>
-            <p className="text-xs text-blue-700">
-              V prípade otázok nás kontaktujte na čísle +421 911 123 456 alebo na info@utopia.sk
-            </p>
-          </div>
-        </div>
+        <OnboardingSidebar
+          currentStep={currentStep}
+          steps={steps}
+          onStepClick={handleStepClick}
+        />
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col">
@@ -312,48 +213,14 @@ const OnboardingFlow = () => {
             </div>
           </div>
 
-          {/* Bottom Navigation */}
-          <div className="border-t border-slate-200 bg-white/80 backdrop-blur-sm p-6 sticky bottom-0">
-            <div className="max-w-4xl mx-auto flex justify-between">
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                disabled={currentStep === 0}
-                className="flex items-center gap-2 hover:bg-slate-50"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Späť
-              </Button>
-              
-              <div className="flex space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/')}
-                  className="hover:bg-slate-50"
-                >
-                  Uložiť a ukončiť
-                </Button>
-                
-                {currentStep === totalSteps - 1 ? (
-                  <Button
-                    onClick={handleComplete}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-                  >
-                    Dokončiť registráciu
-                    <Check className="ml-2 h-4 w-4" />
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={nextStep}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
-                  >
-                    Ďalej
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
+          <OnboardingNavigation
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            onPrevStep={prevStep}
+            onNextStep={nextStep}
+            onComplete={handleComplete}
+            onSaveAndExit={handleSaveAndExit}
+          />
         </div>
       </div>
     </div>
