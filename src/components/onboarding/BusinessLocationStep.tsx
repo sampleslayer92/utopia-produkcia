@@ -222,7 +222,6 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                       value={data.businessLocation.seasonality}
                       onValueChange={(value) => updateBusinessLocation('seasonality', value)}
                       options={seasonalityOptions}
-                      icon={<Calendar className="h-4 w-4" />}
                     />
                     
                     {data.businessLocation.seasonality === 'seasonal' && (
