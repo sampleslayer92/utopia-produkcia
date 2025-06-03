@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingData } from "@/types/onboarding";
@@ -13,6 +12,7 @@ import ConsentsStep from "./ConsentsStep";
 import OnboardingHeader from "./ui/OnboardingHeader";
 import OnboardingSidebar from "./ui/OnboardingSidebar";
 import OnboardingNavigation from "./ui/OnboardingNavigation";
+import OnboardingStepHeader from "./ui/OnboardingStepHeader";
 
 const OnboardingFlow = () => {
   const navigate = useNavigate();
@@ -88,7 +88,6 @@ const OnboardingFlow = () => {
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        // Ensure all arrays exist to prevent undefined errors
         const safeData = {
           ...parsed,
           businessLocations: parsed.businessLocations || [],
@@ -139,7 +138,6 @@ const OnboardingFlow = () => {
 
   const handleComplete = () => {
     console.log('Onboarding dokončený:', onboardingData);
-    // Generate contract data
     const contractData = {
       ...onboardingData,
       completedAt: new Date().toISOString(),
@@ -147,7 +145,6 @@ const OnboardingFlow = () => {
     };
     localStorage.setItem('contract_data', JSON.stringify(contractData));
     
-    // Store user role and redirect
     localStorage.setItem('utopia_user_role', 'merchant');
     navigate('/merchant');
   };
@@ -203,16 +200,14 @@ const OnboardingFlow = () => {
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col">
           {/* Content */}
-          <div className="flex-1 p-6 md:p-10">
+          <div className="flex-1 p-4 md:p-8">
             <div className="max-w-4xl mx-auto">
-              <div className="mb-6">
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">
-                  {steps[currentStep]?.title || 'Loading...'}
-                </h1>
-                <p className="text-slate-600">
-                  {steps[currentStep]?.description || ''}
-                </p>
-              </div>
+              <OnboardingStepHeader
+                currentStep={currentStep}
+                totalSteps={totalSteps}
+                title={steps[currentStep]?.title || 'Loading...'}
+                description={steps[currentStep]?.description || ''}
+              />
               
               <div className="animate-fade-in">
                 {renderStep()}

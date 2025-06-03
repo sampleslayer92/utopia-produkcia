@@ -18,7 +18,6 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
   const progressPercentage = ((currentStep + 1) / totalSteps) * 100;
 
   const handleStepClick = (stepNumber: number) => {
-    // Allow navigation to completed steps or only one step ahead
     if (stepNumber <= currentStep + 1) {
       onStepClick(stepNumber);
     } else {
@@ -29,19 +28,18 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
   };
 
   return (
-    <div className="w-80 bg-white/60 backdrop-blur-sm border-r border-slate-200/60 p-6 sticky top-[77px] h-[calc(100vh-77px)] overflow-y-auto">
+    <div className="w-64 bg-white/60 backdrop-blur-sm border-r border-slate-200/60 p-4 sticky top-[77px] h-[calc(100vh-77px)] overflow-y-auto">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-2">Registračný proces</h2>
-        <div className="text-sm text-slate-600 mb-4">
-          Krok {currentStep + 1} z {totalSteps}
-        </div>
+        <h2 className="text-lg font-semibold text-slate-900 mb-3">Registračný proces</h2>
         <Progress value={progressPercentage} className="h-2" />
+        <div className="text-xs text-slate-600 mt-2 text-center">
+          {Math.round(progressPercentage)}% dokončené
+        </div>
       </div>
 
       {/* Vertical Steps */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {steps.map((step) => {
-          // Determine if this step is clickable
           const isClickable = step.number <= currentStep + 1;
 
           return (
@@ -61,7 +59,7 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
                 }`}
             >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0 ${
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ${
                   step.number === currentStep
                     ? "bg-blue-600 text-white"
                     : step.number < currentStep
@@ -71,28 +69,18 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
                     : "bg-slate-300 text-slate-600"
                 }`}
               >
-                {step.number < currentStep ? <Check className="h-4 w-4" /> : step.number + 1}
+                {step.number < currentStep ? <Check className="h-3 w-3" /> : step.number + 1}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-slate-900 mb-1">
                   {step.title}
                 </div>
-                <div className="text-xs text-slate-600 leading-relaxed">
-                  {step.description}
-                </div>
-
-                {/* Progress indicator for current step */}
-                {step.number === currentStep && (
-                  <div className="w-full h-1 bg-blue-100 rounded mt-3">
-                    <div className="h-full bg-blue-500 rounded" style={{ width: '60%' }}></div>
-                  </div>
-                )}
 
                 {/* Next up indicator */}
                 {step.number === currentStep + 1 && (
-                  <div className="flex items-center mt-2 text-xs text-amber-600">
+                  <div className="flex items-center mt-1 text-xs text-amber-600">
                     <AlertCircle className="h-3 w-3 mr-1" />
-                    <span>Nasledujúci krok</span>
+                    <span>Nasledujúci</span>
                   </div>
                 )}
               </div>
@@ -101,7 +89,7 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
         })}
       </div>
       
-      <div className="mt-10 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+      <div className="mt-8 p-3 bg-blue-50 border border-blue-100 rounded-lg">
         <h3 className="font-medium text-blue-800 text-sm mb-2">Potrebujete pomoc?</h3>
         <p className="text-xs text-blue-700">
           V prípade otázok nás kontaktujte na čísle +421 911 123 456 alebo na info@utopia.sk
