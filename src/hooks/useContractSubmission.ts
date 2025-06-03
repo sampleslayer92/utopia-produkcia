@@ -146,30 +146,39 @@ export const useContractSubmission = () => {
         }
       }
 
-      // 5. Insert device selection with safe defaults
+      // 5. Insert device selection with safe defaults - extract data from dynamic cards
+      const deviceCards = onboardingData.deviceSelection?.dynamicCards?.filter(card => card.type === 'device') || [];
+      
+      // Extract device counts from dynamic cards
+      const paxA920Pro = deviceCards.find(card => card.name === 'PAX A920 PRO');
+      const paxA80 = deviceCards.find(card => card.name === 'PAX A80');
+      const tablet10 = deviceCards.find(card => card.name === 'Tablet 10"');
+      const tablet15 = deviceCards.find(card => card.name === 'Tablet 15"');
+      const tabletPro15 = deviceCards.find(card => card.name === 'Tablet Pro 15"');
+
       const { error: deviceError } = await supabase
         .from('device_selection')
         .insert({
           contract_id: contractId,
-          pax_a920_pro_count: onboardingData.deviceSelection?.terminals?.paxA920Pro?.count || 0,
-          pax_a920_pro_monthly_fee: onboardingData.deviceSelection?.terminals?.paxA920Pro?.monthlyFee || 0,
-          pax_a920_pro_sim_cards: onboardingData.deviceSelection?.terminals?.paxA920Pro?.simCards || 0,
-          pax_a80_count: onboardingData.deviceSelection?.terminals?.paxA80?.count || 0,
-          pax_a80_monthly_fee: onboardingData.deviceSelection?.terminals?.paxA80?.monthlyFee || 0,
-          tablet_10_count: onboardingData.deviceSelection?.tablets?.tablet10?.count || 0,
-          tablet_10_monthly_fee: onboardingData.deviceSelection?.tablets?.tablet10?.monthlyFee || 0,
-          tablet_15_count: onboardingData.deviceSelection?.tablets?.tablet15?.count || 0,
-          tablet_15_monthly_fee: onboardingData.deviceSelection?.tablets?.tablet15?.monthlyFee || 0,
-          tablet_pro_15_count: onboardingData.deviceSelection?.tablets?.tabletPro15?.count || 0,
-          tablet_pro_15_monthly_fee: onboardingData.deviceSelection?.tablets?.tabletPro15?.monthlyFee || 0,
-          software_licenses: onboardingData.deviceSelection?.softwareLicenses || [],
-          accessories: onboardingData.deviceSelection?.accessories || [],
-          ecommerce: onboardingData.deviceSelection?.ecommerce || [],
-          technical_service: onboardingData.deviceSelection?.technicalService || [],
-          transaction_types: onboardingData.deviceSelection?.transactionTypes || [],
-          mif_regulated_cards: onboardingData.deviceSelection?.mifFees?.regulatedCards || 0,
-          mif_unregulated_cards: onboardingData.deviceSelection?.mifFees?.unregulatedCards || 0,
-          mif_dcc_rabat: onboardingData.deviceSelection?.mifFees?.dccRabat || 0,
+          pax_a920_pro_count: paxA920Pro?.count || 0,
+          pax_a920_pro_monthly_fee: paxA920Pro?.monthlyFee || 0,
+          pax_a920_pro_sim_cards: (paxA920Pro as any)?.simCards || 0,
+          pax_a80_count: paxA80?.count || 0,
+          pax_a80_monthly_fee: paxA80?.monthlyFee || 0,
+          tablet_10_count: tablet10?.count || 0,
+          tablet_10_monthly_fee: tablet10?.monthlyFee || 0,
+          tablet_15_count: tablet15?.count || 0,
+          tablet_15_monthly_fee: tablet15?.monthlyFee || 0,
+          tablet_pro_15_count: tabletPro15?.count || 0,
+          tablet_pro_15_monthly_fee: tabletPro15?.monthlyFee || 0,
+          software_licenses: onboardingData.deviceSelection?.dynamicCards?.filter(card => card.category === 'software').map(card => card.name) || [],
+          accessories: onboardingData.deviceSelection?.dynamicCards?.filter(card => card.category === 'accessories').map(card => card.name) || [],
+          ecommerce: onboardingData.deviceSelection?.dynamicCards?.filter(card => card.category === 'ecommerce').map(card => card.name) || [],
+          technical_service: onboardingData.deviceSelection?.dynamicCards?.filter(card => card.category === 'technical').map(card => card.name) || [],
+          transaction_types: [],
+          mif_regulated_cards: onboardingData.fees?.regulatedCards || 0,
+          mif_unregulated_cards: onboardingData.fees?.unregulatedCards || 0,
+          mif_dcc_rabat: 0,
           note: onboardingData.deviceSelection?.note || null
         });
 

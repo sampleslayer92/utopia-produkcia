@@ -208,49 +208,49 @@ const ContractViewPage = () => {
             </Card>
           )}
 
-          {/* Device Selection Summary */}
+          {/* Device Selection Summary - Updated to use dynamic cards */}
           <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm lg:col-span-2">
             <CardHeader>
-              <CardTitle className="text-slate-900">Výber zariadení</CardTitle>
+              <CardTitle className="text-slate-900">Výber zariadení a služieb</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-3 gap-4">
-                {onboardingData.deviceSelection.terminals.paxA920Pro.count > 0 && (
-                  <div className="text-center p-4 bg-slate-50/50 rounded-lg">
-                    <h4 className="font-medium text-slate-900">PAX A920 Pro</h4>
-                    <p className="text-2xl font-bold text-emerald-600">
-                      {onboardingData.deviceSelection.terminals.paxA920Pro.count}
-                    </p>
-                    <p className="text-sm text-slate-600">
-                      {onboardingData.deviceSelection.terminals.paxA920Pro.monthlyFee} €/mes
-                    </p>
+              {onboardingData.deviceSelection.dynamicCards.length > 0 ? (
+                <div className="grid md:grid-cols-3 gap-4">
+                  {onboardingData.deviceSelection.dynamicCards
+                    .filter(card => card.type === 'device')
+                    .map((card, index) => (
+                      <div key={index} className="text-center p-4 bg-slate-50/50 rounded-lg">
+                        <h4 className="font-medium text-slate-900">{card.name}</h4>
+                        <p className="text-2xl font-bold text-emerald-600">
+                          {card.count}
+                        </p>
+                        <p className="text-sm text-slate-600">
+                          {card.monthlyFee} €/mes
+                        </p>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <p className="text-slate-600 text-center py-4">
+                  Žiadne zariadenia neboli vybrané
+                </p>
+              )}
+              
+              {onboardingData.deviceSelection.dynamicCards.filter(card => card.type === 'service').length > 0 && (
+                <div className="mt-6">
+                  <h4 className="font-medium text-slate-900 mb-3">Služby</h4>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {onboardingData.deviceSelection.dynamicCards
+                      .filter(card => card.type === 'service')
+                      .map((card, index) => (
+                        <div key={index} className="text-sm p-3 bg-slate-50/50 rounded">
+                          <span className="font-medium">{card.name}</span>
+                          {card.count > 1 && <span className="text-slate-600"> (x{card.count})</span>}
+                        </div>
+                      ))}
                   </div>
-                )}
-                {onboardingData.deviceSelection.terminals.paxA80.count > 0 && (
-                  <div className="text-center p-4 bg-slate-50/50 rounded-lg">
-                    <h4 className="font-medium text-slate-900">PAX A80</h4>
-                    <p className="text-2xl font-bold text-emerald-600">
-                      {onboardingData.deviceSelection.terminals.paxA80.count}
-                    </p>
-                    <p className="text-sm text-slate-600">
-                      {onboardingData.deviceSelection.terminals.paxA80.monthlyFee} €/mes
-                    </p>
-                  </div>
-                )}
-                {(onboardingData.deviceSelection.tablets.tablet10.count + 
-                  onboardingData.deviceSelection.tablets.tablet15.count + 
-                  onboardingData.deviceSelection.tablets.tabletPro15.count) > 0 && (
-                  <div className="text-center p-4 bg-slate-50/50 rounded-lg">
-                    <h4 className="font-medium text-slate-900">Tablety</h4>
-                    <p className="text-2xl font-bold text-emerald-600">
-                      {onboardingData.deviceSelection.tablets.tablet10.count + 
-                       onboardingData.deviceSelection.tablets.tablet15.count + 
-                       onboardingData.deviceSelection.tablets.tabletPro15.count}
-                    </p>
-                    <p className="text-sm text-slate-600">Rôzne typy</p>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

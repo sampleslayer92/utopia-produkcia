@@ -171,26 +171,34 @@ export const useContractUpdate = (contractId: string) => {
           .eq('contract_id', contractId)
           .maybeSingle();
 
+        // Extract device data from dynamic cards
+        const deviceCards = data.deviceSelection.dynamicCards.filter(card => card.type === 'device');
+        const paxA920Pro = deviceCards.find(card => card.name === 'PAX A920 PRO');
+        const paxA80 = deviceCards.find(card => card.name === 'PAX A80');
+        const tablet10 = deviceCards.find(card => card.name === 'Tablet 10"');
+        const tablet15 = deviceCards.find(card => card.name === 'Tablet 15"');
+        const tabletPro15 = deviceCards.find(card => card.name === 'Tablet Pro 15"');
+
         const deviceData = {
-          pax_a920_pro_count: data.deviceSelection.terminals.paxA920Pro.count,
-          pax_a920_pro_monthly_fee: data.deviceSelection.terminals.paxA920Pro.monthlyFee,
-          pax_a920_pro_sim_cards: data.deviceSelection.terminals.paxA920Pro.simCards,
-          pax_a80_count: data.deviceSelection.terminals.paxA80.count,
-          pax_a80_monthly_fee: data.deviceSelection.terminals.paxA80.monthlyFee,
-          tablet_10_count: data.deviceSelection.tablets.tablet10.count,
-          tablet_10_monthly_fee: data.deviceSelection.tablets.tablet10.monthlyFee,
-          tablet_15_count: data.deviceSelection.tablets.tablet15.count,
-          tablet_15_monthly_fee: data.deviceSelection.tablets.tablet15.monthlyFee,
-          tablet_pro_15_count: data.deviceSelection.tablets.tabletPro15.count,
-          tablet_pro_15_monthly_fee: data.deviceSelection.tablets.tabletPro15.monthlyFee,
-          software_licenses: data.deviceSelection.softwareLicenses,
-          accessories: data.deviceSelection.accessories,
-          ecommerce: data.deviceSelection.ecommerce,
-          technical_service: data.deviceSelection.technicalService,
-          mif_regulated_cards: data.deviceSelection.mifFees.regulatedCards,
-          mif_unregulated_cards: data.deviceSelection.mifFees.unregulatedCards,
-          mif_dcc_rabat: data.deviceSelection.mifFees.dccRabat,
-          transaction_types: data.deviceSelection.transactionTypes,
+          pax_a920_pro_count: paxA920Pro?.count || 0,
+          pax_a920_pro_monthly_fee: paxA920Pro?.monthlyFee || 0,
+          pax_a920_pro_sim_cards: (paxA920Pro as any)?.simCards || 0,
+          pax_a80_count: paxA80?.count || 0,
+          pax_a80_monthly_fee: paxA80?.monthlyFee || 0,
+          tablet_10_count: tablet10?.count || 0,
+          tablet_10_monthly_fee: tablet10?.monthlyFee || 0,
+          tablet_15_count: tablet15?.count || 0,
+          tablet_15_monthly_fee: tablet15?.monthlyFee || 0,
+          tablet_pro_15_count: tabletPro15?.count || 0,
+          tablet_pro_15_monthly_fee: tabletPro15?.monthlyFee || 0,
+          software_licenses: data.deviceSelection.dynamicCards.filter(card => card.category === 'software').map(card => card.name),
+          accessories: data.deviceSelection.dynamicCards.filter(card => card.category === 'accessories').map(card => card.name),
+          ecommerce: data.deviceSelection.dynamicCards.filter(card => card.category === 'ecommerce').map(card => card.name),
+          technical_service: data.deviceSelection.dynamicCards.filter(card => card.category === 'technical').map(card => card.name),
+          mif_regulated_cards: data.fees.regulatedCards,
+          mif_unregulated_cards: data.fees.unregulatedCards,
+          mif_dcc_rabat: 0,
+          transaction_types: [],
           note: data.deviceSelection.note
         };
 

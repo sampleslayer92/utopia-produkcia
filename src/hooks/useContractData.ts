@@ -111,48 +111,72 @@ export const useContractData = (contractId: string) => {
         })) || [],
         
         deviceSelection: deviceSelection ? {
-          terminals: {
-            paxA920Pro: {
-              count: deviceSelection.pax_a920_pro_count || 0,
+          selectedSolutions: [], // Will be determined from existing data
+          dynamicCards: [
+            // Convert PAX terminals to dynamic cards
+            ...(deviceSelection.pax_a920_pro_count > 0 ? [{
+              id: 'pax-a920-pro-legacy',
+              type: 'device' as const,
+              category: 'terminal',
+              name: 'PAX A920 PRO',
+              description: 'Mobilný terminál',
+              count: deviceSelection.pax_a920_pro_count,
               monthlyFee: deviceSelection.pax_a920_pro_monthly_fee || 0,
-              simCards: deviceSelection.pax_a920_pro_sim_cards || 0
-            },
-            paxA80: {
-              count: deviceSelection.pax_a80_count || 0,
-              monthlyFee: deviceSelection.pax_a80_monthly_fee || 0
-            }
-          },
-          tablets: {
-            tablet10: {
-              count: deviceSelection.tablet_10_count || 0,
-              monthlyFee: deviceSelection.tablet_10_monthly_fee || 0
-            },
-            tablet15: {
-              count: deviceSelection.tablet_15_count || 0,
-              monthlyFee: deviceSelection.tablet_15_monthly_fee || 0
-            },
-            tabletPro15: {
-              count: deviceSelection.tablet_pro_15_count || 0,
-              monthlyFee: deviceSelection.tablet_pro_15_monthly_fee || 0
-            }
-          },
-          softwareLicenses: deviceSelection.software_licenses || [],
-          accessories: deviceSelection.accessories || [],
-          ecommerce: deviceSelection.ecommerce || [],
-          technicalService: deviceSelection.technical_service || [],
-          mifFees: {
-            regulatedCards: deviceSelection.mif_regulated_cards || 0,
-            unregulatedCards: deviceSelection.mif_unregulated_cards || 0,
-            dccRabat: deviceSelection.mif_dcc_rabat || 0
-          },
-          transactionTypes: deviceSelection.transaction_types || [],
+              simCards: deviceSelection.pax_a920_pro_sim_cards || 0,
+              specifications: []
+            }] : []),
+            ...(deviceSelection.pax_a80_count > 0 ? [{
+              id: 'pax-a80-legacy',
+              type: 'device' as const,
+              category: 'terminal',
+              name: 'PAX A80',
+              description: 'Stacionárny terminál',
+              count: deviceSelection.pax_a80_count,
+              monthlyFee: deviceSelection.pax_a80_monthly_fee || 0,
+              specifications: []
+            }] : []),
+            // Convert tablets to dynamic cards
+            ...(deviceSelection.tablet_10_count > 0 ? [{
+              id: 'tablet-10-legacy',
+              type: 'device' as const,
+              category: 'pos',
+              name: 'Tablet 10"',
+              description: 'Kompaktný tablet pre POS systém',
+              count: deviceSelection.tablet_10_count,
+              monthlyFee: deviceSelection.tablet_10_monthly_fee || 0,
+              specifications: []
+            }] : []),
+            ...(deviceSelection.tablet_15_count > 0 ? [{
+              id: 'tablet-15-legacy',
+              type: 'device' as const,
+              category: 'pos',
+              name: 'Tablet 15"',
+              description: 'Veľký tablet pre POS systém',
+              count: deviceSelection.tablet_15_count,
+              monthlyFee: deviceSelection.tablet_15_monthly_fee || 0,
+              specifications: []
+            }] : []),
+            ...(deviceSelection.tablet_pro_15_count > 0 ? [{
+              id: 'tablet-pro-15-legacy',
+              type: 'device' as const,
+              category: 'pos',
+              name: 'Tablet Pro 15"',
+              description: 'Profesionálny tablet pre POS systém',
+              count: deviceSelection.tablet_pro_15_count,
+              monthlyFee: deviceSelection.tablet_pro_15_monthly_fee || 0,
+              specifications: []
+            }] : [])
+          ],
           note: deviceSelection.note || ''
         } : {
-          terminals: { paxA920Pro: { count: 0, monthlyFee: 0, simCards: 0 }, paxA80: { count: 0, monthlyFee: 0 } },
-          tablets: { tablet10: { count: 0, monthlyFee: 0 }, tablet15: { count: 0, monthlyFee: 0 }, tabletPro15: { count: 0, monthlyFee: 0 } },
-          softwareLicenses: [], accessories: [], ecommerce: [], technicalService: [],
-          mifFees: { regulatedCards: 0, unregulatedCards: 0, dccRabat: 0 },
-          transactionTypes: [], note: ''
+          selectedSolutions: [],
+          dynamicCards: [],
+          note: ''
+        },
+        
+        fees: {
+          regulatedCards: deviceSelection?.mif_regulated_cards || 0.90,
+          unregulatedCards: deviceSelection?.mif_unregulated_cards || 0.90
         },
         
         authorizedPersons: authorizedPersons?.map(person => ({
