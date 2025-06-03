@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -12,6 +11,7 @@ import {
 import { Building, Calendar, Mail, User } from "lucide-react";
 import { useContractsData, ContractWithInfo } from "@/hooks/useContractsData";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -30,6 +30,11 @@ const getStatusBadge = (status: string) => {
 
 const ContractsTable = () => {
   const { data: contracts, isLoading, error } = useContractsData();
+  const navigate = useNavigate();
+
+  const handleRowClick = (contractId: string) => {
+    navigate(`/admin/contract/${contractId}/edit`);
+  };
 
   if (isLoading) {
     return (
@@ -86,7 +91,7 @@ const ContractsTable = () => {
       <CardHeader>
         <CardTitle className="text-slate-900">Zoznam zmlúv</CardTitle>
         <CardDescription className="text-slate-600">
-          Prehľad všetkých zmlúv v systéme ({contracts.length} celkom)
+          Prehľad všetkých zmlúv v systéme ({contracts.length} celkom) - kliknite na riadok pre editáciu
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -104,7 +109,11 @@ const ContractsTable = () => {
             </TableHeader>
             <TableBody>
               {contracts.map((contract: ContractWithInfo) => (
-                <TableRow key={contract.id} className="hover:bg-slate-50/50">
+                <TableRow 
+                  key={contract.id} 
+                  className="hover:bg-slate-50/50 cursor-pointer transition-colors"
+                  onClick={() => handleRowClick(contract.id)}
+                >
                   <TableCell className="font-medium text-slate-900">
                     #{contract.contract_number}
                   </TableCell>
