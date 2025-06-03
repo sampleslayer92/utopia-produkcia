@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { OnboardingData, BusinessLocation } from "@/types/onboarding";
 import { useState } from "react";
-import { Store, MapPin, Phone, CreditCard, Building, Clock, Calendar, Plus, Edit, Trash2 } from "lucide-react";
+import { Store, MapPin, Phone, CreditCard, Building, Clock, Calendar, Plus, Edit, Trash2, Save, X } from "lucide-react";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingTextarea from "./ui/OnboardingTextarea";
@@ -19,7 +19,7 @@ interface BusinessLocationStepProps {
 
 const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) => {
   const [editingLocationId, setEditingLocationId] = useState<string | null>(null);
-  const [showAddForm, setShowAddForm] = useState(data.businessLocations.length === 0);
+  const [tempLocation, setTempLocation] = useState<BusinessLocation | null>(null);
 
   const createNewLocation = (): BusinessLocation => ({
     id: Date.now().toString(),
@@ -36,57 +36,73 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     assignedPersons: []
   });
 
-  const updateBusinessLocation = (locationId: string, field: string, value: any) => {
-    const updatedLocations = data.businessLocations.map(location => {
-      if (location.id === locationId) {
-        if (field.includes('.')) {
-          const [parent, child] = field.split('.');
-          return {
-            ...location,
-            [parent]: {
-              ...(location[parent as keyof BusinessLocation] as any),
-              [child]: value
-            }
-          };
-        } else {
-          return {
-            ...location,
-            [field]: value
-          };
-        }
-      }
-      return location;
-    });
+  const updateTempLocation = (field: string, value: any) => {
+    if (!tempLocation) return;
 
-    updateData({ businessLocations: updatedLocations });
+    setTempLocation(prev => {
+      if (!prev) return null;
+      
+      if (field.includes('.')) {
+        const [parent, child] = field.split('.');
+        return {
+          ...prev,
+          [parent]: {
+            ...(prev[parent as keyof BusinessLocation] as any),
+            [child]: value
+          }
+        };
+      } else {
+        return {
+          ...prev,
+          [field]: value
+        };
+      }
+    });
   };
 
   const addNewLocation = () => {
     const newLocation = createNewLocation();
-    updateData({ 
-      businessLocations: [...data.businessLocations, newLocation] 
-    });
+    setTempLocation(newLocation);
     setEditingLocationId(newLocation.id);
-    setShowAddForm(true);
+  };
+
+  const saveLocation = () => {
+    if (!tempLocation) return;
+
+    const existingIndex = data.businessLocations.findIndex(loc => loc.id === tempLocation.id);
+    let updatedLocations;
+
+    if (existingIndex >= 0) {
+      // Update existing location
+      updatedLocations = data.businessLocations.map(loc => 
+        loc.id === tempLocation.id ? tempLocation : loc
+      );
+    } else {
+      // Add new location
+      updatedLocations = [...data.businessLocations, tempLocation];
+    }
+
+    updateData({ businessLocations: updatedLocations });
+    setEditingLocationId(null);
+    setTempLocation(null);
+  };
+
+  const startEditing = (location: BusinessLocation) => {
+    setTempLocation({ ...location });
+    setEditingLocationId(location.id);
+  };
+
+  const cancelEditing = () => {
+    setEditingLocationId(null);
+    setTempLocation(null);
   };
 
   const deleteLocation = (locationId: string) => {
     const updatedLocations = data.businessLocations.filter(location => location.id !== locationId);
     updateData({ businessLocations: updatedLocations });
     if (editingLocationId === locationId) {
-      setEditingLocationId(null);
-      setShowAddForm(false);
+      cancelEditing();
     }
-  };
-
-  const startEditing = (locationId: string) => {
-    setEditingLocationId(locationId);
-    setShowAddForm(false);
-  };
-
-  const stopEditing = () => {
-    setEditingLocationId(null);
-    setShowAddForm(false);
   };
 
   const seasonalityOptions = [
@@ -95,12 +111,12 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
   ];
 
   const renderLocationForm = (location: BusinessLocation) => (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-slate-50 p-6 rounded-lg">
       <div className="grid md:grid-cols-2 gap-6">
         <OnboardingInput
           label="Názov obchodného miesta *"
           value={location.name}
-          onChange={(e) => updateBusinessLocation(location.id, 'name', e.target.value)}
+          onChange={(e) => updateTempLocation('name', e.target.value)}
           placeholder="Názov predajne/prevádzky"
           icon={<Store className="h-4 w-4" />}
         />
@@ -110,7 +126,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
             <Checkbox
               id={`hasPOS-${location.id}`}
               checked={location.hasPOS}
-              onCheckedChange={(checked) => updateBusinessLocation(location.id, 'hasPOS', checked)}
+              onCheckedChange={(checked) => updateTempLocation('hasPOS', checked)}
             />
             <label htmlFor={`hasPOS-${location.id}`} className="text-sm text-slate-700">
               Je na prevádzke POS?
@@ -119,7 +135,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
         </div>
       </div>
 
-      <div className="border-t border-slate-100 pt-6">
+      <div className="border-t border-slate-200 pt-6">
         <h4 className="text-md font-medium text-slate-900 mb-4 flex items-center gap-2">
           <MapPin className="h-4 w-4 text-green-600" /> 
           Adresa prevádzky
@@ -130,7 +146,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
             <OnboardingInput
               label="Ulica a číslo *"
               value={location.address.street}
-              onChange={(e) => updateBusinessLocation(location.id, 'address.street', e.target.value)}
+              onChange={(e) => updateTempLocation('address.street', e.target.value)}
               placeholder="Obchodná ulica 456"
             />
           </div>
@@ -138,7 +154,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
           <OnboardingInput
             label="PSČ *"
             value={location.address.zipCode}
-            onChange={(e) => updateBusinessLocation(location.id, 'address.zipCode', e.target.value)}
+            onChange={(e) => updateTempLocation('address.zipCode', e.target.value)}
             placeholder="01001"
           />
         </div>
@@ -146,7 +162,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
         <OnboardingInput
           label="Mesto *"
           value={location.address.city}
-          onChange={(e) => updateBusinessLocation(location.id, 'address.city', e.target.value)}
+          onChange={(e) => updateTempLocation('address.city', e.target.value)}
           placeholder="Bratislava"
         />
       </div>
@@ -154,12 +170,12 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
       <OnboardingInput
         label="IBAN *"
         value={location.iban}
-        onChange={(e) => updateBusinessLocation(location.id, 'iban', e.target.value)}
+        onChange={(e) => updateTempLocation('iban', e.target.value)}
         placeholder="SK89 1200 0000 1987 4263 7541"
         icon={<CreditCard className="h-4 w-4" />}
       />
 
-      <div className="border-t border-slate-100 pt-6">
+      <div className="border-t border-slate-200 pt-6">
         <h4 className="text-md font-medium text-slate-900 mb-4 flex items-center gap-2">
           <Phone className="h-4 w-4 text-green-600" />
           Kontaktná osoba pre prevádzku
@@ -169,7 +185,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
           <OnboardingInput
             label="Meno a priezvisko *"
             value={location.contactPerson.name}
-            onChange={(e) => updateBusinessLocation(location.id, 'contactPerson.name', e.target.value)}
+            onChange={(e) => updateTempLocation('contactPerson.name', e.target.value)}
             placeholder="Mária Kováčová"
           />
           
@@ -177,20 +193,20 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
             label="Email *"
             type="email"
             value={location.contactPerson.email}
-            onChange={(e) => updateBusinessLocation(location.id, 'contactPerson.email', e.target.value)}
+            onChange={(e) => updateTempLocation('contactPerson.email', e.target.value)}
             placeholder="maria.kovacova@prevadzka.sk"
           />
           
           <OnboardingInput
             label="Telefón *"
             value={location.contactPerson.phone}
-            onChange={(e) => updateBusinessLocation(location.id, 'contactPerson.phone', e.target.value)}
+            onChange={(e) => updateTempLocation('contactPerson.phone', e.target.value)}
             placeholder="+421 987 654 321"
           />
         </div>
       </div>
 
-      <div className="border-t border-slate-100 pt-6">
+      <div className="border-t border-slate-200 pt-6">
         <h4 className="text-md font-medium text-slate-900 mb-4 flex items-center gap-2">
           <Building className="h-4 w-4 text-green-600" />
           Údaje o podnikaní
@@ -200,7 +216,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
           <OnboardingInput
             label="Odbor podnikania / MCC *"
             value={location.businessSector}
-            onChange={(e) => updateBusinessLocation(location.id, 'businessSector', e.target.value)}
+            onChange={(e) => updateTempLocation('businessSector', e.target.value)}
             placeholder="Maloobchod, reštaurácie, služby..."
           />
           
@@ -208,7 +224,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
             label="Odhadovaný obrat (EUR) *"
             type="number"
             value={location.estimatedTurnover || ''}
-            onChange={(e) => updateBusinessLocation(location.id, 'estimatedTurnover', Number(e.target.value))}
+            onChange={(e) => updateTempLocation('estimatedTurnover', Number(e.target.value))}
             placeholder="50000"
           />
         </div>
@@ -217,12 +233,12 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
           label="Priemerná výška transakcie (EUR) *"
           type="number"
           value={location.averageTransaction || ''}
-          onChange={(e) => updateBusinessLocation(location.id, 'averageTransaction', Number(e.target.value))}
+          onChange={(e) => updateTempLocation('averageTransaction', Number(e.target.value))}
           placeholder="25"
         />
       </div>
 
-      <div className="border-t border-slate-100 pt-6">
+      <div className="border-t border-slate-200 pt-6">
         <h4 className="text-md font-medium text-slate-900 mb-4 flex items-center gap-2">
           <Clock className="h-4 w-4 text-green-600" />
           Prevádzkové informácie
@@ -231,7 +247,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
         <OnboardingTextarea
           label="Otváracie hodiny *"
           value={location.openingHours}
-          onChange={(e) => updateBusinessLocation(location.id, 'openingHours', e.target.value)}
+          onChange={(e) => updateTempLocation('openingHours', e.target.value)}
           placeholder="Po-Pia: 9:00-18:00, So: 9:00-14:00, Ne: zatvorené"
           rows={3}
         />
@@ -241,7 +257,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
             <OnboardingSelect
               label="Sezónnosť *"
               value={location.seasonality}
-              onValueChange={(value) => updateBusinessLocation(location.id, 'seasonality', value)}
+              onValueChange={(value) => updateTempLocation('seasonality', value)}
               options={seasonalityOptions}
             />
             
@@ -250,7 +266,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                 label="Počet týždňov v sezóne"
                 type="number"
                 value={location.seasonalWeeks || ''}
-                onChange={(e) => updateBusinessLocation(location.id, 'seasonalWeeks', Number(e.target.value))}
+                onChange={(e) => updateTempLocation('seasonalWeeks', Number(e.target.value))}
                 placeholder="20"
                 min="1"
                 max="52"
@@ -260,14 +276,59 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
         </div>
       </div>
 
-      <div className="flex gap-3 pt-4">
-        <Button onClick={stopEditing} variant="outline">
+      <div className="flex gap-3 pt-4 border-t border-slate-200">
+        <Button onClick={saveLocation} className="flex items-center gap-2">
+          <Save className="h-4 w-4" />
           Uložiť prevádzku
         </Button>
-        <Button onClick={() => deleteLocation(location.id)} variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-          <Trash2 className="h-4 w-4 mr-2" />
-          Zmazať
+        <Button onClick={cancelEditing} variant="outline" className="flex items-center gap-2">
+          <X className="h-4 w-4" />
+          Zrušiť
         </Button>
+        {data.businessLocations.some(loc => loc.id === location.id) && (
+          <Button 
+            onClick={() => deleteLocation(location.id)} 
+            variant="outline" 
+            className="text-red-600 hover:text-red-700 flex items-center gap-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            Zmazať
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderLocationSummary = (location: BusinessLocation) => (
+    <div className="p-4 bg-slate-50 rounded-lg">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="font-medium text-slate-900 flex items-center gap-2">
+          <Store className="h-4 w-4 text-green-600" />
+          {location.name}
+        </h4>
+        <Button
+          onClick={() => startEditing(location)}
+          size="sm"
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          <Edit className="h-3 w-3" />
+          Upraviť
+        </Button>
+      </div>
+      <div className="grid md:grid-cols-2 gap-4 text-sm">
+        <div>
+          <span className="font-medium">Adresa:</span> {location.address.street}, {location.address.city}
+        </div>
+        <div>
+          <span className="font-medium">Kontakt:</span> {location.contactPerson.name}
+        </div>
+        <div>
+          <span className="font-medium">Sektor:</span> {location.businessSector}
+        </div>
+        <div>
+          <span className="font-medium">POS:</span> {location.hasPOS ? 'Áno' : 'Nie'}
+        </div>
       </div>
     </div>
   );
@@ -304,95 +365,55 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
           {/* Main form content */}
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <OnboardingSection>
-              {/* Existing Locations */}
-              {data.businessLocations.length > 0 && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-slate-900">Prevádzkové lokality</h3>
-                    <Button onClick={addNewLocation} size="sm" className="flex items-center gap-2">
-                      <Plus className="h-4 w-4" />
-                      Pridať prevádzku
-                    </Button>
-                  </div>
-
-                  <Accordion type="single" collapsible value={editingLocationId || ""}>
-                    {data.businessLocations.map((location) => (
-                      <AccordionItem key={location.id} value={location.id}>
-                        <AccordionTrigger className="hover:no-underline">
-                          <div className="flex items-center justify-between w-full pr-4">
-                            <div className="flex items-center gap-3">
-                              <Store className="h-4 w-4 text-green-600" />
-                              <span className="font-medium">
-                                {location.name || 'Nová prevádzka'}
-                              </span>
-                              {location.address.city && (
-                                <span className="text-sm text-slate-500">
-                                  ({location.address.city})
-                                </span>
-                              )}
-                            </div>
-                            <Button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                startEditing(location.id);
-                              }}
-                              size="sm"
-                              variant="outline"
-                              className="flex items-center gap-2"
-                            >
-                              <Edit className="h-3 w-3" />
-                              Upraviť
-                            </Button>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          {editingLocationId === location.id ? (
-                            renderLocationForm(location)
-                          ) : (
-                            <div className="p-4 bg-slate-50 rounded-lg">
-                              <div className="grid md:grid-cols-2 gap-4 text-sm">
-                                <div>
-                                  <span className="font-medium">Adresa:</span> {location.address.street}, {location.address.city}
-                                </div>
-                                <div>
-                                  <span className="font-medium">Kontakt:</span> {location.contactPerson.name}
-                                </div>
-                                <div>
-                                  <span className="font-medium">Sektor:</span> {location.businessSector}
-                                </div>
-                                <div>
-                                  <span className="font-medium">POS:</span> {location.hasPOS ? 'Áno' : 'Nie'}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              )}
-
-              {/* Add New Location Form */}
-              {showAddForm && data.businessLocations.length === 0 && (
-                <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-slate-900">Pridať novú prevádzku</h3>
-                  {renderLocationForm(createNewLocation())}
-                </div>
-              )}
-
-              {/* Empty State */}
-              {data.businessLocations.length === 0 && !showAddForm && (
-                <div className="text-center py-12">
-                  <Store className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-slate-900 mb-2">Žiadne prevádzky</h3>
-                  <p className="text-slate-600 mb-6">Pridajte svoju prvú prevádzkovou lokalitu</p>
-                  <Button onClick={() => setShowAddForm(true)} className="flex items-center gap-2">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium text-slate-900">
+                    Prevádzkové lokality ({data.businessLocations.length})
+                  </h3>
+                  <Button 
+                    onClick={addNewLocation} 
+                    className="flex items-center gap-2"
+                    disabled={editingLocationId !== null}
+                  >
                     <Plus className="h-4 w-4" />
                     Pridať prevádzku
                   </Button>
                 </div>
-              )}
+
+                {/* Editing Form */}
+                {editingLocationId && tempLocation && (
+                  <div>
+                    <h4 className="text-md font-medium text-slate-900 mb-4">
+                      {data.businessLocations.some(loc => loc.id === tempLocation.id) ? 'Upraviť prevádzku' : 'Nová prevádzka'}
+                    </h4>
+                    {renderLocationForm(tempLocation)}
+                  </div>
+                )}
+
+                {/* Existing Locations */}
+                {data.businessLocations.length > 0 && !editingLocationId && (
+                  <div className="space-y-4">
+                    {data.businessLocations.map((location) => (
+                      <div key={location.id}>
+                        {renderLocationSummary(location)}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Empty State */}
+                {data.businessLocations.length === 0 && !editingLocationId && (
+                  <div className="text-center py-12">
+                    <Store className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-slate-900 mb-2">Žiadne prevádzky</h3>
+                    <p className="text-slate-600 mb-6">Pridajte svoju prvú prevádzkovou lokalitu</p>
+                    <Button onClick={addNewLocation} className="flex items-center gap-2">
+                      <Plus className="h-4 w-4" />
+                      Pridať prevádzku
+                    </Button>
+                  </div>
+                )}
+              </div>
             </OnboardingSection>
           </div>
         </div>
