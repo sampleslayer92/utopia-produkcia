@@ -392,7 +392,7 @@ export type Database = {
       }
       contracts: {
         Row: {
-          contract_number: string | null
+          contract_number: number
           created_at: string
           id: string
           notes: string | null
@@ -401,7 +401,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          contract_number?: string | null
+          contract_number?: number
           created_at?: string
           id?: string
           notes?: string | null
@@ -410,7 +410,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          contract_number?: string | null
+          contract_number?: number
           created_at?: string
           id?: string
           notes?: string | null

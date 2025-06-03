@@ -106,7 +106,7 @@ const ContractsTable = () => {
               {contracts.map((contract: ContractWithInfo) => (
                 <TableRow key={contract.id} className="hover:bg-slate-50/50">
                   <TableCell className="font-medium text-slate-900">
-                    {contract.contract_number || 'N/A'}
+                    #{contract.contract_number}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">

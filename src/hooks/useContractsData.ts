@@ -1,9 +1,10 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface ContractWithInfo {
   id: string;
-  contract_number: string;
+  contract_number: number;
   status: string;
   created_at: string;
   submitted_at: string | null;
