@@ -3,12 +3,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { OnboardingData } from '@/types/onboarding';
 import { toast } from '@/hooks/use-toast';
+import { Database } from '@/integrations/supabase/types';
+
+type ContractStatus = Database['public']['Enums']['contract_status'];
 
 export const useContractUpdate = (contractId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ data, status }: { data: OnboardingData; status?: string }) => {
+    mutationFn: async ({ data, status }: { data: OnboardingData; status?: ContractStatus }) => {
       console.log('Updating contract:', contractId, data);
 
       // Update contract status if provided
@@ -26,7 +29,7 @@ export const useContractUpdate = (contractId: string) => {
         .from('contact_info')
         .upsert({
           contract_id: contractId,
-          salutation: data.contactInfo.salutation,
+          salutation: data.contactInfo.salutation || null,
           first_name: data.contactInfo.firstName,
           last_name: data.contactInfo.lastName,
           email: data.contactInfo.email,
@@ -45,7 +48,7 @@ export const useContractUpdate = (contractId: string) => {
           ico: data.companyInfo.ico,
           dic: data.companyInfo.dic,
           company_name: data.companyInfo.companyName,
-          registry_type: data.companyInfo.registryType,
+          registry_type: (data.companyInfo.registryType || 'other') as Database['public']['Enums']['registry_type'],
           court: data.companyInfo.court,
           section: data.companyInfo.section,
           insert_number: data.companyInfo.insertNumber,

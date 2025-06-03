@@ -42,7 +42,7 @@ export const useContractData = (contractId: string) => {
       // Transform data to OnboardingData format
       const onboardingData: OnboardingData = {
         contactInfo: contactInfo ? {
-          salutation: contactInfo.salutation || '',
+          salutation: (contactInfo.salutation || '') as 'Pan' | 'Pani' | '',
           firstName: contactInfo.first_name || '',
           lastName: contactInfo.last_name || '',
           email: contactInfo.email || '',
@@ -57,7 +57,7 @@ export const useContractData = (contractId: string) => {
           ico: companyInfo.ico || '',
           dic: companyInfo.dic || '',
           companyName: companyInfo.company_name || '',
-          registryType: companyInfo.registry_type || '',
+          registryType: (companyInfo.registry_type || '') as 'public' | 'business' | 'other' | '',
           court: companyInfo.court || '',
           section: companyInfo.section || '',
           insertNumber: companyInfo.insert_number || '',
@@ -106,7 +106,8 @@ export const useContractData = (contractId: string) => {
           openingHours: loc.opening_hours,
           seasonality: loc.seasonality,
           seasonalWeeks: loc.seasonal_weeks,
-          hasPOS: loc.has_pos
+          hasPOS: loc.has_pos,
+          assignedPersons: [] // Initialize as empty array since this isn't stored in DB
         })) || [],
         
         deviceSelection: deviceSelection ? {
