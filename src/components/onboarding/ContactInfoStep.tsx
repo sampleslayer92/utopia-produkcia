@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Check, Mail, Phone, User } from "lucide-react";
 import { OnboardingData } from "@/types/onboarding";
+import { useState, useEffect } from "react";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -16,6 +17,9 @@ interface ContactInfoStepProps {
 }
 
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
+
   const updateContactInfo = (field: string, value: string | boolean) => {
     updateData({
       contactInfo: {
@@ -24,6 +28,17 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
       }
     });
   };
+
+  // Track completed fields for progressive disclosure
+  useEffect(() => {
+    const newCompleted = new Set<string>();
+    if (data.contactInfo.salutation) newCompleted.add('salutation');
+    if (data.contactInfo.firstName) newCompleted.add('firstName');
+    if (data.contactInfo.lastName) newCompleted.add('lastName');
+    if (data.contactInfo.email && isEmailValid(data.contactInfo.email)) newCompleted.add('email');
+    if (data.contactInfo.phone) newCompleted.add('phone');
+    setCompletedFields(newCompleted);
+  }, [data.contactInfo]);
 
   const phonePrefixes = [
     { value: '+421', label: '+421', country: '🇸🇰 Slovensko' },
@@ -36,15 +51,11 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   ];
 
   const formatPhoneNumber = (value: string, prefix: string) => {
-    // Remove all non-digits
     const cleaned = value.replace(/\D/g, '');
     
-    // Format based on country prefix
     if (prefix === '+421' || prefix === '+420') {
-      // Slovak/Czech format: XXX XXX XXX
       return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3').slice(0, 11);
     }
-    // Default format for other countries
     return cleaned.replace(/(\d{3})(\d{3})(\d{3,4})/, '$1 $2 $3').slice(0, 13);
   };
 
@@ -57,108 +68,175 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  return (
-    <div className="max-w-4xl mx-auto">
-      {/* Modern Header Section */}
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-slate-900 mb-3">
-          Kto ste a ako vás môžeme kontaktovať?
-        </h1>
-        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Tieto údaje nám pomôžu vás kontaktovať a bezpečne dokončiť onboarding.
-        </p>
-      </div>
+  const getFieldIcon = (field: string) => {
+    if (completedFields.has(field)) {
+      return <Check className="h-4 w-4 text-green-500" />;
+    }
+    return null;
+  };
 
-      <Card className="border-0 shadow-lg bg-white/60 backdrop-blur-sm">
-        <CardContent className="p-8 space-y-8">
-          {/* Row 1: Personal Identity Block */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium text-slate-700">Osobné údaje</Label>
-            <div className="bg-slate-50/50 rounded-xl p-6 space-y-6">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="md:w-32">
-                  <Label htmlFor="salutation" className="text-sm text-slate-600 mb-2 block">Oslovenie *</Label>
+  const shouldShowField = (field: string) => {
+    switch (field) {
+      case 'name':
+        return true;
+      case 'email':
+        return completedFields.has('firstName') && completedFields.has('lastName');
+      case 'phone':
+        return completedFields.has('email');
+      case 'note':
+        return completedFields.has('phone');
+      default:
+        return true;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 -m-8 p-8">
+      <div className="max-w-2xl mx-auto">
+        {/* Modern Header */}
+        <div className="text-center mb-12 animate-fade-in">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-6 shadow-lg">
+            <User className="h-8 w-8 text-white" />
+          </div>
+          <h1 className="text-4xl font-bold text-slate-900 mb-4 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            Ako sa voláte?
+          </h1>
+          <p className="text-lg text-slate-600 max-w-md mx-auto leading-relaxed">
+            Začneme základnými údajmi, aby sme vás mohli kontaktovať
+          </p>
+        </div>
+
+        <div className="space-y-8">
+          {/* Name Section - Always visible */}
+          <div className="space-y-6 animate-fade-in">
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Salutation */}
+              <div className="sm:w-32">
+                <div className="relative">
                   <Select
                     value={data.contactInfo.salutation}
                     onValueChange={(value) => updateContactInfo('salutation', value)}
                   >
-                    <SelectTrigger className="h-12 border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
-                      <SelectValue placeholder="Vyberte" />
+                    <SelectTrigger className={`h-14 border-2 transition-all duration-300 ${
+                      focusedField === 'salutation' 
+                        ? 'border-blue-500 shadow-lg shadow-blue-500/20 bg-white' 
+                        : 'border-slate-200 bg-white/80 hover:border-slate-300'
+                    }`}>
+                      <SelectValue placeholder="Oslovenie" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-slate-200">
+                    <SelectContent className="bg-white border-slate-200 shadow-xl">
                       <SelectItem value="Pan">Pan</SelectItem>
                       <SelectItem value="Pani">Pani</SelectItem>
                     </SelectContent>
                   </Select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {getFieldIcon('salutation')}
+                  </div>
                 </div>
-                
-                <div className="flex-1">
-                  <Label htmlFor="firstName" className="text-sm text-slate-600 mb-2 block">Meno *</Label>
+              </div>
+
+              {/* First Name */}
+              <div className="flex-1">
+                <div className="relative">
                   <Input
-                    id="firstName"
                     value={data.contactInfo.firstName}
                     onChange={(e) => updateContactInfo('firstName', e.target.value)}
-                    placeholder="Zadajte vaše meno"
-                    className="h-12 border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                    onFocus={() => setFocusedField('firstName')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="Vaše meno"
+                    className={`h-14 border-2 transition-all duration-300 text-lg ${
+                      focusedField === 'firstName'
+                        ? 'border-blue-500 shadow-lg shadow-blue-500/20 bg-white'
+                        : 'border-slate-200 bg-white/80 hover:border-slate-300'
+                    }`}
                   />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {getFieldIcon('firstName')}
+                  </div>
                 </div>
-                
-                <div className="flex-1">
-                  <Label htmlFor="lastName" className="text-sm text-slate-600 mb-2 block">Priezvisko *</Label>
+              </div>
+
+              {/* Last Name */}
+              <div className="flex-1">
+                <div className="relative">
                   <Input
-                    id="lastName"
                     value={data.contactInfo.lastName}
                     onChange={(e) => updateContactInfo('lastName', e.target.value)}
-                    placeholder="Zadajte vaše priezvisko"
-                    className="h-12 border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                    onFocus={() => setFocusedField('lastName')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="Vaše priezvisko"
+                    className={`h-14 border-2 transition-all duration-300 text-lg ${
+                      focusedField === 'lastName'
+                        ? 'border-blue-500 shadow-lg shadow-blue-500/20 bg-white'
+                        : 'border-slate-200 bg-white/80 hover:border-slate-300'
+                    }`}
                   />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {getFieldIcon('lastName')}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Row 2: Email Communication */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium text-slate-700">Emailová komunikácia</Label>
-            <div className="bg-slate-50/50 rounded-xl p-6">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm text-slate-600">Email *</Label>
+          {/* Email Section - Progressive disclosure */}
+          {shouldShowField('email') && (
+            <div className="animate-fade-in" style={{animationDelay: '200ms'}}>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-slate-700">
+                  <Mail className="h-5 w-5 text-blue-500" />
+                  <Label className="text-lg font-medium">Váš email</Label>
+                </div>
                 <div className="relative">
                   <Input
-                    id="email"
                     type="email"
                     value={data.contactInfo.email}
                     onChange={(e) => updateContactInfo('email', e.target.value)}
+                    onFocus={() => setFocusedField('email')}
+                    onBlur={() => setFocusedField(null)}
                     placeholder="vas.email@priklad.sk"
-                    className={`h-12 border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all ${
-                      data.contactInfo.email && !isEmailValid(data.contactInfo.email) 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
-                        : ''
+                    className={`h-14 border-2 transition-all duration-300 text-lg ${
+                      focusedField === 'email'
+                        ? 'border-blue-500 shadow-lg shadow-blue-500/20 bg-white'
+                        : data.contactInfo.email && !isEmailValid(data.contactInfo.email)
+                        ? 'border-red-300 bg-red-50'
+                        : 'border-slate-200 bg-white/80 hover:border-slate-300'
                     }`}
                   />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {getFieldIcon('email')}
+                  </div>
                   {data.contactInfo.email && !isEmailValid(data.contactInfo.email) && (
-                    <p className="text-sm text-red-600 mt-1">Zadajte platnú emailovú adresu</p>
+                    <p className="text-sm text-red-600 mt-2 animate-fade-in">
+                      Zadajte platnú emailovú adresu
+                    </p>
                   )}
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Row 3: Phone Contact Section */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium text-slate-700">Telefónny kontakt</Label>
-            <div className="bg-slate-50/50 rounded-xl p-6">
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-sm text-slate-600">Telefón *</Label>
+          {/* Phone Section - Progressive disclosure */}
+          {shouldShowField('phone') && (
+            <div className="animate-fade-in" style={{animationDelay: '400ms'}}>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-slate-700">
+                  <Phone className="h-5 w-5 text-blue-500" />
+                  <Label className="text-lg font-medium">Telefónne číslo</Label>
+                </div>
                 <div className="flex gap-3">
                   <Select
                     value={data.contactInfo.phonePrefix}
                     onValueChange={(value) => updateContactInfo('phonePrefix', value)}
                   >
-                    <SelectTrigger className="w-44 h-12 border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+                    <SelectTrigger className={`w-44 h-14 border-2 transition-all duration-300 ${
+                      focusedField === 'phonePrefix'
+                        ? 'border-blue-500 shadow-lg shadow-blue-500/20 bg-white'
+                        : 'border-slate-200 bg-white/80 hover:border-slate-300'
+                    }`}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-slate-200">
+                    <SelectContent className="bg-white border-slate-200 shadow-xl">
                       {phonePrefixes.map((prefix) => (
                         <SelectItem key={prefix.value} value={prefix.value}>
                           <span className="flex items-center gap-2">
@@ -169,46 +247,91 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Input
-                    id="phone"
-                    value={data.contactInfo.phone}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="123 456 789"
-                    className="flex-1 h-12 border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-mono"
-                  />
+                  <div className="flex-1 relative">
+                    <Input
+                      value={data.contactInfo.phone}
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      onFocus={() => setFocusedField('phone')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="123 456 789"
+                      className={`h-14 border-2 transition-all duration-300 text-lg font-mono ${
+                        focusedField === 'phone'
+                          ? 'border-blue-500 shadow-lg shadow-blue-500/20 bg-white'
+                          : 'border-slate-200 bg-white/80 hover:border-slate-300'
+                      }`}
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      {getFieldIcon('phone')}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Row 4: Optional Sales Note */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Label className="text-sm font-medium text-slate-700">Dodatočné informácie</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <HelpCircle className="h-4 w-4 text-slate-400" />
-                  </TooltipTrigger>
-                  <TooltipContent className="bg-slate-800 text-white p-3 rounded-lg">
-                    <p>Nepovinné – môžete nám napísať dodatočné info alebo preferencie</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+          {/* Optional Note Section - Progressive disclosure */}
+          {shouldShowField('note') && (
+            <div className="animate-fade-in" style={{animationDelay: '600ms'}}>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Label className="text-lg font-medium text-slate-700">Chcete nám niečo odkázať?</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <HelpCircle className="h-4 w-4 text-slate-400" />
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-slate-800 text-white p-3 rounded-lg">
+                        <p>Nepovinné – môžete nám napísať dodatočné info alebo preferencie</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <Textarea
+                  value={data.contactInfo.salesNote || ''}
+                  onChange={(e) => updateContactInfo('salesNote', e.target.value)}
+                  onFocus={() => setFocusedField('salesNote')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie..."
+                  rows={4}
+                  className={`border-2 transition-all duration-300 resize-none ${
+                    focusedField === 'salesNote'
+                      ? 'border-blue-500 shadow-lg shadow-blue-500/20 bg-white'
+                      : 'border-slate-200 bg-white/80 hover:border-slate-300'
+                  }`}
+                />
+              </div>
             </div>
-            <div className="bg-slate-50/50 rounded-xl p-6">
-              <Textarea
-                id="salesNote"
-                value={data.contactInfo.salesNote || ''}
-                onChange={(e) => updateContactInfo('salesNote', e.target.value)}
-                placeholder="Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie, alebo iné poznámky pre náš tím..."
-                rows={4}
-                className="border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
-              />
+          )}
+
+          {/* Progress indicator */}
+          {completedFields.size > 0 && (
+            <div className="text-center animate-fade-in">
+              <div className="inline-flex items-center gap-2 text-sm text-slate-600 bg-white/60 px-4 py-2 rounded-full">
+                <div className="flex gap-1">
+                  {Array.from({length: 4}).map((_, i) => (
+                    <div 
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                        i < completedFields.size ? 'bg-blue-500' : 'bg-slate-200'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span>{completedFields.size}/4 dokončených</span>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          )}
+
+          {/* Motivational message */}
+          {completedFields.size >= 3 && (
+            <div className="text-center animate-fade-in">
+              <p className="text-lg text-blue-600 font-medium">
+                Skvelé! Už to bude! 🎉
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
