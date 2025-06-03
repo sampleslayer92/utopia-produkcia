@@ -37,18 +37,7 @@ const OnboardingFlow = () => {
       address: { street: '', city: '', zipCode: '' },
       contactPerson: { name: '', email: '', phone: '', isTechnicalPerson: false }
     },
-    businessLocation: {
-      name: '',
-      hasPOS: false,
-      address: { street: '', city: '', zipCode: '' },
-      iban: '',
-      contactPerson: { name: '', email: '', phone: '' },
-      businessSector: '',
-      estimatedTurnover: 0,
-      averageTransaction: 0,
-      openingHours: '',
-      seasonality: 'year-round'
-    },
+    businessLocations: [],
     deviceSelection: {
       terminals: {
         paxA920Pro: { count: 0, monthlyFee: 0, simCards: 0 },

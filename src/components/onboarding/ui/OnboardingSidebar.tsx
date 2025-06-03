@@ -56,7 +56,7 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
                     : step.number < currentStep
                     ? "bg-green-50 border border-green-200 hover:bg-green-100"
                     : step.number === currentStep + 1
-                    ? "bg-slate-50 border border-slate-200 hover:bg-slate-100 animate-pulse"
+                    ? "bg-slate-50 border border-slate-200 hover:bg-slate-100"
                     : "bg-slate-50/50 border border-slate-200"
                 }`}
             >
@@ -84,7 +84,7 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
                 {/* Progress indicator for current step */}
                 {step.number === currentStep && (
                   <div className="w-full h-1 bg-blue-100 rounded mt-3">
-                    <div className="h-full bg-blue-500 rounded animate-pulse" style={{ width: '60%' }}></div>
+                    <div className="h-full bg-blue-500 rounded" style={{ width: '60%' }}></div>
                   </div>
                 )}
 

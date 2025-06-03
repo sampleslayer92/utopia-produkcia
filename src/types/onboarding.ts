@@ -31,6 +31,7 @@ export interface CompanyInfo {
 }
 
 export interface BusinessLocation {
+  id: string;
   name: string;
   hasPOS: boolean;
   address: {
@@ -50,6 +51,7 @@ export interface BusinessLocation {
   openingHours: string;
   seasonality: 'year-round' | 'seasonal';
   seasonalWeeks?: number;
+  assignedPersons: string[]; // IDs of assigned persons
 }
 
 export interface DeviceSelection {
@@ -121,7 +123,7 @@ export interface Consents {
 export interface OnboardingData {
   contactInfo: ContactInfo;
   companyInfo: CompanyInfo;
-  businessLocation: BusinessLocation;
+  businessLocations: BusinessLocation[]; // Changed from businessLocation to businessLocations array
   deviceSelection: DeviceSelection;
   authorizedPersons: AuthorizedPerson[];
   actualOwners: ActualOwner[];
