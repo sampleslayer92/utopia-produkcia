@@ -2,24 +2,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2, Calculator, ShoppingCart, Package, Wrench } from "lucide-react";
+import { Trash2, Calculator, ShoppingCart, Package, Wrench, Edit } from "lucide-react";
 import { DeviceCard, ServiceCard } from "@/types/onboarding";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import EnhancedDeviceCard from "../components/EnhancedDeviceCard";
-import EnhancedServiceCard from "../components/EnhancedServiceCard";
 
 interface LivePreviewPanelProps {
   dynamicCards: Array<DeviceCard | ServiceCard>;
   onUpdateCard: (cardId: string, updatedCard: DeviceCard | ServiceCard) => void;
   onRemoveCard: (cardId: string) => void;
   onClearAll: () => void;
+  onEditCard: (card: DeviceCard | ServiceCard) => void;
 }
 
 const LivePreviewPanel = ({ 
   dynamicCards, 
   onUpdateCard, 
   onRemoveCard,
-  onClearAll 
+  onClearAll,
+  onEditCard
 }: LivePreviewPanelProps) => {
   const deviceCards = dynamicCards.filter(card => card.type === 'device') as DeviceCard[];
   const serviceCards = dynamicCards.filter(card => card.type === 'service') as ServiceCard[];
@@ -63,6 +63,107 @@ const LivePreviewPanel = ({
       </div>
     );
   }
+
+  const renderDeviceCard = (card: DeviceCard) => (
+    <Card key={card.id} className="border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+      <CardContent className="p-4">
+        <div className="flex items-start space-x-4">
+          <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden shrink-0">
+            {card.image ? (
+              <img 
+                src={card.image} 
+                alt={card.name} 
+                className="w-10 h-10 object-contain" 
+              />
+            ) : (
+              <Package className="h-6 w-6 text-slate-400" />
+            )}
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between">
+              <div>
+                <h4 className="font-medium text-slate-900 text-sm">{card.name}</h4>
+                <p className="text-xs text-slate-600 mt-1 line-clamp-2">{card.description}</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant="secondary" className="text-xs">{card.count} ks</Badge>
+                  <Badge variant="outline" className="text-xs text-blue-600 border-blue-300">
+                    {(card.count * card.monthlyFee).toFixed(2)} €/mes
+                  </Badge>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 ml-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onEditCard(card)}
+                  className="h-6 w-6 p-0 hover:bg-blue-50"
+                >
+                  <Edit className="h-3 w-3 text-blue-600" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onRemoveCard(card.id)}
+                  className="h-6 w-6 p-0 hover:bg-red-50"
+                >
+                  <Trash2 className="h-3 w-3 text-red-500" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderServiceCard = (card: ServiceCard) => (
+    <Card key={card.id} className="border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+      <CardContent className="p-4">
+        <div className="flex items-start space-x-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg flex items-center justify-center shrink-0">
+            <Wrench className="h-6 w-6 text-green-600" />
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between">
+              <div>
+                <h4 className="font-medium text-slate-900 text-sm">{card.name}</h4>
+                <p className="text-xs text-slate-600 mt-1 line-clamp-2">{card.description}</p>
+                {card.customValue && (
+                  <p className="text-xs text-slate-500 mt-1 italic">"{card.customValue}"</p>
+                )}
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant="secondary" className="text-xs">{card.count} ks</Badge>
+                  <Badge variant="outline" className="text-xs text-green-600 border-green-300">
+                    {(card.count * card.monthlyFee).toFixed(2)} €/mes
+                  </Badge>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 ml-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onEditCard(card)}
+                  className="h-6 w-6 p-0 hover:bg-blue-50"
+                >
+                  <Edit className="h-3 w-3 text-blue-600" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onRemoveCard(card.id)}
+                  className="h-6 w-6 p-0 hover:bg-red-50"
+                >
+                  <Trash2 className="h-3 w-3 text-red-500" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="h-full flex flex-col">
@@ -131,15 +232,8 @@ const LivePreviewPanel = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
-                <div className="space-y-4 mt-4">
-                  {deviceCards.map((card) => (
-                    <EnhancedDeviceCard
-                      key={card.id}
-                      device={card}
-                      onUpdate={(updatedCard) => onUpdateCard(card.id, updatedCard)}
-                      onRemove={() => onRemoveCard(card.id)}
-                    />
-                  ))}
+                <div className="space-y-3 mt-4">
+                  {deviceCards.map(renderDeviceCard)}
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -161,15 +255,8 @@ const LivePreviewPanel = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
-                <div className="space-y-4 mt-4">
-                  {services.map((card) => (
-                    <EnhancedServiceCard
-                      key={card.id}
-                      service={card}
-                      onUpdate={(updatedCard) => onUpdateCard(card.id, updatedCard)}
-                      onRemove={() => onRemoveCard(card.id)}
-                    />
-                  ))}
+                <div className="space-y-3 mt-4">
+                  {services.map(renderServiceCard)}
                 </div>
               </AccordionContent>
             </AccordionItem>

@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Zap, CreditCard, Monitor, Globe, Smartphone } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import DeviceCatalogCard from "../components/DeviceCatalogCard";
-import ServiceCatalogGroup from "../components/ServiceCatalogGroup";
+import MinimalDeviceCatalogCard from "../components/MinimalDeviceCatalogCard";
+import MinimalServiceCatalogGroup from "../components/MinimalServiceCatalogGroup";
 
 interface DeviceCatalogPanelProps {
   selectedSolutions: string[];
@@ -181,9 +181,9 @@ const DeviceCatalogPanel = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {availableDevices.terminal.map((device) => (
-                    <DeviceCatalogCard
+                    <MinimalDeviceCatalogCard
                       key={device.id}
                       device={device}
                       onAdd={() => onAddDevice(device)}
@@ -206,9 +206,9 @@ const DeviceCatalogPanel = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {availableDevices.pos.map((device) => (
-                    <DeviceCatalogCard
+                    <MinimalDeviceCatalogCard
                       key={device.id}
                       device={device}
                       onAdd={() => onAddDevice(device)}
@@ -232,7 +232,7 @@ const DeviceCatalogPanel = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
-                <ServiceCatalogGroup
+                <MinimalServiceCatalogGroup
                   services={group.items}
                   onAddService={(service) => onAddService(service, key)}
                 />

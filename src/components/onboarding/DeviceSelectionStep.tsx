@@ -2,14 +2,14 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { OnboardingData, DeviceCard, ServiceCard } from "@/types/onboarding";
 import SolutionSelectionSection from "./device-selection/SolutionSelectionSection";
 import DeviceCatalogPanel from "./device-selection/DeviceCatalogPanel";
 import LivePreviewPanel from "./device-selection/LivePreviewPanel";
+import ProductDetailModal from "./components/ProductDetailModal";
+import { useProductModal } from "./hooks/useProductModal";
 
 interface DeviceSelectionStepProps {
   data: OnboardingData;
@@ -20,6 +20,7 @@ interface DeviceSelectionStepProps {
 
 const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelectionStepProps) => {
   const [currentMode, setCurrentMode] = useState<'selection' | 'configuration'>('selection');
+  const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
 
   const toggleSolution = (solutionId: string) => {
     const newSelection = data.deviceSelection.selectedSolutions.includes(solutionId)
@@ -35,46 +36,38 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
   };
 
   const addDevice = (deviceTemplate: any) => {
-    const newDevice: DeviceCard = {
-      ...deviceTemplate,
-      id: `${deviceTemplate.id}-${Date.now()}`
-    };
-    
-    updateData({
-      deviceSelection: {
-        ...data.deviceSelection,
-        dynamicCards: [...data.deviceSelection.dynamicCards, newDevice]
-      }
-    });
-
-    // Auto-switch to configuration mode when first item is added
-    if (data.deviceSelection.dynamicCards.length === 0) {
-      setCurrentMode('configuration');
-    }
+    openAddModal(deviceTemplate, 'device');
   };
 
   const addService = (serviceTemplate: any, category: string) => {
-    const newService: ServiceCard = {
-      id: `${serviceTemplate.id}-${Date.now()}`,
-      type: 'service',
-      category,
-      name: serviceTemplate.name,
-      description: serviceTemplate.description,
-      count: 1,
-      monthlyFee: 0,
-      customValue: serviceTemplate.name === 'Iný' ? '' : undefined
-    };
-    
-    updateData({
-      deviceSelection: {
-        ...data.deviceSelection,
-        dynamicCards: [...data.deviceSelection.dynamicCards, newService]
-      }
-    });
+    const serviceWithCategory = { ...serviceTemplate, category };
+    openAddModal(serviceWithCategory, 'service');
+  };
 
-    // Auto-switch to configuration mode when first item is added
-    if (data.deviceSelection.dynamicCards.length === 0) {
-      setCurrentMode('configuration');
+  const handleSaveProduct = (card: DeviceCard | ServiceCard) => {
+    if (modalState.mode === 'add') {
+      updateData({
+        deviceSelection: {
+          ...data.deviceSelection,
+          dynamicCards: [...data.deviceSelection.dynamicCards, card]
+        }
+      });
+
+      // Auto-switch to configuration mode when first item is added
+      if (data.deviceSelection.dynamicCards.length === 0) {
+        setCurrentMode('configuration');
+      }
+    } else if (modalState.mode === 'edit' && modalState.editingCard) {
+      const updatedCards = data.deviceSelection.dynamicCards.map(existingCard =>
+        existingCard.id === modalState.editingCard!.id ? card : existingCard
+      );
+      
+      updateData({
+        deviceSelection: {
+          ...data.deviceSelection,
+          dynamicCards: updatedCards
+        }
+      });
     }
   };
 
@@ -201,35 +194,22 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
               onUpdateCard={updateCard}
               onRemoveCard={removeCard}
               onClearAll={clearAllCards}
+              onEditCard={openEditModal}
             />
           </Card>
         </div>
       </div>
 
-      {/* Notes Section */}
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-slate-900">Poznámka</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="note">Dodatočné poznámky k výberu zariadení a služieb</Label>
-            <Textarea
-              id="note"
-              placeholder="Špecifické požiadavky, inštalačné poznámky, termíny dodania..."
-              value={data.deviceSelection.note}
-              onChange={(e) => updateData({
-                deviceSelection: {
-                  ...data.deviceSelection,
-                  note: e.target.value
-                }
-              })}
-              rows={3}
-              className="border-slate-300 focus:border-blue-500"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Product Detail Modal */}
+      <ProductDetailModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        mode={modalState.mode}
+        productType={modalState.productType}
+        product={modalState.product}
+        editingCard={modalState.editingCard}
+        onSave={handleSaveProduct}
+      />
 
       {/* Navigation */}
       <div className="flex justify-between items-center">
