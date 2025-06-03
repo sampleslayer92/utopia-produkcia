@@ -10,6 +10,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PartnerDashboard from "./pages/PartnerDashboard";
 import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
+import ContractViewPage from "./components/admin/ContractViewPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/contract/:id/edit" element={<ContractEditPage />} />
+          <Route path="/admin/contract/:id/view" element={<ContractViewPage />} />
           <Route path="/partner" element={<PartnerDashboard />} />
           <Route path="/merchant" element={<MerchantDashboard />} />
           <Route path="*" element={<NotFound />} />
