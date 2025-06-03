@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -81,20 +80,20 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-3">
           {/* Left sidebar */}
-          <div className="bg-gradient-to-br from-purple-50 to-violet-50 p-6 md:p-8">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8">
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                  <Users className="h-5 w-5 text-purple-600" />
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="font-medium text-purple-900">Oprávnené osoby</h3>
+                <h3 className="font-medium text-blue-900">Oprávnené osoby</h3>
               </div>
               
-              <p className="text-sm text-purple-800">
+              <p className="text-sm text-blue-800">
                 Oprávnené osoby sú štatutári alebo splnomocnené osoby, ktoré môžu konať v mene spoločnosti.
               </p>
               
-              <div className="bg-purple-100/50 border border-purple-200 rounded-lg p-4 text-xs text-purple-800">
+              <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
                 <p className="font-medium mb-2">Dôležité informácie</p>
                 <ul className="space-y-2 list-disc list-inside">
                   <li>Údaje musia byť v súlade s oficiálnymi dokumentami</li>
@@ -107,7 +106,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                 <Button
                   onClick={addAuthorizedPerson}
                   variant="outline"
-                  className="w-full border-2 border-purple-200 hover:border-purple-300 hover:bg-purple-50 text-purple-700 flex items-center justify-center gap-2"
+                  className="w-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700 flex items-center justify-center gap-2"
                 >
                   <UserPlus className="h-4 w-4" />
                   Pridať osobu
@@ -127,7 +126,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   <Button 
                     onClick={addAuthorizedPerson}
                     variant="outline" 
-                    className="border-purple-200 hover:border-purple-300 hover:bg-purple-50 text-purple-700"
+                    className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     Pridať oprávnenú osobu
@@ -145,7 +144,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                        person.firstName && person.lastName ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-400'
+                        person.firstName && person.lastName ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'
                       }`}>
                         {person.firstName && person.lastName ? (
                           <UserCheck className="h-5 w-5" />
@@ -184,7 +183,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                     <div className="p-4 animate-fade-in">
                       <div className="space-y-6">
                         <div>
-                          <h4 className="text-sm font-medium text-purple-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <UserCheck className="h-4 w-4" />
                             Základné údaje
                           </h4>
@@ -232,7 +231,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-purple-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Fingerprint className="h-4 w-4" />
                             Osobné údaje
                           </h4>
@@ -279,7 +278,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-purple-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <FileText className="h-4 w-4" />
                             Doklad totožnosti
                           </h4>
@@ -325,7 +324,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-purple-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Flag className="h-4 w-4" />
                             Ďalšie informácie
                           </h4>
@@ -387,7 +386,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                 <Button
                   onClick={addAuthorizedPerson}
                   variant="outline"
-                  className="w-full border-dashed border-2 border-slate-300 hover:border-purple-500 hover:bg-purple-50 mt-4"
+                  className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Pridať ďalšiu oprávnenú osobu

@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -91,20 +90,20 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-3">
           {/* Left sidebar */}
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 md:p-8">
+          <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-6 md:p-8">
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <Store className="h-5 w-5 text-green-600" />
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Store className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="font-medium text-green-900">Údaje o prevádzke</h3>
+                <h3 className="font-medium text-blue-900">Údaje o prevádzke</h3>
               </div>
               
-              <p className="text-sm text-green-800">
+              <p className="text-sm text-blue-800">
                 Spravujte svoje prevádzkové lokality, kde budú platobné terminály umiestnené.
               </p>
               
-              <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
+              <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
                 <p className="font-medium mb-2">Môžete pridať viacero prevádzkových miest</p>
                 <ul className="space-y-2 list-disc list-inside">
                   <li>Každá prevádzka môže mať vlastné kontaktné údaje</li>
@@ -117,7 +116,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                 <Button
                   onClick={addBusinessLocation}
                   variant="outline"
-                  className="w-full border-2 border-green-200 hover:border-green-300 hover:bg-green-50 text-green-700 flex items-center justify-center gap-2"
+                  className="w-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700 flex items-center justify-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
                   Pridať prevádzku
@@ -137,7 +136,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                   <Button 
                     onClick={addBusinessLocation}
                     variant="outline" 
-                    className="border-green-200 hover:border-green-300 hover:bg-green-50 text-green-700"
+                    className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Pridať prevádzku
@@ -155,7 +154,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                        location.name ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-400'
+                        location.name ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'
                       }`}>
                         <Store className="h-5 w-5" />
                       </div>
@@ -188,7 +187,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                     <div className="p-4 animate-fade-in">
                       <div className="space-y-6">
                         <div>
-                          <h4 className="text-sm font-medium text-green-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Store className="h-4 w-4" />
                             Základné údaje
                           </h4>
@@ -217,7 +216,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-green-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <MapPin className="h-4 w-4" />
                             Adresa prevádzky
                           </h4>
@@ -250,7 +249,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-green-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <CreditCard className="h-4 w-4" />
                             Bankové údaje
                           </h4>
@@ -264,7 +263,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-green-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Phone className="h-4 w-4" />
                             Kontaktná osoba pre prevádzku
                           </h4>
@@ -295,7 +294,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-green-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Building className="h-4 w-4" />
                             Údaje o podnikaní
                           </h4>
@@ -328,7 +327,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-green-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Clock className="h-4 w-4" />
                             Prevádzkové informácie
                           </h4>
@@ -374,7 +373,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                 <Button
                   onClick={addBusinessLocation}
                   variant="outline"
-                  className="w-full border-dashed border-2 border-slate-300 hover:border-green-500 hover:bg-green-50 mt-4"
+                  className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Pridať ďalšiu prevádzku

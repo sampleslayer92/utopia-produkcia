@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -41,20 +40,20 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-3">
           {/* Left sidebar */}
-          <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-6 md:p-8">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8">
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center">
-                  <FileDigit className="h-5 w-5 text-teal-600" />
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <FileDigit className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="font-medium text-teal-900">Súhlasy a podpis</h3>
+                <h3 className="font-medium text-blue-900">Súhlasy a podpis</h3>
               </div>
               
-              <p className="text-sm text-teal-800">
+              <p className="text-sm text-blue-800">
                 Finálny krok onboardingu - potvrdenie súhlasov a podpísanie zmluvy.
               </p>
               
-              <div className="bg-teal-100/50 border border-teal-200 rounded-lg p-4 text-xs text-teal-800">
+              <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
                 <p className="font-medium mb-2">Ďalšie kroky po odoslaní</p>
                 <ul className="space-y-2 list-disc list-inside">
                   <li>Generovanie zmluvy na základe zadaných údajov</li>
@@ -176,7 +175,7 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
 
                 <div className="border-t border-slate-200 pt-6 space-y-4">
                   <h3 className="font-medium text-slate-900 flex items-center gap-2">
-                    <FileDigit className="h-4 w-4 text-teal-500" />
+                    <FileDigit className="h-4 w-4 text-blue-500" />
                     Údaje o podpise
                   </h3>
                   
