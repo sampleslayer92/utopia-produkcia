@@ -179,6 +179,7 @@ export const useContractUpdate = (contractId: string) => {
               citizenship: person.citizenship,
               permanent_address: person.permanentAddress,
               document_type: person.documentType,
+              document_number: person.documentNumber || '', // Fixed: added missing field
               document_validity: person.documentValidity,
               document_issuer: person.documentIssuer,
               document_country: person.documentCountry,
