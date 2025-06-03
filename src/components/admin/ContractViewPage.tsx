@@ -7,9 +7,9 @@ import ContractHeader from "./contract-view/ContractHeader";
 const ContractViewPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: contractData, isLoading, error } = useContractData(id!);
+  const contractDataResult = useContractData(id!);
 
-  if (isLoading) {
+  if (contractDataResult.isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="flex items-center space-x-2">
@@ -20,7 +20,7 @@ const ContractViewPage = () => {
     );
   }
 
-  if (error || !contractData) {
+  if (contractDataResult.isError || !contractDataResult.data) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <Card className="max-w-md">
@@ -34,7 +34,7 @@ const ContractViewPage = () => {
     );
   }
 
-  const { contract, onboardingData } = contractData;
+  const { contract, onboardingData } = contractDataResult.data;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">

@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -21,15 +22,15 @@ const ContractEditPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState<ContractStatus>("draft");
 
-  const { data: contractData, isLoading, error } = useContractData(id!);
+  const contractDataResult = useContractData(id!);
   const updateContract = useContractUpdate(id!);
 
   const [editData, setEditData] = useState<OnboardingData | null>(null);
 
   // Initialize edit data when contract data loads
-  if (contractData?.onboardingData && !editData) {
-    setEditData(contractData.onboardingData);
-    setSelectedStatus(contractData.contract.status);
+  if (contractDataResult.data?.onboardingData && !editData) {
+    setEditData(contractDataResult.data.onboardingData);
+    setSelectedStatus(contractDataResult.data.contract.status);
   }
 
   const handleSave = () => {
@@ -37,7 +38,7 @@ const ContractEditPage = () => {
     
     updateContract.mutate({
       data: editData,
-      status: selectedStatus !== contractData?.contract.status ? selectedStatus : undefined
+      status: selectedStatus !== contractDataResult.data?.contract.status ? selectedStatus : undefined
     });
   };
 
@@ -68,7 +69,7 @@ const ContractEditPage = () => {
     }
   };
 
-  if (isLoading) {
+  if (contractDataResult.isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="flex items-center space-x-2">
@@ -79,7 +80,7 @@ const ContractEditPage = () => {
     );
   }
 
-  if (error || !contractData || !editData) {
+  if (contractDataResult.isError || !contractDataResult.data || !editData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <Card className="max-w-md">
@@ -88,7 +89,7 @@ const ContractEditPage = () => {
           </CardHeader>
           <CardContent>
             <p className="text-slate-600 mb-4">
-              {error ? 'Nepodarilo sa načítať zmluvu.' : 'Zmluva nebola nájdená.'}
+              {contractDataResult.error ? 'Nepodarilo sa načítať zmluvu.' : 'Zmluva nebola nájdená.'}
             </p>
             <Button onClick={() => navigate('/admin')} variant="outline">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -99,6 +100,8 @@ const ContractEditPage = () => {
       </div>
     );
   }
+
+  const { contract } = contractDataResult.data;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -117,10 +120,10 @@ const ContractEditPage = () => {
               </Button>
               <div>
                 <h1 className="text-xl font-bold text-slate-900">
-                  Editácia zmluvy #{contractData.contract.contract_number}
+                  Editácia zmluvy #{contract.contract_number}
                 </h1>
                 <p className="text-sm text-slate-600">
-                  Vytvorená: {new Date(contractData.contract.created_at).toLocaleDateString('sk-SK')}
+                  Vytvorená: {new Date(contract.created_at).toLocaleDateString('sk-SK')}
                 </p>
               </div>
             </div>
@@ -128,7 +131,7 @@ const ContractEditPage = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-slate-600">Stav:</span>
-                {getStatusBadge(contractData.contract.status)}
+                {getStatusBadge(contract.status)}
               </div>
               
               <Select value={selectedStatus} onValueChange={(value: ContractStatus) => setSelectedStatus(value)}>
