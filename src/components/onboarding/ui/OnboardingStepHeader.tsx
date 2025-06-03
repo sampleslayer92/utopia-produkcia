@@ -22,22 +22,22 @@ const stepIcons = {
 
 const stepGradients = {
   0: "from-blue-50 to-indigo-50",
-  1: "from-emerald-50 to-teal-50",
-  2: "from-amber-50 to-orange-50",
-  3: "from-purple-50 to-violet-50",
-  4: "from-pink-50 to-rose-50",
-  5: "from-cyan-50 to-blue-50",
-  6: "from-green-50 to-emerald-50",
+  1: "from-sky-50 to-blue-50",
+  2: "from-indigo-50 to-blue-50",
+  3: "from-blue-50 to-slate-50",
+  4: "from-slate-50 to-blue-50",
+  5: "from-sky-50 to-cyan-50",
+  6: "from-blue-50 to-indigo-50",
 };
 
 const stepIconColors = {
   0: "text-blue-600",
-  1: "text-emerald-600",
-  2: "text-amber-600",
-  3: "text-purple-600",
-  4: "text-pink-600",
+  1: "text-sky-600",
+  2: "text-indigo-600",
+  3: "text-blue-700",
+  4: "text-slate-600",
   5: "text-cyan-600",
-  6: "text-green-600",
+  6: "text-indigo-600",
 };
 
 const OnboardingStepHeader = ({ 

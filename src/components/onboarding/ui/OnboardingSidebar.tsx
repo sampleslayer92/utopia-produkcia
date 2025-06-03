@@ -52,9 +52,9 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
                   step.number === currentStep
                     ? "bg-blue-100 border-2 border-blue-300 shadow-sm"
                     : step.number < currentStep
-                    ? "bg-green-50 border border-green-200 hover:bg-green-100"
+                    ? "bg-sky-50 border border-sky-200 hover:bg-sky-100"
                     : step.number === currentStep + 1
-                    ? "bg-slate-50 border border-slate-200 hover:bg-slate-100"
+                    ? "bg-indigo-50 border border-indigo-200 hover:bg-indigo-100"
                     : "bg-slate-50/50 border border-slate-200"
                 }`}
             >
@@ -63,9 +63,9 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
                   step.number === currentStep
                     ? "bg-blue-600 text-white"
                     : step.number < currentStep
-                    ? "bg-green-600 text-white"
+                    ? "bg-sky-600 text-white"
                     : step.number === currentStep + 1
-                    ? "bg-amber-500 text-white"
+                    ? "bg-indigo-500 text-white"
                     : "bg-slate-300 text-slate-600"
                 }`}
               >
@@ -78,7 +78,7 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
 
                 {/* Next up indicator */}
                 {step.number === currentStep + 1 && (
-                  <div className="flex items-center mt-1 text-xs text-amber-600">
+                  <div className="flex items-center mt-1 text-xs text-indigo-600">
                     <AlertCircle className="h-3 w-3 mr-1" />
                     <span>Nasledujúci</span>
                   </div>

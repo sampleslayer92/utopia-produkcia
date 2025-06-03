@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -66,20 +65,20 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-3">
           {/* Left sidebar */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 md:p-8">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8">
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
-                  <Users2 className="h-5 w-5 text-amber-600" />
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Users2 className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="font-medium text-amber-900">Skutoční majitelia</h3>
+                <h3 className="font-medium text-blue-900">Skutoční majitelia</h3>
               </div>
               
-              <p className="text-sm text-amber-800">
+              <p className="text-sm text-blue-800">
                 Skutoční majitelia sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.
               </p>
               
-              <div className="bg-amber-100/50 border border-amber-200 rounded-lg p-4 text-xs text-amber-800">
+              <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
                 <p className="font-medium mb-2">Kto je skutočný majiteľ?</p>
                 <ul className="space-y-2 list-disc list-inside">
                   <li>Osoba, ktorá má priamy alebo nepriamy podiel najmenej 25%</li>
@@ -92,7 +91,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                 <Button
                   onClick={addActualOwner}
                   variant="outline"
-                  className="w-full border-2 border-amber-200 hover:border-amber-300 hover:bg-amber-50 text-amber-700 flex items-center justify-center gap-2"
+                  className="w-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700 flex items-center justify-center gap-2"
                 >
                   <UserPlus className="h-4 w-4" />
                   Pridať majiteľa
@@ -112,7 +111,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                   <Button 
                     onClick={addActualOwner}
                     variant="outline" 
-                    className="border-amber-200 hover:border-amber-300 hover:bg-amber-50 text-amber-700"
+                    className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     Pridať skutočného majiteľa
@@ -130,7 +129,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                        owner.firstName && owner.lastName ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-400'
+                        owner.firstName && owner.lastName ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'
                       }`}>
                         <Users2 className="h-5 w-5" />
                       </div>
@@ -165,7 +164,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                     <div className="p-4 animate-fade-in">
                       <div className="space-y-6">
                         <div>
-                          <h4 className="text-sm font-medium text-amber-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Users2 className="h-4 w-4" />
                             Základné údaje
                           </h4>
@@ -196,7 +195,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-amber-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Fingerprint className="h-4 w-4" />
                             Osobné údaje
                           </h4>
@@ -235,7 +234,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-amber-700 flex items-center gap-2 mb-4">
+                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Flag className="h-4 w-4" />
                             Ďalšie informácie
                           </h4>
@@ -256,7 +255,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                             <div>
                               <label htmlFor={`isPoliticallyExposed-${owner.id}`} className="text-sm font-medium text-slate-700 flex items-center gap-2">
                                 Politicky exponovaná osoba
-                                {owner.isPoliticallyExposed && <AlertTriangle className="h-3 w-3 text-amber-500" />}
+                                {owner.isPoliticallyExposed && <AlertTriangle className="h-3 w-3 text-blue-500" />}
                               </label>
                               {owner.isPoliticallyExposed && (
                                 <p className="text-xs text-slate-500 mt-1">
@@ -276,7 +275,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                 <Button
                   onClick={addActualOwner}
                   variant="outline"
-                  className="w-full border-dashed border-2 border-slate-300 hover:border-amber-500 hover:bg-amber-50 mt-4"
+                  className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Pridať ďalšieho skutočného majiteľa
