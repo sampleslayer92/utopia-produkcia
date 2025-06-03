@@ -28,57 +28,101 @@ export const useContractUpdate = (contractId: string) => {
           }
         }
 
-        // Update contact info
-        const { error: contactError } = await supabase
+        // Handle contact info - check if exists, then update or insert
+        const { data: existingContact } = await supabase
           .from('contact_info')
-          .upsert({
-            contract_id: contractId,
-            salutation: data.contactInfo.salutation || null,
-            first_name: data.contactInfo.firstName,
-            last_name: data.contactInfo.lastName,
-            email: data.contactInfo.email,
-            phone: data.contactInfo.phone,
-            phone_prefix: data.contactInfo.phonePrefix,
-            sales_note: data.contactInfo.salesNote
-          }, {
-            onConflict: 'contract_id'
-          });
+          .select('id')
+          .eq('contract_id', contractId)
+          .maybeSingle();
 
-        if (contactError) {
-          console.error('Error updating contact info:', contactError);
-          throw contactError;
+        if (existingContact) {
+          const { error: contactError } = await supabase
+            .from('contact_info')
+            .update({
+              salutation: data.contactInfo.salutation || null,
+              first_name: data.contactInfo.firstName,
+              last_name: data.contactInfo.lastName,
+              email: data.contactInfo.email,
+              phone: data.contactInfo.phone,
+              phone_prefix: data.contactInfo.phonePrefix,
+              sales_note: data.contactInfo.salesNote
+            })
+            .eq('contract_id', contractId);
+
+          if (contactError) {
+            console.error('Error updating contact info:', contactError);
+            throw contactError;
+          }
+        } else {
+          const { error: contactError } = await supabase
+            .from('contact_info')
+            .insert({
+              contract_id: contractId,
+              salutation: data.contactInfo.salutation || null,
+              first_name: data.contactInfo.firstName,
+              last_name: data.contactInfo.lastName,
+              email: data.contactInfo.email,
+              phone: data.contactInfo.phone,
+              phone_prefix: data.contactInfo.phonePrefix,
+              sales_note: data.contactInfo.salesNote
+            });
+
+          if (contactError) {
+            console.error('Error inserting contact info:', contactError);
+            throw contactError;
+          }
         }
 
-        // Update company info
-        const { error: companyError } = await supabase
+        // Handle company info - check if exists, then update or insert
+        const { data: existingCompany } = await supabase
           .from('company_info')
-          .upsert({
-            contract_id: contractId,
-            ico: data.companyInfo.ico,
-            dic: data.companyInfo.dic,
-            company_name: data.companyInfo.companyName,
-            registry_type: (data.companyInfo.registryType || 'other') as Database['public']['Enums']['registry_type'],
-            court: data.companyInfo.court,
-            section: data.companyInfo.section,
-            insert_number: data.companyInfo.insertNumber,
-            address_street: data.companyInfo.address.street,
-            address_city: data.companyInfo.address.city,
-            address_zip_code: data.companyInfo.address.zipCode,
-            contact_address_street: data.companyInfo.contactAddress?.street,
-            contact_address_city: data.companyInfo.contactAddress?.city,
-            contact_address_zip_code: data.companyInfo.contactAddress?.zipCode,
-            contact_address_same_as_main: data.companyInfo.contactAddressSameAsMain,
-            contact_person_name: data.companyInfo.contactPerson.name,
-            contact_person_email: data.companyInfo.contactPerson.email,
-            contact_person_phone: data.companyInfo.contactPerson.phone,
-            contact_person_is_technical: data.companyInfo.contactPerson.isTechnicalPerson
-          }, {
-            onConflict: 'contract_id'
-          });
+          .select('id')
+          .eq('contract_id', contractId)
+          .maybeSingle();
 
-        if (companyError) {
-          console.error('Error updating company info:', companyError);
-          throw companyError;
+        const companyData = {
+          ico: data.companyInfo.ico,
+          dic: data.companyInfo.dic,
+          company_name: data.companyInfo.companyName,
+          registry_type: (data.companyInfo.registryType || 'other') as Database['public']['Enums']['registry_type'],
+          court: data.companyInfo.court,
+          section: data.companyInfo.section,
+          insert_number: data.companyInfo.insertNumber,
+          address_street: data.companyInfo.address.street,
+          address_city: data.companyInfo.address.city,
+          address_zip_code: data.companyInfo.address.zipCode,
+          contact_address_street: data.companyInfo.contactAddress?.street,
+          contact_address_city: data.companyInfo.contactAddress?.city,
+          contact_address_zip_code: data.companyInfo.contactAddress?.zipCode,
+          contact_address_same_as_main: data.companyInfo.contactAddressSameAsMain,
+          contact_person_name: data.companyInfo.contactPerson.name,
+          contact_person_email: data.companyInfo.contactPerson.email,
+          contact_person_phone: data.companyInfo.contactPerson.phone,
+          contact_person_is_technical: data.companyInfo.contactPerson.isTechnicalPerson
+        };
+
+        if (existingCompany) {
+          const { error: companyError } = await supabase
+            .from('company_info')
+            .update(companyData)
+            .eq('contract_id', contractId);
+
+          if (companyError) {
+            console.error('Error updating company info:', companyError);
+            throw companyError;
+          }
+        } else {
+          const { error: companyError } = await supabase
+            .from('company_info')
+            .insert({
+              contract_id: contractId,
+              ...companyData
+            });
+
+          if (companyError) {
+            console.error('Error inserting company info:', companyError);
+            throw companyError;
+          }
         }
 
         // Delete existing business locations and insert new ones
@@ -120,38 +164,58 @@ export const useContractUpdate = (contractId: string) => {
           }
         }
 
-        // Update device selection
-        const { error: deviceError } = await supabase
+        // Handle device selection - check if exists, then update or insert
+        const { data: existingDevice } = await supabase
           .from('device_selection')
-          .upsert({
-            contract_id: contractId,
-            pax_a920_pro_count: data.deviceSelection.terminals.paxA920Pro.count,
-            pax_a920_pro_monthly_fee: data.deviceSelection.terminals.paxA920Pro.monthlyFee,
-            pax_a920_pro_sim_cards: data.deviceSelection.terminals.paxA920Pro.simCards,
-            pax_a80_count: data.deviceSelection.terminals.paxA80.count,
-            pax_a80_monthly_fee: data.deviceSelection.terminals.paxA80.monthlyFee,
-            tablet_10_count: data.deviceSelection.tablets.tablet10.count,
-            tablet_10_monthly_fee: data.deviceSelection.tablets.tablet10.monthlyFee,
-            tablet_15_count: data.deviceSelection.tablets.tablet15.count,
-            tablet_15_monthly_fee: data.deviceSelection.tablets.tablet15.monthlyFee,
-            tablet_pro_15_count: data.deviceSelection.tablets.tabletPro15.count,
-            tablet_pro_15_monthly_fee: data.deviceSelection.tablets.tabletPro15.monthlyFee,
-            software_licenses: data.deviceSelection.softwareLicenses,
-            accessories: data.deviceSelection.accessories,
-            ecommerce: data.deviceSelection.ecommerce,
-            technical_service: data.deviceSelection.technicalService,
-            mif_regulated_cards: data.deviceSelection.mifFees.regulatedCards,
-            mif_unregulated_cards: data.deviceSelection.mifFees.unregulatedCards,
-            mif_dcc_rabat: data.deviceSelection.mifFees.dccRabat,
-            transaction_types: data.deviceSelection.transactionTypes,
-            note: data.deviceSelection.note
-          }, {
-            onConflict: 'contract_id'
-          });
+          .select('id')
+          .eq('contract_id', contractId)
+          .maybeSingle();
 
-        if (deviceError) {
-          console.error('Error updating device selection:', deviceError);
-          throw deviceError;
+        const deviceData = {
+          pax_a920_pro_count: data.deviceSelection.terminals.paxA920Pro.count,
+          pax_a920_pro_monthly_fee: data.deviceSelection.terminals.paxA920Pro.monthlyFee,
+          pax_a920_pro_sim_cards: data.deviceSelection.terminals.paxA920Pro.simCards,
+          pax_a80_count: data.deviceSelection.terminals.paxA80.count,
+          pax_a80_monthly_fee: data.deviceSelection.terminals.paxA80.monthlyFee,
+          tablet_10_count: data.deviceSelection.tablets.tablet10.count,
+          tablet_10_monthly_fee: data.deviceSelection.tablets.tablet10.monthlyFee,
+          tablet_15_count: data.deviceSelection.tablets.tablet15.count,
+          tablet_15_monthly_fee: data.deviceSelection.tablets.tablet15.monthlyFee,
+          tablet_pro_15_count: data.deviceSelection.tablets.tabletPro15.count,
+          tablet_pro_15_monthly_fee: data.deviceSelection.tablets.tabletPro15.monthlyFee,
+          software_licenses: data.deviceSelection.softwareLicenses,
+          accessories: data.deviceSelection.accessories,
+          ecommerce: data.deviceSelection.ecommerce,
+          technical_service: data.deviceSelection.technicalService,
+          mif_regulated_cards: data.deviceSelection.mifFees.regulatedCards,
+          mif_unregulated_cards: data.deviceSelection.mifFees.unregulatedCards,
+          mif_dcc_rabat: data.deviceSelection.mifFees.dccRabat,
+          transaction_types: data.deviceSelection.transactionTypes,
+          note: data.deviceSelection.note
+        };
+
+        if (existingDevice) {
+          const { error: deviceError } = await supabase
+            .from('device_selection')
+            .update(deviceData)
+            .eq('contract_id', contractId);
+
+          if (deviceError) {
+            console.error('Error updating device selection:', deviceError);
+            throw deviceError;
+          }
+        } else {
+          const { error: deviceError } = await supabase
+            .from('device_selection')
+            .insert({
+              contract_id: contractId,
+              ...deviceData
+            });
+
+          if (deviceError) {
+            console.error('Error inserting device selection:', deviceError);
+            throw deviceError;
+          }
         }
 
         // Delete existing authorized persons and insert new ones
@@ -179,7 +243,7 @@ export const useContractUpdate = (contractId: string) => {
               citizenship: person.citizenship,
               permanent_address: person.permanentAddress,
               document_type: person.documentType,
-              document_number: person.documentNumber || '', // Fixed: added missing field
+              document_number: person.documentNumber || '',
               document_validity: person.documentValidity,
               document_issuer: person.documentIssuer,
               document_country: person.documentCountry,
@@ -229,23 +293,43 @@ export const useContractUpdate = (contractId: string) => {
           }
         }
 
-        // Update consents
-        const { error: consentsError } = await supabase
+        // Handle consents - check if exists, then update or insert
+        const { data: existingConsents } = await supabase
           .from('consents')
-          .upsert({
-            contract_id: contractId,
-            gdpr_consent: data.consents.gdpr,
-            terms_consent: data.consents.terms,
-            electronic_communication_consent: data.consents.electronicCommunication,
-            signature_date: data.consents.signatureDate || null,
-            signing_person_id: data.consents.signingPersonId || null
-          }, {
-            onConflict: 'contract_id'
-          });
+          .select('id')
+          .eq('contract_id', contractId)
+          .maybeSingle();
 
-        if (consentsError) {
-          console.error('Error updating consents:', consentsError);
-          throw consentsError;
+        const consentsData = {
+          gdpr_consent: data.consents.gdpr,
+          terms_consent: data.consents.terms,
+          electronic_communication_consent: data.consents.electronicCommunication,
+          signature_date: data.consents.signatureDate || null,
+          signing_person_id: data.consents.signingPersonId || null
+        };
+
+        if (existingConsents) {
+          const { error: consentsError } = await supabase
+            .from('consents')
+            .update(consentsData)
+            .eq('contract_id', contractId);
+
+          if (consentsError) {
+            console.error('Error updating consents:', consentsError);
+            throw consentsError;
+          }
+        } else {
+          const { error: consentsError } = await supabase
+            .from('consents')
+            .insert({
+              contract_id: contractId,
+              ...consentsData
+            });
+
+          if (consentsError) {
+            console.error('Error inserting consents:', consentsError);
+            throw consentsError;
+          }
         }
 
         console.log('Contract updated successfully');
