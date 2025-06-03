@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -188,7 +189,7 @@ const OnboardingFlow = () => {
                 <CreditCard className="h-6 w-6 text-white" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                PayFlow
+                Utopia
               </span>
             </div>
             <Badge variant="outline" className="border-blue-200 text-blue-700">

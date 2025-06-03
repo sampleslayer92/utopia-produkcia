@@ -1,11 +1,10 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle, Check, Mail, Phone, User } from "lucide-react";
+import { HelpCircle, Check, Mail, Phone } from "lucide-react";
 import { OnboardingData } from "@/types/onboarding";
 import { useState, useEffect } from "react";
 
@@ -93,11 +92,8 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 -m-8 p-8">
       <div className="max-w-2xl mx-auto">
-        {/* Modern Header */}
+        {/* Simplified Header without icon */}
         <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-6 shadow-lg">
-            <User className="h-8 w-8 text-white" />
-          </div>
           <h1 className="text-4xl font-bold text-slate-900 mb-4 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             Ako sa voláte?
           </h1>
