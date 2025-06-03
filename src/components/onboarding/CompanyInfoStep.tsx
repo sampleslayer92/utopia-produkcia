@@ -1,10 +1,11 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingSection from "./ui/OnboardingSection";
+import ORSRSearch from "./ui/ORSRSearch";
 import { Building2, MapPin, User } from "lucide-react";
 
 interface CompanyInfoStepProps {
@@ -35,6 +36,20 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         }
       });
     }
+  };
+
+  const handleORSRData = (orsrData: any) => {
+    updateData({
+      companyInfo: {
+        ...data.companyInfo,
+        companyName: orsrData.companyName,
+        dic: orsrData.dic,
+        court: orsrData.court,
+        section: orsrData.section,
+        insertNumber: orsrData.insertNumber,
+        address: orsrData.address
+      }
+    });
   };
 
   const registryTypeOptions = [
@@ -76,13 +91,19 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <OnboardingSection>
               <div className="grid md:grid-cols-2 gap-6">
-                <OnboardingInput
-                  label="IČO *"
-                  value={data.companyInfo.ico}
-                  onChange={(e) => updateCompanyInfo('ico', e.target.value)}
-                  placeholder="12345678"
-                  icon={<Building2 className="h-4 w-4" />}
-                />
+                <div className="space-y-2">
+                  <OnboardingInput
+                    label="IČO *"
+                    value={data.companyInfo.ico}
+                    onChange={(e) => updateCompanyInfo('ico', e.target.value)}
+                    placeholder="12345678"
+                    icon={<Building2 className="h-4 w-4" />}
+                  />
+                  <ORSRSearch
+                    ico={data.companyInfo.ico}
+                    onDataFound={handleORSRData}
+                  />
+                </div>
                 
                 <OnboardingInput
                   label="DIČ *"
@@ -159,6 +180,53 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                   onChange={(e) => updateCompanyInfo('address.city', e.target.value)}
                   placeholder="Bratislava"
                 />
+              </div>
+
+              <div className="border-t border-slate-100 pt-6 mt-4">
+                <h3 className="text-lg font-medium text-slate-900 mb-4 flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-green-600" />
+                  Kontaktná adresa spoločnosti
+                </h3>
+                
+                <div className="flex items-center space-x-2 mb-4">
+                  <Checkbox
+                    id="contactAddressSameAsMain"
+                    checked={data.companyInfo.contactAddressSameAsMain}
+                    onCheckedChange={(checked) => updateCompanyInfo('contactAddressSameAsMain', checked)}
+                  />
+                  <label htmlFor="contactAddressSameAsMain" className="text-sm text-slate-700">
+                    Kontaktná adresa sa zhoduje so sídlom spoločnosti
+                  </label>
+                </div>
+
+                {!data.companyInfo.contactAddressSameAsMain && (
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <div className="md:col-span-2">
+                        <OnboardingInput
+                          label="Ulica a číslo *"
+                          value={data.companyInfo.contactAddress?.street || ''}
+                          onChange={(e) => updateCompanyInfo('contactAddress.street', e.target.value)}
+                          placeholder="Kontaktná ulica 456"
+                        />
+                      </div>
+                      
+                      <OnboardingInput
+                        label="PSČ *"
+                        value={data.companyInfo.contactAddress?.zipCode || ''}
+                        onChange={(e) => updateCompanyInfo('contactAddress.zipCode', e.target.value)}
+                        placeholder="01001"
+                      />
+                    </div>
+                    
+                    <OnboardingInput
+                      label="Mesto *"
+                      value={data.companyInfo.contactAddress?.city || ''}
+                      onChange={(e) => updateCompanyInfo('contactAddress.city', e.target.value)}
+                      placeholder="Bratislava"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="border-t border-slate-100 pt-6 mt-4">

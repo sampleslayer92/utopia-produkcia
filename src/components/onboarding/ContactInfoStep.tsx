@@ -27,7 +27,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     });
   };
 
-  // Track completed fields for progressive disclosure
+  // Track completed fields for visual feedback
   useEffect(() => {
     const newCompleted = new Set<string>();
     if (data.contactInfo.salutation) newCompleted.add('salutation');
@@ -71,21 +71,6 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const shouldShowField = (field: string) => {
-    switch (field) {
-      case 'name':
-        return true;
-      case 'email':
-        return completedFields.has('firstName') && completedFields.has('lastName');
-      case 'phone':
-        return completedFields.has('email');
-      case 'note':
-        return completedFields.has('phone');
-      default:
-        return true;
-    }
-  };
-
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
       <CardContent className="p-0">
@@ -118,7 +103,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
           {/* Main form content */}
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <OnboardingSection>
-              {/* Name Section - Always visible */}
+              {/* Name Section */}
               <div className="flex flex-col sm:flex-row gap-4">
                 {/* Salutation */}
                 <div className="sm:w-32">
@@ -155,64 +140,52 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                 </div>
               </div>
 
-              {/* Email Section - Progressive disclosure */}
-              {shouldShowField('email') && (
-                <div className="animate-fade-in" style={{animationDelay: '200ms'}}>
-                  <OnboardingInput
-                    type="email"
-                    label="Email *"
-                    value={data.contactInfo.email}
-                    onChange={(e) => updateContactInfo('email', e.target.value)}
-                    placeholder="vas.email@priklad.sk"
-                    icon={<Mail className="h-5 w-5" />}
-                    isCompleted={completedFields.has('email')}
-                    error={data.contactInfo.email && !isEmailValid(data.contactInfo.email) ? 'Zadajte platnú emailovú adresu' : undefined}
-                  />
-                </div>
-              )}
+              {/* Email Section */}
+              <OnboardingInput
+                type="email"
+                label="Email *"
+                value={data.contactInfo.email}
+                onChange={(e) => updateContactInfo('email', e.target.value)}
+                placeholder="vas.email@priklad.sk"
+                icon={<Mail className="h-5 w-5" />}
+                isCompleted={completedFields.has('email')}
+                error={data.contactInfo.email && !isEmailValid(data.contactInfo.email) ? 'Zadajte platnú emailovú adresu' : undefined}
+              />
 
-              {/* Phone Section - Progressive disclosure */}
-              {shouldShowField('phone') && (
-                <div className="animate-fade-in" style={{animationDelay: '400ms'}}>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-slate-700">
-                      <Phone className="h-5 w-5 text-blue-500" />
-                      <span className="text-sm font-medium">Telefónne číslo *</span>
-                    </div>
-                    <div className="flex gap-3">
-                      <OnboardingSelect
-                        value={data.contactInfo.phonePrefix}
-                        onValueChange={(value) => updateContactInfo('phonePrefix', value)}
-                        options={phonePrefixes}
-                        className="w-44"
-                      />
-                      <div className="flex-1">
-                        <OnboardingInput
-                          value={data.contactInfo.phone}
-                          onChange={(e) => handlePhoneChange(e.target.value)}
-                          placeholder="123 456 789"
-                          className="font-mono"
-                          isCompleted={completedFields.has('phone')}
-                        />
-                      </div>
-                    </div>
+              {/* Phone Section */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-slate-700">
+                  <Phone className="h-5 w-5 text-blue-500" />
+                  <span className="text-sm font-medium">Telefónne číslo *</span>
+                </div>
+                <div className="flex gap-3">
+                  <OnboardingSelect
+                    value={data.contactInfo.phonePrefix}
+                    onValueChange={(value) => updateContactInfo('phonePrefix', value)}
+                    options={phonePrefixes}
+                    className="w-44"
+                  />
+                  <div className="flex-1">
+                    <OnboardingInput
+                      value={data.contactInfo.phone}
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      placeholder="123 456 789"
+                      className="font-mono"
+                      isCompleted={completedFields.has('phone')}
+                    />
                   </div>
                 </div>
-              )}
+              </div>
 
-              {/* Optional Note Section - Progressive disclosure */}
-              {shouldShowField('note') && (
-                <div className="animate-fade-in" style={{animationDelay: '600ms'}}>
-                  <OnboardingTextarea
-                    label="Chcete nám niečo odkázať?"
-                    value={data.contactInfo.salesNote || ''}
-                    onChange={(e) => updateContactInfo('salesNote', e.target.value)}
-                    placeholder="Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie..."
-                    rows={4}
-                    helperText="Nepovinné – môžete nám napísať dodatočné info alebo preferencie"
-                  />
-                </div>
-              )}
+              {/* Optional Note Section */}
+              <OnboardingTextarea
+                label="Chcete nám niečo odkázať?"
+                value={data.contactInfo.salesNote || ''}
+                onChange={(e) => updateContactInfo('salesNote', e.target.value)}
+                placeholder="Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie..."
+                rows={4}
+                helperText="Nepovinné – môžete nám napísať dodatočné info alebo preferencie"
+              />
             </OnboardingSection>
           </div>
         </div>

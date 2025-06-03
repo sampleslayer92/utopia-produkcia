@@ -22,6 +22,12 @@ export interface CompanyInfo {
     city: string;
     zipCode: string;
   };
+  contactAddress?: {
+    street: string;
+    city: string;
+    zipCode: string;
+  };
+  contactAddressSameAsMain: boolean;
   contactPerson: {
     name: string;
     email: string;
@@ -123,7 +129,7 @@ export interface Consents {
 export interface OnboardingData {
   contactInfo: ContactInfo;
   companyInfo: CompanyInfo;
-  businessLocations: BusinessLocation[]; // Changed from businessLocation to businessLocations array
+  businessLocations: BusinessLocation[];
   deviceSelection: DeviceSelection;
   authorizedPersons: AuthorizedPerson[];
   actualOwners: ActualOwner[];
