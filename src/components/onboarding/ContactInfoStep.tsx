@@ -234,7 +234,6 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                 onValueChange={(value) => updateContactInfo('userRole', value)}
                 options={userRoleOptions}
                 isCompleted={completedFields.has('userRole')}
-                icon={<UserCheck className="h-5 w-5" />}
               />
 
               {/* Name Section */}
