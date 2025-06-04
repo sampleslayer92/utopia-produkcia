@@ -233,7 +233,9 @@ export type Database = {
           contact_address_street: string | null
           contact_address_zip_code: string | null
           contact_person_email: string
+          contact_person_first_name: string
           contact_person_is_technical: boolean | null
+          contact_person_last_name: string
           contact_person_name: string
           contact_person_phone: string
           contract_id: string | null
@@ -243,8 +245,10 @@ export type Database = {
           ico: string
           id: string
           insert_number: string | null
+          is_vat_payer: boolean | null
           registry_type: Database["public"]["Enums"]["registry_type"]
           section: string | null
+          vat_number: string | null
         }
         Insert: {
           address_city: string
@@ -256,7 +260,9 @@ export type Database = {
           contact_address_street?: string | null
           contact_address_zip_code?: string | null
           contact_person_email: string
+          contact_person_first_name: string
           contact_person_is_technical?: boolean | null
+          contact_person_last_name: string
           contact_person_name: string
           contact_person_phone: string
           contract_id?: string | null
@@ -266,8 +272,10 @@ export type Database = {
           ico: string
           id?: string
           insert_number?: string | null
+          is_vat_payer?: boolean | null
           registry_type: Database["public"]["Enums"]["registry_type"]
           section?: string | null
+          vat_number?: string | null
         }
         Update: {
           address_city?: string
@@ -279,7 +287,9 @@ export type Database = {
           contact_address_street?: string | null
           contact_address_zip_code?: string | null
           contact_person_email?: string
+          contact_person_first_name?: string
           contact_person_is_technical?: boolean | null
+          contact_person_last_name?: string
           contact_person_name?: string
           contact_person_phone?: string
           contract_id?: string | null
@@ -289,8 +299,10 @@ export type Database = {
           ico?: string
           id?: string
           insert_number?: string | null
+          is_vat_payer?: boolean | null
           registry_type?: Database["public"]["Enums"]["registry_type"]
           section?: string | null
+          vat_number?: string | null
         }
         Relationships: [
           {

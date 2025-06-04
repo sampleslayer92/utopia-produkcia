@@ -7,6 +7,7 @@ import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingTextarea from "./ui/OnboardingTextarea";
 import OnboardingSection from "./ui/OnboardingSection";
+import { useContractCreation } from "@/hooks/useContractCreation";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -17,6 +18,7 @@ interface ContactInfoStepProps {
 
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
+  const { createContract, isCreating } = useContractCreation();
 
   const updateContactInfo = (field: string, value: string | boolean) => {
     updateData({
@@ -26,6 +28,36 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
       }
     });
   };
+
+  // Check if basic contact info is complete for contract creation
+  const isBasicInfoComplete = () => {
+    return data.contactInfo.firstName && 
+           data.contactInfo.lastName && 
+           data.contactInfo.email && 
+           isEmailValid(data.contactInfo.email) &&
+           data.contactInfo.phone;
+  };
+
+  // Auto-create contract when basic info is complete
+  useEffect(() => {
+    const autoCreateContract = async () => {
+      if (isBasicInfoComplete() && !data.contractId && !isCreating) {
+        console.log('Basic contact info complete, creating contract...');
+        const result = await createContract();
+        
+        if (result.success) {
+          updateData({
+            contractId: result.contractId,
+            contractNumber: result.contractNumber
+          });
+        }
+      }
+    };
+
+    // Debounce the contract creation
+    const timeoutId = setTimeout(autoCreateContract, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contractId, isCreating]);
 
   // Track completed fields for visual feedback
   useEffect(() => {
@@ -95,8 +127,15 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                   <li>Email bude slúžiť ako vaše používateľské meno</li>
                   <li>Telefón pre technickú podporu a notifikácie</li>
                   <li>Všetky údaje sú chránené GDPR</li>
+                  <li>Po vyplnení základných údajov sa automaticky vytvorí zmluva</li>
                 </ul>
               </div>
+
+              {isCreating && (
+                <div className="bg-yellow-100/50 border border-yellow-200 rounded-lg p-4 text-xs text-yellow-800">
+                  <p className="font-medium">Vytvára sa zmluva...</p>
+                </div>
+              )}
             </div>
           </div>
           

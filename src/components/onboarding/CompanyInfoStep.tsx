@@ -1,12 +1,13 @@
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData } from "@/types/onboarding";
-import OnboardingSection from "./ui/OnboardingSection";
 import { Building2 } from "lucide-react";
-import CompanyBasicInfo from "./company/CompanyBasicInfo";
+import CompanyBasicInfoCard from "./company/CompanyBasicInfoCard";
 import CompanyRegistryInfo from "./company/CompanyRegistryInfo";
-import CompanyAddressSection from "./company/CompanyAddressSection";
-import CompanyContactPerson from "./company/CompanyContactPerson";
+import CompanyAddressCard from "./company/CompanyAddressCard";
+import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
+import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -76,35 +77,83 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                   <li>Pre vystavenie faktúr</li>
                   <li>Pre právne dokumenty a zmluvy</li>
                   <li>Pre zriadenie platobného terminálu</li>
+                  <li>Pre DPH evidenciu ak ste platcom</li>
                 </ul>
               </div>
             </div>
           </div>
           
-          {/* Main form content */}
+          {/* Main form content with accordion */}
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
-            <OnboardingSection>
-              <CompanyBasicInfo
-                data={data}
-                updateCompanyInfo={updateCompanyInfo}
-                handleORSRData={handleORSRData}
-              />
+            <Accordion type="multiple" defaultValue={["basic-info", "address", "contact-address", "contact-person"]} className="space-y-4">
+              
+              {/* Basic Company Info */}
+              <AccordionItem value="basic-info" className="border border-slate-200 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <span className="font-medium text-slate-900">Základné údaje o spoločnosti</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <CompanyBasicInfoCard
+                    data={data}
+                    updateCompanyInfo={updateCompanyInfo}
+                    handleORSRData={handleORSRData}
+                  />
+                </AccordionContent>
+              </AccordionItem>
 
-              <CompanyRegistryInfo
-                data={data}
-                updateCompanyInfo={updateCompanyInfo}
-              />
+              {/* Registry Info */}
+              <AccordionItem value="registry-info" className="border border-slate-200 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <span className="font-medium text-slate-900">Údaje z obchodného registra</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <CompanyRegistryInfo
+                    data={data}
+                    updateCompanyInfo={updateCompanyInfo}
+                  />
+                </AccordionContent>
+              </AccordionItem>
 
-              <CompanyAddressSection
-                data={data}
-                updateCompanyInfo={updateCompanyInfo}
-              />
+              {/* Company Address */}
+              <AccordionItem value="address" className="border border-slate-200 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <span className="font-medium text-slate-900">Sídlo spoločnosti</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <CompanyAddressCard
+                    data={data}
+                    updateCompanyInfo={updateCompanyInfo}
+                  />
+                </AccordionContent>
+              </AccordionItem>
 
-              <CompanyContactPerson
-                data={data}
-                updateCompanyInfo={updateCompanyInfo}
-              />
-            </OnboardingSection>
+              {/* Contact Address */}
+              <AccordionItem value="contact-address" className="border border-slate-200 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <span className="font-medium text-slate-900">Kontaktná adresa</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <CompanyContactAddressCard
+                    data={data}
+                    updateCompanyInfo={updateCompanyInfo}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Contact Person */}
+              <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <span className="font-medium text-slate-900">Kontaktná osoba</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <CompanyContactPersonCard
+                    data={data}
+                    updateCompanyInfo={updateCompanyInfo}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+            </Accordion>
           </div>
         </div>
       </CardContent>

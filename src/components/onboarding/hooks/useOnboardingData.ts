@@ -17,6 +17,8 @@ const initialData: OnboardingData = {
     dic: '',
     companyName: '',
     registryType: '',
+    isVatPayer: false,
+    vatNumber: '',
     court: '',
     section: '',
     insertNumber: '',
@@ -32,7 +34,8 @@ const initialData: OnboardingData = {
     },
     contactAddressSameAsMain: true,
     contactPerson: {
-      name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       phone: '',
       isTechnicalPerson: false
@@ -57,7 +60,9 @@ const initialData: OnboardingData = {
     signatureDate: '',
     signingPersonId: ''
   },
-  currentStep: 0
+  currentStep: 0,
+  contractId: undefined,
+  contractNumber: undefined
 };
 
 export const useOnboardingData = () => {
@@ -72,6 +77,17 @@ export const useOnboardingData = () => {
         }
         if (!parsedData.deviceSelection.selectedSolutions) {
           parsedData.deviceSelection = initialData.deviceSelection;
+        }
+        if (!parsedData.companyInfo.contactPerson.firstName) {
+          // Migrate old name field to firstName/lastName
+          const fullName = parsedData.companyInfo.contactPerson.name || '';
+          const nameParts = fullName.split(' ');
+          parsedData.companyInfo.contactPerson.firstName = nameParts[0] || '';
+          parsedData.companyInfo.contactPerson.lastName = nameParts.slice(1).join(' ') || '';
+        }
+        if (parsedData.companyInfo.isVatPayer === undefined) {
+          parsedData.companyInfo.isVatPayer = false;
+          parsedData.companyInfo.vatNumber = '';
         }
         return parsedData;
       } catch (error) {

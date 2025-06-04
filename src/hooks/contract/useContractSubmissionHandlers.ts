@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { OnboardingData } from '@/types/onboarding';
 import { safeString, safeEmail, validateRegistryType } from './useContractSubmissionValidators';
@@ -31,6 +30,8 @@ export const insertCompanyInfo = async (contractId: string, companyInfo: any) =>
       dic: safeString(companyInfo.dic, '00000000'),
       company_name: safeString(companyInfo.companyName, 'Test Company'),
       registry_type: validRegistryType,
+      is_vat_payer: companyInfo.isVatPayer || false,
+      vat_number: companyInfo.vatNumber || null,
       court: companyInfo.court || null,
       section: companyInfo.section || null,
       insert_number: companyInfo.insertNumber || null,
@@ -41,7 +42,8 @@ export const insertCompanyInfo = async (contractId: string, companyInfo: any) =>
       contact_address_city: companyInfo.contactAddress?.city || null,
       contact_address_zip_code: companyInfo.contactAddress?.zipCode || null,
       contact_address_same_as_main: companyInfo.contactAddressSameAsMain,
-      contact_person_name: safeString(companyInfo.contactPerson.name, 'Test Contact'),
+      contact_person_first_name: safeString(companyInfo.contactPerson.firstName, 'Test'),
+      contact_person_last_name: safeString(companyInfo.contactPerson.lastName, 'Contact'),
       contact_person_email: safeEmail(companyInfo.contactPerson.email),
       contact_person_phone: safeString(companyInfo.contactPerson.phone, '000000000'),
       contact_person_is_technical: companyInfo.contactPerson.isTechnicalPerson

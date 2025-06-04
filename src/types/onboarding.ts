@@ -14,6 +14,8 @@ export interface CompanyInfo {
   dic: string;
   companyName: string;
   registryType: 'public' | 'business' | 'other' | '';
+  isVatPayer: boolean;
+  vatNumber: string;
   court: string;
   section: string;
   insertNumber: string;
@@ -29,7 +31,8 @@ export interface CompanyInfo {
   };
   contactAddressSameAsMain: boolean;
   contactPerson: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone: string;
     isTechnicalPerson: boolean;
@@ -148,4 +151,6 @@ export interface OnboardingData {
   actualOwners: ActualOwner[];
   consents: Consents;
   currentStep: number;
+  contractId?: string;
+  contractNumber?: string;
 }

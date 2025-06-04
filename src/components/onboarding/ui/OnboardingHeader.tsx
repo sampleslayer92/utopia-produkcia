@@ -1,8 +1,12 @@
 
 import { Badge } from "@/components/ui/badge";
-import { CreditCard } from "lucide-react";
+import { CreditCard, FileText } from "lucide-react";
 
-const OnboardingHeader = () => {
+interface OnboardingHeaderProps {
+  contractNumber?: string;
+}
+
+const OnboardingHeader = ({ contractNumber }: OnboardingHeaderProps) => {
   return (
     <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-10">
       <div className="container mx-auto px-6 py-4">
@@ -15,9 +19,17 @@ const OnboardingHeader = () => {
               Utopia
             </span>
           </div>
-          <Badge variant="outline" className="border-blue-200 text-blue-700">
-            Registrácia obchodníka
-          </Badge>
+          <div className="flex items-center gap-3">
+            {contractNumber && (
+              <Badge variant="outline" className="border-blue-200 text-blue-700 flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Zmluva č. {contractNumber}
+              </Badge>
+            )}
+            <Badge variant="outline" className="border-blue-200 text-blue-700">
+              Registrácia obchodníka
+            </Badge>
+          </div>
         </div>
       </div>
     </header>

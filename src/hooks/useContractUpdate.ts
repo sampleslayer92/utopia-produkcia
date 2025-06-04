@@ -85,6 +85,8 @@ export const useContractUpdate = (contractId: string) => {
           dic: data.companyInfo.dic,
           company_name: data.companyInfo.companyName,
           registry_type: (data.companyInfo.registryType || 'other') as Database['public']['Enums']['registry_type'],
+          is_vat_payer: data.companyInfo.isVatPayer,
+          vat_number: data.companyInfo.vatNumber || null,
           court: data.companyInfo.court,
           section: data.companyInfo.section,
           insert_number: data.companyInfo.insertNumber,
@@ -95,7 +97,8 @@ export const useContractUpdate = (contractId: string) => {
           contact_address_city: data.companyInfo.contactAddress?.city,
           contact_address_zip_code: data.companyInfo.contactAddress?.zipCode,
           contact_address_same_as_main: data.companyInfo.contactAddressSameAsMain,
-          contact_person_name: data.companyInfo.contactPerson.name,
+          contact_person_first_name: data.companyInfo.contactPerson.firstName,
+          contact_person_last_name: data.companyInfo.contactPerson.lastName,
           contact_person_email: data.companyInfo.contactPerson.email,
           contact_person_phone: data.companyInfo.contactPerson.phone,
           contact_person_is_technical: data.companyInfo.contactPerson.isTechnicalPerson
