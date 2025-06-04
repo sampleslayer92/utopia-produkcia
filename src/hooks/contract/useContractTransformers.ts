@@ -1,3 +1,4 @@
+
 import { OnboardingData } from '@/types/onboarding';
 
 export const transformContractData = (
@@ -94,6 +95,7 @@ export const transformContractData = (
           description: 'Mobilný terminál',
           count: deviceSelection.pax_a920_pro_count,
           monthlyFee: deviceSelection.pax_a920_pro_monthly_fee || 0,
+          companyCost: 0,
           simCards: deviceSelection.pax_a920_pro_sim_cards || 0,
           specifications: []
         }] : []),
@@ -105,6 +107,7 @@ export const transformContractData = (
           description: 'Stacionárny terminál',
           count: deviceSelection.pax_a80_count,
           monthlyFee: deviceSelection.pax_a80_monthly_fee || 0,
+          companyCost: 0,
           specifications: []
         }] : []),
         ...(deviceSelection.tablet_10_count > 0 ? [{
@@ -115,6 +118,7 @@ export const transformContractData = (
           description: 'Kompaktný tablet pre POS systém',
           count: deviceSelection.tablet_10_count,
           monthlyFee: deviceSelection.tablet_10_monthly_fee || 0,
+          companyCost: 0,
           specifications: []
         }] : []),
         ...(deviceSelection.tablet_15_count > 0 ? [{
@@ -125,6 +129,7 @@ export const transformContractData = (
           description: 'Veľký tablet pre POS systém',
           count: deviceSelection.tablet_15_count,
           monthlyFee: deviceSelection.tablet_15_monthly_fee || 0,
+          companyCost: 0,
           specifications: []
         }] : []),
         ...(deviceSelection.tablet_pro_15_count > 0 ? [{
@@ -135,6 +140,7 @@ export const transformContractData = (
           description: 'Profesionálny tablet pre POS systém',
           count: deviceSelection.tablet_pro_15_count,
           monthlyFee: deviceSelection.tablet_pro_15_monthly_fee || 0,
+          companyCost: 0,
           specifications: []
         }] : []),
       ],
