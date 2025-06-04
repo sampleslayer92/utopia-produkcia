@@ -24,7 +24,7 @@ export const useContractEdit = () => {
             email: data.contactInfo.email,
             phone: data.contactInfo.phone,
             phone_prefix: data.contactInfo.phonePrefix,
-            salutation: data.contactInfo.salutation,
+            salutation: data.contactInfo.salutation || null,
             user_role: data.contactInfo.userRole,
             sales_note: data.contactInfo.salesNote
           }, {
@@ -48,7 +48,7 @@ export const useContractEdit = () => {
             dic: data.companyInfo.dic,
             is_vat_payer: data.companyInfo.isVatPayer,
             vat_number: data.companyInfo.vatNumber,
-            registry_type: data.companyInfo.registryType,
+            registry_type: data.companyInfo.registryType || 'other',
             court: data.companyInfo.court,
             section: data.companyInfo.section,
             insert_number: data.companyInfo.insertNumber,
@@ -63,7 +63,8 @@ export const useContractEdit = () => {
             contact_person_last_name: data.companyInfo.contactPerson.lastName,
             contact_person_email: data.companyInfo.contactPerson.email,
             contact_person_phone: data.companyInfo.contactPerson.phone,
-            contact_person_is_technical: data.companyInfo.contactPerson.isTechnicalPerson
+            contact_person_is_technical: data.companyInfo.contactPerson.isTechnicalPerson,
+            contact_person_name: `${data.companyInfo.contactPerson.firstName} ${data.companyInfo.contactPerson.lastName}`
           }, {
             onConflict: 'contract_id'
           });
