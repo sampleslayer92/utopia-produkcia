@@ -48,10 +48,17 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         court: orsrData.court,
         section: orsrData.section,
         insertNumber: orsrData.insertNumber,
-        address: orsrData.address
+        address: orsrData.address,
+        // Ensure registry_type is set to valid value
+        registryType: orsrData.registryType || 'business'
       }
     });
   };
+
+  // Ensure registry_type has a valid default value
+  if (!data.companyInfo.registryType || data.companyInfo.registryType === '') {
+    updateCompanyInfo('registryType', 'business');
+  }
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">

@@ -22,7 +22,7 @@ export const useContractSubmission = () => {
     try {
       console.log('Starting contract submission...', onboardingData);
       
-      // Validate required fields
+      // Enhanced validation
       if (!onboardingData.contactInfo.firstName || !onboardingData.contactInfo.lastName) {
         throw new Error('Meno a priezvisko sú povinné');
       }
@@ -33,6 +33,11 @@ export const useContractSubmission = () => {
       
       if (!onboardingData.companyInfo.companyName) {
         throw new Error('Názov spoločnosti je povinný');
+      }
+
+      // Additional validation for enum fields
+      if (onboardingData.companyInfo.registryType === '') {
+        onboardingData.companyInfo.registryType = 'other';
       }
       
       // 1. Create main contract
@@ -54,13 +59,23 @@ export const useContractSubmission = () => {
       console.log('Contract created:', contract);
       const contractId = contract.id;
 
-      // Insert all sections with error handling
+      // Update onboarding data with contract info
+      if (typeof Storage !== 'undefined') {
+        const updatedData = {
+          ...onboardingData,
+          contractId: contractId,
+          contractNumber: contract.contract_number.toString()
+        };
+        localStorage.setItem('onboarding_data', JSON.stringify(updatedData));
+      }
+
+      // Insert all sections with enhanced error handling
       try {
         await insertContactInfo(contractId, onboardingData.contactInfo);
         console.log('Contact info inserted successfully');
       } catch (error) {
         console.error('Contact info insertion error:', error);
-        throw new Error('Chyba pri ukladaní kontaktných údajov');
+        throw error;
       }
 
       try {
@@ -68,7 +83,7 @@ export const useContractSubmission = () => {
         console.log('Company info inserted successfully');
       } catch (error) {
         console.error('Company info insertion error:', error);
-        throw new Error('Chyba pri ukladaní údajov o spoločnosti');
+        throw error;
       }
 
       try {
@@ -76,7 +91,7 @@ export const useContractSubmission = () => {
         console.log('Business locations inserted successfully');
       } catch (error) {
         console.error('Business locations insertion error:', error);
-        throw new Error('Chyba pri ukladaní prevádzok');
+        throw error;
       }
 
       try {
@@ -84,7 +99,7 @@ export const useContractSubmission = () => {
         console.log('Device selection inserted successfully');
       } catch (error) {
         console.error('Device selection insertion error:', error);
-        throw new Error('Chyba pri ukladaní zariadení a služieb');
+        throw error;
       }
 
       try {
@@ -92,7 +107,7 @@ export const useContractSubmission = () => {
         console.log('Authorized persons inserted successfully');
       } catch (error) {
         console.error('Authorized persons insertion error:', error);
-        throw new Error('Chyba pri ukladaní oprávnených osôb');
+        throw error;
       }
 
       try {
@@ -100,7 +115,7 @@ export const useContractSubmission = () => {
         console.log('Actual owners inserted successfully');
       } catch (error) {
         console.error('Actual owners insertion error:', error);
-        throw new Error('Chyba pri ukladaní skutočných vlastníkov');
+        throw error;
       }
 
       try {
@@ -108,7 +123,7 @@ export const useContractSubmission = () => {
         console.log('Consents inserted successfully');
       } catch (error) {
         console.error('Consents insertion error:', error);
-        throw new Error('Chyba pri ukladaní súhlasov');
+        throw error;
       }
 
       console.log('Contract submission completed successfully');
