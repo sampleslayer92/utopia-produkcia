@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building, MapPin, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import EditableSection from "./EditableSection";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import { useBusinessLocationsCrud } from "@/hooks/useBusinessLocationsCrud";
@@ -17,10 +19,28 @@ interface ClientOperationsSectionProps {
 
 const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientOperationsSectionProps) => {
   const { id: contractId } = useParams<{ id: string }>();
-  const { deleteLocation, isDeleting } = useBusinessLocationsCrud(contractId!);
+  const { addLocation, deleteLocation, isDeleting, isAdding } = useBusinessLocationsCrud(contractId!);
   
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [locationToDelete, setLocationToDelete] = useState<any>(null);
+  const [addLocationModal, setAddLocationModal] = useState(false);
+  const [newLocationData, setNewLocationData] = useState({
+    name: '',
+    addressStreet: '',
+    addressCity: '',
+    addressZipCode: '',
+    iban: '',
+    businessSector: '',
+    contactPersonName: '',
+    contactPersonPhone: '',
+    contactPersonEmail: '',
+    hasPos: false,
+    estimatedTurnover: 0,
+    averageTransaction: 0,
+    seasonality: 'year-round' as const,
+    seasonalWeeks: null as number | null,
+    openingHours: ''
+  });
 
   const companyInfo = onboardingData.companyInfo;
   const contactInfo = onboardingData.contactInfo;
@@ -40,8 +60,33 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
   };
 
   const addNewLocation = () => {
-    // This would open a modal or form to add a new location
-    console.log('Add new location');
+    setAddLocationModal(true);
+  };
+
+  const handleAddLocation = async () => {
+    try {
+      await addLocation.mutateAsync(newLocationData);
+      setAddLocationModal(false);
+      setNewLocationData({
+        name: '',
+        addressStreet: '',
+        addressCity: '',
+        addressZipCode: '',
+        iban: '',
+        businessSector: '',
+        contactPersonName: '',
+        contactPersonPhone: '',
+        contactPersonEmail: '',
+        hasPos: false,
+        estimatedTurnover: 0,
+        averageTransaction: 0,
+        seasonality: 'year-round' as const,
+        seasonalWeeks: null,
+        openingHours: ''
+      });
+    } catch (error) {
+      console.error('Error adding location:', error);
+    }
   };
 
   return (
@@ -183,7 +228,7 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
                 Prevádzky
               </div>
               {isEditMode && (
-                <Button variant="outline" size="sm" onClick={addNewLocation}>
+                <Button variant="outline" size="sm" onClick={addNewLocation} disabled={isAdding}>
                   <Plus className="h-4 w-4 mr-2" />
                   Pridať prevádzku
                 </Button>
@@ -269,6 +314,81 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
           </CardContent>
         </Card>
       </div>
+
+      {/* Add Location Modal */}
+      <Dialog open={addLocationModal} onOpenChange={setAddLocationModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Pridať novú prevádzku</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="locationName">Názov prevádzky</Label>
+              <Input
+                id="locationName"
+                value={newLocationData.name}
+                onChange={(e) => setNewLocationData(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Názov prevádzky"
+              />
+            </div>
+            <div>
+              <Label htmlFor="locationAddress">Adresa</Label>
+              <Input
+                id="locationAddress"
+                value={newLocationData.addressStreet}
+                onChange={(e) => setNewLocationData(prev => ({ ...prev, addressStreet: e.target.value }))}
+                placeholder="Ulica a číslo"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="locationCity">Mesto</Label>
+                <Input
+                  id="locationCity"
+                  value={newLocationData.addressCity}
+                  onChange={(e) => setNewLocationData(prev => ({ ...prev, addressCity: e.target.value }))}
+                  placeholder="Mesto"
+                />
+              </div>
+              <div>
+                <Label htmlFor="locationZip">PSČ</Label>
+                <Input
+                  id="locationZip"
+                  value={newLocationData.addressZipCode}
+                  onChange={(e) => setNewLocationData(prev => ({ ...prev, addressZipCode: e.target.value }))}
+                  placeholder="PSČ"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="locationIban">IBAN</Label>
+              <Input
+                id="locationIban"
+                value={newLocationData.iban}
+                onChange={(e) => setNewLocationData(prev => ({ ...prev, iban: e.target.value }))}
+                placeholder="IBAN účtu"
+              />
+            </div>
+            <div>
+              <Label htmlFor="locationSector">MCC sektor</Label>
+              <Input
+                id="locationSector"
+                value={newLocationData.businessSector}
+                onChange={(e) => setNewLocationData(prev => ({ ...prev, businessSector: e.target.value }))}
+                placeholder="Obchodný sektor"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddLocationModal(false)} disabled={isAdding}>
+              Zrušiť
+            </Button>
+            <Button onClick={handleAddLocation} disabled={isAdding}>
+              {isAdding ? 'Pridáva sa...' : 'Pridať prevádzku'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDeleteModal
         isOpen={deleteModalOpen}
