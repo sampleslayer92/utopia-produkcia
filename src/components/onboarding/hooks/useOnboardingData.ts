@@ -62,7 +62,9 @@ const getInitialData = (): OnboardingData => ({
     signingPersonId: '',
     isSigned: false
   },
-  currentStep: 0
+  currentStep: 0,
+  contractId: undefined,
+  contractNumber: undefined
 });
 
 export const useOnboardingData = () => {

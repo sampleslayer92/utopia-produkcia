@@ -43,8 +43,9 @@ export const useOnboardingNavigation = (
       return;
     }
     
+    // Contract should exist from auto-creation, but check anyway
     if (!onboardingData.contractId) {
-      toast.error("Chyba: ID zmluvy nebolo nájdené");
+      toast.error("Chyba: ID zmluvy nebolo nájdené. Skúste obnoviť stránku a začať odznova.");
       return;
     }
     
@@ -60,11 +61,11 @@ export const useOnboardingNavigation = (
         return;
       }
       
-      // Create merchant account using the correct contractId from result
+      // Create merchant account using the contractId
       console.log('Vytváram merchant účet s contractId:', contractResult.contractId);
       const userResult = await createMerchantAccount({
         ...onboardingData,
-        contractId: contractResult.contractId // Use the correct contractId from submission result
+        contractId: contractResult.contractId
       });
       
       if (userResult.success) {

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useOnboardingData } from "./hooks/useOnboardingData";
 import { useOnboardingNavigation } from "./hooks/useOnboardingNavigation";
 import { useContractManagement } from "@/hooks/useContractManagement";
+import { useAutoContractCreation } from "@/hooks/useAutoContractCreation";
 import { onboardingSteps } from "./config/onboardingSteps";
 import OnboardingSidebar from "./ui/OnboardingSidebar";
 import OnboardingNavigation from "./ui/OnboardingNavigation";
@@ -15,6 +16,9 @@ const OnboardingFlow = () => {
   const { onboardingData, updateData, clearData } = useOnboardingData();
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
   const { deleteContract, createNewContract, isDeleting } = useContractManagement();
+  
+  // Auto-create contract if it doesn't exist
+  const { isCreating } = useAutoContractCreation(onboardingData.contractId, updateData);
 
   const {
     totalSteps,
@@ -83,14 +87,23 @@ const OnboardingFlow = () => {
         
         <div className="flex-1 p-6">
           <div className="max-w-4xl mx-auto">
-            <OnboardingStepRenderer
-              currentStep={currentStep}
-              data={onboardingData}
-              updateData={handleUpdateData}
-              onNext={nextStep}
-              onPrev={prevStep}
-              onComplete={handleComplete}
-            />
+            {isCreating ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-slate-600">Vytváram zmluvu...</p>
+                </div>
+              </div>
+            ) : (
+              <OnboardingStepRenderer
+                currentStep={currentStep}
+                data={onboardingData}
+                updateData={handleUpdateData}
+                onNext={nextStep}
+                onPrev={prevStep}
+                onComplete={handleComplete}
+              />
+            )}
           </div>
         </div>
       </div>

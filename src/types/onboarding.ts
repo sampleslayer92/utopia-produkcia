@@ -1,3 +1,4 @@
+
 export interface ContactInfo {
   salutation: 'Pan' | 'Pani' | '';
   firstName: string;
