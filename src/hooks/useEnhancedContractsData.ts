@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -96,9 +95,12 @@ const extractSingleRecord = (data: any) => {
   return Array.isArray(data) ? null : data;
 };
 
+// Define valid database status types
+type DatabaseStatus = 'draft' | 'submitted' | 'in_review' | 'approved' | 'rejected' | 'completed' | 'signed';
+
 // Map UI filter values to database enum values
-const mapStatusFilter = (uiStatus: string) => {
-  const statusMap: Record<string, string> = {
+const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
+  const statusMap: Record<string, DatabaseStatus> = {
     'draft': 'draft',
     'submitted': 'submitted',
     'opened': 'submitted', // Map 'opened' to existing status
@@ -106,7 +108,7 @@ const mapStatusFilter = (uiStatus: string) => {
     'approved': 'approved',
     'rejected': 'rejected'
   };
-  return statusMap[uiStatus] || uiStatus;
+  return statusMap[uiStatus] || null;
 };
 
 export const useEnhancedContractsData = (filters?: {
@@ -160,8 +162,7 @@ export const useEnhancedContractsData = (filters?: {
       // Apply filters with proper type checking and mapping
       if (filters?.status && filters.status !== 'all') {
         const mappedStatus = mapStatusFilter(filters.status);
-        const validStatuses = ['draft', 'submitted', 'in_review', 'approved', 'rejected', 'completed', 'signed'];
-        if (validStatuses.includes(mappedStatus)) {
+        if (mappedStatus) {
           query = query.eq('status', mappedStatus);
         }
       }
