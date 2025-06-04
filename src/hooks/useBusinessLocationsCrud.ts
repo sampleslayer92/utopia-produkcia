@@ -9,17 +9,36 @@ export const useBusinessLocationsCrud = (contractId: string) => {
 
   const addLocation = useMutation({
     mutationFn: async (locationData: any) => {
+      console.log('Adding location with data:', locationData);
+      
       const { data, error } = await supabase
         .from('business_locations')
         .insert([{ 
-          ...locationData, 
           contract_id: contractId,
-          location_id: `loc_${Date.now()}`
+          location_id: `loc_${Date.now()}`,
+          name: locationData.name,
+          address_street: locationData.addressStreet,
+          address_city: locationData.addressCity,
+          address_zip_code: locationData.addressZipCode,
+          iban: locationData.iban,
+          business_sector: locationData.businessSector,
+          contact_person_name: locationData.contactPersonName,
+          contact_person_phone: locationData.contactPersonPhone,
+          contact_person_email: locationData.contactPersonEmail,
+          has_pos: locationData.hasPos,
+          estimated_turnover: locationData.estimatedTurnover,
+          average_transaction: locationData.averageTransaction,
+          seasonality: locationData.seasonality,
+          seasonal_weeks: locationData.seasonalWeeks,
+          opening_hours: locationData.openingHours
         }])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding location:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -30,6 +49,7 @@ export const useBusinessLocationsCrud = (contractId: string) => {
       });
     },
     onError: (error) => {
+      console.error('Add location error:', error);
       toast({
         title: "Chyba",
         description: "Nepodarilo sa pridať prevádzku.",
@@ -40,14 +60,35 @@ export const useBusinessLocationsCrud = (contractId: string) => {
 
   const updateLocation = useMutation({
     mutationFn: async ({ locationId, updates }: { locationId: string; updates: any }) => {
+      console.log('Updating location:', locationId, updates);
+      
       const { data, error } = await supabase
         .from('business_locations')
-        .update(updates)
+        .update({
+          name: updates.name,
+          address_street: updates.addressStreet,
+          address_city: updates.addressCity,
+          address_zip_code: updates.addressZipCode,
+          iban: updates.iban,
+          business_sector: updates.businessSector,
+          contact_person_name: updates.contactPersonName,
+          contact_person_phone: updates.contactPersonPhone,
+          contact_person_email: updates.contactPersonEmail,
+          has_pos: updates.hasPos,
+          estimated_turnover: updates.estimatedTurnover,
+          average_transaction: updates.averageTransaction,
+          seasonality: updates.seasonality,
+          seasonal_weeks: updates.seasonalWeeks,
+          opening_hours: updates.openingHours
+        })
         .eq('id', locationId)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating location:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -58,6 +99,7 @@ export const useBusinessLocationsCrud = (contractId: string) => {
       });
     },
     onError: (error) => {
+      console.error('Update location error:', error);
       toast({
         title: "Chyba",
         description: "Nepodarilo sa aktualizovať prevádzku.",
@@ -68,12 +110,17 @@ export const useBusinessLocationsCrud = (contractId: string) => {
 
   const deleteLocation = useMutation({
     mutationFn: async (locationId: string) => {
+      console.log('Deleting location:', locationId);
+      
       const { error } = await supabase
         .from('business_locations')
         .delete()
         .eq('id', locationId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting location:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
@@ -83,6 +130,7 @@ export const useBusinessLocationsCrud = (contractId: string) => {
       });
     },
     onError: (error) => {
+      console.error('Delete location error:', error);
       toast({
         title: "Chyba",
         description: "Nepodarilo sa vymazať prevádzku.",

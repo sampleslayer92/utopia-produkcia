@@ -28,10 +28,16 @@ export const useContractItems = (contractId: string) => {
         .select()
         .single();
 
-      if (itemError) throw itemError;
+      if (itemError) {
+        console.error('Error inserting contract item:', itemError);
+        throw itemError;
+      }
+
+      console.log('Contract item inserted successfully:', contractItem);
 
       // Insert addons if any
       if (item.addons && item.addons.length > 0) {
+        console.log('Inserting addons:', item.addons);
         const { error: addonsError } = await supabase
           .from('contract_item_addons')
           .insert(
@@ -48,12 +54,16 @@ export const useContractItems = (contractId: string) => {
             }))
           );
 
-        if (addonsError) throw addonsError;
+        if (addonsError) {
+          console.error('Error inserting addons:', addonsError);
+          throw addonsError;
+        }
       }
 
       return contractItem;
     },
     onSuccess: () => {
+      console.log('Item added successfully, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
       toast({
         title: "Položka pridaná",
@@ -83,9 +93,13 @@ export const useContractItems = (contractId: string) => {
         })
         .eq('id', itemId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating contract item:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
+      console.log('Item updated successfully, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
       toast({
         title: "Položka aktualizovaná",
@@ -127,8 +141,11 @@ export const useContractItems = (contractId: string) => {
         console.error('Error deleting item:', itemError);
         throw itemError;
       }
+
+      console.log('Item deleted successfully');
     },
     onSuccess: () => {
+      console.log('Item deleted successfully, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
       toast({
         title: "Položka odstránená",

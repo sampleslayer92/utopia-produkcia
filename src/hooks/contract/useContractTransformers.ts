@@ -1,4 +1,3 @@
-
 import { OnboardingData } from '@/types/onboarding';
 
 export const transformContractData = (
@@ -29,7 +28,7 @@ export const transformContractData = (
 
     if (item.item_type === 'device') {
       return {
-        id: item.item_id,
+        id: item.id, // Use database ID instead of item_id
         type: 'device' as const,
         category: item.category,
         name: item.name,
@@ -38,11 +37,12 @@ export const transformContractData = (
         monthlyFee: Number(item.monthly_fee) || 0,
         companyCost: Number(item.company_cost) || 0,
         specifications: [],
-        addons: transformedAddons
+        addons: transformedAddons,
+        itemType: 'device' // Add for consistency
       };
     } else {
       return {
-        id: item.item_id,
+        id: item.id, // Use database ID instead of item_id
         type: 'service' as const,
         category: item.category,
         name: item.name,
@@ -51,7 +51,8 @@ export const transformContractData = (
         monthlyFee: Number(item.monthly_fee) || 0,
         companyCost: Number(item.company_cost) || 0,
         customValue: item.custom_value || undefined,
-        addons: transformedAddons
+        addons: transformedAddons,
+        itemType: 'service' // Add for consistency
       };
     }
   }) || [];
@@ -68,7 +69,8 @@ export const transformContractData = (
       monthlyFee: deviceSelection.pax_a920_pro_monthly_fee || 0,
       companyCost: 0,
       specifications: [],
-      addons: []
+      addons: [],
+      itemType: 'device'
     }] : []),
     ...(deviceSelection.pax_a80_count > 0 ? [{
       id: 'pax-a80-legacy',
@@ -80,7 +82,8 @@ export const transformContractData = (
       monthlyFee: deviceSelection.pax_a80_monthly_fee || 0,
       companyCost: 0,
       specifications: [],
-      addons: []
+      addons: [],
+      itemType: 'device'
     }] : []),
     ...(deviceSelection.tablet_10_count > 0 ? [{
       id: 'tablet-10-legacy',
@@ -92,7 +95,8 @@ export const transformContractData = (
       monthlyFee: deviceSelection.tablet_10_monthly_fee || 0,
       companyCost: 0,
       specifications: [],
-      addons: []
+      addons: [],
+      itemType: 'device'
     }] : []),
     ...(deviceSelection.tablet_15_count > 0 ? [{
       id: 'tablet-15-legacy',
@@ -104,7 +108,8 @@ export const transformContractData = (
       monthlyFee: deviceSelection.tablet_15_monthly_fee || 0,
       companyCost: 0,
       specifications: [],
-      addons: []
+      addons: [],
+      itemType: 'device'
     }] : []),
     ...(deviceSelection.tablet_pro_15_count > 0 ? [{
       id: 'tablet-pro-15-legacy',
@@ -116,7 +121,8 @@ export const transformContractData = (
       monthlyFee: deviceSelection.tablet_pro_15_monthly_fee || 0,
       companyCost: 0,
       specifications: [],
-      addons: []
+      addons: [],
+      itemType: 'device'
     }] : []),
   ] : [];
 
@@ -169,7 +175,7 @@ export const transformContractData = (
       contactAddress: {
         street: companyInfo.contact_address_street || '',
         city: companyInfo.contact_address_city || '',
-        zipCode: companyInfo.contact_address_zip_code || ''
+        zipCode: companyInfo.address_zip_code || ''
       },
       contactAddressSameAsMain: companyInfo.contact_address_same_as_main ?? true,
       contactPerson: {
@@ -216,6 +222,9 @@ export const transformContractData = (
       dynamicCards: finalDynamicCards,
       note: deviceSelection?.note || ''
     },
+    
+    // Add contractItems directly for easy access
+    contractItems: finalDynamicCards,
     
     fees: {
       regulatedCards: deviceSelection?.mif_regulated_cards || 0.90,

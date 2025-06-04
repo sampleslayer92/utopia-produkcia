@@ -29,8 +29,10 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
   
   const { addItem, updateItem, deleteItem, isAdding, isDeleting } = useContractItems(contractId!);
   
-  // Use contractItems instead of deviceSelection.dynamicCards
+  // Use contractItems directly from transformed data
   const devices = onboardingData.contractItems || [];
+  
+  console.log('DevicesServicesSection - devices:', devices);
 
   const getDeviceIcon = (category: string) => {
     return <Monitor className="h-5 w-5 text-blue-600" />;
@@ -53,17 +55,20 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
   };
 
   const handleAddItem = (item: DynamicCard) => {
+    console.log('Adding item to contract:', item);
     addItem(item);
     setIsAddModalOpen(false);
   };
 
   const handleDeleteItem = (item: any) => {
+    console.log('Preparing to delete item:', item);
     setItemToDelete(item);
     setDeleteModalOpen(true);
   };
 
   const confirmDelete = async () => {
     if (itemToDelete) {
+      console.log('Confirming delete for item:', itemToDelete.id);
       try {
         await deleteItem.mutateAsync(itemToDelete.id);
         setDeleteModalOpen(false);
@@ -75,6 +80,7 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
   };
 
   const handleQuantityChange = (itemId: string, newCount: number) => {
+    console.log('Updating quantity for item:', itemId, 'to:', newCount);
     const item = devices.find((d: any) => d.id === itemId);
     if (item) {
       updateItem({
@@ -123,7 +129,7 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
                           <h4 className="font-semibold text-slate-900">{device.name}</h4>
                           <p className="text-sm text-slate-600">{device.description || 'Profesionálne zariadenie'}</p>
                           <Badge variant="secondary" className="mt-1">
-                            {device.itemType === 'device' ? 'Zariadenie' : 'Služba'}
+                            {device.itemType === 'device' || device.type === 'device' ? 'Zariadenie' : 'Služba'}
                           </Badge>
                         </div>
                       </div>
