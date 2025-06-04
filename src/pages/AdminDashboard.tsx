@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   const { data: stats, isLoading: statsLoading } = useContractsStats();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex">
       <AdminSidebar />
       
       <div className="flex-1 flex flex-col">

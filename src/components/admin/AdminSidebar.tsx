@@ -54,11 +54,13 @@ const AdminSidebar = () => {
       {/* Logo/Brand */}
       <div className="p-6 border-b border-slate-200">
         <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-600 to-green-600 flex items-center justify-center">
-            <CreditCard className="h-6 w-6 text-white" />
-          </div>
+          <img 
+            src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
+            alt="Logo" 
+            className="h-10 w-auto"
+          />
           <div>
-            <h2 className="text-lg font-bold text-slate-900">ISO Admin</h2>
+            <h2 className="text-lg font-bold text-slate-900">Admin</h2>
             <p className="text-xs text-slate-600">Control Panel</p>
           </div>
         </div>
@@ -73,7 +75,7 @@ const AdminSidebar = () => {
             onClick={() => navigate(item.path)}
             className={`w-full justify-start ${
               item.active 
-                ? "bg-emerald-600 hover:bg-emerald-700 text-white" 
+                ? "bg-blue-600 hover:bg-blue-700 text-white" 
                 : "text-slate-700 hover:bg-slate-100"
             }`}
             disabled={!item.active && item.path !== "/admin"}
@@ -86,9 +88,9 @@ const AdminSidebar = () => {
 
       {/* Quick Stats */}
       <div className="p-4 mt-8">
-        <Card className="p-4 bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
+        <Card className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
           <div className="flex items-center space-x-3">
-            <Building className="h-8 w-8 text-emerald-600" />
+            <Building className="h-8 w-8 text-blue-600" />
             <div>
               <h3 className="font-medium text-slate-900">Rýchly prehľad</h3>
               <p className="text-sm text-slate-600">Systém funguje správne</p>

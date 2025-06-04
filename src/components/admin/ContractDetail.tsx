@@ -22,7 +22,7 @@ const ContractDetail = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="flex items-center space-x-2">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600"></div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
           <span>Načítavam zmluvu...</span>
         </div>
       </div>

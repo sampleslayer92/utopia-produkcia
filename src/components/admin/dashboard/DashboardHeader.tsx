@@ -16,13 +16,13 @@ const DashboardHeader = () => {
             <p className="text-sm text-slate-600">Prehľad systému a správa zmlúv</p>
           </div>
           <div className="flex items-center space-x-3">
-            <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
+            <Badge className="bg-blue-100 text-blue-700 border-blue-200">
               <Activity className="h-3 w-3 mr-1" />
               Online
             </Badge>
             <Button 
               onClick={() => navigate('/onboarding')}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              className="bg-blue-600 hover:bg-blue-700"
             >
               <Plus className="h-4 w-4 mr-2" />
               Nová zmluva
