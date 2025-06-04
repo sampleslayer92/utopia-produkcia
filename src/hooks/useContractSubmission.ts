@@ -59,7 +59,7 @@ export const useContractSubmission = () => {
         }
 
         console.log('Contract updated:', contract);
-        contractNumber = contract.contract_number;
+        contractNumber = contract.contract_number.toString();
       } else {
         // Fallback: Create new contract if somehow contractId is missing
         console.log('Creating new contract as fallback...');
@@ -81,7 +81,7 @@ export const useContractSubmission = () => {
 
         console.log('Fallback contract created:', contract);
         contractId = contract.id;
-        contractNumber = contract.contract_number;
+        contractNumber = contract.contract_number.toString();
       }
 
       // Clear existing data for this contract before inserting new data
