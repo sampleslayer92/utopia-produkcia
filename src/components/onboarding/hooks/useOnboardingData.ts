@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
 
@@ -10,7 +9,8 @@ const initialData: OnboardingData = {
     email: '',
     phone: '',
     phonePrefix: '+421',
-    salesNote: ''
+    salesNote: '',
+    userRole: ''
   },
   companyInfo: {
     ico: '',
@@ -97,6 +97,11 @@ export const useOnboardingData = () => {
             companyCost: card.companyCost || 0,
             addons: card.addons || []
           }));
+        }
+
+        // Ensure userRole is present in contactInfo
+        if (!parsedData.contactInfo.userRole) {
+          parsedData.contactInfo.userRole = '';
         }
         
         return parsedData;

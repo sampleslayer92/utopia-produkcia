@@ -6,6 +6,7 @@ export interface ContactInfo {
   phone: string;
   phonePrefix: string;
   salesNote?: string;
+  userRole?: 'Majiteľ' | 'Konateľ' | 'Prevádzkar' | '';
 }
 
 export interface CompanyInfo {

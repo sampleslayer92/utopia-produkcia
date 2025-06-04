@@ -27,9 +27,19 @@ const OnboardingFlow = () => {
     updateData({ ...data, currentStep });
   };
 
+  const handleContractDeleted = () => {
+    // Reset the onboarding state
+    clearData();
+    setCurrentStep(0);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <OnboardingHeader contractNumber={onboardingData.contractNumber} />
+      <OnboardingHeader 
+        contractNumber={onboardingData.contractNumber} 
+        contractId={onboardingData.contractId}
+        onContractDeleted={handleContractDeleted}
+      />
       
       <div className="flex">
         <OnboardingSidebar

@@ -1,13 +1,14 @@
 
 import { OnboardingData } from "@/types/onboarding";
 import { useState, useEffect } from "react";
-import { Mail, Phone, User } from "lucide-react";
+import { Mail, Phone, User, UserCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingTextarea from "./ui/OnboardingTextarea";
 import OnboardingSection from "./ui/OnboardingSection";
 import { useContractCreation } from "@/hooks/useContractCreation";
+import { v4 as uuidv4 } from "uuid";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -18,6 +19,7 @@ interface ContactInfoStepProps {
 
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
+  const [hasAutoFilled, setHasAutoFilled] = useState(false);
   const { createContract, isCreating } = useContractCreation();
 
   const updateContactInfo = (field: string, value: string | boolean) => {
@@ -27,6 +29,96 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
         [field]: value
       }
     });
+  };
+
+  // Auto-fill based on role selection
+  const autoFillBasedOnRole = (role: string) => {
+    if (role === 'Majiteľ' || role === 'Konateľ') {
+      const { contactInfo } = data;
+      
+      // Only auto-fill if we have the required basic information
+      if (contactInfo.firstName && contactInfo.lastName && contactInfo.email && contactInfo.phone) {
+        const personId = uuidv4();
+        
+        // Create authorized person
+        const authorizedPerson = {
+          id: personId,
+          firstName: contactInfo.firstName,
+          lastName: contactInfo.lastName,
+          email: contactInfo.email,
+          phone: contactInfo.phone,
+          maidenName: '',
+          birthDate: '',
+          birthPlace: '',
+          birthNumber: '',
+          permanentAddress: '',
+          position: role,
+          documentType: 'OP' as const,
+          documentNumber: '',
+          documentValidity: '',
+          documentIssuer: '',
+          documentCountry: 'Slovensko',
+          citizenship: 'Slovensko',
+          isPoliticallyExposed: false,
+          isUSCitizen: false
+        };
+
+        // Create actual owner (for Majiteľ)
+        const actualOwner = role === 'Majiteľ' ? {
+          id: uuidv4(),
+          firstName: contactInfo.firstName,
+          lastName: contactInfo.lastName,
+          maidenName: '',
+          birthDate: '',
+          birthPlace: '',
+          birthNumber: '',
+          citizenship: 'Slovensko',
+          permanentAddress: '',
+          isPoliticallyExposed: false
+        } : null;
+
+        // Check if person is already in the lists to avoid duplicates
+        const existingAuthorized = data.authorizedPersons.find(p => 
+          p.firstName === contactInfo.firstName && 
+          p.lastName === contactInfo.lastName && 
+          p.email === contactInfo.email
+        );
+
+        const existingOwner = data.actualOwners.find(p => 
+          p.firstName === contactInfo.firstName && 
+          p.lastName === contactInfo.lastName
+        );
+
+        const updates: Partial<OnboardingData> = {};
+
+        if (!existingAuthorized) {
+          updates.authorizedPersons = [...data.authorizedPersons, authorizedPerson];
+        }
+
+        if (role === 'Majiteľ' && actualOwner && !existingOwner) {
+          updates.actualOwners = [...data.actualOwners, actualOwner];
+        }
+
+        // Set signing person
+        updates.consents = {
+          ...data.consents,
+          signingPersonId: personId
+        };
+
+        if (Object.keys(updates).length > 0) {
+          updateData(updates);
+          setHasAutoFilled(true);
+        }
+      }
+    } else {
+      setHasAutoFilled(false);
+    }
+  };
+
+  // Handle role change
+  const handleRoleChange = (role: string) => {
+    updateContactInfo('userRole', role);
+    autoFillBasedOnRole(role);
   };
 
   // Check if basic contact info is complete for contract creation
@@ -48,16 +140,22 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
         if (result.success) {
           updateData({
             contractId: result.contractId,
-            contractNumber: result.contractNumber?.toString() // Convert to string
+            contractNumber: result.contractNumber?.toString()
           });
         }
       }
     };
 
-    // Debounce the contract creation
     const timeoutId = setTimeout(autoCreateContract, 1000);
     return () => clearTimeout(timeoutId);
   }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contractId, isCreating]);
+
+  // Auto-fill when role and basic info are complete
+  useEffect(() => {
+    if (data.contactInfo.userRole && isBasicInfoComplete()) {
+      autoFillBasedOnRole(data.contactInfo.userRole);
+    }
+  }, [data.contactInfo.userRole, data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone]);
 
   // Track completed fields for visual feedback
   useEffect(() => {
@@ -67,6 +165,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     if (data.contactInfo.lastName) newCompleted.add('lastName');
     if (data.contactInfo.email && isEmailValid(data.contactInfo.email)) newCompleted.add('email');
     if (data.contactInfo.phone) newCompleted.add('phone');
+    if (data.contactInfo.userRole) newCompleted.add('userRole');
     setCompletedFields(newCompleted);
   }, [data.contactInfo]);
 
@@ -83,6 +182,12 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const salutationOptions = [
     { value: 'Pan', label: 'Pan' },
     { value: 'Pani', label: 'Pani' }
+  ];
+
+  const userRoleOptions = [
+    { value: 'Majiteľ', label: 'Majiteľ' },
+    { value: 'Konateľ', label: 'Konateľ' },
+    { value: 'Prevádzkar', label: 'Prevádzkar' }
   ];
 
   const formatPhoneNumber = (value: string, prefix: string) => {
@@ -118,7 +223,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
               </div>
               
               <p className="text-sm text-blue-800">
-                Zadajte svoje základné kontaktné informácie pre registráciu obchodného účtu.
+                Zadajte svoje základné kontaktné informácie a vašu rolu v spoločnosti pre registráciu obchodného účtu.
               </p>
               
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
@@ -130,6 +235,16 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                   <li>Po vyplnení základných údajov sa automaticky vytvorí zmluva</li>
                 </ul>
               </div>
+
+              {hasAutoFilled && (data.contactInfo.userRole === 'Majiteľ' || data.contactInfo.userRole === 'Konateľ') && (
+                <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <UserCheck className="h-4 w-4" />
+                    <p className="font-medium">Automatické predvyplnenie</p>
+                  </div>
+                  <p>Na základe vašej roly ({data.contactInfo.userRole}) boli vaše údaje automaticky predvyplnené v sekciách "Oprávnené osoby" a {data.contactInfo.userRole === 'Majiteľ' ? '"Skutoční majitelia"' : '"Podpis zmluvy"'}.</p>
+                </div>
+              )}
 
               {isCreating && (
                 <div className="bg-yellow-100/50 border border-yellow-200 rounded-lg p-4 text-xs text-yellow-800">
@@ -178,6 +293,17 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                   />
                 </div>
               </div>
+
+              {/* Role Selection */}
+              <OnboardingSelect
+                label="Vaša rola v spoločnosti *"
+                placeholder="Vyberte vašu rolu"
+                value={data.contactInfo.userRole || ''}
+                onValueChange={handleRoleChange}
+                options={userRoleOptions}
+                isCompleted={completedFields.has('userRole')}
+                helperText="Podľa vašej roly sa automaticky predvyplnia niektoré sekcie onboardingu"
+              />
 
               {/* Email Section */}
               <OnboardingInput

@@ -367,6 +367,7 @@ export type Database = {
           phone_prefix: string
           sales_note: string | null
           salutation: Database["public"]["Enums"]["salutation"] | null
+          user_role: string | null
         }
         Insert: {
           contract_id?: string | null
@@ -379,6 +380,7 @@ export type Database = {
           phone_prefix?: string
           sales_note?: string | null
           salutation?: Database["public"]["Enums"]["salutation"] | null
+          user_role?: string | null
         }
         Update: {
           contract_id?: string | null
@@ -391,6 +393,7 @@ export type Database = {
           phone_prefix?: string
           sales_note?: string | null
           salutation?: Database["public"]["Enums"]["salutation"] | null
+          user_role?: string | null
         }
         Relationships: [
           {
@@ -573,6 +576,9 @@ export type Database = {
           created_at: string
           id: string
           notes: string | null
+          signature_ip: string | null
+          signed_at: string | null
+          signed_by: string | null
           status: Database["public"]["Enums"]["contract_status"]
           submitted_at: string | null
           updated_at: string
@@ -582,6 +588,9 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          signature_ip?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
           updated_at?: string
@@ -591,6 +600,9 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          signature_ip?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
           updated_at?: string
@@ -715,6 +727,88 @@ export type Database = {
           },
         ]
       }
+      onboarding_audit: {
+        Row: {
+          contract_id: string | null
+          created_at: string | null
+          data_after: Json | null
+          data_before: Json | null
+          id: string
+          step_name: string
+          user_action: string
+        }
+        Insert: {
+          contract_id?: string | null
+          created_at?: string | null
+          data_after?: Json | null
+          data_before?: Json | null
+          id?: string
+          step_name: string
+          user_action: string
+        }
+        Update: {
+          contract_id?: string | null
+          created_at?: string | null
+          data_after?: Json | null
+          data_before?: Json | null
+          id?: string
+          step_name?: string
+          user_action?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_audit_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          auth_user_id: string | null
+          contract_id: string | null
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean | null
+          role: string
+          updated_at: string | null
+        }
+        Insert: {
+          auth_user_id?: string | null
+          contract_id?: string | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          is_active?: boolean | null
+          role?: string
+          updated_at?: string | null
+        }
+        Update: {
+          auth_user_id?: string | null
+          contract_id?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean | null
+          role?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -730,6 +824,7 @@ export type Database = {
         | "approved"
         | "rejected"
         | "completed"
+        | "signed"
       document_type: "OP" | "Pas"
       registry_type: "public" | "business" | "other"
       salutation: "Pan" | "Pani"
@@ -856,6 +951,7 @@ export const Constants = {
         "approved",
         "rejected",
         "completed",
+        "signed",
       ],
       document_type: ["OP", "Pas"],
       registry_type: ["public", "business", "other"],
