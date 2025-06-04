@@ -78,7 +78,7 @@ export const useContractPersistence = () => {
             transaction_margin: onboardingData.fees.calculatorResults.transactionMargin,
             service_margin: onboardingData.fees.calculatorResults.serviceMargin,
             total_monthly_profit: onboardingData.fees.calculatorResults.totalMonthlyProfit,
-            calculation_data: onboardingData.fees.calculatorResults
+            calculation_data: JSON.parse(JSON.stringify(onboardingData.fees.calculatorResults))
           });
 
         if (calcError) throw calcError;

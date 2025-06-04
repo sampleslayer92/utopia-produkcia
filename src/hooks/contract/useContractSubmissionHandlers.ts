@@ -1,6 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-import { OnboardingData } from '@/types/onboarding';
-import { safeString, safeEmail, validateRegistryType } from './useContractSubmissionValidators';
 
 export const insertContactInfo = async (contractId: string, contactInfo: any) => {
   const { error } = await supabase
@@ -8,50 +6,43 @@ export const insertContactInfo = async (contractId: string, contactInfo: any) =>
     .insert({
       contract_id: contractId,
       salutation: contactInfo.salutation || null,
-      first_name: safeString(contactInfo.firstName, 'Test'),
-      last_name: safeString(contactInfo.lastName, 'Test'),
-      email: safeEmail(contactInfo.email),
-      phone: safeString(contactInfo.phone, '000000000'),
+      first_name: contactInfo.firstName,
+      last_name: contactInfo.lastName,
+      email: contactInfo.email,
+      phone: contactInfo.phone,
       phone_prefix: contactInfo.phonePrefix || '+421',
       sales_note: contactInfo.salesNote || null
     });
-  
+
   if (error) throw error;
 };
 
 export const insertCompanyInfo = async (contractId: string, companyInfo: any) => {
-  const validRegistryType = validateRegistryType(companyInfo.registryType);
-  
-  // Combine first and last name for legacy field
-  const contactPersonName = `${safeString(companyInfo.contactPerson.firstName, 'Test')} ${safeString(companyInfo.contactPerson.lastName, 'Contact')}`.trim();
-
   const { error } = await supabase
     .from('company_info')
     .insert({
       contract_id: contractId,
-      ico: safeString(companyInfo.ico, '00000000'),
-      dic: safeString(companyInfo.dic, '00000000'),
-      company_name: safeString(companyInfo.companyName, 'Test Company'),
-      registry_type: validRegistryType,
-      is_vat_payer: companyInfo.isVatPayer || false,
+      ico: companyInfo.ico,
+      dic: companyInfo.dic,
+      company_name: companyInfo.companyName,
+      registry_type: companyInfo.registryType,
+      is_vat_payer: companyInfo.isVatPayer,
       vat_number: companyInfo.vatNumber || null,
       court: companyInfo.court || null,
       section: companyInfo.section || null,
       insert_number: companyInfo.insertNumber || null,
-      address_street: safeString(companyInfo.address.street, 'Test Street 1'),
-      address_city: safeString(companyInfo.address.city, 'Test City'),
-      address_zip_code: safeString(companyInfo.address.zipCode, '00000'),
+      address_street: companyInfo.address.street,
+      address_city: companyInfo.address.city,
+      address_zip_code: companyInfo.address.zipCode,
+      contact_address_same_as_main: companyInfo.contactAddressSameAsMain,
       contact_address_street: companyInfo.contactAddress?.street || null,
       contact_address_city: companyInfo.contactAddress?.city || null,
       contact_address_zip_code: companyInfo.contactAddress?.zipCode || null,
-      contact_address_same_as_main: companyInfo.contactAddressSameAsMain,
-      // Legacy field - combine first and last name
-      contact_person_name: contactPersonName,
-      // New separate fields
-      contact_person_first_name: safeString(companyInfo.contactPerson.firstName, 'Test'),
-      contact_person_last_name: safeString(companyInfo.contactPerson.lastName, 'Contact'),
-      contact_person_email: safeEmail(companyInfo.contactPerson.email),
-      contact_person_phone: safeString(companyInfo.contactPerson.phone, '000000000'),
+      contact_person_name: `${companyInfo.contactPerson.firstName} ${companyInfo.contactPerson.lastName}`,
+      contact_person_first_name: companyInfo.contactPerson.firstName,
+      contact_person_last_name: companyInfo.contactPerson.lastName,
+      contact_person_email: companyInfo.contactPerson.email,
+      contact_person_phone: companyInfo.contactPerson.phone,
       contact_person_is_technical: companyInfo.contactPerson.isTechnicalPerson
     });
 
@@ -59,30 +50,26 @@ export const insertCompanyInfo = async (contractId: string, companyInfo: any) =>
 };
 
 export const insertBusinessLocations = async (contractId: string, businessLocations: any[]) => {
-  if (!businessLocations || businessLocations.length === 0) return;
-
   for (const location of businessLocations) {
-    if (!location.name && !location.address.street) continue;
-    
     const { error } = await supabase
       .from('business_locations')
       .insert({
         contract_id: contractId,
         location_id: location.id,
-        name: safeString(location.name, 'Test Location'),
-        has_pos: location.hasPOS || false,
-        address_street: safeString(location.address.street, 'Test Street 1'),
-        address_city: safeString(location.address.city, 'Test City'),
-        address_zip_code: safeString(location.address.zipCode, '00000'),
-        iban: safeString(location.iban, 'SK0000000000000000000000'),
-        contact_person_name: safeString(location.contactPerson.name, 'Test Contact'),
-        contact_person_email: safeEmail(location.contactPerson.email),
-        contact_person_phone: safeString(location.contactPerson.phone, '000000000'),
-        business_sector: safeString(location.businessSector, 'Other'),
-        estimated_turnover: location.estimatedTurnover || 0,
-        average_transaction: location.averageTransaction || 0,
-        opening_hours: safeString(location.openingHours, '9:00-17:00'),
-        seasonality: location.seasonality || 'year-round',
+        name: location.name,
+        has_pos: location.hasPOS,
+        address_street: location.address.street,
+        address_city: location.address.city,
+        address_zip_code: location.address.zipCode,
+        iban: location.iban,
+        contact_person_name: location.contactPerson.name,
+        contact_person_email: location.contactPerson.email,
+        contact_person_phone: location.contactPerson.phone,
+        business_sector: location.businessSector,
+        estimated_turnover: location.estimatedTurnover,
+        average_transaction: location.averageTransaction,
+        opening_hours: location.openingHours,
+        seasonality: location.seasonality,
         seasonal_weeks: location.seasonalWeeks || null
       });
 
@@ -150,7 +137,7 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
         transaction_margin: fees.calculatorResults.transactionMargin,
         service_margin: fees.calculatorResults.serviceMargin,
         total_monthly_profit: fees.calculatorResults.totalMonthlyProfit,
-        calculation_data: fees.calculatorResults
+        calculation_data: JSON.parse(JSON.stringify(fees.calculatorResults))
       });
 
     if (calcError) throw calcError;
@@ -195,34 +182,30 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
 };
 
 export const insertAuthorizedPersons = async (contractId: string, authorizedPersons: any[]) => {
-  if (!authorizedPersons || authorizedPersons.length === 0) return;
-
   for (const person of authorizedPersons) {
-    if (!person.firstName && !person.lastName) continue;
-    
     const { error } = await supabase
       .from('authorized_persons')
       .insert({
         contract_id: contractId,
         person_id: person.id,
-        first_name: safeString(person.firstName, 'Test'),
-        last_name: safeString(person.lastName, 'Test'),
-        email: safeEmail(person.email),
-        phone: safeString(person.phone, '000000000'),
+        first_name: person.firstName,
+        last_name: person.lastName,
+        email: person.email,
+        phone: person.phone,
         maiden_name: person.maidenName || null,
-        birth_date: person.birthDate || '1990-01-01',
-        birth_place: safeString(person.birthPlace, 'Test City'),
-        birth_number: safeString(person.birthNumber, '000000/0000'),
-        permanent_address: safeString(person.permanentAddress, 'Test Address'),
-        position: safeString(person.position, 'Test Position'),
-        document_type: person.documentType || 'OP',
-        document_number: safeString(person.documentNumber, '000000000'),
-        document_validity: person.documentValidity || '2030-12-31',
-        document_issuer: safeString(person.documentIssuer, 'Test Issuer'),
-        document_country: safeString(person.documentCountry, 'SK'),
-        citizenship: safeString(person.citizenship, 'SK'),
-        is_politically_exposed: person.isPoliticallyExposed || false,
-        is_us_citizen: person.isUSCitizen || false
+        birth_date: person.birthDate,
+        birth_place: person.birthPlace,
+        birth_number: person.birthNumber,
+        permanent_address: person.permanentAddress,
+        position: person.position,
+        document_type: person.documentType,
+        document_number: person.documentNumber,
+        document_validity: person.documentValidity,
+        document_issuer: person.documentIssuer,
+        document_country: person.documentCountry,
+        citizenship: person.citizenship,
+        is_politically_exposed: person.isPoliticallyExposed,
+        is_us_citizen: person.isUSCitizen
       });
 
     if (error) throw error;
@@ -230,25 +213,21 @@ export const insertAuthorizedPersons = async (contractId: string, authorizedPers
 };
 
 export const insertActualOwners = async (contractId: string, actualOwners: any[]) => {
-  if (!actualOwners || actualOwners.length === 0) return;
-
   for (const owner of actualOwners) {
-    if (!owner.firstName && !owner.lastName) continue;
-    
     const { error } = await supabase
       .from('actual_owners')
       .insert({
         contract_id: contractId,
         owner_id: owner.id,
-        first_name: safeString(owner.firstName, 'Test'),
-        last_name: safeString(owner.lastName, 'Test'),
+        first_name: owner.firstName,
+        last_name: owner.lastName,
         maiden_name: owner.maidenName || null,
-        birth_date: owner.birthDate || '1990-01-01',
-        birth_place: safeString(owner.birthPlace, 'Test City'),
-        birth_number: safeString(owner.birthNumber, '000000/0000'),
-        citizenship: safeString(owner.citizenship, 'SK'),
-        permanent_address: safeString(owner.permanentAddress, 'Test Address'),
-        is_politically_exposed: owner.isPoliticallyExposed || false
+        birth_date: owner.birthDate,
+        birth_place: owner.birthPlace,
+        birth_number: owner.birthNumber,
+        citizenship: owner.citizenship,
+        permanent_address: owner.permanentAddress,
+        is_politically_exposed: owner.isPoliticallyExposed
       });
 
     if (error) throw error;
@@ -260,11 +239,11 @@ export const insertConsents = async (contractId: string, consents: any) => {
     .from('consents')
     .insert({
       contract_id: contractId,
-      gdpr_consent: consents?.gdpr || false,
-      terms_consent: consents?.terms || false,
-      electronic_communication_consent: consents?.electronicCommunication || false,
-      signature_date: consents?.signatureDate || null,
-      signing_person_id: consents?.signingPersonId || null
+      gdpr_consent: consents.gdpr,
+      terms_consent: consents.terms,
+      electronic_communication_consent: consents.electronicCommunication,
+      signature_date: consents.signatureDate || null,
+      signing_person_id: consents.signingPersonId || null
     });
 
   if (error) throw error;
