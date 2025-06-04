@@ -1,3 +1,4 @@
+
 import { OnboardingData } from '@/types/onboarding';
 
 export const transformContractData = (
@@ -222,9 +223,6 @@ export const transformContractData = (
       dynamicCards: finalDynamicCards,
       note: deviceSelection?.note || ''
     },
-    
-    // Add contractItems directly for easy access
-    contractItems: finalDynamicCards,
     
     fees: {
       regulatedCards: deviceSelection?.mif_regulated_cards || 0.90,
