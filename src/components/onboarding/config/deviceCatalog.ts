@@ -7,12 +7,12 @@ export const DEVICE_CATALOG = [
     category: 'terminals',
     monthlyFee: 25.00,
     companyCost: 15.00,
-    specifications: {
-      display: '5.5" HD dotykový displej',
-      connectivity: '4G, WiFi, Bluetooth',
-      payment: 'Kontaktné, bezkontaktné, QR kódy',
-      battery: '5000mAh, celý deň prevádzky'
-    }
+    specifications: [
+      '5.5" HD dotykový displej',
+      '4G, WiFi, Bluetooth',
+      'Kontaktné, bezkontaktné, QR kódy',
+      '5000mAh, celý deň prevádzky'
+    ]
   },
   {
     id: 'pax-a80',
@@ -21,12 +21,12 @@ export const DEVICE_CATALOG = [
     category: 'terminals',
     monthlyFee: 18.00,
     companyCost: 12.00,
-    specifications: {
-      display: '2.8" farebný displej',
-      connectivity: '4G, WiFi',
-      payment: 'Kontaktné, bezkontaktné',
-      battery: '2500mAh'
-    }
+    specifications: [
+      '2.8" farebný displej',
+      '4G, WiFi',
+      'Kontaktné, bezkontaktné',
+      '2500mAh'
+    ]
   },
   {
     id: 'tablet-10',
@@ -35,12 +35,12 @@ export const DEVICE_CATALOG = [
     category: 'tablets',
     monthlyFee: 20.00,
     companyCost: 14.00,
-    specifications: {
-      display: '10.1" HD IPS',
-      connectivity: 'WiFi, Bluetooth',
-      os: 'Android',
-      storage: '64GB'
-    }
+    specifications: [
+      '10.1" HD IPS',
+      'WiFi, Bluetooth',
+      'Android',
+      '64GB'
+    ]
   },
   {
     id: 'tablet-15',
@@ -49,12 +49,12 @@ export const DEVICE_CATALOG = [
     category: 'tablets',
     monthlyFee: 30.00,
     companyCost: 20.00,
-    specifications: {
-      display: '15.6" Full HD',
-      connectivity: 'WiFi, Bluetooth, Ethernet',
-      os: 'Android',
-      storage: '128GB'
-    }
+    specifications: [
+      '15.6" Full HD',
+      'WiFi, Bluetooth, Ethernet',
+      'Android',
+      '128GB'
+    ]
   },
   {
     id: 'tablet-pro-15',
@@ -63,11 +63,11 @@ export const DEVICE_CATALOG = [
     category: 'tablets',
     monthlyFee: 40.00,
     companyCost: 28.00,
-    specifications: {
-      display: '15.6" 4K dotykový',
-      connectivity: 'WiFi 6, Bluetooth 5.0, Ethernet',
-      os: 'Android 12',
-      storage: '256GB'
-    }
+    specifications: [
+      '15.6" 4K dotykový',
+      'WiFi 6, Bluetooth 5.0, Ethernet',
+      'Android 12',
+      '256GB'
+    ]
   }
 ];

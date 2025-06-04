@@ -1,11 +1,11 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Monitor, Wifi, ShoppingCart, Wrench } from "lucide-react";
 import DeviceCatalogCard from "@/components/onboarding/components/DeviceCatalogCard";
-import ServiceCatalogGroup from "@/components/onboarding/components/ServiceCatalogGroup";
+import MinimalServiceCatalogGroup from "@/components/onboarding/components/MinimalServiceCatalogGroup";
 import { DEVICE_CATALOG } from "@/components/onboarding/config/deviceCatalog";
 import { SERVICE_CATALOG } from "@/components/onboarding/config/serviceCatalog";
 import { DynamicCard } from "@/types/onboarding";
@@ -29,6 +29,7 @@ const AddDeviceServiceModal = ({ isOpen, onClose, onAddItem }: AddDeviceServiceM
       monthlyFee: device.monthlyFee,
       companyCost: device.companyCost || 0,
       count: 1,
+      specifications: device.specifications || [],
       addons: []
     };
     onAddItem(dynamicCard);
@@ -86,31 +87,27 @@ const AddDeviceServiceModal = ({ isOpen, onClose, onAddItem }: AddDeviceServiceM
                 <DeviceCatalogCard
                   key={device.id}
                   device={device}
-                  onSelect={() => handleAddDevice(device)}
-                  isSelected={false}
-                  showAddButton={true}
+                  onAdd={() => handleAddDevice(device)}
                 />
               ))}
             </div>
           </TabsContent>
 
           <TabsContent value="services" className="space-y-6">
-            {Object.entries(SERVICE_CATALOG).map(([category, services]) => {
-              const IconComponent = getTabIcon(category);
-              return (
-                <ServiceCatalogGroup
-                  key={category}
-                  title={category === 'software' ? 'Softvérové riešenia' : 
-                         category === 'ecommerce' ? 'E-commerce riešenia' : 
-                         'Technické služby'}
-                  icon={IconComponent}
+            {Object.entries(SERVICE_CATALOG).map(([category, services]) => (
+              <div key={category} className="space-y-3">
+                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                  {React.createElement(getTabIcon(category), { className: "h-5 w-5" })}
+                  {category === 'software' ? 'Softvérové riešenia' : 
+                   category === 'ecommerce' ? 'E-commerce riešenia' : 
+                   'Technické služby'}
+                </h3>
+                <MinimalServiceCatalogGroup
                   services={services}
-                  selectedServices={[]}
-                  onServiceToggle={(service) => handleAddService(service)}
-                  showAddButton={true}
+                  onAddService={(service) => handleAddService(service)}
                 />
-              );
-            })}
+              </div>
+            ))}
           </TabsContent>
         </Tabs>
 

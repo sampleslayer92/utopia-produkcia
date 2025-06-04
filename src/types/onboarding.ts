@@ -1,4 +1,3 @@
-
 export interface ContactInfo {
   salutation: 'Pan' | 'Pani' | '';
   firstName: string;
@@ -102,6 +101,8 @@ export interface ServiceCard {
   customValue?: string;
   addons: AddonCard[];
 }
+
+export type DynamicCard = DeviceCard | ServiceCard;
 
 export interface DeviceSelection {
   selectedSolutions: string[];

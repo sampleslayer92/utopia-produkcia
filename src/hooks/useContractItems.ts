@@ -41,7 +41,7 @@ export const useContractItems = (contractId: string) => {
               name: addon.name,
               description: addon.description || '',
               category: addon.category,
-              quantity: addon.quantity,
+              quantity: addon.customQuantity || 1,
               monthly_fee: addon.monthlyFee,
               company_cost: addon.companyCost || 0,
               is_per_device: addon.isPerDevice
