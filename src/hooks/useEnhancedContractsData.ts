@@ -96,6 +96,19 @@ const extractSingleRecord = (data: any) => {
   return Array.isArray(data) ? null : data;
 };
 
+// Map UI filter values to database enum values
+const mapStatusFilter = (uiStatus: string) => {
+  const statusMap: Record<string, string> = {
+    'draft': 'draft',
+    'submitted': 'submitted',
+    'opened': 'submitted', // Map 'opened' to existing status
+    'viewed': 'in_review', // Map 'viewed' to existing status
+    'approved': 'approved',
+    'rejected': 'rejected'
+  };
+  return statusMap[uiStatus] || uiStatus;
+};
+
 export const useEnhancedContractsData = (filters?: {
   status?: string;
   contractType?: string;
@@ -144,12 +157,12 @@ export const useEnhancedContractsData = (filters?: {
         `)
         .order('created_at', { ascending: false });
 
-      // Apply filters with proper type checking
+      // Apply filters with proper type checking and mapping
       if (filters?.status && filters.status !== 'all') {
-        // Only apply filter if status is valid
-        const validStatuses = ['draft', 'submitted', 'opened', 'viewed', 'approved', 'rejected'];
-        if (validStatuses.includes(filters.status)) {
-          query = query.eq('status', filters.status);
+        const mappedStatus = mapStatusFilter(filters.status);
+        const validStatuses = ['draft', 'submitted', 'in_review', 'approved', 'rejected', 'completed', 'signed'];
+        if (validStatuses.includes(mappedStatus)) {
+          query = query.eq('status', mappedStatus);
         }
       }
 
