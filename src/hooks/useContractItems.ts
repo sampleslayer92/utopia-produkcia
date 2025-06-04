@@ -54,7 +54,7 @@ export const useContractItems = (contractId: string) => {
       return contractItem;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
       toast({
         title: "Položka pridaná",
         description: "Zariadenie/služba bola úspešne pridaná do zmluvy.",
@@ -86,7 +86,7 @@ export const useContractItems = (contractId: string) => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
       toast({
         title: "Položka aktualizovaná",
         description: "Zmeny boli úspešne uložené.",
@@ -123,7 +123,7 @@ export const useContractItems = (contractId: string) => {
       if (itemError) throw itemError;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
       toast({
         title: "Položka odstránená",
         description: "Zariadenie/služba bola úspešne odstránená zo zmluvy.",
@@ -142,7 +142,7 @@ export const useContractItems = (contractId: string) => {
   return {
     addItem: addItemMutation.mutate,
     updateItem: updateItemMutation.mutate,
-    deleteItem: deleteItemMutation.mutate,
+    deleteItem: deleteItemMutation,
     isAdding: addItemMutation.isPending,
     isUpdating: updateItemMutation.isPending,
     isDeleting: deleteItemMutation.isPending
