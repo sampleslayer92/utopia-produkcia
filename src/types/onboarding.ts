@@ -71,6 +71,7 @@ export interface DeviceCard {
   image?: string;
   count: number;
   monthlyFee: number;
+  companyCost: number;
   simCards?: number;
   specifications: string[];
 }
@@ -83,6 +84,7 @@ export interface ServiceCard {
   description: string;
   count: number;
   monthlyFee: number;
+  companyCost: number;
   customValue?: string;
 }
 
@@ -96,14 +98,16 @@ export interface Fees {
   regulatedCards: number;
   unregulatedCards: number;
   calculatorResults?: {
-    totalTurnover: number;
-    monthlyDeviceCosts: number;
-    annualDeviceCosts: number;
+    monthlyTurnover: number;
+    totalCustomerPayments: number;
+    totalCompanyCosts: number;
     effectiveRegulated: number;
     effectiveUnregulated: number;
     regulatedFee: number;
     unregulatedFee: number;
-    totalAnnualCosts: number;
+    transactionMargin: number;
+    serviceMargin: number;
+    totalMonthlyProfit: number;
   };
 }
 

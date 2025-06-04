@@ -89,6 +89,15 @@ export const useOnboardingData = () => {
           parsedData.companyInfo.isVatPayer = false;
           parsedData.companyInfo.vatNumber = '';
         }
+        
+        // Migrate existing dynamic cards to include companyCost field
+        if (parsedData.deviceSelection.dynamicCards) {
+          parsedData.deviceSelection.dynamicCards = parsedData.deviceSelection.dynamicCards.map((card: any) => ({
+            ...card,
+            companyCost: card.companyCost || 0
+          }));
+        }
+        
         return parsedData;
       } catch (error) {
         console.error('Error parsing saved onboarding data:', error);

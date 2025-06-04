@@ -67,7 +67,7 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove }: DynamicDeviceCardProp
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor={`count-${device.id}`}>Počet ks</Label>
             <Input
@@ -88,6 +88,18 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove }: DynamicDeviceCardProp
               step="0.01"
               value={device.monthlyFee}
               onChange={(e) => updateField('monthlyFee', parseFloat(e.target.value) || 0)}
+              className="border-slate-300 focus:border-blue-500"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`company-cost-${device.id}`}>Náklad firmy (EUR)</Label>
+            <Input
+              id={`company-cost-${device.id}`}
+              type="number"
+              min="0"
+              step="0.01"
+              value={device.companyCost}
+              onChange={(e) => updateField('companyCost', parseFloat(e.target.value) || 0)}
               className="border-slate-300 focus:border-blue-500"
             />
           </div>

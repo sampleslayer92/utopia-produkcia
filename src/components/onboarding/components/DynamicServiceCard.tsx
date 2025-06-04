@@ -39,7 +39,7 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove }: DynamicServiceCardP
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor={`count-${service.id}`}>Počet ks</Label>
             <Input
@@ -60,6 +60,18 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove }: DynamicServiceCardP
               step="0.01"
               value={service.monthlyFee}
               onChange={(e) => updateField('monthlyFee', parseFloat(e.target.value) || 0)}
+              className="border-slate-300 focus:border-blue-500"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`company-cost-${service.id}`}>Náklad firmy (EUR)</Label>
+            <Input
+              id={`company-cost-${service.id}`}
+              type="number"
+              min="0"
+              step="0.01"
+              value={service.companyCost}
+              onChange={(e) => updateField('companyCost', parseFloat(e.target.value) || 0)}
               className="border-slate-300 focus:border-blue-500"
             />
           </div>

@@ -53,6 +53,7 @@ const ProductDetailModal = ({
           type: 'device' as const,
           count: 1,
           monthlyFee: product.rentalPrice || 0,
+          companyCost: 0,
           simCards: product.simCards || 0
         };
         console.log('Created device data:', deviceData);
@@ -66,6 +67,7 @@ const ProductDetailModal = ({
           description: product.description,
           count: 1,
           monthlyFee: 0,
+          companyCost: 0,
           customValue: product.name === 'Iný' ? '' : undefined
         };
         console.log('Created service data:', serviceData);
@@ -220,6 +222,26 @@ const ProductDetailModal = ({
             />
           </div>
 
+          {/* Company Cost - NEW FIELD */}
+          <div className="space-y-2">
+            <Label htmlFor="company-cost" className="text-sm font-medium">
+              Mesačný náklad pre firmu (bez DPH)
+            </Label>
+            <Input
+              id="company-cost"
+              type="number"
+              min="0"
+              step="0.01"
+              value={formData.companyCost}
+              onChange={(e) => updateField('companyCost', parseFloat(e.target.value) || 0)}
+              className="text-sm"
+              placeholder="0.00"
+            />
+            <p className="text-xs text-slate-500">
+              Toto je reálny náklad vašej firmy na poskytovanie tejto služby alebo zariadenia.
+            </p>
+          </div>
+
           {/* Custom value for services */}
           {productType === 'service' && formData.name === 'Iný' && (
             <div className="space-y-2">
@@ -255,18 +277,24 @@ const ProductDetailModal = ({
           {/* Cost Summary */}
           <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-4 border border-blue-200">
             <div className="flex justify-between items-center text-sm mb-2">
-              <span className="text-slate-700 font-medium">Subtotal:</span>
+              <span className="text-slate-700 font-medium">Subtotal zákazník:</span>
               <span className="font-semibold text-slate-900">
                 {(formData.count * formData.monthlyFee).toFixed(2)} €
                 {(productType === 'service' || pricingMode === 'rental') && '/mes'}
               </span>
             </div>
-            {(productType === 'service' || pricingMode === 'rental') && (
-              <div className="flex justify-between items-center text-xs text-slate-600">
-                <span>Ročne:</span>
-                <span>{(formData.count * formData.monthlyFee * 12).toFixed(2)} €</span>
-              </div>
-            )}
+            <div className="flex justify-between items-center text-sm mb-2">
+              <span className="text-slate-700 font-medium">Náklad firmy:</span>
+              <span className="font-semibold text-red-600">
+                {(formData.count * formData.companyCost).toFixed(2)} €/mes
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-sm border-t pt-2">
+              <span className="text-slate-700 font-medium">Marža:</span>
+              <span className="font-bold text-green-600">
+                {(formData.count * (formData.monthlyFee - formData.companyCost)).toFixed(2)} €/mes
+              </span>
+            </div>
           </div>
         </div>
 
