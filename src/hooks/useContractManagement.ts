@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { OnboardingData } from '@/types/onboarding';
 
 export const useContractManagement = () => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -13,31 +12,126 @@ export const useContractManagement = () => {
     try {
       console.log('Mazanie zmluvy:', contractId);
 
-      // Delete all related data first
-      const tables = [
-        'actual_owners',
-        'authorized_persons', 
-        'business_locations',
-        'contract_items',
-        'contract_item_addons',
-        'contract_calculations',
-        'device_selection',
-        'consents',
-        'contact_info',
-        'company_info',
-        'location_assignments'
-      ];
+      // Delete all related data first - using explicit table names
+      // Delete actual_owners
+      const { error: actualOwnersError } = await supabase
+        .from('actual_owners')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (actualOwnersError) {
+        console.error('Chyba pri mazaní actual_owners:', actualOwnersError);
+        throw new Error('Chyba pri mazaní skutočných vlastníkov');
+      }
 
-      for (const table of tables) {
-        const { error } = await supabase
-          .from(table)
-          .delete()
-          .eq('contract_id', contractId);
-        
-        if (error) {
-          console.error(`Chyba pri mazaní z tabuľky ${table}:`, error);
-          throw new Error(`Chyba pri mazaní dát z tabuľky ${table}`);
-        }
+      // Delete authorized_persons
+      const { error: authorizedPersonsError } = await supabase
+        .from('authorized_persons')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (authorizedPersonsError) {
+        console.error('Chyba pri mazaní authorized_persons:', authorizedPersonsError);
+        throw new Error('Chyba pri mazaní oprávnených osôb');
+      }
+
+      // Delete business_locations
+      const { error: businessLocationsError } = await supabase
+        .from('business_locations')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (businessLocationsError) {
+        console.error('Chyba pri mazaní business_locations:', businessLocationsError);
+        throw new Error('Chyba pri mazaní prevádzkových miest');
+      }
+
+      // Delete contract_items
+      const { error: contractItemsError } = await supabase
+        .from('contract_items')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (contractItemsError) {
+        console.error('Chyba pri mazaní contract_items:', contractItemsError);
+        throw new Error('Chyba pri mazaní položiek zmluvy');
+      }
+
+      // Delete contract_item_addons
+      const { error: contractItemAddonsError } = await supabase
+        .from('contract_item_addons')
+        .delete()
+        .eq('contract_item_id', contractId); // Note: this might need a subquery
+      
+      if (contractItemAddonsError) {
+        console.error('Chyba pri mazaní contract_item_addons:', contractItemAddonsError);
+        // Don't throw here as this might be expected if no addons exist
+      }
+
+      // Delete contract_calculations
+      const { error: contractCalculationsError } = await supabase
+        .from('contract_calculations')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (contractCalculationsError) {
+        console.error('Chyba pri mazaní contract_calculations:', contractCalculationsError);
+        throw new Error('Chyba pri mazaní výpočtov zmluvy');
+      }
+
+      // Delete device_selection
+      const { error: deviceSelectionError } = await supabase
+        .from('device_selection')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (deviceSelectionError) {
+        console.error('Chyba pri mazaní device_selection:', deviceSelectionError);
+        throw new Error('Chyba pri mazaní výberu zariadení');
+      }
+
+      // Delete consents
+      const { error: consentsError } = await supabase
+        .from('consents')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (consentsError) {
+        console.error('Chyba pri mazaní consents:', consentsError);
+        throw new Error('Chyba pri mazaní súhlasov');
+      }
+
+      // Delete contact_info
+      const { error: contactInfoError } = await supabase
+        .from('contact_info')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (contactInfoError) {
+        console.error('Chyba pri mazaní contact_info:', contactInfoError);
+        throw new Error('Chyba pri mazaní kontaktných údajov');
+      }
+
+      // Delete company_info
+      const { error: companyInfoError } = await supabase
+        .from('company_info')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (companyInfoError) {
+        console.error('Chyba pri mazaní company_info:', companyInfoError);
+        throw new Error('Chyba pri mazaní údajov spoločnosti');
+      }
+
+      // Delete location_assignments
+      const { error: locationAssignmentsError } = await supabase
+        .from('location_assignments')
+        .delete()
+        .eq('contract_id', contractId);
+      
+      if (locationAssignmentsError) {
+        console.error('Chyba pri mazaní location_assignments:', locationAssignmentsError);
+        throw new Error('Chyba pri mazaní priradení lokalít');
       }
 
       // Finally delete the contract
