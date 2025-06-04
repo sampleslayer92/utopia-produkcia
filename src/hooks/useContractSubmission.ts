@@ -35,38 +35,43 @@ export const useContractSubmission = () => {
         throw new Error('Názov spoločnosti je povinný');
       }
 
+      if (!onboardingData.contractId) {
+        throw new Error('Zmluva nebola vytvorená. Prosím obnovte stránku a skúste znova.');
+      }
+
       // Additional validation for enum fields
       if (onboardingData.companyInfo.registryType === '') {
         onboardingData.companyInfo.registryType = 'other';
       }
       
-      // 1. Create main contract
-      const { data: contract, error: contractError } = await supabase
-        .from('contracts')
-        .insert({
-          status: 'submitted',
-          submitted_at: new Date().toISOString(),
-          notes: 'Contract submitted via onboarding portal'
-        })
-        .select('id, contract_number')
-        .single();
+      // Use existing contract ID
+      const contractId = onboardingData.contractId;
+      console.log('Using existing contract:', contractId);
 
-      if (contractError) {
-        console.error('Contract creation error:', contractError);
-        throw new Error(`Chyba pri vytváraní zmluvy: ${contractError.message}`);
+      // Update contract status to submitted
+      const { error: statusError } = await supabase
+        .from('contracts')
+        .update({ 
+          status: 'submitted',
+          submitted_at: new Date().toISOString()
+        })
+        .eq('id', contractId);
+
+      if (statusError) {
+        console.error('Contract status update error:', statusError);
+        throw new Error(`Chyba pri aktualizácii stavu zmluvy: ${statusError.message}`);
       }
 
-      console.log('Contract created:', contract);
-      const contractId = contract.id;
+      // Get updated contract info
+      const { data: contract, error: contractError } = await supabase
+        .from('contracts')
+        .select('id, contract_number')
+        .eq('id', contractId)
+        .single();
 
-      // Update onboarding data with contract info
-      if (typeof Storage !== 'undefined') {
-        const updatedData = {
-          ...onboardingData,
-          contractId: contractId,
-          contractNumber: contract.contract_number.toString()
-        };
-        localStorage.setItem('onboarding_data', JSON.stringify(updatedData));
+      if (contractError || !contract) {
+        console.error('Contract fetch error:', contractError);
+        throw new Error(`Chyba pri načítaní zmluvy: ${contractError?.message || 'Zmluva nenájdená'}`);
       }
 
       // Insert all sections with enhanced error handling
@@ -75,7 +80,7 @@ export const useContractSubmission = () => {
         console.log('Contact info inserted successfully');
       } catch (error) {
         console.error('Contact info insertion error:', error);
-        throw error;
+        throw new Error(`Chyba pri ukladaní kontaktných údajov: ${error instanceof Error ? error.message : 'Neznáma chyba'}`);
       }
 
       try {
@@ -83,7 +88,7 @@ export const useContractSubmission = () => {
         console.log('Company info inserted successfully');
       } catch (error) {
         console.error('Company info insertion error:', error);
-        throw error;
+        throw new Error(`Chyba pri ukladaní údajov o spoločnosti: ${error instanceof Error ? error.message : 'Neznáma chyba'}`);
       }
 
       try {
@@ -91,7 +96,7 @@ export const useContractSubmission = () => {
         console.log('Business locations inserted successfully');
       } catch (error) {
         console.error('Business locations insertion error:', error);
-        throw error;
+        throw new Error(`Chyba pri ukladaní prevádzok: ${error instanceof Error ? error.message : 'Neznáma chyba'}`);
       }
 
       try {
@@ -99,7 +104,7 @@ export const useContractSubmission = () => {
         console.log('Device selection inserted successfully');
       } catch (error) {
         console.error('Device selection insertion error:', error);
-        throw error;
+        throw new Error(`Chyba pri ukladaní zariadení: ${error instanceof Error ? error.message : 'Neznáma chyba'}`);
       }
 
       try {
@@ -107,7 +112,7 @@ export const useContractSubmission = () => {
         console.log('Authorized persons inserted successfully');
       } catch (error) {
         console.error('Authorized persons insertion error:', error);
-        throw error;
+        throw new Error(`Chyba pri ukladaní oprávnených osôb: ${error instanceof Error ? error.message : 'Neznáma chyba'}`);
       }
 
       try {
@@ -115,7 +120,7 @@ export const useContractSubmission = () => {
         console.log('Actual owners inserted successfully');
       } catch (error) {
         console.error('Actual owners insertion error:', error);
-        throw error;
+        throw new Error(`Chyba pri ukladaní skutočných vlastníkov: ${error instanceof Error ? error.message : 'Neznáma chyba'}`);
       }
 
       try {
@@ -123,7 +128,7 @@ export const useContractSubmission = () => {
         console.log('Consents inserted successfully');
       } catch (error) {
         console.error('Consents insertion error:', error);
-        throw error;
+        throw new Error(`Chyba pri ukladaní súhlasov: ${error instanceof Error ? error.message : 'Neznáma chyba'}`);
       }
 
       console.log('Contract submission completed successfully');

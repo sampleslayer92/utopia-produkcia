@@ -1,7 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CreditCard, FileText, Trash2 } from "lucide-react";
+import { CreditCard, FileText, Trash2, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,9 +20,15 @@ interface OnboardingHeaderProps {
   contractNumber?: string;
   contractId?: string;
   onContractDeleted?: () => void;
+  isCreatingContract?: boolean;
 }
 
-const OnboardingHeader = ({ contractNumber, contractId, onContractDeleted }: OnboardingHeaderProps) => {
+const OnboardingHeader = ({ 
+  contractNumber, 
+  contractId, 
+  onContractDeleted,
+  isCreatingContract = false 
+}: OnboardingHeaderProps) => {
   const { deleteContract, isDeleting } = useOnboardingContractDelete();
   const navigate = useNavigate();
 
@@ -57,44 +63,54 @@ const OnboardingHeader = ({ contractNumber, contractId, onContractDeleted }: Onb
             </span>
           </div>
           <div className="flex items-center gap-3">
-            {contractNumber && (
+            {isCreatingContract && (
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="border-yellow-200 text-yellow-700 flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Vytvára sa zmluva...
+                </Badge>
+              </div>
+            )}
+            {contractNumber && contractId && (
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="border-blue-200 text-blue-700 flex items-center gap-2">
                   <FileText className="h-4 w-4" />
                   Zmluva č. {contractNumber}
                 </Badge>
-                {contractId && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-red-200 text-red-700 hover:bg-red-50"
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-200 text-red-700 hover:bg-red-50"
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Vymazať zmluvu</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Naozaj chcete vymazať zmluvu č. {contractNumber}? Táto akcia sa nedá vrátiť späť a všetky údaje budú trvalo odstránené.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Zrušiť</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDeleteContract}
+                        className="bg-red-600 hover:bg-red-700"
                         disabled={isDeleting}
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Vymazať zmluvu</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Naozaj chcete vymazať zmluvu č. {contractNumber}? Táto akcia sa nedá vrátiť späť a všetky údaje budú trvalo odstránené.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Zrušiť</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={handleDeleteContract}
-                          className="bg-red-600 hover:bg-red-700"
-                          disabled={isDeleting}
-                        >
-                          {isDeleting ? 'Vymazávam...' : 'Vymazať zmluvu'}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
+                        {isDeleting ? 'Vymazávam...' : 'Vymazať zmluvu'}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             )}
             <Badge variant="outline" className="border-blue-200 text-blue-700">

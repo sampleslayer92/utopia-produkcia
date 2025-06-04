@@ -7,7 +7,6 @@ import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingTextarea from "./ui/OnboardingTextarea";
 import OnboardingSection from "./ui/OnboardingSection";
-import { useContractCreation } from "@/hooks/useContractCreation";
 import { v4 as uuidv4 } from "uuid";
 
 interface ContactInfoStepProps {
@@ -20,7 +19,6 @@ interface ContactInfoStepProps {
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
   const [hasAutoFilled, setHasAutoFilled] = useState(false);
-  const { createContract, isCreating } = useContractCreation();
 
   const updateContactInfo = (field: string, value: string | boolean) => {
     updateData({
@@ -121,7 +119,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     autoFillBasedOnRole(role);
   };
 
-  // Check if basic contact info is complete for contract creation
+  // Check if basic contact info is complete
   const isBasicInfoComplete = () => {
     return data.contactInfo.firstName && 
            data.contactInfo.lastName && 
@@ -129,26 +127,6 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
            isEmailValid(data.contactInfo.email) &&
            data.contactInfo.phone;
   };
-
-  // Auto-create contract when basic info is complete
-  useEffect(() => {
-    const autoCreateContract = async () => {
-      if (isBasicInfoComplete() && !data.contractId && !isCreating) {
-        console.log('Basic contact info complete, creating contract...');
-        const result = await createContract();
-        
-        if (result.success) {
-          updateData({
-            contractId: result.contractId,
-            contractNumber: result.contractNumber?.toString()
-          });
-        }
-      }
-    };
-
-    const timeoutId = setTimeout(autoCreateContract, 1000);
-    return () => clearTimeout(timeoutId);
-  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contractId, isCreating]);
 
   // Auto-fill when role and basic info are complete
   useEffect(() => {
@@ -246,9 +224,17 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                 </div>
               )}
 
-              {isCreating && (
+              {isBasicInfoComplete() && !data.contractId && (
                 <div className="bg-yellow-100/50 border border-yellow-200 rounded-lg p-4 text-xs text-yellow-800">
                   <p className="font-medium">Vytvára sa zmluva...</p>
+                  <p className="mt-1">Po vyplnení základných údajov sa automaticky vytvorí zmluva.</p>
+                </div>
+              )}
+
+              {data.contractId && data.contractNumber && (
+                <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
+                  <p className="font-medium">Zmluva vytvorená!</p>
+                  <p className="mt-1">Číslo zmluvy: {data.contractNumber}</p>
                 </div>
               )}
             </div>
