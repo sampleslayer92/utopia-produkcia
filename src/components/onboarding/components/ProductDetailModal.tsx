@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,58 +30,69 @@ const ProductDetailModal = ({
   editingCard,
   onSave
 }: ProductDetailModalProps) => {
-  const [formData, setFormData] = useState(() => {
-    if (mode === 'edit' && editingCard) {
-      return editingCard;
-    }
-    
-    // Add null check for product
-    if (!product) {
-      return null;
-    }
-    
-    if (productType === 'device') {
-      return {
-        ...product,
-        id: `${product.id}-${Date.now()}`,
-        count: 1,
-        monthlyFee: product.rentalPrice || 0,
-        simCards: product.simCards || 0
-      };
-    } else {
-      return {
-        id: `${product.id}-${Date.now()}`,
-        type: 'service' as const,
-        category: 'software',
-        name: product.name,
-        description: product.description,
-        count: 1,
-        monthlyFee: 0,
-        customValue: product.name === 'Iný' ? '' : undefined
-      };
-    }
-  });
-
+  const [formData, setFormData] = useState<any>(null);
   const [pricingMode, setPricingMode] = useState<'rental' | 'purchase'>('rental');
   const [isSpecsOpen, setIsSpecsOpen] = useState(false);
 
-  // Don't render if product is null or formData is null
-  if (!product || !formData) {
+  // Initialize form data when modal opens or product changes
+  useEffect(() => {
+    if (!isOpen) return;
+
+    console.log('Modal opened with:', { mode, productType, product, editingCard });
+
+    if (mode === 'edit' && editingCard) {
+      console.log('Setting form data from editing card:', editingCard);
+      setFormData(editingCard);
+    } else if (mode === 'add' && product) {
+      console.log('Setting form data from product template:', product);
+      
+      if (productType === 'device') {
+        const deviceData = {
+          ...product,
+          id: `${product.id}-${Date.now()}`,
+          type: 'device' as const,
+          count: 1,
+          monthlyFee: product.rentalPrice || 0,
+          simCards: product.simCards || 0
+        };
+        console.log('Created device data:', deviceData);
+        setFormData(deviceData);
+      } else {
+        const serviceData = {
+          id: `${product.id}-${Date.now()}`,
+          type: 'service' as const,
+          category: product.category || 'software',
+          name: product.name,
+          description: product.description,
+          count: 1,
+          monthlyFee: 0,
+          customValue: product.name === 'Iný' ? '' : undefined
+        };
+        console.log('Created service data:', serviceData);
+        setFormData(serviceData);
+      }
+    }
+  }, [isOpen, mode, product, editingCard, productType]);
+
+  // Don't render if modal is not open or formData is not ready
+  if (!isOpen || !formData) {
     return null;
   }
 
   const updateField = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    console.log('Updating field:', field, 'with value:', value);
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
+    console.log('Saving form data:', formData);
     onSave(formData);
     onClose();
   };
 
   const handlePricingModeChange = (mode: 'rental' | 'purchase') => {
     setPricingMode(mode);
-    if (productType === 'device') {
+    if (productType === 'device' && product) {
       if (mode === 'rental') {
         updateField('monthlyFee', product.rentalPrice || 0);
       } else {

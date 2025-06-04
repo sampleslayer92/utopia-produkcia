@@ -19,7 +19,6 @@ interface DeviceSelectionStepProps {
 }
 
 const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelectionStepProps) => {
-  const [currentMode, setCurrentMode] = useState<'selection' | 'configuration'>('selection');
   const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
 
   const toggleSolution = (solutionId: string) => {
@@ -36,15 +35,18 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
   };
 
   const addDevice = (deviceTemplate: any) => {
+    console.log('Adding device:', deviceTemplate);
     openAddModal(deviceTemplate, 'device');
   };
 
   const addService = (serviceTemplate: any, category: string) => {
     const serviceWithCategory = { ...serviceTemplate, category };
+    console.log('Adding service:', serviceWithCategory);
     openAddModal(serviceWithCategory, 'service');
   };
 
   const handleSaveProduct = (card: DeviceCard | ServiceCard) => {
+    console.log('Saving product:', card);
     if (modalState.mode === 'add') {
       updateData({
         deviceSelection: {
@@ -52,11 +54,6 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
           dynamicCards: [...data.deviceSelection.dynamicCards, card]
         }
       });
-
-      // Auto-switch to configuration mode when first item is added
-      if (data.deviceSelection.dynamicCards.length === 0) {
-        setCurrentMode('configuration');
-      }
     } else if (modalState.mode === 'edit' && modalState.editingCard) {
       const updatedCards = data.deviceSelection.dynamicCards.map(existingCard =>
         existingCard.id === modalState.editingCard!.id ? card : existingCard
@@ -134,7 +131,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
 
   return (
     <div className="space-y-6">
-      {/* Header with Progress and Mode Toggle */}
+      {/* Header with Progress */}
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -153,51 +150,35 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
               </div>
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Button
-                variant={currentMode === 'selection' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setCurrentMode('selection')}
-              >
-                Katalóg
-              </Button>
-              <Button
-                variant={currentMode === 'configuration' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setCurrentMode('configuration')}
-                disabled={data.deviceSelection.dynamicCards.length === 0}
-              >
-                Konfigurácia ({data.deviceSelection.dynamicCards.length})
-              </Button>
+              <Badge variant="outline" className="text-blue-600">
+                {data.deviceSelection.dynamicCards.length} položiek
+              </Badge>
             </div>
           </div>
         </CardHeader>
       </Card>
 
-      {/* Main Content Area */}
-      <div className="grid lg:grid-cols-5 gap-6 min-h-[600px]">
+      {/* Main Content Area - Two Column Layout */}
+      <div className="grid lg:grid-cols-2 gap-6 min-h-[600px]">
         {/* Left Panel - Catalog */}
-        <div className={`lg:col-span-2 ${currentMode === 'selection' ? 'lg:col-span-3' : ''}`}>
-          <Card className="h-full border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
-            <DeviceCatalogPanel
-              selectedSolutions={data.deviceSelection.selectedSolutions}
-              onAddDevice={addDevice}
-              onAddService={addService}
-            />
-          </Card>
-        </div>
+        <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
+          <DeviceCatalogPanel
+            selectedSolutions={data.deviceSelection.selectedSolutions}
+            onAddDevice={addDevice}
+            onAddService={addService}
+          />
+        </Card>
 
         {/* Right Panel - Live Preview */}
-        <div className={`lg:col-span-3 ${currentMode === 'selection' ? 'lg:col-span-2' : ''}`}>
-          <Card className="h-full border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
-            <LivePreviewPanel
-              dynamicCards={data.deviceSelection.dynamicCards}
-              onUpdateCard={updateCard}
-              onRemoveCard={removeCard}
-              onClearAll={clearAllCards}
-              onEditCard={openEditModal}
-            />
-          </Card>
-        </div>
+        <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
+          <LivePreviewPanel
+            dynamicCards={data.deviceSelection.dynamicCards}
+            onUpdateCard={updateCard}
+            onRemoveCard={removeCard}
+            onClearAll={clearAllCards}
+            onEditCard={openEditModal}
+          />
+        </Card>
       </div>
 
       {/* Product Detail Modal */}
