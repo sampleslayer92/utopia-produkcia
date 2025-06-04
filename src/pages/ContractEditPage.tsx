@@ -7,66 +7,39 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { useContractData } from "@/hooks/useContractData";
-import { useContractUpdate } from "@/hooks/useContractUpdate";
+import { useContractEdit } from "@/hooks/useContractEdit";
 import OnboardingStepRenderer from "@/components/onboarding/components/OnboardingStepRenderer";
 import OnboardingSidebar from "@/components/onboarding/ui/OnboardingSidebar";
 import { onboardingSteps } from "@/components/onboarding/config/onboardingSteps";
 import { OnboardingData } from "@/types/onboarding";
-import { Database } from "@/integrations/supabase/types";
-
-type ContractStatus = Database['public']['Enums']['contract_status'];
 
 const ContractEditPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState<ContractStatus>("draft");
 
   const contractDataResult = useContractData(id!);
-  const updateContract = useContractUpdate(id!);
+  const { saveContract, isSaving } = useContractEdit();
 
   const [editData, setEditData] = useState<OnboardingData | null>(null);
 
   // Initialize edit data when contract data loads
   if (contractDataResult.data?.onboardingData && !editData) {
     setEditData(contractDataResult.data.onboardingData);
-    setSelectedStatus(contractDataResult.data.contract.status);
   }
 
-  const handleSave = () => {
-    if (!editData) return;
+  const handleSave = async () => {
+    if (!editData || !id) return;
     
-    updateContract.mutate({
-      data: editData,
-      status: selectedStatus !== contractDataResult.data?.contract.status ? selectedStatus : undefined
-    });
+    const result = await saveContract(id, editData);
+    if (result.success) {
+      navigate('/admin');
+    }
   };
 
   const handleDataUpdate = (data: Partial<OnboardingData>) => {
     if (!editData) return;
     setEditData(prev => ({ ...prev!, ...data }));
-  };
-
-  const statusOptions = [
-    { value: 'draft', label: 'Koncept' },
-    { value: 'submitted', label: 'Odoslané' },
-    { value: 'approved', label: 'Schválené' },
-    { value: 'rejected', label: 'Zamietnuté' }
-  ];
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'submitted':
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Odoslané</Badge>;
-      case 'approved':
-        return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">Schválené</Badge>;
-      case 'rejected':
-        return <Badge className="bg-red-100 text-red-700 border-red-200">Zamietnuté</Badge>;
-      case 'draft':
-        return <Badge className="bg-gray-100 text-gray-700 border-gray-200">Koncept</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
-    }
   };
 
   if (contractDataResult.isLoading) {
@@ -103,6 +76,21 @@ const ContractEditPage = () => {
 
   const { contract } = contractDataResult.data;
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'submitted':
+        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Odoslané</Badge>;
+      case 'approved':
+        return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">Schválené</Badge>;
+      case 'rejected':
+        return <Badge className="bg-red-100 text-red-700 border-red-200">Zamietnuté</Badge>;
+      case 'draft':
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-200">Koncept</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Header */}
@@ -134,25 +122,12 @@ const ContractEditPage = () => {
                 {getStatusBadge(contract.status)}
               </div>
               
-              <Select value={selectedStatus} onValueChange={(value: ContractStatus) => setSelectedStatus(value)}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Zmeniť stav" />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
               <Button
                 onClick={handleSave}
-                disabled={updateContract.isPending}
+                disabled={isSaving}
                 className="bg-emerald-600 hover:bg-emerald-700"
               >
-                {updateContract.isPending ? (
+                {isSaving ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Ukladám...

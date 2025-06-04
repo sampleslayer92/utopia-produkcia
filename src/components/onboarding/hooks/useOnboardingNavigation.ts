@@ -60,9 +60,12 @@ export const useOnboardingNavigation = (
         return;
       }
       
-      // Create merchant account
-      console.log('Vytváram merchant účet...');
-      const userResult = await createMerchantAccount(onboardingData);
+      // Create merchant account using the correct contractId from result
+      console.log('Vytváram merchant účet s contractId:', contractResult.contractId);
+      const userResult = await createMerchantAccount({
+        ...onboardingData,
+        contractId: contractResult.contractId // Use the correct contractId from submission result
+      });
       
       if (userResult.success) {
         // Store success data for potential future use

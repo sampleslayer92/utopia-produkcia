@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContractData } from "@/hooks/useContractData";
+import { useContractEdit } from "@/hooks/useContractEdit";
 import { useToast } from "@/hooks/use-toast";
 import ContractHeader from "./contract-detail/ContractHeader";
 import ClientOperationsSection from "./contract-detail/ClientOperationsSection";
@@ -16,7 +17,9 @@ const ContractDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [editData, setEditData] = useState<any>(null);
   const contractDataResult = useContractData(id!);
+  const { saveContract, updateDeviceCount, removeDevice, isSaving } = useContractEdit();
 
   if (contractDataResult.isLoading) {
     return (
@@ -43,13 +46,22 @@ const ContractDetail = () => {
 
   const { contract, onboardingData } = contractDataResult.data;
 
-  const handleSave = async (data: any) => {
+  // Initialize edit data when switching to edit mode
+  if (isEditMode && !editData) {
+    setEditData(onboardingData);
+  }
+
+  const handleSave = async (data?: any) => {
     try {
-      // TODO: Implement save logic to database
-      toast({
-        title: "Zmluva uložená",
-        description: "Zmeny boli úspešne uložené.",
-      });
+      const dataToSave = data || editData || onboardingData;
+      const result = await saveContract(contract.id, dataToSave);
+      
+      if (result.success) {
+        setIsEditMode(false);
+        setEditData(null);
+        // Refresh the data
+        contractDataResult.refetch();
+      }
     } catch (error) {
       toast({
         title: "Chyba",
@@ -59,15 +71,41 @@ const ContractDetail = () => {
     }
   };
 
+  const handleDeviceUpdate = async (deviceName: string, newCount: number) => {
+    const result = await updateDeviceCount(contract.id, deviceName, newCount);
+    if (result.success) {
+      contractDataResult.refetch();
+    }
+  };
+
+  const handleDeviceRemove = async (deviceName: string) => {
+    const result = await removeDevice(contract.id, deviceName);
+    if (result.success) {
+      contractDataResult.refetch();
+    }
+  };
+
+  const handleDataUpdate = (newData: any) => {
+    setEditData({ ...editData, ...newData });
+  };
+
+  const currentData = isEditMode ? editData : onboardingData;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <ContractHeader
         contract={contract}
-        onboardingData={onboardingData}
+        onboardingData={currentData}
         isEditMode={isEditMode}
-        onToggleEdit={() => setIsEditMode(!isEditMode)}
+        onToggleEdit={() => {
+          if (isEditMode) {
+            setEditData(null);
+          }
+          setIsEditMode(!isEditMode);
+        }}
         onBack={() => navigate('/admin')}
         onSave={handleSave}
+        isSaving={isSaving}
       />
 
       <div className="container mx-auto px-6 py-8">
@@ -75,32 +113,34 @@ const ContractDetail = () => {
           {/* Main content - 3 columns */}
           <div className="lg:col-span-3 space-y-8">
             <ClientOperationsSection
-              onboardingData={onboardingData}
+              onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={handleSave}
+              onSave={handleDataUpdate}
             />
 
             <DevicesServicesSection
-              onboardingData={onboardingData}
+              onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={handleSave}
+              onSave={handleDataUpdate}
+              onDeviceUpdate={handleDeviceUpdate}
+              onDeviceRemove={handleDeviceRemove}
             />
 
             <CalculationFeesSection
-              onboardingData={onboardingData}
+              onboardingData={currentData}
               contract={contract}
             />
 
             <AuthorizedPersonsSection
-              onboardingData={onboardingData}
+              onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={handleSave}
+              onSave={handleDataUpdate}
             />
 
             <SignatureSection
               contract={contract}
-              onboardingData={onboardingData}
-              onSave={handleSave}
+              onboardingData={currentData}
+              onSave={handleDataUpdate}
             />
           </div>
 
@@ -108,7 +148,7 @@ const ContractDetail = () => {
           <div className="lg:col-span-1">
             <ContractActions
               contract={contract}
-              onboardingData={onboardingData}
+              onboardingData={currentData}
             />
           </div>
         </div>
