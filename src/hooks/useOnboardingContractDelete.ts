@@ -39,13 +39,20 @@ export const useOnboardingContractDelete = () => {
         .eq('contract_id', contractId);
       if (deviceSelectionError) console.error('Error deleting device_selection:', deviceSelectionError);
 
-      const { error: contractItemAddonsError } = await supabase
-        .from('contract_item_addons')
-        .delete()
-        .in('contract_item_id', 
-          supabase.from('contract_items').select('id').eq('contract_id', contractId)
-        );
-      if (contractItemAddonsError) console.error('Error deleting contract_item_addons:', contractItemAddonsError);
+      // First get contract item IDs, then delete addons
+      const { data: contractItems } = await supabase
+        .from('contract_items')
+        .select('id')
+        .eq('contract_id', contractId);
+
+      if (contractItems && contractItems.length > 0) {
+        const contractItemIds = contractItems.map(item => item.id);
+        const { error: contractItemAddonsError } = await supabase
+          .from('contract_item_addons')
+          .delete()
+          .in('contract_item_id', contractItemIds);
+        if (contractItemAddonsError) console.error('Error deleting contract_item_addons:', contractItemAddonsError);
+      }
 
       const { error: contractItemsError } = await supabase
         .from('contract_items')
