@@ -61,6 +61,8 @@ export const useContractData = (contractId: string): ContractDataResult => {
     companyInfo,
     businessLocations,
     deviceSelection,
+    contractItems,
+    contractCalculations,
     authorizedPersons,
     actualOwners,
     consents
@@ -72,6 +74,8 @@ export const useContractData = (contractId: string): ContractDataResult => {
     companyInfo,
     businessLocations,
     deviceSelection,
+    contractItems,
+    contractCalculations,
     authorizedPersons,
     actualOwners,
     consents

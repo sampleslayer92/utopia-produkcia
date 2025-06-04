@@ -7,10 +7,137 @@ export const transformContractData = (
   companyInfo: any,
   businessLocations: any[],
   deviceSelection: any,
+  contractItems: any[],
+  contractCalculations: any,
   authorizedPersons: any[],
   actualOwners: any[],
   consents: any
 ): OnboardingData => {
+  // Transform contract items and addons into dynamic cards
+  const transformedDynamicCards = contractItems?.map(item => {
+    const transformedAddons = item.contract_item_addons?.map((addon: any) => ({
+      id: addon.addon_id,
+      type: 'addon' as const,
+      category: addon.category,
+      name: addon.name,
+      description: addon.description || '',
+      monthlyFee: Number(addon.monthly_fee) || 0,
+      companyCost: Number(addon.company_cost) || 0,
+      isPerDevice: addon.is_per_device || false,
+      customQuantity: addon.quantity || 1
+    })) || [];
+
+    if (item.item_type === 'device') {
+      return {
+        id: item.item_id,
+        type: 'device' as const,
+        category: item.category,
+        name: item.name,
+        description: item.description || '',
+        count: item.count || 1,
+        monthlyFee: Number(item.monthly_fee) || 0,
+        companyCost: Number(item.company_cost) || 0,
+        specifications: [],
+        addons: transformedAddons
+      };
+    } else {
+      return {
+        id: item.item_id,
+        type: 'service' as const,
+        category: item.category,
+        name: item.name,
+        description: item.description || '',
+        count: item.count || 1,
+        monthlyFee: Number(item.monthly_fee) || 0,
+        companyCost: Number(item.company_cost) || 0,
+        customValue: item.custom_value || undefined,
+        addons: transformedAddons
+      };
+    }
+  }) || [];
+
+  // If no contract items exist, fall back to legacy device_selection
+  const legacyDynamicCards = deviceSelection ? [
+    ...(deviceSelection.pax_a920_pro_count > 0 ? [{
+      id: 'pax-a920-pro-legacy',
+      type: 'device' as const,
+      category: 'terminal',
+      name: 'PAX A920 PRO',
+      description: 'Mobilný terminál',
+      count: deviceSelection.pax_a920_pro_count,
+      monthlyFee: deviceSelection.pax_a920_pro_monthly_fee || 0,
+      companyCost: 0,
+      specifications: [],
+      addons: []
+    }] : []),
+    ...(deviceSelection.pax_a80_count > 0 ? [{
+      id: 'pax-a80-legacy',
+      type: 'device' as const,
+      category: 'terminal',
+      name: 'PAX A80',
+      description: 'Stacionárny terminál',
+      count: deviceSelection.pax_a80_count,
+      monthlyFee: deviceSelection.pax_a80_monthly_fee || 0,
+      companyCost: 0,
+      specifications: [],
+      addons: []
+    }] : []),
+    ...(deviceSelection.tablet_10_count > 0 ? [{
+      id: 'tablet-10-legacy',
+      type: 'device' as const,
+      category: 'pos',
+      name: 'Tablet 10"',
+      description: 'Kompaktný tablet pre POS systém',
+      count: deviceSelection.tablet_10_count,
+      monthlyFee: deviceSelection.tablet_10_monthly_fee || 0,
+      companyCost: 0,
+      specifications: [],
+      addons: []
+    }] : []),
+    ...(deviceSelection.tablet_15_count > 0 ? [{
+      id: 'tablet-15-legacy',
+      type: 'device' as const,
+      category: 'pos',
+      name: 'Tablet 15"',
+      description: 'Veľký tablet pre POS systém',
+      count: deviceSelection.tablet_15_count,
+      monthlyFee: deviceSelection.tablet_15_monthly_fee || 0,
+      companyCost: 0,
+      specifications: [],
+      addons: []
+    }] : []),
+    ...(deviceSelection.tablet_pro_15_count > 0 ? [{
+      id: 'tablet-pro-15-legacy',
+      type: 'device' as const,
+      category: 'pos',
+      name: 'Tablet Pro 15"',
+      description: 'Profesionálny tablet pre POS systém',
+      count: deviceSelection.tablet_pro_15_count,
+      monthlyFee: deviceSelection.tablet_pro_15_monthly_fee || 0,
+      companyCost: 0,
+      specifications: [],
+      addons: []
+    }] : []),
+  ] : [];
+
+  const finalDynamicCards = transformedDynamicCards.length > 0 ? transformedDynamicCards : legacyDynamicCards;
+
+  // Transform calculation results
+  const calculatorResults = contractCalculations ? {
+    monthlyTurnover: Number(contractCalculations.monthly_turnover) || 0,
+    totalCustomerPayments: Number(contractCalculations.total_customer_payments) || 0,
+    totalCompanyCosts: Number(contractCalculations.total_company_costs) || 0,
+    effectiveRegulated: Number(contractCalculations.effective_regulated) || 0,
+    effectiveUnregulated: Number(contractCalculations.effective_unregulated) || 0,
+    regulatedFee: Number(contractCalculations.regulated_fee) || 0,
+    unregulatedFee: Number(contractCalculations.unregulated_fee) || 0,
+    transactionMargin: Number(contractCalculations.transaction_margin) || 0,
+    serviceMargin: Number(contractCalculations.service_margin) || 0,
+    totalMonthlyProfit: Number(contractCalculations.total_monthly_profit) || 0,
+    customerPaymentBreakdown: contractCalculations.calculation_data?.customerPaymentBreakdown || [],
+    companyCostBreakdown: contractCalculations.calculation_data?.companyCostBreakdown || []
+  } : undefined;
+
   return {
     contactInfo: contactInfo ? {
       salutation: (contactInfo.salutation || '') as 'Pan' | 'Pani' | '',
@@ -28,7 +155,7 @@ export const transformContractData = (
       ico: companyInfo.ico || '',
       dic: companyInfo.dic || '',
       companyName: companyInfo.company_name || '',
-      registryType: (companyInfo.registry_type || '') as 'public' | 'business' | 'other' | '',
+      registryType: (companyInfo.registry_type || 'other') as 'public' | 'business' | 'other' | '',
       isVatPayer: companyInfo.is_vat_payer || false,
       vatNumber: companyInfo.vat_number || '',
       court: companyInfo.court || '',
@@ -53,7 +180,7 @@ export const transformContractData = (
         isTechnicalPerson: companyInfo.contact_person_is_technical ?? false
       }
     } : {
-      ico: '', dic: '', companyName: '', registryType: '', isVatPayer: false, vatNumber: '', court: '', section: '', insertNumber: '',
+      ico: '', dic: '', companyName: '', registryType: 'other', isVatPayer: false, vatNumber: '', court: '', section: '', insertNumber: '',
       address: { street: '', city: '', zipCode: '' },
       contactAddress: { street: '', city: '', zipCode: '' },
       contactAddressSameAsMain: true,
@@ -84,81 +211,16 @@ export const transformContractData = (
       assignedPersons: []
     })) || [],
     
-    deviceSelection: deviceSelection ? {
+    deviceSelection: {
       selectedSolutions: [],
-      dynamicCards: [
-        ...(deviceSelection.pax_a920_pro_count > 0 ? [{
-          id: 'pax-a920-pro-legacy',
-          type: 'device' as const,
-          category: 'terminal',
-          name: 'PAX A920 PRO',
-          description: 'Mobilný terminál',
-          count: deviceSelection.pax_a920_pro_count,
-          monthlyFee: deviceSelection.pax_a920_pro_monthly_fee || 0,
-          companyCost: 0,
-          simCards: deviceSelection.pax_a920_pro_sim_cards || 0,
-          specifications: [],
-          addons: []
-        }] : []),
-        ...(deviceSelection.pax_a80_count > 0 ? [{
-          id: 'pax-a80-legacy',
-          type: 'device' as const,
-          category: 'terminal',
-          name: 'PAX A80',
-          description: 'Stacionárny terminál',
-          count: deviceSelection.pax_a80_count,
-          monthlyFee: deviceSelection.pax_a80_monthly_fee || 0,
-          companyCost: 0,
-          specifications: [],
-          addons: []
-        }] : []),
-        ...(deviceSelection.tablet_10_count > 0 ? [{
-          id: 'tablet-10-legacy',
-          type: 'device' as const,
-          category: 'pos',
-          name: 'Tablet 10"',
-          description: 'Kompaktný tablet pre POS systém',
-          count: deviceSelection.tablet_10_count,
-          monthlyFee: deviceSelection.tablet_10_monthly_fee || 0,
-          companyCost: 0,
-          specifications: [],
-          addons: []
-        }] : []),
-        ...(deviceSelection.tablet_15_count > 0 ? [{
-          id: 'tablet-15-legacy',
-          type: 'device' as const,
-          category: 'pos',
-          name: 'Tablet 15"',
-          description: 'Veľký tablet pre POS systém',
-          count: deviceSelection.tablet_15_count,
-          monthlyFee: deviceSelection.tablet_15_monthly_fee || 0,
-          companyCost: 0,
-          specifications: [],
-          addons: []
-        }] : []),
-        ...(deviceSelection.tablet_pro_15_count > 0 ? [{
-          id: 'tablet-pro-15-legacy',
-          type: 'device' as const,
-          category: 'pos',
-          name: 'Tablet Pro 15"',
-          description: 'Profesionálny tablet pre POS systém',
-          count: deviceSelection.tablet_pro_15_count,
-          monthlyFee: deviceSelection.tablet_pro_15_monthly_fee || 0,
-          companyCost: 0,
-          specifications: [],
-          addons: []
-        }] : []),
-      ],
-      note: deviceSelection.note || ''
-    } : {
-      selectedSolutions: [],
-      dynamicCards: [],
-      note: ''
+      dynamicCards: finalDynamicCards,
+      note: deviceSelection?.note || ''
     },
     
     fees: {
       regulatedCards: deviceSelection?.mif_regulated_cards || 0.90,
-      unregulatedCards: deviceSelection?.mif_unregulated_cards || 0.90
+      unregulatedCards: deviceSelection?.mif_unregulated_cards || 0.90,
+      calculatorResults
     },
     
     authorizedPersons: authorizedPersons?.map(person => ({
