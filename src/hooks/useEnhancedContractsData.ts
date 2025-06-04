@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -7,6 +8,8 @@ export interface EnhancedContractData {
   status: string;
   created_at: string;
   submitted_at: string | null;
+  contract_type: string | null;
+  salesperson: string | null;
   contact_info: {
     first_name: string;
     last_name: string;
@@ -29,14 +32,11 @@ export interface EnhancedContractData {
   } | null;
   completedSteps: number;
   contractValue: number;
-  contractType: string;
   clientName: string;
-  salesPerson: string;
 }
 
 const calculateCompletedSteps = (contract: any) => {
   let completed = 0;
-  const totalSteps = 7;
 
   // Step 1: Contact Info
   if (contract.contact_info?.first_name && contract.contact_info?.last_name && contract.contact_info?.email) {
@@ -76,18 +76,6 @@ const calculateCompletedSteps = (contract: any) => {
   return completed;
 };
 
-const determineContractType = (deviceSelection: any) => {
-  if (!deviceSelection) return 'Nedefinovaný';
-
-  const hasPos = (deviceSelection.pax_a80_count || 0) + (deviceSelection.pax_a920_pro_count || 0) > 0;
-  const hasTablet = (deviceSelection.tablet_10_count || 0) + (deviceSelection.tablet_15_count || 0) + (deviceSelection.tablet_pro_15_count || 0) > 0;
-
-  if (hasPos && hasTablet) return 'POS + SoftPOS';
-  if (hasPos) return 'POS';
-  if (hasTablet) return 'SoftPOS';
-  return 'E-commerce';
-};
-
 const extractSingleRecord = (data: any) => {
   if (Array.isArray(data) && data.length > 0) {
     return data[0];
@@ -95,34 +83,19 @@ const extractSingleRecord = (data: any) => {
   return Array.isArray(data) ? null : data;
 };
 
-// Define valid database status types
-type DatabaseStatus = 'draft' | 'submitted' | 'in_review' | 'approved' | 'rejected' | 'completed' | 'signed';
-
-// Map UI filter values to database enum values
-const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
-  const statusMap: Record<string, DatabaseStatus> = {
-    'draft': 'draft',
-    'submitted': 'submitted',
-    'opened': 'submitted', // Map 'opened' to existing status
-    'viewed': 'in_review', // Map 'viewed' to existing status
-    'approved': 'approved',
-    'rejected': 'rejected'
-  };
-  return statusMap[uiStatus] || null;
-};
-
 export const useEnhancedContractsData = (filters?: {
   status?: string;
   contractType?: string;
+  client?: string;
+  salesperson?: string;
   dateFrom?: string;
   dateTo?: string;
-  salesPerson?: string;
   search?: string;
 }) => {
   return useQuery({
     queryKey: ['enhanced-contracts', filters],
     queryFn: async () => {
-      console.log('Fetching enhanced contracts data...');
+      console.log('Fetching enhanced contracts data with filters:', filters);
       
       let query = supabase
         .from('contracts')
@@ -132,6 +105,8 @@ export const useEnhancedContractsData = (filters?: {
           status,
           created_at,
           submitted_at,
+          contract_type,
+          salesperson,
           contact_info (
             first_name,
             last_name,
@@ -159,12 +134,17 @@ export const useEnhancedContractsData = (filters?: {
         `)
         .order('created_at', { ascending: false });
 
-      // Apply filters with proper type checking and mapping
+      // Apply server-side filters
       if (filters?.status && filters.status !== 'all') {
-        const mappedStatus = mapStatusFilter(filters.status);
-        if (mappedStatus) {
-          query = query.eq('status', mappedStatus);
-        }
+        query = query.eq('status', filters.status);
+      }
+
+      if (filters?.contractType && filters.contractType !== 'all') {
+        query = query.eq('contract_type', filters.contractType);
+      }
+
+      if (filters?.salesperson && filters.salesperson !== 'all') {
+        query = query.eq('salesperson', filters.salesperson);
       }
 
       if (filters?.dateFrom) {
@@ -192,13 +172,10 @@ export const useEnhancedContractsData = (filters?: {
         const contractCalculations = extractSingleRecord(contract.contract_calculations);
         const deviceSelection = extractSingleRecord(contract.device_selection);
         
-        const contractType = determineContractType(deviceSelection);
         const contractValue = contractCalculations?.total_monthly_profit || 0;
         
         const clientName = companyInfo?.company_name || 
           (contactInfo ? `${contactInfo.first_name} ${contactInfo.last_name}` : 'N/A');
-        
-        const salesPerson = contactInfo?.user_role || 'Admin';
 
         return {
           id: contract.id,
@@ -206,24 +183,21 @@ export const useEnhancedContractsData = (filters?: {
           status: contract.status,
           created_at: contract.created_at,
           submitted_at: contract.submitted_at,
+          contract_type: contract.contract_type,
+          salesperson: contract.salesperson,
           contact_info: contactInfo,
           company_info: companyInfo,
           contract_calculations: contractCalculations,
           device_selection: deviceSelection,
           completedSteps,
           contractValue,
-          contractType,
-          clientName,
-          salesPerson
+          clientName
         };
       }).filter(contract => {
         // Apply client-side filters
-        if (filters?.contractType && filters.contractType !== 'all' && contract.contractType !== filters.contractType) {
-          return false;
-        }
-
-        if (filters?.salesPerson && filters.salesPerson !== 'all' && contract.salesPerson !== filters.salesPerson) {
-          return false;
+        if (filters?.client && filters.client !== 'all') {
+          const searchTerm = filters.client.toLowerCase();
+          return contract.clientName.toLowerCase().includes(searchTerm);
         }
 
         if (filters?.search) {
@@ -231,8 +205,8 @@ export const useEnhancedContractsData = (filters?: {
           return (
             contract.contract_number.toString().includes(searchTerm) ||
             contract.clientName.toLowerCase().includes(searchTerm) ||
-            contract.salesPerson.toLowerCase().includes(searchTerm) ||
-            contract.contractType.toLowerCase().includes(searchTerm) ||
+            contract.salesperson?.toLowerCase().includes(searchTerm) ||
+            contract.contract_type?.toLowerCase().includes(searchTerm) ||
             contract.contact_info?.email?.toLowerCase().includes(searchTerm)
           );
         }
@@ -251,12 +225,15 @@ export const useContractTypeOptions = () => {
     queryKey: ['contract-types'],
     queryFn: async () => {
       const { data } = await supabase
-        .from('device_selection')
-        .select('*');
+        .from('contracts')
+        .select('contract_type')
+        .not('contract_type', 'is', null);
 
       const types = new Set<string>();
-      data?.forEach(device => {
-        types.add(determineContractType(device));
+      data?.forEach(contract => {
+        if (contract.contract_type) {
+          types.add(contract.contract_type);
+        }
       });
 
       return Array.from(types);
@@ -269,16 +246,14 @@ export const useSalesPersonOptions = () => {
     queryKey: ['sales-persons'],
     queryFn: async () => {
       const { data } = await supabase
-        .from('contact_info')
-        .select('user_role')
-        .not('user_role', 'is', null);
+        .from('contracts')
+        .select('salesperson')
+        .not('salesperson', 'is', null);
 
       const persons = new Set<string>();
-      persons.add('Admin');
-      
-      data?.forEach(contact => {
-        if (contact.user_role) {
-          persons.add(contact.user_role);
+      data?.forEach(contract => {
+        if (contract.salesperson) {
+          persons.add(contract.salesperson);
         }
       });
 

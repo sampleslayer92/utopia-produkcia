@@ -12,18 +12,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Building, Calendar, Mail, User, Search, Filter, Plus } from "lucide-react";
-import { useContractsData, ContractWithInfo } from "@/hooks/useContractsData";
+import { Building, Calendar, Mail, User, Search, Plus } from "lucide-react";
+import { useEnhancedContractsData, useContractTypeOptions, useSalesPersonOptions } from "@/hooks/useEnhancedContractsData";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import ContractActionsDropdown from "./ContractActionsDropdown";
+import FilterableTableHead from "./contracts-table/FilterableTableHead";
+import SelectionCheckbox from "./contracts-table/SelectionCheckbox";
+import BulkActionsPanel from "./contracts-table/BulkActionsPanel";
+import { useContractSelection } from "@/hooks/useContractSelection";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -41,25 +38,47 @@ const getStatusBadge = (status: string) => {
 };
 
 const EnhancedContractsTable = () => {
-  const { data: contracts, isLoading, error } = useContractsData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  
+  // Filter states
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [contractTypeFilter, setContractTypeFilter] = useState<string>("all");
+  const [clientFilter, setClientFilter] = useState<string>("all");
+  const [salespersonFilter, setSalespersonFilter] = useState<string>("all");
+  const [dateFromFilter, setDateFromFilter] = useState<string>("");
+  const [dateToFilter, setDateToFilter] = useState<string>("");
 
-  // Filter contracts based on search term and status
-  const filteredContracts = contracts?.filter((contract: ContractWithInfo) => {
-    const matchesSearch = 
-      contract.contract_number.toString().includes(searchTerm) ||
-      contract.contact_info?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.contact_info?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.contact_info?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.company_info?.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.company_info?.ico?.includes(searchTerm);
+  // Selection state
+  const {
+    selectedIds,
+    isAllSelected,
+    selectAll,
+    selectNone,
+    toggleContract,
+    toggleAll,
+  } = useContractSelection();
 
-    const matchesStatus = statusFilter === "all" || contract.status === statusFilter;
+  // Data queries
+  const { data: contracts, isLoading, error } = useEnhancedContractsData({
+    status: statusFilter,
+    contractType: contractTypeFilter,
+    client: clientFilter,
+    salesperson: salespersonFilter,
+    dateFrom: dateFromFilter,
+    dateTo: dateToFilter,
+    search: searchTerm,
+  });
 
-    return matchesSearch && matchesStatus;
-  }) || [];
+  const { data: contractTypes } = useContractTypeOptions();
+  const { data: salesPersons } = useSalesPersonOptions();
+
+  // Get actual selected contracts based on current page
+  const actualSelectedIds = contracts ? 
+    Array.from(selectedIds).filter(id => contracts.some(c => c.id === id)) : [];
+  
+  const effectiveSelectedCount = isAllSelected ? (contracts?.length || 0) : actualSelectedIds.length;
+  const effectiveSelectedIds = isAllSelected ? (contracts?.map(c => c.id) || []) : actualSelectedIds;
 
   if (isLoading) {
     return (
@@ -93,144 +112,179 @@ const EnhancedContractsTable = () => {
   }
 
   return (
-    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-slate-900">Správa zmlúv</CardTitle>
-            <CardDescription className="text-slate-600">
-              Prehľad všetkých zmlúv v systéme ({filteredContracts.length} z {contracts?.length || 0})
-            </CardDescription>
+    <>
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-slate-900">Správa zmlúv</CardTitle>
+              <CardDescription className="text-slate-600">
+                Pokročilá správa zmlúv s filtrovaním a hromadnými akciami ({contracts?.length || 0} zmlúv)
+              </CardDescription>
+            </div>
+            <Button 
+              onClick={() => navigate('/onboarding')}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nová zmluva
+            </Button>
           </div>
-          <Button 
-            onClick={() => navigate('/onboarding')}
-            className="bg-emerald-600 hover:bg-emerald-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Nová zmluva
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {/* Search and Filter Controls */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <Input
-              placeholder="Vyhľadať zmluvu (číslo, meno, email, spoločnosť, IČO)..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        </CardHeader>
+        <CardContent>
+          {/* Global Search */}
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Fulltextové vyhľadávanie (číslo, meno, email, spoločnosť)..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-slate-500" />
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Filter stavu" />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="all">Všetky stavy</SelectItem>
-                <SelectItem value="draft">Koncept</SelectItem>
-                <SelectItem value="submitted">Odoslané</SelectItem>
-                <SelectItem value="approved">Schválené</SelectItem>
-                <SelectItem value="rejected">Zamietnuté</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
 
-        {filteredContracts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-            <Building className="h-16 w-16 mb-4 text-slate-300" />
-            <h3 className="text-lg font-medium mb-2">
-              {searchTerm || statusFilter !== "all" ? "Žiadne výsledky" : "Žiadne zmluvy"}
-            </h3>
-            <p className="text-center max-w-md">
-              {searchTerm || statusFilter !== "all" 
-                ? "Skúste zmeniť kritériá vyhľadávania alebo filtra."
-                : "Zatiaľ nie sú vytvorené žiadne zmluvy. Vytvorte prvú zmluvu kliknutím na tlačidlo 'Nová zmluva'."
-              }
-            </p>
-          </div>
-        ) : (
-          <div className="rounded-lg border border-slate-200 overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-slate-50">
-                  <TableHead className="font-medium text-slate-700">Číslo zmluvy</TableHead>
-                  <TableHead className="font-medium text-slate-700">Kontakt</TableHead>
-                  <TableHead className="font-medium text-slate-700">Spoločnosť</TableHead>
-                  <TableHead className="font-medium text-slate-700">IČO</TableHead>
-                  <TableHead className="font-medium text-slate-700">Stav</TableHead>
-                  <TableHead className="font-medium text-slate-700">Vytvorené</TableHead>
-                  <TableHead className="font-medium text-slate-700 w-16">Akcie</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredContracts.map((contract: ContractWithInfo) => (
-                  <TableRow 
-                    key={contract.id} 
-                    className="hover:bg-slate-50/50 transition-colors"
-                  >
-                    <TableCell className="font-medium text-slate-900">
-                      #{contract.contract_number}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <User className="h-4 w-4 text-slate-500" />
-                        <div>
-                          <p className="font-medium text-slate-900">
-                            {contract.contact_info 
-                              ? `${contract.contact_info.first_name} ${contract.contact_info.last_name}`
-                              : 'N/A'
-                            }
-                          </p>
-                          {contract.contact_info?.email && (
-                            <p className="text-sm text-slate-600 flex items-center">
-                              <Mail className="h-3 w-3 mr-1" />
-                              {contract.contact_info.email}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Building className="h-4 w-4 text-slate-500" />
-                        <span className="text-slate-900">
-                          {contract.company_info?.company_name || 'N/A'}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-slate-700">
-                      {contract.company_info?.ico || 'N/A'}
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(contract.status)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2 text-slate-600">
-                        <Calendar className="h-4 w-4" />
-                        <span className="text-sm">
-                          {format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <ContractActionsDropdown 
-                        contractId={contract.id} 
-                        contractNumber={contract.contract_number}
+          {contracts && contracts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-slate-500">
+              <Building className="h-16 w-16 mb-4 text-slate-300" />
+              <h3 className="text-lg font-medium mb-2">Žiadne výsledky</h3>
+              <p className="text-center max-w-md">
+                Skúste zmeniť kritériá vyhľadávania alebo filtra.
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-lg border border-slate-200 overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-slate-50">
+                    <TableHead className="w-12">
+                      <SelectionCheckbox
+                        checked={isAllSelected || (contracts ? selectedIds.size === contracts.length && contracts.length > 0 : false)}
+                        onCheckedChange={() => toggleAll(contracts?.map(c => c.id) || [])}
                       />
-                    </TableCell>
+                    </TableHead>
+                    <TableHead className="font-medium text-slate-700">Číslo zmluvy</TableHead>
+                    <TableHead className="font-medium text-slate-700">Kontakt</TableHead>
+                    <TableHead className="font-medium text-slate-700">Spoločnosť</TableHead>
+                    <FilterableTableHead
+                      title="Typ zmluvy"
+                      filterType="select"
+                      filterValue={contractTypeFilter}
+                      onFilterChange={setContractTypeFilter}
+                      options={contractTypes?.map(type => ({ value: type, label: type })) || []}
+                    />
+                    <FilterableTableHead
+                      title="Stav"
+                      filterType="select"
+                      filterValue={statusFilter}
+                      onFilterChange={setStatusFilter}
+                      options={[
+                        { value: 'draft', label: 'Koncept' },
+                        { value: 'submitted', label: 'Odoslané' },
+                        { value: 'approved', label: 'Schválené' },
+                        { value: 'rejected', label: 'Zamietnuté' },
+                      ]}
+                    />
+                    <FilterableTableHead
+                      title="Obchodník"
+                      filterType="select"
+                      filterValue={salespersonFilter}
+                      onFilterChange={setSalespersonFilter}
+                      options={salesPersons?.map(person => ({ value: person, label: person })) || []}
+                    />
+                    <FilterableTableHead
+                      title="Vytvorené"
+                      filterType="date"
+                      filterValue={dateFromFilter}
+                      onFilterChange={setDateFromFilter}
+                    />
+                    <TableHead className="font-medium text-slate-700 w-16">Akcie</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                </TableHeader>
+                <TableBody>
+                  {contracts?.map((contract) => (
+                    <TableRow 
+                      key={contract.id} 
+                      className="hover:bg-slate-50/50 transition-colors"
+                    >
+                      <TableCell>
+                        <SelectionCheckbox
+                          checked={isAllSelected || selectedIds.has(contract.id)}
+                          onCheckedChange={() => toggleContract(contract.id)}
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium text-slate-900">
+                        #{contract.contract_number}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4 text-slate-500" />
+                          <div>
+                            <p className="font-medium text-slate-900">
+                              {contract.contact_info 
+                                ? `${contract.contact_info.first_name} ${contract.contact_info.last_name}`
+                                : 'N/A'
+                              }
+                            </p>
+                            {contract.contact_info?.email && (
+                              <p className="text-sm text-slate-600 flex items-center">
+                                <Mail className="h-3 w-3 mr-1" />
+                                {contract.contact_info.email}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Building className="h-4 w-4 text-slate-500" />
+                          <span className="text-slate-900">
+                            {contract.company_info?.company_name || 'N/A'}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-slate-700">
+                        {contract.contract_type || 'N/A'}
+                      </TableCell>
+                      <TableCell>
+                        {getStatusBadge(contract.status)}
+                      </TableCell>
+                      <TableCell className="text-slate-700">
+                        {contract.salesperson || 'N/A'}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2 text-slate-600">
+                          <Calendar className="h-4 w-4" />
+                          <span className="text-sm">
+                            {format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <ContractActionsDropdown 
+                          contractId={contract.id} 
+                          contractNumber={contract.contract_number}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Bulk Actions Panel */}
+      {effectiveSelectedCount > 0 && (
+        <BulkActionsPanel
+          selectedCount={effectiveSelectedCount}
+          selectedIds={effectiveSelectedIds}
+          onClose={selectNone}
+        />
+      )}
+    </>
   );
 };
 

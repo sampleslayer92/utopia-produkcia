@@ -1,5 +1,5 @@
 
-import EnhancedAdminTable from "@/components/admin/EnhancedAdminTable";
+import EnhancedContractsTable from "@/components/admin/EnhancedContractsTable";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import DashboardHeader from "@/components/admin/dashboard/DashboardHeader";
 import StatsCards from "@/components/admin/dashboard/StatsCards";
@@ -17,7 +17,7 @@ const AdminDashboard = () => {
 
         <div className="flex-1 p-6">
           <StatsCards stats={stats} statsLoading={statsLoading} />
-          <EnhancedAdminTable />
+          <EnhancedContractsTable />
         </div>
       </div>
     </div>
