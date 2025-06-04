@@ -90,11 +90,12 @@ export const useOnboardingData = () => {
           parsedData.companyInfo.vatNumber = '';
         }
         
-        // Migrate existing dynamic cards to include companyCost field
+        // Migrate existing dynamic cards to include companyCost and addons fields
         if (parsedData.deviceSelection.dynamicCards) {
           parsedData.deviceSelection.dynamicCards = parsedData.deviceSelection.dynamicCards.map((card: any) => ({
             ...card,
-            companyCost: card.companyCost || 0
+            companyCost: card.companyCost || 0,
+            addons: card.addons || []
           }));
         }
         

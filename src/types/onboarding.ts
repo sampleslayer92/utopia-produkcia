@@ -1,3 +1,4 @@
+
 export interface ContactInfo {
   salutation: 'Pan' | 'Pani' | '';
   firstName: string;
@@ -62,6 +63,18 @@ export interface BusinessLocation {
   assignedPersons: string[];
 }
 
+export interface AddonCard {
+  id: string;
+  type: 'addon';
+  category: 'sim' | 'docking' | 'case' | 'backup' | 'printer' | 'drawer';
+  name: string;
+  description: string;
+  monthlyFee: number;
+  companyCost: number;
+  isPerDevice: boolean;
+  customQuantity?: number;
+}
+
 export interface DeviceCard {
   id: string;
   type: 'device';
@@ -74,6 +87,7 @@ export interface DeviceCard {
   companyCost: number;
   simCards?: number;
   specifications: string[];
+  addons: AddonCard[];
 }
 
 export interface ServiceCard {
@@ -86,12 +100,22 @@ export interface ServiceCard {
   monthlyFee: number;
   companyCost: number;
   customValue?: string;
+  addons: AddonCard[];
 }
 
 export interface DeviceSelection {
   selectedSolutions: string[];
   dynamicCards: Array<DeviceCard | ServiceCard>;
   note: string;
+}
+
+export interface ItemBreakdown {
+  id: string;
+  name: string;
+  count: number;
+  unitPrice: number;
+  subtotal: number;
+  addons?: ItemBreakdown[];
 }
 
 export interface Fees {
@@ -108,6 +132,8 @@ export interface Fees {
     transactionMargin: number;
     serviceMargin: number;
     totalMonthlyProfit: number;
+    customerPaymentBreakdown: ItemBreakdown[];
+    companyCostBreakdown: ItemBreakdown[];
   };
 }
 

@@ -97,7 +97,8 @@ export const transformContractData = (
           monthlyFee: deviceSelection.pax_a920_pro_monthly_fee || 0,
           companyCost: 0,
           simCards: deviceSelection.pax_a920_pro_sim_cards || 0,
-          specifications: []
+          specifications: [],
+          addons: []
         }] : []),
         ...(deviceSelection.pax_a80_count > 0 ? [{
           id: 'pax-a80-legacy',
@@ -108,7 +109,8 @@ export const transformContractData = (
           count: deviceSelection.pax_a80_count,
           monthlyFee: deviceSelection.pax_a80_monthly_fee || 0,
           companyCost: 0,
-          specifications: []
+          specifications: [],
+          addons: []
         }] : []),
         ...(deviceSelection.tablet_10_count > 0 ? [{
           id: 'tablet-10-legacy',
@@ -119,7 +121,8 @@ export const transformContractData = (
           count: deviceSelection.tablet_10_count,
           monthlyFee: deviceSelection.tablet_10_monthly_fee || 0,
           companyCost: 0,
-          specifications: []
+          specifications: [],
+          addons: []
         }] : []),
         ...(deviceSelection.tablet_15_count > 0 ? [{
           id: 'tablet-15-legacy',
@@ -130,7 +133,8 @@ export const transformContractData = (
           count: deviceSelection.tablet_15_count,
           monthlyFee: deviceSelection.tablet_15_monthly_fee || 0,
           companyCost: 0,
-          specifications: []
+          specifications: [],
+          addons: []
         }] : []),
         ...(deviceSelection.tablet_pro_15_count > 0 ? [{
           id: 'tablet-pro-15-legacy',
@@ -141,7 +145,8 @@ export const transformContractData = (
           count: deviceSelection.tablet_pro_15_count,
           monthlyFee: deviceSelection.tablet_pro_15_monthly_fee || 0,
           companyCost: 0,
-          specifications: []
+          specifications: [],
+          addons: []
         }] : []),
       ],
       note: deviceSelection.note || ''

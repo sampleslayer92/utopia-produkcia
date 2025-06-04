@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calculator, TrendingUp } from "lucide-react";
-import { OnboardingData } from "@/types/onboarding";
+import { OnboardingData, ItemBreakdown, AddonCard, DeviceCard, ServiceCard } from "@/types/onboarding";
 
 interface ProfitCalculatorProps {
   data: OnboardingData;
@@ -22,17 +22,63 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
     0
   );
 
-  // Calculate total customer payments (monthly fees)
-  const totalCustomerPayments = data.deviceSelection.dynamicCards.reduce(
-    (sum, card) => sum + (card.count * card.monthlyFee), 
-    0
-  );
+  // Helper function to create item breakdown
+  const createItemBreakdown = (card: DeviceCard | ServiceCard, isCustomerPrice: boolean): ItemBreakdown => {
+    const unitPrice = isCustomerPrice ? card.monthlyFee : card.companyCost;
+    const mainItem: ItemBreakdown = {
+      id: card.id,
+      name: card.name,
+      count: card.count,
+      unitPrice: unitPrice,
+      subtotal: card.count * unitPrice,
+      addons: []
+    };
+
+    // Add addons breakdown
+    if (card.addons && card.addons.length > 0) {
+      mainItem.addons = card.addons.map((addon: AddonCard) => {
+        const addonUnitPrice = isCustomerPrice ? addon.monthlyFee : addon.companyCost;
+        const addonQuantity = addon.isPerDevice ? card.count : (addon.customQuantity || 1);
+        
+        return {
+          id: addon.id,
+          name: addon.name,
+          count: addonQuantity,
+          unitPrice: addonUnitPrice,
+          subtotal: addonQuantity * addonUnitPrice
+        };
+      });
+    }
+
+    return mainItem;
+  };
+
+  // Calculate total customer payments
+  const calculateTotalCustomerPayments = () => {
+    return data.deviceSelection.dynamicCards.reduce((sum, card) => {
+      const mainItemTotal = card.count * card.monthlyFee;
+      const addonsTotal = (card.addons || []).reduce((addonSum, addon) => {
+        const quantity = addon.isPerDevice ? card.count : (addon.customQuantity || 1);
+        return addonSum + (quantity * addon.monthlyFee);
+      }, 0);
+      return sum + mainItemTotal + addonsTotal;
+    }, 0);
+  };
 
   // Calculate total company costs
-  const totalCompanyCosts = data.deviceSelection.dynamicCards.reduce(
-    (sum, card) => sum + (card.count * card.companyCost), 
-    0
-  );
+  const calculateTotalCompanyCosts = () => {
+    return data.deviceSelection.dynamicCards.reduce((sum, card) => {
+      const mainItemCost = card.count * card.companyCost;
+      const addonsCost = (card.addons || []).reduce((addonSum, addon) => {
+        const quantity = addon.isPerDevice ? card.count : (addon.customQuantity || 1);
+        return addonSum + (quantity * addon.companyCost);
+      }, 0);
+      return sum + mainItemCost + addonsCost;
+    }, 0);
+  };
+
+  const totalCustomerPayments = calculateTotalCustomerPayments();
+  const totalCompanyCosts = calculateTotalCompanyCosts();
 
   // Calculate effective rates (subtract 0.2%)
   const effectiveRegulated = Math.max(0, data.fees.regulatedCards - 0.2);
@@ -43,9 +89,9 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
     return new Intl.NumberFormat('sk-SK', {
       style: 'currency',
       currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount).replace('€', '').trim() + ' €';
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
   };
 
   const formatPercentage = (percent: number): string => {
@@ -59,6 +105,15 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
     const serviceMargin = totalCustomerPayments - totalCompanyCosts;
     const totalMonthlyProfit = transactionMargin + serviceMargin;
 
+    // Create detailed breakdowns
+    const customerPaymentBreakdown = data.deviceSelection.dynamicCards.map(card => 
+      createItemBreakdown(card, true)
+    );
+    
+    const companyCostBreakdown = data.deviceSelection.dynamicCards.map(card => 
+      createItemBreakdown(card, false)
+    );
+
     const calculatorResults = {
       monthlyTurnover,
       totalCustomerPayments,
@@ -69,7 +124,9 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
       unregulatedFee,
       transactionMargin,
       serviceMargin,
-      totalMonthlyProfit
+      totalMonthlyProfit,
+      customerPaymentBreakdown,
+      companyCostBreakdown
     };
 
     updateData({
@@ -89,9 +146,50 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
         [field]: value
       }
     });
-    // Hide results when fees change
     setShowResults(false);
   };
+
+  const renderItemBreakdown = (items: ItemBreakdown[], title: string, isCustomerPayment: boolean) => (
+    <Card className="bg-slate-50 border-slate-200 shadow-sm">
+      <CardContent className="pt-6">
+        <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          {isCustomerPayment ? '💼' : '🔧'} {title}:
+        </h3>
+        <div className="space-y-3">
+          {items.map((item) => (
+            <div key={item.id} className="border-l-4 border-blue-200 pl-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-slate-700">
+                  📦 {item.name} ({item.count} ks x {formatCurrency(item.unitPrice)}):
+                </span>
+                <span className="font-medium text-slate-900">{formatCurrency(item.subtotal)}</span>
+              </div>
+              
+              {item.addons && item.addons.map((addon) => (
+                <div key={addon.id} className="flex justify-between items-center ml-4 mt-1">
+                  <span className="text-xs text-slate-600">
+                    🔧 {addon.name} ({addon.count} ks x {formatCurrency(addon.unitPrice)}):
+                  </span>
+                  <span className="text-xs font-medium text-slate-700">{formatCurrency(addon.subtotal)}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+          
+          <div className="border-t pt-3 mt-4">
+            <div className="flex justify-between items-center">
+              <span className="font-bold text-slate-900">📦 Spolu:</span>
+              <span className={`font-bold text-xl ${isCustomerPayment ? 'text-blue-600' : 'text-red-600'}`}>
+                {formatCurrency(items.reduce((sum, item) => {
+                  return sum + item.subtotal + (item.addons?.reduce((addonSum, addon) => addonSum + addon.subtotal, 0) || 0);
+                }, 0))}
+              </span>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
@@ -196,79 +294,68 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
+              className="space-y-6"
             >
+              {/* Detailed Payment Breakdown */}
+              {renderItemBreakdown(
+                data.fees.calculatorResults.customerPaymentBreakdown,
+                "Mesačné platby od zákazníka",
+                true
+              )}
+
+              {/* Detailed Cost Breakdown */}
+              {renderItemBreakdown(
+                data.fees.calculatorResults.companyCostBreakdown,
+                "Vaše firemné náklady",
+                false
+              )}
+
+              {/* Transaction Revenue */}
               <Card className="bg-slate-50 border-slate-200 shadow-md">
                 <CardContent className="pt-6">
-                  {/* Transaction Revenue */}
-                  <div className="mb-6">
-                    <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                      💰 Tržba z transakcií:
-                    </h3>
-                    <div className="space-y-2 text-sm ml-4">
-                      <div className="flex justify-between">
-                        <span>• Odhadovaný obrat:</span>
-                        <span className="font-medium">{formatCurrency(data.fees.calculatorResults.monthlyTurnover)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>• Regulované karty: {formatPercentage(data.fees.calculatorResults.effectiveRegulated)} →</span>
-                        <span className="font-medium">{formatCurrency(data.fees.calculatorResults.regulatedFee)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>• Neregulované karty: {formatPercentage(data.fees.calculatorResults.effectiveUnregulated)} →</span>
-                        <span className="font-medium">{formatCurrency(data.fees.calculatorResults.unregulatedFee)}</span>
-                      </div>
+                  <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                    💰 Tržba z transakcií:
+                  </h3>
+                  <div className="space-y-2 text-sm ml-4">
+                    <div className="flex justify-between">
+                      <span>• Odhadovaný obrat:</span>
+                      <span className="font-medium">{formatCurrency(data.fees.calculatorResults.monthlyTurnover)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>• Regulované karty: {formatPercentage(data.fees.calculatorResults.effectiveRegulated)} →</span>
+                      <span className="font-medium">{formatCurrency(data.fees.calculatorResults.regulatedFee)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>• Neregulované karty: {formatPercentage(data.fees.calculatorResults.effectiveUnregulated)} →</span>
+                      <span className="font-medium">{formatCurrency(data.fees.calculatorResults.unregulatedFee)}</span>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
 
-                  {/* Customer Payments */}
-                  <div className="mb-6">
-                    <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                      💼 Mesačné platby od zákazníka:
-                    </h3>
-                    <div className="space-y-2 text-sm ml-4">
-                      <div className="flex justify-between">
-                        <span>• Súčet mesačných poplatkov:</span>
-                        <span className="font-medium">{formatCurrency(data.fees.calculatorResults.totalCustomerPayments)}</span>
-                      </div>
+              {/* Monthly Profit */}
+              <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 shadow-md">
+                <CardContent className="pt-6">
+                  <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                    📈 Váš mesačný zisk:
+                  </h3>
+                  <div className="space-y-3 text-sm ml-4">
+                    <div className="flex justify-between">
+                      <span>• Marža z transakcií:</span>
+                      <span className="font-medium text-green-600">{formatCurrency(data.fees.calculatorResults.transactionMargin)}</span>
                     </div>
-                  </div>
-
-                  {/* Company Costs */}
-                  <div className="mb-6">
-                    <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                      🔧 Vaše firemné náklady:
-                    </h3>
-                    <div className="space-y-2 text-sm ml-4">
-                      <div className="flex justify-between">
-                        <span>• Súčet mesačných nákladov:</span>
-                        <span className="font-medium text-red-600">{formatCurrency(data.fees.calculatorResults.totalCompanyCosts)}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Monthly Profit */}
-                  <div className="border-t border-slate-300 pt-4">
-                    <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                      📈 Váš mesačný zisk:
-                    </h3>
-                    <div className="space-y-3 text-sm ml-4">
-                      <div className="flex justify-between">
-                        <span>• Marža z transakcií:</span>
-                        <span className="font-medium text-green-600">{formatCurrency(data.fees.calculatorResults.transactionMargin)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>• Marža zo služieb:</span>
-                        <span className="font-medium text-green-600">
-                          {formatCurrency(data.fees.calculatorResults.serviceMargin)} 
-                          <span className="text-xs text-slate-500 ml-1">
-                            ({formatCurrency(data.fees.calculatorResults.totalCustomerPayments)} - {formatCurrency(data.fees.calculatorResults.totalCompanyCosts)})
-                          </span>
+                    <div className="flex justify-between">
+                      <span>• Marža zo služieb:</span>
+                      <span className="font-medium text-green-600">
+                        {formatCurrency(data.fees.calculatorResults.serviceMargin)} 
+                        <span className="text-xs text-slate-500 ml-1">
+                          ({formatCurrency(data.fees.calculatorResults.totalCustomerPayments)} - {formatCurrency(data.fees.calculatorResults.totalCompanyCosts)})
                         </span>
-                      </div>
-                      <div className="flex justify-between items-center pt-3 border-t border-slate-200">
-                        <span className="font-bold text-slate-900">• Celkový mesačný zisk:</span>
-                        <span className="font-bold text-xl text-green-600">{formatCurrency(data.fees.calculatorResults.totalMonthlyProfit)}</span>
-                      </div>
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center pt-3 border-t border-green-200">
+                      <span className="font-bold text-slate-900">• Celkový mesačný zisk:</span>
+                      <span className="font-bold text-2xl text-green-600">{formatCurrency(data.fees.calculatorResults.totalMonthlyProfit)}</span>
                     </div>
                   </div>
                 </CardContent>

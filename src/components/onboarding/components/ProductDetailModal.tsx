@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
-import { DeviceCard, ServiceCard } from "@/types/onboarding";
-import { Settings, Package, X } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { DeviceCard, ServiceCard, AddonCard } from "@/types/onboarding";
+import { Settings, Package } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import AddonSelector from "./AddonSelector";
 
 interface ProductDetailModalProps {
   isOpen: boolean;
@@ -34,18 +36,12 @@ const ProductDetailModal = ({
   const [pricingMode, setPricingMode] = useState<'rental' | 'purchase'>('rental');
   const [isSpecsOpen, setIsSpecsOpen] = useState(false);
 
-  // Initialize form data when modal opens or product changes
   useEffect(() => {
     if (!isOpen) return;
 
-    console.log('Modal opened with:', { mode, productType, product, editingCard });
-
     if (mode === 'edit' && editingCard) {
-      console.log('Setting form data from editing card:', editingCard);
       setFormData(editingCard);
     } else if (mode === 'add' && product) {
-      console.log('Setting form data from product template:', product);
-      
       if (productType === 'device') {
         const deviceData = {
           ...product,
@@ -54,9 +50,9 @@ const ProductDetailModal = ({
           count: 1,
           monthlyFee: product.rentalPrice || 0,
           companyCost: 0,
-          simCards: product.simCards || 0
+          simCards: product.simCards || 0,
+          addons: []
         };
-        console.log('Created device data:', deviceData);
         setFormData(deviceData);
       } else {
         const serviceData = {
@@ -68,26 +64,70 @@ const ProductDetailModal = ({
           count: 1,
           monthlyFee: 0,
           companyCost: 0,
-          customValue: product.name === 'Iný' ? '' : undefined
+          customValue: product.name === 'Iný' ? '' : undefined,
+          addons: []
         };
-        console.log('Created service data:', serviceData);
         setFormData(serviceData);
       }
     }
   }, [isOpen, mode, product, editingCard, productType]);
 
-  // Don't render if modal is not open or formData is not ready
   if (!isOpen || !formData) {
     return null;
   }
 
   const updateField = (field: string, value: any) => {
-    console.log('Updating field:', field, 'with value:', value);
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
 
+  const handleAddAddon = (addon: AddonCard) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      addons: [...(prev.addons || []), addon]
+    }));
+  };
+
+  const handleRemoveAddon = (addonId: string) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      addons: (prev.addons || []).filter((addon: AddonCard) => addon.id !== addonId)
+    }));
+  };
+
+  const handleUpdateAddon = (addonId: string, updatedAddon: AddonCard) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      addons: (prev.addons || []).map((addon: AddonCard) => 
+        addon.id === addonId ? updatedAddon : addon
+      )
+    }));
+  };
+
+  const calculateMainItemSubtotal = () => {
+    return formData.count * formData.monthlyFee;
+  };
+
+  const calculateAddonsSubtotal = () => {
+    return (formData.addons || []).reduce((sum: number, addon: AddonCard) => {
+      const quantity = addon.isPerDevice ? formData.count : (addon.customQuantity || 1);
+      return sum + (quantity * addon.monthlyFee);
+    }, 0);
+  };
+
+  const calculateTotalCost = () => {
+    return calculateMainItemSubtotal() + calculateAddonsSubtotal();
+  };
+
+  const calculateCompanyCost = () => {
+    const mainCost = formData.count * formData.companyCost;
+    const addonsCost = (formData.addons || []).reduce((sum: number, addon: AddonCard) => {
+      const quantity = addon.isPerDevice ? formData.count : (addon.customQuantity || 1);
+      return sum + (quantity * addon.companyCost);
+    }, 0);
+    return mainCost + addonsCost;
+  };
+
   const handleSave = () => {
-    console.log('Saving form data:', formData);
     onSave(formData);
     onClose();
   };
@@ -105,7 +145,7 @@ const ProductDetailModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             {productType === 'device' ? (
@@ -154,10 +194,6 @@ const ProductDetailModal = ({
               step={1}
               className="w-full"
             />
-            <div className="flex justify-between text-xs text-slate-500">
-              <span>1</span>
-              <span>20</span>
-            </div>
           </div>
 
           {/* Device specific options */}
@@ -204,42 +240,40 @@ const ProductDetailModal = ({
           )}
 
           {/* Pricing */}
-          <div className="space-y-2">
-            <Label htmlFor="monthly-fee" className="text-sm">
-              {productType === 'device' 
-                ? (pricingMode === 'rental' ? 'Mesačný poplatok (€)' : 'Jednorázová cena (€)')
-                : 'Mesačný poplatok (€)'
-              }
-            </Label>
-            <Input
-              id="monthly-fee"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.monthlyFee}
-              onChange={(e) => updateField('monthlyFee', parseFloat(e.target.value) || 0)}
-              className="text-sm"
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="monthly-fee" className="text-sm">
+                {productType === 'device' 
+                  ? (pricingMode === 'rental' ? 'Mesačný poplatok (€)' : 'Jednorázová cena (€)')
+                  : 'Mesačný poplatok (€)'
+                }
+              </Label>
+              <Input
+                id="monthly-fee"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.monthlyFee}
+                onChange={(e) => updateField('monthlyFee', parseFloat(e.target.value) || 0)}
+                className="text-sm"
+              />
+            </div>
 
-          {/* Company Cost - NEW FIELD */}
-          <div className="space-y-2">
-            <Label htmlFor="company-cost" className="text-sm font-medium">
-              Mesačný náklad pre firmu (bez DPH)
-            </Label>
-            <Input
-              id="company-cost"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.companyCost}
-              onChange={(e) => updateField('companyCost', parseFloat(e.target.value) || 0)}
-              className="text-sm"
-              placeholder="0.00"
-            />
-            <p className="text-xs text-slate-500">
-              Toto je reálny náklad vašej firmy na poskytovanie tejto služby alebo zariadenia.
-            </p>
+            <div className="space-y-2">
+              <Label htmlFor="company-cost" className="text-sm font-medium">
+                Mesačný náklad pre firmu (€)
+              </Label>
+              <Input
+                id="company-cost"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.companyCost}
+                onChange={(e) => updateField('companyCost', parseFloat(e.target.value) || 0)}
+                className="text-sm"
+                placeholder="0.00"
+              />
+            </div>
           </div>
 
           {/* Custom value for services */}
@@ -257,6 +291,68 @@ const ProductDetailModal = ({
             </div>
           )}
 
+          <Separator />
+
+          {/* Addons Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <h4 className="font-medium text-slate-900">Doplnky a príslušenstvo</h4>
+              <Badge variant="outline" className="text-xs">
+                {(formData.addons || []).length} položiek
+              </Badge>
+            </div>
+            
+            <AddonSelector
+              selectedAddons={formData.addons || []}
+              parentCount={formData.count}
+              onAddAddon={handleAddAddon}
+              onRemoveAddon={handleRemoveAddon}
+              onUpdateAddon={handleUpdateAddon}
+            />
+          </div>
+
+          <Separator />
+
+          {/* Cost Summary */}
+          <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-4 border border-blue-200">
+            <h4 className="font-medium text-slate-900 mb-3">Súhrn nákladov</h4>
+            
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-700">Hlavná položka ({formData.count} ks x {formData.monthlyFee.toFixed(2)} €):</span>
+                <span className="font-medium">{calculateMainItemSubtotal().toFixed(2)} €</span>
+              </div>
+              
+              {(formData.addons || []).length > 0 && (
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-700">Doplnky:</span>
+                  <span className="font-medium">{calculateAddonsSubtotal().toFixed(2)} €</span>
+                </div>
+              )}
+              
+              <div className="flex justify-between items-center border-t pt-2">
+                <span className="font-medium text-slate-900">Subtotal zákazník:</span>
+                <span className="font-bold text-blue-600">
+                  {calculateTotalCost().toFixed(2)} €/mes
+                </span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-slate-900">Náklad firmy:</span>
+                <span className="font-bold text-red-600">
+                  {calculateCompanyCost().toFixed(2)} €/mes
+                </span>
+              </div>
+              
+              <div className="flex justify-between items-center border-t pt-2">
+                <span className="font-bold text-slate-900">Marža:</span>
+                <span className="font-bold text-green-600">
+                  {(calculateTotalCost() - calculateCompanyCost()).toFixed(2)} €/mes
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Specifications for devices */}
           {productType === 'device' && formData.specifications?.length > 0 && (
             <Collapsible open={isSpecsOpen} onOpenChange={setIsSpecsOpen}>
@@ -273,29 +369,6 @@ const ProductDetailModal = ({
               </div>
             </Collapsible>
           )}
-
-          {/* Cost Summary */}
-          <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-4 border border-blue-200">
-            <div className="flex justify-between items-center text-sm mb-2">
-              <span className="text-slate-700 font-medium">Subtotal zákazník:</span>
-              <span className="font-semibold text-slate-900">
-                {(formData.count * formData.monthlyFee).toFixed(2)} €
-                {(productType === 'service' || pricingMode === 'rental') && '/mes'}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-sm mb-2">
-              <span className="text-slate-700 font-medium">Náklad firmy:</span>
-              <span className="font-semibold text-red-600">
-                {(formData.count * formData.companyCost).toFixed(2)} €/mes
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-sm border-t pt-2">
-              <span className="text-slate-700 font-medium">Marža:</span>
-              <span className="font-bold text-green-600">
-                {(formData.count * (formData.monthlyFee - formData.companyCost)).toFixed(2)} €/mes
-              </span>
-            </div>
-          </div>
         </div>
 
         {/* Actions */}
