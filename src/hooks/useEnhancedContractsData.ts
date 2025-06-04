@@ -136,7 +136,18 @@ export const useEnhancedContractsData = (filters?: {
 
       // Apply server-side filters
       if (filters?.status && filters.status !== 'all') {
-        query = query.eq('status', filters.status);
+        // Map UI status values to database status values
+        const statusMapping: { [key: string]: string } = {
+          'draft': 'draft',
+          'submitted': 'submitted', 
+          'opened': 'submitted', // Map to existing status
+          'viewed': 'submitted',  // Map to existing status
+          'approved': 'approved',
+          'rejected': 'rejected'
+        };
+        
+        const dbStatus = statusMapping[filters.status] || filters.status;
+        query = query.eq('status', dbStatus);
       }
 
       if (filters?.contractType && filters.contractType !== 'all') {
