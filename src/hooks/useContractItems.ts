@@ -64,7 +64,8 @@ export const useContractItems = (contractId: string) => {
     },
     onSuccess: () => {
       console.log('Item added successfully, invalidating queries');
-      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+      // Use the same query key as useContractQueries
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
       toast({
         title: "Položka pridaná",
         description: "Zariadenie/služba bola úspešne pridaná do zmluvy.",
@@ -100,7 +101,7 @@ export const useContractItems = (contractId: string) => {
     },
     onSuccess: () => {
       console.log('Item updated successfully, invalidating queries');
-      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
       toast({
         title: "Položka aktualizovaná",
         description: "Zmeny boli úspešne uložené.",
@@ -146,7 +147,7 @@ export const useContractItems = (contractId: string) => {
     },
     onSuccess: () => {
       console.log('Item deleted successfully, invalidating queries');
-      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
       toast({
         title: "Položka odstránená",
         description: "Zariadenie/služba bola úspešne odstránená zo zmluvy.",

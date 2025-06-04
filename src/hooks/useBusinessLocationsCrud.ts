@@ -42,7 +42,8 @@ export const useBusinessLocationsCrud = (contractId: string) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+      // Use the same query key as useContractQueries
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
       toast({
         title: "Prevádzka pridaná",
         description: "Prevádzka bola úspešne pridaná.",
@@ -92,7 +93,7 @@ export const useBusinessLocationsCrud = (contractId: string) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
       toast({
         title: "Prevádzka aktualizovaná",
         description: "Prevádzka bola úspešne aktualizovaná.",
@@ -123,7 +124,7 @@ export const useBusinessLocationsCrud = (contractId: string) => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
       toast({
         title: "Prevádzka vymazaná",
         description: "Prevádzka bola úspešne vymazaná.",

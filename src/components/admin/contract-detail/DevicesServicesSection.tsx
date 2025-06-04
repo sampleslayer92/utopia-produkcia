@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +28,7 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
   
   const { addItem, updateItem, deleteItem, isAdding, isDeleting } = useContractItems(contractId!);
   
-  // Use contractItems directly from transformed data
+  // Use contractItems directly from onboardingData
   const devices = onboardingData.contractItems || [];
   
   console.log('DevicesServicesSection - devices:', devices);

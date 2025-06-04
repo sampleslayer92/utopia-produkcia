@@ -194,4 +194,5 @@ export interface OnboardingData {
   currentStep: number;
   contractId?: string;
   contractNumber?: string;
+  contractItems?: DynamicCard[];
 }
