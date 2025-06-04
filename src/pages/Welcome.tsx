@@ -39,7 +39,7 @@ const Welcome = () => {
               <CreditCard className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-              PayFlow
+              Utopia
             </h1>
             <p className="text-slate-600 mt-2">Vyberte svoju rolu</p>
           </div>
@@ -125,7 +125,7 @@ const Welcome = () => {
             <CreditCard className="h-10 w-10 text-white" />
           </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-3">
-            PayFlow
+            Utopia
           </h1>
           <p className="text-slate-600 text-lg">
             Platobná platforma pre ISO organizácie, obchodných partnerov a klientov
@@ -145,7 +145,7 @@ const Welcome = () => {
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold text-slate-900 mb-1">
-                    Prihlásiť sa ako existujúci používateľ
+                    Prihlásiť sa
                   </h2>
                   <p className="text-slate-600">
                     Vyberte svoju rolu a pokračujte do systému
@@ -167,7 +167,7 @@ const Welcome = () => {
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold text-slate-900 mb-1">
-                    Nový klient – Začať onboarding
+                    Začať onboarding
                   </h2>
                   <p className="text-slate-600">
                     Registrácia novej spoločnosti do systému
