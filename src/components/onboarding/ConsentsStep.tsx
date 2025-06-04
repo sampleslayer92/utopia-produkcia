@@ -1,11 +1,13 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+
 import { OnboardingData } from "@/types/onboarding";
-import { AlertCircle, FileDigit, FileCheck, FileWarning } from "lucide-react";
-import OnboardingInput from "./ui/OnboardingInput";
-import OnboardingSelect from "./ui/OnboardingSelect";
+import { useState } from "react";
+import { Check, FileText, Lock, Mail, Shield, PenTool } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import OnboardingSection from "./ui/OnboardingSection";
+import ContractPreviewModal from "./components/ContractPreviewModal";
+import { toast } from "sonner";
 
 interface ConsentsStepProps {
   data: OnboardingData;
@@ -15,8 +17,11 @@ interface ConsentsStepProps {
   onComplete: () => void;
 }
 
-const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
-  const updateConsents = (field: string, value: any) => {
+const ConsentsStep = ({ data, updateData, onPrev, onComplete }: ConsentsStepProps) => {
+  const [showContractPreview, setShowContractPreview] = useState(false);
+  const [isSigning, setIsSigning] = useState(false);
+
+  const updateConsents = (field: string, value: boolean | string) => {
     updateData({
       consents: {
         ...data.consents,
@@ -25,70 +30,121 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
     });
   };
 
-  const authorizedPersonsOptions = data.authorizedPersons.map(person => ({
-    value: person.id,
-    label: `${person.firstName} ${person.lastName}`
-  }));
+  const areAllConsentsGiven = () => {
+    return data.consents.gdpr && 
+           data.consents.terms && 
+           data.consents.electronicCommunication;
+  };
 
-  const allRequiredConsentsProvided = data.consents.gdpr && 
-                                     data.consents.terms && 
-                                     data.consents.signatureDate && 
-                                     data.consents.signingPersonId;
+  const handleSignContract = async () => {
+    if (!areAllConsentsGiven()) {
+      toast.error("Musíte súhlasiť so všetkými podmienkami pred podpisom zmluvy.");
+      return;
+    }
+
+    setIsSigning(true);
+    
+    try {
+      // Simulate signing delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const signatureDate = new Date().toISOString();
+      const signingPerson = `${data.contactInfo.firstName} ${data.contactInfo.lastName}`;
+      
+      updateData({
+        consents: {
+          ...data.consents,
+          isSigned: true,
+          signedAt: signatureDate,
+          signedBy: signingPerson,
+          signatureDate: signatureDate,
+          signingPersonId: data.contactInfo.userRole
+        }
+      });
+
+      setShowContractPreview(false);
+      toast.success("Zmluva bola úspešne podpísaná!", {
+        description: "Vaš účet bol vytvorený a môžete pristúpiť k portálu."
+      });
+      
+      // Complete the onboarding process
+      setTimeout(() => {
+        onComplete();
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Error signing contract:', error);
+      toast.error("Nastala chyba pri podpisovaní zmluvy. Skúste to znovu.");
+    } finally {
+      setIsSigning(false);
+    }
+  };
+
+  const consentItems = [
+    {
+      id: 'gdpr',
+      label: 'Súhlas so spracovaním osobných údajov (GDPR)',
+      description: 'Súhlasím so spracovaním mojich osobných údajov v súlade s GDPR.',
+      checked: data.consents.gdpr,
+      icon: Shield,
+      required: true
+    },
+    {
+      id: 'terms',
+      label: 'Súhlas s obchodnými podmienkami',
+      description: 'Súhlasím s všeobecnými obchodnými podmienkami spoločnosti.',
+      checked: data.consents.terms,
+      icon: FileText,
+      required: true
+    },
+    {
+      id: 'electronicCommunication',
+      label: 'Súhlas s elektronickým doručovaním',
+      description: 'Súhlasím s doručovaním dokumentov a komunikácie elektronickou formou.',
+      checked: data.consents.electronicCommunication,
+      icon: Mail,
+      required: true
+    }
+  ];
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-3">
           {/* Left sidebar */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 md:p-8">
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <FileDigit className="h-5 w-5 text-blue-600" />
+                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <Lock className="h-5 w-5 text-green-600" />
                 </div>
-                <h3 className="font-medium text-blue-900">Súhlasy a podpis</h3>
+                <h3 className="font-medium text-green-900">Súhlasy a podpis</h3>
               </div>
               
-              <p className="text-sm text-blue-800">
-                Finálny krok onboardingu - potvrdenie súhlasov a podpísanie zmluvy.
+              <p className="text-sm text-green-800">
+                Posledný krok! Prečítajte si podmienky a podpíšte zmluvu.
               </p>
               
-              <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-                <p className="font-medium mb-2">Ďalšie kroky po odoslaní</p>
+              <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
+                <p className="font-medium mb-2">Čo sa stane po podpise:</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  <li>Generovanie zmluvy na základe zadaných údajov</li>
-                  <li>Elektronické podpísanie zmluvy</li>
-                  <li>Aktivácia účtu a doručenie zariadení</li>
+                  <li>Vytvorí sa váš klientský účet</li>
+                  <li>Dostanete prístup do portálu</li>
+                  <li>Zmluva nadobudne platnosť</li>
+                  <li>Začne sa proces aktivácie služieb</li>
                 </ul>
               </div>
-              
-              <div className={`mt-4 rounded-lg p-4 ${
-                allRequiredConsentsProvided 
-                  ? 'bg-green-100/50 border border-green-200 text-green-800' 
-                  : 'bg-amber-100/50 border border-amber-200 text-amber-800'
-              }`}>
-                <div className="flex items-start gap-3">
-                  {allRequiredConsentsProvided ? (
-                    <FileCheck className="h-5 w-5 mt-0.5" />
-                  ) : (
-                    <FileWarning className="h-5 w-5 mt-0.5" />
-                  )}
-                  <div>
-                    <p className="font-medium text-xs">
-                      {allRequiredConsentsProvided 
-                        ? 'Všetky povinné súhlasy sú udelené' 
-                        : 'Chýbajú povinné súhlasy'
-                      }
-                    </p>
-                    <p className="text-xs mt-1">
-                      {allRequiredConsentsProvided 
-                        ? 'Registráciu môžete dokončiť' 
-                        : 'Pre dokončenie registrácie udeľte všetky povinné súhlasy'
-                      }
-                    </p>
-                  </div>
+
+              {data.consents.isSigned && (
+                <div className="bg-emerald-100/50 border border-emerald-200 rounded-lg p-4 text-xs text-emerald-800">
+                  <p className="font-medium flex items-center gap-2">
+                    <Check className="h-4 w-4" />
+                    Zmluva podpísaná
+                  </p>
+                  <p>Podpísal: {data.consents.signedBy}</p>
+                  <p>Dátum: {data.consents.signedAt ? new Date(data.consents.signedAt).toLocaleDateString('sk-SK') : 'N/A'}</p>
                 </div>
-              </div>
+              )}
             </div>
           </div>
           
@@ -96,143 +152,74 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <OnboardingSection>
               <div className="space-y-6">
+                {/* Consent checkboxes */}
                 <div className="space-y-4">
-                  <div className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50/50 transition-colors">
-                    <div className="flex items-start space-x-3">
+                  {consentItems.map((item) => (
+                    <div key={item.id} className="flex items-start space-x-3 p-4 bg-slate-50 rounded-lg">
                       <Checkbox
-                        id="gdpr"
-                        checked={data.consents.gdpr}
-                        onCheckedChange={(checked) => updateConsents('gdpr', checked)}
+                        id={item.id}
+                        checked={item.checked}
+                        onCheckedChange={(checked) => updateConsents(item.id, !!checked)}
                         className="mt-1"
+                        disabled={data.consents.isSigned}
                       />
-                      <div className="space-y-1">
-                        <Label htmlFor="gdpr" className="text-sm font-medium text-slate-900">
-                          Súhlas so spracovaním osobných údajov (GDPR) *
-                        </Label>
-                        <div className="text-sm text-slate-600">
-                          <p>
-                            Súhlasím so spracovaním osobných údajov v súlade s nariadením GDPR
-                            pre účely uzatvorenia a plnenia zmluvy o poskytovaní platobných služieb.
-                          </p>
-                          <p className="text-xs text-blue-600 mt-2 cursor-pointer hover:underline">
-                            Zobraziť úplné znenie súhlasu
-                          </p>
-                        </div>
+                      <div className="flex-1">
+                        <label 
+                          htmlFor={item.id}
+                          className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer"
+                        >
+                          <item.icon className="h-4 w-4" />
+                          {item.label}
+                          {item.required && <span className="text-red-500">*</span>}
+                        </label>
+                        <p className="text-xs text-slate-600 mt-1">{item.description}</p>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50/50 transition-colors">
-                    <div className="flex items-start space-x-3">
-                      <Checkbox
-                        id="terms"
-                        checked={data.consents.terms}
-                        onCheckedChange={(checked) => updateConsents('terms', checked)}
-                        className="mt-1"
-                      />
-                      <div className="space-y-1">
-                        <Label htmlFor="terms" className="text-sm font-medium text-slate-900">
-                          Súhlas s obchodnými podmienkami *
-                        </Label>
-                        <div className="text-sm text-slate-600">
-                          <p>
-                            Súhlasím s obchodnými podmienkami poskytovania platobných služieb
-                            a s cenníkom poplatkov za poskytované služby.
-                          </p>
-                          <p className="text-xs text-blue-600 mt-2 cursor-pointer hover:underline">
-                            Zobraziť obchodné podmienky
-                          </p>
+                  ))}
+                </div>
+
+                {/* Contract preview and signature section */}
+                <div className="border-t pt-6">
+                  <div className="text-center space-y-4">
+                    <h3 className="text-lg font-semibold text-slate-900">Podpis zmluvy</h3>
+                    
+                    {!data.consents.isSigned ? (
+                      <>
+                        <p className="text-sm text-slate-600">
+                          Pred podpisom si môžete prezrieť celú zmluvu.
+                        </p>
+                        
+                        <div className="flex justify-center gap-4">
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowContractPreview(true)}
+                            className="flex items-center gap-2"
+                          >
+                            <FileText className="h-4 w-4" />
+                            Zobraziť zmluvu
+                          </Button>
+                          
+                          <Button
+                            onClick={handleSignContract}
+                            disabled={!areAllConsentsGiven() || isSigning}
+                            className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+                          >
+                            <PenTool className="h-4 w-4" />
+                            {isSigning ? 'Podpisujem...' : 'Podpísať zmluvu'}
+                          </Button>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50/50 transition-colors">
-                    <div className="flex items-start space-x-3">
-                      <Checkbox
-                        id="electronicCommunication"
-                        checked={data.consents.electronicCommunication}
-                        onCheckedChange={(checked) => updateConsents('electronicCommunication', checked)}
-                        className="mt-1"
-                      />
-                      <div className="space-y-1">
-                        <Label htmlFor="electronicCommunication" className="text-sm font-medium text-slate-900">
-                          Súhlas s elektronickou komunikáciou
-                        </Label>
-                        <div className="text-sm text-slate-600">
-                          <p>
-                            Súhlasím s doručovaním dokumentov a komunikáciou v elektronickej forme
-                            na uvedenú emailovú adresu.
-                          </p>
-                          <p className="text-xs text-blue-600 mt-2 cursor-pointer hover:underline">
-                            Zobraziť možnosti komunikácie
-                          </p>
+                      </>
+                    ) : (
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6">
+                        <div className="flex items-center justify-center gap-3 text-emerald-700">
+                          <Check className="h-6 w-6" />
+                          <span className="font-semibold">Zmluva úspešne podpísaná!</span>
                         </div>
+                        <p className="text-sm text-emerald-600 mt-2">
+                          Vaša registrácia je dokončená. Budete presmerovaný do klientského portálu.
+                        </p>
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t border-slate-200 pt-6 space-y-4">
-                  <h3 className="font-medium text-slate-900 flex items-center gap-2">
-                    <FileDigit className="h-4 w-4 text-blue-500" />
-                    Údaje o podpise
-                  </h3>
-                  
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <OnboardingInput
-                      label="Dátum podpisu *"
-                      type="date"
-                      value={data.consents.signatureDate}
-                      onChange={(e) => updateConsents('signatureDate', e.target.value)}
-                      error={!data.consents.signatureDate ? "Dátum podpisu je povinný údaj" : undefined}
-                    />
-
-                    <OnboardingSelect
-                      label="Podpisujúca osoba *"
-                      value={data.consents.signingPersonId}
-                      onValueChange={(value) => updateConsents('signingPersonId', value)}
-                      options={authorizedPersonsOptions}
-                      placeholder="Vyberte podpisujúcu osobu"
-                      error={!data.consents.signingPersonId ? "Podpisujúca osoba je povinný údaj" : undefined}
-                    />
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-5 mt-6">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium text-blue-900 mb-2">Ďalšie kroky</h4>
-                      <ol className="space-y-3 text-sm text-blue-800">
-                        <li className="flex items-baseline gap-2">
-                          <span className="bg-blue-200 text-blue-800 rounded-full h-5 w-5 flex items-center justify-center text-xs flex-shrink-0 font-medium">1</span>
-                          <span>Po dokončení registrácie bude vygenerovaná zmluva na základe zadaných údajov.</span>
-                        </li>
-                        <li className="flex items-baseline gap-2">
-                          <span className="bg-blue-200 text-blue-800 rounded-full h-5 w-5 flex items-center justify-center text-xs flex-shrink-0 font-medium">2</span>
-                          <span>Zmluva bude odoslaná na váš email na elektronické podpísanie.</span>
-                        </li>
-                        <li className="flex items-baseline gap-2">
-                          <span className="bg-blue-200 text-blue-800 rounded-full h-5 w-5 flex items-center justify-center text-xs flex-shrink-0 font-medium">3</span>
-                          <span>Po podpísaní zmluvy bude váš účet aktivovaný a môžete začať používať služby.</span>
-                        </li>
-                        <li className="flex items-baseline gap-2">
-                          <span className="bg-blue-200 text-blue-800 rounded-full h-5 w-5 flex items-center justify-center text-xs flex-shrink-0 font-medium">4</span>
-                          <span>Zariadenia budú doručené na adresu prevádzky do 5 pracovných dní.</span>
-                        </li>
-                      </ol>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-amber-800">
-                      <span className="font-medium">Dôležité:</span> Všetky povinné polia musia byť vyplnené a súhlasy udelené
-                      pred dokončením registrácie. Skontrolujte prosím všetky údaje v predchádzajúcich krokoch.
-                    </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -240,6 +227,28 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
           </div>
         </div>
       </CardContent>
+      
+      {/* Navigation */}
+      <div className="flex justify-between items-center p-6 bg-slate-50 border-t">
+        <Button variant="outline" onClick={onPrev}>
+          Späť
+        </Button>
+        
+        {data.consents.isSigned && (
+          <Button onClick={onComplete} className="bg-green-600 hover:bg-green-700">
+            Dokončiť registráciu
+          </Button>
+        )}
+      </div>
+
+      {/* Contract Preview Modal */}
+      <ContractPreviewModal
+        isOpen={showContractPreview}
+        onClose={() => setShowContractPreview(false)}
+        onSign={handleSignContract}
+        data={data}
+        isLoading={isSigning}
+      />
     </Card>
   );
 };

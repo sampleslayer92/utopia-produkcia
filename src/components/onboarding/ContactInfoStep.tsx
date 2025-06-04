@@ -1,7 +1,7 @@
 
 import { OnboardingData } from "@/types/onboarding";
 import { useState, useEffect } from "react";
-import { Mail, Phone, User } from "lucide-react";
+import { Mail, Phone, User, UserCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
@@ -21,11 +21,70 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const { createContract, isCreating } = useContractCreation();
 
   const updateContactInfo = (field: string, value: string | boolean) => {
-    updateData({
-      contactInfo: {
-        ...data.contactInfo,
-        [field]: value
+    const newContactInfo = {
+      ...data.contactInfo,
+      [field]: value
+    };
+
+    // Auto-populate authorized persons and actual owners if user is owner or executive
+    if (field === 'userRole' && (value === 'Majiteľ' || value === 'Konateľ')) {
+      updateDataWithAutoPopulation(newContactInfo);
+    } else {
+      updateData({
+        contactInfo: newContactInfo
+      });
+      
+      // Update related data if contact info changes and user is owner/executive
+      if ((data.contactInfo.userRole === 'Majiteľ' || data.contactInfo.userRole === 'Konateľ') && 
+          (field === 'firstName' || field === 'lastName' || field === 'email' || field === 'phone')) {
+        updateDataWithAutoPopulation(newContactInfo);
       }
+    }
+  };
+
+  const updateDataWithAutoPopulation = (contactInfo: any) => {
+    const personId = `auto-${Date.now()}`;
+    const fullName = `${contactInfo.firstName} ${contactInfo.lastName}`.trim();
+    
+    const authorizedPerson = {
+      id: personId,
+      firstName: contactInfo.firstName,
+      lastName: contactInfo.lastName,
+      email: contactInfo.email,
+      phone: contactInfo.phone,
+      maidenName: '',
+      birthDate: '',
+      birthPlace: '',
+      birthNumber: '',
+      permanentAddress: '',
+      position: contactInfo.userRole === 'Majiteľ' ? 'Majiteľ spoločnosti' : 'Konateľ',
+      documentType: 'OP' as const,
+      documentNumber: '',
+      documentValidity: '',
+      documentIssuer: '',
+      documentCountry: 'Slovensko',
+      citizenship: 'Slovensko',
+      isPoliticallyExposed: false,
+      isUSCitizen: false
+    };
+
+    const actualOwner = {
+      id: personId,
+      firstName: contactInfo.firstName,
+      lastName: contactInfo.lastName,
+      maidenName: '',
+      birthDate: '',
+      birthPlace: '',
+      birthNumber: '',
+      citizenship: 'Slovensko',
+      permanentAddress: '',
+      isPoliticallyExposed: false
+    };
+
+    updateData({
+      contactInfo,
+      authorizedPersons: [authorizedPerson],
+      actualOwners: [actualOwner]
     });
   };
 
@@ -35,7 +94,8 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
            data.contactInfo.lastName && 
            data.contactInfo.email && 
            isEmailValid(data.contactInfo.email) &&
-           data.contactInfo.phone;
+           data.contactInfo.phone &&
+           data.contactInfo.userRole;
   };
 
   // Auto-create contract when basic info is complete
@@ -48,7 +108,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
         if (result.success) {
           updateData({
             contractId: result.contractId,
-            contractNumber: result.contractNumber?.toString() // Convert to string
+            contractNumber: result.contractNumber?.toString()
           });
         }
       }
@@ -57,7 +117,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     // Debounce the contract creation
     const timeoutId = setTimeout(autoCreateContract, 1000);
     return () => clearTimeout(timeoutId);
-  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contractId, isCreating]);
+  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.userRole, data.contractId, isCreating]);
 
   // Track completed fields for visual feedback
   useEffect(() => {
@@ -67,6 +127,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     if (data.contactInfo.lastName) newCompleted.add('lastName');
     if (data.contactInfo.email && isEmailValid(data.contactInfo.email)) newCompleted.add('email');
     if (data.contactInfo.phone) newCompleted.add('phone');
+    if (data.contactInfo.userRole) newCompleted.add('userRole');
     setCompletedFields(newCompleted);
   }, [data.contactInfo]);
 
@@ -85,6 +146,12 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     { value: 'Pani', label: 'Pani' }
   ];
 
+  const userRoleOptions = [
+    { value: 'Majiteľ', label: 'Majiteľ' },
+    { value: 'Konateľ', label: 'Konateľ' },
+    { value: 'Manažér', label: 'Manažér' }
+  ];
+
   const formatPhoneNumber = (value: string, prefix: string) => {
     const cleaned = value.replace(/\D/g, '');
     
@@ -101,6 +168,21 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
 
   const isEmailValid = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const getAutoPopulationHint = () => {
+    if (data.contactInfo.userRole === 'Majiteľ' || data.contactInfo.userRole === 'Konateľ') {
+      return (
+        <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
+          <p className="font-medium mb-1 flex items-center gap-2">
+            <UserCheck className="h-4 w-4" />
+            Automatické vyplnenie
+          </p>
+          <p>Vaše údaje budú automaticky doplnené aj do sekcií "Oprávnené osoby" a "Skutoční majitelia".</p>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -131,6 +213,8 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                 </ul>
               </div>
 
+              {getAutoPopulationHint()}
+
               {isCreating && (
                 <div className="bg-yellow-100/50 border border-yellow-200 rounded-lg p-4 text-xs text-yellow-800">
                   <p className="font-medium">Vytvára sa zmluva...</p>
@@ -142,6 +226,17 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
           {/* Main form content */}
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <OnboardingSection>
+              {/* User Role Selection */}
+              <OnboardingSelect
+                label="Kto ste? *"
+                placeholder="Vyberte vašu rolu"
+                value={data.contactInfo.userRole}
+                onValueChange={(value) => updateContactInfo('userRole', value)}
+                options={userRoleOptions}
+                isCompleted={completedFields.has('userRole')}
+                icon={<UserCheck className="h-5 w-5" />}
+              />
+
               {/* Name Section */}
               <div className="flex flex-col sm:flex-row gap-4">
                 {/* Salutation */}
