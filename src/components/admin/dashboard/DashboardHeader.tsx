@@ -16,7 +16,7 @@ const DashboardHeader = () => {
             <p className="text-sm text-slate-600">Prehľad systému a správa zmlúv</p>
           </div>
           <div className="flex items-center space-x-3">
-            <Badge className="bg-blue-100 text-blue-700 border-blue-200">
+            <Badge className="bg-green-100 text-green-700 border-green-200">
               <Activity className="h-3 w-3 mr-1" />
               Online
             </Badge>
@@ -26,13 +26,6 @@ const DashboardHeader = () => {
             >
               <Plus className="h-4 w-4 mr-2" />
               Nová zmluva
-            </Button>
-            <Button 
-              onClick={() => navigate('/')}
-              variant="outline"
-              className="border-slate-300"
-            >
-              Domovská stránka
             </Button>
           </div>
         </div>

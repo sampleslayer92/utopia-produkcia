@@ -17,8 +17,6 @@ const AdminDashboard = () => {
 
         <div className="flex-1 p-6">
           <StatsCards stats={stats} statsLoading={statsLoading} />
-          
-          {/* Enhanced Admin Table takes full width */}
           <EnhancedAdminTable />
         </div>
       </div>
