@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { ContactInfo, CompanyInfo, BusinessLocation, DeviceSelection, Fees, AuthorizedPerson, ActualOwner, Consents } from '@/types/onboarding';
 
@@ -157,6 +158,11 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
 
   // Insert calculation data if available
   if (fees.calculatorResults) {
+    const calculationData = {
+      customerPaymentBreakdown: fees.calculatorResults.customerPaymentBreakdown,
+      companyCostBreakdown: fees.calculatorResults.companyCostBreakdown
+    };
+
     const { error: calculationError } = await supabase
       .from('contract_calculations')
       .insert({
@@ -171,10 +177,7 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
         transaction_margin: fees.calculatorResults.transactionMargin,
         service_margin: fees.calculatorResults.serviceMargin,
         total_monthly_profit: fees.calculatorResults.totalMonthlyProfit,
-        calculation_data: {
-          customerPaymentBreakdown: fees.calculatorResults.customerPaymentBreakdown,
-          companyCostBreakdown: fees.calculatorResults.companyCostBreakdown
-        }
+        calculation_data: calculationData as any
       });
 
     if (calculationError) {

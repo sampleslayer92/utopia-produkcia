@@ -302,7 +302,6 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                 onValueChange={handleRoleChange}
                 options={userRoleOptions}
                 isCompleted={completedFields.has('userRole')}
-                helperText="Podľa vašej roly sa automaticky predvyplnia niektoré sekcie onboardingu"
               />
 
               {/* Email Section */}
@@ -349,7 +348,6 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                 onChange={(e) => updateContactInfo('salesNote', e.target.value)}
                 placeholder="Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie..."
                 rows={4}
-                helperText="Nepovinné – môžete nám napísať dodatočné info alebo preferencie"
               />
             </OnboardingSection>
           </div>

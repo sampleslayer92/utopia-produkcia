@@ -25,7 +25,7 @@ export const useOnboardingContractDelete = () => {
         'actual_owners',
         'consents',
         'location_assignments'
-      ];
+      ] as const;
 
       // Delete all related records
       for (const table of tablesToClear) {
