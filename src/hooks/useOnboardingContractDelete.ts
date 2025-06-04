@@ -13,32 +13,75 @@ export const useOnboardingContractDelete = () => {
       console.log('Deleting contract:', contractId);
       
       // Delete in correct order due to foreign key constraints
-      const tablesToClear = [
-        'contact_info',
-        'company_info', 
-        'business_locations',
-        'device_selection',
-        'contract_items',
-        'contract_item_addons',
-        'contract_calculations',
-        'authorized_persons',
-        'actual_owners',
-        'consents',
-        'location_assignments'
-      ];
+      // Delete each table individually to avoid TypeScript type issues
+      
+      const { error: contactInfoError } = await supabase
+        .from('contact_info')
+        .delete()
+        .eq('contract_id', contractId);
+      if (contactInfoError) console.error('Error deleting contact_info:', contactInfoError);
 
-      // Delete all related records
-      for (const table of tablesToClear) {
-        const { error } = await supabase
-          .from(table)
-          .delete()
-          .eq('contract_id', contractId);
-          
-        if (error) {
-          console.error(`Error deleting from ${table}:`, error);
-          // Continue with other tables even if one fails
-        }
-      }
+      const { error: companyInfoError } = await supabase
+        .from('company_info')
+        .delete()
+        .eq('contract_id', contractId);
+      if (companyInfoError) console.error('Error deleting company_info:', companyInfoError);
+
+      const { error: businessLocationsError } = await supabase
+        .from('business_locations')
+        .delete()
+        .eq('contract_id', contractId);
+      if (businessLocationsError) console.error('Error deleting business_locations:', businessLocationsError);
+
+      const { error: deviceSelectionError } = await supabase
+        .from('device_selection')
+        .delete()
+        .eq('contract_id', contractId);
+      if (deviceSelectionError) console.error('Error deleting device_selection:', deviceSelectionError);
+
+      const { error: contractItemAddonsError } = await supabase
+        .from('contract_item_addons')
+        .delete()
+        .in('contract_item_id', 
+          supabase.from('contract_items').select('id').eq('contract_id', contractId)
+        );
+      if (contractItemAddonsError) console.error('Error deleting contract_item_addons:', contractItemAddonsError);
+
+      const { error: contractItemsError } = await supabase
+        .from('contract_items')
+        .delete()
+        .eq('contract_id', contractId);
+      if (contractItemsError) console.error('Error deleting contract_items:', contractItemsError);
+
+      const { error: contractCalculationsError } = await supabase
+        .from('contract_calculations')
+        .delete()
+        .eq('contract_id', contractId);
+      if (contractCalculationsError) console.error('Error deleting contract_calculations:', contractCalculationsError);
+
+      const { error: authorizedPersonsError } = await supabase
+        .from('authorized_persons')
+        .delete()
+        .eq('contract_id', contractId);
+      if (authorizedPersonsError) console.error('Error deleting authorized_persons:', authorizedPersonsError);
+
+      const { error: actualOwnersError } = await supabase
+        .from('actual_owners')
+        .delete()
+        .eq('contract_id', contractId);
+      if (actualOwnersError) console.error('Error deleting actual_owners:', actualOwnersError);
+
+      const { error: consentsError } = await supabase
+        .from('consents')
+        .delete()
+        .eq('contract_id', contractId);
+      if (consentsError) console.error('Error deleting consents:', consentsError);
+
+      const { error: locationAssignmentsError } = await supabase
+        .from('location_assignments')
+        .delete()
+        .eq('contract_id', contractId);
+      if (locationAssignmentsError) console.error('Error deleting location_assignments:', locationAssignmentsError);
 
       // Finally delete the contract itself
       const { error: contractError } = await supabase
