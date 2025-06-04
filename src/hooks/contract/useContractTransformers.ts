@@ -1,4 +1,3 @@
-
 import { OnboardingData } from '@/types/onboarding';
 
 export const transformContractData = (
@@ -29,6 +28,8 @@ export const transformContractData = (
       dic: companyInfo.dic || '',
       companyName: companyInfo.company_name || '',
       registryType: (companyInfo.registry_type || '') as 'public' | 'business' | 'other' | '',
+      isVatPayer: companyInfo.is_vat_payer || false,
+      vatNumber: companyInfo.vat_number || '',
       court: companyInfo.court || '',
       section: companyInfo.section || '',
       insertNumber: companyInfo.insert_number || '',
@@ -44,17 +45,18 @@ export const transformContractData = (
       },
       contactAddressSameAsMain: companyInfo.contact_address_same_as_main ?? true,
       contactPerson: {
-        name: companyInfo.contact_person_name || '',
+        firstName: companyInfo.contact_person_first_name || '',
+        lastName: companyInfo.contact_person_last_name || '',
         email: companyInfo.contact_person_email || '',
         phone: companyInfo.contact_person_phone || '',
         isTechnicalPerson: companyInfo.contact_person_is_technical ?? false
       }
     } : {
-      ico: '', dic: '', companyName: '', registryType: '', court: '', section: '', insertNumber: '',
+      ico: '', dic: '', companyName: '', registryType: '', isVatPayer: false, vatNumber: '', court: '', section: '', insertNumber: '',
       address: { street: '', city: '', zipCode: '' },
       contactAddress: { street: '', city: '', zipCode: '' },
       contactAddressSameAsMain: true,
-      contactPerson: { name: '', email: '', phone: '', isTechnicalPerson: false }
+      contactPerson: { firstName: '', lastName: '', email: '', phone: '', isTechnicalPerson: false }
     },
     
     businessLocations: businessLocations?.map(loc => ({
@@ -134,7 +136,7 @@ export const transformContractData = (
           count: deviceSelection.tablet_pro_15_count,
           monthlyFee: deviceSelection.tablet_pro_15_monthly_fee || 0,
           specifications: []
-        }] : [])
+        }] : []),
       ],
       note: deviceSelection.note || ''
     } : {

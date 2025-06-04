@@ -28,7 +28,6 @@ export const useContractUpdate = (contractId: string) => {
           }
         }
 
-        // Handle contact info - check if exists, then update or insert
         const { data: existingContact } = await supabase
           .from('contact_info')
           .select('id')
@@ -73,12 +72,14 @@ export const useContractUpdate = (contractId: string) => {
           }
         }
 
-        // Handle company info - check if exists, then update or insert
         const { data: existingCompany } = await supabase
           .from('company_info')
           .select('id')
           .eq('contract_id', contractId)
           .maybeSingle();
+
+        // Combine first and last name for legacy field
+        const contactPersonName = `${data.companyInfo.contactPerson.firstName} ${data.companyInfo.contactPerson.lastName}`.trim();
 
         const companyData = {
           ico: data.companyInfo.ico,
@@ -97,6 +98,9 @@ export const useContractUpdate = (contractId: string) => {
           contact_address_city: data.companyInfo.contactAddress?.city,
           contact_address_zip_code: data.companyInfo.contactAddress?.zipCode,
           contact_address_same_as_main: data.companyInfo.contactAddressSameAsMain,
+          // Legacy field - combine first and last name
+          contact_person_name: contactPersonName,
+          // New separate fields
           contact_person_first_name: data.companyInfo.contactPerson.firstName,
           contact_person_last_name: data.companyInfo.contactPerson.lastName,
           contact_person_email: data.companyInfo.contactPerson.email,

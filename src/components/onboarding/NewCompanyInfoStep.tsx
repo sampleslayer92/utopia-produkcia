@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -67,6 +66,31 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
               className="border-slate-300 focus:border-blue-500"
             />
           </div>
+        </div>
+
+        {/* VAT Payer Section */}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="isVatPayer"
+              checked={data.companyInfo.isVatPayer}
+              onCheckedChange={(checked) => updateCompanyInfo('isVatPayer', checked)}
+            />
+            <Label htmlFor="isVatPayer">Je platcom DPH</Label>
+          </div>
+
+          {data.companyInfo.isVatPayer && (
+            <div className="space-y-2">
+              <Label htmlFor="vatNumber">IČ DPH *</Label>
+              <Input
+                id="vatNumber"
+                value={data.companyInfo.vatNumber}
+                onChange={(e) => updateCompanyInfo('vatNumber', e.target.value)}
+                placeholder="SK2012345678"
+                className="border-slate-300 focus:border-blue-500"
+              />
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -172,18 +196,31 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
 
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-slate-900">Kontaktná osoba</h3>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="contactName">Meno a priezvisko *</Label>
+              <Label htmlFor="contactFirstName">Meno *</Label>
               <Input
-                id="contactName"
-                value={data.companyInfo.contactPerson.name}
-                onChange={(e) => updateCompanyInfo('contactPerson.name', e.target.value)}
-                placeholder="Ján Novák"
+                id="contactFirstName"
+                value={data.companyInfo.contactPerson.firstName}
+                onChange={(e) => updateCompanyInfo('contactPerson.firstName', e.target.value)}
+                placeholder="Ján"
                 className="border-slate-300 focus:border-blue-500"
               />
             </div>
             
+            <div className="space-y-2">
+              <Label htmlFor="contactLastName">Priezvisko *</Label>
+              <Input
+                id="contactLastName"
+                value={data.companyInfo.contactPerson.lastName}
+                onChange={(e) => updateCompanyInfo('contactPerson.lastName', e.target.value)}
+                placeholder="Novák"
+                className="border-slate-300 focus:border-blue-500"
+              />
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="contactEmail">Email *</Label>
               <Input

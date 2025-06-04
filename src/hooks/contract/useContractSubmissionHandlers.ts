@@ -21,6 +21,9 @@ export const insertContactInfo = async (contractId: string, contactInfo: any) =>
 
 export const insertCompanyInfo = async (contractId: string, companyInfo: any) => {
   const validRegistryType = validateRegistryType(companyInfo.registryType);
+  
+  // Combine first and last name for legacy field
+  const contactPersonName = `${safeString(companyInfo.contactPerson.firstName, 'Test')} ${safeString(companyInfo.contactPerson.lastName, 'Contact')}`.trim();
 
   const { error } = await supabase
     .from('company_info')
@@ -42,6 +45,9 @@ export const insertCompanyInfo = async (contractId: string, companyInfo: any) =>
       contact_address_city: companyInfo.contactAddress?.city || null,
       contact_address_zip_code: companyInfo.contactAddress?.zipCode || null,
       contact_address_same_as_main: companyInfo.contactAddressSameAsMain,
+      // Legacy field - combine first and last name
+      contact_person_name: contactPersonName,
+      // New separate fields
       contact_person_first_name: safeString(companyInfo.contactPerson.firstName, 'Test'),
       contact_person_last_name: safeString(companyInfo.contactPerson.lastName, 'Contact'),
       contact_person_email: safeEmail(companyInfo.contactPerson.email),

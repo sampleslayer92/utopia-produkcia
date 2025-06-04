@@ -48,7 +48,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
         if (result.success) {
           updateData({
             contractId: result.contractId,
-            contractNumber: result.contractNumber
+            contractNumber: result.contractNumber?.toString() // Convert to string
           });
         }
       }

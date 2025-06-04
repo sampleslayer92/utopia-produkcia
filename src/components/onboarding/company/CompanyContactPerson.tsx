@@ -16,14 +16,23 @@ const CompanyContactPerson = ({ data, updateCompanyInfo }: CompanyContactPersonP
         <User className="h-4 w-4 text-blue-600" />
         Kontaktná osoba
       </h3>
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 gap-6">
         <OnboardingInput
-          label="Meno a priezvisko *"
-          value={data.companyInfo.contactPerson.name}
-          onChange={(e) => updateCompanyInfo('contactPerson.name', e.target.value)}
-          placeholder="Ján Novák"
+          label="Meno *"
+          value={data.companyInfo.contactPerson.firstName}
+          onChange={(e) => updateCompanyInfo('contactPerson.firstName', e.target.value)}
+          placeholder="Ján"
         />
         
+        <OnboardingInput
+          label="Priezvisko *"
+          value={data.companyInfo.contactPerson.lastName}
+          onChange={(e) => updateCompanyInfo('contactPerson.lastName', e.target.value)}
+          placeholder="Novák"
+        />
+      </div>
+      
+      <div className="grid md:grid-cols-2 gap-6 mt-4">
         <OnboardingInput
           label="Email *"
           type="email"
