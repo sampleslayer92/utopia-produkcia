@@ -37,32 +37,44 @@ export const useOnboardingNavigation = (
   const handleComplete = async () => {
     console.log('Onboarding dokončený:', onboardingData);
     
-    // If contract is not signed yet, cannot complete
+    // Check if contract is signed
     if (!onboardingData.consents.isSigned) {
-      toast.error("Musíte najprv podpísať zmluvu");
+      toast.error("Zmluva musí byť podpísaná pred dokončením registrácie");
       return;
     }
     
-    // Submit contract to Supabase
-    const result = await submitContract(onboardingData);
+    if (!onboardingData.contractId) {
+      toast.error("Chyba: ID zmluvy nebolo nájdené");
+      return;
+    }
     
-    if (result.success) {
+    try {
+      // Submit contract to Supabase
+      console.log('Ukladám zmluvu do databázy...');
+      const contractResult = await submitContract(onboardingData);
+      
+      if (!contractResult.success) {
+        toast.error("Chyba pri ukladaní zmluvy", {
+          description: "Skúste to znovu alebo kontaktujte podporu"
+        });
+        return;
+      }
+      
       // Create merchant account
+      console.log('Vytváram merchant účet...');
       const userResult = await createMerchantAccount(onboardingData);
       
       if (userResult.success) {
-        // Store success data for redirect
+        // Store success data for potential future use
         const contractData = {
           ...onboardingData,
           completedAt: new Date().toISOString(),
           status: 'signed',
-          contractId: result.contractId,
-          contractNumber: result.contractNumber
+          contractId: contractResult.contractId,
+          contractNumber: contractResult.contractNumber
         };
         
         localStorage.setItem('contract_data', JSON.stringify(contractData));
-        localStorage.setItem('utopia_user_role', 'merchant');
-        localStorage.setItem('utopia_user_email', onboardingData.contactInfo.email);
         
         // Clear onboarding data
         clearData();
@@ -70,10 +82,19 @@ export const useOnboardingNavigation = (
         // Navigate to merchant dashboard
         navigate('/merchant');
         
-        toast.success('Registrácia dokončená!', {
-          description: `Číslo zmluvy: ${result.contractNumber}. Váš účet bol vytvorený.`
+        toast.success('Registrácia úspešne dokončená!', {
+          description: `Číslo zmluvy: ${contractResult.contractNumber}. Váš účet bol vytvorený.`
+        });
+      } else {
+        toast.error("Chyba pri vytváraní účtu", {
+          description: "Zmluva bola uložená, ale nepodarilo sa vytvoriť účet"
         });
       }
+    } catch (error) {
+      console.error('Chyba pri dokončovaní onboardingu:', error);
+      toast.error("Neočakávaná chyba", {
+        description: "Skúste to znovu alebo kontaktujte podporu"
+      });
     }
   };
 
@@ -83,7 +104,7 @@ export const useOnboardingNavigation = (
   };
 
   const handleSaveAndExit = () => {
-    toast.success('Onboarding údaje uložené', {
+    toast.success('Pokrok uložený', {
       description: 'Môžete pokračovať neskôr z rovnakého miesta'
     });
     navigate('/');

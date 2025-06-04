@@ -42,10 +42,15 @@ const ConsentsStep = ({ data, updateData, onPrev, onComplete }: ConsentsStepProp
       return;
     }
 
+    if (!data.contractId) {
+      toast.error("Chyba: ID zmluvy nebolo nájdené. Skúste obnoviť stránku.");
+      return;
+    }
+
     setIsSigning(true);
     
     try {
-      // Simulate signing delay
+      // Simulate signing process
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const signatureDate = new Date().toISOString();
@@ -63,18 +68,21 @@ const ConsentsStep = ({ data, updateData, onPrev, onComplete }: ConsentsStepProp
       });
 
       setShowContractPreview(false);
+      
       toast.success("Zmluva bola úspešne podpísaná!", {
-        description: "Vaš účet bol vytvorený a môžete pristúpiť k portálu."
+        description: "Teraz sa dokončí vytvorenie vašeho účtu."
       });
       
-      // Complete the onboarding process
+      // Complete the onboarding process after a short delay
       setTimeout(() => {
         onComplete();
-      }, 1000);
+      }, 1500);
       
     } catch (error) {
-      console.error('Error signing contract:', error);
-      toast.error("Nastala chyba pri podpisovaní zmluvy. Skúste to znovu.");
+      console.error('Chyba pri podpisovaní zmluvy:', error);
+      toast.error("Nastala chyba pri podpisovaní zmluvy", {
+        description: "Skúste to znovu. Ak problém pretrváva, kontaktujte podporu."
+      });
     } finally {
       setIsSigning(false);
     }
@@ -128,10 +136,10 @@ const ConsentsStep = ({ data, updateData, onPrev, onComplete }: ConsentsStepProp
               <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
                 <p className="font-medium mb-2">Čo sa stane po podpise:</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  <li>Vytvorí sa váš klientský účet</li>
-                  <li>Dostanete prístup do portálu</li>
+                  <li>Vytvorí sa váš klientský záznam</li>
                   <li>Zmluva nadobudne platnosť</li>
                   <li>Začne sa proces aktivácie služieb</li>
+                  <li>Dostanete potvrdenie na email</li>
                 </ul>
               </div>
 
@@ -208,6 +216,12 @@ const ConsentsStep = ({ data, updateData, onPrev, onComplete }: ConsentsStepProp
                             {isSigning ? 'Podpisujem...' : 'Podpísať zmluvu'}
                           </Button>
                         </div>
+                        
+                        {!areAllConsentsGiven() && (
+                          <p className="text-sm text-amber-600">
+                            Pre podpis zmluvy musíte súhlasiť so všetkými podmienkami
+                          </p>
+                        )}
                       </>
                     ) : (
                       <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6">
@@ -230,7 +244,7 @@ const ConsentsStep = ({ data, updateData, onPrev, onComplete }: ConsentsStepProp
       
       {/* Navigation */}
       <div className="flex justify-between items-center p-6 bg-slate-50 border-t">
-        <Button variant="outline" onClick={onPrev}>
+        <Button variant="outline" onClick={onPrev} disabled={isSigning}>
           Späť
         </Button>
         

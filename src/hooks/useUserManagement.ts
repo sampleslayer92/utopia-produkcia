@@ -11,39 +11,16 @@ export const useUserManagement = () => {
     setIsCreatingUser(true);
     
     try {
-      console.log('Creating merchant account...', onboardingData);
+      console.log('Vytváram merchant účet...', onboardingData);
       
       if (!onboardingData.contactInfo.email || !onboardingData.contractId) {
-        throw new Error('Email and contract ID are required');
+        throw new Error('Email a ID zmluvy sú povinné');
       }
 
-      // Create auth user first
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: onboardingData.contactInfo.email,
-        password: generateTemporaryPassword(),
-        options: {
-          emailRedirectTo: `${window.location.origin}/merchant`,
-          data: {
-            full_name: `${onboardingData.contactInfo.firstName} ${onboardingData.contactInfo.lastName}`,
-            role: 'merchant'
-          }
-        }
-      });
-
-      if (authError) {
-        console.error('Auth creation error:', authError);
-        throw new Error(`Chyba pri vytváraní účtu: ${authError.message}`);
-      }
-
-      if (!authData.user) {
-        throw new Error('Nepodarilo sa vytvoriť používateľský účet');
-      }
-
-      // Create user record in our users table
+      // Create user record in our users table first - we'll handle auth separately
       const { error: userError } = await supabase
         .from('users')
         .insert({
-          auth_user_id: authData.user.id,
           email: onboardingData.contactInfo.email,
           full_name: `${onboardingData.contactInfo.firstName} ${onboardingData.contactInfo.lastName}`,
           role: 'merchant',
@@ -52,7 +29,7 @@ export const useUserManagement = () => {
         });
 
       if (userError) {
-        console.error('User record creation error:', userError);
+        console.error('Chyba pri vytváraní používateľského záznamu:', userError);
         throw new Error(`Chyba pri vytváraní používateľského záznamu: ${userError.message}`);
       }
 
@@ -68,24 +45,23 @@ export const useUserManagement = () => {
         .eq('id', onboardingData.contractId);
 
       if (contractError) {
-        console.error('Contract update error:', contractError);
+        console.error('Chyba pri aktualizácii zmluvy:', contractError);
         throw new Error(`Chyba pri aktualizácii zmluvy: ${contractError.message}`);
       }
 
-      console.log('Merchant account created successfully');
+      console.log('Merchant účet úspešne vytvorený');
       
       toast.success('Váš účet bol úspešne vytvorený!', {
-        description: 'Môžete sa teraz prihlásiť do portálu'
+        description: 'Registrácia bola dokončená úspešne'
       });
 
       return {
         success: true,
-        userId: authData.user.id,
         email: onboardingData.contactInfo.email
       };
 
     } catch (error) {
-      console.error('Merchant account creation error:', error);
+      console.error('Chyba pri vytváraní merchant účtu:', error);
       
       const errorMessage = error instanceof Error ? error.message : 'Neočakávaná chyba';
       
@@ -100,16 +76,6 @@ export const useUserManagement = () => {
     } finally {
       setIsCreatingUser(false);
     }
-  };
-
-  const generateTemporaryPassword = () => {
-    // Generate a temporary password - in production, this should be sent via email
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let password = '';
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return password;
   };
 
   const getUserIP = async () => {
