@@ -34,70 +34,25 @@ export const useContractSubmission = () => {
       if (!onboardingData.companyInfo.companyName) {
         throw new Error('Názov spoločnosti je povinný');
       }
+      
+      // 1. Create main contract
+      const { data: contract, error: contractError } = await supabase
+        .from('contracts')
+        .insert({
+          status: 'submitted',
+          submitted_at: new Date().toISOString(),
+          notes: 'Contract submitted via onboarding portal'
+        })
+        .select('id, contract_number')
+        .single();
 
-      let contractId = onboardingData.contractId;
-      let contractNumber = onboardingData.contractNumber;
-
-      if (contractId) {
-        // Update existing contract to submitted status
-        console.log('Updating existing contract:', contractId);
-        
-        const { data: contract, error: updateError } = await supabase
-          .from('contracts')
-          .update({
-            status: 'submitted',
-            submitted_at: new Date().toISOString(),
-            notes: 'Contract submitted via onboarding portal'
-          })
-          .eq('id', contractId)
-          .select('id, contract_number')
-          .single();
-
-        if (updateError) {
-          console.error('Contract update error:', updateError);
-          throw new Error(`Chyba pri aktualizácii zmluvy: ${updateError.message}`);
-        }
-
-        console.log('Contract updated:', contract);
-        contractNumber = contract.contract_number.toString();
-      } else {
-        // Fallback: Create new contract if somehow contractId is missing
-        console.log('Creating new contract as fallback...');
-        
-        const { data: contract, error: contractError } = await supabase
-          .from('contracts')
-          .insert({
-            status: 'submitted',
-            submitted_at: new Date().toISOString(),
-            notes: 'Contract submitted via onboarding portal (fallback creation)'
-          })
-          .select('id, contract_number')
-          .single();
-
-        if (contractError) {
-          console.error('Contract creation error:', contractError);
-          throw new Error(`Chyba pri vytváraní zmluvy: ${contractError.message}`);
-        }
-
-        console.log('Fallback contract created:', contract);
-        contractId = contract.id;
-        contractNumber = contract.contract_number.toString();
+      if (contractError) {
+        console.error('Contract creation error:', contractError);
+        throw new Error(`Chyba pri vytváraní zmluvy: ${contractError.message}`);
       }
 
-      // Clear existing data for this contract before inserting new data
-      console.log('Clearing existing contract data...');
-      
-      await Promise.all([
-        supabase.from('contact_info').delete().eq('contract_id', contractId),
-        supabase.from('company_info').delete().eq('contract_id', contractId),
-        supabase.from('business_locations').delete().eq('contract_id', contractId),
-        supabase.from('device_selection').delete().eq('contract_id', contractId),
-        supabase.from('contract_items').delete().eq('contract_id', contractId),
-        supabase.from('contract_calculations').delete().eq('contract_id', contractId),
-        supabase.from('authorized_persons').delete().eq('contract_id', contractId),
-        supabase.from('actual_owners').delete().eq('contract_id', contractId),
-        supabase.from('consents').delete().eq('contract_id', contractId)
-      ]);
+      console.log('Contract created:', contract);
+      const contractId = contract.id;
 
       // Insert all sections with error handling
       try {
@@ -159,13 +114,13 @@ export const useContractSubmission = () => {
       console.log('Contract submission completed successfully');
       
       toast.success('Registrácia úspešne odoslaná!', {
-        description: `Číslo zmluvy: ${contractNumber}`
+        description: `Číslo zmluvy: ${contract.contract_number}`
       });
 
       return {
         success: true,
         contractId: contractId,
-        contractNumber: contractNumber
+        contractNumber: contract.contract_number
       };
 
     } catch (error) {

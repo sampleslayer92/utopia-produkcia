@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Edit, Save } from "lucide-react";
 import { format } from "date-fns";
 import { formatCurrency } from "@/components/onboarding/utils/currencyUtils";
 
@@ -13,7 +13,6 @@ interface ContractHeaderProps {
   onToggleEdit: () => void;
   onBack: () => void;
   onSave: (data: any) => void;
-  isSaving?: boolean;
 }
 
 const ContractHeader = ({ 
@@ -22,8 +21,7 @@ const ContractHeader = ({
   isEditMode, 
   onToggleEdit, 
   onBack, 
-  onSave,
-  isSaving = false
+  onSave 
 }: ContractHeaderProps) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -101,15 +99,9 @@ const ContractHeader = ({
               <div className="flex items-center space-x-2">
                 <Button
                   onClick={onToggleEdit}
-                  disabled={isSaving}
                   className={isEditMode ? "bg-emerald-600 hover:bg-emerald-700" : "bg-blue-600 hover:bg-blue-700"}
                 >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Ukladám...
-                    </>
-                  ) : isEditMode ? (
+                  {isEditMode ? (
                     <>
                       <Save className="h-4 w-4 mr-2" />
                       Uložiť zmeny

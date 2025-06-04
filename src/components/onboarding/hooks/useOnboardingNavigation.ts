@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { OnboardingData } from "@/types/onboarding";
 import { onboardingSteps } from "../config/onboardingSteps";
 import { useContractSubmission } from "@/hooks/useContractSubmission";
-import { useUserManagement } from "@/hooks/useUserManagement";
 
 export const useOnboardingNavigation = (
   currentStep: number,
@@ -15,7 +14,6 @@ export const useOnboardingNavigation = (
   const navigate = useNavigate();
   const totalSteps = onboardingSteps.length;
   const { submitContract, isSubmitting } = useContractSubmission();
-  const { createMerchantAccount, isCreatingUser } = useUserManagement();
 
   const nextStep = () => {
     if (currentStep < totalSteps - 1) {
@@ -37,67 +35,30 @@ export const useOnboardingNavigation = (
   const handleComplete = async () => {
     console.log('Onboarding dokončený:', onboardingData);
     
-    // Check if contract is signed
-    if (!onboardingData.consents.isSigned) {
-      toast.error("Zmluva musí byť podpísaná pred dokončením registrácie");
-      return;
-    }
+    // Submit contract to Supabase
+    const result = await submitContract(onboardingData);
     
-    // Contract should exist from auto-creation, but check anyway
-    if (!onboardingData.contractId) {
-      toast.error("Chyba: ID zmluvy nebolo nájdené. Skúste obnoviť stránku a začať odznova.");
-      return;
-    }
-    
-    try {
-      // Submit contract to Supabase
-      console.log('Ukladám zmluvu do databázy...');
-      const contractResult = await submitContract(onboardingData);
-      
-      if (!contractResult.success) {
-        toast.error("Chyba pri ukladaní zmluvy", {
-          description: "Skúste to znovu alebo kontaktujte podporu"
-        });
-        return;
-      }
-      
-      // Create merchant account using the contractId
-      console.log('Vytváram merchant účet s contractId:', contractResult.contractId);
-      const userResult = await createMerchantAccount({
+    if (result.success) {
+      // Store success data for redirect
+      const contractData = {
         ...onboardingData,
-        contractId: contractResult.contractId
-      });
+        completedAt: new Date().toISOString(),
+        status: 'submitted',
+        contractId: result.contractId,
+        contractNumber: result.contractNumber
+      };
       
-      if (userResult.success) {
-        // Store success data for potential future use
-        const contractData = {
-          ...onboardingData,
-          completedAt: new Date().toISOString(),
-          status: 'signed',
-          contractId: contractResult.contractId,
-          contractNumber: contractResult.contractNumber
-        };
-        
-        localStorage.setItem('contract_data', JSON.stringify(contractData));
-        
-        // Clear onboarding data
-        clearData();
-        
-        // Navigate to merchant dashboard
-        navigate('/merchant');
-        
-        toast.success('Registrácia úspešne dokončená!', {
-          description: `Číslo zmluvy: ${contractResult.contractNumber}. Váš účet bol vytvorený.`
-        });
-      } else {
-        toast.error("Chyba pri vytváraní účtu", {
-          description: "Zmluva bola uložená, ale nepodarilo sa vytvoriť účet"
-        });
-      }
-    } catch (error) {
-      console.error('Chyba pri dokončovaní onboardingu:', error);
-      toast.error("Neočakávaná chyba", {
-        description: "Skúste to znovu alebo kontaktujte podporu"
+      localStorage.setItem('contract_data', JSON.stringify(contractData));
+      localStorage.setItem('utopia_user_role', 'merchant');
+      
+      // Clear onboarding data
+      clearData();
+      
+      // Navigate to merchant dashboard
+      navigate('/merchant');
+      
+      toast.success('Registrácia dokončená!', {
+        description: `Číslo zmluvy: ${result.contractNumber}. Presmerováva sa na dashboard...`
       });
     }
   };
@@ -108,7 +69,7 @@ export const useOnboardingNavigation = (
   };
 
   const handleSaveAndExit = () => {
-    toast.success('Pokrok uložený', {
+    toast.success('Onboarding údaje uložené', {
       description: 'Môžete pokračovať neskôr z rovnakého miesta'
     });
     navigate('/');
@@ -121,6 +82,6 @@ export const useOnboardingNavigation = (
     handleComplete,
     handleStepClick,
     handleSaveAndExit,
-    isSubmitting: isSubmitting || isCreatingUser
+    isSubmitting
   };
 };

@@ -12,7 +12,6 @@ interface ContractDataSuccess {
   error: null;
   isPending: false;
   isError: false;
-  refetch: () => void;
 }
 
 interface ContractDataLoading {
@@ -21,7 +20,6 @@ interface ContractDataLoading {
   error: null;
   isPending: true;
   isError: false;
-  refetch: () => void;
 }
 
 interface ContractDataError {
@@ -30,7 +28,6 @@ interface ContractDataError {
   error: any;
   isPending: false;
   isError: true;
-  refetch: () => void;
 }
 
 type ContractDataResult = ContractDataSuccess | ContractDataLoading | ContractDataError;
@@ -44,8 +41,7 @@ export const useContractData = (contractId: string): ContractDataResult => {
       isLoading: true,
       error: null,
       isPending: true,
-      isError: false,
-      refetch: queries.refetch
+      isError: false
     };
   }
 
@@ -55,8 +51,7 @@ export const useContractData = (contractId: string): ContractDataResult => {
       isLoading: false,
       error: queries.error,
       isPending: false,
-      isError: true,
-      refetch: queries.refetch
+      isError: true
     };
   }
 
@@ -91,7 +86,6 @@ export const useContractData = (contractId: string): ContractDataResult => {
     isLoading: false,
     error: null,
     isPending: false,
-    isError: false,
-    refetch: queries.refetch
+    isError: false
   };
 };

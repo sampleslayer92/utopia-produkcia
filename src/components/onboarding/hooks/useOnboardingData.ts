@@ -1,8 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
 
-const getInitialData = (): OnboardingData => ({
+const initialData: OnboardingData = {
   contactInfo: {
     salutation: '',
     firstName: '',
@@ -10,8 +10,7 @@ const getInitialData = (): OnboardingData => ({
     email: '',
     phone: '',
     phonePrefix: '+421',
-    salesNote: '',
-    userRole: ''
+    salesNote: ''
   },
   companyInfo: {
     ico: '',
@@ -49,8 +48,8 @@ const getInitialData = (): OnboardingData => ({
     note: ''
   },
   fees: {
-    regulatedCards: 0.2,
-    unregulatedCards: 1.15
+    regulatedCards: 0.90,
+    unregulatedCards: 0.90
   },
   authorizedPersons: [],
   actualOwners: [],
@@ -59,56 +58,67 @@ const getInitialData = (): OnboardingData => ({
     terms: false,
     electronicCommunication: false,
     signatureDate: '',
-    signingPersonId: '',
-    isSigned: false
+    signingPersonId: ''
   },
   currentStep: 0,
   contractId: undefined,
   contractNumber: undefined
-});
+};
 
 export const useOnboardingData = () => {
   const [onboardingData, setOnboardingData] = useState<OnboardingData>(() => {
-    // Try to load from localStorage
     const saved = localStorage.getItem('onboarding_data');
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        // Ensure new fields exist
-        return {
-          ...getInitialData(),
-          ...parsed,
-          contactInfo: {
-            ...getInitialData().contactInfo,
-            ...parsed.contactInfo
-          },
-          consents: {
-            ...getInitialData().consents,
-            ...parsed.consents
-          }
-        };
-      } catch {
-        return getInitialData();
+        const parsedData = JSON.parse(saved);
+        // Ensure the data has the new structure
+        if (!parsedData.fees) {
+          parsedData.fees = initialData.fees;
+        }
+        if (!parsedData.deviceSelection.selectedSolutions) {
+          parsedData.deviceSelection = initialData.deviceSelection;
+        }
+        if (!parsedData.companyInfo.contactPerson.firstName) {
+          // Migrate old name field to firstName/lastName
+          const fullName = parsedData.companyInfo.contactPerson.name || '';
+          const nameParts = fullName.split(' ');
+          parsedData.companyInfo.contactPerson.firstName = nameParts[0] || '';
+          parsedData.companyInfo.contactPerson.lastName = nameParts.slice(1).join(' ') || '';
+        }
+        if (parsedData.companyInfo.isVatPayer === undefined) {
+          parsedData.companyInfo.isVatPayer = false;
+          parsedData.companyInfo.vatNumber = '';
+        }
+        
+        // Migrate existing dynamic cards to include companyCost and addons fields
+        if (parsedData.deviceSelection.dynamicCards) {
+          parsedData.deviceSelection.dynamicCards = parsedData.deviceSelection.dynamicCards.map((card: any) => ({
+            ...card,
+            companyCost: card.companyCost || 0,
+            addons: card.addons || []
+          }));
+        }
+        
+        return parsedData;
+      } catch (error) {
+        console.error('Error parsing saved onboarding data:', error);
+        return initialData;
       }
     }
-    return getInitialData();
+    return initialData;
   });
 
-  // Save to localStorage whenever data changes
-  useEffect(() => {
-    localStorage.setItem('onboarding_data', JSON.stringify(onboardingData));
-  }, [onboardingData]);
-
-  const updateData = (newData: Partial<OnboardingData>) => {
-    setOnboardingData(prev => ({
-      ...prev,
-      ...newData
-    }));
+  const updateData = (data: Partial<OnboardingData>) => {
+    setOnboardingData(prev => {
+      const updated = { ...prev, ...data };
+      localStorage.setItem('onboarding_data', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const clearData = () => {
     localStorage.removeItem('onboarding_data');
-    setOnboardingData(getInitialData());
+    setOnboardingData(initialData);
   };
 
   return {

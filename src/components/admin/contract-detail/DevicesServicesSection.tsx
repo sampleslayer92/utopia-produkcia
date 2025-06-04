@@ -17,17 +17,9 @@ interface DevicesServicesSectionProps {
   onboardingData: any;
   isEditMode: boolean;
   onSave: (data: any) => void;
-  onDeviceUpdate?: (deviceName: string, newCount: number) => Promise<void>;
-  onDeviceRemove?: (deviceName: string) => Promise<void>;
 }
 
-const DevicesServicesSection = ({ 
-  onboardingData, 
-  isEditMode, 
-  onSave, 
-  onDeviceUpdate, 
-  onDeviceRemove 
-}: DevicesServicesSectionProps) => {
+const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesServicesSectionProps) => {
   const { id: contractId } = useParams<{ id: string }>();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { addItem, updateItem, deleteItem, isAdding, isDeleting } = useContractItems(contractId!);

@@ -1,4 +1,3 @@
-
 export interface ContactInfo {
   salutation: 'Pan' | 'Pani' | '';
   firstName: string;
@@ -7,7 +6,6 @@ export interface ContactInfo {
   phone: string;
   phonePrefix: string;
   salesNote?: string;
-  userRole: 'Majiteľ' | 'Konateľ' | 'Manažér' | '';
 }
 
 export interface CompanyInfo {
@@ -181,9 +179,6 @@ export interface Consents {
   electronicCommunication: boolean;
   signatureDate: string;
   signingPersonId: string;
-  isSigned: boolean;
-  signedAt?: string;
-  signedBy?: string;
 }
 
 export interface OnboardingData {

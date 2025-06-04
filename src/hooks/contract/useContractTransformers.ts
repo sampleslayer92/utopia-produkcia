@@ -146,10 +146,9 @@ export const transformContractData = (
       email: contactInfo.email || '',
       phone: contactInfo.phone || '',
       phonePrefix: contactInfo.phone_prefix || '+421',
-      salesNote: contactInfo.sales_note || '',
-      userRole: (contactInfo.user_role || '') as 'Majiteľ' | 'Konateľ' | 'Manažér' | ''
+      salesNote: contactInfo.sales_note || ''
     } : {
-      salutation: '', firstName: '', lastName: '', email: '', phone: '', phonePrefix: '+421', salesNote: '', userRole: ''
+      salutation: '', firstName: '', lastName: '', email: '', phone: '', phonePrefix: '+421', salesNote: ''
     },
     
     companyInfo: companyInfo ? {
@@ -264,10 +263,9 @@ export const transformContractData = (
       terms: consents.terms_consent || false,
       electronicCommunication: consents.electronic_communication_consent || false,
       signatureDate: consents.signature_date || '',
-      signingPersonId: consents.signing_person_id || '',
-      isSigned: false
+      signingPersonId: consents.signing_person_id || ''
     } : {
-      gdpr: false, terms: false, electronicCommunication: false, signatureDate: '', signingPersonId: '', isSigned: false
+      gdpr: false, terms: false, electronicCommunication: false, signatureDate: '', signingPersonId: ''
     },
     
     currentStep: 0
