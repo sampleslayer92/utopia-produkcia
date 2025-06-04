@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { DeviceCard, ServiceCard, AddonCard } from "@/types/onboarding";
 import { Settings, Package } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { formatCurrencyWithColor } from "../utils/currencyUtils";
 import AddonSelector from "./AddonSelector";
 
 interface ProductDetailModalProps {
@@ -50,7 +51,6 @@ const ProductDetailModal = ({
           count: 1,
           monthlyFee: product.rentalPrice || 0,
           companyCost: 0,
-          simCards: product.simCards || 0,
           addons: []
         };
         setFormData(deviceData);
@@ -127,6 +127,10 @@ const ProductDetailModal = ({
     return mainCost + addonsCost;
   };
 
+  const calculateMargin = () => {
+    return calculateTotalCost() - calculateCompanyCost();
+  };
+
   const handleSave = () => {
     onSave(formData);
     onClose();
@@ -142,6 +146,18 @@ const ProductDetailModal = ({
       }
     }
   };
+
+  const mainSubtotal = calculateMainItemSubtotal();
+  const addonsSubtotal = calculateAddonsSubtotal();
+  const totalCost = calculateTotalCost();
+  const companyCost = calculateCompanyCost();
+  const margin = calculateMargin();
+
+  const mainSubtotalFormatted = formatCurrencyWithColor(mainSubtotal);
+  const addonsSubtotalFormatted = formatCurrencyWithColor(addonsSubtotal);
+  const totalCostFormatted = formatCurrencyWithColor(totalCost);
+  const companyCostFormatted = formatCurrencyWithColor(companyCost);
+  const marginFormatted = formatCurrencyWithColor(margin);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -221,21 +237,6 @@ const ProductDetailModal = ({
                   </Button>
                 </div>
               </div>
-
-              {/* SIM Cards */}
-              {formData.simCards !== undefined && (
-                <div className="space-y-2">
-                  <Label htmlFor="sim-cards" className="text-sm">Počet SIM kariet</Label>
-                  <Input
-                    id="sim-cards"
-                    type="number"
-                    min="0"
-                    value={formData.simCards}
-                    onChange={(e) => updateField('simCards', parseInt(e.target.value) || 0)}
-                    className="text-sm"
-                  />
-                </div>
-              )}
             </>
           )}
 
@@ -320,34 +321,38 @@ const ProductDetailModal = ({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between items-center">
                 <span className="text-slate-700">Hlavná položka ({formData.count} ks x {formData.monthlyFee.toFixed(2)} €):</span>
-                <span className="font-medium">{calculateMainItemSubtotal().toFixed(2)} €</span>
+                <span className={`font-medium ${mainSubtotalFormatted.className}`}>
+                  {mainSubtotalFormatted.value}
+                </span>
               </div>
               
               {(formData.addons || []).length > 0 && (
                 <div className="flex justify-between items-center">
                   <span className="text-slate-700">Doplnky:</span>
-                  <span className="font-medium">{calculateAddonsSubtotal().toFixed(2)} €</span>
+                  <span className={`font-medium ${addonsSubtotalFormatted.className}`}>
+                    {addonsSubtotalFormatted.value}
+                  </span>
                 </div>
               )}
               
               <div className="flex justify-between items-center border-t pt-2">
                 <span className="font-medium text-slate-900">Subtotal zákazník:</span>
-                <span className="font-bold text-blue-600">
-                  {calculateTotalCost().toFixed(2)} €/mes
+                <span className={`font-bold text-lg ${totalCostFormatted.className || 'text-blue-600'}`}>
+                  {totalCostFormatted.value}
                 </span>
               </div>
               
               <div className="flex justify-between items-center">
                 <span className="font-medium text-slate-900">Náklad firmy:</span>
-                <span className="font-bold text-red-600">
-                  {calculateCompanyCost().toFixed(2)} €/mes
+                <span className={`font-bold ${companyCostFormatted.className || 'text-red-600'}`}>
+                  {companyCostFormatted.value}
                 </span>
               </div>
               
               <div className="flex justify-between items-center border-t pt-2">
                 <span className="font-bold text-slate-900">Marža:</span>
-                <span className="font-bold text-green-600">
-                  {(calculateTotalCost() - calculateCompanyCost()).toFixed(2)} €/mes
+                <span className={`font-bold text-lg ${marginFormatted.className || 'text-green-600'}`}>
+                  {marginFormatted.value}
                 </span>
               </div>
             </div>

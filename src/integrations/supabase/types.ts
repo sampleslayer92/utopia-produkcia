@@ -402,6 +402,171 @@ export type Database = {
           },
         ]
       }
+      contract_calculations: {
+        Row: {
+          calculation_data: Json | null
+          contract_id: string | null
+          created_at: string
+          effective_regulated: number
+          effective_unregulated: number
+          id: string
+          monthly_turnover: number
+          regulated_fee: number
+          service_margin: number
+          total_company_costs: number
+          total_customer_payments: number
+          total_monthly_profit: number
+          transaction_margin: number
+          unregulated_fee: number
+          updated_at: string
+        }
+        Insert: {
+          calculation_data?: Json | null
+          contract_id?: string | null
+          created_at?: string
+          effective_regulated?: number
+          effective_unregulated?: number
+          id?: string
+          monthly_turnover?: number
+          regulated_fee?: number
+          service_margin?: number
+          total_company_costs?: number
+          total_customer_payments?: number
+          total_monthly_profit?: number
+          transaction_margin?: number
+          unregulated_fee?: number
+          updated_at?: string
+        }
+        Update: {
+          calculation_data?: Json | null
+          contract_id?: string | null
+          created_at?: string
+          effective_regulated?: number
+          effective_unregulated?: number
+          id?: string
+          monthly_turnover?: number
+          regulated_fee?: number
+          service_margin?: number
+          total_company_costs?: number
+          total_customer_payments?: number
+          total_monthly_profit?: number
+          transaction_margin?: number
+          unregulated_fee?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_calculations_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contract_item_addons: {
+        Row: {
+          addon_id: string
+          category: string
+          company_cost: number
+          contract_item_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_per_device: boolean
+          monthly_fee: number
+          name: string
+          quantity: number
+        }
+        Insert: {
+          addon_id: string
+          category: string
+          company_cost?: number
+          contract_item_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_per_device?: boolean
+          monthly_fee?: number
+          name: string
+          quantity?: number
+        }
+        Update: {
+          addon_id?: string
+          category?: string
+          company_cost?: number
+          contract_item_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_per_device?: boolean
+          monthly_fee?: number
+          name?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_item_addons_contract_item_id_fkey"
+            columns: ["contract_item_id"]
+            isOneToOne: false
+            referencedRelation: "contract_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contract_items: {
+        Row: {
+          category: string
+          company_cost: number
+          contract_id: string | null
+          count: number
+          created_at: string
+          custom_value: string | null
+          description: string | null
+          id: string
+          item_id: string
+          item_type: string
+          monthly_fee: number
+          name: string
+        }
+        Insert: {
+          category: string
+          company_cost?: number
+          contract_id?: string | null
+          count?: number
+          created_at?: string
+          custom_value?: string | null
+          description?: string | null
+          id?: string
+          item_id: string
+          item_type: string
+          monthly_fee?: number
+          name: string
+        }
+        Update: {
+          category?: string
+          company_cost?: number
+          contract_id?: string | null
+          count?: number
+          created_at?: string
+          custom_value?: string | null
+          description?: string | null
+          id?: string
+          item_id?: string
+          item_type?: string
+          monthly_fee?: number
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_items_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contracts: {
         Row: {
           contract_number: number

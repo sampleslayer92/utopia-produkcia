@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calculator, TrendingUp } from "lucide-react";
 import { OnboardingData, ItemBreakdown, AddonCard, DeviceCard, ServiceCard } from "@/types/onboarding";
+import { formatCurrency, formatCurrencyWithColor, formatPercentage } from "../utils/currencyUtils";
 
 interface ProfitCalculatorProps {
   data: OnboardingData;
@@ -84,18 +85,14 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
   const effectiveRegulated = Math.max(0, data.fees.regulatedCards - 0.2);
   const effectiveUnregulated = Math.max(0, data.fees.unregulatedCards - 0.2);
 
-  // Format number with space separators and € symbol
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('sk-SK', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount);
-  };
-
-  const formatPercentage = (percent: number): string => {
-    return percent.toFixed(2) + ' %';
+  const updateFees = (field: keyof typeof data.fees, value: number) => {
+    updateData({
+      fees: {
+        ...data.fees,
+        [field]: value
+      }
+    });
+    setShowResults(false);
   };
 
   const calculateProfit = () => {
@@ -139,16 +136,6 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
     setShowResults(true);
   };
 
-  const updateFees = (field: keyof typeof data.fees, value: number) => {
-    updateData({
-      fees: {
-        ...data.fees,
-        [field]: value
-      }
-    });
-    setShowResults(false);
-  };
-
   const renderItemBreakdown = (items: ItemBreakdown[], title: string, isCustomerPayment: boolean) => (
     <Card className="bg-slate-50 border-slate-200 shadow-sm">
       <CardContent className="pt-6">
@@ -156,30 +143,51 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
           {isCustomerPayment ? '💼' : '🔧'} {title}:
         </h3>
         <div className="space-y-3">
-          {items.map((item) => (
-            <div key={item.id} className="border-l-4 border-blue-200 pl-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-slate-700">
-                  📦 {item.name} ({item.count} ks x {formatCurrency(item.unitPrice)}):
-                </span>
-                <span className="font-medium text-slate-900">{formatCurrency(item.subtotal)}</span>
-              </div>
-              
-              {item.addons && item.addons.map((addon) => (
-                <div key={addon.id} className="flex justify-between items-center ml-4 mt-1">
-                  <span className="text-xs text-slate-600">
-                    🔧 {addon.name} ({addon.count} ks x {formatCurrency(addon.unitPrice)}):
+          {items.map((item) => {
+            const itemSubtotalFormatted = formatCurrencyWithColor(item.subtotal);
+            const totalWithAddons = item.subtotal + (item.addons?.reduce((sum, addon) => sum + addon.subtotal, 0) || 0);
+            const totalFormatted = formatCurrencyWithColor(totalWithAddons);
+            
+            return (
+              <div key={item.id} className="border-l-4 border-blue-200 pl-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-slate-700">
+                    📦 {item.name} ({item.count} ks x {formatCurrency(item.unitPrice)}):
                   </span>
-                  <span className="text-xs font-medium text-slate-700">{formatCurrency(addon.subtotal)}</span>
+                  <span className={`font-medium ${itemSubtotalFormatted.className}`}>
+                    {itemSubtotalFormatted.value}
+                  </span>
                 </div>
-              ))}
-            </div>
-          ))}
+                
+                {item.addons && item.addons.map((addon) => {
+                  const addonSubtotalFormatted = formatCurrencyWithColor(addon.subtotal);
+                  return (
+                    <div key={addon.id} className="flex justify-between items-center ml-4 mt-1">
+                      <span className="text-xs text-slate-600">
+                        🔧 {addon.name} ({addon.count} ks x {formatCurrency(addon.unitPrice)}):
+                      </span>
+                      <span className={`text-xs font-medium ${addonSubtotalFormatted.className}`}>
+                        {addonSubtotalFormatted.value}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
           
           <div className="border-t pt-3 mt-4">
             <div className="flex justify-between items-center">
               <span className="font-bold text-slate-900">📦 Spolu:</span>
-              <span className={`font-bold text-xl ${isCustomerPayment ? 'text-blue-600' : 'text-red-600'}`}>
+              <span className={`font-bold text-xl ${
+                isCustomerPayment 
+                  ? (formatCurrencyWithColor(items.reduce((sum, item) => {
+                      return sum + item.subtotal + (item.addons?.reduce((addonSum, addon) => addonSum + addon.subtotal, 0) || 0);
+                    }, 0)).className || 'text-blue-600')
+                  : (formatCurrencyWithColor(items.reduce((sum, item) => {
+                      return sum + item.subtotal + (item.addons?.reduce((addonSum, addon) => addonSum + addon.subtotal, 0) || 0);
+                    }, 0)).className || 'text-red-600')
+              }`}>
                 {formatCurrency(items.reduce((sum, item) => {
                   return sum + item.subtotal + (item.addons?.reduce((addonSum, addon) => addonSum + addon.subtotal, 0) || 0);
                 }, 0))}
@@ -323,11 +331,15 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
                     </div>
                     <div className="flex justify-between">
                       <span>• Regulované karty: {formatPercentage(data.fees.calculatorResults.effectiveRegulated)} →</span>
-                      <span className="font-medium">{formatCurrency(data.fees.calculatorResults.regulatedFee)}</span>
+                      <span className={`font-medium ${formatCurrencyWithColor(data.fees.calculatorResults.regulatedFee).className}`}>
+                        {formatCurrencyWithColor(data.fees.calculatorResults.regulatedFee).value}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>• Neregulované karty: {formatPercentage(data.fees.calculatorResults.effectiveUnregulated)} →</span>
-                      <span className="font-medium">{formatCurrency(data.fees.calculatorResults.unregulatedFee)}</span>
+                      <span className={`font-medium ${formatCurrencyWithColor(data.fees.calculatorResults.unregulatedFee).className}`}>
+                        {formatCurrencyWithColor(data.fees.calculatorResults.unregulatedFee).value}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -342,12 +354,14 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
                   <div className="space-y-3 text-sm ml-4">
                     <div className="flex justify-between">
                       <span>• Marža z transakcií:</span>
-                      <span className="font-medium text-green-600">{formatCurrency(data.fees.calculatorResults.transactionMargin)}</span>
+                      <span className={`font-medium ${formatCurrencyWithColor(data.fees.calculatorResults.transactionMargin).className || 'text-green-600'}`}>
+                        {formatCurrencyWithColor(data.fees.calculatorResults.transactionMargin).value}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>• Marža zo služieb:</span>
-                      <span className="font-medium text-green-600">
-                        {formatCurrency(data.fees.calculatorResults.serviceMargin)} 
+                      <span className={`font-medium ${formatCurrencyWithColor(data.fees.calculatorResults.serviceMargin).className || 'text-green-600'}`}>
+                        {formatCurrencyWithColor(data.fees.calculatorResults.serviceMargin).value}
                         <span className="text-xs text-slate-500 ml-1">
                           ({formatCurrency(data.fees.calculatorResults.totalCustomerPayments)} - {formatCurrency(data.fees.calculatorResults.totalCompanyCosts)})
                         </span>
@@ -355,7 +369,9 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
                     </div>
                     <div className="flex justify-between items-center pt-3 border-t border-green-200">
                       <span className="font-bold text-slate-900">• Celkový mesačný zisk:</span>
-                      <span className="font-bold text-2xl text-green-600">{formatCurrency(data.fees.calculatorResults.totalMonthlyProfit)}</span>
+                      <span className={`font-bold text-2xl ${formatCurrencyWithColor(data.fees.calculatorResults.totalMonthlyProfit).className || 'text-green-600'}`}>
+                        {formatCurrencyWithColor(data.fees.calculatorResults.totalMonthlyProfit).value}
+                      </span>
                     </div>
                   </div>
                 </CardContent>

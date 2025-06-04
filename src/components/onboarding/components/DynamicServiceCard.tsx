@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Edit2 } from "lucide-react";
 import { ServiceCard, AddonCard } from "@/types/onboarding";
 import { getAddonIcon } from "../config/addonCatalog";
+import { formatCurrencyWithColor } from "../utils/currencyUtils";
 
 interface DynamicServiceCardProps {
   service: ServiceCard;
@@ -34,6 +35,14 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
   const calculateTotalSubtotal = () => {
     return calculateMainItemSubtotal() + calculateAddonsSubtotal();
   };
+
+  const mainSubtotal = calculateMainItemSubtotal();
+  const addonsSubtotal = calculateAddonsSubtotal();
+  const totalSubtotal = calculateTotalSubtotal();
+
+  const mainSubtotalFormatted = formatCurrencyWithColor(mainSubtotal);
+  const addonsSubtotalFormatted = formatCurrencyWithColor(addonsSubtotal);
+  const totalSubtotalFormatted = formatCurrencyWithColor(totalSubtotal);
 
   return (
     <Card className="border-slate-200/60 bg-white shadow-md">
@@ -145,6 +154,7 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
               {service.addons.map((addon: AddonCard) => {
                 const quantity = addon.isPerDevice ? service.count : (addon.customQuantity || 1);
                 const subtotal = quantity * addon.monthlyFee;
+                const subtotalFormatted = formatCurrencyWithColor(subtotal);
                 
                 return (
                   <div key={addon.id} className="bg-slate-50 rounded-lg p-3 border border-slate-200">
@@ -161,8 +171,8 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
                           </p>
                         </div>
                       </div>
-                      <span className="text-sm font-medium text-green-600">
-                        {subtotal.toFixed(2)} €
+                      <span className={`text-sm font-medium ${subtotalFormatted.className || 'text-green-600'}`}>
+                        {subtotalFormatted.value}
                       </span>
                     </div>
                   </div>
@@ -177,18 +187,22 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
           <div className="space-y-2 text-sm">
             <div className="flex justify-between items-center">
               <span className="text-slate-700">Hlavná položka:</span>
-              <span className="font-medium">{calculateMainItemSubtotal().toFixed(2)} €</span>
+              <span className={`font-medium ${mainSubtotalFormatted.className}`}>
+                {mainSubtotalFormatted.value}
+              </span>
             </div>
-            {calculateAddonsSubtotal() > 0 && (
+            {addonsSubtotal > 0 && (
               <div className="flex justify-between items-center">
                 <span className="text-slate-700">Doplnky:</span>
-                <span className="font-medium">{calculateAddonsSubtotal().toFixed(2)} €</span>
+                <span className={`font-medium ${addonsSubtotalFormatted.className}`}>
+                  {addonsSubtotalFormatted.value}
+                </span>
               </div>
             )}
             <div className="flex justify-between items-center border-t pt-2">
               <span className="font-bold text-slate-900">Celkom:</span>
-              <span className="font-bold text-xl text-green-600">
-                {calculateTotalSubtotal().toFixed(2)} €/mes
+              <span className={`font-bold text-xl ${totalSubtotalFormatted.className || 'text-green-600'}`}>
+                {totalSubtotalFormatted.value}/mes
               </span>
             </div>
           </div>

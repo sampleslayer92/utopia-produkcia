@@ -91,6 +91,72 @@ export const insertBusinessLocations = async (contractId: string, businessLocati
 };
 
 export const insertDeviceSelection = async (contractId: string, deviceSelection: any, fees: any) => {
+  // Save to new contract_items and contract_item_addons tables
+  for (const card of deviceSelection?.dynamicCards || []) {
+    const { data: contractItem, error: itemError } = await supabase
+      .from('contract_items')
+      .insert({
+        contract_id: contractId,
+        item_id: card.id,
+        item_type: card.type,
+        category: card.category,
+        name: card.name,
+        description: card.description,
+        count: card.count,
+        monthly_fee: card.monthlyFee,
+        company_cost: card.companyCost,
+        custom_value: card.customValue || null
+      })
+      .select('id')
+      .single();
+
+    if (itemError) throw itemError;
+
+    // Save addons for this item
+    if (card.addons && card.addons.length > 0 && contractItem) {
+      for (const addon of card.addons) {
+        const { error: addonError } = await supabase
+          .from('contract_item_addons')
+          .insert({
+            contract_item_id: contractItem.id,
+            addon_id: addon.id,
+            category: addon.category,
+            name: addon.name,
+            description: addon.description,
+            quantity: addon.isPerDevice ? card.count : (addon.customQuantity || 1),
+            monthly_fee: addon.monthlyFee,
+            company_cost: addon.companyCost,
+            is_per_device: addon.isPerDevice
+          });
+
+        if (addonError) throw addonError;
+      }
+    }
+  }
+
+  // Save calculation results if they exist
+  if (fees?.calculatorResults) {
+    const { error: calcError } = await supabase
+      .from('contract_calculations')
+      .insert({
+        contract_id: contractId,
+        monthly_turnover: fees.calculatorResults.monthlyTurnover,
+        total_customer_payments: fees.calculatorResults.totalCustomerPayments,
+        total_company_costs: fees.calculatorResults.totalCompanyCosts,
+        effective_regulated: fees.calculatorResults.effectiveRegulated,
+        effective_unregulated: fees.calculatorResults.effectiveUnregulated,
+        regulated_fee: fees.calculatorResults.regulatedFee,
+        unregulated_fee: fees.calculatorResults.unregulatedFee,
+        transaction_margin: fees.calculatorResults.transactionMargin,
+        service_margin: fees.calculatorResults.serviceMargin,
+        total_monthly_profit: fees.calculatorResults.totalMonthlyProfit,
+        calculation_data: fees.calculatorResults
+      });
+
+    if (calcError) throw calcError;
+  }
+
+  // Keep legacy device_selection table for backward compatibility
   const deviceCards = deviceSelection?.dynamicCards?.filter((card: any) => card.type === 'device') || [];
   
   const paxA920Pro = deviceCards.find((card: any) => card.name === 'PAX A920 PRO');
@@ -105,7 +171,7 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
       contract_id: contractId,
       pax_a920_pro_count: paxA920Pro?.count || 0,
       pax_a920_pro_monthly_fee: paxA920Pro?.monthlyFee || 0,
-      pax_a920_pro_sim_cards: (paxA920Pro as any)?.simCards || 0,
+      pax_a920_pro_sim_cards: 0, // SIM is now an addon
       pax_a80_count: paxA80?.count || 0,
       pax_a80_monthly_fee: paxA80?.monthlyFee || 0,
       tablet_10_count: tablet10?.count || 0,
