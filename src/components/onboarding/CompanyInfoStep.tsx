@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData } from "@/types/onboarding";
@@ -56,7 +55,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
   };
 
   // Ensure registry_type has a valid default value
-  if (!data.companyInfo.registryType || data.companyInfo.registryType === '') {
+  if (!data.companyInfo.registryType || !['public', 'business', 'other'].includes(data.companyInfo.registryType)) {
     updateCompanyInfo('registryType', 'business');
   }
 
