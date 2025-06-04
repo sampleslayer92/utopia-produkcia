@@ -1,9 +1,8 @@
 
-import EnhancedContractsTable from "@/components/admin/EnhancedContractsTable";
+import EnhancedAdminTable from "@/components/admin/EnhancedAdminTable";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import DashboardHeader from "@/components/admin/dashboard/DashboardHeader";
 import StatsCards from "@/components/admin/dashboard/StatsCards";
-import DashboardSidebar from "@/components/admin/dashboard/DashboardSidebar";
 import { useContractsStats } from "@/hooks/useContractsData";
 
 const AdminDashboard = () => {
@@ -18,18 +17,9 @@ const AdminDashboard = () => {
 
         <div className="flex-1 p-6">
           <StatsCards stats={stats} statsLoading={statsLoading} />
-
-          <div className="grid lg:grid-cols-4 gap-8">
-            {/* Enhanced Contracts Table */}
-            <div className="lg:col-span-3">
-              <EnhancedContractsTable />
-            </div>
-
-            {/* Sidebar with alerts and actions */}
-            <div className="lg:col-span-1">
-              <DashboardSidebar stats={stats} />
-            </div>
-          </div>
+          
+          {/* Enhanced Admin Table takes full width */}
+          <EnhancedAdminTable />
         </div>
       </div>
     </div>
