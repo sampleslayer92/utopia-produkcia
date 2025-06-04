@@ -33,7 +33,6 @@ const AddDeviceServiceModal = ({ isOpen, onClose, onAddItem }: AddDeviceServiceM
       addons: []
     };
     onAddItem(dynamicCard);
-    onClose();
   };
 
   const handleAddService = (service: any) => {
@@ -49,7 +48,6 @@ const AddDeviceServiceModal = ({ isOpen, onClose, onAddItem }: AddDeviceServiceM
       addons: []
     };
     onAddItem(dynamicCard);
-    onClose();
   };
 
   const getTabIcon = (category: string) => {
@@ -64,54 +62,60 @@ const AddDeviceServiceModal = ({ isOpen, onClose, onAddItem }: AddDeviceServiceM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-5xl max-h-[85vh] overflow-hidden flex flex-col">
+        <DialogHeader className="pb-4">
           <DialogTitle>Pridať zariadenie alebo službu</DialogTitle>
         </DialogHeader>
 
-        <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="devices" className="flex items-center space-x-2">
-              <Monitor className="h-4 w-4" />
-              <span>Zariadenia</span>
-            </TabsTrigger>
-            <TabsTrigger value="services" className="flex items-center space-x-2">
-              <Wifi className="h-4 w-4" />
-              <span>Služby</span>
-            </TabsTrigger>
-          </TabsList>
+        <div className="flex-1 overflow-hidden">
+          <Tabs value={selectedTab} onValueChange={setSelectedTab} className="h-full flex flex-col">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="devices" className="flex items-center space-x-2">
+                <Monitor className="h-4 w-4" />
+                <span>Zariadenia</span>
+              </TabsTrigger>
+              <TabsTrigger value="services" className="flex items-center space-x-2">
+                <Wifi className="h-4 w-4" />
+                <span>Služby</span>
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="devices" className="space-y-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {DEVICE_CATALOG.map((device) => (
-                <DeviceCatalogCard
-                  key={device.id}
-                  device={device}
-                  onAdd={() => handleAddDevice(device)}
-                />
-              ))}
+            <div className="flex-1 overflow-y-auto">
+              <TabsContent value="devices" className="mt-0 h-full">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
+                  {DEVICE_CATALOG.map((device) => (
+                    <DeviceCatalogCard
+                      key={device.id}
+                      device={device}
+                      onAdd={() => handleAddDevice(device)}
+                    />
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="services" className="mt-0 h-full">
+                <div className="space-y-6 pb-4">
+                  {Object.entries(SERVICE_CATALOG).map(([category, services]) => (
+                    <div key={category} className="space-y-3">
+                      <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2 sticky top-0 bg-white py-2">
+                        {React.createElement(getTabIcon(category), { className: "h-5 w-5" })}
+                        {category === 'software' ? 'Softvérové riešenia' : 
+                         category === 'ecommerce' ? 'E-commerce riešenia' : 
+                         'Technické služby'}
+                      </h3>
+                      <MinimalServiceCatalogGroup
+                        services={services}
+                        onAddService={(service) => handleAddService(service)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
             </div>
-          </TabsContent>
+          </Tabs>
+        </div>
 
-          <TabsContent value="services" className="space-y-6">
-            {Object.entries(SERVICE_CATALOG).map(([category, services]) => (
-              <div key={category} className="space-y-3">
-                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                  {React.createElement(getTabIcon(category), { className: "h-5 w-5" })}
-                  {category === 'software' ? 'Softvérové riešenia' : 
-                   category === 'ecommerce' ? 'E-commerce riešenia' : 
-                   'Technické služby'}
-                </h3>
-                <MinimalServiceCatalogGroup
-                  services={services}
-                  onAddService={(service) => handleAddService(service)}
-                />
-              </div>
-            ))}
-          </TabsContent>
-        </Tabs>
-
-        <div className="flex justify-end space-x-2 pt-4">
+        <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200 mt-4">
           <Button variant="outline" onClick={onClose}>
             Zrušiť
           </Button>

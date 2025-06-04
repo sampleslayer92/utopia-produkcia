@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +29,8 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
   
   const { addItem, updateItem, deleteItem, isAdding, isDeleting } = useContractItems(contractId!);
   
-  const devices = onboardingData.deviceSelection?.dynamicCards || [];
+  // Use contractItems instead of deviceSelection.dynamicCards
+  const devices = onboardingData.contractItems || [];
 
   const getDeviceIcon = (category: string) => {
     return <Monitor className="h-5 w-5 text-blue-600" />;
@@ -52,6 +54,7 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
 
   const handleAddItem = (item: DynamicCard) => {
     addItem(item);
+    setIsAddModalOpen(false);
   };
 
   const handleDeleteItem = (item: any) => {
@@ -61,9 +64,13 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
 
   const confirmDelete = async () => {
     if (itemToDelete) {
-      await deleteItem.mutateAsync(itemToDelete.id);
-      setDeleteModalOpen(false);
-      setItemToDelete(null);
+      try {
+        await deleteItem.mutateAsync(itemToDelete.id);
+        setDeleteModalOpen(false);
+        setItemToDelete(null);
+      } catch (error) {
+        console.error('Error deleting item:', error);
+      }
     }
   };
 
@@ -116,7 +123,7 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
                           <h4 className="font-semibold text-slate-900">{device.name}</h4>
                           <p className="text-sm text-slate-600">{device.description || 'Profesionálne zariadenie'}</p>
                           <Badge variant="secondary" className="mt-1">
-                            {device.type === 'device' ? 'Zariadenie' : 'Služba'}
+                            {device.itemType === 'device' ? 'Zariadenie' : 'Služba'}
                           </Badge>
                         </div>
                       </div>
@@ -139,7 +146,7 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
                         <div>
                           <Label className="text-sm font-medium text-slate-600">Počet kusov</Label>
                           {isEditMode ? (
-                            <div className="mt-1">
+                            <div className="mt-2">
                               <QuantityStepper 
                                 value={device.count} 
                                 onChange={(value) => handleQuantityChange(device.id, value)} 
@@ -154,14 +161,7 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
                         
                         <div>
                           <Label className="text-sm font-medium text-slate-600">Typ platby</Label>
-                          {isEditMode ? (
-                            <div className="flex space-x-2 mt-1">
-                              <Button size="sm" variant="outline">Prenájom</Button>
-                              <Button size="sm" variant="outline">Kúpa</Button>
-                            </div>
-                          ) : (
-                            <Badge className="mt-1">Prenájom</Badge>
-                          )}
+                          <Badge className="mt-1 block w-fit">Prenájom</Badge>
                         </div>
                       </div>
 
@@ -282,9 +282,19 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
               );
             })
           ) : (
-            <p className="text-slate-600 text-center py-8">
-              Žiadne zariadenia neboli vybrané
-            </p>
+            <div className="text-center py-8">
+              <p className="text-slate-600 mb-4">Žiadne zariadenia neboli vybrané</p>
+              {isEditMode && (
+                <Button 
+                  variant="outline"
+                  onClick={() => setIsAddModalOpen(true)}
+                  disabled={isAdding}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Pridať prvé zariadenie
+                </Button>
+              )}
+            </div>
           )}
         </CardContent>
       </Card>

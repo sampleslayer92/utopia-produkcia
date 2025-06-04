@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -53,9 +52,13 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
 
   const confirmDelete = async () => {
     if (locationToDelete) {
-      await deleteLocation.mutateAsync(locationToDelete.id);
-      setDeleteModalOpen(false);
-      setLocationToDelete(null);
+      try {
+        await deleteLocation.mutateAsync(locationToDelete.id);
+        setDeleteModalOpen(false);
+        setLocationToDelete(null);
+      } catch (error) {
+        console.error('Error deleting location:', error);
+      }
     }
   };
 
@@ -238,7 +241,7 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
           <CardContent className="space-y-4">
             {businessLocations && businessLocations.length > 0 ? (
               businessLocations.map((location: any, index: number) => (
-                <EditableSection key={index} isEditMode={isEditMode}>
+                <EditableSection key={location.id || index} isEditMode={isEditMode}>
                   <div className="p-4 bg-slate-50/50 rounded-lg space-y-3 relative">
                     {isEditMode && (
                       <Button
@@ -307,9 +310,19 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
                 </EditableSection>
               ))
             ) : (
-              <p className="text-slate-600 text-center py-4">
-                Žiadne prevádzky neboli zadané
-              </p>
+              <div className="text-center py-8">
+                <p className="text-slate-600 mb-4">Žiadne prevádzky neboli zadané</p>
+                {isEditMode && (
+                  <Button 
+                    variant="outline"
+                    onClick={addNewLocation}
+                    disabled={isAdding}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Pridať prvú prevádzku
+                  </Button>
+                )}
+              </div>
             )}
           </CardContent>
         </Card>
@@ -317,11 +330,11 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
 
       {/* Add Location Modal */}
       <Dialog open={addLocationModal} onOpenChange={setAddLocationModal}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Pridať novú prevádzku</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-96 overflow-y-auto">
             <div>
               <Label htmlFor="locationName">Názov prevádzky</Label>
               <Input
@@ -379,11 +392,11 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setAddLocationModal(false)} disabled={isAdding}>
               Zrušiť
             </Button>
-            <Button onClick={handleAddLocation} disabled={isAdding}>
+            <Button onClick={handleAddLocation} disabled={isAdding || !newLocationData.name.trim()}>
               {isAdding ? 'Pridáva sa...' : 'Pridať prevádzku'}
             </Button>
           </DialogFooter>

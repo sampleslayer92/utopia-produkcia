@@ -112,7 +112,10 @@ export const useContractItems = (contractId: string) => {
         .delete()
         .eq('contract_item_id', itemId);
 
-      if (addonsError) throw addonsError;
+      if (addonsError) {
+        console.error('Error deleting addons:', addonsError);
+        throw addonsError;
+      }
 
       // Delete main item
       const { error: itemError } = await supabase
@@ -120,7 +123,10 @@ export const useContractItems = (contractId: string) => {
         .delete()
         .eq('id', itemId);
 
-      if (itemError) throw itemError;
+      if (itemError) {
+        console.error('Error deleting item:', itemError);
+        throw itemError;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
