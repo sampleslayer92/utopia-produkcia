@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Monitor, Plus, Trash2 } from "lucide-react";
 import { formatCurrency } from "@/components/onboarding/utils/currencyUtils";
 import EditableSection from "./EditableSection";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import { Button } from "@/components/ui/button";
 import QuantityStepper from "@/components/onboarding/components/QuantityStepper";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,9 @@ interface DevicesServicesSectionProps {
 const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesServicesSectionProps) => {
   const { id: contractId } = useParams<{ id: string }>();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<any>(null);
+  
   const { addItem, updateItem, deleteItem, isAdding, isDeleting } = useContractItems(contractId!);
   
   const devices = onboardingData.deviceSelection?.dynamicCards || [];
@@ -50,9 +54,16 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
     addItem(item);
   };
 
-  const handleDeleteItem = (itemId: string) => {
-    if (window.confirm('Naozaj chcete odstrániť túto položku?')) {
-      deleteItem(itemId);
+  const handleDeleteItem = (item: any) => {
+    setItemToDelete(item);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (itemToDelete) {
+      await deleteItem.mutateAsync(itemToDelete.id);
+      setDeleteModalOpen(false);
+      setItemToDelete(null);
     }
   };
 
@@ -113,7 +124,7 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          onClick={() => handleDeleteItem(device.id)}
+                          onClick={() => handleDeleteItem(device)}
                           disabled={isDeleting}
                           className="text-red-600 hover:text-red-700"
                         >
@@ -282,6 +293,14 @@ const DevicesServicesSection = ({ onboardingData, isEditMode, onSave }: DevicesS
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddItem={handleAddItem}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title={itemToDelete?.name || 'túto položku'}
+        isDeleting={isDeleting}
       />
     </>
   );

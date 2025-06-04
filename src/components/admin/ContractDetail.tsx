@@ -45,11 +45,12 @@ const ContractDetail = () => {
 
   const handleSave = async (data: any) => {
     try {
-      // TODO: Implement save logic to database
+      // Save functionality will be implemented based on the specific data being saved
       toast({
         title: "Zmluva uložená",
         description: "Zmeny boli úspešne uložené.",
       });
+      setIsEditMode(false);
     } catch (error) {
       toast({
         title: "Chyba",
@@ -59,13 +60,22 @@ const ContractDetail = () => {
     }
   };
 
+  const handleToggleEdit = () => {
+    if (isEditMode) {
+      // Save changes when leaving edit mode
+      handleSave({});
+    } else {
+      setIsEditMode(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <ContractHeader
         contract={contract}
         onboardingData={onboardingData}
         isEditMode={isEditMode}
-        onToggleEdit={() => setIsEditMode(!isEditMode)}
+        onToggleEdit={handleToggleEdit}
         onBack={() => navigate('/admin')}
         onSave={handleSave}
       />

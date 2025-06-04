@@ -49,6 +49,14 @@ const ContractHeader = ({
 
   const contractValue = calculateContractValue();
 
+  // Format contract number as CON-2024-XXX
+  const formattedContractNumber = `CON-2024-${String(contract.contract_number).padStart(3, '0')}`;
+  
+  // Get author name from contact info or default to Admin
+  const authorName = onboardingData.contactInfo 
+    ? `${onboardingData.contactInfo.firstName} ${onboardingData.contactInfo.lastName}`
+    : (onboardingData.contactInfo?.user_role || 'Admin');
+
   return (
     <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-slate-200/60">
       <div className="container mx-auto px-6 py-4">
@@ -67,11 +75,16 @@ const ContractHeader = ({
                 
                 <div>
                   <h1 className="text-2xl font-bold text-slate-900">
-                    CON-2024-{String(contract.contract_number).padStart(3, '0')}
+                    {formattedContractNumber}
                   </h1>
-                  <p className="text-sm text-slate-600">
-                    Zmluva pre {onboardingData.companyInfo?.companyName || 'Neuvedené'}
-                  </p>
+                  <div className="space-y-1">
+                    <p className="text-sm text-slate-600">
+                      Zmluva pre {onboardingData.companyInfo?.companyName || 'Neuvedené'}
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      Zmluvu vytvoril: {authorName}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex items-center space-x-4">
