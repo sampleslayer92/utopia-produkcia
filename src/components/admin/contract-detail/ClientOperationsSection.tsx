@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -46,6 +47,7 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
   const businessLocations = onboardingData.businessLocations;
 
   const handleDeleteLocation = (location: any) => {
+    console.log('Setting location to delete:', location);
     setLocationToDelete(location);
     setDeleteModalOpen(true);
   };
@@ -53,11 +55,20 @@ const ClientOperationsSection = ({ onboardingData, isEditMode, onSave }: ClientO
   const confirmDelete = async () => {
     if (locationToDelete) {
       try {
-        await deleteLocation.mutateAsync(locationToDelete.id);
-        setDeleteModalOpen(false);
-        setLocationToDelete(null);
+        console.log('Deleting location with ID:', locationToDelete.id);
+        // Use the correct mutation function call
+        deleteLocation.mutate(locationToDelete.id, {
+          onSuccess: () => {
+            console.log('Location deleted successfully');
+            setDeleteModalOpen(false);
+            setLocationToDelete(null);
+          },
+          onError: (error) => {
+            console.error('Error deleting location:', error);
+          }
+        });
       } catch (error) {
-        console.error('Error deleting location:', error);
+        console.error('Error in confirmDelete:', error);
       }
     }
   };

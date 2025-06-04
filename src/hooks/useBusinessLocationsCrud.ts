@@ -111,7 +111,7 @@ export const useBusinessLocationsCrud = (contractId: string) => {
 
   const deleteLocation = useMutation({
     mutationFn: async (locationId: string) => {
-      console.log('Deleting location:', locationId);
+      console.log('Deleting location with ID:', locationId);
       
       const { error } = await supabase
         .from('business_locations')
