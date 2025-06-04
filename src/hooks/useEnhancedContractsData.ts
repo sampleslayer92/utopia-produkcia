@@ -89,6 +89,13 @@ const determineContractType = (deviceSelection: any) => {
   return 'E-commerce';
 };
 
+const extractSingleRecord = (data: any) => {
+  if (Array.isArray(data) && data.length > 0) {
+    return data[0];
+  }
+  return Array.isArray(data) ? null : data;
+};
+
 export const useEnhancedContractsData = (filters?: {
   status?: string;
   contractType?: string;
@@ -137,9 +144,13 @@ export const useEnhancedContractsData = (filters?: {
         `)
         .order('created_at', { ascending: false });
 
-      // Apply filters
+      // Apply filters with proper type checking
       if (filters?.status && filters.status !== 'all') {
-        query = query.eq('status', filters.status);
+        // Only apply filter if status is valid
+        const validStatuses = ['draft', 'submitted', 'opened', 'viewed', 'approved', 'rejected'];
+        if (validStatuses.includes(filters.status)) {
+          query = query.eq('status', filters.status);
+        }
       }
 
       if (filters?.dateFrom) {
@@ -160,13 +171,20 @@ export const useEnhancedContractsData = (filters?: {
       // Transform the data
       const transformedData: EnhancedContractData[] = data?.map(contract => {
         const completedSteps = calculateCompletedSteps(contract);
-        const contractType = determineContractType(contract.device_selection);
-        const contractValue = contract.contract_calculations?.total_monthly_profit || 0;
         
-        const clientName = contract.company_info?.company_name || 
-          (contract.contact_info ? `${contract.contact_info.first_name} ${contract.contact_info.last_name}` : 'N/A');
+        // Extract single records from potentially array relationships
+        const contactInfo = extractSingleRecord(contract.contact_info);
+        const companyInfo = extractSingleRecord(contract.company_info);
+        const contractCalculations = extractSingleRecord(contract.contract_calculations);
+        const deviceSelection = extractSingleRecord(contract.device_selection);
         
-        const salesPerson = contract.contact_info?.user_role || 'Admin';
+        const contractType = determineContractType(deviceSelection);
+        const contractValue = contractCalculations?.total_monthly_profit || 0;
+        
+        const clientName = companyInfo?.company_name || 
+          (contactInfo ? `${contactInfo.first_name} ${contactInfo.last_name}` : 'N/A');
+        
+        const salesPerson = contactInfo?.user_role || 'Admin';
 
         return {
           id: contract.id,
@@ -174,18 +192,10 @@ export const useEnhancedContractsData = (filters?: {
           status: contract.status,
           created_at: contract.created_at,
           submitted_at: contract.submitted_at,
-          contact_info: Array.isArray(contract.contact_info) && contract.contact_info.length > 0 
-            ? contract.contact_info[0] 
-            : contract.contact_info,
-          company_info: Array.isArray(contract.company_info) && contract.company_info.length > 0 
-            ? contract.company_info[0] 
-            : contract.company_info,
-          contract_calculations: Array.isArray(contract.contract_calculations) && contract.contract_calculations.length > 0 
-            ? contract.contract_calculations[0] 
-            : contract.contract_calculations,
-          device_selection: Array.isArray(contract.device_selection) && contract.device_selection.length > 0 
-            ? contract.device_selection[0] 
-            : contract.device_selection,
+          contact_info: contactInfo,
+          company_info: companyInfo,
+          contract_calculations: contractCalculations,
+          device_selection: deviceSelection,
           completedSteps,
           contractValue,
           contractType,
