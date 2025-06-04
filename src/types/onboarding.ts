@@ -1,4 +1,3 @@
-
 export interface ContactInfo {
   salutation: 'Pan' | 'Pani' | '';
   firstName: string;
@@ -96,6 +95,16 @@ export interface DeviceSelection {
 export interface Fees {
   regulatedCards: number;
   unregulatedCards: number;
+  calculatorResults?: {
+    totalTurnover: number;
+    monthlyDeviceCosts: number;
+    annualDeviceCosts: number;
+    effectiveRegulated: number;
+    effectiveUnregulated: number;
+    regulatedFee: number;
+    unregulatedFee: number;
+    totalAnnualCosts: number;
+  };
 }
 
 export interface AuthorizedPerson {

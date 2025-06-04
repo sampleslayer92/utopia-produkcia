@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { OnboardingData } from "@/types/onboarding";
+import FeeCalculator from "./fees/FeeCalculator";
 
 interface FeesStepProps {
   data: OnboardingData;
@@ -23,11 +24,15 @@ const FeesStep = ({ data, updateData }: FeesStepProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Fee Calculator */}
+      <FeeCalculator data={data} updateData={updateData} />
+
+      {/* Original Fee Settings */}
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Poplatky</CardTitle>
+          <CardTitle className="text-slate-900">Nastavenie poplatkov</CardTitle>
           <CardDescription className="text-slate-600">
-            Nastavenie poplatkov za spracovanie kariet
+            Základné percentuálne sadzby pre spracovanie kariet
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -57,7 +62,7 @@ const FeesStep = ({ data, updateData }: FeesStepProps) => {
                 value={data.fees.unregulatedCards}
                 onChange={(e) => updateFees('unregulatedCards', parseFloat(e.target.value) || 0)}
                 className="border-slate-300 focus:border-blue-500"
-                placeholder="0.90"
+                placeholder="1.50"
               />
             </div>
           </div>
