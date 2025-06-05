@@ -1,5 +1,4 @@
-
-import { OnboardingData } from "@/types/onboarding";
+import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
 import { v4 as uuidv4 } from "uuid";
 
 export const getPersonDataFromContactInfo = (contactInfo: OnboardingData['contactInfo']) => ({
@@ -46,28 +45,54 @@ export const createActualOwnerFromContactInfo = (contactInfo: OnboardingData['co
   isPoliticallyExposed: false
 });
 
-export const createDefaultBusinessLocation = (contactInfo: OnboardingData['contactInfo']) => ({
-  id: uuidv4(),
-  name: '',
-  hasPOS: false,
-  address: { 
-    street: '', 
-    city: '', 
-    zipCode: '' 
-  },
-  iban: '',
-  contactPerson: {
-    name: `${contactInfo.firstName} ${contactInfo.lastName}`,
-    email: contactInfo.email,
-    phone: contactInfo.phone
-  },
-  businessSector: '',
-  estimatedTurnover: 0,
-  averageTransaction: 0,
-  openingHours: '',
-  seasonality: 'year-round' as const,
-  assignedPersons: []
-});
+export const createDefaultBusinessLocation = (contactInfo: OnboardingData['contactInfo']) => {
+  // Default bank account
+  const defaultBankAccount: BankAccount = {
+    id: uuidv4(),
+    format: 'IBAN',
+    iban: '',
+    mena: 'EUR'
+  };
+
+  // Default opening hours (weekdays open, weekends closed)
+  const defaultOpeningHours: OpeningHours[] = [
+    { day: "Po", open: "09:00", close: "17:00", otvorene: true },
+    { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
+    { day: "St", open: "09:00", close: "17:00", otvorene: true },
+    { day: "Št", open: "09:00", close: "17:00", otvorene: true },
+    { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
+    { day: "So", open: "09:00", close: "14:00", otvorene: false },
+    { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
+  ];
+
+  return {
+    id: uuidv4(),
+    name: '',
+    hasPOS: false,
+    address: { 
+      street: '', 
+      city: '', 
+      zipCode: '' 
+    },
+    iban: '', // Keep for backward compatibility
+    bankAccounts: [defaultBankAccount],
+    contactPerson: {
+      name: `${contactInfo.firstName} ${contactInfo.lastName}`,
+      email: contactInfo.email,
+      phone: contactInfo.phone
+    },
+    businessSector: '', // Keep for backward compatibility
+    businessSubject: '',
+    mccCode: '',
+    estimatedTurnover: 0, // Keep for backward compatibility
+    monthlyTurnover: 0,
+    averageTransaction: 0,
+    openingHours: '', // Keep for backward compatibility
+    openingHoursDetailed: defaultOpeningHours,
+    seasonality: 'year-round' as const,
+    assignedPersons: []
+  };
+};
 
 export const shouldAutoFillBasedOnContactInfo = (contactInfo: OnboardingData['contactInfo']) => {
   return contactInfo.firstName && 

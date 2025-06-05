@@ -1,5 +1,4 @@
-
-import { OnboardingData } from '@/types/onboarding';
+import { OnboardingData, BankAccount, OpeningHours } from '@/types/onboarding';
 
 export const transformContractData = (
   contract: any,
@@ -194,29 +193,55 @@ export const transformContractData = (
       contactPerson: { firstName: '', lastName: '', email: '', phone: '', isTechnicalPerson: false }
     },
     
-    businessLocations: businessLocations?.map(loc => ({
-      id: loc.location_id,
-      name: loc.name,
-      address: {
-        street: loc.address_street,
-        city: loc.address_city,
-        zipCode: loc.address_zip_code
-      },
-      contactPerson: {
-        name: loc.contact_person_name,
-        phone: loc.contact_person_phone,
-        email: loc.contact_person_email
-      },
-      businessSector: loc.business_sector,
-      estimatedTurnover: loc.estimated_turnover,
-      averageTransaction: loc.average_transaction,
-      iban: loc.iban,
-      openingHours: loc.opening_hours,
-      seasonality: loc.seasonality,
-      seasonalWeeks: loc.seasonal_weeks,
-      hasPOS: loc.has_pos,
-      assignedPersons: []
-    })) || [],
+    businessLocations: businessLocations?.map(loc => {
+      // Default bank account from legacy IBAN
+      const defaultBankAccount: BankAccount = {
+        id: `legacy-${loc.location_id}`,
+        format: 'IBAN',
+        iban: loc.iban || '',
+        mena: 'EUR'
+      };
+
+      // Default opening hours (weekdays open, weekends closed)
+      const defaultOpeningHours: OpeningHours[] = [
+        { day: "Po", open: "09:00", close: "17:00", otvorene: true },
+        { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
+        { day: "St", open: "09:00", close: "17:00", otvorene: true },
+        { day: "Št", open: "09:00", close: "17:00", otvorene: true },
+        { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
+        { day: "So", open: "09:00", close: "14:00", otvorene: false },
+        { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
+      ];
+
+      return {
+        id: loc.location_id,
+        name: loc.name,
+        hasPOS: loc.has_pos,
+        address: {
+          street: loc.address_street,
+          city: loc.address_city,
+          zipCode: loc.address_zip_code
+        },
+        iban: loc.iban, // Keep for backward compatibility
+        bankAccounts: [defaultBankAccount],
+        contactPerson: {
+          name: loc.contact_person_name,
+          phone: loc.contact_person_phone,
+          email: loc.contact_person_email
+        },
+        businessSector: loc.business_sector, // Keep for backward compatibility
+        businessSubject: loc.business_sector || '',
+        mccCode: '',
+        estimatedTurnover: loc.estimated_turnover, // Keep for backward compatibility
+        monthlyTurnover: loc.estimated_turnover || 0,
+        averageTransaction: loc.average_transaction,
+        openingHours: loc.opening_hours, // Keep for backward compatibility
+        openingHoursDetailed: defaultOpeningHours,
+        seasonality: loc.seasonality,
+        seasonalWeeks: loc.seasonal_weeks,
+        assignedPersons: []
+      };
+    }) || [],
     
     deviceSelection: {
       selectedSolutions: [],
