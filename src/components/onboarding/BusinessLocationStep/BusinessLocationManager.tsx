@@ -40,11 +40,23 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
       { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
     ];
 
+    // Use head office address if checkbox is checked and this is the first location
+    const shouldUseHeadOfficeAddress = data.companyInfo.headOfficeEqualsOperatingAddress && data.businessLocations.length === 0;
+    const addressData = shouldUseHeadOfficeAddress ? {
+      street: data.companyInfo.address.street,
+      city: data.companyInfo.address.city,
+      zipCode: data.companyInfo.address.zipCode
+    } : {
+      street: '',
+      city: '',
+      zipCode: ''
+    };
+
     const newLocation: BusinessLocation = {
       id: Date.now().toString(),
       name: '',
       hasPOS: false,
-      address: { street: '', city: '', zipCode: '' },
+      address: addressData,
       iban: '', // Keep for backward compatibility
       bankAccounts: [defaultBankAccount],
       contactPerson: contactPersonData,
@@ -78,6 +90,15 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
   };
 
   const updateBusinessLocation = (id: string, field: string, value: any) => {
+    // Prevent updating first location's address if head office sync is enabled
+    if (field.startsWith('address.') && data.companyInfo.headOfficeEqualsOperatingAddress) {
+      const firstLocationId = data.businessLocations[0]?.id;
+      if (id === firstLocationId) {
+        console.log('Address update blocked - head office sync is enabled');
+        return;
+      }
+    }
+
     updateData({
       businessLocations: data.businessLocations.map(location => {
         if (location.id !== id) return location;

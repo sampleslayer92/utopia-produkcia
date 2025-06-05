@@ -42,15 +42,28 @@ const CompanyAddressCard = ({ data, updateCompanyInfo }: CompanyAddressCardProps
         placeholder="Bratislava"
       />
 
-      <div className="flex items-center space-x-2 pt-4 border-t border-slate-200">
-        <Checkbox
-          id="contactAddressSameAsMain"
-          checked={data.companyInfo.contactAddressSameAsMain}
-          onCheckedChange={(checked) => updateCompanyInfo('contactAddressSameAsMain', checked)}
-        />
-        <label htmlFor="contactAddressSameAsMain" className="text-sm text-slate-700">
-          Sídlo spoločnosti je rovnaké ako kontaktná adresa spoločnosti
-        </label>
+      <div className="space-y-3 pt-4 border-t border-slate-200">
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="contactAddressSameAsMain"
+            checked={data.companyInfo.contactAddressSameAsMain}
+            onCheckedChange={(checked) => updateCompanyInfo('contactAddressSameAsMain', checked)}
+          />
+          <label htmlFor="contactAddressSameAsMain" className="text-sm text-slate-700">
+            Sídlo spoločnosti je rovnaké ako kontaktná adresa spoločnosti
+          </label>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="headOfficeEqualsOperatingAddress"
+            checked={data.companyInfo.headOfficeEqualsOperatingAddress}
+            onCheckedChange={(checked) => updateCompanyInfo('headOfficeEqualsOperatingAddress', checked)}
+          />
+          <label htmlFor="headOfficeEqualsOperatingAddress" className="text-sm text-slate-700">
+            Sídlo spoločnosti je rovnaké ako adresa prevádzky
+          </label>
+        </div>
       </div>
     </div>
   );

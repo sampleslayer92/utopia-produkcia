@@ -39,6 +39,7 @@ export interface CompanyInfo {
   address: CompanyAddress;
   contactAddressSameAsMain: boolean;
   contactAddress?: CompanyAddress;
+  headOfficeEqualsOperatingAddress: boolean; // New field for operating address sync
   contactPerson: ContactPerson;
 }
 

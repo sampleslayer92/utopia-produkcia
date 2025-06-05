@@ -61,6 +61,85 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     data.companyInfo.address.zipCode
   ]);
 
+  // Synchronize operating address with head office when checkbox is checked
+  useEffect(() => {
+    if (data.companyInfo.headOfficeEqualsOperatingAddress) {
+      const updatedLocations = [...data.businessLocations];
+      
+      // If no business locations exist, create one with head office address
+      if (updatedLocations.length === 0) {
+        const hasBusinessContactRole = data.contactInfo.userRoles?.includes('Kontaktná osoba na prevádzku') || 
+                                      data.contactInfo.userRoles?.includes('Majiteľ') || 
+                                      false;
+
+        const newLocation = {
+          id: Date.now().toString(),
+          name: '',
+          hasPOS: false,
+          address: {
+            street: data.companyInfo.address.street,
+            city: data.companyInfo.address.city,
+            zipCode: data.companyInfo.address.zipCode
+          },
+          iban: '',
+          bankAccounts: [{
+            id: Date.now().toString(),
+            format: 'IBAN' as const,
+            iban: '',
+            mena: 'EUR' as const
+          }],
+          contactPerson: hasBusinessContactRole ? {
+            name: `${data.contactInfo.firstName} ${data.contactInfo.lastName}`,
+            email: data.contactInfo.email,
+            phone: data.contactInfo.phone
+          } : {
+            name: '',
+            email: '',
+            phone: ''
+          },
+          businessSector: '',
+          businessSubject: '',
+          mccCode: '',
+          estimatedTurnover: 0,
+          monthlyTurnover: 0,
+          averageTransaction: 0,
+          openingHours: '',
+          openingHoursDetailed: [
+            { day: "Po", open: "09:00", close: "17:00", otvorene: true },
+            { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
+            { day: "St", open: "09:00", close: "17:00", otvorene: true },
+            { day: "Št", open: "09:00", close: "17:00", otvorene: true },
+            { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
+            { day: "So", open: "09:00", close: "14:00", otvorene: false },
+            { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
+          ],
+          seasonality: 'year-round' as const,
+          assignedPersons: []
+        };
+        updatedLocations.push(newLocation);
+      } else {
+        // Update the first business location's address
+        updatedLocations[0] = {
+          ...updatedLocations[0],
+          address: {
+            street: data.companyInfo.address.street,
+            city: data.companyInfo.address.city,
+            zipCode: data.companyInfo.address.zipCode
+          }
+        };
+      }
+
+      updateData({
+        businessLocations: updatedLocations
+      });
+    }
+  }, [
+    data.companyInfo.headOfficeEqualsOperatingAddress,
+    data.companyInfo.address.street,
+    data.companyInfo.address.city,
+    data.companyInfo.address.zipCode
+  ]);
+
   const handleORSRData = (orsrData: any) => {
     updateData({
       companyInfo: {
@@ -80,6 +159,11 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
   // Ensure registry_type has a valid default value
   if (!data.companyInfo.registryType || !['public', 'business', 'other'].includes(data.companyInfo.registryType)) {
     updateCompanyInfo('registryType', 'business');
+  }
+
+  // Ensure headOfficeEqualsOperatingAddress has a default value
+  if (data.companyInfo.headOfficeEqualsOperatingAddress === undefined) {
+    updateCompanyInfo('headOfficeEqualsOperatingAddress', false);
   }
 
   // Determine default accordion values based on whether contact address should be shown
@@ -114,6 +198,13 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                   <li>Pre DPH evidenciu ak ste platcom</li>
                 </ul>
               </div>
+
+              {data.companyInfo.headOfficeEqualsOperatingAddress && (
+                <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
+                  <p className="font-medium mb-1">✓ Synchronizácia aktívna</p>
+                  <p>Adresa sídla sa automaticky kopíruje do prvej prevádzky.</p>
+                </div>
+              )}
             </div>
           </div>
           
