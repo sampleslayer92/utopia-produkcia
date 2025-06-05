@@ -2,11 +2,18 @@
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import { User, Mail, Phone } from "lucide-react";
-import { contactPersonSchema, ContactPersonFormData } from "../validation/schemas";
+import { contactPersonSchema } from "../validation/schemas";
 import { useValidatedForm } from "../hooks/useValidatedForm";
 
 interface ContactPersonFormProps {
-  data: ContactPersonFormData & { isTechnicalPerson?: boolean };
+  data: {
+    salutation?: 'Pan' | 'Pani' | '';
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    isTechnicalPerson?: boolean;
+  };
   onUpdate: (field: string, value: any) => void;
   title?: string;
   showTechnicalPersonOption?: boolean;

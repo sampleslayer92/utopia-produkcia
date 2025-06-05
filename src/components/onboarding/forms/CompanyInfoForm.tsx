@@ -38,6 +38,23 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
     updateField(`contactAddress.${field}`, value);
   };
 
+  // Ensure we have default values for required address fields
+  const addressData = {
+    street: data.address?.street || '',
+    city: data.address?.city || '',
+    zipCode: data.address?.zipCode || ''
+  };
+
+  const contactAddressData = data.contactAddress ? {
+    street: data.contactAddress.street || '',
+    city: data.contactAddress.city || '',
+    zipCode: data.contactAddress.zipCode || ''
+  } : {
+    street: '',
+    city: '',
+    zipCode: ''
+  };
+
   return (
     <div className={`space-y-8 ${className}`}>
       {/* Basic Company Info */}
@@ -153,7 +170,7 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
       {/* Address */}
       <AddressForm
         title="Sídlo spoločnosti"
-        data={data.address}
+        data={addressData}
         onUpdate={handleAddressUpdate}
       />
 
@@ -172,10 +189,10 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
           </label>
         </div>
 
-        {!data.contactAddressSameAsMain && data.contactAddress && (
+        {!data.contactAddressSameAsMain && (
           <AddressForm
             title="Kontaktná adresa"
-            data={data.contactAddress}
+            data={contactAddressData}
             onUpdate={handleContactAddressUpdate}
           />
         )}

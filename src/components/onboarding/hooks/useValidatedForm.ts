@@ -20,24 +20,33 @@ export function useValidatedForm<T>(
   // Validate specific field
   const validateField = (field: string, value: any) => {
     try {
-      // Create a partial schema for the specific field
-      const fieldSchema = schema.shape?.[field];
-      if (fieldSchema) {
-        fieldSchema.parse(value);
+      // For nested field validation, we need to validate the entire object
+      const result = schema.safeParse(data);
+      if (result.success) {
         setErrors(prev => {
           const newErrors = { ...prev };
           delete newErrors[field];
           return newErrors;
         });
         return true;
+      } else {
+        // Check if this field has an error
+        const fieldError = result.error.errors.find(err => 
+          err.path.join('.') === field
+        );
+        if (fieldError) {
+          setErrors(prev => ({
+            ...prev,
+            [field]: fieldError.message
+          }));
+          return false;
+        }
       }
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        setErrors(prev => ({
-          ...prev,
-          [field]: error.errors[0]?.message || 'Neplatná hodnota'
-        }));
-      }
+      setErrors(prev => ({
+        ...prev,
+        [field]: 'Neplatná hodnota'
+      }));
       return false;
     }
     return true;

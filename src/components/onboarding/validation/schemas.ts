@@ -36,6 +36,7 @@ export const companyInfoSchema = z.object({
   }).optional(),
   contactAddressSameAsMain: z.boolean(),
   contactPerson: z.object({
+    salutation: z.enum(['Pan', 'Pani', '']).optional(),
     firstName: z.string().min(1, 'Meno je povinné'),
     lastName: z.string().min(1, 'Priezvisko je povinné'),
     email: z.string().email('Neplatný email'),
@@ -53,6 +54,7 @@ export const addressSchema = z.object({
 
 // Contact person validation schema (reusable)
 export const contactPersonSchema = z.object({
+  salutation: z.enum(['Pan', 'Pani', '']).optional(),
   firstName: z.string().min(1, 'Meno je povinné'),
   lastName: z.string().min(1, 'Priezvisko je povinné'),
   email: z.string().email('Neplatný email'),
