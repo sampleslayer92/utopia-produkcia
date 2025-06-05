@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -322,11 +323,11 @@ const EnhancedAdminTable = () => {
                         {contract.clientName}
                       </TableCell>
                       <TableCell className="text-slate-700">
-                        {contract.salesperson}
+                        {contract.salesPerson}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="border-blue-200 text-blue-700">
-                          {contract.contract_type}
+                          {contract.contractType}
                         </Badge>
                       </TableCell>
                       <TableCell>
