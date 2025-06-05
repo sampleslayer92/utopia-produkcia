@@ -55,9 +55,9 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
     zipCode: ''
   };
 
-  // Ensure we have default values for required contact person fields
+  // Ensure we have default values for required contact person fields with proper typing
   const contactPersonData = {
-    salutation: data.contactPerson?.salutation || '',
+    salutation: (data.contactPerson?.salutation || '') as '' | 'Pan' | 'Pani',
     firstName: data.contactPerson?.firstName || '',
     lastName: data.contactPerson?.lastName || '',
     email: data.contactPerson?.email || '',
