@@ -1,7 +1,9 @@
 
 import { Progress } from "@/components/ui/progress";
-import { Check, AlertCircle } from "lucide-react";
+import { Check, AlertCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { useProgressTracking } from "../hooks/useProgressTracking";
+import { OnboardingData } from "@/types/onboarding";
 
 interface OnboardingSidebarProps {
   currentStep: number;
@@ -11,11 +13,19 @@ interface OnboardingSidebarProps {
     description: string;
   }>;
   onStepClick: (stepNumber: number) => void;
+  onboardingData?: OnboardingData;
 }
 
-const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSidebarProps) => {
-  const totalSteps = steps.length;
-  const progressPercentage = ((currentStep + 1) / totalSteps) * 100;
+const OnboardingSidebar = ({ 
+  currentStep, 
+  steps, 
+  onStepClick,
+  onboardingData 
+}: OnboardingSidebarProps) => {
+  const { stepProgress, overallProgress } = useProgressTracking(
+    onboardingData || {} as OnboardingData, 
+    currentStep
+  );
 
   const handleStepClick = (stepNumber: number) => {
     if (stepNumber <= currentStep + 1) {
@@ -31,9 +41,12 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
     <div className="w-64 bg-white/60 backdrop-blur-sm border-r border-slate-200/60 p-4 sticky top-[77px] h-[calc(100vh-77px)] overflow-y-auto">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-3">Registračný proces</h2>
-        <Progress value={progressPercentage} className="h-2" />
+        <Progress value={overallProgress.overallPercentage} className="h-2" />
         <div className="text-xs text-slate-600 mt-2 text-center">
-          {Math.round(progressPercentage)}% dokončené
+          {overallProgress.overallPercentage}% dokončené
+        </div>
+        <div className="text-xs text-slate-500 text-center">
+          {overallProgress.completedSteps}/{overallProgress.totalSteps} krokov
         </div>
       </div>
 
@@ -41,6 +54,10 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
       <div className="space-y-2">
         {steps.map((step) => {
           const isClickable = step.number <= currentStep + 1;
+          const progress = stepProgress[step.number];
+          const isCurrentStep = step.number === currentStep;
+          const isCompleted = step.number < currentStep || (progress?.isComplete ?? false);
+          const isNext = step.number === currentStep + 1;
 
           return (
             <div
@@ -49,38 +66,59 @@ const OnboardingSidebar = ({ currentStep, steps, onStepClick }: OnboardingSideba
               className={`flex items-start space-x-3 p-3 rounded-lg transition-all duration-200 
                 ${isClickable ? "cursor-pointer" : "opacity-70 cursor-not-allowed"}
                 ${
-                  step.number === currentStep
+                  isCurrentStep
                     ? "bg-blue-100 border-2 border-blue-300 shadow-sm"
-                    : step.number < currentStep
+                    : isCompleted
                     ? "bg-green-50 border border-green-200 hover:bg-green-100"
-                    : step.number === currentStep + 1
+                    : isNext
                     ? "bg-indigo-50 border border-indigo-200 hover:bg-indigo-100"
                     : "bg-slate-50/50 border border-slate-200"
                 }`}
             >
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ${
-                  step.number === currentStep
+                  isCurrentStep
                     ? "bg-blue-600 text-white"
-                    : step.number < currentStep
+                    : isCompleted
                     ? "bg-green-600 text-white"
-                    : step.number === currentStep + 1
+                    : isNext
                     ? "bg-indigo-500 text-white"
                     : "bg-slate-300 text-slate-600"
                 }`}
               >
-                {step.number < currentStep ? <Check className="h-3 w-3" /> : step.number + 1}
+                {isCompleted ? <Check className="h-3 w-3" /> : step.number + 1}
               </div>
+              
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-slate-900 mb-1">
                   {step.title}
                 </div>
 
-                {/* Next up indicator */}
-                {step.number === currentStep + 1 && (
+                {/* Progress bar for current and future steps */}
+                {progress && !isCompleted && (
+                  <div className="mt-2">
+                    <Progress 
+                      value={progress.completionPercentage} 
+                      className="h-1"
+                    />
+                    <div className="text-xs text-slate-500 mt-1">
+                      {progress.completionPercentage}% dokončené
+                    </div>
+                  </div>
+                )}
+
+                {/* Status indicators */}
+                {isNext && (
                   <div className="flex items-center mt-1 text-xs text-indigo-600">
                     <AlertCircle className="h-3 w-3 mr-1" />
                     <span>Nasledujúci</span>
+                  </div>
+                )}
+
+                {isCurrentStep && progress && progress.completionPercentage > 0 && (
+                  <div className="flex items-center mt-1 text-xs text-blue-600">
+                    <Clock className="h-3 w-3 mr-1" />
+                    <span>Prebieha</span>
                   </div>
                 )}
               </div>
