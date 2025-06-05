@@ -1,13 +1,14 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContractData } from "@/hooks/useContractData";
 import { useToast } from "@/hooks/use-toast";
 import ContractHeader from "./contract-detail/ContractHeader";
-import ClientOperationsSection from "./contract-detail/ClientOperationsSection";
+import EnhancedClientOperationsSection from "./contract-detail/EnhancedClientOperationsSection";
 import DevicesServicesSection from "./contract-detail/DevicesServicesSection";
 import CalculationFeesSection from "./contract-detail/CalculationFeesSection";
 import AuthorizedPersonsSection from "./contract-detail/AuthorizedPersonsSection";
+import ActualOwnersSection from "./contract-detail/ActualOwnersSection";
+import ContractNotesSection from "./contract-detail/ContractNotesSection";
 import SignatureSection from "./contract-detail/SignatureSection";
 import ContractActions from "./contract-detail/ContractActions";
 
@@ -84,7 +85,7 @@ const ContractDetail = () => {
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Main content - 3 columns */}
           <div className="lg:col-span-3 space-y-8">
-            <ClientOperationsSection
+            <EnhancedClientOperationsSection
               onboardingData={onboardingData}
               isEditMode={isEditMode}
               onSave={handleSave}
@@ -102,6 +103,19 @@ const ContractDetail = () => {
             />
 
             <AuthorizedPersonsSection
+              onboardingData={onboardingData}
+              isEditMode={isEditMode}
+              onSave={handleSave}
+            />
+
+            <ActualOwnersSection
+              onboardingData={onboardingData}
+              isEditMode={isEditMode}
+              onSave={handleSave}
+            />
+
+            <ContractNotesSection
+              contract={contract}
               onboardingData={onboardingData}
               isEditMode={isEditMode}
               onSave={handleSave}
