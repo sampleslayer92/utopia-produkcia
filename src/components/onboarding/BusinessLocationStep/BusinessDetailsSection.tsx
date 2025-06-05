@@ -1,9 +1,7 @@
-
 import { Building } from "lucide-react";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
-import ContactPersonSection from "./ContactPersonSection";
 import { MCC_CODES } from "../config/mccCodes";
 import { useState } from "react";
 
@@ -11,11 +9,6 @@ interface BusinessDetailsSectionProps {
   businessSubject: string;
   mccCode: string;
   monthlyTurnover: number;
-  contactPerson: {
-    name: string;
-    email: string;
-    phone: string;
-  };
   onUpdate: (field: string, value: string | number) => void;
 }
 
@@ -23,7 +16,6 @@ const BusinessDetailsSection = ({
   businessSubject,
   mccCode,
   monthlyTurnover,
-  contactPerson,
   onUpdate
 }: BusinessDetailsSectionProps) => {
   // Local state to preserve user input format during typing
@@ -101,12 +93,6 @@ const BusinessDetailsSection = ({
           step="any"
         />
       </div>
-
-      {/* Contact Person Section */}
-      <ContactPersonSection
-        contactPerson={contactPerson}
-        onUpdate={onUpdate}
-      />
     </div>
   );
 };
