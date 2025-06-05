@@ -1,5 +1,5 @@
 
-import { User, UserCheck } from "lucide-react";
+import { User, CheckCircle, Clock, AlertCircle, FileText } from "lucide-react";
 
 interface ContactInfoSidebarProps {
   hasAutoFilled: boolean;
@@ -17,7 +17,6 @@ interface ContactInfoSidebarProps {
 
 const ContactInfoSidebar = ({
   hasAutoFilled,
-  userRoles,
   autoFillStatus,
   isBasicInfoComplete,
   contractId,
@@ -34,47 +33,78 @@ const ContactInfoSidebar = ({
         </div>
         
         <p className="text-sm text-blue-800">
-          Zadajte svoje základné kontaktné informácie, typ spoločnosti a vašu rolu v spoločnosti pre registráciu obchodného účtu.
+          Zadajte svoje kontaktné údaje. Tieto informácie sa automaticky použijú vo všetkých potrebných sekciách onboarding procesu.
         </p>
+
+        {contractId && contractNumber && (
+          <div className="bg-green-100/50 border border-green-200 rounded-lg p-3 text-xs text-green-800">
+            <div className="flex items-center gap-2 mb-1">
+              <FileText className="h-3 w-3" />
+              <span className="font-medium">Zmluva vytvorená</span>
+            </div>
+            <p>Číslo: {contractNumber}</p>
+          </div>
+        )}
         
         <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-          <p className="font-medium mb-2">Dôležité informácie</p>
-          <ul className="space-y-2 list-disc list-inside">
-            <li>Email bude slúžiť ako vaše používateľské meno</li>
-            <li>Telefón pre technickú podporu a notifikácie</li>
-            <li>Všetky údaje sú chránené GDPR</li>
-            <li>Na základe vašej roly sa automaticky predvyplnia údaje v ďalších krokoch</li>
-            <li>Telefónne čísla majú jednotný formát vo všetkých krokoch</li>
+          <p className="font-medium mb-2">Automatické vyplnenie</p>
+          <p className="mb-3">
+            Po vyplnení kontaktných údajov sa automaticky vytvorí:
+          </p>
+          <ul className="space-y-2">
+            <li className="flex items-center gap-2">
+              {autoFillStatus.companyInfo ? 
+                <CheckCircle className="h-3 w-3 text-green-600" /> : 
+                <Clock className="h-3 w-3 text-blue-500" />
+              }
+              <span>Kontaktná osoba spoločnosti</span>
+            </li>
+            <li className="flex items-center gap-2">
+              {autoFillStatus.businessLocations ? 
+                <CheckCircle className="h-3 w-3 text-green-600" /> : 
+                <Clock className="h-3 w-3 text-blue-500" />
+              }
+              <span>Prvá prevádzka</span>
+            </li>
+            <li className="flex items-center gap-2">
+              {autoFillStatus.authorizedPersons ? 
+                <CheckCircle className="h-3 w-3 text-green-600" /> : 
+                <Clock className="h-3 w-3 text-blue-500" />
+              }
+              <span>Oprávnená osoba</span>
+            </li>
+            <li className="flex items-center gap-2">
+              {autoFillStatus.actualOwners ? 
+                <CheckCircle className="h-3 w-3 text-green-600" /> : 
+                <Clock className="h-3 w-3 text-blue-500" />
+              }
+              <span>Skutočný majiteľ</span>
+            </li>
           </ul>
         </div>
 
-        {hasAutoFilled && userRoles && userRoles.length > 0 && (
+        {hasAutoFilled && isBasicInfoComplete && (
           <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
             <div className="flex items-center gap-2 mb-2">
-              <UserCheck className="h-4 w-4" />
-              <p className="font-medium">Automatické predvyplnenie</p>
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <span className="font-medium">Automatické vyplnenie dokončené</span>
             </div>
-            <p className="mb-2">Na základe vašich rolí ({userRoles.join(', ')}) boli údaje predvyplnené v:</p>
-            <ul className="space-y-1 text-xs">
-              {autoFillStatus.actualOwners && <li>• Skutoční majitelia</li>}
-              {autoFillStatus.authorizedPersons && <li>• Oprávnené osoby</li>}
-              {autoFillStatus.businessLocations && <li>• Prevádzky (vytvorená prvá prevádzka)</li>}
-              {autoFillStatus.companyInfo && <li>• Technická kontaktná osoba</li>}
-            </ul>
+            <p>
+              Vaše údaje boli automaticky použité vo všetkých potrebných sekciách. 
+              Môžete ich neskôr upraviť v príslušných krokoch.
+            </p>
           </div>
         )}
 
-        {isBasicInfoComplete && !contractId && (
-          <div className="bg-yellow-100/50 border border-yellow-200 rounded-lg p-4 text-xs text-yellow-800">
-            <p className="font-medium">Vytvára sa zmluva...</p>
-            <p className="mt-1">Po vyplnení základných údajov sa automaticky vytvorí zmluva.</p>
-          </div>
-        )}
-
-        {contractId && contractNumber && (
-          <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
-            <p className="font-medium">Zmluva vytvorená!</p>
-            <p className="mt-1">Číslo zmluvy: {contractNumber}</p>
+        {!isBasicInfoComplete && (
+          <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertCircle className="h-4 w-4 text-blue-600" />
+              <span className="font-medium">Potrebné údaje</span>
+            </div>
+            <p>
+              Vyplňte meno, priezvisko, email a telefónne číslo pre automatické vyplnenie ostatných sekcií.
+            </p>
           </div>
         )}
       </div>

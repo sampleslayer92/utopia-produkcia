@@ -46,7 +46,7 @@ export const createActualOwnerFromContactInfo = (contactInfo: OnboardingData['co
   isPoliticallyExposed: false
 });
 
-export const createDefaultBusinessLocation = (contactInfo: OnboardingData['contactInfo'], hasBusinessContactRole: boolean) => ({
+export const createDefaultBusinessLocation = (contactInfo: OnboardingData['contactInfo']) => ({
   id: uuidv4(),
   name: '',
   hasPOS: false,
@@ -56,14 +56,10 @@ export const createDefaultBusinessLocation = (contactInfo: OnboardingData['conta
     zipCode: '' 
   },
   iban: '',
-  contactPerson: hasBusinessContactRole ? {
+  contactPerson: {
     name: `${contactInfo.firstName} ${contactInfo.lastName}`,
     email: contactInfo.email,
     phone: contactInfo.phone
-  } : {
-    name: '',
-    email: '',
-    phone: ''
   },
   businessSector: '',
   estimatedTurnover: 0,
@@ -73,15 +69,110 @@ export const createDefaultBusinessLocation = (contactInfo: OnboardingData['conta
   assignedPersons: []
 });
 
-export const shouldAutoFillBasedOnRoles = (roles: string[], contactInfo: OnboardingData['contactInfo']) => {
-  return roles.length > 0 && 
-         contactInfo.firstName && 
+export const shouldAutoFillBasedOnContactInfo = (contactInfo: OnboardingData['contactInfo']) => {
+  return contactInfo.firstName && 
          contactInfo.lastName && 
          contactInfo.email && 
          contactInfo.phone &&
          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
 };
 
+// New simplified auto-fill function that doesn't require roles
+export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
+  if (!shouldAutoFillBasedOnContactInfo(contactInfo)) {
+    return {};
+  }
+
+  console.log('Simplified auto-fill triggered with contact info:', contactInfo);
+
+  const updates: Partial<OnboardingData> = {};
+
+  // Check for existing records to avoid duplicates
+  const existingAuthorized = currentData.authorizedPersons.find(p => 
+    p.firstName === contactInfo.firstName && 
+    p.lastName === contactInfo.lastName && 
+    p.email === contactInfo.email
+  );
+
+  const existingOwner = currentData.actualOwners.find(p => 
+    p.firstName === contactInfo.firstName && 
+    p.lastName === contactInfo.lastName
+  );
+
+  // Always create actual owner record
+  if (!existingOwner) {
+    console.log('Creating actual owner record');
+    const actualOwner = createActualOwnerFromContactInfo(contactInfo);
+    updates.actualOwners = [...currentData.actualOwners, actualOwner];
+  }
+
+  // Always create authorized person record
+  if (!existingAuthorized) {
+    console.log('Creating authorized person record');
+    const authorizedPerson = createAuthorizedPersonFromContactInfo(contactInfo);
+    updates.authorizedPersons = [...currentData.authorizedPersons, authorizedPerson];
+    
+    // Set as signing person
+    updates.consents = {
+      ...currentData.consents,
+      signingPersonId: authorizedPerson.id
+    };
+  }
+
+  // Always update company contact person
+  console.log('Updating company contact person');
+  updates.companyInfo = {
+    ...currentData.companyInfo,
+    contactPerson: {
+      ...currentData.companyInfo.contactPerson,
+      firstName: contactInfo.firstName,
+      lastName: contactInfo.lastName,
+      email: contactInfo.email,
+      phone: contactInfo.phone,
+      isTechnicalPerson: true
+    }
+  };
+
+  // Always create/update business location
+  let updatedBusinessLocations = currentData.businessLocations;
+  
+  // Create first business location if none exists
+  if (updatedBusinessLocations.length === 0) {
+    console.log('Creating default business location');
+    const defaultLocation = createDefaultBusinessLocation(contactInfo);
+    updatedBusinessLocations = [defaultLocation];
+  } else {
+    // Update existing business locations with contact person
+    updatedBusinessLocations = updatedBusinessLocations.map(location => {
+      // Only auto-fill if contact person is empty or matches the contact info
+      const shouldUpdate = !location.contactPerson.name || 
+                          location.contactPerson.email === contactInfo.email ||
+                          location.contactPerson.name === `${contactInfo.firstName} ${contactInfo.lastName}`;
+
+      if (shouldUpdate) {
+        return {
+          ...location,
+          contactPerson: {
+            name: `${contactInfo.firstName} ${contactInfo.lastName}`,
+            email: contactInfo.email,
+            phone: contactInfo.phone
+          }
+        };
+      }
+      
+      return location;
+    });
+  }
+  
+  if (updatedBusinessLocations !== currentData.businessLocations) {
+    updates.businessLocations = updatedBusinessLocations;
+  }
+
+  console.log('Simplified auto-fill updates generated:', Object.keys(updates));
+  return updates;
+};
+
+// Legacy functions for backward compatibility
 export const updateBusinessLocationsContactPerson = (
   businessLocations: OnboardingData['businessLocations'], 
   contactInfo: OnboardingData['contactInfo'],
@@ -113,6 +204,15 @@ export const updateBusinessLocationsContactPerson = (
     
     return location;
   });
+};
+
+export const shouldAutoFillBasedOnRoles = (roles: string[], contactInfo: OnboardingData['contactInfo']) => {
+  return roles.length > 0 && 
+         contactInfo.firstName && 
+         contactInfo.lastName && 
+         contactInfo.email && 
+         contactInfo.phone &&
+         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
 };
 
 export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
@@ -181,7 +281,7 @@ export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData[
     // Create first business location if none exists
     if (updatedBusinessLocations.length === 0) {
       console.log('Creating default business location for business contact role');
-      const defaultLocation = createDefaultBusinessLocation(contactInfo, true);
+      const defaultLocation = createDefaultBusinessLocation(contactInfo);
       updatedBusinessLocations = [defaultLocation];
     } else {
       // Update existing business locations

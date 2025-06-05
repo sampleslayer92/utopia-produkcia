@@ -1,18 +1,16 @@
 
-import { Building } from "lucide-react";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
 import OnboardingSection from "../ui/OnboardingSection";
 import OnboardingSelect from "../ui/OnboardingSelect";
-import MultiRoleSelector from "../ui/MultiRoleSelector";
 import PersonInputGroup from "../ui/PersonInputGroup";
 import { getPersonDataFromContactInfo } from "../utils/autoFillUtils";
 import { OnboardingData } from "@/types/onboarding";
+import { Building } from "lucide-react";
 
 interface ContactInfoFormProps {
   data: OnboardingData;
   completedFields: Set<string>;
   onPersonDataUpdate: (field: string, value: string) => void;
-  onRolesChange: (roles: string[]) => void;
   onContactInfoUpdate: (field: string, value: string) => void;
 }
 
@@ -20,7 +18,6 @@ const ContactInfoForm = ({
   data,
   completedFields,
   onPersonDataUpdate,
-  onRolesChange,
   onContactInfoUpdate
 }: ContactInfoFormProps) => {
   const companyTypeOptions = [
@@ -55,12 +52,6 @@ const ContactInfoForm = ({
             isCompleted={completedFields.has('companyType')}
           />
         </div>
-
-        {/* Multi-Role Selection */}
-        <MultiRoleSelector
-          selectedRoles={data.contactInfo.userRoles || []}
-          onChange={onRolesChange}
-        />
 
         {/* Optional Note Section */}
         <OnboardingTextarea

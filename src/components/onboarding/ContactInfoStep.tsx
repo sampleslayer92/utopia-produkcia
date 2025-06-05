@@ -3,7 +3,7 @@ import { OnboardingData } from "@/types/onboarding";
 import { Card, CardContent } from "@/components/ui/card";
 import ContactInfoSidebar from "./ContactInfoStep/ContactInfoSidebar";
 import ContactInfoForm from "./ContactInfoStep/ContactInfoForm";
-import { useContactInfoLogic } from "./ContactInfoStep/hooks/useContactInfoLogic";
+import { useSimplifiedContactInfoLogic } from "./ContactInfoStep/hooks/useSimplifiedContactInfoLogic";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -16,12 +16,18 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const {
     completedFields,
     hasAutoFilled,
-    autoFillStatus,
     updateContactInfo,
     handlePersonDataUpdate,
-    handleRolesChange,
     isBasicInfoComplete
-  } = useContactInfoLogic(data, updateData);
+  } = useSimplifiedContactInfoLogic(data, updateData);
+
+  // Auto-fill status shows all sections as auto-filled when basic info is complete
+  const autoFillStatus = {
+    actualOwners: Boolean(isBasicInfoComplete()),
+    authorizedPersons: Boolean(isBasicInfoComplete()),
+    businessLocations: Boolean(isBasicInfoComplete()),
+    companyInfo: Boolean(isBasicInfoComplete())
+  };
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
@@ -29,7 +35,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
         <div className="grid grid-cols-1 md:grid-cols-3">
           <ContactInfoSidebar
             hasAutoFilled={hasAutoFilled}
-            userRoles={data.contactInfo.userRoles || []}
+            userRoles={[]} // No longer using roles
             autoFillStatus={autoFillStatus}
             isBasicInfoComplete={Boolean(isBasicInfoComplete())}
             contractId={data.contractId}
@@ -40,7 +46,6 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
             data={data}
             completedFields={completedFields}
             onPersonDataUpdate={handlePersonDataUpdate}
-            onRolesChange={handleRolesChange}
             onContactInfoUpdate={updateContactInfo}
           />
         </div>
