@@ -103,28 +103,46 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     }
   };
 
+  // Enhanced update function with immediate localStorage persistence
   const updateBusinessLocation = (id: string, field: string, value: any) => {
-    updateData({
-      businessLocations: data.businessLocations.map(location => {
-        if (location.id !== id) return location;
-        
-        if (field.includes('.')) {
-          const [parent, child] = field.split('.');
-          return {
-            ...location,
-            [parent]: {
-              ...(location[parent as keyof BusinessLocation] as any),
-              [child]: value
-            }
-          };
-        } else {
-          return {
-            ...location,
-            [field]: value
-          };
-        }
-      })
+    console.log(`Updating business location ${id}, field: ${field}, value:`, value);
+    
+    const updatedLocations = data.businessLocations.map(location => {
+      if (location.id !== id) return location;
+      
+      if (field.includes('.')) {
+        const [parent, child] = field.split('.');
+        return {
+          ...location,
+          [parent]: {
+            ...(location[parent as keyof BusinessLocation] as any),
+            [child]: value
+          }
+        };
+      } else {
+        return {
+          ...location,
+          [field]: value
+        };
+      }
     });
+
+    // Immediate update to state and localStorage
+    const newData = { businessLocations: updatedLocations };
+    updateData(newData);
+    
+    // Force immediate save to localStorage for critical fields
+    if (field === 'monthlyTurnover' || field === 'estimatedTurnover') {
+      console.log(`Force saving critical field "${field}" to localStorage`);
+      try {
+        const currentData = JSON.parse(localStorage.getItem('onboardingData') || '{}');
+        currentData.businessLocations = updatedLocations;
+        localStorage.setItem('onboardingData', JSON.stringify(currentData));
+        console.log('Data successfully saved to localStorage');
+      } catch (error) {
+        console.error('Error saving to localStorage:', error);
+      }
+    }
   };
 
   // Handle bank accounts update
@@ -142,8 +160,10 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     }
   };
 
-  // Handle business details update
+  // Enhanced business details update with immediate persistence
   const updateBusinessDetails = (locationId: string, field: string, value: string | number) => {
+    console.log(`Updating business details for location ${locationId}: ${field} = ${value}`);
+    
     updateBusinessLocation(locationId, field, value);
     
     // Update backward compatibility fields
@@ -151,6 +171,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
       updateBusinessLocation(locationId, 'businessSector', value);
     } else if (field === 'monthlyTurnover') {
       updateBusinessLocation(locationId, 'estimatedTurnover', value);
+      console.log(`Monthly turnover updated: ${value} EUR`);
     }
   };
 
@@ -227,14 +248,26 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     setExpandedLocationId(expandedLocationId === id ? null : id);
   };
 
-  // Migrate existing locations to have bankAccounts and openingHoursDetailed
+  // Enhanced data integrity check and logging
   useEffect(() => {
+    console.log('BusinessLocationStep: Current business locations data:', data.businessLocations);
+    
+    // Check for data integrity issues
+    data.businessLocations.forEach((location, index) => {
+      if (location.monthlyTurnover && location.monthlyTurnover > 0) {
+        console.log(`Location ${index + 1} (${location.name || 'Unnamed'}): ${location.monthlyTurnover} EUR`);
+      } else {
+        console.warn(`Location ${index + 1} (${location.name || 'Unnamed'}): No monthly turnover set`);
+      }
+    });
+    
     const locationsNeedMigration = data.businessLocations.some(location => 
       !location.bankAccounts || !location.openingHoursDetailed || 
-      !location.businessSubject || !location.monthlyTurnover
+      !location.businessSubject || (!location.monthlyTurnover && location.monthlyTurnover !== 0)
     );
 
     if (locationsNeedMigration) {
+      console.log('Migrating business locations data...');
       const migratedLocations = data.businessLocations.map(location => {
         const migrated = { ...location };
         
@@ -265,7 +298,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
         if (!migrated.businessSubject) {
           migrated.businessSubject = location.businessSector || '';
         }
-        if (!migrated.monthlyTurnover) {
+        if (migrated.monthlyTurnover === undefined) {
           migrated.monthlyTurnover = location.estimatedTurnover || 0;
         }
         if (!migrated.mccCode) {
@@ -277,7 +310,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
       
       updateData({ businessLocations: migratedLocations });
     }
-  }, []);
+  }, [data.businessLocations]);
 
   return (
     <>
@@ -305,6 +338,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                     <li>Detailné MCC kódy a predmet podnikania</li>
                     <li>Interaktívne otváracie hodiny s rýchlymi akciami</li>
                     <li>Podpora rôznych mien (EUR, CZK, USD)</li>
+                    <li>Automatické ukladanie údajov o obrate</li>
                   </ul>
                 </div>
 
@@ -328,7 +362,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
               </div>
             </div>
             
-            {/* Main content */}
+            {/* Main content - keep existing code the same */}
             <div className="col-span-1 md:col-span-2 p-6 md:p-8">
               <OnboardingSection>
                 {data.businessLocations.length === 0 && (
@@ -347,190 +381,192 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                   </div>
                 )}
 
-                {data.businessLocations.map((location, index) => (
-                  <div key={location.id} className="mb-6 overflow-hidden border border-slate-200 rounded-lg shadow-sm bg-white">
-                    <div 
-                      onClick={() => toggleLocation(location.id)}
-                      className={`flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 ${
-                        expandedLocationId === location.id ? 'bg-slate-50 border-b border-slate-200' : ''
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                          location.name ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'
-                        }`}>
-                          <Store className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-slate-900">
-                            {location.name || `Prevádzka ${index + 1}`}
-                          </h3>
-                          {location.address.street && (
-                            <p className="text-xs text-slate-500">{location.address.street}, {location.address.city}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeBusinessLocation(location.id);
-                          }}
-                          className="p-2 hover:bg-red-50 text-red-600 rounded-full transition-colors mr-2"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                        <div className="w-6 text-slate-400 transition-transform duration-200 transform">
-                          {expandedLocationId === location.id ? '▲' : '▼'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {expandedLocationId === location.id && (
-                      <div className="p-4 animate-fade-in">
-                        <div className="space-y-8">
+                {
+                  data.businessLocations.map((location, index) => (
+                    <div key={location.id} className="mb-6 overflow-hidden border border-slate-200 rounded-lg shadow-sm bg-white">
+                      <div 
+                        onClick={() => toggleLocation(location.id)}
+                        className={`flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 ${
+                          expandedLocationId === location.id ? 'bg-slate-50 border-b border-slate-200' : ''
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                            location.name ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'
+                          }`}>
+                            <Store className="h-5 w-5" />
+                          </div>
                           <div>
-                            <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
-                              <Store className="h-4 w-4" />
-                              Základné údaje
-                            </h4>
-                            
-                            <div className="grid md:grid-cols-2 gap-4">
-                              <OnboardingInput
-                                label="Názov obchodného miesta *"
-                                value={location.name}
-                                onChange={(e) => updateBusinessLocation(location.id, 'name', e.target.value)}
-                                placeholder="Názov predajne/prevádzky"
-                              />
+                            <h3 className="font-medium text-slate-900">
+                              {location.name || `Prevádzka ${index + 1}`}
+                            </h3>
+                            {location.address.street && (
+                              <p className="text-xs text-slate-500">{location.address.street}, {location.address.city}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeBusinessLocation(location.id);
+                            }}
+                            className="p-2 hover:bg-red-50 text-red-600 rounded-full transition-colors mr-2"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                          <div className="w-6 text-slate-400 transition-transform duration-200 transform">
+                            {expandedLocationId === location.id ? '▲' : '▼'}
+                          </div>
+                        </div>
+                      </div>
+
+                      {expandedLocationId === location.id && (
+                        <div className="p-4 animate-fade-in">
+                          <div className="space-y-8">
+                            <div>
+                              <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
+                                <Store className="h-4 w-4" />
+                                Základné údaje
+                              </h4>
                               
-                              <div className="flex items-end h-full pb-2">
-                                <div className="flex items-center space-x-2">
-                                  <Checkbox
-                                    id={`hasPOS-${location.id}`}
-                                    checked={location.hasPOS}
-                                    onCheckedChange={(checked) => updateBusinessLocation(location.id, 'hasPOS', checked)}
-                                  />
-                                  <label htmlFor={`hasPOS-${location.id}`} className="text-sm text-slate-700">
-                                    Je na prevádzke POS?
-                                  </label>
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <OnboardingInput
+                                  label="Názov obchodného miesta *"
+                                  value={location.name}
+                                  onChange={(e) => updateBusinessLocation(location.id, 'name', e.target.value)}
+                                  placeholder="Názov predajne/prevádzky"
+                                />
+                                
+                                <div className="flex items-end h-full pb-2">
+                                  <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                      id={`hasPOS-${location.id}`}
+                                      checked={location.hasPOS}
+                                      onCheckedChange={(checked) => updateBusinessLocation(location.id, 'hasPOS', checked)}
+                                    />
+                                    <label htmlFor={`hasPOS-${location.id}`} className="text-sm text-slate-700">
+                                      Je na prevádzke POS?
+                                    </label>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
 
-                          <div className="border-t border-slate-100 pt-6">
-                            <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
-                              <MapPin className="h-4 w-4" />
-                              Adresa prevádzky
-                            </h4>
-                            
-                            <div className="grid md:grid-cols-3 gap-4">
-                              <div className="md:col-span-2">
+                            <div className="border-t border-slate-100 pt-6">
+                              <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
+                                <MapPin className="h-4 w-4" />
+                                Adresa prevádzky
+                              </h4>
+                              
+                              <div className="grid md:grid-cols-3 gap-4">
+                                <div className="md:col-span-2">
+                                  <OnboardingInput
+                                    label="Ulica a číslo *"
+                                    value={location.address.street}
+                                    onChange={(e) => updateBusinessLocation(location.id, 'address.street', e.target.value)}
+                                    placeholder="Obchodná ulica 456"
+                                  />
+                                </div>
+                                
                                 <OnboardingInput
-                                  label="Ulica a číslo *"
-                                  value={location.address.street}
-                                  onChange={(e) => updateBusinessLocation(location.id, 'address.street', e.target.value)}
-                                  placeholder="Obchodná ulica 456"
+                                  label="PSČ *"
+                                  value={location.address.zipCode}
+                                  onChange={(e) => updateBusinessLocation(location.id, 'address.zipCode', e.target.value)}
+                                  placeholder="01001"
                                 />
                               </div>
                               
                               <OnboardingInput
-                                label="PSČ *"
-                                value={location.address.zipCode}
-                                onChange={(e) => updateBusinessLocation(location.id, 'address.zipCode', e.target.value)}
-                                placeholder="01001"
-                              />
-                            </div>
-                            
-                            <OnboardingInput
-                              label="Mesto *"
-                              value={location.address.city}
-                              onChange={(e) => updateBusinessLocation(location.id, 'address.city', e.target.value)}
-                              placeholder="Bratislava"
-                              className="mt-4"
-                            />
-                          </div>
-
-                          <div className="border-t border-slate-100 pt-6">
-                            <BankAccountsSection
-                              bankAccounts={location.bankAccounts || []}
-                              onUpdateBankAccounts={(accounts) => updateBankAccounts(location.id, accounts)}
-                            />
-                          </div>
-
-                          <div className="border-t border-slate-100 pt-6">
-                            <BusinessDetailsSection
-                              businessSubject={location.businessSubject || ''}
-                              mccCode={location.mccCode || ''}
-                              monthlyTurnover={location.monthlyTurnover || 0}
-                              onUpdate={(field, value) => updateBusinessDetails(location.id, field, value)}
-                            />
-                          </div>
-
-                          <div className="border-t border-slate-100 pt-6">
-                            <div className="grid md:grid-cols-2 gap-4">
-                              <OnboardingInput
-                                label="Priemerná výška transakcie (EUR) *"
-                                type="number"
-                                value={location.averageTransaction || ''}
-                                onChange={(e) => updateBusinessLocation(location.id, 'averageTransaction', Number(e.target.value))}
-                                placeholder="25"
-                              />
-                              
-                              <OnboardingSelect
-                                label="Sezónnosť *"
-                                value={location.seasonality}
-                                onValueChange={(value) => updateBusinessLocation(location.id, 'seasonality', value)}
-                                options={seasonalityOptions}
-                              />
-                            </div>
-                            
-                            {location.seasonality === 'seasonal' && (
-                              <OnboardingInput
-                                label="Počet týždňov v sezóne"
-                                type="number"
-                                value={location.seasonalWeeks || ''}
-                                onChange={(e) => updateBusinessLocation(location.id, 'seasonalWeeks', Number(e.target.value))}
-                                placeholder="20"
-                                min="1"
-                                max="52"
+                                label="Mesto *"
+                                value={location.address.city}
+                                onChange={(e) => updateBusinessLocation(location.id, 'address.city', e.target.value)}
+                                placeholder="Bratislava"
                                 className="mt-4"
                               />
-                            )}
-                          </div>
+                            </div>
 
-                          {/* Opening Hours Summary - now using modal */}
-                          <div className="border-t border-slate-100 pt-6">
-                            <OpeningHoursSummary
-                              openingHours={location.openingHoursDetailed || []}
-                              onEdit={() => setEditingHoursLocationId(location.id)}
-                            />
-                          </div>
+                            <div className="border-t border-slate-100 pt-6">
+                              <BankAccountsSection
+                                bankAccounts={location.bankAccounts || []}
+                                onUpdateBankAccounts={(accounts) => updateBankAccounts(location.id, accounts)}
+                              />
+                            </div>
 
-                          {/* Contact Person Section */}
-                          <div className="border-t border-slate-100 pt-6">
-                            <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
-                              <Phone className="h-4 w-4" />
-                              Kontaktná osoba pre prevádzku
-                            </h4>
-                            
-                            <PersonInputGroup
-                              data={getContactPersonDisplayData(location)}
-                              onUpdate={(field, value) => updateContactPersonData(location.id, field, value)}
-                              showSalutation={false}
-                              forceShowPhonePrefix={true}
-                              emailValidation={false}
-                              isAutoFilled={isContactPersonAutoFilled(location)}
-                              autoFilledFrom={hasBusinessContactRole ? "Kontaktné údaje (Krok 1)" : undefined}
-                              allowReset={isContactPersonAutoFilled(location)}
-                              onReset={() => resetContactPersonToOriginal(location.id)}
-                            />
+                            <div className="border-t border-slate-100 pt-6">
+                              <BusinessDetailsSection
+                                businessSubject={location.businessSubject || ''}
+                                mccCode={location.mccCode || ''}
+                                monthlyTurnover={location.monthlyTurnover || 0}
+                                onUpdate={(field, value) => updateBusinessDetails(location.id, field, value)}
+                              />
+                            </div>
+
+                            <div className="border-t border-slate-100 pt-6">
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <OnboardingInput
+                                  label="Priemerná výška transakcie (EUR) *"
+                                  type="number"
+                                  value={location.averageTransaction || ''}
+                                  onChange={(e) => updateBusinessLocation(location.id, 'averageTransaction', Number(e.target.value))}
+                                  placeholder="25"
+                                />
+                                
+                                <OnboardingSelect
+                                  label="Sezónnosť *"
+                                  value={location.seasonality}
+                                  onValueChange={(value) => updateBusinessLocation(location.id, 'seasonality', value)}
+                                  options={seasonalityOptions}
+                                />
+                              </div>
+                              
+                              {location.seasonality === 'seasonal' && (
+                                <OnboardingInput
+                                  label="Počet týždňov v sezóne"
+                                  type="number"
+                                  value={location.seasonalWeeks || ''}
+                                  onChange={(e) => updateBusinessLocation(location.id, 'seasonalWeeks', Number(e.target.value))}
+                                  placeholder="20"
+                                  min="1"
+                                  max="52"
+                                  className="mt-4"
+                                />
+                              )}
+                            </div>
+
+                            {/* Opening Hours Summary - now using modal */}
+                            <div className="border-t border-slate-100 pt-6">
+                              <OpeningHoursSummary
+                                openingHours={location.openingHoursDetailed || []}
+                                onEdit={() => setEditingHoursLocationId(location.id)}
+                              />
+                            </div>
+
+                            {/* Contact Person Section */}
+                            <div className="border-t border-slate-100 pt-6">
+                              <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
+                                <Phone className="h-4 w-4" />
+                                Kontaktná osoba pre prevádzku
+                              </h4>
+                              
+                              <PersonInputGroup
+                                data={getContactPersonDisplayData(location)}
+                                onUpdate={(field, value) => updateContactPersonData(location.id, field, value)}
+                                showSalutation={false}
+                                forceShowPhonePrefix={true}
+                                emailValidation={false}
+                                isAutoFilled={isContactPersonAutoFilled(location)}
+                                autoFilledFrom={hasBusinessContactRole ? "Kontaktné údaje (Krok 1)" : undefined}
+                                allowReset={isContactPersonAutoFilled(location)}
+                                onReset={() => resetContactPersonToOriginal(location.id)}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      )}
+                    </div>
+                  ))
+                }
 
                 {data.businessLocations.length > 0 && (
                   <Button
