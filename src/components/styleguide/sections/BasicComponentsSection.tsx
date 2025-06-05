@@ -57,7 +57,7 @@ const BasicComponentsSection: React.FC<BasicComponentsSectionProps> = ({ searchT
 
           <div className="flex flex-wrap gap-4 mb-6">
             <Button disabled>Disabled</Button>
-            <Button loading>Loading...</Button>
+            <Button disabled>Loading...</Button>
           </div>
 
           <CodeBlock
@@ -141,7 +141,7 @@ const BasicComponentsSection: React.FC<BasicComponentsSectionProps> = ({ searchT
               <Checkbox 
                 id="checkbox1" 
                 checked={isChecked}
-                onCheckedChange={setIsChecked}
+                onCheckedChange={(checked) => setIsChecked(checked === true)}
               />
               <Label htmlFor="checkbox1">Súhlasím s podmienkami</Label>
             </div>
@@ -172,7 +172,7 @@ const BasicComponentsSection: React.FC<BasicComponentsSectionProps> = ({ searchT
   <Checkbox 
     id="terms" 
     checked={agreedToTerms}
-    onCheckedChange={setAgreedToTerms}
+    onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
   />
   <Label htmlFor="terms">Súhlasím s podmienkami</Label>
 </div>
