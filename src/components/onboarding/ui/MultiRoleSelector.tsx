@@ -1,8 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { Users, Info } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import OnboardingSelect from "./OnboardingSelect";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Users } from "lucide-react";
 
 interface MultiRoleSelectorProps {
   selectedRoles: string[];
@@ -10,93 +9,80 @@ interface MultiRoleSelectorProps {
 }
 
 const MultiRoleSelector = ({ selectedRoles, onChange }: MultiRoleSelectorProps) => {
-  // Debug logging
-  console.log('MultiRoleSelector render:', { selectedRoles, onChange: typeof onChange });
+  const [selectAll, setSelectAll] = useState(false);
 
   const roleOptions = [
-    {
-      value: 'Majiteľ',
-      label: 'Majiteľ',
-      description: 'Údaje sa zobrazia IBA v sekcii "Skutoční majitelia"'
-    },
-    {
-      value: 'Konateľ',
-      label: 'Konateľ',
-      description: 'Údaje sa zobrazia v sekciách: "Oprávnené osoby", "Technická osoba", "Kontakt prevádzky"'
-    },
-    {
-      value: 'Kontaktná osoba na prevádzku',
-      label: 'Kontaktná osoba na prevádzku',
-      description: 'Údaje sa zobrazia IBA ako "Kontakt prevádzky"'
-    },
-    {
-      value: 'Kontaktná osoba pre technické záležitosti',
-      label: 'Kontaktná osoba pre technické záležitosti',
-      description: 'Údaje sa zobrazia IBA ako "Technická osoba"'
-    }
+    'Majiteľ',
+    'Konateľ',
+    'Kontaktná osoba na prevádzku',
+    'Kontaktná osoba pre technické záležitosti'
   ];
 
-  const getSelectedRoleInfo = (selectedRole: string) => {
-    if (!selectedRole) return null;
-    
-    switch (selectedRole) {
-      case 'Majiteľ':
-        return "Vaše údaje sa automaticky zobrazia v sekcii: Skutoční majitelia.";
-      case 'Konateľ':
-        return "Vaše údaje sa automaticky zobrazia v sekciách: Oprávnené osoby, Technická osoba, Kontakt prevádzky.";
-      case 'Kontaktná osoba na prevádzku':
-        return "Vaše údaje sa automaticky zobrazia v sekcii: Kontakt prevádzky.";
-      case 'Kontaktná osoba pre technické záležitosti':
-        return "Vaše údaje sa automaticky zobrazia v sekcii: Technická osoba.";
-      default:
-        return null;
+  useEffect(() => {
+    setSelectAll(roleOptions.length === selectedRoles.length && selectedRoles.length > 0);
+  }, [selectedRoles]);
+
+  const handleRoleChange = (role: string, checked: boolean) => {
+    if (checked) {
+      const newRoles = [...selectedRoles, role];
+      onChange(newRoles);
+    } else {
+      const newRoles = selectedRoles.filter(r => r !== role);
+      onChange(newRoles);
+      setSelectAll(false);
     }
   };
 
-  const handleRoleChange = (role: string) => {
-    console.log('Role changed to:', role);
-    // Convert single role to array for backward compatibility
-    onChange(role ? [role] : []);
+  const handleSelectAll = (checked: boolean) => {
+    setSelectAll(checked);
+    if (checked) {
+      onChange([...roleOptions]);
+    } else {
+      onChange([]);
+    }
   };
 
-  // Get the selected role (first item from array for backward compatibility)
-  const selectedRole = Array.isArray(selectedRoles) && selectedRoles.length > 0 ? selectedRoles[0] : '';
-  const selectedRoleOption = roleOptions.find(opt => opt.value === selectedRole);
-
   return (
-    <div className="space-y-4 relative z-10">
+    <div className="space-y-4">
       <div className="flex items-center gap-3 mb-4">
         <Users className="h-5 w-5 text-blue-600" />
         <h3 className="text-sm font-medium text-slate-700">Vaša rola v spoločnosti *</h3>
       </div>
 
-      {/* Single Role Dropdown */}
-      <OnboardingSelect
-        placeholder="Vyberte vašu rolu v spoločnosti..."
-        value={selectedRole}
-        onValueChange={handleRoleChange}
-        options={roleOptions}
-        isCompleted={Boolean(selectedRole)}
-      />
+      {/* Select All Option */}
+      <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+        <Checkbox
+          id="selectAll"
+          checked={selectAll}
+          onCheckedChange={handleSelectAll}
+        />
+        <label htmlFor="selectAll" className="text-sm font-medium text-blue-800 cursor-pointer">
+          Zaškrtnúť všetko
+        </label>
+      </div>
 
-      {/* Selected Role Description */}
-      {selectedRoleOption && (
-        <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-          <div className="font-medium text-sm text-slate-800">{selectedRoleOption.label}</div>
-          <div className="text-xs text-slate-600 mt-1 italic">
-            {selectedRoleOption.description}
+      {/* Individual Role Options */}
+      <div className="space-y-3">
+        {roleOptions.map((role) => (
+          <div key={role} className="flex items-center space-x-3">
+            <Checkbox
+              id={role}
+              checked={selectedRoles.includes(role)}
+              onCheckedChange={(checked) => handleRoleChange(role, checked as boolean)}
+            />
+            <label htmlFor={role} className="text-sm text-slate-700 cursor-pointer">
+              {role}
+            </label>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
 
-      {/* Information about selected role */}
-      {selectedRole && (
-        <Alert className="mt-4">
-          <Info className="h-4 w-4" />
-          <AlertDescription className="text-sm">
-            <span className="font-medium">Automatické predvyplnenie:</span> {getSelectedRoleInfo(selectedRole)}
-          </AlertDescription>
-        </Alert>
+      {selectedRoles.length > 0 && (
+        <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-sm text-green-800">
+            <span className="font-medium">Vybraté role:</span> {selectedRoles.join(', ')}
+          </p>
+        </div>
       )}
     </div>
   );
