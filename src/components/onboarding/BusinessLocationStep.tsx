@@ -7,7 +7,9 @@ import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingTextarea from "./ui/OnboardingTextarea";
 import OnboardingSection from "./ui/OnboardingSection";
-import { useState } from "react";
+import PersonInputGroup from "./ui/PersonInputGroup";
+import { useState, useEffect } from "react";
+import { getPersonDataFromContactInfo } from "./utils/autoFillUtils";
 
 interface BusinessLocationStepProps {
   data: OnboardingData;
@@ -24,14 +26,27 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     { value: "seasonal", label: "Sezónne" }
   ];
 
+  // Check if user has "Kontaktná osoba na prevádzku" role
+  const hasBusinessContactRole = data.contactInfo.userRoles?.includes('Kontaktná osoba na prevádzku') || false;
+
   const addBusinessLocation = () => {
+    const contactPersonData = hasBusinessContactRole ? {
+      name: `${data.contactInfo.firstName} ${data.contactInfo.lastName}`,
+      email: data.contactInfo.email,
+      phone: data.contactInfo.phone
+    } : {
+      name: '',
+      email: '',
+      phone: ''
+    };
+
     const newLocation: BusinessLocation = {
       id: Date.now().toString(),
       name: '',
       hasPOS: false,
       address: { street: '', city: '', zipCode: '' },
       iban: '',
-      contactPerson: { name: '', email: '', phone: '' },
+      contactPerson: contactPersonData,
       businessSector: '',
       estimatedTurnover: 0,
       averageTransaction: 0,
@@ -81,6 +96,46 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     });
   };
 
+  const updateContactPersonData = (locationId: string, field: string, value: string) => {
+    const fieldMap: { [key: string]: string } = {
+      firstName: 'name',
+      lastName: 'name',
+      email: 'email',
+      phone: 'phone'
+    };
+
+    if (field === 'firstName' || field === 'lastName') {
+      // Handle name composition for firstName/lastName
+      const location = data.businessLocations.find(l => l.id === locationId);
+      if (location) {
+        const currentName = location.contactPerson.name;
+        const nameParts = currentName.split(' ');
+        
+        if (field === 'firstName') {
+          const lastName = nameParts.slice(1).join(' ') || '';
+          updateBusinessLocation(locationId, 'contactPerson.name', `${value} ${lastName}`.trim());
+        } else {
+          const firstName = nameParts[0] || '';
+          updateBusinessLocation(locationId, 'contactPerson.name', `${firstName} ${value}`.trim());
+        }
+      }
+    } else if (fieldMap[field]) {
+      updateBusinessLocation(locationId, `contactPerson.${fieldMap[field]}`, value);
+    }
+  };
+
+  const getContactPersonDisplayData = (location: BusinessLocation) => {
+    const nameParts = location.contactPerson.name.split(' ');
+    return {
+      firstName: nameParts[0] || '',
+      lastName: nameParts.slice(1).join(' ') || '',
+      email: location.contactPerson.email,
+      phone: location.contactPerson.phone,
+      phonePrefix: '+421',
+      salutation: ''
+    };
+  };
+
   const toggleLocation = (id: string) => {
     setExpandedLocationId(expandedLocationId === id ? null : id);
   };
@@ -111,6 +166,13 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                   <li>Presné adresy pre inštaláciu terminálov</li>
                 </ul>
               </div>
+
+              {hasBusinessContactRole && (
+                <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
+                  <p className="font-medium mb-2">Automatické predvyplnenie</p>
+                  <p>Vaše kontaktné údaje sa automaticky predvyplnia pre nové prevádzky na základe vašej roly "Kontaktná osoba na prevádzku".</p>
+                </div>
+              )}
               
               <div className="mt-4">
                 <Button
@@ -268,29 +330,15 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                             Kontaktná osoba pre prevádzku
                           </h4>
                           
-                          <div className="grid md:grid-cols-3 gap-4">
-                            <OnboardingInput
-                              label="Meno a priezvisko *"
-                              value={location.contactPerson.name}
-                              onChange={(e) => updateBusinessLocation(location.id, 'contactPerson.name', e.target.value)}
-                              placeholder="Mária Kováčová"
-                            />
-                            
-                            <OnboardingInput
-                              label="Email *"
-                              type="email"
-                              value={location.contactPerson.email}
-                              onChange={(e) => updateBusinessLocation(location.id, 'contactPerson.email', e.target.value)}
-                              placeholder="maria.kovacova@prevadzka.sk"
-                            />
-                            
-                            <OnboardingInput
-                              label="Telefón *"
-                              value={location.contactPerson.phone}
-                              onChange={(e) => updateBusinessLocation(location.id, 'contactPerson.phone', e.target.value)}
-                              placeholder="+421 987 654 321"
-                            />
-                          </div>
+                          <PersonInputGroup
+                            data={getContactPersonDisplayData(location)}
+                            onUpdate={(field, value) => updateContactPersonData(location.id, field, value)}
+                            showSalutation={false}
+                            showPhonePrefix={false}
+                            emailValidation={false}
+                            isAutoFilled={hasBusinessContactRole && location.contactPerson.name.includes(data.contactInfo.firstName)}
+                            autoFilledFrom={hasBusinessContactRole ? "Kontaktné údaje (Krok 1)" : undefined}
+                          />
                         </div>
 
                         <div className="border-t border-slate-100 pt-4">
