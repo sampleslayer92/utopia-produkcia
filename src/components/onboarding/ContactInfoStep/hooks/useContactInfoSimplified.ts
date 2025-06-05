@@ -3,17 +3,17 @@ import { useState, useEffect, useCallback } from 'react';
 import { OnboardingData } from '@/types/onboarding';
 
 export const useContactInfoSimplified = (data: OnboardingData, updateData: (data: Partial<OnboardingData>) => void) => {
-  const [completedFields, setCompletedFields] = useState<string[]>([]);
+  const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
 
   // Track which fields are completed
   useEffect(() => {
-    const completed: string[] = [];
+    const completed = new Set<string>();
     
-    if (data.contactInfo.firstName) completed.push('firstName');
-    if (data.contactInfo.lastName) completed.push('lastName');
-    if (data.contactInfo.email) completed.push('email');
-    if (data.contactInfo.phone) completed.push('phone');
-    if (data.contactInfo.companyType) completed.push('companyType');
+    if (data.contactInfo.firstName) completed.add('firstName');
+    if (data.contactInfo.lastName) completed.add('lastName');
+    if (data.contactInfo.email) completed.add('email');
+    if (data.contactInfo.phone) completed.add('phone');
+    if (data.contactInfo.companyType) completed.add('companyType');
     
     setCompletedFields(completed);
   }, [data.contactInfo]);
