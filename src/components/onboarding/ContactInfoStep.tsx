@@ -1,6 +1,6 @@
 
 import { OnboardingData } from "@/types/onboarding";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { User, UserCheck, Building } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import OnboardingTextarea from "./ui/OnboardingTextarea";
@@ -8,7 +8,7 @@ import OnboardingSection from "./ui/OnboardingSection";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import MultiRoleSelector from "./ui/MultiRoleSelector";
 import PersonInputGroup from "./ui/PersonInputGroup";
-import { getPersonDataFromContactInfo, getAutoFillUpdates } from "./utils/autoFillUtils";
+import { getPersonDataFromContactInfo, getAutoFillUpdates, hasContactInfoChanged } from "./utils/autoFillUtils";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -20,6 +20,7 @@ interface ContactInfoStepProps {
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
   const [hasAutoFilled, setHasAutoFilled] = useState(false);
+  const prevContactInfoRef = useRef(data.contactInfo);
 
   const updateContactInfo = (field: string, value: string | boolean | string[]) => {
     updateData({
@@ -76,6 +77,34 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     }
   }, [data.contactInfo.userRoles, data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone]);
 
+  // Watch for changes in contact info and propagate to other sections
+  useEffect(() => {
+    const currentContactInfo = data.contactInfo;
+    const prevContactInfo = prevContactInfoRef.current;
+
+    // Only proceed if contact info has actually changed and user has roles
+    if (hasContactInfoChanged(prevContactInfo, currentContactInfo) && 
+        currentContactInfo.userRoles && 
+        currentContactInfo.userRoles.length > 0 &&
+        isBasicInfoComplete()) {
+      
+      console.log('Contact info changed, updating related sections...', {
+        prev: prevContactInfo,
+        current: currentContactInfo,
+        roles: currentContactInfo.userRoles
+      });
+
+      const autoFillUpdates = getAutoFillUpdates(currentContactInfo.userRoles, currentContactInfo, data);
+      if (Object.keys(autoFillUpdates).length > 0) {
+        updateData(autoFillUpdates);
+        setHasAutoFilled(true);
+      }
+    }
+
+    // Update ref for next comparison
+    prevContactInfoRef.current = currentContactInfo;
+  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix]);
+
   // Track completed fields for visual feedback
   useEffect(() => {
     const newCompleted = new Set<string>();
@@ -121,6 +150,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                   <li>Telefón pre technickú podporu a notifikácie</li>
                   <li>Všetky údaje sú chránené GDPR</li>
                   <li>Na základe vašej roly sa automaticky predvyplnia údaje v ďalších krokoch</li>
+                  <li>Telefónne čísla majú jednotný formát vo všetkých krokoch</li>
                 </ul>
               </div>
 
@@ -158,6 +188,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                 data={getPersonDataFromContactInfo(data.contactInfo)}
                 onUpdate={handlePersonDataUpdate}
                 completedFields={completedFields}
+                forceShowPhonePrefix={true}
               />
 
               {/* Company Type Selection */}

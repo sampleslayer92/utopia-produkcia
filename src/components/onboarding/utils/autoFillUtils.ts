@@ -55,6 +55,39 @@ export const shouldAutoFillBasedOnRoles = (roles: string[], contactInfo: Onboard
          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
 };
 
+export const updateBusinessLocationsContactPerson = (
+  businessLocations: OnboardingData['businessLocations'], 
+  contactInfo: OnboardingData['contactInfo'],
+  roles: string[]
+) => {
+  // Only update if user has relevant role
+  const hasBusinessContactRole = roles.includes('Kontaktná osoba na prevádzku') || roles.includes('Majiteľ');
+  
+  if (!hasBusinessContactRole || !shouldAutoFillBasedOnRoles(roles, contactInfo)) {
+    return businessLocations;
+  }
+
+  return businessLocations.map(location => {
+    // Only auto-fill if contact person is empty or matches the previous contact info
+    const shouldUpdate = !location.contactPerson.name || 
+                        location.contactPerson.email === contactInfo.email ||
+                        location.contactPerson.name === `${contactInfo.firstName} ${contactInfo.lastName}`;
+
+    if (shouldUpdate) {
+      return {
+        ...location,
+        contactPerson: {
+          name: `${contactInfo.firstName} ${contactInfo.lastName}`,
+          email: contactInfo.email,
+          phone: contactInfo.phone
+        }
+      };
+    }
+    
+    return location;
+  });
+};
+
 export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
   if (!shouldAutoFillBasedOnRoles(roles, contactInfo)) {
     return {};
@@ -107,8 +140,43 @@ export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData[
     };
   }
 
-  // Handle Kontaktná osoba na prevádzku - this will be handled in BusinessLocationStep
-  // when new locations are created or when the step is accessed
+  // Handle Kontaktná osoba na prevádzku - update existing business locations
+  if (roles.includes('Kontaktná osoba na prevádzku') || roles.includes('Majiteľ')) {
+    const updatedBusinessLocations = updateBusinessLocationsContactPerson(
+      currentData.businessLocations, 
+      contactInfo, 
+      roles
+    );
+    
+    if (updatedBusinessLocations !== currentData.businessLocations) {
+      updates.businessLocations = updatedBusinessLocations;
+    }
+  }
 
   return updates;
+};
+
+// Helper function to check if contact info has changed significantly
+export const hasContactInfoChanged = (
+  prev: OnboardingData['contactInfo'], 
+  current: OnboardingData['contactInfo']
+) => {
+  return prev.firstName !== current.firstName ||
+         prev.lastName !== current.lastName ||
+         prev.email !== current.email ||
+         prev.phone !== current.phone;
+};
+
+// Helper function to format phone number consistently
+export const formatPhoneForDisplay = (phone: string, prefix: string = '+421') => {
+  if (!phone) return '';
+  
+  // Remove any existing formatting
+  const cleaned = phone.replace(/\D/g, '');
+  
+  // Format based on prefix
+  if (prefix === '+421' || prefix === '+420') {
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3').slice(0, 11);
+  }
+  return cleaned.replace(/(\d{3})(\d{3})(\d{3,4})/, '$1 $2 $3').slice(0, 13);
 };

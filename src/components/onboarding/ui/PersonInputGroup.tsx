@@ -17,10 +17,13 @@ interface PersonInputGroupProps {
   onUpdate: (field: keyof PersonData, value: string) => void;
   showSalutation?: boolean;
   showPhonePrefix?: boolean;
+  forceShowPhonePrefix?: boolean;
   completedFields?: Set<string>;
   emailValidation?: boolean;
   isAutoFilled?: boolean;
   autoFilledFrom?: string;
+  allowReset?: boolean;
+  onReset?: () => void;
 }
 
 const PersonInputGroup = ({
@@ -28,10 +31,13 @@ const PersonInputGroup = ({
   onUpdate,
   showSalutation = true,
   showPhonePrefix = true,
+  forceShowPhonePrefix = false,
   completedFields = new Set(),
   emailValidation = true,
   isAutoFilled = false,
-  autoFilledFrom
+  autoFilledFrom,
+  allowReset = false,
+  onReset
 }: PersonInputGroupProps) => {
   const phonePrefixes = [
     { value: '+421', label: '+421', extra: '🇸🇰 Slovensko' },
@@ -66,13 +72,27 @@ const PersonInputGroup = ({
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
+  // Force show phone prefix if explicitly requested or if showPhonePrefix is true
+  const shouldShowPhonePrefix = forceShowPhonePrefix || showPhonePrefix;
+
   return (
     <div className="space-y-4">
       {isAutoFilled && autoFilledFrom && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            <span className="font-medium">Automaticky predvyplnené z: {autoFilledFrom}</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              <span className="font-medium">Automaticky predvyplnené z: {autoFilledFrom}</span>
+            </div>
+            {allowReset && onReset && (
+              <button
+                type="button"
+                onClick={onReset}
+                className="text-xs text-blue-600 hover:text-blue-800 underline"
+              >
+                Resetovať
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -132,7 +152,7 @@ const PersonInputGroup = ({
           <span className="text-sm font-medium">Telefónne číslo *</span>
         </div>
         <div className="flex gap-3">
-          {showPhonePrefix && (
+          {shouldShowPhonePrefix && (
             <OnboardingSelect
               value={data.phonePrefix || '+421'}
               onValueChange={(value) => onUpdate('phonePrefix', value)}

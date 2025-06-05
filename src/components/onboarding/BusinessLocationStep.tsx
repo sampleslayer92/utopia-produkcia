@@ -9,7 +9,7 @@ import OnboardingTextarea from "./ui/OnboardingTextarea";
 import OnboardingSection from "./ui/OnboardingSection";
 import PersonInputGroup from "./ui/PersonInputGroup";
 import { useState, useEffect } from "react";
-import { getPersonDataFromContactInfo } from "./utils/autoFillUtils";
+import { getPersonDataFromContactInfo, formatPhoneForDisplay } from "./utils/autoFillUtils";
 
 interface BusinessLocationStepProps {
   data: OnboardingData;
@@ -26,8 +26,10 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     { value: "seasonal", label: "Sezónne" }
   ];
 
-  // Check if user has "Kontaktná osoba na prevádzku" role
-  const hasBusinessContactRole = data.contactInfo.userRoles?.includes('Kontaktná osoba na prevádzku') || false;
+  // Check if user has "Kontaktná osoba na prevádzku" role or "Majiteľ" role
+  const hasBusinessContactRole = data.contactInfo.userRoles?.includes('Kontaktná osoba na prevádzku') || 
+                                data.contactInfo.userRoles?.includes('Majiteľ') || 
+                                false;
 
   const addBusinessLocation = () => {
     const contactPersonData = hasBusinessContactRole ? {
@@ -101,7 +103,8 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
       firstName: 'name',
       lastName: 'name',
       email: 'email',
-      phone: 'phone'
+      phone: 'phone',
+      phonePrefix: 'phonePrefix'
     };
 
     if (field === 'firstName' || field === 'lastName') {
@@ -131,9 +134,25 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
       lastName: nameParts.slice(1).join(' ') || '',
       email: location.contactPerson.email,
       phone: location.contactPerson.phone,
-      phonePrefix: '+421',
+      phonePrefix: data.contactInfo.phonePrefix || '+421',
       salutation: ''
     };
+  };
+
+  const isContactPersonAutoFilled = (location: BusinessLocation) => {
+    return hasBusinessContactRole && 
+           location.contactPerson.name === `${data.contactInfo.firstName} ${data.contactInfo.lastName}` &&
+           location.contactPerson.email === data.contactInfo.email;
+  };
+
+  const resetContactPersonToOriginal = (locationId: string) => {
+    if (hasBusinessContactRole) {
+      updateBusinessLocation(locationId, 'contactPerson', {
+        name: `${data.contactInfo.firstName} ${data.contactInfo.lastName}`,
+        email: data.contactInfo.email,
+        phone: data.contactInfo.phone
+      });
+    }
   };
 
   const toggleLocation = (id: string) => {
@@ -164,13 +183,14 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                   <li>Každá prevádzka môže mať vlastné kontaktné údaje</li>
                   <li>Osoby môžu byť priradené ku konkrétnym prevádzkam</li>
                   <li>Presné adresy pre inštaláciu terminálov</li>
+                  <li>Telefónne čísla majú jednotný formát (predvoľba + číslo)</li>
                 </ul>
               </div>
 
               {hasBusinessContactRole && (
                 <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
                   <p className="font-medium mb-2">Automatické predvyplnenie</p>
-                  <p>Vaše kontaktné údaje sa automaticky predvyplnia pre nové prevádzky na základe vašej roly "Kontaktná osoba na prevádzku".</p>
+                  <p>Vaše kontaktné údaje sa automaticky predvyplnia pre nové prevádzky na základe vašej roly "{data.contactInfo.userRoles?.includes('Kontaktná osoba na prevádzku') ? 'Kontaktná osoba na prevádzku' : 'Majiteľ'}".</p>
                 </div>
               )}
               
@@ -324,6 +344,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                           />
                         </div>
 
+                        {/* Contact Person Section - Now with unified phone format */}
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Phone className="h-4 w-4" />
@@ -334,10 +355,12 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                             data={getContactPersonDisplayData(location)}
                             onUpdate={(field, value) => updateContactPersonData(location.id, field, value)}
                             showSalutation={false}
-                            showPhonePrefix={false}
+                            forceShowPhonePrefix={true}
                             emailValidation={false}
-                            isAutoFilled={hasBusinessContactRole && location.contactPerson.name.includes(data.contactInfo.firstName)}
+                            isAutoFilled={isContactPersonAutoFilled(location)}
                             autoFilledFrom={hasBusinessContactRole ? "Kontaktné údaje (Krok 1)" : undefined}
+                            allowReset={isContactPersonAutoFilled(location)}
+                            onReset={() => resetContactPersonToOriginal(location.id)}
                           />
                         </div>
 
