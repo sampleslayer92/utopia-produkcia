@@ -6,7 +6,8 @@ import {
   hasContactInfoChanged,
   requiresBusinessLocation,
   requiresActualOwner,
-  requiresAuthorizedPerson
+  requiresAuthorizedPerson,
+  requiresTechnicalPerson
 } from "../../utils/autoFillUtils";
 
 export const useContactInfoLogic = (
@@ -70,16 +71,16 @@ export const useContactInfoLogic = (
     if (isBasicInfoComplete()) {
       const autoFillUpdates = getAutoFillUpdates(roles, data.contactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
-        console.log('Applying auto-fill updates:', autoFillUpdates);
+        console.log('Applying auto-fill updates from role change:', autoFillUpdates);
         updateData(autoFillUpdates);
         setHasAutoFilled(true);
         
-        // Update auto-fill status
+        // Update auto-fill status based on new roles
         setAutoFillStatus({
           actualOwners: requiresActualOwner(roles),
           authorizedPersons: requiresAuthorizedPerson(roles),
           businessLocations: requiresBusinessLocation(roles),
-          companyInfo: roles.includes('Kontaktná osoba pre technické záležitosti')
+          companyInfo: requiresTechnicalPerson(roles)
         });
       }
     }
@@ -90,7 +91,7 @@ export const useContactInfoLogic = (
     if (data.contactInfo.userRoles && data.contactInfo.userRoles.length > 0 && isBasicInfoComplete()) {
       const autoFillUpdates = getAutoFillUpdates(data.contactInfo.userRoles, data.contactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
-        console.log('Auto-filling from useEffect:', autoFillUpdates);
+        console.log('Auto-filling from useEffect (roles/basic info complete):', autoFillUpdates);
         updateData(autoFillUpdates);
         setHasAutoFilled(true);
         
@@ -100,7 +101,7 @@ export const useContactInfoLogic = (
           actualOwners: requiresActualOwner(roles),
           authorizedPersons: requiresAuthorizedPerson(roles),
           businessLocations: requiresBusinessLocation(roles),
-          companyInfo: roles.includes('Kontaktná osoba pre technické záležitosti')
+          companyInfo: requiresTechnicalPerson(roles)
         });
       }
     }
@@ -125,6 +126,7 @@ export const useContactInfoLogic = (
 
       const autoFillUpdates = getAutoFillUpdates(currentContactInfo.userRoles, currentContactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
+        console.log('Applying auto-fill updates from contact info change:', autoFillUpdates);
         updateData(autoFillUpdates);
         setHasAutoFilled(true);
       }

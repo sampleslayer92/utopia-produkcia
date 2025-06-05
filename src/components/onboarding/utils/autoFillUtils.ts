@@ -46,7 +46,7 @@ export const createActualOwnerFromContactInfo = (contactInfo: OnboardingData['co
   isPoliticallyExposed: false
 });
 
-export const createDefaultBusinessLocation = (contactInfo: OnboardingData['contactInfo'], hasBusinessContactRole: boolean) => ({
+export const createDefaultBusinessLocation = (contactInfo: OnboardingData['contactInfo'], shouldAutoFillContact: boolean) => ({
   id: uuidv4(),
   name: '',
   hasPOS: false,
@@ -56,7 +56,7 @@ export const createDefaultBusinessLocation = (contactInfo: OnboardingData['conta
     zipCode: '' 
   },
   iban: '',
-  contactPerson: hasBusinessContactRole ? {
+  contactPerson: shouldAutoFillContact ? {
     name: `${contactInfo.firstName} ${contactInfo.lastName}`,
     email: contactInfo.email,
     phone: contactInfo.phone
@@ -87,8 +87,8 @@ export const updateBusinessLocationsContactPerson = (
   contactInfo: OnboardingData['contactInfo'],
   roles: string[]
 ) => {
-  // Only update if user has relevant role
-  const hasBusinessContactRole = roles.includes('Kontaktná osoba na prevádzku') || roles.includes('Majiteľ');
+  // Iba ak má rolu "Kontaktná osoba na prevádzku"
+  const hasBusinessContactRole = roles.includes('Kontaktná osoba na prevádzku');
   
   if (!hasBusinessContactRole || !shouldAutoFillBasedOnRoles(roles, contactInfo)) {
     return businessLocations;
@@ -136,27 +136,76 @@ export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData[
     p.lastName === contactInfo.lastName
   );
 
-  // Handle Majiteľ role - create actual owner record
+  // MAJITEĽ - zobrazuje sa IBA v skutočných majiteľoch
   if (roles.includes('Majiteľ') && !existingOwner) {
     console.log('Creating actual owner record for Majiteľ role');
     const actualOwner = createActualOwnerFromContactInfo(contactInfo);
     updates.actualOwners = [...currentData.actualOwners, actualOwner];
   }
 
-  // Handle Konateľ role - create authorized person record
-  if (roles.includes('Konateľ') && !existingAuthorized) {
-    console.log('Creating authorized person record for Konateľ role');
-    const authorizedPerson = createAuthorizedPersonFromContactInfo(contactInfo);
-    updates.authorizedPersons = [...currentData.authorizedPersons, authorizedPerson];
+  // KONATEĽ - zobrazuje sa VŠADE OKREM skutočných majiteľov
+  if (roles.includes('Konateľ')) {
+    // Pridať do oprávnených osôb (ak tam ešte nie je)
+    if (!existingAuthorized) {
+      console.log('Creating authorized person record for Konateľ role');
+      const authorizedPerson = createAuthorizedPersonFromContactInfo(contactInfo);
+      updates.authorizedPersons = [...currentData.authorizedPersons, authorizedPerson];
+      
+      // Set as signing person
+      updates.consents = {
+        ...currentData.consents,
+        signingPersonId: authorizedPerson.id
+      };
+    }
+
+    // Nastaviť ako technickú osobu (ak nie je špecificky nastavená)
+    const currentTechnicalPerson = currentData.companyInfo.contactPerson;
+    const isTechnicalPersonEmpty = !currentTechnicalPerson.firstName && !currentTechnicalPerson.lastName;
     
-    // Set as signing person
-    updates.consents = {
-      ...currentData.consents,
-      signingPersonId: authorizedPerson.id
-    };
+    if (isTechnicalPersonEmpty) {
+      console.log('Setting Konateľ as technical contact person');
+      updates.companyInfo = {
+        ...currentData.companyInfo,
+        contactPerson: {
+          ...currentData.companyInfo.contactPerson,
+          firstName: contactInfo.firstName,
+          lastName: contactInfo.lastName,
+          email: contactInfo.email,
+          phone: contactInfo.phone,
+          isTechnicalPerson: true
+        }
+      };
+    }
+
+    // Nastaviť ako kontakt pre prevádzku (ak nie je iná osoba nastavená)
+    let updatedBusinessLocations = currentData.businessLocations;
+    if (updatedBusinessLocations.length === 0) {
+      console.log('Creating default business location for Konateľ role');
+      const defaultLocation = createDefaultBusinessLocation(contactInfo, true);
+      updatedBusinessLocations = [defaultLocation];
+    } else {
+      // Aktualizovať existujúce prevádzky iba ak nemajú nastavený kontakt
+      updatedBusinessLocations = updatedBusinessLocations.map(location => {
+        if (!location.contactPerson.name) {
+          return {
+            ...location,
+            contactPerson: {
+              name: `${contactInfo.firstName} ${contactInfo.lastName}`,
+              email: contactInfo.email,
+              phone: contactInfo.phone
+            }
+          };
+        }
+        return location;
+      });
+    }
+    
+    if (updatedBusinessLocations !== currentData.businessLocations) {
+      updates.businessLocations = updatedBusinessLocations;
+    }
   }
 
-  // Handle Kontaktná osoba pre technické záležitosti
+  // KONTAKTNÁ OSOBA PRE TECHNICKÉ ZÁLEŽITOSTI - IBA technická osoba
   if (roles.includes('Kontaktná osoba pre technické záležitosti')) {
     console.log('Updating technical contact person');
     updates.companyInfo = {
@@ -172,10 +221,8 @@ export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData[
     };
   }
 
-  // Handle business location creation and updates
-  const hasBusinessContactRole = roles.includes('Kontaktná osoba na prevádzku') || roles.includes('Majiteľ');
-  
-  if (hasBusinessContactRole) {
+  // KONTAKTNÁ OSOBA NA PREVÁDZKU - IBA kontakt v prevádzke
+  if (roles.includes('Kontaktná osoba na prevádzku')) {
     let updatedBusinessLocations = currentData.businessLocations;
     
     // Create first business location if none exists
@@ -229,7 +276,7 @@ export const formatPhoneForDisplay = (phone: string, prefix: string = '+421') =>
 
 // Helper function to check if roles have business location requirements
 export const requiresBusinessLocation = (roles: string[]) => {
-  return roles.includes('Kontaktná osoba na prevádzku') || roles.includes('Majiteľ');
+  return roles.includes('Kontaktná osoba na prevádzku');
 };
 
 // Helper function to check if roles require actual owner record
@@ -240,4 +287,9 @@ export const requiresActualOwner = (roles: string[]) => {
 // Helper function to check if roles require authorized person record
 export const requiresAuthorizedPerson = (roles: string[]) => {
   return roles.includes('Konateľ');
+};
+
+// Helper function to check if roles require technical person
+export const requiresTechnicalPerson = (roles: string[]) => {
+  return roles.includes('Kontaktná osoba pre technické záležitosti') || roles.includes('Konateľ');
 };

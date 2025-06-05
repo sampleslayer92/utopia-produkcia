@@ -1,7 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users } from "lucide-react";
+import { Users, Info } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface MultiRoleSelectorProps {
   selectedRoles: string[];
@@ -17,6 +18,40 @@ const MultiRoleSelector = ({ selectedRoles, onChange }: MultiRoleSelectorProps) 
     'Kontaktná osoba na prevádzku',
     'Kontaktná osoba pre technické záležitosti'
   ];
+
+  const getRoleDescription = (role: string) => {
+    switch (role) {
+      case 'Majiteľ':
+        return 'Údaje sa zobrazia IBA v sekcii "Skutoční majitelia"';
+      case 'Konateľ':
+        return 'Údaje sa zobrazia vo všetkých sekciách OKREM "Skutočných majiteľov"';
+      case 'Kontaktná osoba na prevádzku':
+        return 'Údaje sa zobrazia IBA ako kontaktná osoba v prevádzke';
+      case 'Kontaktná osoba pre technické záležitosti':
+        return 'Údaje sa zobrazia IBA ako technická osoba';
+      default:
+        return '';
+    }
+  };
+
+  const getSelectedRolesInfo = () => {
+    if (selectedRoles.length === 0) return null;
+    
+    if (selectedRoles.length === roleOptions.length) {
+      return "Vaše údaje sa zobrazia vo všetkých relevantných sekciách onboarding procesu.";
+    }
+
+    const sections = [];
+    if (selectedRoles.includes('Majiteľ')) sections.push('Skutoční majitelia');
+    if (selectedRoles.includes('Konateľ')) sections.push('Oprávnené osoby', 'Technická osoba', 'Kontakt prevádzky');
+    if (selectedRoles.includes('Kontaktná osoba na prevádzku')) sections.push('Kontakt prevádzky');
+    if (selectedRoles.includes('Kontaktná osoba pre technické záležitosti')) sections.push('Technická osoba');
+
+    // Remove duplicates
+    const uniqueSections = [...new Set(sections)];
+    
+    return `Vaše údaje sa automaticky zobrazia v sekciách: ${uniqueSections.join(', ')}.`;
+  };
 
   useEffect(() => {
     setSelectAll(roleOptions.length === selectedRoles.length && selectedRoles.length > 0);
@@ -64,25 +99,34 @@ const MultiRoleSelector = ({ selectedRoles, onChange }: MultiRoleSelectorProps) 
       {/* Individual Role Options */}
       <div className="space-y-3">
         {roleOptions.map((role) => (
-          <div key={role} className="flex items-center space-x-3">
-            <Checkbox
-              id={role}
-              checked={selectedRoles.includes(role)}
-              onCheckedChange={(checked) => handleRoleChange(role, checked as boolean)}
-            />
-            <label htmlFor={role} className="text-sm text-slate-700 cursor-pointer">
-              {role}
-            </label>
+          <div key={role} className="space-y-2">
+            <div className="flex items-center space-x-3">
+              <Checkbox
+                id={role}
+                checked={selectedRoles.includes(role)}
+                onCheckedChange={(checked) => handleRoleChange(role, checked as boolean)}
+              />
+              <label htmlFor={role} className="text-sm text-slate-700 cursor-pointer font-medium">
+                {role}
+              </label>
+            </div>
+            {selectedRoles.includes(role) && (
+              <div className="ml-7 text-xs text-slate-600 italic">
+                {getRoleDescription(role)}
+              </div>
+            )}
           </div>
         ))}
       </div>
 
+      {/* Information about selected roles */}
       {selectedRoles.length > 0 && (
-        <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-sm text-green-800">
-            <span className="font-medium">Vybraté role:</span> {selectedRoles.join(', ')}
-          </p>
-        </div>
+        <Alert className="mt-4">
+          <Info className="h-4 w-4" />
+          <AlertDescription className="text-sm">
+            <span className="font-medium">Automatické predvyplnenie:</span> {getSelectedRolesInfo()}
+          </AlertDescription>
+        </Alert>
       )}
     </div>
   );
