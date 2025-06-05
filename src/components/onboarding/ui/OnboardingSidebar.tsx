@@ -1,6 +1,6 @@
 
 import { Progress } from "@/components/ui/progress";
-import { Check, AlertCircle, Clock } from "lucide-react";
+import { Check, AlertCircle, Clock, CircleDot } from "lucide-react";
 import { toast } from "sonner";
 import { useProgressTracking } from "../hooks/useProgressTracking";
 import { OnboardingData } from "@/types/onboarding";
@@ -53,8 +53,9 @@ const OnboardingSidebar = ({
           const isClickable = step.number <= currentStep + 1;
           const progress = stepProgress[step.number];
           const isCurrentStep = step.number === currentStep;
-          const isCompleted = step.number < currentStep || (progress?.isComplete ?? false);
+          const isCompleted = progress?.isComplete ?? false;
           const isNext = step.number === currentStep + 1;
+          const isPartiallyComplete = progress && progress.completionPercentage > 0 && progress.completionPercentage < 100;
 
           return (
             <div
@@ -67,6 +68,8 @@ const OnboardingSidebar = ({
                     ? "bg-blue-100 border-2 border-blue-300 shadow-sm"
                     : isCompleted
                     ? "bg-green-50 border border-green-200 hover:bg-green-100"
+                    : isPartiallyComplete
+                    ? "bg-amber-50 border border-amber-200 hover:bg-amber-100"
                     : isNext
                     ? "bg-indigo-50 border border-indigo-200 hover:bg-indigo-100"
                     : "bg-slate-50/50 border border-slate-200"
@@ -78,12 +81,20 @@ const OnboardingSidebar = ({
                     ? "bg-blue-600 text-white"
                     : isCompleted
                     ? "bg-green-600 text-white"
+                    : isPartiallyComplete
+                    ? "bg-amber-500 text-white"
                     : isNext
                     ? "bg-indigo-500 text-white"
                     : "bg-slate-300 text-slate-600"
                 }`}
               >
-                {isCompleted ? <Check className="h-3 w-3" /> : step.number + 1}
+                {isCompleted ? (
+                  <Check className="h-3 w-3" />
+                ) : isPartiallyComplete ? (
+                  <CircleDot className="h-3 w-3" />
+                ) : (
+                  step.number + 1
+                )}
               </div>
               
               <div className="flex-1 min-w-0">
@@ -91,7 +102,7 @@ const OnboardingSidebar = ({
                   {step.title}
                 </div>
 
-                {/* Progress bar for current and future steps */}
+                {/* Progress bar for current and incomplete steps */}
                 {progress && !isCompleted && (
                   <div className="mt-2">
                     <Progress 
@@ -105,17 +116,31 @@ const OnboardingSidebar = ({
                 )}
 
                 {/* Status indicators */}
-                {isNext && (
+                {isNext && !isPartiallyComplete && (
                   <div className="flex items-center mt-1 text-xs text-indigo-600">
                     <AlertCircle className="h-3 w-3 mr-1" />
                     <span>Nasledujúci</span>
                   </div>
                 )}
 
-                {isCurrentStep && progress && progress.completionPercentage > 0 && (
+                {isCurrentStep && progress && progress.completionPercentage > 0 && !isCompleted && (
                   <div className="flex items-center mt-1 text-xs text-blue-600">
                     <Clock className="h-3 w-3 mr-1" />
                     <span>Prebieha</span>
+                  </div>
+                )}
+
+                {isPartiallyComplete && !isCurrentStep && (
+                  <div className="flex items-center mt-1 text-xs text-amber-600">
+                    <CircleDot className="h-3 w-3 mr-1" />
+                    <span>Čiastočne vyplnené</span>
+                  </div>
+                )}
+
+                {isCompleted && (
+                  <div className="flex items-center mt-1 text-xs text-green-600">
+                    <Check className="h-3 w-3 mr-1" />
+                    <span>Dokončené</span>
                   </div>
                 )}
               </div>

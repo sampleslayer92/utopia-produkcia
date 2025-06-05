@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useOnboardingData } from "./hooks/useOnboardingData";
 import { useOnboardingNavigation } from "./hooks/useOnboardingNavigation";
 import { useAutoSave } from "./hooks/useAutoSave";
@@ -22,6 +22,7 @@ const OnboardingFlow = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date>();
+  const [contractCreationAttempted, setContractCreationAttempted] = useState(false);
   
   const { createContract, isCreating } = useContractCreation();
   const { saveContractData } = useContractPersistence();
@@ -37,8 +38,27 @@ const OnboardingFlow = () => {
     isSubmitting
   } = useOnboardingNavigation(currentStep, setCurrentStep, onboardingData, clearData);
 
+  // Memoized validation for basic contact info
+  const isBasicInfoComplete = useMemo(() => {
+    const { contactInfo } = onboardingData;
+    const isEmailValid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    
+    return Boolean(
+      contactInfo.firstName?.trim() &&
+      contactInfo.lastName?.trim() &&
+      contactInfo.email?.trim() &&
+      isEmailValid(contactInfo.email) &&
+      contactInfo.phone?.trim()
+    );
+  }, [
+    onboardingData.contactInfo.firstName,
+    onboardingData.contactInfo.lastName,
+    onboardingData.contactInfo.email,
+    onboardingData.contactInfo.phone
+  ]);
+
   // Auto-save functionality
-  const handleAutoSave = async (data: typeof onboardingData) => {
+  const handleAutoSave = useCallback(async (data: typeof onboardingData) => {
     if (!data.contractId) return;
     
     setAutoSaveStatus('saving');
@@ -51,7 +71,7 @@ const OnboardingFlow = () => {
       setAutoSaveStatus('error');
       throw error;
     }
-  };
+  }, [saveContractData]);
 
   const { isSaving } = useAutoSave(onboardingData, {
     enabled: Boolean(onboardingData.contractId),
@@ -59,74 +79,67 @@ const OnboardingFlow = () => {
     onError: () => setAutoSaveStatus('error')
   });
 
-  // Auto-create contract when basic contact info is complete
+  // Optimized contract creation effect
   useEffect(() => {
-    const isBasicInfoComplete = () => {
-      return onboardingData.contactInfo.firstName && 
-             onboardingData.contactInfo.lastName && 
-             onboardingData.contactInfo.email && 
-             isEmailValid(onboardingData.contactInfo.email) &&
-             onboardingData.contactInfo.phone;
-    };
+    if (!isBasicInfoComplete || onboardingData.contractId || isCreating || contractCreationAttempted) {
+      return;
+    }
 
-    const isEmailValid = (email: string) => {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    };
-
-    const autoCreateContract = async () => {
-      if (isBasicInfoComplete() && !onboardingData.contractId && !isCreating) {
-        console.log('Basic contact info complete, creating contract...');
-        setIsLoading(true);
+    const createContractWithDelay = async () => {
+      console.log('Basic contact info complete, creating contract...');
+      setIsLoading(true);
+      setContractCreationAttempted(true);
+      
+      try {
+        const result = await createContract();
         
-        try {
-          const result = await createContract();
-          
-          if (result.success) {
-            updateData({
-              contractId: result.contractId,
-              contractNumber: result.contractNumber?.toString()
-            });
-            toast.success('Zmluva bola vytvorená');
-          }
-        } catch (error) {
-          console.error('Failed to create contract:', error);
-          toast.error('Nepodarilo sa vytvoriť zmluvu');
-        } finally {
-          setIsLoading(false);
+        if (result.success) {
+          updateData({
+            contractId: result.contractId,
+            contractNumber: result.contractNumber?.toString()
+          });
+          toast.success('Zmluva bola vytvorená');
         }
+      } catch (error) {
+        console.error('Failed to create contract:', error);
+        toast.error('Nepodarilo sa vytvoriť zmluvu');
+        setContractCreationAttempted(false); // Allow retry
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    const timeoutId = setTimeout(autoCreateContract, 1000);
+    // Use a shorter delay and debounce to prevent multiple calls
+    const timeoutId = setTimeout(createContractWithDelay, 500);
     return () => clearTimeout(timeoutId);
   }, [
-    onboardingData.contactInfo.firstName, 
-    onboardingData.contactInfo.lastName, 
-    onboardingData.contactInfo.email, 
-    onboardingData.contactInfo.phone, 
-    onboardingData.contractId, 
-    isCreating, 
-    createContract, 
+    isBasicInfoComplete,
+    onboardingData.contractId,
+    isCreating,
+    contractCreationAttempted,
+    createContract,
     updateData
   ]);
 
   // Update current step in data when it changes
-  const handleUpdateData = (data: any) => {
+  const handleUpdateData = useCallback((data: any) => {
     updateData({ ...data, currentStep });
-  };
+  }, [updateData, currentStep]);
 
-  const handleContractDeleted = () => {
+  const handleContractDeleted = useCallback(() => {
     // Reset the onboarding state completely
     clearData();
     setCurrentStep(0);
     setAutoSaveStatus('idle');
     setLastSaved(undefined);
-  };
+    setContractCreationAttempted(false);
+  }, [clearData]);
 
-  const handleErrorReset = () => {
+  const handleErrorReset = useCallback(() => {
     setAutoSaveStatus('idle');
     setIsLoading(false);
-  };
+    setContractCreationAttempted(false);
+  }, []);
 
   if (isLoading) {
     return <OnboardingLoadingState type="full" />;
