@@ -3,6 +3,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { OnboardingData } from "@/types/onboarding";
 import { AlertCircle, FileDigit, FileCheck, FileWarning } from "lucide-react";
+import { useEffect } from "react";
+import { format } from "date-fns";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingSection from "./ui/OnboardingSection";
@@ -16,6 +18,14 @@ interface ConsentsStepProps {
 }
 
 const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
+  // Automatically set today's date if signature date is empty
+  useEffect(() => {
+    if (!data.consents.signatureDate) {
+      const today = format(new Date(), 'yyyy-MM-dd');
+      updateConsents('signatureDate', today);
+    }
+  }, []);
+
   const updateConsents = (field: string, value: any) => {
     updateData({
       consents: {
