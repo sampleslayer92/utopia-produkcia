@@ -3,7 +3,7 @@ import { OnboardingData } from "@/types/onboarding";
 import { Card, CardContent } from "@/components/ui/card";
 import ContactInfoSidebar from "./ContactInfoStep/ContactInfoSidebar";
 import ContactInfoForm from "./ContactInfoStep/ContactInfoForm";
-import { useSimplifiedContactInfoLogic } from "./ContactInfoStep/hooks/useSimplifiedContactInfoLogic";
+import { useContactInfoSimplified } from "./ContactInfoStep/hooks/useContactInfoSimplified";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -15,18 +15,17 @@ interface ContactInfoStepProps {
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const {
     completedFields,
-    hasAutoFilled,
+    isBasicInfoComplete,
     updateContactInfo,
-    handlePersonDataUpdate,
-    isBasicInfoComplete
-  } = useSimplifiedContactInfoLogic(data, updateData);
+    handlePersonDataUpdate
+  } = useContactInfoSimplified(data, updateData);
 
-  // Auto-fill status shows all sections as auto-filled when basic info is complete
+  // Auto-fill status for sidebar
   const autoFillStatus = {
-    actualOwners: Boolean(isBasicInfoComplete()),
-    authorizedPersons: Boolean(isBasicInfoComplete()),
-    businessLocations: Boolean(isBasicInfoComplete()),
-    companyInfo: Boolean(isBasicInfoComplete())
+    actualOwners: isBasicInfoComplete,
+    authorizedPersons: isBasicInfoComplete,
+    businessLocations: isBasicInfoComplete,
+    companyInfo: isBasicInfoComplete
   };
 
   return (
@@ -34,10 +33,10 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-3">
           <ContactInfoSidebar
-            hasAutoFilled={hasAutoFilled}
-            userRoles={[]} // No longer using roles
+            hasAutoFilled={isBasicInfoComplete}
+            userRoles={[]} // Simplified - no roles needed
             autoFillStatus={autoFillStatus}
-            isBasicInfoComplete={Boolean(isBasicInfoComplete())}
+            isBasicInfoComplete={isBasicInfoComplete}
             contractId={data.contractId}
             contractNumber={data.contractNumber}
           />
