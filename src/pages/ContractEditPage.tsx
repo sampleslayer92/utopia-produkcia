@@ -174,6 +174,7 @@ const ContractEditPage = () => {
           currentStep={currentStep}
           steps={onboardingSteps}
           onStepClick={setCurrentStep}
+          onboardingData={editData}
         />
         
         <div className="flex-1 p-6">
