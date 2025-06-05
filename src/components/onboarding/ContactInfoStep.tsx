@@ -8,7 +8,14 @@ import OnboardingSection from "./ui/OnboardingSection";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import MultiRoleSelector from "./ui/MultiRoleSelector";
 import PersonInputGroup from "./ui/PersonInputGroup";
-import { getPersonDataFromContactInfo, getAutoFillUpdates, hasContactInfoChanged } from "./utils/autoFillUtils";
+import { 
+  getPersonDataFromContactInfo, 
+  getAutoFillUpdates, 
+  hasContactInfoChanged,
+  requiresBusinessLocation,
+  requiresActualOwner,
+  requiresAuthorizedPerson
+} from "./utils/autoFillUtils";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -20,6 +27,17 @@ interface ContactInfoStepProps {
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
   const [hasAutoFilled, setHasAutoFilled] = useState(false);
+  const [autoFillStatus, setAutoFillStatus] = useState<{
+    actualOwners: boolean;
+    authorizedPersons: boolean;
+    businessLocations: boolean;
+    companyInfo: boolean;
+  }>({
+    actualOwners: false,
+    authorizedPersons: false,
+    businessLocations: false,
+    companyInfo: false
+  });
   const prevContactInfoRef = useRef(data.contactInfo);
 
   const updateContactInfo = (field: string, value: string | boolean | string[]) => {
@@ -37,7 +55,9 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
 
   // Handle roles change with improved auto-fill logic
   const handleRolesChange = (roles: string[]) => {
+    console.log('Roles changed to:', roles);
     updateContactInfo('userRoles', roles);
+    
     // Also update the legacy userRole field for backward compatibility
     if (roles.length > 0) {
       updateContactInfo('userRole', roles[0]);
@@ -45,11 +65,22 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
       updateContactInfo('userRole', '');
     }
 
-    // Apply auto-fill logic
-    const autoFillUpdates = getAutoFillUpdates(roles, data.contactInfo, data);
-    if (Object.keys(autoFillUpdates).length > 0) {
-      updateData(autoFillUpdates);
-      setHasAutoFilled(true);
+    // Apply auto-fill logic immediately if basic info is complete
+    if (isBasicInfoComplete()) {
+      const autoFillUpdates = getAutoFillUpdates(roles, data.contactInfo, data);
+      if (Object.keys(autoFillUpdates).length > 0) {
+        console.log('Applying auto-fill updates:', autoFillUpdates);
+        updateData(autoFillUpdates);
+        setHasAutoFilled(true);
+        
+        // Update auto-fill status
+        setAutoFillStatus({
+          actualOwners: requiresActualOwner(roles),
+          authorizedPersons: requiresAuthorizedPerson(roles),
+          businessLocations: requiresBusinessLocation(roles),
+          companyInfo: roles.includes('Kontaktná osoba pre technické záležitosti')
+        });
+      }
     }
   };
 
@@ -71,8 +102,18 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     if (data.contactInfo.userRoles && data.contactInfo.userRoles.length > 0 && isBasicInfoComplete()) {
       const autoFillUpdates = getAutoFillUpdates(data.contactInfo.userRoles, data.contactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
+        console.log('Auto-filling from useEffect:', autoFillUpdates);
         updateData(autoFillUpdates);
         setHasAutoFilled(true);
+        
+        // Update auto-fill status
+        const roles = data.contactInfo.userRoles;
+        setAutoFillStatus({
+          actualOwners: requiresActualOwner(roles),
+          authorizedPersons: requiresAuthorizedPerson(roles),
+          businessLocations: requiresBusinessLocation(roles),
+          companyInfo: roles.includes('Kontaktná osoba pre technické záležitosti')
+        });
       }
     }
   }, [data.contactInfo.userRoles, data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone]);
@@ -160,7 +201,13 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
                     <UserCheck className="h-4 w-4" />
                     <p className="font-medium">Automatické predvyplnenie</p>
                   </div>
-                  <p>Na základe vašich rolí ({data.contactInfo.userRoles.join(', ')}) boli vaše údaje automaticky predvyplnené v príslušných sekciách.</p>
+                  <p className="mb-2">Na základe vašich rolí ({data.contactInfo.userRoles.join(', ')}) boli údaje predvyplnené v:</p>
+                  <ul className="space-y-1 text-xs">
+                    {autoFillStatus.actualOwners && <li>• Skutoční majitelia</li>}
+                    {autoFillStatus.authorizedPersons && <li>• Oprávnené osoby</li>}
+                    {autoFillStatus.businessLocations && <li>• Prevádzky (vytvorená prvá prevádzka)</li>}
+                    {autoFillStatus.companyInfo && <li>• Technická kontaktná osoba</li>}
+                  </ul>
                 </div>
               )}
 
