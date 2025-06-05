@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2, Building } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ORSRSearchProps {
   ico: string;
@@ -56,17 +57,18 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `https://datahub.ekosystem.slovensko.digital/api/datahub/corporate_bodies/search?q=cin:${ico}`
-      );
+      console.log(`Searching by ICO: ${ico}`);
+      
+      const { data, error } = await supabase.functions.invoke('orsr-search', {
+        body: { ico }
+      });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (error) {
+        console.error("Supabase function error:", error);
+        throw new Error(error.message || 'Chyba pri volaní funkcie');
       }
 
-      const data = await response.json();
-      
-      if (data && data.length > 0) {
+      if (data && Array.isArray(data) && data.length > 0) {
         const mappedData = mapApiResponse(data[0]);
         onDataFound(mappedData);
         toast.success("Údaje zo slovenského obchodného registra boli načítané", {
@@ -80,7 +82,7 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
     } catch (error) {
       console.error("Error searching by ICO:", error);
       toast.error("Chyba pri vyhľadávaní v obchodnom registri", {
-        description: "Skúste to prosím znovu alebo zadajte údaje manuálne"
+        description: error.message || "Skúste to prosím znovu alebo zadajte údaje manuálne"
       });
     } finally {
       setIsLoading(false);
@@ -95,17 +97,18 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
 
     setIsSearchingByName(true);
     try {
-      const response = await fetch(
-        `https://datahub.ekosystem.slovensko.digital/api/datahub/corporate_bodies/search?q=name:${encodeURIComponent(searchName.trim())}`
-      );
+      console.log(`Searching by name: ${searchName}`);
+      
+      const { data, error } = await supabase.functions.invoke('orsr-search', {
+        body: { name: searchName.trim() }
+      });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (error) {
+        console.error("Supabase function error:", error);
+        throw new Error(error.message || 'Chyba pri volaní funkcie');
       }
 
-      const data = await response.json();
-      
-      if (data && data.length > 0) {
+      if (data && Array.isArray(data) && data.length > 0) {
         const mappedData = mapApiResponse(data[0]);
         onDataFound(mappedData);
         toast.success("Údaje zo slovenského obchodného registra boli načítané", {
@@ -120,7 +123,7 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
     } catch (error) {
       console.error("Error searching by name:", error);
       toast.error("Chyba pri vyhľadávaní v obchodnom registri", {
-        description: "Skúste to prosím znovu alebo zadajte údaje manuálne"
+        description: error.message || "Skúste to prosím znovu alebo zadajte údaje manuálne"
       });
     } finally {
       setIsSearchingByName(false);
