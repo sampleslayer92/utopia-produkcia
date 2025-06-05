@@ -55,6 +55,16 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
     zipCode: ''
   };
 
+  // Ensure we have default values for required contact person fields
+  const contactPersonData = {
+    salutation: data.contactPerson?.salutation || '',
+    firstName: data.contactPerson?.firstName || '',
+    lastName: data.contactPerson?.lastName || '',
+    email: data.contactPerson?.email || '',
+    phone: data.contactPerson?.phone || '',
+    isTechnicalPerson: data.contactPerson?.isTechnicalPerson || false
+  };
+
   return (
     <div className={`space-y-8 ${className}`}>
       {/* Basic Company Info */}
@@ -200,7 +210,7 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
 
       {/* Contact Person */}
       <ContactPersonForm
-        data={data.contactPerson}
+        data={contactPersonData}
         onUpdate={handleContactPersonUpdate}
         showTechnicalPersonOption={true}
       />
