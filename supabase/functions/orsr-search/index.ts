@@ -62,37 +62,69 @@ serve(async (req) => {
 
     console.log(`Searching ORSR with query: ${searchQuery}`);
 
-    // Call Slovensko.Digital API
-    const apiUrl = `https://datahub.ekosystem.slovensko.digital/api/datahub/corporate_bodies/search?q=${searchQuery}`;
-    
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'Lovable-App/1.0'
-      }
-    });
+    // Try multiple API endpoints and approaches
+    const apiUrls = [
+      `https://datahub.ekosystem.slovensko.digital/api/datahub/corporate_bodies/search?q=${searchQuery}`,
+      `https://datahub.ekosystem.slovensko.digital/corporate_bodies/search?q=${searchQuery}`,
+    ];
 
-    if (!response.ok) {
-      console.error(`API response error: ${response.status} ${response.statusText}`);
-      return new Response(
-        JSON.stringify({ 
-          error: 'Chyba pri komunikácii s obchodným registrom',
-          details: `HTTP ${response.status}` 
-        }),
-        { 
-          status: 502, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    let lastError = null;
+    
+    for (const apiUrl of apiUrls) {
+      try {
+        console.log(`Trying API URL: ${apiUrl}`);
+        
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (compatible; OnboardingApp/1.0)',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+          }
+        });
+
+        console.log(`API response status: ${response.status}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`API response received, ${data?.length || 0} results found`);
+
+          return new Response(
+            JSON.stringify(data),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            }
+          );
+        } else {
+          lastError = `HTTP ${response.status}: ${response.statusText}`;
+          console.log(`API error for ${apiUrl}: ${lastError}`);
+          
+          // Try to get error details
+          try {
+            const errorText = await response.text();
+            console.log(`Error response body: ${errorText}`);
+          } catch (e) {
+            console.log('Could not read error response body');
+          }
         }
-      );
+      } catch (fetchError) {
+        lastError = fetchError.message;
+        console.log(`Fetch error for ${apiUrl}: ${lastError}`);
+      }
     }
 
-    const data = await response.json();
-    console.log(`API response received, ${data?.length || 0} results found`);
-
+    // If all API attempts failed, return a fallback response
+    console.error(`All API endpoints failed. Last error: ${lastError}`);
+    
     return new Response(
-      JSON.stringify(data),
+      JSON.stringify({ 
+        error: 'Služba obchodného registra je dočasne nedostupná',
+        details: 'Skúste to prosím neskôr alebo zadajte údaje manuálne',
+        fallback: true
+      }),
       { 
+        status: 503, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     );
@@ -102,7 +134,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: 'Interná chyba servera',
-        details: error.message 
+        details: 'Skúste to prosím neskôr alebo zadajte údaje manuálne',
+        fallback: true
       }),
       { 
         status: 500, 

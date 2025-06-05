@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, Building } from "lucide-react";
+import { Search, Loader2, Building, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -32,6 +32,7 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchName, setSearchName] = useState("");
   const [isSearchingByName, setIsSearchingByName] = useState(false);
+  const [apiUnavailable, setApiUnavailable] = useState(false);
 
   const mapApiResponse = (company: SlovenskoDigitalCompany) => {
     // Map the API response to our expected format
@@ -47,6 +48,21 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
         zipCode: company.postal_code || "00000"
       }
     };
+  };
+
+  const handleApiError = (error: any, searchType: string) => {
+    console.error(`Error searching by ${searchType}:`, error);
+    
+    if (error.fallback) {
+      setApiUnavailable(true);
+      toast.error("Služba obchodného registra je nedostupná", {
+        description: "Zadajte prosím údaje manuálne"
+      });
+    } else {
+      toast.error(`Chyba pri vyhľadávaní v obchodnom registri`, {
+        description: error.details || "Skúste to prosím znovu alebo zadajte údaje manuálne"
+      });
+    }
   };
 
   const searchByICO = async () => {
@@ -65,25 +81,25 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
 
       if (error) {
         console.error("Supabase function error:", error);
-        throw new Error(error.message || 'Chyba pri volaní funkcie');
+        throw error;
       }
 
-      if (data && Array.isArray(data) && data.length > 0) {
+      if (data && !data.error && Array.isArray(data) && data.length > 0) {
         const mappedData = mapApiResponse(data[0]);
         onDataFound(mappedData);
         toast.success("Údaje zo slovenského obchodného registra boli načítané", {
           description: `Spoločnosť: ${mappedData.companyName}`
         });
+        setApiUnavailable(false);
+      } else if (data && data.error) {
+        throw data;
       } else {
         toast.error("Spoločnosť s týmto IČO nebola nájdená", {
           description: "Skúste zadať údaje manuálne"
         });
       }
     } catch (error) {
-      console.error("Error searching by ICO:", error);
-      toast.error("Chyba pri vyhľadávaní v obchodnom registri", {
-        description: error.message || "Skúste to prosím znovu alebo zadajte údaje manuálne"
-      });
+      handleApiError(error, "ICO");
     } finally {
       setIsLoading(false);
     }
@@ -105,26 +121,26 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
 
       if (error) {
         console.error("Supabase function error:", error);
-        throw new Error(error.message || 'Chyba pri volaní funkcie');
+        throw error;
       }
 
-      if (data && Array.isArray(data) && data.length > 0) {
+      if (data && !data.error && Array.isArray(data) && data.length > 0) {
         const mappedData = mapApiResponse(data[0]);
         onDataFound(mappedData);
         toast.success("Údaje zo slovenského obchodného registra boli načítané", {
           description: `Spoločnosť: ${mappedData.companyName}`
         });
         setSearchName(""); // Clear search after successful find
+        setApiUnavailable(false);
+      } else if (data && data.error) {
+        throw data;
       } else {
         toast.error("Spoločnosť s týmto názvom nebola nájdená", {
           description: "Skúste iný názov alebo zadajte údaje manuálne"
         });
       }
     } catch (error) {
-      console.error("Error searching by name:", error);
-      toast.error("Chyba pri vyhľadávaní v obchodnom registri", {
-        description: error.message || "Skúste to prosím znovu alebo zadajte údaje manuálne"
-      });
+      handleApiError(error, "name");
     } finally {
       setIsSearchingByName(false);
     }
@@ -138,12 +154,21 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
 
   return (
     <div className="space-y-3">
+      {apiUnavailable && (
+        <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <span className="text-sm text-amber-800">
+            Služba obchodného registra je dočasne nedostupná. Zadajte údaje manuálne.
+          </span>
+        </div>
+      )}
+
       {/* Search by ICO */}
       <div className="flex items-center gap-2">
         <Button
           type="button"
           onClick={searchByICO}
-          disabled={isLoading || !ico}
+          disabled={isLoading || !ico || apiUnavailable}
           size="sm"
           variant="outline"
           className="flex items-center gap-2"
@@ -170,11 +195,12 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
             onChange={(e) => setSearchName(e.target.value)}
             onKeyPress={handleNameKeyPress}
             className="text-sm"
+            disabled={apiUnavailable}
           />
           <Button
             type="button"
             onClick={searchByName}
-            disabled={isSearchingByName || !searchName.trim()}
+            disabled={isSearchingByName || !searchName.trim() || apiUnavailable}
             size="sm"
             variant="outline"
             className="flex items-center gap-2 whitespace-nowrap"
