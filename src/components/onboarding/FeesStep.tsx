@@ -1,6 +1,6 @@
 
 import { OnboardingData } from "@/types/onboarding";
-import ProfitCalculator from "./fees/ProfitCalculator";
+import RealTimeProfitCalculator from "./fees/RealTimeProfitCalculator";
 
 interface FeesStepProps {
   data: OnboardingData;
@@ -12,8 +12,8 @@ interface FeesStepProps {
 const FeesStep = ({ data, updateData }: FeesStepProps) => {
   return (
     <div className="space-y-6">
-      {/* Only the Profit Calculator */}
-      <ProfitCalculator data={data} updateData={updateData} />
+      {/* Real-time Profit Calculator with two-column layout */}
+      <RealTimeProfitCalculator data={data} updateData={updateData} />
     </div>
   );
 };

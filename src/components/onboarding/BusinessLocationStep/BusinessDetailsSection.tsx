@@ -23,6 +23,11 @@ const BusinessDetailsSection = ({
     label: code.label
   }));
 
+  const handleTurnoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value) || 0;
+    onUpdate('monthlyTurnover', value);
+  };
+
   return (
     <div className="space-y-4">
       <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2">
@@ -50,9 +55,10 @@ const BusinessDetailsSection = ({
         label="Odhadovaný obrat (mesačne v EUR) *"
         type="number"
         value={monthlyTurnover || ''}
-        onChange={(e) => onUpdate('monthlyTurnover', Number(e.target.value))}
+        onChange={handleTurnoverChange}
         placeholder="5000"
         min="0"
+        step="1"
       />
     </div>
   );
