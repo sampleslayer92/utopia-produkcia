@@ -85,6 +85,7 @@ export interface BusinessLocation {
 
 export interface Addon {
   id: string;
+  type?: 'addon';
   category: string;
   name: string;
   description?: string;
@@ -110,6 +111,7 @@ export interface DeviceCard {
   image?: string;
   specifications?: string[];
   simCards?: number;
+  customValue?: string;
 }
 
 // Export ServiceCard as alias for DeviceCard for backward compatibility
@@ -193,12 +195,12 @@ export interface Consents {
 
 // Export ItemBreakdown interface for fee calculations
 export interface ItemBreakdown {
+  id: string;
   name: string;
   count: number;
-  monthlyFee: number;
-  companyCost: number;
-  totalCustomerPayment: number;
-  totalCompanyCost: number;
+  unitPrice: number;
+  subtotal: number;
+  addons?: ItemBreakdown[];
 }
 
 export interface OnboardingData {
