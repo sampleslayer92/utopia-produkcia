@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useCallback } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import { 
@@ -58,13 +57,13 @@ export const useContactInfoLogic = (
   }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone]);
 
   // Separate auto-fill logic to prevent state updates during render
-  const applyAutoFill = useCallback((roles: string[], contactInfo: OnboardingData['contactInfo']) => {
+  const applyAutoFill = useCallback((role: string, contactInfo: OnboardingData['contactInfo']) => {
     if (!isBasicInfoComplete()) {
       console.log('Basic info not complete, skipping auto-fill');
       return;
     }
 
-    const autoFillUpdates = getAutoFillUpdates(roles, contactInfo, data);
+    const autoFillUpdates = getAutoFillUpdates(role, contactInfo, data);
     if (Object.keys(autoFillUpdates).length > 0) {
       console.log('Applying auto-fill updates:', Object.keys(autoFillUpdates));
       updateData(autoFillUpdates);
@@ -72,10 +71,10 @@ export const useContactInfoLogic = (
       
       // Update auto-fill status
       setAutoFillStatus({
-        actualOwners: requiresActualOwner(roles),
-        authorizedPersons: requiresAuthorizedPerson(roles),
-        businessLocations: requiresBusinessLocation(roles),
-        companyInfo: requiresTechnicalPerson(roles)
+        actualOwners: requiresActualOwner(role),
+        authorizedPersons: requiresAuthorizedPerson(role),
+        businessLocations: requiresBusinessLocation(role),
+        companyInfo: requiresTechnicalPerson(role)
       });
     }
   }, [data, updateData, isBasicInfoComplete]);
@@ -84,27 +83,25 @@ export const useContactInfoLogic = (
   const handleRolesChange = useCallback((roles: string[]) => {
     console.log('Roles changed to:', roles);
     
-    // Update roles immediately
+    // Update roles immediately (keep array for backward compatibility)
     updateContactInfo('userRoles', roles);
     
     // Also update the legacy userRole field for backward compatibility
-    if (roles.length > 0) {
-      updateContactInfo('userRole', roles[0]);
-    } else {
-      updateContactInfo('userRole', '');
-    }
+    const selectedRole = roles.length > 0 ? roles[0] : '';
+    updateContactInfo('userRole', selectedRole);
 
     // Schedule auto-fill for next tick to avoid state updates during render
     setTimeout(() => {
-      applyAutoFill(roles, data.contactInfo);
+      applyAutoFill(selectedRole, data.contactInfo);
     }, 0);
   }, [updateContactInfo, applyAutoFill, data.contactInfo]);
 
-  // Auto-fill when roles and basic info are complete - use useEffect to avoid render issues
+  // Auto-fill when role and basic info are complete - use useEffect to avoid render issues
   useEffect(() => {
     const currentRoles = data.contactInfo.userRoles;
-    if (currentRoles && currentRoles.length > 0 && isBasicInfoComplete()) {
-      applyAutoFill(currentRoles, data.contactInfo);
+    const currentRole = currentRoles && currentRoles.length > 0 ? currentRoles[0] : '';
+    if (currentRole && isBasicInfoComplete()) {
+      applyAutoFill(currentRole, data.contactInfo);
     }
   }, [data.contactInfo.userRoles, data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, applyAutoFill, isBasicInfoComplete]);
 
@@ -113,19 +110,20 @@ export const useContactInfoLogic = (
     const currentContactInfo = data.contactInfo;
     const prevContactInfo = prevContactInfoRef.current;
 
-    // Only proceed if contact info has actually changed and user has roles
+    // Only proceed if contact info has actually changed and user has a role
     if (hasContactInfoChanged(prevContactInfo, currentContactInfo) && 
         currentContactInfo.userRoles && 
         currentContactInfo.userRoles.length > 0 &&
         isBasicInfoComplete()) {
       
+      const currentRole = currentContactInfo.userRoles[0];
       console.log('Contact info changed, updating related sections...', {
         prev: prevContactInfo,
         current: currentContactInfo,
-        roles: currentContactInfo.userRoles
+        role: currentRole
       });
 
-      applyAutoFill(currentContactInfo.userRoles, currentContactInfo);
+      applyAutoFill(currentRole, currentContactInfo);
     }
 
     // Update ref for next comparison

@@ -1,4 +1,3 @@
-
 import { OnboardingData } from "@/types/onboarding";
 import { v4 as uuidv4 } from "uuid";
 
@@ -73,8 +72,8 @@ export const createDefaultBusinessLocation = (contactInfo: OnboardingData['conta
   assignedPersons: []
 });
 
-export const shouldAutoFillBasedOnRoles = (roles: string[], contactInfo: OnboardingData['contactInfo']) => {
-  return roles.length > 0 && 
+export const shouldAutoFillBasedOnRole = (role: string, contactInfo: OnboardingData['contactInfo']) => {
+  return role && 
          contactInfo.firstName && 
          contactInfo.lastName && 
          contactInfo.email && 
@@ -85,12 +84,12 @@ export const shouldAutoFillBasedOnRoles = (roles: string[], contactInfo: Onboard
 export const updateBusinessLocationsContactPerson = (
   businessLocations: OnboardingData['businessLocations'], 
   contactInfo: OnboardingData['contactInfo'],
-  roles: string[]
+  role: string
 ) => {
-  // Iba ak má rolu "Kontaktná osoba na prevádzku"
-  const hasBusinessContactRole = roles.includes('Kontaktná osoba na prevádzku');
+  // Iba ak má rolu "Kontaktná osoba na prevádzku" alebo "Konateľ"
+  const hasBusinessContactRole = role === 'Kontaktná osoba na prevádzku' || role === 'Konateľ';
   
-  if (!hasBusinessContactRole || !shouldAutoFillBasedOnRoles(roles, contactInfo)) {
+  if (!hasBusinessContactRole || !shouldAutoFillBasedOnRole(role, contactInfo)) {
     return businessLocations;
   }
 
@@ -115,12 +114,12 @@ export const updateBusinessLocationsContactPerson = (
   });
 };
 
-export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
-  if (!shouldAutoFillBasedOnRoles(roles, contactInfo)) {
+export const getAutoFillUpdates = (role: string, contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
+  if (!shouldAutoFillBasedOnRole(role, contactInfo)) {
     return {};
   }
 
-  console.log('Auto-fill triggered with roles:', roles, 'and contact info:', contactInfo);
+  console.log('Auto-fill triggered with role:', role, 'and contact info:', contactInfo);
 
   const updates: Partial<OnboardingData> = {};
 
@@ -137,14 +136,14 @@ export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData[
   );
 
   // MAJITEĽ - zobrazuje sa IBA v skutočných majiteľoch
-  if (roles.includes('Majiteľ') && !existingOwner) {
+  if (role === 'Majiteľ' && !existingOwner) {
     console.log('Creating actual owner record for Majiteľ role');
     const actualOwner = createActualOwnerFromContactInfo(contactInfo);
     updates.actualOwners = [...currentData.actualOwners, actualOwner];
   }
 
-  // KONATEĽ - zobrazuje sa VŠADE OKREM skutočných majiteľov
-  if (roles.includes('Konateľ')) {
+  // KONATEĽ - zobrazuje sa v oprávnených osobách, technickej osobe a kontakte prevádzky
+  if (role === 'Konateľ') {
     // Pridať do oprávnených osôb (ak tam ešte nie je)
     if (!existingAuthorized) {
       console.log('Creating authorized person record for Konateľ role');
@@ -206,7 +205,7 @@ export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData[
   }
 
   // KONTAKTNÁ OSOBA PRE TECHNICKÉ ZÁLEŽITOSTI - IBA technická osoba
-  if (roles.includes('Kontaktná osoba pre technické záležitosti')) {
+  if (role === 'Kontaktná osoba pre technické záležitosti') {
     console.log('Updating technical contact person');
     updates.companyInfo = {
       ...currentData.companyInfo,
@@ -222,7 +221,7 @@ export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData[
   }
 
   // KONTAKTNÁ OSOBA NA PREVÁDZKU - IBA kontakt v prevádzke
-  if (roles.includes('Kontaktná osoba na prevádzku')) {
+  if (role === 'Kontaktná osoba na prevádzku') {
     let updatedBusinessLocations = currentData.businessLocations;
     
     // Create first business location if none exists
@@ -235,7 +234,7 @@ export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData[
       updatedBusinessLocations = updateBusinessLocationsContactPerson(
         updatedBusinessLocations, 
         contactInfo, 
-        roles
+        role
       );
     }
     
@@ -274,22 +273,22 @@ export const formatPhoneForDisplay = (phone: string, prefix: string = '+421') =>
   return cleaned.replace(/(\d{3})(\d{3})(\d{3,4})/, '$1 $2 $3').slice(0, 13);
 };
 
-// Helper function to check if roles have business location requirements
-export const requiresBusinessLocation = (roles: string[]) => {
-  return roles.includes('Kontaktná osoba na prevádzku');
+// Helper function to check if role has business location requirements
+export const requiresBusinessLocation = (role: string) => {
+  return role === 'Kontaktná osoba na prevádzku' || role === 'Konateľ';
 };
 
-// Helper function to check if roles require actual owner record
-export const requiresActualOwner = (roles: string[]) => {
-  return roles.includes('Majiteľ');
+// Helper function to check if role requires actual owner record
+export const requiresActualOwner = (role: string) => {
+  return role === 'Majiteľ';
 };
 
-// Helper function to check if roles require authorized person record
-export const requiresAuthorizedPerson = (roles: string[]) => {
-  return roles.includes('Konateľ');
+// Helper function to check if role requires authorized person record
+export const requiresAuthorizedPerson = (role: string) => {
+  return role === 'Konateľ';
 };
 
-// Helper function to check if roles require technical person
-export const requiresTechnicalPerson = (roles: string[]) => {
-  return roles.includes('Kontaktná osoba pre technické záležitosti') || roles.includes('Konateľ');
+// Helper function to check if role requires technical person
+export const requiresTechnicalPerson = (role: string) => {
+  return role === 'Kontaktná osoba pre technické záležitosti' || role === 'Konateľ';
 };
