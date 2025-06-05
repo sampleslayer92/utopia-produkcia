@@ -17,9 +17,9 @@ interface ProfitCalculatorProps {
 const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
   const [showResults, setShowResults] = useState(false);
 
-  // Calculate monthly turnover from all business locations
+  // Calculate monthly turnover from all business locations using monthlyTurnover field
   const monthlyTurnover = data.businessLocations.reduce(
-    (sum, location) => sum + (location.estimatedTurnover || 0), 
+    (sum, location) => sum + (location.monthlyTurnover || location.estimatedTurnover || 0), 
     0
   );
 
