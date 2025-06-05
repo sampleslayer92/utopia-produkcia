@@ -1,4 +1,3 @@
-
 import { OnboardingData, BankAccount, OpeningHours } from '@/types/onboarding';
 
 // Helper function to convert database salutation to frontend format
@@ -324,6 +323,7 @@ export const transformContractData = (
       gdpr: false, terms: false, electronicCommunication: false, signatureDate: '', signingPersonId: ''
     },
     
+    visitedSteps: [], // Add default empty visitedSteps for transformed data
     currentStep: 0
   };
 };
