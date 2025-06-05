@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -16,9 +17,10 @@ interface ConsentsStepProps {
   onNext: () => void;
   onPrev: () => void;
   onComplete: () => void;
+  onSaveSignature?: () => void;
 }
 
-const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
+const ConsentsStep = ({ data, updateData, onSaveSignature }: ConsentsStepProps) => {
   // Automatically set today's date if signature date is empty
   useEffect(() => {
     if (!data.consents.signatureDate) {
@@ -46,6 +48,14 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
                                      data.consents.signatureDate && 
                                      data.consents.signingPersonId &&
                                      data.consents.signatureUrl;
+
+  const handleSignatureChange = (url: string) => {
+    updateConsents('signatureUrl', url);
+    // Automatically call onSaveSignature when signature is created
+    if (url && onSaveSignature) {
+      onSaveSignature();
+    }
+  };
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
@@ -217,7 +227,7 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
                 <div className="border-t border-slate-200 pt-6">
                   <SignaturePad
                     value={data.consents.signatureUrl}
-                    onSignatureChange={(url) => updateConsents('signatureUrl', url)}
+                    onSignatureChange={handleSignatureChange}
                     disabled={!data.consents.signingPersonId}
                   />
                   

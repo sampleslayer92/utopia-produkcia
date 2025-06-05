@@ -9,6 +9,7 @@ interface StepProgress {
   completionPercentage: number;
   requiredFields: string[];
   completedFields: string[];
+  isVisited: boolean;
 }
 
 export const useProgressTracking = (data: OnboardingData, currentStep: number) => {
@@ -21,7 +22,8 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         isComplete: false,
         completionPercentage: 0,
         requiredFields: ['contactInfo.firstName', 'contactInfo.lastName', 'contactInfo.email', 'contactInfo.phone'],
-        completedFields: []
+        completedFields: [],
+        isVisited: true // Always consider first steps as visitable
       },
       // Step 1: Company Info
       {
@@ -35,7 +37,8 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
           'companyInfo.contactPerson.firstName', 'companyInfo.contactPerson.lastName',
           'companyInfo.contactPerson.email', 'companyInfo.contactPerson.phone'
         ],
-        completedFields: []
+        completedFields: [],
+        isVisited: true
       },
       // Step 2: Business Locations
       {
@@ -44,7 +47,8 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         isComplete: false,
         completionPercentage: 0,
         requiredFields: ['businessLocations'],
-        completedFields: []
+        completedFields: [],
+        isVisited: true
       },
       // Step 3: Device Selection
       {
@@ -53,43 +57,48 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         isComplete: false,
         completionPercentage: 0,
         requiredFields: ['deviceSelection.dynamicCards'],
-        completedFields: []
+        completedFields: [],
+        isVisited: true
       },
-      // Step 4: Fees
+      // Step 4: Fees - requires visit to be complete
       {
         stepNumber: 4,
         stepName: 'Poplatky',
         isComplete: false,
         completionPercentage: 0,
         requiredFields: ['fees.regulatedCards', 'fees.unregulatedCards'],
-        completedFields: []
+        completedFields: [],
+        isVisited: data.visitedSteps?.includes(4) || false
       },
-      // Step 5: Authorized Persons
+      // Step 5: Authorized Persons - requires visit to be complete
       {
         stepNumber: 5,
         stepName: 'Oprávnené osoby',
         isComplete: false,
         completionPercentage: 0,
         requiredFields: ['authorizedPersons'],
-        completedFields: []
+        completedFields: [],
+        isVisited: data.visitedSteps?.includes(5) || false
       },
-      // Step 6: Actual Owners
+      // Step 6: Actual Owners - requires visit to be complete
       {
         stepNumber: 6,
         stepName: 'Skutoční vlastníci',
         isComplete: false,
         completionPercentage: 0,
         requiredFields: ['actualOwners'],
-        completedFields: []
+        completedFields: [],
+        isVisited: data.visitedSteps?.includes(6) || false
       },
-      // Step 7: Consents
+      // Step 7: Consents - requires visit to be complete
       {
         stepNumber: 7,
         stepName: 'Súhlasy',
         isComplete: false,
         completionPercentage: 0,
         requiredFields: ['consents.gdpr', 'consents.terms'],
-        completedFields: []
+        completedFields: [],
+        isVisited: data.visitedSteps?.includes(7) || false
       }
     ];
 
@@ -109,8 +118,17 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         ? Math.round((completedFields.length / step.requiredFields.length) * 100)
         : 0;
       
-      // Only mark as complete if ALL required fields are 100% valid
-      step.isComplete = step.completionPercentage === 100;
+      // For steps 4-7: Only mark as complete if visited AND all fields are valid
+      if (step.stepNumber >= 4) {
+        step.isComplete = step.isVisited && step.completionPercentage === 100;
+        // If not visited, show as 0% complete regardless of field validation
+        if (!step.isVisited) {
+          step.completionPercentage = 0;
+        }
+      } else {
+        // For steps 0-3: Use standard validation (field completion only)
+        step.isComplete = step.completionPercentage === 100;
+      }
     });
 
     return steps;
@@ -141,7 +159,6 @@ const getNestedValue = (obj: any, path: string): any => {
   }, obj);
 };
 
-// Enhanced field completion validation with stricter rules
 const isFieldComplete = (value: any, fieldPath: string): boolean => {
   if (value === null || value === undefined) return false;
   
@@ -232,7 +249,6 @@ const isFieldComplete = (value: any, fieldPath: string): boolean => {
   return false;
 };
 
-// Helper function to validate business location completeness
 const isBusinessLocationComplete = (location: any): boolean => {
   if (!location) return false;
   

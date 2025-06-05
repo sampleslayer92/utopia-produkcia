@@ -16,6 +16,7 @@ interface OnboardingStepRendererProps {
   onNext: () => void;
   onPrev: () => void;
   onComplete: () => void;
+  onSaveSignature?: () => void;
 }
 
 const OnboardingStepRenderer = ({
@@ -24,7 +25,8 @@ const OnboardingStepRenderer = ({
   updateData,
   onNext,
   onPrev,
-  onComplete
+  onComplete,
+  onSaveSignature
 }: OnboardingStepRendererProps) => {
   const commonProps = {
     data,
@@ -49,7 +51,7 @@ const OnboardingStepRenderer = ({
     case 6:
       return <ActualOwnersStep {...commonProps} />;
     case 7:
-      return <ConsentsStep {...commonProps} onComplete={onComplete} />;
+      return <ConsentsStep {...commonProps} onComplete={onComplete} onSaveSignature={onSaveSignature} />;
     default:
       return null;
   }

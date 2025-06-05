@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Check, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Loader2, Save } from "lucide-react";
 
 interface OnboardingNavigationProps {
   currentStep: number;
@@ -9,6 +9,7 @@ interface OnboardingNavigationProps {
   onNextStep: () => void;
   onComplete: () => void;
   onSaveAndExit: () => void;
+  onSaveSignature?: () => void;
   isSubmitting?: boolean;
 }
 
@@ -19,8 +20,11 @@ const OnboardingNavigation = ({
   onNextStep,
   onComplete,
   onSaveAndExit,
+  onSaveSignature,
   isSubmitting = false
 }: OnboardingNavigationProps) => {
+  const isConsentsStep = currentStep === totalSteps - 1;
+  
   return (
     <div className="border-t border-slate-200 bg-white/80 backdrop-blur-sm p-6 sticky bottom-0">
       <div className="max-w-4xl mx-auto flex justify-between">
@@ -44,7 +48,19 @@ const OnboardingNavigation = ({
             Uložiť a ukončiť
           </Button>
           
-          {currentStep === totalSteps - 1 ? (
+          {isConsentsStep && onSaveSignature && (
+            <Button
+              onClick={onSaveSignature}
+              disabled={isSubmitting}
+              variant="outline"
+              className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              Uložiť podpis
+            </Button>
+          )}
+          
+          {isConsentsStep ? (
             <Button
               onClick={onComplete}
               disabled={isSubmitting}

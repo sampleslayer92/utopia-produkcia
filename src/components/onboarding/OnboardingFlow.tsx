@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useOnboardingData } from "./hooks/useOnboardingData";
 import { useOnboardingNavigation } from "./hooks/useOnboardingNavigation";
@@ -16,7 +15,7 @@ import { useContractPersistence } from "@/hooks/useContractPersistence";
 import { toast } from "sonner";
 
 const OnboardingFlow = () => {
-  const { onboardingData, updateData, clearData } = useOnboardingData();
+  const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData();
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date>();
@@ -33,8 +32,9 @@ const OnboardingFlow = () => {
     handleComplete,
     handleStepClick,
     handleSaveAndExit,
+    handleSaveSignature,
     isSubmitting
-  } = useOnboardingNavigation(currentStep, setCurrentStep, onboardingData, clearData);
+  } = useOnboardingNavigation(currentStep, setCurrentStep, onboardingData, clearData, markStepAsVisited);
 
   // Memoized validation for basic contact info
   const isBasicInfoComplete = useMemo(() => {
@@ -100,7 +100,7 @@ const OnboardingFlow = () => {
       } catch (error) {
         console.error('Failed to create contract:', error);
         toast.error('Nepodarilo sa vytvoriť zmluvu');
-        setContractCreationAttempted(false); // Allow retry
+        setContractCreationAttempted(false);
       }
     };
 
@@ -176,6 +176,7 @@ const OnboardingFlow = () => {
                 onNext={nextStep}
                 onPrev={prevStep}
                 onComplete={handleComplete}
+                onSaveSignature={handleSaveSignature}
               />
             </div>
           </div>
@@ -188,6 +189,7 @@ const OnboardingFlow = () => {
           onNextStep={nextStep}
           onComplete={handleComplete}
           onSaveAndExit={handleSaveAndExit}
+          onSaveSignature={handleSaveSignature}
           isSubmitting={isSubmitting || isSaving}
         />
       </div>

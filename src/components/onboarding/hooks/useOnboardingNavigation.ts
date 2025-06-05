@@ -9,17 +9,20 @@ export const useOnboardingNavigation = (
   currentStep: number,
   setCurrentStep: (step: number) => void,
   onboardingData: OnboardingData,
-  clearData: () => void
+  clearData: () => void,
+  markStepAsVisited: (stepNumber: number) => void
 ) => {
   const navigate = useNavigate();
   const totalSteps = onboardingSteps.length;
   const { submitContract, isSubmitting } = useContractSubmission();
 
   const nextStep = () => {
+    // Mark current step as visited before moving to next
+    markStepAsVisited(currentStep);
+    
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
-      // Removed toast notification for each step
     }
   };
 
@@ -31,6 +34,9 @@ export const useOnboardingNavigation = (
   };
 
   const handleComplete = async () => {
+    // Mark final step as visited
+    markStepAsVisited(currentStep);
+    
     console.log('Onboarding dokončený:', onboardingData);
     
     // Submit contract to Supabase
@@ -73,6 +79,14 @@ export const useOnboardingNavigation = (
     navigate('/');
   };
 
+  const handleSaveSignature = () => {
+    // Mark step 7 (Consents) as visited when signature is saved
+    markStepAsVisited(7);
+    toast.success('Podpis uložený', {
+      description: 'Elektronický podpis bol úspešne uložený'
+    });
+  };
+
   return {
     totalSteps,
     nextStep,
@@ -80,6 +94,7 @@ export const useOnboardingNavigation = (
     handleComplete,
     handleStepClick,
     handleSaveAndExit,
+    handleSaveSignature,
     isSubmitting
   };
 };
