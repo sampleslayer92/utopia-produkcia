@@ -6,6 +6,7 @@ import { OnboardingData, AuthorizedPerson } from "@/types/onboarding";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingSection from "./ui/OnboardingSection";
+import DocumentUpload from "./ui/DocumentUpload";
 import { useState } from "react";
 
 interface AuthorizedPersonsStepProps {
@@ -38,14 +39,15 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       documentCountry: 'Slovensko',
       citizenship: 'Slovensko',
       isPoliticallyExposed: false,
-      isUSCitizen: false
+      isUSCitizen: false,
+      documentFrontUrl: '',
+      documentBackUrl: ''
     };
 
     updateData({
       authorizedPersons: [...data.authorizedPersons, newPerson]
     });
     
-    // Automatically expand the new person
     setExpandedPersonId(newPerson.id);
   };
 
@@ -182,6 +184,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   {expandedPersonId === person.id && (
                     <div className="p-4 animate-fade-in">
                       <div className="space-y-6">
+                        {/* Základné údaje - keep existing code */}
                         <div>
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <UserCheck className="h-4 w-4" />
@@ -230,6 +233,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                           />
                         </div>
 
+                        {/* Osobné údaje - keep existing code */}
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Fingerprint className="h-4 w-4" />
@@ -277,6 +281,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                           />
                         </div>
 
+                        {/* Doklad totožnosti - enhanced with document upload */}
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <FileText className="h-4 w-4" />
@@ -321,8 +326,28 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                               placeholder="Slovensko"
                             />
                           </div>
+
+                          {/* Document Upload Section */}
+                          <div className="grid md:grid-cols-2 gap-6 mt-6">
+                            <DocumentUpload
+                              label="Predná strana dokladu *"
+                              value={person.documentFrontUrl}
+                              onChange={(url) => updateAuthorizedPerson(person.id, 'documentFrontUrl', url)}
+                              personId={person.id}
+                              documentSide="front"
+                            />
+
+                            <DocumentUpload
+                              label="Zadná strana dokladu *"
+                              value={person.documentBackUrl}
+                              onChange={(url) => updateAuthorizedPerson(person.id, 'documentBackUrl', url)}
+                              personId={person.id}
+                              documentSide="back"
+                            />
+                          </div>
                         </div>
 
+                        {/* Ďalšie informácie - keep existing code */}
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Flag className="h-4 w-4" />
