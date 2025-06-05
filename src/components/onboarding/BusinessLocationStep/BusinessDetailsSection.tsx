@@ -4,6 +4,7 @@ import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
 import { MCC_CODES } from "../config/mccCodes";
+import { useState } from "react";
 
 interface BusinessDetailsSectionProps {
   businessSubject: string;
@@ -18,15 +19,44 @@ const BusinessDetailsSection = ({
   monthlyTurnover,
   onUpdate
 }: BusinessDetailsSectionProps) => {
+  // Local state to preserve user input format during typing
+  const [turnoverInput, setTurnoverInput] = useState(monthlyTurnover?.toString() || '');
+
   const mccOptions = MCC_CODES.map(code => ({
     value: code.value,
     label: code.label
   }));
 
   const handleTurnoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value) || 0;
-    onUpdate('monthlyTurnover', value);
+    const value = e.target.value;
+    setTurnoverInput(value);
+    
+    // Parse and update parent component with debounced approach
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue) && numericValue >= 0) {
+      onUpdate('monthlyTurnover', numericValue);
+    } else if (value === '') {
+      onUpdate('monthlyTurnover', 0);
+    }
   };
+
+  const handleTurnoverBlur = () => {
+    // Final validation and cleanup on blur
+    const numericValue = parseFloat(turnoverInput);
+    if (isNaN(numericValue) || numericValue < 0) {
+      setTurnoverInput('0');
+      onUpdate('monthlyTurnover', 0);
+    } else {
+      // Update input to show clean format if needed
+      setTurnoverInput(numericValue.toString());
+      onUpdate('monthlyTurnover', numericValue);
+    }
+  };
+
+  // Sync local state when prop changes from external source
+  if (monthlyTurnover?.toString() !== turnoverInput && turnoverInput === '') {
+    setTurnoverInput(monthlyTurnover?.toString() || '');
+  }
 
   return (
     <div className="space-y-4">
@@ -54,11 +84,13 @@ const BusinessDetailsSection = ({
       <OnboardingInput
         label="Odhadovaný obrat (mesačne v EUR) *"
         type="number"
-        value={monthlyTurnover || ''}
+        inputMode="decimal"
+        value={turnoverInput}
         onChange={handleTurnoverChange}
-        placeholder="5000"
+        onBlur={handleTurnoverBlur}
+        placeholder="Zadajte mesačný obrat v EUR (napr. 5000, 12500.50, 1000000)"
         min="0"
-        step="1"
+        step="any"
       />
     </div>
   );
