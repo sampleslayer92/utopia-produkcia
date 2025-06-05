@@ -65,15 +65,15 @@ const OnboardingHeader = ({
           <div className="flex items-center gap-3">
             {isCreatingContract && (
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="border-yellow-200 text-yellow-700 flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Vytvára sa zmluva...
+                <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 flex items-center gap-2">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <span className="text-xs">Vytvára sa zmluva...</span>
                 </Badge>
               </div>
             )}
             {contractNumber && contractId && (
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="border-blue-200 text-blue-700 flex items-center gap-2">
+                <Badge variant="outline" className="border-green-200 text-green-700 bg-green-50 flex items-center gap-2">
                   <FileText className="h-4 w-4" />
                   Zmluva č. {contractNumber}
                 </Badge>

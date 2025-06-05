@@ -10,7 +10,6 @@ import OnboardingNavigation from "./ui/OnboardingNavigation";
 import OnboardingHeader from "./ui/OnboardingHeader";
 import OnboardingStepRenderer from "./components/OnboardingStepRenderer";
 import { OnboardingErrorBoundary } from "./components/OnboardingErrorBoundary";
-import OnboardingLoadingState from "./ui/OnboardingLoadingState";
 import AutoSaveIndicator from "./ui/AutoSaveIndicator";
 import { useContractCreation } from "@/hooks/useContractCreation";
 import { useContractPersistence } from "@/hooks/useContractPersistence";
@@ -19,7 +18,6 @@ import { toast } from "sonner";
 const OnboardingFlow = () => {
   const { onboardingData, updateData, clearData } = useOnboardingData();
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
-  const [isLoading, setIsLoading] = useState(false);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date>();
   const [contractCreationAttempted, setContractCreationAttempted] = useState(false);
@@ -79,7 +77,7 @@ const OnboardingFlow = () => {
     onError: () => setAutoSaveStatus('error')
   });
 
-  // Optimized contract creation effect
+  // Optimized contract creation effect - NO MORE isLoading!
   useEffect(() => {
     if (!isBasicInfoComplete || onboardingData.contractId || isCreating || contractCreationAttempted) {
       return;
@@ -87,7 +85,6 @@ const OnboardingFlow = () => {
 
     const createContractWithDelay = async () => {
       console.log('Basic contact info complete, creating contract...');
-      setIsLoading(true);
       setContractCreationAttempted(true);
       
       try {
@@ -104,8 +101,6 @@ const OnboardingFlow = () => {
         console.error('Failed to create contract:', error);
         toast.error('Nepodarilo sa vytvoriť zmluvu');
         setContractCreationAttempted(false); // Allow retry
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -137,14 +132,10 @@ const OnboardingFlow = () => {
 
   const handleErrorReset = useCallback(() => {
     setAutoSaveStatus('idle');
-    setIsLoading(false);
     setContractCreationAttempted(false);
   }, []);
 
-  if (isLoading) {
-    return <OnboardingLoadingState type="full" />;
-  }
-
+  // NO MORE FULL-SCREEN LOADING - smooth UI always!
   return (
     <OnboardingErrorBoundary onReset={handleErrorReset}>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
