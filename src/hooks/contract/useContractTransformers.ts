@@ -1,4 +1,26 @@
+
 import { OnboardingData, BankAccount, OpeningHours } from '@/types/onboarding';
+
+// Helper function to convert database salutation to frontend format
+const convertSalutation = (dbSalutation: string): 'Pan' | 'Pani' | undefined => {
+  if (dbSalutation === 'Pan' || dbSalutation === 'Pani') {
+    return dbSalutation;
+  }
+  return undefined;
+};
+
+// Helper function to convert database registry type to frontend format
+const convertRegistryType = (dbRegistryType: string): 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' => {
+  switch (dbRegistryType) {
+    case 'public':
+      return 'Nezisková organizácia';
+    case 'business':
+      return 'S.r.o.';
+    case 'other':
+    default:
+      return 'Živnosť';
+  }
+};
 
 export const transformContractData = (
   contract: any,
@@ -146,7 +168,7 @@ export const transformContractData = (
 
   return {
     contactInfo: contactInfo ? {
-      salutation: (contactInfo.salutation || '') as 'Pan' | 'Pani' | '',
+      salutation: convertSalutation(contactInfo.salutation || ''),
       firstName: contactInfo.first_name || '',
       lastName: contactInfo.last_name || '',
       email: contactInfo.email || '',
@@ -154,14 +176,14 @@ export const transformContractData = (
       phonePrefix: contactInfo.phone_prefix || '+421',
       salesNote: contactInfo.sales_note || ''
     } : {
-      salutation: '', firstName: '', lastName: '', email: '', phone: '', phonePrefix: '+421', salesNote: ''
+      salutation: undefined, firstName: '', lastName: '', email: '', phone: '', phonePrefix: '+421', salesNote: ''
     },
     
     companyInfo: companyInfo ? {
       ico: companyInfo.ico || '',
       dic: companyInfo.dic || '',
       companyName: companyInfo.company_name || '',
-      registryType: (companyInfo.registry_type || 'other') as 'public' | 'business' | 'other' | '',
+      registryType: convertRegistryType(companyInfo.registry_type || 'other'),
       isVatPayer: companyInfo.is_vat_payer || false,
       vatNumber: companyInfo.vat_number || '',
       court: companyInfo.court || '',
@@ -186,7 +208,7 @@ export const transformContractData = (
         isTechnicalPerson: companyInfo.contact_person_is_technical ?? false
       }
     } : {
-      ico: '', dic: '', companyName: '', registryType: 'other', isVatPayer: false, vatNumber: '', court: '', section: '', insertNumber: '',
+      ico: '', dic: '', companyName: '', registryType: 'Živnosť', isVatPayer: false, vatNumber: '', court: '', section: '', insertNumber: '',
       address: { street: '', city: '', zipCode: '' },
       contactAddress: { street: '', city: '', zipCode: '' },
       contactAddressSameAsMain: true,

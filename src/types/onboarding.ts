@@ -1,6 +1,6 @@
 
 export interface ContactInfo {
-  salutation?: 'Mr' | 'Ms';
+  salutation?: 'Pan' | 'Pani';
   firstName: string;
   lastName: string;
   email: string;
