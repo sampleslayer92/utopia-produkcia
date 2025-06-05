@@ -208,6 +208,7 @@ export interface OnboardingData {
   contractId?: string;
   contractNumber?: string;
   currentStep?: number;
+  visitedSteps: number[]; // Add visitedSteps field
   contactInfo: ContactInfo;
   companyInfo: CompanyInfo;
   businessLocations: BusinessLocation[];
