@@ -3,7 +3,7 @@ import { OnboardingData } from "@/types/onboarding";
 import { Card, CardContent } from "@/components/ui/card";
 import ContactInfoSidebar from "./ContactInfoStep/ContactInfoSidebar";
 import ContactInfoForm from "./ContactInfoStep/ContactInfoForm";
-import { useContactInfoSimplified } from "./ContactInfoStep/hooks/useContactInfoSimplified";
+import { useSimplifiedContactInfoLogic } from "./ContactInfoStep/hooks/useSimplifiedContactInfoLogic";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -15,17 +15,18 @@ interface ContactInfoStepProps {
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const {
     completedFields,
-    isBasicInfoComplete,
+    hasAutoFilled,
     updateContactInfo,
-    handlePersonDataUpdate
-  } = useContactInfoSimplified(data, updateData);
+    handlePersonDataUpdate,
+    isBasicInfoComplete
+  } = useSimplifiedContactInfoLogic(data, updateData);
 
-  // Auto-fill status for sidebar
+  // Auto-fill status shows all sections as auto-filled when basic info is complete
   const autoFillStatus = {
-    actualOwners: isBasicInfoComplete,
-    authorizedPersons: isBasicInfoComplete,
-    businessLocations: isBasicInfoComplete,
-    companyInfo: isBasicInfoComplete
+    actualOwners: Boolean(isBasicInfoComplete()),
+    authorizedPersons: Boolean(isBasicInfoComplete()),
+    businessLocations: Boolean(isBasicInfoComplete()),
+    companyInfo: Boolean(isBasicInfoComplete())
   };
 
   return (
@@ -33,10 +34,10 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-3">
           <ContactInfoSidebar
-            hasAutoFilled={isBasicInfoComplete}
-            userRoles={[]} // Simplified - no roles needed
+            hasAutoFilled={hasAutoFilled}
+            userRoles={[]} // No longer using roles
             autoFillStatus={autoFillStatus}
-            isBasicInfoComplete={isBasicInfoComplete}
+            isBasicInfoComplete={Boolean(isBasicInfoComplete())}
             contractId={data.contractId}
             contractNumber={data.contractNumber}
           />
