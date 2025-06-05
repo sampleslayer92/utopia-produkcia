@@ -1,7 +1,8 @@
 
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
-import { User, Mail, Phone } from "lucide-react";
+import PhoneNumberInput from "../ui/PhoneNumberInput";
+import { User, Mail } from "lucide-react";
 import { contactPersonSchema } from "../validation/schemas";
 import { useValidatedForm } from "../hooks/useValidatedForm";
 
@@ -12,6 +13,7 @@ interface ContactPersonFormProps {
     lastName: string;
     email: string;
     phone: string;
+    phonePrefix?: string;
     isTechnicalPerson?: boolean;
   };
   onUpdate: (field: string, value: any) => void;
@@ -88,14 +90,14 @@ const ContactPersonForm = ({
           error={errors.email}
         />
 
-        <OnboardingInput
-          label="Telefón *"
-          icon={<Phone className="h-4 w-4" />}
-          value={data.phone}
-          onChange={(e) => updateField('phone', e.target.value)}
-          placeholder="+421 123 456 789"
+        <PhoneNumberInput
+          phoneValue={data.phone}
+          prefixValue={data.phonePrefix || '+421'}
+          onPhoneChange={(value) => updateField('phone', value)}
+          onPrefixChange={(value) => updateField('phonePrefix', value)}
           isCompleted={completedFields.has('phone')}
           error={errors.phone}
+          required={true}
         />
       </div>
 

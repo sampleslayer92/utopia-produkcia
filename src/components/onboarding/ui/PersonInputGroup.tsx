@@ -1,8 +1,8 @@
 
 import OnboardingInput from "./OnboardingInput";
 import OnboardingSelect from "./OnboardingSelect";
-import CountryFlagSelect from "./CountryFlagSelect";
-import { User, Phone, Mail } from "lucide-react";
+import PhoneNumberInput from "./PhoneNumberInput";
+import { User, Mail } from "lucide-react";
 
 interface PersonData {
   salutation?: string;
@@ -29,8 +29,8 @@ const PersonInputGroup = ({
   showSalutation = true 
 }: PersonInputGroupProps) => {
   const salutationOptions = [
-    { value: 'Mr', label: 'Pán' },
-    { value: 'Ms', label: 'Pani' }
+    { value: 'Pan', label: 'Pan' },
+    { value: 'Pani', label: 'Pani' }
   ];
 
   return (
@@ -83,27 +83,14 @@ const PersonInputGroup = ({
         />
       </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 text-slate-700">
-          <Phone className="h-4 w-4 text-blue-500" />
-          <span className="text-sm font-medium">Telefónne číslo *</span>
-        </div>
-        <div className="flex gap-2">
-          {forceShowPhonePrefix && (
-            <CountryFlagSelect
-              value={data.phonePrefix || '+421'}
-              onValueChange={(value) => onUpdate('phonePrefix', value)}
-            />
-          )}
-          <OnboardingInput
-            value={data.phone}
-            onChange={(e) => onUpdate('phone', e.target.value)}
-            placeholder="123 456 789"
-            isCompleted={completedFields.has('phone')}
-            className="flex-1"
-          />
-        </div>
-      </div>
+      <PhoneNumberInput
+        phoneValue={data.phone}
+        prefixValue={data.phonePrefix || '+421'}
+        onPhoneChange={(value) => onUpdate('phone', value)}
+        onPrefixChange={(value) => onUpdate('phonePrefix', value)}
+        isCompleted={completedFields.has('phone')}
+        required={true}
+      />
     </div>
   );
 };
