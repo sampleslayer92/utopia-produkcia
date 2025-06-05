@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import { 
   getAutoFillUpdates, 
@@ -29,35 +29,62 @@ export const useContactInfoLogic = (
   });
   const prevContactInfoRef = useRef(data.contactInfo);
 
-  const updateContactInfo = (field: string, value: string | boolean | string[]) => {
+  // Memoize updateContactInfo to prevent unnecessary re-renders
+  const updateContactInfo = useCallback((field: string, value: string | boolean | string[]) => {
+    console.log('Updating contact info:', { field, value });
     updateData({
       contactInfo: {
         ...data.contactInfo,
         [field]: value
       }
     });
-  };
+  }, [data.contactInfo, updateData]);
 
-  const handlePersonDataUpdate = (field: string, value: string) => {
+  const handlePersonDataUpdate = useCallback((field: string, value: string) => {
     updateContactInfo(field, value);
-  };
+  }, [updateContactInfo]);
 
   const isEmailValid = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
   // Check if basic contact info is complete
-  const isBasicInfoComplete = () => {
+  const isBasicInfoComplete = useCallback(() => {
     return data.contactInfo.firstName && 
            data.contactInfo.lastName && 
            data.contactInfo.email && 
            isEmailValid(data.contactInfo.email) &&
            data.contactInfo.phone;
-  };
+  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone]);
 
-  // Handle roles change with improved auto-fill logic
-  const handleRolesChange = (roles: string[]) => {
+  // Separate auto-fill logic to prevent state updates during render
+  const applyAutoFill = useCallback((roles: string[], contactInfo: OnboardingData['contactInfo']) => {
+    if (!isBasicInfoComplete()) {
+      console.log('Basic info not complete, skipping auto-fill');
+      return;
+    }
+
+    const autoFillUpdates = getAutoFillUpdates(roles, contactInfo, data);
+    if (Object.keys(autoFillUpdates).length > 0) {
+      console.log('Applying auto-fill updates:', Object.keys(autoFillUpdates));
+      updateData(autoFillUpdates);
+      setHasAutoFilled(true);
+      
+      // Update auto-fill status
+      setAutoFillStatus({
+        actualOwners: requiresActualOwner(roles),
+        authorizedPersons: requiresAuthorizedPerson(roles),
+        businessLocations: requiresBusinessLocation(roles),
+        companyInfo: requiresTechnicalPerson(roles)
+      });
+    }
+  }, [data, updateData, isBasicInfoComplete]);
+
+  // Handle roles change - prevent state updates during render
+  const handleRolesChange = useCallback((roles: string[]) => {
     console.log('Roles changed to:', roles);
+    
+    // Update roles immediately
     updateContactInfo('userRoles', roles);
     
     // Also update the legacy userRole field for backward compatibility
@@ -67,45 +94,19 @@ export const useContactInfoLogic = (
       updateContactInfo('userRole', '');
     }
 
-    // Apply auto-fill logic immediately if basic info is complete
-    if (isBasicInfoComplete()) {
-      const autoFillUpdates = getAutoFillUpdates(roles, data.contactInfo, data);
-      if (Object.keys(autoFillUpdates).length > 0) {
-        console.log('Applying auto-fill updates from role change:', autoFillUpdates);
-        updateData(autoFillUpdates);
-        setHasAutoFilled(true);
-        
-        // Update auto-fill status based on new roles
-        setAutoFillStatus({
-          actualOwners: requiresActualOwner(roles),
-          authorizedPersons: requiresAuthorizedPerson(roles),
-          businessLocations: requiresBusinessLocation(roles),
-          companyInfo: requiresTechnicalPerson(roles)
-        });
-      }
-    }
-  };
+    // Schedule auto-fill for next tick to avoid state updates during render
+    setTimeout(() => {
+      applyAutoFill(roles, data.contactInfo);
+    }, 0);
+  }, [updateContactInfo, applyAutoFill, data.contactInfo]);
 
-  // Auto-fill when roles and basic info are complete
+  // Auto-fill when roles and basic info are complete - use useEffect to avoid render issues
   useEffect(() => {
-    if (data.contactInfo.userRoles && data.contactInfo.userRoles.length > 0 && isBasicInfoComplete()) {
-      const autoFillUpdates = getAutoFillUpdates(data.contactInfo.userRoles, data.contactInfo, data);
-      if (Object.keys(autoFillUpdates).length > 0) {
-        console.log('Auto-filling from useEffect (roles/basic info complete):', autoFillUpdates);
-        updateData(autoFillUpdates);
-        setHasAutoFilled(true);
-        
-        // Update auto-fill status
-        const roles = data.contactInfo.userRoles;
-        setAutoFillStatus({
-          actualOwners: requiresActualOwner(roles),
-          authorizedPersons: requiresAuthorizedPerson(roles),
-          businessLocations: requiresBusinessLocation(roles),
-          companyInfo: requiresTechnicalPerson(roles)
-        });
-      }
+    const currentRoles = data.contactInfo.userRoles;
+    if (currentRoles && currentRoles.length > 0 && isBasicInfoComplete()) {
+      applyAutoFill(currentRoles, data.contactInfo);
     }
-  }, [data.contactInfo.userRoles, data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone]);
+  }, [data.contactInfo.userRoles, data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, applyAutoFill, isBasicInfoComplete]);
 
   // Watch for changes in contact info and propagate to other sections
   useEffect(() => {
@@ -124,17 +125,12 @@ export const useContactInfoLogic = (
         roles: currentContactInfo.userRoles
       });
 
-      const autoFillUpdates = getAutoFillUpdates(currentContactInfo.userRoles, currentContactInfo, data);
-      if (Object.keys(autoFillUpdates).length > 0) {
-        console.log('Applying auto-fill updates from contact info change:', autoFillUpdates);
-        updateData(autoFillUpdates);
-        setHasAutoFilled(true);
-      }
+      applyAutoFill(currentContactInfo.userRoles, currentContactInfo);
     }
 
     // Update ref for next comparison
     prevContactInfoRef.current = currentContactInfo;
-  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix]);
+  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix, applyAutoFill, isBasicInfoComplete]);
 
   // Track completed fields for visual feedback
   useEffect(() => {
