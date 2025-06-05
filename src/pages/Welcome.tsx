@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Users, Building2, User, ArrowRight, UserCheck } from "lucide-react";
+import { Users, Building2, User, ArrowRight, UserCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Welcome = () => {
@@ -35,12 +35,11 @@ const Welcome = () => {
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center mx-auto mb-4">
-              <CreditCard className="h-8 w-8 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-              Utopia
-            </h1>
+            <img 
+              src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+              alt="Utopia Logo" 
+              className="h-16 w-auto mx-auto mb-4"
+            />
             <p className="text-slate-600 mt-2">Vyberte svoju rolu</p>
           </div>
 
@@ -121,12 +120,11 @@ const Welcome = () => {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center mx-auto mb-6">
-            <CreditCard className="h-10 w-10 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-3">
-            Utopia
-          </h1>
+          <img 
+            src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+            alt="Utopia Logo" 
+            className="h-20 w-auto mx-auto mb-6"
+          />
           <p className="text-slate-600 text-lg">
             Platobná platforma pre ISO organizácie, obchodných partnerov a klientov
           </p>
@@ -163,7 +161,11 @@ const Welcome = () => {
             <CardContent className="p-8">
               <div className="flex items-center space-x-4">
                 <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <CreditCard className="h-7 w-7 text-white" />
+                  <img 
+                    src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+                    alt="Utopia Logo" 
+                    className="h-7 w-7 object-contain brightness-0 invert"
+                  />
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold text-slate-900 mb-1">

@@ -1,7 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CreditCard, FileText, Trash2, Loader2 } from "lucide-react";
+import { FileText, Trash2, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,12 +55,11 @@ const OnboardingHeader = ({
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-              <CreditCard className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-              Utopia
-            </span>
+            <img 
+              src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+              alt="Utopia Logo" 
+              className="h-10 w-auto"
+            />
           </div>
           <div className="flex items-center gap-3">
             {isCreatingContract && (
@@ -113,9 +112,6 @@ const OnboardingHeader = ({
                 </AlertDialog>
               </div>
             )}
-            <Badge variant="outline" className="border-blue-200 text-blue-700">
-              Registrácia obchodníka
-            </Badge>
           </div>
         </div>
       </div>
