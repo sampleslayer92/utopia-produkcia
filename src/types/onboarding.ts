@@ -9,6 +9,7 @@ export interface ContactInfo {
   companyType?: string;
   salesNote?: string;
   userRole?: string;
+  userRoles?: string[]; // Add support for multiple roles
 }
 
 export interface CompanyAddress {
@@ -41,23 +42,45 @@ export interface CompanyInfo {
   contactPerson: ContactPerson;
 }
 
+export interface BankAccount {
+  id: string;
+  format: 'IBAN' | 'CisloUctuKodBanky';
+  iban?: string;
+  cisloUctu?: string;
+  kodBanky?: string;
+  mena: 'EUR' | 'CZK' | 'USD';
+}
+
+export interface OpeningHours {
+  day: 'Po' | 'Ut' | 'St' | 'Št' | 'Pi' | 'So' | 'Ne';
+  open: string;
+  close: string;
+  otvorene: boolean;
+}
+
 export interface BusinessLocation {
   id: string;
   name: string;
   hasPOS: boolean;
   address: CompanyAddress;
   iban: string;
+  bankAccounts?: BankAccount[];
   contactPerson: {
     name: string;
     email: string;
     phone: string;
   };
   businessSector: string;
+  businessSubject?: string;
+  mccCode?: string;
   estimatedTurnover: number;
+  monthlyTurnover?: number;
   averageTransaction: number;
   openingHours: string;
+  openingHoursDetailed?: OpeningHours[];
   seasonality: 'year-round' | 'seasonal';
   seasonalWeeks?: number;
+  assignedPersons?: string[];
 }
 
 export interface Addon {
@@ -82,6 +105,9 @@ export interface DeviceCard {
   companyCost: number;
   addons: Addon[];
 }
+
+// Add DynamicCard as alias for DeviceCard for backward compatibility
+export type DynamicCard = DeviceCard;
 
 export interface DeviceSelection {
   selectedSolutions: string[];
@@ -157,6 +183,8 @@ export interface Consents {
 }
 
 export interface OnboardingData {
+  contractId?: string;
+  contractNumber?: string;
   contactInfo: ContactInfo;
   companyInfo: CompanyInfo;
   businessLocations: BusinessLocation[];

@@ -38,8 +38,8 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
             userRoles={[]} // No longer using roles
             autoFillStatus={autoFillStatus}
             isBasicInfoComplete={Boolean(isBasicInfoComplete())}
-            contractId={data.contractId}
-            contractNumber={data.contractNumber}
+            contractId={data.contractId || ''}
+            contractNumber={data.contractNumber || ''}
           />
           
           <ContactInfoForm

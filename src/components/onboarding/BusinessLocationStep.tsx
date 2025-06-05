@@ -34,10 +34,13 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
   } = useBusinessLocationManager(data, updateData);
 
   const getUserRole = () => {
-    if (data.contactInfo.userRoles?.includes('Kontaktná osoba na prevádzku')) {
+    // Check both userRole (singular) and userRoles (array) for backward compatibility
+    const roles = data.contactInfo.userRoles || (data.contactInfo.userRole ? [data.contactInfo.userRole] : []);
+    
+    if (roles.includes('Kontaktná osoba na prevádzku')) {
       return 'Kontaktná osoba na prevádzku';
     }
-    if (data.contactInfo.userRoles?.includes('Majiteľ')) {
+    if (roles.includes('Majiteľ')) {
       return 'Majiteľ';
     }
     return '';
