@@ -1,6 +1,7 @@
 
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
+import { Checkbox } from "@/components/ui/checkbox";
 import { MapPin } from "lucide-react";
 
 interface CompanyAddressCardProps {
@@ -40,6 +41,17 @@ const CompanyAddressCard = ({ data, updateCompanyInfo }: CompanyAddressCardProps
         onChange={(e) => updateCompanyInfo('address.city', e.target.value)}
         placeholder="Bratislava"
       />
+
+      <div className="flex items-center space-x-2 pt-4 border-t border-slate-200">
+        <Checkbox
+          id="contactAddressSameAsMain"
+          checked={data.companyInfo.contactAddressSameAsMain}
+          onCheckedChange={(checked) => updateCompanyInfo('contactAddressSameAsMain', checked)}
+        />
+        <label htmlFor="contactAddressSameAsMain" className="text-sm text-slate-700">
+          Sídlo spoločnosti je rovnaké ako kontaktná adresa spoločnosti
+        </label>
+      </div>
     </div>
   );
 };

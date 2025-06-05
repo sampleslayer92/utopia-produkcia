@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData } from "@/types/onboarding";
@@ -7,6 +8,7 @@ import CompanyRegistryInfo from "./company/CompanyRegistryInfo";
 import CompanyAddressCard from "./company/CompanyAddressCard";
 import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
 import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
+import { useEffect } from "react";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -38,6 +40,27 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     }
   };
 
+  // Synchronize contact address with main address when checkbox is checked
+  useEffect(() => {
+    if (data.companyInfo.contactAddressSameAsMain) {
+      updateData({
+        companyInfo: {
+          ...data.companyInfo,
+          contactAddress: {
+            street: data.companyInfo.address.street,
+            city: data.companyInfo.address.city,
+            zipCode: data.companyInfo.address.zipCode
+          }
+        }
+      });
+    }
+  }, [
+    data.companyInfo.contactAddressSameAsMain,
+    data.companyInfo.address.street,
+    data.companyInfo.address.city,
+    data.companyInfo.address.zipCode
+  ]);
+
   const handleORSRData = (orsrData: any) => {
     updateData({
       companyInfo: {
@@ -58,6 +81,11 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
   if (!data.companyInfo.registryType || !['public', 'business', 'other'].includes(data.companyInfo.registryType)) {
     updateCompanyInfo('registryType', 'business');
   }
+
+  // Determine default accordion values based on whether contact address should be shown
+  const defaultAccordionValues = data.companyInfo.contactAddressSameAsMain 
+    ? ["basic-info", "address", "contact-person"]
+    : ["basic-info", "address", "contact-address", "contact-person"];
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
@@ -91,7 +119,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
           
           {/* Main form content with accordion */}
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
-            <Accordion type="multiple" defaultValue={["basic-info", "address", "contact-address", "contact-person"]} className="space-y-4">
+            <Accordion type="multiple" defaultValue={defaultAccordionValues} className="space-y-4">
               
               {/* Basic Company Info */}
               <AccordionItem value="basic-info" className="border border-slate-200 rounded-lg">
@@ -133,18 +161,20 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                 </AccordionContent>
               </AccordionItem>
 
-              {/* Contact Address */}
-              <AccordionItem value="contact-address" className="border border-slate-200 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-medium text-slate-900">Kontaktná adresa</span>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <CompanyContactAddressCard
-                    data={data}
-                    updateCompanyInfo={updateCompanyInfo}
-                  />
-                </AccordionContent>
-              </AccordionItem>
+              {/* Contact Address - only show if not same as main */}
+              {!data.companyInfo.contactAddressSameAsMain && (
+                <AccordionItem value="contact-address" className="border border-slate-200 rounded-lg">
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                    <span className="font-medium text-slate-900">Kontaktná adresa</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <CompanyContactAddressCard
+                      data={data}
+                      updateCompanyInfo={updateCompanyInfo}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
 
               {/* Contact Person */}
               <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
