@@ -47,6 +47,7 @@ export const useAutoSave = (
         await onSave(data);
         previousDataRef.current = currentDataString;
         console.log('Auto-save completed successfully');
+        // Removed toast success notification
       } catch (error) {
         console.error('Auto-save failed:', error);
         if (onError) {

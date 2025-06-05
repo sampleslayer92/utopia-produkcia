@@ -20,7 +20,7 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         stepName: 'Kontaktné údaje',
         isComplete: false,
         completionPercentage: 0,
-        requiredFields: ['firstName', 'lastName', 'email', 'phone', 'phonePrefix'],
+        requiredFields: ['contactInfo.firstName', 'contactInfo.lastName', 'contactInfo.email', 'contactInfo.phone'],
         completedFields: []
       },
       // Step 1: Company Info
@@ -30,10 +30,10 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         isComplete: false,
         completionPercentage: 0,
         requiredFields: [
-          'ico', 'dic', 'companyName', 'registryType',
-          'address.street', 'address.city', 'address.zipCode',
-          'contactPerson.firstName', 'contactPerson.lastName',
-          'contactPerson.email', 'contactPerson.phone'
+          'companyInfo.ico', 'companyInfo.dic', 'companyInfo.companyName', 'companyInfo.registryType',
+          'companyInfo.address.street', 'companyInfo.address.city', 'companyInfo.address.zipCode',
+          'companyInfo.contactPerson.firstName', 'companyInfo.contactPerson.lastName',
+          'companyInfo.contactPerson.email', 'companyInfo.contactPerson.phone'
         ],
         completedFields: []
       },
@@ -160,7 +160,7 @@ const isFieldComplete = (value: any, fieldPath: string): boolean => {
   }
   
   if (typeof value === 'object') {
-    // For objects, check if they have meaningful content
+    // For complex objects, check specific field requirements
     if (fieldPath.includes('address')) {
       return value.street && value.city && value.zipCode;
     }

@@ -13,7 +13,7 @@ interface OnboardingSidebarProps {
     description: string;
   }>;
   onStepClick: (stepNumber: number) => void;
-  onboardingData?: OnboardingData;
+  onboardingData: OnboardingData;
 }
 
 const OnboardingSidebar = ({ 
@@ -22,10 +22,7 @@ const OnboardingSidebar = ({
   onStepClick,
   onboardingData 
 }: OnboardingSidebarProps) => {
-  const { stepProgress, overallProgress } = useProgressTracking(
-    onboardingData || {} as OnboardingData, 
-    currentStep
-  );
+  const { stepProgress, overallProgress } = useProgressTracking(onboardingData, currentStep);
 
   const handleStepClick = (stepNumber: number) => {
     if (stepNumber <= currentStep + 1) {

@@ -147,6 +147,7 @@ const OnboardingFlow = () => {
             currentStep={currentStep}
             steps={onboardingSteps}
             onStepClick={handleStepClick}
+            onboardingData={onboardingData}
           />
           
           <div className="flex-1 p-6">

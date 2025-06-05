@@ -11,8 +11,12 @@ export const useContractPersistence = () => {
     setIsLoading(true);
     
     try {
+      console.log('Saving contract data for:', contractId, onboardingData);
+
       // Save contract items (devices/services)
       for (const card of onboardingData.deviceSelection.dynamicCards) {
+        console.log('Saving contract item:', card);
+        
         const { error: itemError } = await supabase
           .from('contract_items')
           .upsert({
@@ -28,10 +32,15 @@ export const useContractPersistence = () => {
             custom_value: (card as any).customValue || null
           });
 
-        if (itemError) throw itemError;
+        if (itemError) {
+          console.error('Error saving contract item:', itemError);
+          throw itemError;
+        }
 
         // Save addons for this item
         if (card.addons && card.addons.length > 0) {
+          console.log('Saving addons for item:', card.id, card.addons);
+          
           // First, get the contract_item_id
           const { data: contractItem } = await supabase
             .from('contract_items')
@@ -56,7 +65,10 @@ export const useContractPersistence = () => {
                   is_per_device: addon.isPerDevice
                 });
 
-              if (addonError) throw addonError;
+              if (addonError) {
+                console.error('Error saving addon:', addonError);
+                throw addonError;
+              }
             }
           }
         }
@@ -64,6 +76,8 @@ export const useContractPersistence = () => {
 
       // Save calculation results if they exist
       if (onboardingData.fees.calculatorResults) {
+        console.log('Saving calculation results:', onboardingData.fees.calculatorResults);
+        
         const { error: calcError } = await supabase
           .from('contract_calculations')
           .upsert({
@@ -81,14 +95,18 @@ export const useContractPersistence = () => {
             calculation_data: JSON.parse(JSON.stringify(onboardingData.fees.calculatorResults))
           });
 
-        if (calcError) throw calcError;
+        if (calcError) {
+          console.error('Error saving calculations:', calcError);
+          throw calcError;
+        }
       }
 
-      toast.success('Údaje úspešne uložené do databázy');
+      console.log('Contract data saved successfully');
       return { success: true };
 
     } catch (error) {
       console.error('Error saving contract data:', error);
+      // Only show error toast, not success toast
       toast.error('Chyba pri ukladaní údajov');
       return { success: false, error };
     } finally {
@@ -100,6 +118,8 @@ export const useContractPersistence = () => {
     setIsLoading(true);
     
     try {
+      console.log('Loading contract data for:', contractId);
+      
       // Load contract items
       const { data: items, error: itemsError } = await supabase
         .from('contract_items')
@@ -109,7 +129,10 @@ export const useContractPersistence = () => {
         `)
         .eq('contract_id', contractId);
 
-      if (itemsError) throw itemsError;
+      if (itemsError) {
+        console.error('Error loading contract items:', itemsError);
+        throw itemsError;
+      }
 
       // Load calculation results
       const { data: calculations, error: calcError } = await supabase
@@ -120,8 +143,13 @@ export const useContractPersistence = () => {
         .limit(1)
         .maybeSingle();
 
-      if (calcError) throw calcError;
+      if (calcError) {
+        console.error('Error loading calculations:', calcError);
+        throw calcError;
+      }
 
+      console.log('Contract data loaded successfully:', { items, calculations });
+      
       return { 
         success: true, 
         items: items || [], 

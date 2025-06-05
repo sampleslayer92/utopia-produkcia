@@ -19,9 +19,7 @@ export const useOnboardingNavigation = (
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
-      toast.success("Krok uložený", {
-        description: `Postupujete na krok: ${onboardingSteps[currentStep + 1].title}`
-      });
+      // Removed toast notification for each step
     }
   };
 
@@ -49,16 +47,16 @@ export const useOnboardingNavigation = (
       };
       
       localStorage.setItem('contract_data', JSON.stringify(contractData));
-      localStorage.setItem('utopia_user_role', 'merchant');
+      localStorage.setItem('utopia_user_role', 'admin');
       
       // Clear onboarding data
       clearData();
       
-      // Navigate to merchant dashboard
-      navigate('/merchant');
+      // Navigate to admin dashboard instead of merchant
+      navigate('/admin');
       
       toast.success('Registrácia dokončená!', {
-        description: `Číslo zmluvy: ${result.contractNumber}. Presmerováva sa na dashboard...`
+        description: `Číslo zmluvy: ${result.contractNumber}. Presmerováva sa na admin dashboard...`
       });
     }
   };
