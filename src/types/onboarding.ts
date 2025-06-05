@@ -94,6 +94,9 @@ export interface Addon {
   customQuantity?: number;
 }
 
+// Export AddonCard as alias for Addon
+export type AddonCard = Addon;
+
 export interface DeviceCard {
   id: string;
   type: 'device' | 'service';
@@ -104,7 +107,13 @@ export interface DeviceCard {
   monthlyFee: number;
   companyCost: number;
   addons: Addon[];
+  image?: string;
+  specifications?: string[];
+  simCards?: number;
 }
+
+// Export ServiceCard as alias for DeviceCard for backward compatibility
+export type ServiceCard = DeviceCard;
 
 // Add DynamicCard as alias for DeviceCard for backward compatibility
 export type DynamicCard = DeviceCard;
@@ -182,9 +191,20 @@ export interface Consents {
   signatureUrl?: string;
 }
 
+// Export ItemBreakdown interface for fee calculations
+export interface ItemBreakdown {
+  name: string;
+  count: number;
+  monthlyFee: number;
+  companyCost: number;
+  totalCustomerPayment: number;
+  totalCompanyCost: number;
+}
+
 export interface OnboardingData {
   contractId?: string;
   contractNumber?: string;
+  currentStep?: number;
   contactInfo: ContactInfo;
   companyInfo: CompanyInfo;
   businessLocations: BusinessLocation[];

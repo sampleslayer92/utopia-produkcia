@@ -4,7 +4,7 @@ import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
 
 const initialData: OnboardingData = {
   contactInfo: {
-    salutation: '',
+    salutation: undefined,
     firstName: '',
     lastName: '',
     email: '',
@@ -19,7 +19,7 @@ const initialData: OnboardingData = {
     ico: '',
     dic: '',
     companyName: '',
-    registryType: '',
+    registryType: 'Živnosť',
     isVatPayer: false,
     vatNumber: '',
     court: '',
