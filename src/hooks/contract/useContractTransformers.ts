@@ -271,9 +271,6 @@ export const transformContractData = (
       note: deviceSelection?.note || ''
     },
     
-    // Add contractItems for easy access in admin components
-    contractItems: finalDynamicCards,
-    
     fees: {
       regulatedCards: deviceSelection?.mif_regulated_cards || 0.90,
       unregulatedCards: deviceSelection?.mif_unregulated_cards || 0.90,
