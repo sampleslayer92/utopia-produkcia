@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -135,20 +136,18 @@ export const useEnhancedContractsData = (filters?: {
 
       // Apply server-side filters
       if (filters?.status && filters.status !== 'all') {
-        // Map UI status values to valid database status values
+        // Map UI status values to database status values
         const statusMapping: { [key: string]: string } = {
           'draft': 'draft',
           'submitted': 'submitted', 
-          'opened': 'submitted', 
-          'viewed': 'submitted',
+          'opened': 'submitted', // Map to existing status
+          'viewed': 'submitted',  // Map to existing status
           'approved': 'approved',
           'rejected': 'rejected'
         };
         
-        const dbStatus = statusMapping[filters.status];
-        if (dbStatus) {
-          query = query.eq('status', dbStatus);
-        }
+        const dbStatus = statusMapping[filters.status] || filters.status;
+        query = query.eq('status', dbStatus);
       }
 
       if (filters?.contractType && filters.contractType !== 'all') {
