@@ -1,7 +1,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Search, Loader2, Building } from "lucide-react";
 import { toast } from "sonner";
 
 interface ORSRSearchProps {
@@ -9,41 +10,76 @@ interface ORSRSearchProps {
   onDataFound: (data: any) => void;
 }
 
+interface SlovenskoDigitalCompany {
+  cin: string;
+  name: string;
+  formatted_name?: string;
+  tin?: string;
+  vat_number?: string;
+  street?: string;
+  building_number?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
+  registration_court?: string;
+  legal_form?: string;
+  section?: string;
+  file_number?: string;
+}
+
 const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [searchName, setSearchName] = useState("");
+  const [isSearchingByName, setIsSearchingByName] = useState(false);
 
-  const searchORSR = async () => {
+  const mapApiResponse = (company: SlovenskoDigitalCompany) => {
+    // Map the API response to our expected format
+    return {
+      companyName: company.formatted_name || company.name,
+      dic: company.tin || `SK${company.cin}`,
+      court: company.registration_court || "Okresný súd Bratislava I",
+      section: company.section || company.legal_form || "Sro",
+      insertNumber: company.file_number || `${company.cin.slice(-4)}/B`,
+      address: {
+        street: `${company.street || ""} ${company.building_number || ""}`.trim() || "Neznáma ulica",
+        city: company.city || "Neznáme mesto",
+        zipCode: company.postal_code || "00000"
+      }
+    };
+  };
+
+  const searchByICO = async () => {
     if (!ico || ico.length < 8) {
-      toast.error("Zadajte platné IČO");
+      toast.error("Zadajte platné IČO (8 čísel)");
       return;
     }
 
     setIsLoading(true);
     try {
-      // Mock ORSR response for now - in real implementation this would call actual ORSR API
-      // Using a timeout to simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Mock company data based on IČO
-      const mockData = {
-        companyName: ico === "12345678" ? "UTOPIA Technologies s.r.o." : "Test Company s.r.o.",
-        dic: `SK${ico}`,
-        court: "Okresný súd Bratislava I",
-        section: "Sro",
-        insertNumber: `${ico.slice(-4)}/B`,
-        address: {
-          street: "Hlavná ulica 123",
-          city: "Bratislava",
-          zipCode: "81101"
-        }
-      };
+      const response = await fetch(
+        `https://datahub.ekosystem.slovensko.digital/api/datahub/corporate_bodies/search?q=cin:${ico}`
+      );
 
-      onDataFound(mockData);
-      toast.success("Údaje zo slovenského obchodného registra boli načítané", {
-        description: `Spoločnosť: ${mockData.companyName}`
-      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        const mappedData = mapApiResponse(data[0]);
+        onDataFound(mappedData);
+        toast.success("Údaje zo slovenského obchodného registra boli načítané", {
+          description: `Spoločnosť: ${mappedData.companyName}`
+        });
+      } else {
+        toast.error("Spoločnosť s týmto IČO nebola nájdená", {
+          description: "Skúste zadať údaje manuálne"
+        });
+      }
     } catch (error) {
-      toast.error("Chyba pri vyhľadávaní v ORSR", {
+      console.error("Error searching by ICO:", error);
+      toast.error("Chyba pri vyhľadávaní v obchodnom registri", {
         description: "Skúste to prosím znovu alebo zadajte údaje manuálne"
       });
     } finally {
@@ -51,22 +87,109 @@ const ORSRSearch = ({ ico, onDataFound }: ORSRSearchProps) => {
     }
   };
 
+  const searchByName = async () => {
+    if (!searchName || searchName.trim().length < 3) {
+      toast.error("Zadajte aspoň 3 znaky názvu spoločnosti");
+      return;
+    }
+
+    setIsSearchingByName(true);
+    try {
+      const response = await fetch(
+        `https://datahub.ekosystem.slovensko.digital/api/datahub/corporate_bodies/search?q=name:${encodeURIComponent(searchName.trim())}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        const mappedData = mapApiResponse(data[0]);
+        onDataFound(mappedData);
+        toast.success("Údaje zo slovenského obchodného registra boli načítané", {
+          description: `Spoločnosť: ${mappedData.companyName}`
+        });
+        setSearchName(""); // Clear search after successful find
+      } else {
+        toast.error("Spoločnosť s týmto názvom nebola nájdená", {
+          description: "Skúste iný názov alebo zadajte údaje manuálne"
+        });
+      }
+    } catch (error) {
+      console.error("Error searching by name:", error);
+      toast.error("Chyba pri vyhľadávaní v obchodnom registri", {
+        description: "Skúste to prosím znovu alebo zadajte údaje manuálne"
+      });
+    } finally {
+      setIsSearchingByName(false);
+    }
+  };
+
+  const handleNameKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      searchByName();
+    }
+  };
+
   return (
-    <Button
-      type="button"
-      onClick={searchORSR}
-      disabled={isLoading || !ico}
-      size="sm"
-      variant="outline"
-      className="flex items-center gap-2"
-    >
-      {isLoading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        <Search className="h-4 w-4" />
-      )}
-      {isLoading ? "Vyhľadávam..." : "Vyhľadať v ORSR"}
-    </Button>
+    <div className="space-y-3">
+      {/* Search by ICO */}
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          onClick={searchByICO}
+          disabled={isLoading || !ico}
+          size="sm"
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Search className="h-4 w-4" />
+          )}
+          {isLoading ? "Vyhľadávam..." : "Vyhľadať podľa IČO"}
+        </Button>
+      </div>
+
+      {/* Search by name */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 text-slate-600 text-sm">
+          <Building className="h-4 w-4" />
+          <span>alebo vyhľadajte podľa názvu:</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Zadajte názov spoločnosti..."
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            onKeyPress={handleNameKeyPress}
+            className="text-sm"
+          />
+          <Button
+            type="button"
+            onClick={searchByName}
+            disabled={isSearchingByName || !searchName.trim()}
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-2 whitespace-nowrap"
+          >
+            {isSearchingByName ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
+            {isSearchingByName ? "Hľadám..." : "Vyhľadať"}
+          </Button>
+        </div>
+      </div>
+
+      <p className="text-xs text-slate-500">
+        Dáta sú načítavané z oficiálneho slovenského obchodného registra cez Slovensko.Digital API
+      </p>
+    </div>
   );
 };
 
