@@ -20,11 +20,15 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
 
   // Calculate monthly turnover from all business locations (using both old and new field names for compatibility)
   const monthlyTurnover = useMemo(() => {
-    return data.businessLocations.reduce((sum, location) => {
+    const turnover = data.businessLocations.reduce((sum, location) => {
       // Use new field first, fallback to old field for backward compatibility
-      const turnover = location.monthlyTurnover || location.estimatedTurnover || 0;
-      return sum + turnover;
+      const locationTurnover = location.monthlyTurnover || location.estimatedTurnover || 0;
+      console.log(`Location ${location.name || 'Unnamed'}: ${locationTurnover} EUR`);
+      return sum + locationTurnover;
     }, 0);
+    
+    console.log(`Total monthly turnover calculated: ${turnover} EUR from ${data.businessLocations.length} locations`);
+    return turnover;
   }, [data.businessLocations]);
 
   // Calculate total customer payments from devices and services
@@ -62,6 +66,17 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
     const serviceMargin = totalCustomerPayments - totalCompanyCosts;
     const totalMonthlyProfit = transactionMargin + serviceMargin;
 
+    console.log('Calculations updated:', {
+      monthlyTurnover,
+      effectiveRegulated,
+      effectiveUnregulated,
+      regulatedFee,
+      unregulatedFee,
+      transactionMargin,
+      serviceMargin,
+      totalMonthlyProfit
+    });
+
     return {
       monthlyTurnover,
       totalCustomerPayments,
@@ -75,6 +90,12 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
       totalMonthlyProfit
     };
   }, [monthlyTurnover, totalCustomerPayments, totalCompanyCosts, localRegulatedRate, localUnregulatedRate]);
+
+  // Force re-calculation when business locations change
+  useEffect(() => {
+    console.log('Business locations changed, forcing calculator update');
+    console.log('Current business locations:', data.businessLocations);
+  }, [data.businessLocations]);
 
   // Debounced update to global state
   useEffect(() => {
@@ -137,6 +158,14 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
     setLocalUnregulatedRate(numValue);
   }, []);
 
+  // Show turnover breakdown for transparency
+  const turnoverBreakdown = useMemo(() => {
+    return data.businessLocations.map(location => ({
+      name: location.name || 'Nepomenovaná prevádzka',
+      turnover: location.monthlyTurnover || location.estimatedTurnover || 0
+    })).filter(item => item.turnover > 0);
+  }, [data.businessLocations]);
+
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>
@@ -151,7 +180,7 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Vstupné údaje</h3>
             
-            {/* Monthly Turnover - Read Only */}
+            {/* Monthly Turnover - Read Only with breakdown */}
             <div className="space-y-2">
               <Label className="text-slate-700">Odhadovaný mesačný obrat (EUR)</Label>
               <Input
@@ -160,7 +189,24 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
                 readOnly
                 className="bg-slate-50 border-slate-300 text-slate-600"
               />
-              <p className="text-xs text-slate-500">Predvyplnené z údajov prevádzkární</p>
+              <div className="text-xs text-slate-500">
+                <p>Predvyplnené z údajov prevádzkární</p>
+                {turnoverBreakdown.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    <p className="font-medium">Rozklad:</p>
+                    {turnoverBreakdown.map((item, index) => (
+                      <p key={index} className="ml-2">
+                        • {item.name}: {formatCurrency(item.turnover)}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                {turnoverBreakdown.length === 0 && monthlyTurnover === 0 && (
+                  <p className="text-amber-600 font-medium mt-1">
+                    ⚠️ Žiadny obrat nie je zadaný v prevádzkach (Krok 3)
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Regulated Cards Rate */}
