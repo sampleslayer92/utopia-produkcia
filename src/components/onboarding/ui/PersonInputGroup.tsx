@@ -40,13 +40,13 @@ const PersonInputGroup = ({
   onReset
 }: PersonInputGroupProps) => {
   const phonePrefixes = [
-    { value: '+421', label: '+421', extra: '🇸🇰 Slovensko' },
-    { value: '+420', label: '+420', extra: '🇨🇿 Česko' },
-    { value: '+43', label: '+43', extra: '🇦🇹 Rakúsko' },
-    { value: '+36', label: '+36', extra: '🇭🇺 Maďarsko' },
-    { value: '+48', label: '+48', extra: '🇵🇱 Poľsko' },
-    { value: '+49', label: '+49', extra: '🇩🇪 Nemecko' },
-    { value: '+44', label: '+44', extra: '🇬🇧 Británia' }
+    { value: '+421', label: '🇸🇰', extra: 'Slovensko' },
+    { value: '+420', label: '🇨🇿', extra: 'Česko' },
+    { value: '+43', label: '🇦🇹', extra: 'Rakúsko' },
+    { value: '+36', label: '🇭🇺', extra: 'Maďarsko' },
+    { value: '+48', label: '🇵🇱', extra: 'Poľsko' },
+    { value: '+49', label: '🇩🇪', extra: 'Nemecko' },
+    { value: '+44', label: '🇬🇧', extra: 'Británia' }
   ];
 
   const salutationOptions = [
@@ -157,7 +157,9 @@ const PersonInputGroup = ({
               value={data.phonePrefix || '+421'}
               onValueChange={(value) => onUpdate('phonePrefix', value)}
               options={phonePrefixes}
-              className="w-44"
+              className="w-20"
+              compact={true}
+              showTooltip={true}
             />
           )}
           <div className="flex-1">

@@ -12,6 +12,8 @@ interface OnboardingSelectProps {
   isCompleted?: boolean;
   error?: string;
   className?: string;
+  compact?: boolean;
+  showTooltip?: boolean;
 }
 
 const OnboardingSelect = ({
@@ -22,8 +24,12 @@ const OnboardingSelect = ({
   options,
   isCompleted,
   error,
-  className
+  className,
+  compact = false,
+  showTooltip = false
 }: OnboardingSelectProps) => {
+  const selectedOption = options.find(option => option.value === value);
+
   return (
     <div className="space-y-2">
       {label && (
@@ -33,20 +39,29 @@ const OnboardingSelect = ({
       )}
       <div className="relative">
         <Select value={value} onValueChange={onValueChange}>
-          <SelectTrigger className={`h-12 border-2 transition-all duration-200 ${
-            error
-              ? 'border-red-300 bg-red-50'
-              : 'border-slate-200 bg-white/80 hover:border-slate-300 focus:border-blue-500 focus:shadow-md focus:shadow-blue-500/20'
-          } ${className}`}>
-            <SelectValue placeholder={placeholder} />
+          <SelectTrigger 
+            className={`h-12 border-2 transition-all duration-200 ${
+              error
+                ? 'border-red-300 bg-red-50'
+                : 'border-slate-200 bg-white/80 hover:border-slate-300 focus:border-blue-500 focus:shadow-md focus:shadow-blue-500/20'
+            } ${compact ? 'text-center justify-center' : ''} ${className}`}
+            title={showTooltip && selectedOption?.extra ? selectedOption.extra : undefined}
+          >
+            <SelectValue 
+              placeholder={placeholder} 
+              className={compact ? 'text-center' : ''}
+            />
           </SelectTrigger>
-          <SelectContent className="bg-white border-slate-200 shadow-xl">
+          <SelectContent className="bg-white border-slate-200 shadow-xl z-50">
             {options.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 <span className="flex items-center gap-2">
-                  <span>{option.label}</span>
-                  {option.extra && (
+                  <span className={compact ? 'text-lg' : ''}>{option.label}</span>
+                  {option.extra && !compact && (
                     <span className="text-sm text-slate-500">{option.extra}</span>
+                  )}
+                  {option.extra && compact && (
+                    <span className="text-sm text-slate-600">{option.extra}</span>
                   )}
                 </span>
               </SelectItem>
