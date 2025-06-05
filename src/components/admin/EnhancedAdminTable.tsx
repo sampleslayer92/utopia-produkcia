@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -22,10 +23,13 @@ import {
 import { Building, Calendar, Search, Filter, Plus, Download } from "lucide-react";
 import { useEnhancedContractsData, useContractTypeOptions, useSalesPersonOptions, EnhancedContractData } from "@/hooks/useEnhancedContractsData";
 import { useContractsRealtime } from "@/hooks/useContractsRealtime";
+import { useBulkContractActions } from "@/hooks/useBulkContractActions";
 import { format } from "date-fns";
 import { sk } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import ContractActionsDropdown from "./ContractActionsDropdown";
+import TableColumnFilter from "./table/TableColumnFilter";
+import BulkActionsPanel from "./table/BulkActionsPanel";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -68,6 +72,14 @@ interface FilterState {
   search: string;
 }
 
+interface ColumnFilters {
+  status?: string;
+  contractType?: string;
+  clientName?: string;
+  salesPerson?: string;
+  createdAt?: { from: string; to: string };
+}
+
 const EnhancedAdminTable = () => {
   // Enable real-time updates
   useContractsRealtime();
@@ -82,12 +94,38 @@ const EnhancedAdminTable = () => {
     search: '',
   });
 
+  // Column filters state
+  const [columnFilters, setColumnFilters] = useState<ColumnFilters>({});
+
+  // Selection state
+  const [selectedContracts, setSelectedContracts] = useState<Set<string>>(new Set());
+
   const { data: contracts, isLoading, error } = useEnhancedContractsData(filters);
   const { data: contractTypes } = useContractTypeOptions();
   const { data: salesPersons } = useSalesPersonOptions();
+  const { bulkUpdate, bulkDelete, isUpdating, isDeleting } = useBulkContractActions();
+
+  // Apply column filters to contracts
+  const filteredContracts = contracts?.filter(contract => {
+    if (columnFilters.status && contract.status !== columnFilters.status) return false;
+    if (columnFilters.contractType && contract.contractType !== columnFilters.contractType) return false;
+    if (columnFilters.clientName && !contract.clientName.toLowerCase().includes(columnFilters.clientName.toLowerCase())) return false;
+    if (columnFilters.salesPerson && contract.salesPerson !== columnFilters.salesPerson) return false;
+    if (columnFilters.createdAt) {
+      const contractDate = new Date(contract.created_at).toISOString().split('T')[0];
+      const { from, to } = columnFilters.createdAt;
+      if (from && contractDate < from) return false;
+      if (to && contractDate > to) return false;
+    }
+    return true;
+  });
 
   const updateFilter = (key: keyof FilterState, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const updateColumnFilter = (column: keyof ColumnFilters, value: any) => {
+    setColumnFilters(prev => ({ ...prev, [column]: value }));
   };
 
   const clearFilters = () => {
@@ -99,7 +137,67 @@ const EnhancedAdminTable = () => {
       salesPerson: 'all',
       search: '',
     });
+    setColumnFilters({});
   };
+
+  // Selection handlers
+  const toggleSelectAll = () => {
+    if (selectedContracts.size === filteredContracts?.length) {
+      setSelectedContracts(new Set());
+    } else {
+      setSelectedContracts(new Set(filteredContracts?.map(c => c.id) || []));
+    }
+  };
+
+  const toggleSelectContract = (contractId: string) => {
+    const newSelection = new Set(selectedContracts);
+    if (newSelection.has(contractId)) {
+      newSelection.delete(contractId);
+    } else {
+      newSelection.add(contractId);
+    }
+    setSelectedContracts(newSelection);
+  };
+
+  const clearSelection = () => {
+    setSelectedContracts(new Set());
+  };
+
+  // Bulk actions
+  const handleBulkUpdate = (field: string, value: string) => {
+    const contractIds = Array.from(selectedContracts);
+    bulkUpdate({ contractIds, field, value });
+    clearSelection();
+  };
+
+  const handleBulkDelete = () => {
+    const contractIds = Array.from(selectedContracts);
+    bulkDelete(contractIds);
+    clearSelection();
+  };
+
+  // Check if column has active filter
+  const hasActiveColumnFilter = (column: keyof ColumnFilters) => {
+    const filter = columnFilters[column];
+    if (!filter) return false;
+    if (typeof filter === 'string') return filter.length > 0;
+    if (typeof filter === 'object' && 'from' in filter) {
+      return filter.from.length > 0 || filter.to.length > 0;
+    }
+    return false;
+  };
+
+  const statusOptions = [
+    { value: 'draft', label: 'Vygenerovaná' },
+    { value: 'submitted', label: 'Odoslaná' },
+    { value: 'opened', label: 'Otvorená emailom' },
+    { value: 'viewed', label: 'Zobrazená' },
+    { value: 'approved', label: 'Podpísaná' },
+    { value: 'rejected', label: 'Zamietnutá' },
+  ];
+
+  const contractTypeOptions = contractTypes?.map(type => ({ value: type, label: type })) || [];
+  const salesPersonOptions = salesPersons?.map(person => ({ value: person, label: person })) || [];
 
   if (isLoading) {
     return (
@@ -167,7 +265,7 @@ const EnhancedAdminTable = () => {
           </Button>
         </div>
         <div className="text-sm text-slate-600">
-          Celkom zmlúv: {contracts?.length || 0}
+          Celkom zmlúv: {filteredContracts?.length || 0}
         </div>
       </div>
 
@@ -261,7 +359,7 @@ const EnhancedAdminTable = () => {
             </div>
           </div>
 
-          {contracts?.length === 0 ? (
+          {filteredContracts?.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-slate-500">
               <Building className="h-16 w-16 mb-4 text-slate-300" />
               <h3 className="text-lg font-medium mb-2">Žiadne výsledky</h3>
@@ -274,23 +372,94 @@ const EnhancedAdminTable = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-slate-50">
+                    <TableHead className="w-12">
+                      <Checkbox
+                        checked={selectedContracts.size === filteredContracts?.length && filteredContracts.length > 0}
+                        onCheckedChange={toggleSelectAll}
+                      />
+                    </TableHead>
                     <TableHead className="font-medium text-slate-700">ID zmluvy</TableHead>
-                    <TableHead className="font-medium text-slate-700">Status</TableHead>
+                    <TableHead className="font-medium text-slate-700">
+                      <div className="flex items-center space-x-2">
+                        <span>Status</span>
+                        <TableColumnFilter
+                          type="select"
+                          options={statusOptions}
+                          value={columnFilters.status}
+                          onValueChange={(value) => updateColumnFilter('status', value)}
+                          placeholder="Filtrovať status"
+                          hasActiveFilter={hasActiveColumnFilter('status')}
+                        />
+                      </div>
+                    </TableHead>
                     <TableHead className="font-medium text-slate-700">Vyplnené kroky</TableHead>
-                    <TableHead className="font-medium text-slate-700">Dátum vytvorenia</TableHead>
+                    <TableHead className="font-medium text-slate-700">
+                      <div className="flex items-center space-x-2">
+                        <span>Dátum vytvorenia</span>
+                        <TableColumnFilter
+                          type="date-range"
+                          value={columnFilters.createdAt}
+                          onValueChange={(value) => updateColumnFilter('createdAt', value)}
+                          hasActiveFilter={hasActiveColumnFilter('createdAt')}
+                        />
+                      </div>
+                    </TableHead>
                     <TableHead className="font-medium text-slate-700 text-right">Hodnota (€)</TableHead>
-                    <TableHead className="font-medium text-slate-700">Klient</TableHead>
-                    <TableHead className="font-medium text-slate-700">Obchodník</TableHead>
-                    <TableHead className="font-medium text-slate-700">Typ zmluvy</TableHead>
+                    <TableHead className="font-medium text-slate-700">
+                      <div className="flex items-center space-x-2">
+                        <span>Klient</span>
+                        <TableColumnFilter
+                          type="text"
+                          value={columnFilters.clientName}
+                          onValueChange={(value) => updateColumnFilter('clientName', value)}
+                          placeholder="Filtrovať klienta"
+                          hasActiveFilter={hasActiveColumnFilter('clientName')}
+                        />
+                      </div>
+                    </TableHead>
+                    <TableHead className="font-medium text-slate-700">
+                      <div className="flex items-center space-x-2">
+                        <span>Obchodník</span>
+                        <TableColumnFilter
+                          type="select"
+                          options={salesPersonOptions}
+                          value={columnFilters.salesPerson}
+                          onValueChange={(value) => updateColumnFilter('salesPerson', value)}
+                          placeholder="Filtrovať obchodníka"
+                          hasActiveFilter={hasActiveColumnFilter('salesPerson')}
+                        />
+                      </div>
+                    </TableHead>
+                    <TableHead className="font-medium text-slate-700">
+                      <div className="flex items-center space-x-2">
+                        <span>Typ zmluvy</span>
+                        <TableColumnFilter
+                          type="select"
+                          options={contractTypeOptions}
+                          value={columnFilters.contractType}
+                          onValueChange={(value) => updateColumnFilter('contractType', value)}
+                          placeholder="Filtrovať typ"
+                          hasActiveFilter={hasActiveColumnFilter('contractType')}
+                        />
+                      </div>
+                    </TableHead>
                     <TableHead className="font-medium text-slate-700 w-16">Akcie</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {contracts?.map((contract: EnhancedContractData) => (
+                  {filteredContracts?.map((contract: EnhancedContractData) => (
                     <TableRow 
                       key={contract.id} 
-                      className="hover:bg-slate-50/50 transition-colors"
+                      className={`hover:bg-slate-50/50 transition-colors ${
+                        selectedContracts.has(contract.id) ? 'bg-blue-50/50' : ''
+                      }`}
                     >
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedContracts.has(contract.id)}
+                          onCheckedChange={() => toggleSelectContract(contract.id)}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium text-slate-900">
                         #{contract.contract_number}
                       </TableCell>
@@ -344,6 +513,15 @@ const EnhancedAdminTable = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Bulk Actions Panel */}
+      <BulkActionsPanel
+        selectedCount={selectedContracts.size}
+        onClearSelection={clearSelection}
+        onBulkUpdate={handleBulkUpdate}
+        onBulkDelete={handleBulkDelete}
+        isLoading={isUpdating || isDeleting}
+      />
     </div>
   );
 };

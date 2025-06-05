@@ -573,9 +573,11 @@ export type Database = {
       contracts: {
         Row: {
           contract_number: number
+          contract_type: string | null
           created_at: string
           id: string
           notes: string | null
+          salesperson: string | null
           signature_ip: string | null
           signed_at: string | null
           signed_by: string | null
@@ -585,9 +587,11 @@ export type Database = {
         }
         Insert: {
           contract_number?: number
+          contract_type?: string | null
           created_at?: string
           id?: string
           notes?: string | null
+          salesperson?: string | null
           signature_ip?: string | null
           signed_at?: string | null
           signed_by?: string | null
@@ -597,9 +601,11 @@ export type Database = {
         }
         Update: {
           contract_number?: number
+          contract_type?: string | null
           created_at?: string
           id?: string
           notes?: string | null
+          salesperson?: string | null
           signature_ip?: string | null
           signed_at?: string | null
           signed_by?: string | null
