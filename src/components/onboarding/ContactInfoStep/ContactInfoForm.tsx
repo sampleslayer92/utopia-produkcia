@@ -2,9 +2,9 @@
 import OnboardingTextarea from "../ui/OnboardingTextarea";
 import OnboardingSection from "../ui/OnboardingSection";
 import OnboardingSelect from "../ui/OnboardingSelect";
-import ContactPersonForm from "../ui/ContactPersonForm";
+import PersonInputGroup from "../ui/PersonInputGroup";
+import { getPersonDataFromContactInfo } from "../utils/autoFillUtils";
 import { OnboardingData } from "@/types/onboarding";
-import { ContactPerson } from "@/types/contactPerson";
 import { Building } from "lucide-react";
 
 interface ContactInfoFormProps {
@@ -27,31 +27,15 @@ const ContactInfoForm = ({
     { value: 'Akciová spoločnosť', label: 'Akciová spoločnosť' }
   ];
 
-  // Convert contactInfo to ContactPerson format
-  const contactPersonData: ContactPerson = {
-    firstName: data.contactInfo.firstName,
-    lastName: data.contactInfo.lastName,
-    email: data.contactInfo.email,
-    phoneCountryCode: data.contactInfo.phonePrefix,
-    phoneNumber: data.contactInfo.phone
-  };
-
-  const handleContactPersonChange = (contactPerson: ContactPerson) => {
-    onPersonDataUpdate('firstName', contactPerson.firstName);
-    onPersonDataUpdate('lastName', contactPerson.lastName);
-    onPersonDataUpdate('email', contactPerson.email);
-    onPersonDataUpdate('phonePrefix', contactPerson.phoneCountryCode);
-    onPersonDataUpdate('phone', contactPerson.phoneNumber);
-  };
-
   return (
     <div className="col-span-1 md:col-span-2 p-6 md:p-8">
       <OnboardingSection>
         {/* Personal Information using unified component */}
-        <ContactPersonForm
-          initialValues={contactPersonData}
-          onChange={handleContactPersonChange}
+        <PersonInputGroup
+          data={getPersonDataFromContactInfo(data.contactInfo)}
+          onUpdate={onPersonDataUpdate}
           completedFields={completedFields}
+          forceShowPhonePrefix={true}
         />
 
         {/* Company Type Selection */}

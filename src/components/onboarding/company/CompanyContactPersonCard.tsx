@@ -1,7 +1,6 @@
 
 import { OnboardingData } from "@/types/onboarding";
-import ContactPersonForm from "../ui/ContactPersonForm";
-import { ContactPerson } from "@/types/contactPerson";
+import OnboardingInput from "../ui/OnboardingInput";
 import { Checkbox } from "@/components/ui/checkbox";
 import { User } from "lucide-react";
 
@@ -11,22 +10,6 @@ interface CompanyContactPersonCardProps {
 }
 
 const CompanyContactPersonCard = ({ data, updateCompanyInfo }: CompanyContactPersonCardProps) => {
-  // Convert company contact person to ContactPerson format
-  const contactPersonData: ContactPerson = {
-    firstName: data.companyInfo.contactPerson.firstName,
-    lastName: data.companyInfo.contactPerson.lastName,
-    email: data.companyInfo.contactPerson.email,
-    phoneCountryCode: '+421', // Default prefix for company contact
-    phoneNumber: data.companyInfo.contactPerson.phone
-  };
-
-  const handleContactPersonChange = (contactPerson: ContactPerson) => {
-    updateCompanyInfo('contactPerson.firstName', contactPerson.firstName);
-    updateCompanyInfo('contactPerson.lastName', contactPerson.lastName);
-    updateCompanyInfo('contactPerson.email', contactPerson.email);
-    updateCompanyInfo('contactPerson.phone', contactPerson.phoneNumber);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-4">
@@ -34,10 +17,38 @@ const CompanyContactPersonCard = ({ data, updateCompanyInfo }: CompanyContactPer
         <h3 className="text-lg font-medium text-slate-900">Kontaktná osoba</h3>
       </div>
 
-      <ContactPersonForm
-        initialValues={contactPersonData}
-        onChange={handleContactPersonChange}
-      />
+      <div className="grid md:grid-cols-2 gap-6">
+        <OnboardingInput
+          label="Meno *"
+          value={data.companyInfo.contactPerson.firstName}
+          onChange={(e) => updateCompanyInfo('contactPerson.firstName', e.target.value)}
+          placeholder="Ján"
+        />
+        
+        <OnboardingInput
+          label="Priezvisko *"
+          value={data.companyInfo.contactPerson.lastName}
+          onChange={(e) => updateCompanyInfo('contactPerson.lastName', e.target.value)}
+          placeholder="Novák"
+        />
+      </div>
+      
+      <div className="grid md:grid-cols-2 gap-6">
+        <OnboardingInput
+          label="Email *"
+          type="email"
+          value={data.companyInfo.contactPerson.email}
+          onChange={(e) => updateCompanyInfo('contactPerson.email', e.target.value)}
+          placeholder="jan.novak@firma.sk"
+        />
+        
+        <OnboardingInput
+          label="Telefón *"
+          value={data.companyInfo.contactPerson.phone}
+          onChange={(e) => updateCompanyInfo('contactPerson.phone', e.target.value)}
+          placeholder="+421 123 456 789"
+        />
+      </div>
       
       <div className="flex items-center space-x-2">
         <Checkbox

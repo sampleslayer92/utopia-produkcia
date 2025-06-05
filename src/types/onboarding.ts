@@ -1,4 +1,3 @@
-
 export interface ContactInfo {
   salutation: 'Pan' | 'Pani' | '';
   firstName: string;
@@ -38,7 +37,6 @@ export interface CompanyInfo {
     lastName: string;
     email: string;
     phone: string;
-    phoneCountryCode?: string; // Added for consistency with ContactPersonForm
     isTechnicalPerson: boolean;
   };
 }

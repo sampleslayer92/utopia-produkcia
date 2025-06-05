@@ -1,18 +1,19 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Store, MapPin, Clock } from "lucide-react";
+import { Plus, Trash2, Store, MapPin, Phone, CreditCard, Building, Clock } from "lucide-react";
 import { OnboardingData, BusinessLocation, BankAccount, OpeningHours } from "@/types/onboarding";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
+import OnboardingTextarea from "./ui/OnboardingTextarea";
 import OnboardingSection from "./ui/OnboardingSection";
+import PersonInputGroup from "./ui/PersonInputGroup";
 import BankAccountsSection from "./BusinessLocationStep/BankAccountsSection";
 import BusinessDetailsSection from "./BusinessLocationStep/BusinessDetailsSection";
-import ContactPersonSection from "./BusinessLocationStep/ContactPersonSection";
 import OpeningHoursSummary from "./BusinessLocationStep/OpeningHoursSummary";
 import OpeningHoursModal from "./BusinessLocationStep/OpeningHoursModal";
 import { useState, useEffect } from "react";
+import { getPersonDataFromContactInfo, formatPhoneForDisplay } from "./utils/autoFillUtils";
 
 interface BusinessLocationStepProps {
   data: OnboardingData;
@@ -165,9 +166,61 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     updateBusinessLocation(locationId, 'openingHours', hoursText || 'Nie sú zadané');
   };
 
-  // Handle contact person update
-  const updateContactPerson = (locationId: string, field: string, value: string) => {
-    updateBusinessLocation(locationId, `contactPerson.${field}`, value);
+  const updateContactPersonData = (locationId: string, field: string, value: string) => {
+    const fieldMap: { [key: string]: string } = {
+      firstName: 'name',
+      lastName: 'name',
+      email: 'email',
+      phone: 'phone',
+      phonePrefix: 'phonePrefix'
+    };
+
+    if (field === 'firstName' || field === 'lastName') {
+      // Handle name composition for firstName/lastName
+      const location = data.businessLocations.find(l => l.id === locationId);
+      if (location) {
+        const currentName = location.contactPerson.name;
+        const nameParts = currentName.split(' ');
+        
+        if (field === 'firstName') {
+          const lastName = nameParts.slice(1).join(' ') || '';
+          updateBusinessLocation(locationId, 'contactPerson.name', `${value} ${lastName}`.trim());
+        } else {
+          const firstName = nameParts[0] || '';
+          updateBusinessLocation(locationId, 'contactPerson.name', `${firstName} ${value}`.trim());
+        }
+      }
+    } else if (fieldMap[field]) {
+      updateBusinessLocation(locationId, `contactPerson.${fieldMap[field]}`, value);
+    }
+  };
+
+  const getContactPersonDisplayData = (location: BusinessLocation) => {
+    const nameParts = location.contactPerson.name.split(' ');
+    return {
+      firstName: nameParts[0] || '',
+      lastName: nameParts.slice(1).join(' ') || '',
+      email: location.contactPerson.email,
+      phone: location.contactPerson.phone,
+      phonePrefix: data.contactInfo.phonePrefix || '+421',
+      salutation: ''
+    };
+  };
+
+  const isContactPersonAutoFilled = (location: BusinessLocation) => {
+    return hasBusinessContactRole && 
+           location.contactPerson.name === `${data.contactInfo.firstName} ${data.contactInfo.lastName}` &&
+           location.contactPerson.email === data.contactInfo.email;
+  };
+
+  const resetContactPersonToOriginal = (locationId: string) => {
+    if (hasBusinessContactRole) {
+      updateBusinessLocation(locationId, 'contactPerson', {
+        name: `${data.contactInfo.firstName} ${data.contactInfo.lastName}`,
+        email: data.contactInfo.email,
+        phone: data.contactInfo.phone
+      });
+    }
   };
 
   const toggleLocation = (id: string) => {
@@ -456,9 +509,21 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
 
                           {/* Contact Person Section */}
                           <div className="border-t border-slate-100 pt-6">
-                            <ContactPersonSection
-                              contactPerson={location.contactPerson}
-                              onUpdate={(field, value) => updateContactPerson(location.id, field, value)}
+                            <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
+                              <Phone className="h-4 w-4" />
+                              Kontaktná osoba pre prevádzku
+                            </h4>
+                            
+                            <PersonInputGroup
+                              data={getContactPersonDisplayData(location)}
+                              onUpdate={(field, value) => updateContactPersonData(location.id, field, value)}
+                              showSalutation={false}
+                              forceShowPhonePrefix={true}
+                              emailValidation={false}
+                              isAutoFilled={isContactPersonAutoFilled(location)}
+                              autoFilledFrom={hasBusinessContactRole ? "Kontaktné údaje (Krok 1)" : undefined}
+                              allowReset={isContactPersonAutoFilled(location)}
+                              onReset={() => resetContactPersonToOriginal(location.id)}
                             />
                           </div>
                         </div>
