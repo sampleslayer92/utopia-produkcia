@@ -27,7 +27,7 @@ const OnboardingNavigation = ({
   
   return (
     <div className="border-t border-slate-200 bg-white/80 backdrop-blur-sm p-6 sticky bottom-0">
-      <div className="max-w-4xl mx-auto flex justify-between">
+      <div className="max-w-5xl mx-auto flex justify-between">
         <Button
           variant="outline"
           onClick={onPrevStep}

@@ -36,7 +36,6 @@ const OnboardingFlow = () => {
     isSubmitting
   } = useOnboardingNavigation(currentStep, setCurrentStep, onboardingData, clearData, markStepAsVisited);
 
-  // Memoized validation for basic contact info
   const isBasicInfoComplete = useMemo(() => {
     const { contactInfo } = onboardingData;
     const isEmailValid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -55,7 +54,6 @@ const OnboardingFlow = () => {
     onboardingData.contactInfo.phone
   ]);
 
-  // Auto-save functionality
   const handleAutoSave = useCallback(async (data: typeof onboardingData) => {
     if (!data.contractId) return;
     
@@ -77,7 +75,6 @@ const OnboardingFlow = () => {
     onError: () => setAutoSaveStatus('error')
   });
 
-  // Optimized contract creation effect - NO MORE isLoading!
   useEffect(() => {
     if (!isBasicInfoComplete || onboardingData.contractId || isCreating || contractCreationAttempted) {
       return;
@@ -104,7 +101,6 @@ const OnboardingFlow = () => {
       }
     };
 
-    // Use a shorter delay and debounce to prevent multiple calls
     const timeoutId = setTimeout(createContractWithDelay, 500);
     return () => clearTimeout(timeoutId);
   }, [
@@ -116,13 +112,11 @@ const OnboardingFlow = () => {
     updateData
   ]);
 
-  // Update current step in data when it changes
   const handleUpdateData = useCallback((data: any) => {
     updateData({ ...data, currentStep });
   }, [updateData, currentStep]);
 
   const handleContractDeleted = useCallback(() => {
-    // Reset the onboarding state completely
     clearData();
     setCurrentStep(0);
     setAutoSaveStatus('idle');
@@ -135,7 +129,6 @@ const OnboardingFlow = () => {
     setContractCreationAttempted(false);
   }, []);
 
-  // NO MORE FULL-SCREEN LOADING - smooth UI always!
   return (
     <OnboardingErrorBoundary onReset={handleErrorReset}>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -155,7 +148,7 @@ const OnboardingFlow = () => {
           />
           
           <div className="flex-1 p-6">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-5xl mx-auto">
               {/* Progress and Auto-save indicator */}
               <div className="flex justify-between items-center mb-4">
                 <div className="text-sm text-slate-600">
