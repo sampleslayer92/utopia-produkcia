@@ -11,6 +11,7 @@ import PartnerDashboard from "./pages/PartnerDashboard";
 import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
 import ContractDetail from "./components/admin/ContractDetail";
+import StyleGuide from "./pages/StyleGuide";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/admin/contract/:id/view" element={<ContractDetail />} />
           <Route path="/partner" element={<PartnerDashboard />} />
           <Route path="/merchant" element={<MerchantDashboard />} />
+          <Route path="/styleguide" element={<StyleGuide />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
