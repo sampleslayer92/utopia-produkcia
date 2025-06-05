@@ -21,7 +21,6 @@ const ContactInfoForm = ({
   onContactInfoUpdate
 }: ContactInfoFormProps) => {
   const roleOptions = [
-    { value: '', label: 'Vyberte svoju rolu' },
     { value: 'Konateľ', label: 'Konateľ' },
     { value: 'Majiteľ', label: 'Majiteľ' },
     { value: 'Menežér', label: 'Menežér' }

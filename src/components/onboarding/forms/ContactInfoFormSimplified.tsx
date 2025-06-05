@@ -20,7 +20,6 @@ const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactIn
   );
 
   const salutationOptions = [
-    { value: '', label: 'Vyberte oslovenie' },
     { value: 'Pan', label: 'Pan' },
     { value: 'Pani', label: 'Pani' }
   ];
@@ -51,6 +50,7 @@ const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactIn
         <div className="grid md:grid-cols-3 gap-4">
           <OnboardingSelect
             label="Oslovenie"
+            placeholder="Vyberte oslovenie"
             value={data.salutation || ''}
             onValueChange={(value) => updateField('salutation', value)}
             options={salutationOptions}

@@ -36,7 +36,6 @@ const ContactPersonForm = ({
   );
 
   const salutationOptions = [
-    { value: '', label: 'Vyberte oslovenie' },
     { value: 'Pan', label: 'Pan' },
     { value: 'Pani', label: 'Pani' }
   ];
@@ -51,6 +50,7 @@ const ContactPersonForm = ({
       <div className="grid md:grid-cols-3 gap-4">
         <OnboardingSelect
           label="Oslovenie"
+          placeholder="Vyberte oslovenie"
           value={data.salutation || ''}
           onValueChange={(value) => updateField('salutation', value)}
           options={salutationOptions}
