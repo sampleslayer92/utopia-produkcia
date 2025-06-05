@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { OnboardingData } from "@/types/onboarding";
+import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
 
 const initialData: OnboardingData = {
   contactInfo: {
@@ -112,6 +113,51 @@ export const useOnboardingData = () => {
         }
         if (!parsedData.contactInfo.userRoles) {
           parsedData.contactInfo.userRoles = [];
+        }
+
+        // Migrate business locations to new structure
+        if (parsedData.businessLocations) {
+          parsedData.businessLocations = parsedData.businessLocations.map((location: any) => {
+            const migratedLocation = { ...location };
+            
+            // Migrate bank accounts
+            if (!migratedLocation.bankAccounts) {
+              const defaultBankAccount: BankAccount = {
+                id: Date.now().toString(),
+                format: 'IBAN',
+                iban: location.iban || '',
+                mena: 'EUR'
+              };
+              migratedLocation.bankAccounts = [defaultBankAccount];
+            }
+            
+            // Migrate opening hours
+            if (!migratedLocation.openingHoursDetailed) {
+              const defaultOpeningHours: OpeningHours[] = [
+                { day: "Po", open: "09:00", close: "17:00", otvorene: true },
+                { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
+                { day: "St", open: "09:00", close: "17:00", otvorene: true },
+                { day: "Št", open: "09:00", close: "17:00", otvorene: true },
+                { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
+                { day: "So", open: "09:00", close: "14:00", otvorene: false },
+                { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
+              ];
+              migratedLocation.openingHoursDetailed = defaultOpeningHours;
+            }
+            
+            // Migrate business details
+            if (!migratedLocation.businessSubject) {
+              migratedLocation.businessSubject = location.businessSector || '';
+            }
+            if (!migratedLocation.monthlyTurnover) {
+              migratedLocation.monthlyTurnover = location.estimatedTurnover || 0;
+            }
+            if (!migratedLocation.mccCode) {
+              migratedLocation.mccCode = '';
+            }
+            
+            return migratedLocation;
+          });
         }
         
         return parsedData;

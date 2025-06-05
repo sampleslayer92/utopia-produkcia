@@ -41,6 +41,22 @@ export interface CompanyInfo {
   };
 }
 
+export interface BankAccount {
+  id: string;
+  format: 'IBAN' | 'CisloUctuKodBanky';
+  iban?: string;
+  cisloUctu?: string;
+  kodBanky?: string;
+  mena: 'EUR' | 'CZK' | 'USD';
+}
+
+export interface OpeningHours {
+  day: 'Po' | 'Ut' | 'St' | 'Št' | 'Pi' | 'So' | 'Ne';
+  open: string; // 08:00
+  close: string; // 17:00
+  otvorene: boolean;
+}
+
 export interface BusinessLocation {
   id: string;
   name: string;
@@ -50,16 +66,21 @@ export interface BusinessLocation {
     city: string;
     zipCode: string;
   };
-  iban: string;
+  iban: string; // Keep for backward compatibility
+  bankAccounts: BankAccount[];
   contactPerson: {
     name: string;
     email: string;
     phone: string;
   };
-  businessSector: string;
-  estimatedTurnover: number;
+  businessSector: string; // Keep for backward compatibility
+  businessSubject: string;
+  mccCode: string;
+  estimatedTurnover: number; // Keep for backward compatibility
+  monthlyTurnover: number;
   averageTransaction: number;
-  openingHours: string;
+  openingHours: string; // Keep for backward compatibility
+  openingHoursDetailed: OpeningHours[];
   seasonality: 'year-round' | 'seasonal';
   seasonalWeeks?: number;
   assignedPersons: string[];

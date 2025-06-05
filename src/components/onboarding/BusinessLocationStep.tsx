@@ -1,13 +1,17 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Store, MapPin, Phone, CreditCard, Building, Clock } from "lucide-react";
-import { OnboardingData, BusinessLocation } from "@/types/onboarding";
+import { OnboardingData, BusinessLocation, BankAccount, OpeningHours } from "@/types/onboarding";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingTextarea from "./ui/OnboardingTextarea";
 import OnboardingSection from "./ui/OnboardingSection";
 import PersonInputGroup from "./ui/PersonInputGroup";
+import BankAccountsSection from "./BusinessLocationStep/BankAccountsSection";
+import BusinessDetailsSection from "./BusinessLocationStep/BusinessDetailsSection";
+import OpeningHoursSection from "./BusinessLocationStep/OpeningHoursSection";
 import { useState, useEffect } from "react";
 import { getPersonDataFromContactInfo, formatPhoneForDisplay } from "./utils/autoFillUtils";
 
@@ -42,17 +46,41 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
       phone: ''
     };
 
+    // Default bank account
+    const defaultBankAccount: BankAccount = {
+      id: Date.now().toString(),
+      format: 'IBAN',
+      iban: '',
+      mena: 'EUR'
+    };
+
+    // Default opening hours (weekdays open, weekends closed)
+    const defaultOpeningHours: OpeningHours[] = [
+      { day: "Po", open: "09:00", close: "17:00", otvorene: true },
+      { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
+      { day: "St", open: "09:00", close: "17:00", otvorene: true },
+      { day: "Št", open: "09:00", close: "17:00", otvorene: true },
+      { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
+      { day: "So", open: "09:00", close: "14:00", otvorene: false },
+      { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
+    ];
+
     const newLocation: BusinessLocation = {
       id: Date.now().toString(),
       name: '',
       hasPOS: false,
       address: { street: '', city: '', zipCode: '' },
-      iban: '',
+      iban: '', // Keep for backward compatibility
+      bankAccounts: [defaultBankAccount],
       contactPerson: contactPersonData,
-      businessSector: '',
-      estimatedTurnover: 0,
+      businessSector: '', // Keep for backward compatibility
+      businessSubject: '',
+      mccCode: '',
+      estimatedTurnover: 0, // Keep for backward compatibility
+      monthlyTurnover: 0,
       averageTransaction: 0,
-      openingHours: '',
+      openingHours: '', // Keep for backward compatibility
+      openingHoursDetailed: defaultOpeningHours,
       seasonality: 'year-round',
       assignedPersons: []
     };
@@ -96,6 +124,45 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
         }
       })
     });
+  };
+
+  // Handle bank accounts update
+  const updateBankAccounts = (locationId: string, bankAccounts: BankAccount[]) => {
+    updateBusinessLocation(locationId, 'bankAccounts', bankAccounts);
+    
+    // Update backward compatibility IBAN field
+    if (bankAccounts.length > 0) {
+      const firstAccount = bankAccounts[0];
+      if (firstAccount.format === 'IBAN' && firstAccount.iban) {
+        updateBusinessLocation(locationId, 'iban', firstAccount.iban);
+      } else if (firstAccount.format === 'CisloUctuKodBanky' && firstAccount.cisloUctu && firstAccount.kodBanky) {
+        updateBusinessLocation(locationId, 'iban', `${firstAccount.cisloUctu}/${firstAccount.kodBanky}`);
+      }
+    }
+  };
+
+  // Handle business details update
+  const updateBusinessDetails = (locationId: string, field: string, value: string | number) => {
+    updateBusinessLocation(locationId, field, value);
+    
+    // Update backward compatibility fields
+    if (field === 'businessSubject') {
+      updateBusinessLocation(locationId, 'businessSector', value);
+    } else if (field === 'monthlyTurnover') {
+      updateBusinessLocation(locationId, 'estimatedTurnover', value);
+    }
+  };
+
+  // Handle opening hours update
+  const updateOpeningHours = (locationId: string, openingHours: OpeningHours[]) => {
+    updateBusinessLocation(locationId, 'openingHoursDetailed', openingHours);
+    
+    // Update backward compatibility openingHours field
+    const hoursText = openingHours
+      .filter(h => h.otvorene)
+      .map(h => `${h.day}: ${h.open}-${h.close}`)
+      .join(', ');
+    updateBusinessLocation(locationId, 'openingHours', hoursText || 'Nie sú zadané');
   };
 
   const updateContactPersonData = (locationId: string, field: string, value: string) => {
@@ -159,6 +226,58 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     setExpandedLocationId(expandedLocationId === id ? null : id);
   };
 
+  // Migrate existing locations to have bankAccounts and openingHoursDetailed
+  useEffect(() => {
+    const locationsNeedMigration = data.businessLocations.some(location => 
+      !location.bankAccounts || !location.openingHoursDetailed || 
+      !location.businessSubject || !location.monthlyTurnover
+    );
+
+    if (locationsNeedMigration) {
+      const migratedLocations = data.businessLocations.map(location => {
+        const migrated = { ...location };
+        
+        // Migrate bank accounts
+        if (!migrated.bankAccounts) {
+          migrated.bankAccounts = [{
+            id: Date.now().toString(),
+            format: 'IBAN' as const,
+            iban: location.iban || '',
+            mena: 'EUR' as const
+          }];
+        }
+        
+        // Migrate opening hours
+        if (!migrated.openingHoursDetailed) {
+          migrated.openingHoursDetailed = [
+            { day: "Po", open: "09:00", close: "17:00", otvorene: true },
+            { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
+            { day: "St", open: "09:00", close: "17:00", otvorene: true },
+            { day: "Št", open: "09:00", close: "17:00", otvorene: true },
+            { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
+            { day: "So", open: "09:00", close: "14:00", otvorene: false },
+            { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
+          ];
+        }
+        
+        // Migrate business details
+        if (!migrated.businessSubject) {
+          migrated.businessSubject = location.businessSector || '';
+        }
+        if (!migrated.monthlyTurnover) {
+          migrated.monthlyTurnover = location.estimatedTurnover || 0;
+        }
+        if (!migrated.mccCode) {
+          migrated.mccCode = '';
+        }
+        
+        return migrated;
+      });
+      
+      updateData({ businessLocations: migratedLocations });
+    }
+  }, []);
+
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
       <CardContent className="p-0">
@@ -174,16 +293,16 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
               </div>
               
               <p className="text-sm text-blue-800">
-                Spravujte svoje prevádzkové lokality, kde budú platobné terminály umiestnené.
+                Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.
               </p>
               
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-                <p className="font-medium mb-2">Môžete pridať viacero prevádzkových miest</p>
+                <p className="font-medium mb-2">Nové funkcie v tejto verzii</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  <li>Každá prevádzka môže mať vlastné kontaktné údaje</li>
-                  <li>Osoby môžu byť priradené ku konkrétnym prevádzkam</li>
-                  <li>Presné adresy pre inštaláciu terminálov</li>
-                  <li>Telefónne čísla majú jednotný formát (predvoľba + číslo)</li>
+                  <li>Správa viacerých bankových účtov</li>
+                  <li>Detailné MCC kódy a predmet podnikania</li>
+                  <li>Presné otváracie hodiny pre každý deň</li>
+                  <li>Podpora rôznych mien (EUR, CZK, USD)</li>
                 </ul>
               </div>
 
@@ -267,7 +386,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
 
                   {expandedLocationId === location.id && (
                     <div className="p-4 animate-fade-in">
-                      <div className="space-y-6">
+                      <div className="space-y-8">
                         <div>
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Store className="h-4 w-4" />
@@ -297,7 +416,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                           </div>
                         </div>
 
-                        <div className="border-t border-slate-100 pt-4">
+                        <div className="border-t border-slate-100 pt-6">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <MapPin className="h-4 w-4" />
                             Adresa prevádzky
@@ -330,22 +449,63 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                           />
                         </div>
 
-                        <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
-                            <CreditCard className="h-4 w-4" />
-                            Bankové údaje
-                          </h4>
+                        <div className="border-t border-slate-100 pt-6">
+                          <BankAccountsSection
+                            bankAccounts={location.bankAccounts || []}
+                            onUpdateBankAccounts={(accounts) => updateBankAccounts(location.id, accounts)}
+                          />
+                        </div>
+
+                        <div className="border-t border-slate-100 pt-6">
+                          <BusinessDetailsSection
+                            businessSubject={location.businessSubject || ''}
+                            mccCode={location.mccCode || ''}
+                            monthlyTurnover={location.monthlyTurnover || 0}
+                            onUpdate={(field, value) => updateBusinessDetails(location.id, field, value)}
+                          />
+                        </div>
+
+                        <div className="border-t border-slate-100 pt-6">
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <OnboardingInput
+                              label="Priemerná výška transakcie (EUR) *"
+                              type="number"
+                              value={location.averageTransaction || ''}
+                              onChange={(e) => updateBusinessLocation(location.id, 'averageTransaction', Number(e.target.value))}
+                              placeholder="25"
+                            />
+                            
+                            <OnboardingSelect
+                              label="Sezónnosť *"
+                              value={location.seasonality}
+                              onValueChange={(value) => updateBusinessLocation(location.id, 'seasonality', value)}
+                              options={seasonalityOptions}
+                            />
+                          </div>
                           
-                          <OnboardingInput
-                            label="IBAN *"
-                            value={location.iban}
-                            onChange={(e) => updateBusinessLocation(location.id, 'iban', e.target.value)}
-                            placeholder="SK89 1200 0000 1987 4263 7541"
+                          {location.seasonality === 'seasonal' && (
+                            <OnboardingInput
+                              label="Počet týždňov v sezóne"
+                              type="number"
+                              value={location.seasonalWeeks || ''}
+                              onChange={(e) => updateBusinessLocation(location.id, 'seasonalWeeks', Number(e.target.value))}
+                              placeholder="20"
+                              min="1"
+                              max="52"
+                              className="mt-4"
+                            />
+                          )}
+                        </div>
+
+                        <div className="border-t border-slate-100 pt-6">
+                          <OpeningHoursSection
+                            openingHoursDetailed={location.openingHoursDetailed || []}
+                            onUpdate={(hours) => updateOpeningHours(location.id, hours)}
                           />
                         </div>
 
                         {/* Contact Person Section - Now with unified phone format */}
-                        <div className="border-t border-slate-100 pt-4">
+                        <div className="border-t border-slate-100 pt-6">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Phone className="h-4 w-4" />
                             Kontaktná osoba pre prevádzku
@@ -362,77 +522,6 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
                             allowReset={isContactPersonAutoFilled(location)}
                             onReset={() => resetContactPersonToOriginal(location.id)}
                           />
-                        </div>
-
-                        <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
-                            <Building className="h-4 w-4" />
-                            Údaje o podnikaní
-                          </h4>
-                          
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <OnboardingInput
-                              label="Odbor podnikania / MCC *"
-                              value={location.businessSector}
-                              onChange={(e) => updateBusinessLocation(location.id, 'businessSector', e.target.value)}
-                              placeholder="Maloobchod, reštaurácie, služby..."
-                            />
-                            
-                            <OnboardingInput
-                              label="Odhadovaný obrat (EUR) *"
-                              type="number"
-                              value={location.estimatedTurnover || ''}
-                              onChange={(e) => updateBusinessLocation(location.id, 'estimatedTurnover', Number(e.target.value))}
-                              placeholder="50000"
-                            />
-                          </div>
-
-                          <OnboardingInput
-                            label="Priemerná výška transakcie (EUR) *"
-                            type="number"
-                            value={location.averageTransaction || ''}
-                            onChange={(e) => updateBusinessLocation(location.id, 'averageTransaction', Number(e.target.value))}
-                            placeholder="25"
-                            className="mt-4"
-                          />
-                        </div>
-
-                        <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
-                            <Clock className="h-4 w-4" />
-                            Prevádzkové informácie
-                          </h4>
-                          
-                          <OnboardingTextarea
-                            label="Otváracie hodiny *"
-                            value={location.openingHours}
-                            onChange={(e) => updateBusinessLocation(location.id, 'openingHours', e.target.value)}
-                            placeholder="Po-Pia: 9:00-18:00, So: 9:00-14:00, Ne: zatvorené"
-                            rows={3}
-                          />
-
-                          <div className="mt-4">
-                            <div className="grid md:grid-cols-2 gap-4">
-                              <OnboardingSelect
-                                label="Sezónnosť *"
-                                value={location.seasonality}
-                                onValueChange={(value) => updateBusinessLocation(location.id, 'seasonality', value)}
-                                options={seasonalityOptions}
-                              />
-                              
-                              {location.seasonality === 'seasonal' && (
-                                <OnboardingInput
-                                  label="Počet týždňov v sezóne"
-                                  type="number"
-                                  value={location.seasonalWeeks || ''}
-                                  onChange={(e) => updateBusinessLocation(location.id, 'seasonalWeeks', Number(e.target.value))}
-                                  placeholder="20"
-                                  min="1"
-                                  max="52"
-                                />
-                              )}
-                            </div>
-                          </div>
                         </div>
                       </div>
                     </div>
