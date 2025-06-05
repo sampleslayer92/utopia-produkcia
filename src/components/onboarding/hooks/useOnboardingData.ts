@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
 
@@ -36,6 +35,7 @@ const initialData: OnboardingData = {
       zipCode: ''
     },
     contactAddressSameAsMain: true,
+    headOfficeEqualsOperatingAddress: false,
     contactPerson: {
       firstName: '',
       lastName: '',

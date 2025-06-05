@@ -200,6 +200,7 @@ export const transformContractData = (
         zipCode: companyInfo.address_zip_code || ''
       },
       contactAddressSameAsMain: companyInfo.contact_address_same_as_main ?? true,
+      headOfficeEqualsOperatingAddress: false, // Default value for legacy data
       contactPerson: {
         firstName: companyInfo.contact_person_first_name || '',
         lastName: companyInfo.contact_person_last_name || '',
@@ -212,6 +213,7 @@ export const transformContractData = (
       address: { street: '', city: '', zipCode: '' },
       contactAddress: { street: '', city: '', zipCode: '' },
       contactAddressSameAsMain: true,
+      headOfficeEqualsOperatingAddress: false,
       contactPerson: { firstName: '', lastName: '', email: '', phone: '', isTechnicalPerson: false }
     },
     

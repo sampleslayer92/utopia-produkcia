@@ -1,7 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { OnboardingData } from "@/types/onboarding";
+import { OnboardingData, OpeningHours } from "@/types/onboarding";
 import { Building2 } from "lucide-react";
 import CompanyBasicInfoCard from "./company/CompanyBasicInfoCard";
 import CompanyRegistryInfo from "./company/CompanyRegistryInfo";
@@ -72,6 +72,16 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                                       data.contactInfo.userRoles?.includes('Majiteľ') || 
                                       false;
 
+        const defaultOpeningHours: OpeningHours[] = [
+          { day: "Po", open: "09:00", close: "17:00", otvorene: true },
+          { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
+          { day: "St", open: "09:00", close: "17:00", otvorene: true },
+          { day: "Št", open: "09:00", close: "17:00", otvorene: true },
+          { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
+          { day: "So", open: "09:00", close: "14:00", otvorene: false },
+          { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
+        ];
+
         const newLocation = {
           id: Date.now().toString(),
           name: '',
@@ -104,15 +114,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
           monthlyTurnover: 0,
           averageTransaction: 0,
           openingHours: '',
-          openingHoursDetailed: [
-            { day: "Po", open: "09:00", close: "17:00", otvorene: true },
-            { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
-            { day: "St", open: "09:00", close: "17:00", otvorene: true },
-            { day: "Št", open: "09:00", close: "17:00", otvorene: true },
-            { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
-            { day: "So", open: "09:00", close: "14:00", otvorene: false },
-            { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
-          ],
+          openingHoursDetailed: defaultOpeningHours,
           seasonality: 'year-round' as const,
           assignedPersons: []
         };
