@@ -31,7 +31,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
             hasAutoFilled={hasAutoFilled}
             userRoles={data.contactInfo.userRoles || []}
             autoFillStatus={autoFillStatus}
-            isBasicInfoComplete={isBasicInfoComplete()}
+            isBasicInfoComplete={Boolean(isBasicInfoComplete())}
             contractId={data.contractId}
             contractNumber={data.contractNumber}
           />
