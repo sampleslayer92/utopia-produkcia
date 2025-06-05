@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { OnboardingData } from "@/types/onboarding";
-import { getAutoFillUpdatesSimplified, hasContactInfoChanged } from "../../utils/autoFillUtils";
+import { getAutoFillUpdates, hasContactInfoChanged } from "../../utils/autoFillUtils";
 
 export const useSimplifiedContactInfoLogic = (
   data: OnboardingData,
@@ -28,26 +28,27 @@ export const useSimplifiedContactInfoLogic = (
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  // Check if basic contact info is complete
+  // Check if basic contact info is complete (including role)
   const isBasicInfoComplete = () => {
     return data.contactInfo.firstName && 
            data.contactInfo.lastName && 
            data.contactInfo.email && 
            isEmailValid(data.contactInfo.email) &&
-           data.contactInfo.phone;
+           data.contactInfo.phone &&
+           data.contactInfo.userRole;
   };
 
-  // Auto-fill when basic info is complete
+  // Auto-fill when basic info is complete using role-based logic
   useEffect(() => {
     if (isBasicInfoComplete()) {
-      const autoFillUpdates = getAutoFillUpdatesSimplified(data.contactInfo, data);
+      const autoFillUpdates = getAutoFillUpdates(data.contactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
-        console.log('Auto-filling simplified from useEffect:', autoFillUpdates);
+        console.log('Auto-filling with role-based logic:', autoFillUpdates);
         updateData(autoFillUpdates);
         setHasAutoFilled(true);
       }
     }
-  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix]);
+  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix, data.contactInfo.userRole]);
 
   // Watch for changes in contact info and propagate to other sections
   useEffect(() => {
@@ -61,7 +62,7 @@ export const useSimplifiedContactInfoLogic = (
         current: currentContactInfo
       });
 
-      const autoFillUpdates = getAutoFillUpdatesSimplified(currentContactInfo, data);
+      const autoFillUpdates = getAutoFillUpdates(currentContactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
         updateData(autoFillUpdates);
         setHasAutoFilled(true);
@@ -70,11 +71,12 @@ export const useSimplifiedContactInfoLogic = (
 
     // Update ref for next comparison
     prevContactInfoRef.current = currentContactInfo;
-  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix]);
+  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix, data.contactInfo.userRole]);
 
   // Track completed fields for visual feedback
   useEffect(() => {
     const newCompleted = new Set<string>();
+    if (data.contactInfo.userRole) newCompleted.add('userRole');
     if (data.contactInfo.salutation) newCompleted.add('salutation');
     if (data.contactInfo.firstName) newCompleted.add('firstName');
     if (data.contactInfo.lastName) newCompleted.add('lastName');

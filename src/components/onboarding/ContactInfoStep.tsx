@@ -21,12 +21,15 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     isBasicInfoComplete
   } = useSimplifiedContactInfoLogic(data, updateData);
 
-  // Auto-fill status shows all sections as auto-filled when basic info is complete
+  // Auto-fill status shows sections based on user role
+  const userRole = data.contactInfo.userRole;
+  const basicInfoComplete = Boolean(isBasicInfoComplete());
+  
   const autoFillStatus = {
-    actualOwners: Boolean(isBasicInfoComplete()),
-    authorizedPersons: Boolean(isBasicInfoComplete()),
-    businessLocations: Boolean(isBasicInfoComplete()),
-    companyInfo: Boolean(isBasicInfoComplete())
+    actualOwners: basicInfoComplete && (userRole === 'Majiteľ' || userRole === 'Konateľ'),
+    authorizedPersons: basicInfoComplete && userRole === 'Konateľ',
+    businessLocations: Boolean(basicInfoComplete), // All roles get business locations
+    companyInfo: Boolean(basicInfoComplete) // All roles get company info
   };
 
   return (
@@ -35,7 +38,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
         <div className="grid grid-cols-1 md:grid-cols-3">
           <ContactInfoSidebar
             hasAutoFilled={hasAutoFilled}
-            userRoles={[]} // No longer using roles
+            userRoles={[]} // No longer using roles array
             autoFillStatus={autoFillStatus}
             isBasicInfoComplete={Boolean(isBasicInfoComplete())}
             contractId={data.contractId || ''}
