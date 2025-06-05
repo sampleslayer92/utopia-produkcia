@@ -123,11 +123,16 @@ const Welcome = () => {
           <img 
             src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
             alt="Utopia Logo" 
-            className="h-20 w-auto mx-auto mb-6"
+            className="h-20 w-auto mx-auto mb-8 animate-fade-in"
           />
-          <p className="text-slate-600 text-lg">
-            Platobná platforma pre ISO organizácie, obchodných partnerov a klientov
-          </p>
+          <div className="space-y-3">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent leading-tight animate-fade-in">
+              Registrácia bez stresu.
+            </h1>
+            <p className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-slate-600 to-slate-800 bg-clip-text text-transparent animate-fade-in">
+              Vitaj v onboardingu budúcnosti.
+            </p>
+          </div>
         </div>
 
         {/* Main Options */}
@@ -182,8 +187,12 @@ const Welcome = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-sm text-slate-500">
-          Demo verzia - bez skutočného prihlásenia
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100">
+            <span className="text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Utopia Research Lab 2025
+            </span>
+          </div>
         </div>
       </div>
     </div>
