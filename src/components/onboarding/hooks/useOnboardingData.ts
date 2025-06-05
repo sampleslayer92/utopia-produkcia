@@ -10,7 +10,9 @@ const initialData: OnboardingData = {
     phone: '',
     phonePrefix: '+421',
     salesNote: '',
-    userRole: ''
+    companyType: '',
+    userRoles: [],
+    userRole: '' // Keep for backward compatibility
   },
   companyInfo: {
     ico: '',
@@ -99,9 +101,17 @@ export const useOnboardingData = () => {
           }));
         }
 
-        // Ensure userRole is present in contactInfo
-        if (!parsedData.contactInfo.userRole) {
-          parsedData.contactInfo.userRole = '';
+        // Migrate userRole to userRoles if needed
+        if (!parsedData.contactInfo.userRoles && parsedData.contactInfo.userRole) {
+          parsedData.contactInfo.userRoles = [parsedData.contactInfo.userRole];
+        }
+        
+        // Ensure new fields are present
+        if (!parsedData.contactInfo.companyType) {
+          parsedData.contactInfo.companyType = '';
+        }
+        if (!parsedData.contactInfo.userRoles) {
+          parsedData.contactInfo.userRoles = [];
         }
         
         return parsedData;

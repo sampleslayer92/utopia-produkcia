@@ -6,7 +6,9 @@ export interface ContactInfo {
   phone: string;
   phonePrefix: string;
   salesNote?: string;
-  userRole?: 'Majiteľ' | 'Konateľ' | 'Prevádzkar' | '';
+  companyType?: 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' | '';
+  userRoles?: ('Majiteľ' | 'Konateľ' | 'Kontaktná osoba na prevádzku' | 'Kontaktná osoba pre technické záležitosti')[];
+  userRole?: 'Majiteľ' | 'Konateľ' | 'Prevádzkar' | ''; // Keep for backward compatibility
 }
 
 export interface CompanyInfo {
