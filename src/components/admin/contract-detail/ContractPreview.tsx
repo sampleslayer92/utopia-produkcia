@@ -46,7 +46,7 @@ const ContractPreview = ({ contract, onboardingData }: ContractPreviewProps) => 
             <p className="font-medium">{onboardingData.companyInfo?.companyName || 'Neuvedené'}</p>
             <p>IČO: {onboardingData.companyInfo?.ico || 'Neuvedené'}</p>
             <p>DIČ: {onboardingData.companyInfo?.dic || 'Neuvedené'}</p>
-            <p>Adresa: {onboardingData.companyInfo?.address || 'Neuvedená'}</p>
+            <p>Adresa: {onboardingData.companyInfo?.addressStreet || ''}, {onboardingData.companyInfo?.addressCity || ''} {onboardingData.companyInfo?.addressZipCode || ''}</p>
           </div>
         </div>
       </div>
@@ -58,11 +58,11 @@ const ContractPreview = ({ contract, onboardingData }: ContractPreviewProps) => 
         <h3 className="font-semibold text-slate-900 mb-3">Kontaktná osoba</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p><span className="font-medium">Meno:</span> {onboardingData.companyInfo?.contactPerson?.firstName} {onboardingData.companyInfo?.contactPerson?.lastName}</p>
-            <p><span className="font-medium">Email:</span> {onboardingData.companyInfo?.contactPerson?.email}</p>
+            <p><span className="font-medium">Meno:</span> {onboardingData.companyInfo?.contactPersonFirstName} {onboardingData.companyInfo?.contactPersonLastName}</p>
+            <p><span className="font-medium">Email:</span> {onboardingData.companyInfo?.contactPersonEmail}</p>
           </div>
           <div>
-            <p><span className="font-medium">Telefón:</span> {onboardingData.companyInfo?.contactPerson?.phone}</p>
+            <p><span className="font-medium">Telefón:</span> {onboardingData.companyInfo?.contactPersonPhone}</p>
           </div>
         </div>
       </div>
