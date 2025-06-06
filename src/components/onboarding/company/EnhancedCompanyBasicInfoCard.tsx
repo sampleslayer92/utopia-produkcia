@@ -25,15 +25,15 @@ const EnhancedCompanyBasicInfoCard = ({
 
   const handleCompanySelect = (result: CompanyRecognitionResult) => {
     console.log('handleCompanySelect called with:', result);
-    const fieldsToUpdate = new Set<string>(autoFilledFields);
+    
+    // Clear previous auto-filled fields and start fresh
+    const fieldsToUpdate = new Set<string>();
 
     try {
-      // Update company info with recognized data
-      if (result.companyName && result.companyName !== data.companyInfo.companyName) {
-        console.log('Updating company name:', result.companyName);
-        updateCompanyInfo('companyName', result.companyName);
-        fieldsToUpdate.add('companyName');
-      }
+      // Always update company name with the exact name from search result
+      console.log('Updating company name:', result.companyName);
+      updateCompanyInfo('companyName', result.companyName);
+      fieldsToUpdate.add('companyName');
 
       if (result.registryType) {
         console.log('Updating registry type:', result.registryType);
@@ -88,6 +88,7 @@ const EnhancedCompanyBasicInfoCard = ({
         fieldsToUpdate.add('address.zipCode');
       }
 
+      // Replace auto-filled fields completely with new selection
       setAutoFilledFields(fieldsToUpdate);
       
       console.log('Company selected and auto-filled:', {
@@ -170,7 +171,7 @@ const EnhancedCompanyBasicInfoCard = ({
         <h3 className="text-lg font-medium text-slate-900">Základné údaje o spoločnosti</h3>
       </div>
 
-      {/* Company Name - with search button */}
+      {/* Company Name - with search button and wider field */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-slate-700">
           Obchodné meno spoločnosti *
@@ -183,7 +184,7 @@ const EnhancedCompanyBasicInfoCard = ({
               updateCompanyInfo('companyName', e.target.value);
             }}
             placeholder="Zadajte obchodné meno spoločnosti"
-            className={`flex-1 ${getFieldClassName('companyName')}`}
+            className={`flex-1 min-w-0 text-sm ${getFieldClassName('companyName')}`}
             icon={<Building2 className="h-4 w-4" />}
           />
           <CompanySearchButton 
