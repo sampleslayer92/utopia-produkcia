@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData, OpeningHours } from "@/types/onboarding";
@@ -14,9 +13,10 @@ interface CompanyInfoStepProps {
   updateData: (data: Partial<OnboardingData>) => void;
   onNext: () => void;
   onPrev: () => void;
+  hideContactPerson?: boolean;
 }
 
-const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
+const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: CompanyInfoStepProps) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
 
   const updateCompanyInfo = useCallback((field: string, value: any) => {
@@ -191,12 +191,20 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     }
   }, [data.companyInfo.headOfficeEqualsOperatingAddress, updateCompanyInfo]);
 
-  // Determine default accordion values based on whether contact address should be shown
+  // Determine default accordion values based on whether contact person should be shown and contact address
   const defaultAccordionValues = useMemo(() => {
-    return data.companyInfo.contactAddressSameAsMain 
-      ? ["basic-info", "address", "contact-person"]
-      : ["basic-info", "address", "contact-address", "contact-person"];
-  }, [data.companyInfo.contactAddressSameAsMain]);
+    const baseValues = ["basic-info", "address"];
+    
+    if (!data.companyInfo.contactAddressSameAsMain) {
+      baseValues.push("contact-address");
+    }
+    
+    if (!hideContactPerson) {
+      baseValues.push("contact-person");
+    }
+    
+    return baseValues;
+  }, [data.companyInfo.contactAddressSameAsMain, hideContactPerson]);
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
@@ -284,18 +292,20 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                 </AccordionItem>
               )}
 
-              {/* Contact Person */}
-              <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-medium text-slate-900">Kontaktná osoba</span>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <CompanyContactPersonCard
-                    data={data}
-                    updateCompanyInfo={updateCompanyInfo}
-                  />
-                </AccordionContent>
-              </AccordionItem>
+              {/* Contact Person - only show if not hidden */}
+              {!hideContactPerson && (
+                <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                    <span className="font-medium text-slate-900">Kontaktná osoba</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <CompanyContactPersonCard
+                      data={data}
+                      updateCompanyInfo={updateCompanyInfo}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
 
             </Accordion>
           </div>

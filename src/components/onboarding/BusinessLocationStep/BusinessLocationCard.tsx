@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Store, Trash2 } from "lucide-react";
+import { Store, Trash2, MapPin } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { BusinessLocation, OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
@@ -45,6 +45,9 @@ const BusinessLocationCard = ({
     onUpdate(`contactPerson.${field}`, value);
   };
 
+  // Check if address should be hidden (head office equals operating address)
+  const shouldHideAddress = data.companyInfo.headOfficeEqualsOperatingAddress;
+
   return (
     <div className="mb-6 overflow-hidden border border-slate-200 rounded-lg shadow-sm bg-white">
       <div 
@@ -65,6 +68,12 @@ const BusinessLocationCard = ({
             </h3>
             {location.address.street && (
               <p className="text-xs text-slate-500">{location.address.street}, {location.address.city}</p>
+            )}
+            {shouldHideAddress && (
+              <p className="text-xs text-green-600">
+                <MapPin className="h-3 w-3 inline mr-1" />
+                Používa adresu sídla spoločnosti
+              </p>
             )}
           </div>
         </div>
@@ -117,14 +126,38 @@ const BusinessLocationCard = ({
               </div>
             </div>
 
-            {/* Address */}
-            <div className="border-t border-slate-100 pt-6">
-              <AddressForm
-                title="Adresa prevádzky"
-                data={location.address}
-                onUpdate={(field, value) => onUpdate(`address.${field}`, value)}
-              />
-            </div>
+            {/* Address - only show if not using head office address */}
+            {!shouldHideAddress && (
+              <div className="border-t border-slate-100 pt-6">
+                <AddressForm
+                  title="Adresa prevádzky"
+                  data={location.address}
+                  onUpdate={(field, value) => onUpdate(`address.${field}`, value)}
+                />
+              </div>
+            )}
+
+            {/* Info message when using head office address */}
+            {shouldHideAddress && (
+              <div className="border-t border-slate-100 pt-6">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-blue-900">Adresa prevádzky</p>
+                      <p className="text-sm text-blue-800 mt-1">
+                        Táto prevádzka používa adresu sídla spoločnosti. Adresa sa automaticky synchronizuje s hlavnou adresou.
+                      </p>
+                      <div className="mt-2 text-sm text-blue-700">
+                        <p className="font-medium">Aktuálna adresa:</p>
+                        <p>{location.address.street}</p>
+                        <p>{location.address.zipCode} {location.address.city}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Bank Accounts */}
             <div className="border-t border-slate-100 pt-6">
