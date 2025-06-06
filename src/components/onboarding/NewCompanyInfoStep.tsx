@@ -1,10 +1,11 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { OnboardingData } from "@/types/onboarding";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, User } from "lucide-react";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -207,65 +208,53 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
           </div>
         </div>
 
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium text-slate-900">Kontaktná osoba</h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="contactFirstName">Meno *</Label>
-              <Input
-                id="contactFirstName"
-                value={data.companyInfo.contactPerson.firstName}
-                onChange={(e) => updateCompanyInfo('contactPerson.firstName', e.target.value)}
-                placeholder="Ján"
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="contactLastName">Priezvisko *</Label>
-              <Input
-                id="contactLastName"
-                value={data.companyInfo.contactPerson.lastName}
-                onChange={(e) => updateCompanyInfo('contactPerson.lastName', e.target.value)}
-                placeholder="Novák"
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
+        {/* Contact Person Info - Display Only (from Step 1) */}
+        <div className="space-y-4 pt-4 border-t border-slate-200">
+          <div className="flex items-center gap-2">
+            <User className="h-5 w-5 text-blue-600" />
+            <h3 className="text-lg font-medium text-slate-900">Kontaktná osoba</h3>
+            <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
+              Prebraté z kroku 1
+            </span>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="contactEmail">Email *</Label>
-              <Input
-                id="contactEmail"
-                type="email"
-                value={data.companyInfo.contactPerson.email}
-                onChange={(e) => updateCompanyInfo('contactPerson.email', e.target.value)}
-                placeholder="jan.novak@firma.sk"
-                className="border-slate-300 focus:border-blue-500"
-              />
+          {data.contactInfo.firstName && data.contactInfo.lastName ? (
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium text-slate-700">Meno:</span>{" "}
+                  <span className="text-slate-900">
+                    {data.contactInfo.firstName} {data.contactInfo.lastName}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-medium text-slate-700">Email:</span>{" "}
+                  <span className="text-slate-900">{data.contactInfo.email}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-slate-700">Telefón:</span>{" "}
+                  <span className="text-slate-900">
+                    {data.contactInfo.phonePrefix} {data.contactInfo.phone}
+                  </span>
+                </div>
+                {data.contactInfo.userRole && (
+                  <div>
+                    <span className="font-medium text-slate-700">Pozícia:</span>{" "}
+                    <span className="text-slate-900">{data.contactInfo.userRole}</span>
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-slate-600 mt-2">
+                ℹ️ Tieto údaje boli prebraté z prvého kroku. Pre úpravy sa vráťte na krok "Kontaktné údaje".
+              </p>
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="contactPhone">Telefón *</Label>
-              <Input
-                id="contactPhone"
-                value={data.companyInfo.contactPerson.phone}
-                onChange={(e) => updateCompanyInfo('contactPerson.phone', e.target.value)}
-                placeholder="+421 123 456 789"
-                className="border-slate-300 focus:border-blue-500"
-              />
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="text-sm text-yellow-800">
+                ⚠️ Kontaktné údaje nie sú vyplnené. Vráťte sa na krok "Kontaktné údaje" a vyplňte ich.
+              </p>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="isTechnicalPerson"
-              checked={data.companyInfo.contactPerson.isTechnicalPerson}
-              onCheckedChange={(checked) => updateCompanyInfo('contactPerson.isTechnicalPerson', checked)}
-            />
-            <Label htmlFor="isTechnicalPerson">Je zároveň technická osoba</Label>
-          </div>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -28,9 +27,16 @@ const CompanySearchModal = ({
   useEffect(() => {
     if (open) {
       setQuery(initialQuery);
+      setSelectedCompany(null); // Reset selected company when modal opens
       if (initialQuery.trim()) {
         handleSearchWithQuery(initialQuery);
       }
+    } else {
+      // Reset all state when modal closes
+      setQuery("");
+      setResults([]);
+      setSelectedCompany(null);
+      setIsSearching(false);
     }
   }, [open, initialQuery]);
 
@@ -38,9 +44,11 @@ const CompanySearchModal = ({
     if (!searchQuery.trim()) return;
     
     setIsSearching(true);
+    setSelectedCompany(null); // Reset selection when new search starts
     try {
       const searchResults = await searchCompanySuggestions(searchQuery);
       setResults(searchResults);
+      console.log('Search results:', searchResults);
     } catch (error) {
       console.error('Search error:', error);
       setResults([]);
@@ -54,24 +62,22 @@ const CompanySearchModal = ({
   };
 
   const handleSelectCompany = (company: CompanyRecognitionResult) => {
+    console.log('Company selected in modal:', company);
     setSelectedCompany(company);
   };
 
   const handleConfirmSelection = () => {
     if (selectedCompany) {
+      console.log('Confirming company selection:', selectedCompany);
       onCompanySelect(selectedCompany);
       onOpenChange(false);
-      setQuery("");
-      setResults([]);
-      setSelectedCompany(null);
+      // State will be reset by useEffect when modal closes
     }
   };
 
   const handleCancel = () => {
     onOpenChange(false);
-    setQuery("");
-    setResults([]);
-    setSelectedCompany(null);
+    // State will be reset by useEffect when modal closes
   };
 
   return (
@@ -108,7 +114,7 @@ const CompanySearchModal = ({
               <h4 className="font-medium text-slate-900">Výsledky vyhľadávania:</h4>
               {results.map((company, index) => (
                 <div
-                  key={index}
+                  key={`${company.ico}-${index}`}
                   className={`p-4 border rounded-lg cursor-pointer transition-colors ${
                     selectedCompany === company
                       ? 'border-blue-500 bg-blue-50'
@@ -116,6 +122,7 @@ const CompanySearchModal = ({
                   }`}
                   onClick={() => handleSelectCompany(company)}
                 >
+                  
                   <div className="space-y-2">
                     <div className="flex items-start justify-between">
                       <div>

@@ -24,14 +24,17 @@ const EnhancedCompanyBasicInfoCard = ({
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const handleCompanySelect = (result: CompanyRecognitionResult) => {
-    console.log('handleCompanySelect called with:', result);
+    console.log('=== Starting company selection ===');
+    console.log('Selected company:', result);
+    console.log('Current company name in data:', data.companyInfo.companyName);
+    console.log('Current auto-filled fields:', Array.from(autoFilledFields));
     
-    // Clear previous auto-filled fields and start fresh
+    // Clear ALL previous auto-filled fields and start completely fresh
     const fieldsToUpdate = new Set<string>();
 
     try {
-      // Always update company name with the exact name from search result
-      console.log('Updating company name:', result.companyName);
+      // ALWAYS update company name with the exact name from search result
+      console.log('Force updating company name from:', data.companyInfo.companyName, 'to:', result.companyName);
       updateCompanyInfo('companyName', result.companyName);
       fieldsToUpdate.add('companyName');
 
@@ -88,10 +91,11 @@ const EnhancedCompanyBasicInfoCard = ({
         fieldsToUpdate.add('address.zipCode');
       }
 
-      // Replace auto-filled fields completely with new selection
+      // Completely replace auto-filled fields with new selection
+      console.log('Setting new auto-filled fields:', Array.from(fieldsToUpdate));
       setAutoFilledFields(fieldsToUpdate);
       
-      console.log('Company selected and auto-filled:', {
+      console.log('=== Company selection completed ===', {
         company: result.companyName,
         type: result.registryType,
         fieldsUpdated: Array.from(fieldsToUpdate)
@@ -161,6 +165,7 @@ const EnhancedCompanyBasicInfoCard = ({
   };
 
   const handleOpenSearchModal = () => {
+    console.log('Opening search modal with current company name:', data.companyInfo.companyName);
     setIsSearchModalOpen(true);
   };
 
