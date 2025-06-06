@@ -1,3 +1,4 @@
+
 import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
 import { v4 as uuidv4 } from "uuid";
 
@@ -16,6 +17,7 @@ export const createAuthorizedPersonFromContactInfo = (contactInfo: OnboardingDat
   lastName: contactInfo.lastName,
   email: contactInfo.email,
   phone: contactInfo.phone,
+  phonePrefix: contactInfo.phonePrefix || '+421', // Add phonePrefix field
   maidenName: '',
   birthDate: '',
   birthPlace: '',

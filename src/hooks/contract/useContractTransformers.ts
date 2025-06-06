@@ -1,3 +1,4 @@
+
 import { OnboardingData, BankAccount, OpeningHours } from '@/types/onboarding';
 
 // Helper function to convert database salutation to frontend format
@@ -295,6 +296,7 @@ export const transformContractData = (
       documentCountry: person.document_country,
       position: person.position,
       phone: person.phone,
+      phonePrefix: person.phone_prefix || '+421', // Add phonePrefix field with default
       email: person.email,
       isPoliticallyExposed: person.is_politically_exposed,
       isUSCitizen: person.is_us_citizen
