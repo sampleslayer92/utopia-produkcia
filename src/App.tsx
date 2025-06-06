@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import PasswordScreen from "./pages/PasswordScreen";
 import Welcome from "./pages/Welcome";
 import OnboardingFlow from "./pages/OnboardingFlow";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -22,7 +23,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Welcome />} />
+          <Route path="/" element={<PasswordScreen />} />
+          <Route path="/home" element={<Welcome />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/contract/:id/edit" element={<ContractEditPage />} />

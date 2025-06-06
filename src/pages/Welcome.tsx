@@ -1,13 +1,21 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Building2, User, ArrowRight, UserCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { usePasswordProtection } from "@/hooks/usePasswordProtection";
 
 const Welcome = () => {
   const navigate = useNavigate();
   const [showRoleSelection, setShowRoleSelection] = useState(false);
+  const { isPasswordVerified } = usePasswordProtection();
+
+  // Protect this component - redirect to password screen if not verified
+  useEffect(() => {
+    if (!isPasswordVerified()) {
+      navigate('/');
+    }
+  }, [navigate, isPasswordVerified]);
 
   const handleRoleSelect = (role: 'admin' | 'partner' | 'merchant') => {
     localStorage.setItem('utopia_user_role', role);
@@ -28,6 +36,11 @@ const Welcome = () => {
   const handleNewClient = () => {
     navigate('/onboarding');
   };
+
+  // Don't render if password not verified
+  if (!isPasswordVerified()) {
+    return null;
+  }
 
   if (showRoleSelection) {
     return (
