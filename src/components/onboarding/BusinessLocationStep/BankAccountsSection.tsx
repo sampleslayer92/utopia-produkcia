@@ -76,17 +76,9 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
     const rawValue = e.target.value;
     console.log('=== IBAN INPUT CHANGE ===', { id, rawValue });
     
-    // Store the raw value directly without immediate formatting to avoid cursor jumping
-    updateBankAccount(id, 'iban', rawValue);
-  };
-
-  const handleIBANBlur = (id: string, e: React.FocusEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    console.log('=== IBAN BLUR ===', { id, value });
-    
-    // Format IBAN only on blur to avoid cursor issues
-    const formattedValue = formatIBAN(value);
-    console.log('=== FORMATTED IBAN ON BLUR ===', formattedValue);
+    // Format IBAN in real-time while typing
+    const formattedValue = formatIBAN(rawValue);
+    console.log('=== REAL-TIME FORMATTED IBAN ===', formattedValue);
     
     updateBankAccount(id, 'iban', formattedValue);
   };
@@ -195,7 +187,6 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
                         label="IBAN *"
                         value={account.iban || ''}
                         onChange={(e) => handleIBANChange(account.id, e)}
-                        onBlur={(e) => handleIBANBlur(account.id, e)}
                         placeholder="SK89 1200 0000 1987 4263 7541"
                         maxLength={29} // Maximum IBAN length with spaces
                       />

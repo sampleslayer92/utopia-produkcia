@@ -9,7 +9,6 @@ import AddressForm from "../ui/AddressForm";
 import BankAccountsSection from "./BankAccountsSection";
 import BusinessDetailsSection from "./BusinessDetailsSection";
 import OpeningHoursSummary from "./OpeningHoursSummary";
-import CompanyContactPersonCard from "../company/CompanyContactPersonCard";
 
 interface BusinessLocationCardProps {
   location: BusinessLocation;
@@ -218,25 +217,29 @@ const BusinessLocationCard = ({
               />
             </div>
 
-            {/* Contact Person */}
-            <div className="border-t border-slate-100 pt-6">
-              <CompanyContactPersonCard
-                data={{
-                  ...data,
-                  companyInfo: {
-                    ...data.companyInfo,
-                    contactPerson: {
-                      firstName: location.contactPerson.name.split(' ')[0] || '',
-                      lastName: location.contactPerson.name.split(' ').slice(1).join(' ') || '',
-                      email: location.contactPerson.email,
-                      phone: location.contactPerson.phone,
-                      isTechnicalPerson: false
+            {/* Contact Person - HIDDEN but still saving data in background */}
+            {/* This section is intentionally commented out to hide it from the user */}
+            {/* The data is still being saved via the updateContactPerson function */}
+            {false && (
+              <div className="border-t border-slate-100 pt-6">
+                <CompanyContactPersonCard
+                  data={{
+                    ...data,
+                    companyInfo: {
+                      ...data.companyInfo,
+                      contactPerson: {
+                        firstName: location.contactPerson.name.split(' ')[0] || '',
+                        lastName: location.contactPerson.name.split(' ').slice(1).join(' ') || '',
+                        email: location.contactPerson.email,
+                        phone: location.contactPerson.phone,
+                        isTechnicalPerson: false
+                      }
                     }
-                  }
-                }}
-                updateCompanyInfo={updateContactPerson}
-              />
-            </div>
+                  }}
+                  updateCompanyInfo={updateContactPerson}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

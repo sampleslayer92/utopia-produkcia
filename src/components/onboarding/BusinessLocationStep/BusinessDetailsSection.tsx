@@ -56,7 +56,7 @@ const BusinessDetailsSection = ({
   const handleTurnoverFocus = () => {
     console.log('=== TURNOVER FOCUS ===', { monthlyTurnover });
     setIsFocused(true);
-    // Clear field if it's 0 or show raw number for editing
+    // Show raw number for editing, or empty string if zero
     if (monthlyTurnover === 0) {
       setTurnoverInput('');
     } else {

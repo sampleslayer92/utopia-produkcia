@@ -5,11 +5,12 @@ export const formatIBAN = (value: string): string => {
   // Remove all non-alphanumeric characters
   const cleaned = value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
   
-  // Add spaces every 4 characters for readability, but don't format while typing
-  if (cleaned.length <= 4) {
-    return cleaned;
+  // Don't format if empty or too short
+  if (cleaned.length === 0) {
+    return '';
   }
   
+  // Add spaces every 4 characters for real-time formatting
   return cleaned.replace(/(.{4})/g, '$1 ').trim();
 };
 
