@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData, OpeningHours } from "@/types/onboarding";
@@ -16,7 +17,7 @@ interface CompanyInfoStepProps {
 }
 
 const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
-  const [autoFilledAddressFields, setAutoFilledAddressFields] = useState<Set<string>>(new Set());
+  const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
 
   const updateCompanyInfo = (field: string, value: any) => {
     if (field.includes('.')) {
@@ -142,21 +143,6 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     data.companyInfo.address.zipCode
   ]);
 
-  const handleORSRData = (orsrData: any) => {
-    updateData({
-      companyInfo: {
-        ...data.companyInfo,
-        companyName: orsrData.companyName,
-        dic: orsrData.dic,
-        court: orsrData.court,
-        section: orsrData.section,
-        insertNumber: orsrData.insertNumber,
-        address: orsrData.address,
-        registryType: orsrData.registryType || 'Živnosť'
-      }
-    });
-  };
-
   // Ensure headOfficeEqualsOperatingAddress has a default value
   if (data.companyInfo.headOfficeEqualsOperatingAddress === undefined) {
     updateCompanyInfo('headOfficeEqualsOperatingAddress', false);
@@ -182,16 +168,16 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
               </div>
               
               <p className="text-sm text-blue-800">
-                Začnite zadaním obchodného mena. Systém automaticky rozpozná typ spoločnosti a doplní všetky potrebné údaje vrátane adresy.
+                Začnite zadaním obchodného mena. Systém automaticky rozpozná spoločnosť a doplní všetky potrebné údaje vrátane sídla.
               </p>
               
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
                 <p className="font-medium mb-2">Inteligentné vyplnenie</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  <li>Rozpoznanie typu spoločnosti</li>
+                  <li>Rozpoznanie spoločnosti</li>
                   <li>Automatické doplnenie IČO/DIČ</li>
                   <li>Údaje z obchodného registra</li>
-                  <li>Adresa sídla spoločnosti</li>
+                  <li>Sídlo spoločnosti</li>
                   <li>DPH status predikcia</li>
                 </ul>
               </div>
@@ -209,7 +195,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <Accordion type="multiple" defaultValue={defaultAccordionValues} className="space-y-4">
               
-              {/* Enhanced Basic Company Info (now includes registry info) */}
+              {/* Enhanced Basic Company Info */}
               <AccordionItem value="basic-info" className="border border-slate-200 rounded-lg">
                 <AccordionTrigger className="px-4 py-3 hover:no-underline">
                   <span className="font-medium text-slate-900">Základné údaje o spoločnosti</span>
@@ -218,6 +204,8 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                   <EnhancedCompanyBasicInfoCard
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
+                    autoFilledFields={autoFilledFields}
+                    setAutoFilledFields={setAutoFilledFields}
                   />
                 </AccordionContent>
               </AccordionItem>
@@ -231,7 +219,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                   <CompanyAddressCard
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
-                    autoFilledFields={autoFilledAddressFields}
+                    autoFilledFields={autoFilledFields}
                   />
                 </AccordionContent>
               </AccordionItem>

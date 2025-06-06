@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
 import CompanyAutocomplete from "../ui/CompanyAutocomplete";
@@ -10,14 +9,20 @@ import { CompanyRecognitionResult } from "../services/mockCompanyRecognition";
 interface EnhancedCompanyBasicInfoCardProps {
   data: OnboardingData;
   updateCompanyInfo: (field: string, value: any) => void;
+  autoFilledFields: Set<string>;
+  setAutoFilledFields: (fields: Set<string>) => void;
 }
 
-const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompanyBasicInfoCardProps) => {
-  const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
+const EnhancedCompanyBasicInfoCard = ({ 
+  data, 
+  updateCompanyInfo, 
+  autoFilledFields, 
+  setAutoFilledFields 
+}: EnhancedCompanyBasicInfoCardProps) => {
 
   const handleCompanySelect = (result: CompanyRecognitionResult) => {
     console.log('handleCompanySelect called with:', result);
-    const fieldsToUpdate = new Set<string>();
+    const fieldsToUpdate = new Set<string>(autoFilledFields);
 
     try {
       // Update company info with recognized data
@@ -115,7 +120,7 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
         <h3 className="text-lg font-medium text-slate-900">Základné údaje o spoločnosti</h3>
       </div>
 
-      {/* Company Name - Now with autocomplete */}
+      {/* Company Name - with autocomplete */}
       <div className="space-y-2">
         <CompanyAutocomplete
           value={data.companyInfo.companyName}
@@ -129,16 +134,33 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
         {getFieldIndicator('companyName')}
       </div>
 
-      {/* Company Type - Read-only display when filled */}
-      {data.companyInfo.registryType && (
+      {/* Registry Info Template - Slovak format display */}
+      {(data.companyInfo.section || data.companyInfo.insertNumber) && (
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700">
-            Typ spoločnosti *
+            Údaje z obchodného registra
           </label>
-          <div className={`h-11 px-3 border rounded-md flex items-center text-sm ${getFieldClassName('registryType')}`}>
-            {data.companyInfo.registryType}
+          <div className={`p-3 border rounded-md bg-slate-50 text-sm ${getFieldClassName('registryType')}`}>
+            <div className="space-y-1">
+              {data.companyInfo.section && data.companyInfo.insertNumber && (
+                <div>
+                  <span className="font-medium">Oddiel:</span> {data.companyInfo.section} | 
+                  <span className="font-medium"> Vložka číslo:</span> {data.companyInfo.insertNumber}
+                </div>
+              )}
+              {data.companyInfo.companyName && (
+                <div>
+                  <span className="font-medium">Obchodné meno:</span> {data.companyInfo.companyName}
+                </div>
+              )}
+              {data.companyInfo.registryType && (
+                <div>
+                  <span className="font-medium">Právna forma:</span> {data.companyInfo.registryType}
+                </div>
+              )}
+            </div>
           </div>
-          {getFieldIndicator('registryType')}
+          {getFieldIndicator('section')}
         </div>
       )}
 
@@ -192,7 +214,7 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
         )}
       </div>
 
-      {/* Court Registry Information - moved from CompanyRegistryInfo */}
+      {/* Court Registry Information - editable fields */}
       <div className="space-y-4 pt-4 border-t border-slate-200">
         <h4 className="text-md font-medium text-slate-900">Údaje v obchodnom registri</h4>
         <div className="grid md:grid-cols-3 gap-6">

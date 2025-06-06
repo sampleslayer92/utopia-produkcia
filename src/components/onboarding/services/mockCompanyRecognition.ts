@@ -1,3 +1,4 @@
+
 import { CompanyInfo, CompanyAddress } from "@/types/onboarding";
 
 export interface CompanyRecognitionResult {
@@ -12,7 +13,7 @@ export interface CompanyRecognitionResult {
   address?: CompanyAddress;
 }
 
-// Enhanced mock database with more companies and addresses
+// Enhanced mock database with more companies and realistic Slovak addresses
 const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
   "Slovak Telekom": {
     companyName: "Slovak Telekom, a.s.",
@@ -25,7 +26,7 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     isVatPayer: true,
     address: {
       street: "Bajkalská 28",
-      city: "Bratislava",
+      city: "Bratislava - mestská časť Nové Mesto",
       zipCode: "81762"
     }
   },
@@ -40,7 +41,7 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     isVatPayer: true,
     address: {
       street: "Metodova 8",
-      city: "Bratislava",
+      city: "Bratislava - mestská časť Karlova Ves",
       zipCode: "82109"
     }
   },
@@ -55,22 +56,37 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     isVatPayer: true,
     address: {
       street: "Hodžovo námestie 3",
-      city: "Bratislava",
+      city: "Bratislava - mestská časť Staré Mesto",
       zipCode: "81106"
     }
   },
-  "Pekáreň Novák": {
-    companyName: "Pekáreň Novák s.r.o.",
+  "onePos": {
+    companyName: "onePos s.r.o.",
     registryType: "S.r.o.",
     ico: "12345678",
     dic: "2023456789",
     court: "Okresný súd Bratislava I",
     section: "Sro",
+    insertNumber: "142250/B",
+    isVatPayer: true,
+    address: {
+      street: "Na Grunte 12888/5",
+      city: "Bratislava - mestská časť Nové Mesto",
+      zipCode: "83152"
+    }
+  },
+  "Pekáreň Novák": {
+    companyName: "Pekáreň Novák s.r.o.",
+    registryType: "S.r.o.",
+    ico: "87654321",
+    dic: "2023456780",
+    court: "Okresný súd Košice I",
+    section: "Sro",
     insertNumber: "45678/B",
     isVatPayer: false,
     address: {
       street: "Hlavná ulica 15",
-      city: "Košice",
+      city: "Košice - mestská časť Staré Mesto",
       zipCode: "04001"
     }
   },
@@ -85,7 +101,7 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     isVatPayer: true,
     address: {
       street: "Partizánska cesta 9",
-      city: "Bratislava",
+      city: "Bratislava - mestská časť Nové Mesto",
       zipCode: "97599"
     }
   },
@@ -100,7 +116,7 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     isVatPayer: false,
     address: {
       street: "Mýtna 1",
-      city: "Bratislava",
+      city: "Bratislava - mestská časť Staré Mesto",
       zipCode: "81790"
     }
   },
@@ -115,7 +131,7 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     isVatPayer: true,
     address: {
       street: "Einsteinova 24",
-      city: "Bratislava",
+      city: "Bratislava - mestská časť Petržalka",
       zipCode: "85101"
     }
   },
@@ -130,7 +146,7 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     isVatPayer: true,
     address: {
       street: "Kamenné námestie 1",
-      city: "Bratislava",
+      city: "Bratislava - mestská časť Staré Mesto",
       zipCode: "81106"
     }
   }
@@ -188,7 +204,7 @@ export const recognizeCompanyFromName = async (companyName: string): Promise<Com
   return suggestions.length > 0 ? suggestions[0] : null;
 };
 
-// Helper functions for generating mock data with addresses
+// Helper functions for generating mock data with realistic Slovak addresses
 const generateMockSRO = (name: string): CompanyRecognitionResult => ({
   companyName: name.includes('s.r.o') ? name : `${name} s.r.o.`,
   registryType: "S.r.o.",
@@ -198,7 +214,7 @@ const generateMockSRO = (name: string): CompanyRecognitionResult => ({
   section: "Sro",
   insertNumber: `${Math.floor(Math.random() * 99999)}/B`,
   isVatPayer: Math.random() > 0.5,
-  address: generateMockAddress()
+  address: generateMockSlovakAddress()
 });
 
 const generateMockAS = (name: string): CompanyRecognitionResult => ({
@@ -210,7 +226,7 @@ const generateMockAS = (name: string): CompanyRecognitionResult => ({
   section: "Sa",
   insertNumber: `${Math.floor(Math.random() * 9999)}/B`,
   isVatPayer: true,
-  address: generateMockAddress()
+  address: generateMockSlovakAddress()
 });
 
 const generateMockNO = (name: string): CompanyRecognitionResult => ({
@@ -222,7 +238,7 @@ const generateMockNO = (name: string): CompanyRecognitionResult => ({
   section: "Oz",
   insertNumber: `${Math.floor(Math.random() * 9999)}/B`,
   isVatPayer: false,
-  address: generateMockAddress()
+  address: generateMockSlovakAddress()
 });
 
 const generateMockZivnost = (name: string): CompanyRecognitionResult => ({
@@ -231,18 +247,34 @@ const generateMockZivnost = (name: string): CompanyRecognitionResult => ({
   ico: generateMockICO(),
   dic: generateMockDIC(),
   isVatPayer: Math.random() > 0.7,
-  address: generateMockAddress()
+  address: generateMockSlovakAddress()
 });
 
-const generateMockAddress = (): CompanyAddress => {
+const generateMockSlovakAddress = (): CompanyAddress => {
   const streets = [
     "Hlavná ulica", "Námestie SNP", "Štúrova", "Hviezdoslavovo námestie", 
-    "Kollárova", "Dunajská", "Obchodná", "Grosslingova", "Šancová"
+    "Kollárova", "Dunajská", "Obchodná", "Grosslingova", "Šancová",
+    "Na Grunte", "Metodova", "Bajkalská", "Einsteinova", "Partizánska cesta"
   ];
-  const cities = ["Bratislava", "Košice", "Prešov", "Žilina", "Banská Bystrica", "Nitra", "Trnava"];
+  
+  const cities = [
+    "Bratislava - mestská časť Staré Mesto",
+    "Bratislava - mestská časť Nové Mesto", 
+    "Bratislava - mestská časť Petržalka",
+    "Bratislava - mestská časť Karlova Ves",
+    "Košice - mestská časť Staré Mesto",
+    "Prešov", 
+    "Žilina", 
+    "Banská Bystrica", 
+    "Nitra", 
+    "Trnava"
+  ];
+  
+  const houseNumber = Math.floor(Math.random() * 200) + 1;
+  const buildingNumber = Math.floor(Math.random() * 20000) + 1000;
   
   return {
-    street: `${streets[Math.floor(Math.random() * streets.length)]} ${Math.floor(Math.random() * 200) + 1}`,
+    street: `${streets[Math.floor(Math.random() * streets.length)]} ${buildingNumber}/${houseNumber}`,
     city: cities[Math.floor(Math.random() * cities.length)],
     zipCode: `${Math.floor(Math.random() * 90000) + 10000}`
   };
