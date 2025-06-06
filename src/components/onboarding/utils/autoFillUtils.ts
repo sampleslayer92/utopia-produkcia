@@ -1,4 +1,3 @@
-
 import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
 import { v4 as uuidv4 } from "uuid";
 
@@ -75,20 +74,20 @@ export const createDefaultBusinessLocation = (contactInfo: OnboardingData['conta
       city: '', 
       zipCode: '' 
     },
-    iban: '', // Keep for backward compatibility
+    iban: '',
     bankAccounts: [defaultBankAccount],
     contactPerson: {
       name: `${contactInfo.firstName} ${contactInfo.lastName}`,
       email: contactInfo.email,
       phone: contactInfo.phone
     },
-    businessSector: '', // Keep for backward compatibility
+    businessSector: '',
     businessSubject: '',
     mccCode: '',
-    estimatedTurnover: 0, // Keep for backward compatibility
+    estimatedTurnover: 0,
     monthlyTurnover: 0,
     averageTransaction: 0,
-    openingHours: '', // Keep for backward compatibility
+    openingHours: '',
     openingHoursDetailed: defaultOpeningHours,
     seasonality: 'year-round' as const,
     assignedPersons: []
@@ -100,104 +99,7 @@ export const shouldAutoFillBasedOnContactInfo = (contactInfo: OnboardingData['co
          contactInfo.lastName && 
          contactInfo.email && 
          contactInfo.phone &&
-         contactInfo.userRole &&
          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
-};
-
-// Updated role-based auto-fill function with Menežér support
-export const getAutoFillUpdates = (contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
-  if (!shouldAutoFillBasedOnContactInfo(contactInfo)) {
-    return {};
-  }
-
-  const userRole = contactInfo.userRole;
-  console.log('Auto-fill triggered with role:', userRole, 'and contact info:', contactInfo);
-
-  const updates: Partial<OnboardingData> = {};
-
-  // Check for existing records to avoid duplicates
-  const existingAuthorized = currentData.authorizedPersons.find(p => 
-    p.firstName === contactInfo.firstName && 
-    p.lastName === contactInfo.lastName && 
-    p.email === contactInfo.email
-  );
-
-  const existingOwner = currentData.actualOwners.find(p => 
-    p.firstName === contactInfo.firstName && 
-    p.lastName === contactInfo.lastName
-  );
-
-  // Handle Majiteľ role - create actual owner record (but not for Menežér)
-  if ((userRole === 'Majiteľ' || userRole === 'Konateľ') && !existingOwner) {
-    console.log('Creating actual owner record for role:', userRole);
-    const actualOwner = createActualOwnerFromContactInfo(contactInfo);
-    updates.actualOwners = [...currentData.actualOwners, actualOwner];
-  }
-
-  // Handle Konateľ role - create authorized person record (not for Majiteľ or Menežér)
-  if (userRole === 'Konateľ' && !existingAuthorized) {
-    console.log('Creating authorized person record for Konateľ role');
-    const authorizedPerson = createAuthorizedPersonFromContactInfo(contactInfo);
-    updates.authorizedPersons = [...currentData.authorizedPersons, authorizedPerson];
-    
-    // Set as signing person
-    updates.consents = {
-      ...currentData.consents,
-      signingPersonId: authorizedPerson.id
-    };
-  }
-
-  // Handle technical contact person for all roles
-  console.log('Updating technical contact person for role:', userRole);
-  updates.companyInfo = {
-    ...currentData.companyInfo,
-    contactPerson: {
-      ...currentData.companyInfo.contactPerson,
-      firstName: contactInfo.firstName,
-      lastName: contactInfo.lastName,
-      email: contactInfo.email,
-      phone: contactInfo.phone,
-      isTechnicalPerson: true
-    }
-  };
-
-  // Handle business location creation and updates for all roles
-  let updatedBusinessLocations = currentData.businessLocations;
-  
-  // Create first business location if none exists
-  if (updatedBusinessLocations.length === 0) {
-    console.log('Creating default business location for role:', userRole);
-    const defaultLocation = createDefaultBusinessLocation(contactInfo);
-    updatedBusinessLocations = [defaultLocation];
-  } else {
-    // Update existing business locations with contact person
-    updatedBusinessLocations = updatedBusinessLocations.map(location => {
-      // Only auto-fill if contact person is empty or matches the contact info
-      const shouldUpdate = !location.contactPerson.name || 
-                          location.contactPerson.email === contactInfo.email ||
-                          location.contactPerson.name === `${contactInfo.firstName} ${contactInfo.lastName}`;
-
-      if (shouldUpdate) {
-        return {
-          ...location,
-          contactPerson: {
-            name: `${contactInfo.firstName} ${contactInfo.lastName}`,
-            email: contactInfo.email,
-            phone: contactInfo.phone
-          }
-        };
-      }
-      
-      return location;
-    });
-  }
-  
-  if (updatedBusinessLocations !== currentData.businessLocations) {
-    updates.businessLocations = updatedBusinessLocations;
-  }
-
-  console.log('Auto-fill updates generated for role', userRole, ':', Object.keys(updates));
-  return updates;
 };
 
 // New simplified auto-fill function that doesn't require roles
@@ -295,7 +197,10 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
   return updates;
 };
 
-// Legacy functions for backward compatibility
+// Legacy function for backward compatibility - we'll keep this but use our new simplified version
+export const getAutoFillUpdates = getAutoFillUpdatesSimplified;
+
+// Keep existing helper functions for backward compatibility
 export const updateBusinessLocationsContactPerson = (
   businessLocations: OnboardingData['businessLocations'], 
   contactInfo: OnboardingData['contactInfo'],
@@ -365,17 +270,15 @@ export const formatPhoneForDisplay = (phone: string, prefix: string = '+421') =>
   return cleaned.replace(/(\d{3})(\d{3})(\d{3,4})/, '$1 $2 $3').slice(0, 13);
 };
 
-// Helper function to check if roles have business location requirements
+// Legacy helper functions no longer used but kept for backward compatibility
 export const requiresBusinessLocation = (roles: string[]) => {
   return roles.includes('Kontaktná osoba na prevádzku') || roles.includes('Majiteľ');
 };
 
-// Helper function to check if roles require actual owner record
 export const requiresActualOwner = (roles: string[]) => {
   return roles.includes('Majiteľ');
 };
 
-// Helper function to check if roles require authorized person record
 export const requiresAuthorizedPerson = (roles: string[]) => {
   return roles.includes('Konateľ');
 };

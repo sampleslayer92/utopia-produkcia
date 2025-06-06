@@ -21,15 +21,14 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     isBasicInfoComplete
   } = useSimplifiedContactInfoLogic(data, updateData);
 
-  // Auto-fill status shows sections based on user role
-  const userRole = data.contactInfo.userRole;
+  // Auto-fill status based only on basic info completion
   const basicInfoComplete = Boolean(isBasicInfoComplete());
   
   const autoFillStatus = {
-    actualOwners: basicInfoComplete && (userRole === 'Majiteľ' || userRole === 'Konateľ'),
-    authorizedPersons: basicInfoComplete && userRole === 'Konateľ',
-    businessLocations: Boolean(basicInfoComplete), // All roles get business locations
-    companyInfo: Boolean(basicInfoComplete) // All roles get company info
+    actualOwners: basicInfoComplete,
+    authorizedPersons: basicInfoComplete,
+    businessLocations: basicInfoComplete,
+    companyInfo: basicInfoComplete
   };
 
   return (
@@ -40,7 +39,7 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
             hasAutoFilled={hasAutoFilled}
             userRoles={[]} // No longer using roles array
             autoFillStatus={autoFillStatus}
-            isBasicInfoComplete={Boolean(isBasicInfoComplete())}
+            isBasicInfoComplete={basicInfoComplete}
             contractId={data.contractId || ''}
             contractNumber={data.contractNumber || ''}
           />

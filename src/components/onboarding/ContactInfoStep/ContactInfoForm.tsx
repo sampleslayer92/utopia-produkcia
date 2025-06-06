@@ -5,7 +5,7 @@ import OnboardingSelect from "../ui/OnboardingSelect";
 import PersonInputGroup from "../ui/PersonInputGroup";
 import { getPersonDataFromContactInfo } from "../utils/autoFillUtils";
 import { OnboardingData } from "@/types/onboarding";
-import { Building, UserCheck } from "lucide-react";
+import { Building } from "lucide-react";
 
 interface ContactInfoFormProps {
   data: OnboardingData;
@@ -20,12 +20,6 @@ const ContactInfoForm = ({
   onPersonDataUpdate,
   onContactInfoUpdate
 }: ContactInfoFormProps) => {
-  const roleOptions = [
-    { value: 'Konateľ', label: 'Konateľ' },
-    { value: 'Majiteľ', label: 'Majiteľ' },
-    { value: 'Menežér', label: 'Menežér' }
-  ];
-
   const companyTypeOptions = [
     { value: 'Živnosť', label: 'Živnosť' },
     { value: 'S.r.o.', label: 'S.r.o.' },
@@ -36,34 +30,6 @@ const ContactInfoForm = ({
   return (
     <div className="col-span-1 md:col-span-2 p-6 md:p-8">
       <OnboardingSection>
-        {/* Role Selection */}
-        <div className="space-y-2 mb-6">
-          <div className="flex items-center gap-2 text-slate-700">
-            <UserCheck className="h-5 w-5 text-blue-500" />
-            <span className="text-sm font-medium">Vaša pozícia v spoločnosti *</span>
-          </div>
-          <OnboardingSelect
-            placeholder="Vyberte svoju rolu"
-            value={data.contactInfo.userRole || ''}
-            onValueChange={(value) => onContactInfoUpdate('userRole', value)}
-            options={roleOptions}
-            isCompleted={completedFields.has('userRole')}
-          />
-          {data.contactInfo.userRole && (
-            <div className="text-xs text-slate-600 bg-blue-50 p-2 rounded-md">
-              {data.contactInfo.userRole === 'Konateľ' && 
-                'Vaše údaje sa automaticky vyplnia vo všetkých potrebných sekciách.'
-              }
-              {data.contactInfo.userRole === 'Majiteľ' && 
-                'Vaše údaje sa automaticky vyplnia okrem sekcie oprávnených osôb.'
-              }
-              {data.contactInfo.userRole === 'Menežér' && 
-                'Vaše údaje sa automaticky vyplnia iba ako kontaktná osoba spoločnosti a prevádzok.'
-              }
-            </div>
-          )}
-        </div>
-
         {/* Personal Information using unified component */}
         <PersonInputGroup
           data={getPersonDataFromContactInfo(data.contactInfo)}

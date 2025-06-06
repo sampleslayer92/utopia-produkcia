@@ -789,7 +789,8 @@ export type Database = {
           full_name: string
           id: string
           is_active: boolean | null
-          role: string
+          profile_id: string | null
+          role: string | null
           updated_at: string | null
         }
         Insert: {
@@ -800,7 +801,8 @@ export type Database = {
           full_name: string
           id?: string
           is_active?: boolean | null
-          role?: string
+          profile_id?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -811,7 +813,8 @@ export type Database = {
           full_name?: string
           id?: string
           is_active?: boolean | null
-          role?: string
+          profile_id?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Relationships: [
