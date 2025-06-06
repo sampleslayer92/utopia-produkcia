@@ -217,29 +217,9 @@ const BusinessLocationCard = ({
               />
             </div>
 
-            {/* Contact Person - HIDDEN but still saving data in background */}
-            {/* This section is intentionally commented out to hide it from the user */}
-            {/* The data is still being saved via the updateContactPerson function */}
-            {false && (
-              <div className="border-t border-slate-100 pt-6">
-                <CompanyContactPersonCard
-                  data={{
-                    ...data,
-                    companyInfo: {
-                      ...data.companyInfo,
-                      contactPerson: {
-                        firstName: location.contactPerson.name.split(' ')[0] || '',
-                        lastName: location.contactPerson.name.split(' ').slice(1).join(' ') || '',
-                        email: location.contactPerson.email,
-                        phone: location.contactPerson.phone,
-                        isTechnicalPerson: false
-                      }
-                    }
-                  }}
-                  updateCompanyInfo={updateContactPerson}
-                />
-              </div>
-            )}
+            {/* Contact Person - COMPLETELY HIDDEN but data is still saved in background */}
+            {/* This section is intentionally removed from the UI */}
+            {/* The data is still being saved via the updateContactPerson function when needed */}
           </div>
         </div>
       )}
