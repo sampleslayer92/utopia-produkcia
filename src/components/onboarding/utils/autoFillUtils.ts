@@ -144,7 +144,7 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
     };
   }
 
-  // Always update company contact person (removed registryType auto-fill)
+  // Always update company contact person
   console.log('Updating company contact person');
   const companyUpdates: any = {
     contactPerson: {
@@ -211,8 +211,7 @@ export const hasContactInfoChanged = (
          prev.email !== current.email ||
          prev.phone !== current.phone ||
          prev.phonePrefix !== current.phonePrefix ||
-         prev.userRole !== current.userRole ||
-         prev.companyType !== current.companyType;
+         prev.userRole !== current.userRole;
 };
 
 // Helper function to format phone number consistently

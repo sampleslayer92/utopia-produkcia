@@ -11,7 +11,6 @@ const initialData: OnboardingData = {
     phone: '',
     phonePrefix: '+421',
     salesNote: '',
-    companyType: '',
     userRoles: [],
     userRole: '' // Keep for backward compatibility
   },
@@ -110,9 +109,6 @@ export const useOnboardingData = () => {
         }
         
         // Ensure new fields are present
-        if (!parsedData.contactInfo.companyType) {
-          parsedData.contactInfo.companyType = '';
-        }
         if (!parsedData.contactInfo.userRoles) {
           parsedData.contactInfo.userRoles = [];
         }

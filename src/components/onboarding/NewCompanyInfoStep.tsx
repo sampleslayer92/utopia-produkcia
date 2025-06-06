@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,8 +36,8 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     }
   };
 
-  // Check if registry type was auto-filled
-  const isRegistryTypeAutoFilled = data.companyInfo.registryType && data.contactInfo.companyType;
+  // Check if registry type was auto-filled (simplified check)
+  const isRegistryTypeAutoFilled = data.companyInfo.registryType && data.companyInfo.companyName;
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
