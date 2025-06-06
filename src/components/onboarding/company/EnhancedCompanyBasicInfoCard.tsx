@@ -23,87 +23,115 @@ const EnhancedCompanyBasicInfoCard = ({
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const handleCompanySelect = (result: CompanyRecognitionResult) => {
-    console.log('=== ENHANCED CARD: Starting company selection ===');
-    console.log('Selected company result:', result);
-    console.log('Current data before update:', {
+    console.log('=== COMPANY SELECT: Starting batch update ===');
+    console.log('Selected company:', result);
+    console.log('Current data before batch update:', {
       companyName: data.companyInfo.companyName,
       ico: data.companyInfo.ico,
-      dic: data.companyInfo.dic
+      dic: data.companyInfo.dic,
+      address: data.companyInfo.address
     });
     
-    // Force clear previous auto-filled state
+    // Clear previous auto-filled state immediately
     setAutoFilledFields(new Set());
     
     const fieldsToUpdate = new Set<string>();
+    const updates: Record<string, any> = {};
 
     try {
-      // Force update company name - this is the critical fix
-      console.log('=== FORCING COMPANY NAME UPDATE ===');
-      console.log('From:', data.companyInfo.companyName);
-      console.log('To:', result.companyName);
-      updateCompanyInfo('companyName', result.companyName);
-      fieldsToUpdate.add('companyName');
+      // Prepare all updates in a single object
+      console.log('=== PREPARING BATCH UPDATES ===');
+      
+      // Company name - force update
+      if (result.companyName) {
+        console.log('Adding companyName to batch:', result.companyName);
+        updates.companyName = result.companyName;
+        fieldsToUpdate.add('companyName');
+      }
 
+      // Registry type
       if (result.registryType) {
-        console.log('Updating registry type:', result.registryType);
-        updateCompanyInfo('registryType', result.registryType);
+        console.log('Adding registryType to batch:', result.registryType);
+        updates.registryType = result.registryType;
         fieldsToUpdate.add('registryType');
       }
 
+      // ICO
       if (result.ico) {
-        console.log('Updating ICO:', result.ico);
-        updateCompanyInfo('ico', result.ico);
+        console.log('Adding ico to batch:', result.ico);
+        updates.ico = result.ico;
         fieldsToUpdate.add('ico');
       }
 
+      // DIC
       if (result.dic) {
-        console.log('Updating DIC:', result.dic);
-        updateCompanyInfo('dic', result.dic);
+        console.log('Adding dic to batch:', result.dic);
+        updates.dic = result.dic;
         fieldsToUpdate.add('dic');
       }
 
+      // VAT status
       if (result.isVatPayer !== undefined) {
-        console.log('Updating VAT payer status:', result.isVatPayer);
-        updateCompanyInfo('isVatPayer', result.isVatPayer);
+        console.log('Adding isVatPayer to batch:', result.isVatPayer);
+        updates.isVatPayer = result.isVatPayer;
         fieldsToUpdate.add('isVatPayer');
       }
 
+      // Court info
       if (result.court) {
-        console.log('Updating court:', result.court);
-        updateCompanyInfo('court', result.court);
+        console.log('Adding court to batch:', result.court);
+        updates.court = result.court;
         fieldsToUpdate.add('court');
       }
 
       if (result.section) {
-        console.log('Updating section:', result.section);
-        updateCompanyInfo('section', result.section);
+        console.log('Adding section to batch:', result.section);
+        updates.section = result.section;
         fieldsToUpdate.add('section');
       }
 
       if (result.insertNumber) {
-        console.log('Updating insert number:', result.insertNumber);
-        updateCompanyInfo('insertNumber', result.insertNumber);
+        console.log('Adding insertNumber to batch:', result.insertNumber);
+        updates.insertNumber = result.insertNumber;
         fieldsToUpdate.add('insertNumber');
       }
 
-      // Auto-fill address if available
+      // Address handling - create complete address object
       if (result.address) {
-        console.log('Updating address:', result.address);
-        updateCompanyInfo('address.street', result.address.street);
-        updateCompanyInfo('address.city', result.address.city);
-        updateCompanyInfo('address.zipCode', result.address.zipCode);
+        console.log('Adding address to batch:', result.address);
+        updates.address = {
+          street: result.address.street || '',
+          city: result.address.city || '',
+          zipCode: result.address.zipCode || ''
+        };
         fieldsToUpdate.add('address.street');
         fieldsToUpdate.add('address.city');
         fieldsToUpdate.add('address.zipCode');
       }
 
-      // Set auto-filled fields after all updates
-      console.log('Setting auto-filled fields:', Array.from(fieldsToUpdate));
-      setAutoFilledFields(fieldsToUpdate);
+      console.log('=== EXECUTING BATCH UPDATE ===');
+      console.log('Updates to apply:', updates);
+      console.log('Fields to mark as auto-filled:', Array.from(fieldsToUpdate));
+
+      // Apply all updates in sequence with small delays to ensure proper state updating
+      Object.entries(updates).forEach(([field, value], index) => {
+        setTimeout(() => {
+          console.log(`Applying update ${index + 1}:`, field, '=', value);
+          updateCompanyInfo(field, value);
+          
+          // If this is the last update, set auto-filled fields
+          if (index === Object.entries(updates).length - 1) {
+            setTimeout(() => {
+              console.log('Setting auto-filled fields:', Array.from(fieldsToUpdate));
+              setAutoFilledFields(fieldsToUpdate);
+              console.log('=== BATCH UPDATE COMPLETED ===');
+            }, 100);
+          }
+        }, index * 50);
+      });
       
-      console.log('=== ENHANCED CARD: Company selection completed ===');
     } catch (error) {
-      console.error('Error in handleCompanySelect:', error);
+      console.error('Error in handleCompanySelect batch update:', error);
     }
   };
 

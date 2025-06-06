@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData, OpeningHours } from "@/types/onboarding";
@@ -20,8 +19,14 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
 
   const updateCompanyInfo = (field: string, value: any) => {
+    console.log('=== COMPANY INFO STEP: updateCompanyInfo called ===');
+    console.log('Field:', field);
+    console.log('Value:', value);
+    console.log('Current companyInfo before update:', data.companyInfo);
+    
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
+      console.log('Updating nested field:', parent, '->', child);
       updateData({
         companyInfo: {
           ...data.companyInfo,
@@ -32,6 +37,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         }
       });
     } else {
+      console.log('Updating top-level field:', field);
       updateData({
         companyInfo: {
           ...data.companyInfo,
@@ -39,7 +45,18 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         }
       });
     }
+    
+    console.log('Update dispatched');
   };
+
+  // Debug effect to track data changes
+  useEffect(() => {
+    console.log('=== COMPANY INFO STEP: Data changed ===');
+    console.log('Company name:', data.companyInfo?.companyName);
+    console.log('ICO:', data.companyInfo?.ico);
+    console.log('DIC:', data.companyInfo?.dic);
+    console.log('Address:', data.companyInfo?.address);
+  }, [data.companyInfo]);
 
   // Synchronize contact address with main address when checkbox is checked
   useEffect(() => {
