@@ -4,7 +4,8 @@ import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
 import { MCC_CODES } from "../config/mccCodes";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { formatCurrencyInput, parseCurrencyInput } from "../utils/formatUtils";
 
 interface BusinessDetailsSectionProps {
   businessSubject: string;
@@ -19,44 +20,57 @@ const BusinessDetailsSection = ({
   monthlyTurnover,
   onUpdate
 }: BusinessDetailsSectionProps) => {
-  // Local state to preserve user input format during typing
-  const [turnoverInput, setTurnoverInput] = useState(monthlyTurnover?.toString() || '');
+  // Local state for turnover input with formatting
+  const [turnoverInput, setTurnoverInput] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   const mccOptions = MCC_CODES.map(code => ({
     value: code.value,
     label: code.label
   }));
 
+  // Initialize turnover input when component mounts or value changes externally
+  useEffect(() => {
+    if (!isFocused) {
+      if (monthlyTurnover === 0) {
+        setTurnoverInput('');
+      } else {
+        setTurnoverInput(formatCurrencyInput(monthlyTurnover.toString()));
+      }
+    }
+  }, [monthlyTurnover, isFocused]);
+
   const handleTurnoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTurnoverInput(value);
     
-    // Parse and update parent component with debounced approach
-    const numericValue = parseFloat(value);
-    if (!isNaN(numericValue) && numericValue >= 0) {
-      onUpdate('monthlyTurnover', numericValue);
-    } else if (value === '') {
-      onUpdate('monthlyTurnover', 0);
+    // Parse and update parent component
+    const numericValue = parseCurrencyInput(value);
+    onUpdate('monthlyTurnover', numericValue);
+  };
+
+  const handleTurnoverFocus = () => {
+    setIsFocused(true);
+    // Clear field if it's 0 or show raw number for editing
+    if (monthlyTurnover === 0) {
+      setTurnoverInput('');
+    } else {
+      setTurnoverInput(monthlyTurnover.toString());
     }
   };
 
   const handleTurnoverBlur = () => {
-    // Final validation and cleanup on blur
-    const numericValue = parseFloat(turnoverInput);
-    if (isNaN(numericValue) || numericValue < 0) {
-      setTurnoverInput('0');
+    setIsFocused(false);
+    // Format the value for display
+    const numericValue = parseCurrencyInput(turnoverInput);
+    if (numericValue === 0) {
+      setTurnoverInput('');
       onUpdate('monthlyTurnover', 0);
     } else {
-      // Update input to show clean format if needed
-      setTurnoverInput(numericValue.toString());
+      setTurnoverInput(formatCurrencyInput(numericValue.toString()));
       onUpdate('monthlyTurnover', numericValue);
     }
   };
-
-  // Sync local state when prop changes from external source
-  if (monthlyTurnover?.toString() !== turnoverInput && turnoverInput === '') {
-    setTurnoverInput(monthlyTurnover?.toString() || '');
-  }
 
   return (
     <div className="space-y-4">
@@ -83,14 +97,13 @@ const BusinessDetailsSection = ({
 
       <OnboardingInput
         label="Odhadovaný obrat (mesačne v EUR) *"
-        type="number"
+        type="text"
         inputMode="decimal"
         value={turnoverInput}
         onChange={handleTurnoverChange}
+        onFocus={handleTurnoverFocus}
         onBlur={handleTurnoverBlur}
-        placeholder="Zadajte mesačný obrat v EUR (napr. 5000, 12500.50, 1000000)"
-        min="0"
-        step="any"
+        placeholder={isFocused ? "Zadajte číslo" : "napr. 5 000, 12 500, 1 000 000"}
       />
     </div>
   );
