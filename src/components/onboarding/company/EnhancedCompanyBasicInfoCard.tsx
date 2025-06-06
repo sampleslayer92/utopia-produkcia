@@ -1,7 +1,9 @@
 
+import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
-import CompanyAutocomplete from "../ui/CompanyAutocomplete";
+import CompanySearchModal from "../ui/CompanySearchModal";
+import CompanySearchButton from "../ui/CompanySearchButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Building2, CheckCircle } from "lucide-react";
 import { CompanyRecognitionResult } from "../services/mockCompanyRecognition";
@@ -19,6 +21,7 @@ const EnhancedCompanyBasicInfoCard = ({
   autoFilledFields, 
   setAutoFilledFields 
 }: EnhancedCompanyBasicInfoCardProps) => {
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const handleCompanySelect = (result: CompanyRecognitionResult) => {
     console.log('handleCompanySelect called with:', result);
@@ -113,6 +116,10 @@ const EnhancedCompanyBasicInfoCard = ({
     return null;
   };
 
+  const handleOpenSearchModal = () => {
+    setIsSearchModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-4">
@@ -120,17 +127,26 @@ const EnhancedCompanyBasicInfoCard = ({
         <h3 className="text-lg font-medium text-slate-900">Základné údaje o spoločnosti</h3>
       </div>
 
-      {/* Company Name - with autocomplete */}
+      {/* Company Name - with search button */}
       <div className="space-y-2">
-        <CompanyAutocomplete
-          value={data.companyInfo.companyName}
-          onValueChange={(value) => {
-            console.log('Company name changed via input:', value);
-            updateCompanyInfo('companyName', value);
-          }}
-          onCompanySelect={handleCompanySelect}
-          className={getFieldClassName('companyName')}
-        />
+        <label className="text-sm font-medium text-slate-700">
+          Obchodné meno spoločnosti *
+        </label>
+        <div className="flex gap-2">
+          <OnboardingInput
+            value={data.companyInfo.companyName}
+            onChange={(e) => {
+              console.log('Company name changed via input:', e.target.value);
+              updateCompanyInfo('companyName', e.target.value);
+            }}
+            placeholder="Zadajte obchodné meno spoločnosti"
+            className={`flex-1 ${getFieldClassName('companyName')}`}
+            icon={<Building2 className="h-4 w-4" />}
+          />
+          <CompanySearchButton 
+            onClick={handleOpenSearchModal}
+          />
+        </div>
         {getFieldIndicator('companyName')}
       </div>
 
@@ -252,6 +268,14 @@ const EnhancedCompanyBasicInfoCard = ({
           </div>
         </div>
       </div>
+
+      {/* Company Search Modal */}
+      <CompanySearchModal
+        open={isSearchModalOpen}
+        onOpenChange={setIsSearchModalOpen}
+        onCompanySelect={handleCompanySelect}
+        initialQuery={data.companyInfo.companyName}
+      />
     </div>
   );
 };
