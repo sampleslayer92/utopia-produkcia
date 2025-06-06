@@ -21,8 +21,8 @@ export const createAuthorizedPersonFromCompanyContact = (companyInfo: Onboarding
     documentNumber: '',
     documentValidity: '',
     documentIssuer: '',
-    documentCountry: 'Slovensko',
-    citizenship: 'Slovensko',
+    documentCountry: getDefaultCountryByICO(companyInfo.ico),
+    citizenship: getDefaultCountryByICO(companyInfo.ico),
     isPoliticallyExposed: false,
     isUSCitizen: false,
     documentFrontUrl: '',
@@ -39,7 +39,7 @@ export const createActualOwnerFromCompanyContact = (companyInfo: OnboardingData[
     birthDate: '',
     birthPlace: '',
     birthNumber: '',
-    citizenship: 'Slovensko',
+    citizenship: getDefaultCountryByICO(companyInfo.ico),
     permanentAddress: '',
     isPoliticallyExposed: false
   };
@@ -50,7 +50,7 @@ export const createBusinessLocationFromCompanyInfo = (companyInfo: OnboardingDat
     id: uuidv4(),
     format: 'IBAN',
     iban: '',
-    mena: 'EUR'
+    mena: getDefaultCurrencyByICO(companyInfo.ico)
   };
 
   const defaultOpeningHours: OpeningHours[] = [
@@ -79,7 +79,7 @@ export const createBusinessLocationFromCompanyInfo = (companyInfo: OnboardingDat
       email: companyInfo.contactPerson.email,
       phone: companyInfo.contactPerson.phone
     },
-    businessSector: '',
+    businessSector: getDefaultBusinessSectorByRegistryType(companyInfo.registryType),
     businessSubject: '',
     mccCode: '',
     estimatedTurnover: 0,
@@ -104,6 +104,42 @@ export const getDefaultPositionByRegistryType = (registryType: string): string =
       return 'Štatutárny zástupca';
     default:
       return 'Konateľ';
+  }
+};
+
+export const getDefaultCountryByICO = (ico: string): string => {
+  // Slovak ICO starts with specific patterns
+  if (ico && ico.length === 8 && /^\d+$/.test(ico)) {
+    return 'Slovensko';
+  }
+  // Czech ICO patterns
+  if (ico && ico.length === 8 && /^\d+$/.test(ico)) {
+    return 'Česká republika';
+  }
+  return 'Slovensko'; // Default
+};
+
+export const getDefaultCurrencyByICO = (ico: string): 'EUR' | 'CZK' | 'USD' => {
+  const country = getDefaultCountryByICO(ico);
+  switch (country) {
+    case 'Česká republika':
+      return 'CZK';
+    case 'Slovensko':
+    default:
+      return 'EUR';
+  }
+};
+
+export const getDefaultBusinessSectorByRegistryType = (registryType: string): string => {
+  switch (registryType) {
+    case 'Nezisková organizácia':
+      return 'Neziskový sektor';
+    case 'Živnosť':
+      return 'Služby';
+    case 'S.r.o.':
+    case 'Akciová spoločnosť':
+    default:
+      return 'Obchod a služby';
   }
 };
 
@@ -166,6 +202,80 @@ export const updateSigningPersonFromContact = (
   return contactAsAuthorized?.id;
 };
 
+export const findDuplicatePersons = (data: OnboardingData) => {
+  const duplicates: Array<{ type: string; message: string; action: string }> = [];
+
+  // Check if contact person exists in authorized persons but with different data
+  const contactInAuthorized = data.authorizedPersons.find(person =>
+    person.firstName === data.companyInfo.contactPerson.firstName &&
+    person.lastName === data.companyInfo.contactPerson.lastName
+  );
+
+  if (contactInAuthorized && 
+      (contactInAuthorized.email !== data.companyInfo.contactPerson.email ||
+       contactInAuthorized.phone !== data.companyInfo.contactPerson.phone)) {
+    duplicates.push({
+      type: 'inconsistent-contact',
+      message: 'Kontaktná osoba má rozdielne údaje v oprávnených osobách',
+      action: 'sync-contact-data'
+    });
+  }
+
+  // Check for duplicate persons between authorized and actual owners
+  data.authorizedPersons.forEach(authPerson => {
+    const duplicateOwner = data.actualOwners.find(owner =>
+      owner.firstName === authPerson.firstName && 
+      owner.lastName === authPerson.lastName
+    );
+    
+    if (duplicateOwner) {
+      duplicates.push({
+        type: 'duplicate-person',
+        message: `${authPerson.firstName} ${authPerson.lastName} je v oprávnených osobách aj skutočných majiteľoch`,
+        action: 'merge-person-data'
+      });
+    }
+  });
+
+  return duplicates;
+};
+
+export const getDataConsistencyIssues = (data: OnboardingData) => {
+  const issues: Array<{ type: string; message: string; action: string }> = [];
+
+  // Check if contact person is missing from authorized persons
+  if (!shouldCreateAuthorizedPersonFromContact(data.companyInfo, data.authorizedPersons) &&
+      !data.authorizedPersons.some(person =>
+        person.firstName === data.companyInfo.contactPerson.firstName &&
+        person.lastName === data.companyInfo.contactPerson.lastName
+      )) {
+    issues.push({
+      type: 'missing-contact-in-authorized',
+      message: 'Kontaktná osoba spoločnosti nie je v zozname oprávnených osôb',
+      action: 'add-contact-to-authorized'
+    });
+  }
+
+  // Check if head office address doesn't match business locations when it should
+  if (data.companyInfo.headOfficeEqualsOperatingAddress && data.businessLocations.length > 0) {
+    const hasMatchingLocation = data.businessLocations.some(location =>
+      location.address.street === data.companyInfo.address.street &&
+      location.address.city === data.companyInfo.address.city &&
+      location.address.zipCode === data.companyInfo.address.zipCode
+    );
+
+    if (!hasMatchingLocation) {
+      issues.push({
+        type: 'address-mismatch',
+        message: 'Žiadna prevádzka nemá adresu sídla spoločnosti',
+        action: 'sync-business-location-address'
+      });
+    }
+  }
+
+  return issues;
+};
+
 export const getAutoFillSuggestions = (data: OnboardingData) => {
   const suggestions: string[] = [];
 
@@ -182,5 +292,54 @@ export const getAutoFillSuggestions = (data: OnboardingData) => {
     suggestions.push('Vytvoriť prevádzku s adresou sídla spoločnosti');
   }
 
+  // Add suggestions for duplicates and consistency issues
+  const duplicates = findDuplicatePersons(data);
+  const issues = getDataConsistencyIssues(data);
+
+  duplicates.forEach(duplicate => {
+    suggestions.push(duplicate.message);
+  });
+
+  issues.forEach(issue => {
+    suggestions.push(issue.message);
+  });
+
   return suggestions;
+};
+
+export const syncContactPersonData = (
+  data: OnboardingData,
+  updateData: (data: Partial<OnboardingData>) => void
+) => {
+  const updatedAuthorizedPersons = data.authorizedPersons.map(person => {
+    if (person.firstName === data.companyInfo.contactPerson.firstName &&
+        person.lastName === data.companyInfo.contactPerson.lastName) {
+      return {
+        ...person,
+        email: data.companyInfo.contactPerson.email,
+        phone: data.companyInfo.contactPerson.phone
+      };
+    }
+    return person;
+  });
+
+  updateData({ authorizedPersons: updatedAuthorizedPersons });
+};
+
+export const syncBusinessLocationAddresses = (
+  data: OnboardingData,
+  updateData: (data: Partial<OnboardingData>) => void
+) => {
+  if (data.companyInfo.headOfficeEqualsOperatingAddress) {
+    const updatedLocations = data.businessLocations.map(location => ({
+      ...location,
+      address: {
+        street: data.companyInfo.address.street,
+        city: data.companyInfo.address.city,
+        zipCode: data.companyInfo.address.zipCode
+      }
+    }));
+
+    updateData({ businessLocations: updatedLocations });
+  }
 };

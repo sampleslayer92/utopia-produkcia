@@ -7,7 +7,9 @@ import {
   createBusinessLocationFromCompanyInfo,
   shouldCreateAuthorizedPersonFromContact,
   shouldCreateActualOwnerFromContact,
-  updateSigningPersonFromContact
+  updateSigningPersonFromContact,
+  syncContactPersonData,
+  syncBusinessLocationAddresses
 } from "../utils/crossStepAutoFill";
 import { useToast } from "@/hooks/use-toast";
 
@@ -94,6 +96,53 @@ export const useCrossStepAutoFill = ({ data, updateData, currentStep }: UseCross
     }
   }, [data.companyInfo, data.authorizedPersons, data.consents, updateData, toast]);
 
+  // Sync contact person data across steps
+  const syncContactData = useCallback(() => {
+    syncContactPersonData(data, updateData);
+    
+    toast({
+      title: "Údaje synchronizované",
+      description: "Kontaktné údaje boli aktualizované vo všetkých krokoch",
+    });
+  }, [data, updateData, toast]);
+
+  // Sync business location addresses
+  const syncAddresses = useCallback(() => {
+    syncBusinessLocationAddresses(data, updateData);
+    
+    toast({
+      title: "Adresy synchronizované",
+      description: "Adresy prevádzok boli aktualizované podľa sídla spoločnosti",
+    });
+  }, [data, updateData, toast]);
+
+  // Apply all available auto-fills
+  const applyAllSuggestions = useCallback(() => {
+    let applied = 0;
+
+    if (shouldCreateAuthorizedPersonFromContact(data.companyInfo, data.authorizedPersons)) {
+      autoFillAuthorizedPerson();
+      applied++;
+    }
+
+    if (shouldCreateActualOwnerFromContact(data.contactInfo, data.companyInfo, data.actualOwners)) {
+      autoFillActualOwner();
+      applied++;
+    }
+
+    if (data.companyInfo.headOfficeEqualsOperatingAddress && data.businessLocations.length === 0) {
+      autoFillBusinessLocation();
+      applied++;
+    }
+
+    if (applied > 0) {
+      toast({
+        title: "Hromadné vyplnenie",
+        description: `Aplikované ${applied} automatické návrhy`,
+      });
+    }
+  }, [data, autoFillAuthorizedPerson, autoFillActualOwner, autoFillBusinessLocation, toast]);
+
   // Trigger auto-fills based on current step
   useEffect(() => {
     if (currentStep === 2) { // Business Locations
@@ -111,6 +160,9 @@ export const useCrossStepAutoFill = ({ data, updateData, currentStep }: UseCross
     autoFillAuthorizedPerson,
     autoFillActualOwner,
     autoFillBusinessLocation,
-    autoFillSigningPerson
+    autoFillSigningPerson,
+    syncContactData,
+    syncAddresses,
+    applyAllSuggestions
   };
 };

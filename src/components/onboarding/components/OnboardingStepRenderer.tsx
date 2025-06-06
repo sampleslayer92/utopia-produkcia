@@ -43,7 +43,14 @@ const OnboardingStepRenderer = ({
     currentStep,
     companyName: data.companyInfo?.companyName,
     ico: data.companyInfo?.ico,
-    address: data.companyInfo?.address
+    address: data.companyInfo?.address,
+    contactPerson: data.companyInfo?.contactPerson,
+    headOfficeEqualsOperating: data.companyInfo?.headOfficeEqualsOperatingAddress,
+    businessLocationsCount: data.businessLocations?.length || 0,
+    authorizedPersonsCount: data.authorizedPersons?.length || 0,
+    actualOwnersCount: data.actualOwners?.length || 0,
+    userRole: data.contactInfo?.userRole,
+    userRoles: data.contactInfo?.userRoles
   });
 
   switch (currentStep) {
