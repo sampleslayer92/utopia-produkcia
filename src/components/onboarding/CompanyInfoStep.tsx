@@ -4,10 +4,11 @@ import { OnboardingData, OpeningHours } from "@/types/onboarding";
 import { Building2 } from "lucide-react";
 import EnhancedCompanyBasicInfoCard from "./company/EnhancedCompanyBasicInfoCard";
 import CompanyAddressCard from "./company/CompanyAddressCard";
-import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
-import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
+import CompanyContactAddressCard from "./company/CompanyContactPersonCard";
+import MobileOptimizedCard from "./ui/MobileOptimizedCard";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { syncContactPersonData } from "./utils/crossStepAutoFill";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -19,6 +20,7 @@ interface CompanyInfoStepProps {
 
 const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: CompanyInfoStepProps) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
+  const isMobile = useIsMobile();
 
   const updateCompanyInfo = useCallback((field: string, value: any) => {
     console.log('=== COMPANY INFO STEP: updateCompanyInfo called ===');
@@ -253,11 +255,61 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
     return baseValues;
   }, [data.companyInfo.contactAddressSameAsMain, hideContactPerson]);
 
+  const infoTooltipData = {
+    description: "Začnite zadaním obchodného mena. Systém automaticky rozpozná spoločnosť a doplní všetky potrebné údaje vrátane sídla.",
+    features: [
+      "Rozpoznanie spoločnosti",
+      "Automatické doplnenie IČO/DIČ",
+      "Údaje z obchodného registra", 
+      "Sídlo spoločnosti",
+      "DPH status predikcia"
+    ]
+  };
+
+  if (isMobile) {
+    return (
+      <MobileOptimizedCard
+        title="Údaje o spoločnosti"
+        icon={<Building2 className="h-4 w-4 text-blue-600" />}
+        infoTooltip={infoTooltipData}
+      >
+        <div className="space-y-4">
+          <EnhancedCompanyBasicInfoCard
+            data={data}
+            updateCompanyInfo={updateCompanyInfo}
+            autoFilledFields={autoFilledFields}
+            setAutoFilledFields={setAutoFilledFields}
+          />
+          
+          <CompanyAddressCard
+            data={data}
+            updateCompanyInfo={updateCompanyInfo}
+            autoFilledFields={autoFilledFields}
+          />
+          
+          {!data.companyInfo.contactAddressSameAsMain && (
+            <CompanyContactAddressCard
+              data={data}
+              updateCompanyInfo={updateCompanyInfo}
+            />
+          )}
+          
+          {!hideContactPerson && (
+            <CompanyContactPersonCard
+              data={data}
+              updateCompanyInfo={updateCompanyInfo}
+            />
+          )}
+        </div>
+      </MobileOptimizedCard>
+    );
+  }
+
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-3">
-          {/* Left sidebar with info */}
+          {/* Left sidebar with info - Desktop only */}
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8">
             <div className="space-y-6">
               <div className="flex items-center gap-3">

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useOnboardingData } from "./hooks/useOnboardingData";
 import { useOnboardingNavigation } from "./hooks/useOnboardingNavigation";
@@ -10,8 +11,10 @@ import OnboardingHeader from "./ui/OnboardingHeader";
 import OnboardingStepRenderer from "./components/OnboardingStepRenderer";
 import { OnboardingErrorBoundary } from "./components/OnboardingErrorBoundary";
 import AutoSaveIndicator from "./ui/AutoSaveIndicator";
+import MobileStepper from "./ui/MobileStepper";
 import { useContractCreation } from "@/hooks/useContractCreation";
 import { useContractPersistence } from "@/hooks/useContractPersistence";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
 const OnboardingFlow = () => {
@@ -24,6 +27,7 @@ const OnboardingFlow = () => {
   const { createContract, isCreating } = useContractCreation();
   const { saveContractData } = useContractPersistence();
   const { overallProgress } = useProgressTracking(onboardingData, currentStep);
+  const isMobile = useIsMobile();
 
   const {
     totalSteps,
@@ -129,6 +133,8 @@ const OnboardingFlow = () => {
     setContractCreationAttempted(false);
   }, []);
 
+  const currentStepData = onboardingSteps[currentStep];
+
   return (
     <OnboardingErrorBoundary onReset={handleErrorReset}>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -139,28 +145,45 @@ const OnboardingFlow = () => {
           isCreatingContract={isCreating}
         />
         
-        <div className="flex">
-          <OnboardingSidebar
+        {/* Mobile Stepper */}
+        {isMobile && (
+          <MobileStepper
             currentStep={currentStep}
-            steps={onboardingSteps}
-            onStepClick={handleStepClick}
-            onboardingData={onboardingData}
+            totalSteps={totalSteps}
+            stepTitle={currentStepData?.title || 'Krok'}
+            progress={overallProgress.overallPercentage}
+            onBack={prevStep}
+            showBackButton={currentStep > 0}
           />
+        )}
+        
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          {!isMobile && (
+            <OnboardingSidebar
+              currentStep={currentStep}
+              steps={onboardingSteps}
+              onStepClick={handleStepClick}
+              onboardingData={onboardingData}
+            />
+          )}
           
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-4 md:p-6">
             <div className="max-w-5xl mx-auto">
-              {/* Progress and Auto-save indicator */}
-              <div className="flex justify-between items-center mb-4">
-                <div className="text-sm text-slate-600">
-                  Celkový postup: {overallProgress.overallPercentage}% 
-                  ({overallProgress.completedSteps}/{overallProgress.totalSteps} krokov)
+              {/* Progress and Auto-save indicator - Hide on mobile */}
+              {!isMobile && (
+                <div className="flex justify-between items-center mb-4">
+                  <div className="text-sm text-slate-600">
+                    Celkový postup: {overallProgress.overallPercentage}% 
+                    ({overallProgress.completedSteps}/{overallProgress.totalSteps} krokov)
+                  </div>
+                  
+                  <AutoSaveIndicator 
+                    status={autoSaveStatus}
+                    lastSaved={lastSaved}
+                  />
                 </div>
-                
-                <AutoSaveIndicator 
-                  status={autoSaveStatus}
-                  lastSaved={lastSaved}
-                />
-              </div>
+              )}
 
               <OnboardingStepRenderer
                 currentStep={currentStep}

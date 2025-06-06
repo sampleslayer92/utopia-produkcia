@@ -1,16 +1,15 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { OnboardingData } from "@/types/onboarding";
-import OnboardingSection from "./ui/OnboardingSection";
-import BusinessLocationCard from "./BusinessLocationStep/BusinessLocationCard";
-import EmptyState from "./BusinessLocationStep/EmptyState";
+import { Store } from "lucide-react";
 import BusinessLocationSidebar from "./BusinessLocationStep/BusinessLocationSidebar";
+import BusinessLocationCard from "./BusinessLocationStep/BusinessLocationCard";
+import MobileOptimizedCard from "./ui/MobileOptimizedCard";
+import EmptyState from "./BusinessLocationStep/EmptyState";
 import OpeningHoursModal from "./BusinessLocationStep/OpeningHoursModal";
-import AutoFillSuggestions from "./ui/AutoFillSuggestions";
+import { OnboardingData, OpeningHours } from "@/types/onboarding";
 import { useBusinessLocationManager } from "./BusinessLocationStep/BusinessLocationManager";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface BusinessLocationStepProps {
   data: OnboardingData;
@@ -20,7 +19,9 @@ interface BusinessLocationStepProps {
 }
 
 const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) => {
-  const [editingHoursLocationId, setEditingHoursLocationId] = useState<string | null>(null);
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [isOpeningHoursModalOpen, setIsOpeningHoursModalOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const {
     expandedLocationId,
@@ -34,18 +35,79 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     toggleLocation
   } = useBusinessLocationManager(data, updateData);
 
-  const getUserRole = () => {
-    // Check both userRole (singular) and userRoles (array) for backward compatibility
-    const roles = data.contactInfo.userRoles || (data.contactInfo.userRole ? [data.contactInfo.userRole] : []);
-    
-    if (roles.includes('Kontaktná osoba na prevádzku')) {
-      return 'Kontaktná osoba na prevádzku';
-    }
-    if (roles.includes('Majiteľ')) {
-      return 'Majiteľ';
-    }
-    return '';
+  const handleOpeningHoursEdit = (locationId: string) => {
+    setSelectedLocationId(locationId);
+    setIsOpeningHoursModalOpen(true);
   };
+
+  const handleOpeningHoursSave = (openingHours: OpeningHours[]) => {
+    if (selectedLocationId) {
+      updateOpeningHours(selectedLocationId, openingHours);
+    }
+    setIsOpeningHoursModalOpen(false);
+    setSelectedLocationId(null);
+  };
+
+  const infoTooltipData = {
+    description: "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
+    features: [
+      "Správa viacerých bankových účtov",
+      "Detailné MCC kódy a predmet podnikania", 
+      "Interaktívne otváracie hodiny s rýchlymi akciami",
+      "Podpora rôznych mien (EUR, CZK, USD)"
+    ]
+  };
+
+  const renderContent = () => {
+    if (data.businessLocations.length === 0) {
+      return <EmptyState onAddLocation={addBusinessLocation} />;
+    }
+
+    return (
+      <div className="space-y-4">
+        {data.businessLocations.map((location, index) => (
+          <BusinessLocationCard
+            key={location.id}
+            location={location}
+            index={index}
+            data={data}
+            isExpanded={expandedLocationId === location.id}
+            onToggle={() => toggleLocation(location.id)}
+            onRemove={() => removeBusinessLocation(location.id)}
+            onUpdate={(field, value) => updateBusinessLocation(location.id, field, value)}
+            onBankAccountsUpdate={(accounts) => updateBankAccounts(location.id, accounts)}
+            onBusinessDetailsUpdate={(field, value) => updateBusinessDetails(location.id, field, value)}
+            onOpeningHoursEdit={() => handleOpeningHoursEdit(location.id)}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  if (isMobile) {
+    return (
+      <>
+        <MobileOptimizedCard
+          title="Údaje o prevádzke"
+          icon={<Store className="h-4 w-4 text-blue-600" />}
+          infoTooltip={infoTooltipData}
+        >
+          {renderContent()}
+        </MobileOptimizedCard>
+
+        <OpeningHoursModal
+          isOpen={isOpeningHoursModalOpen}
+          onClose={() => setIsOpeningHoursModalOpen(false)}
+          onSave={handleOpeningHoursSave}
+          initialHours={
+            selectedLocationId 
+              ? data.businessLocations.find(loc => loc.id === selectedLocationId)?.openingHoursDetailed || []
+              : []
+          }
+        />
+      </>
+    );
+  }
 
   return (
     <>
@@ -54,67 +116,27 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
           <div className="grid grid-cols-1 md:grid-cols-3">
             <BusinessLocationSidebar
               hasBusinessContactRole={hasBusinessContactRole}
-              userRole={getUserRole()}
+              userRole={data.contactInfo.userRole}
               onAddLocation={addBusinessLocation}
             />
             
             <div className="col-span-1 md:col-span-2 p-6 md:p-8">
-              <OnboardingSection>
-                {/* Auto-fill suggestions */}
-                <AutoFillSuggestions 
-                  data={data} 
-                  updateData={updateData} 
-                  currentStep={2} 
-                />
-
-                {data.businessLocations.length === 0 ? (
-                  <EmptyState onAddLocation={addBusinessLocation} />
-                ) : (
-                  <>
-                    {data.businessLocations.map((location, index) => (
-                      <BusinessLocationCard
-                        key={location.id}
-                        location={location}
-                        index={index}
-                        data={data}
-                        isExpanded={expandedLocationId === location.id}
-                        onToggle={() => toggleLocation(location.id)}
-                        onRemove={() => removeBusinessLocation(location.id)}
-                        onUpdate={(field, value) => updateBusinessLocation(location.id, field, value)}
-                        onBankAccountsUpdate={(accounts) => updateBankAccounts(location.id, accounts)}
-                        onBusinessDetailsUpdate={(field, value) => updateBusinessDetails(location.id, field, value)}
-                        onOpeningHoursEdit={() => setEditingHoursLocationId(location.id)}
-                      />
-                    ))}
-
-                    <Button
-                      onClick={addBusinessLocation}
-                      variant="outline"
-                      className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Pridať ďalšiu prevádzku
-                    </Button>
-                  </>
-                )}
-              </OnboardingSection>
+              {renderContent()}
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Opening Hours Modal */}
-      {editingHoursLocationId && (
-        <OpeningHoursModal
-          isOpen={true}
-          onClose={() => setEditingHoursLocationId(null)}
-          openingHours={data.businessLocations.find(loc => loc.id === editingHoursLocationId)?.openingHoursDetailed || []}
-          onSave={(hours) => {
-            updateOpeningHours(editingHoursLocationId, hours);
-            setEditingHoursLocationId(null);
-          }}
-        />
-      )}
+      <OpeningHoursModal
+        isOpen={isOpeningHoursModalOpen}
+        onClose={() => setIsOpeningHoursModalOpen(false)}
+        onSave={handleOpeningHoursSave}
+        initialHours={
+          selectedLocationId 
+            ? data.businessLocations.find(loc => loc.id === selectedLocationId)?.openingHoursDetailed || []
+            : []
+        }
+      />
     </>
   );
 };

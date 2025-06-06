@@ -1,9 +1,12 @@
 
 import { OnboardingData } from "@/types/onboarding";
 import { Card, CardContent } from "@/components/ui/card";
+import { User } from "lucide-react";
 import ContactInfoSidebar from "./ContactInfoStep/ContactInfoSidebar";
 import ContactInfoForm from "./ContactInfoStep/ContactInfoForm";
+import MobileOptimizedCard from "./ui/MobileOptimizedCard";
 import { useSimplifiedContactInfoLogic } from "./ContactInfoStep/hooks/useSimplifiedContactInfoLogic";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -13,6 +16,7 @@ interface ContactInfoStepProps {
 }
 
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
+  const isMobile = useIsMobile();
   const {
     completedFields,
     hasAutoFilled,
@@ -30,6 +34,33 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     businessLocations: basicInfoComplete,
     companyInfo: basicInfoComplete
   };
+
+  const infoTooltipData = {
+    description: "Vyplňte vaše základné kontaktné údaje. Tieto informácie sa použijú pre automatické predvyplnenie ostatných krokov registrácie.",
+    features: [
+      "Automatické predvyplnenie kontaktných osôb",
+      "Synchronizácia údajov medzi krokmi",
+      "Overenie emailovej adresy", 
+      "Formátovanie telefónneho čísla"
+    ]
+  };
+
+  if (isMobile) {
+    return (
+      <MobileOptimizedCard
+        title="Kontaktné údaje"
+        icon={<User className="h-4 w-4 text-blue-600" />}
+        infoTooltip={infoTooltipData}
+      >
+        <ContactInfoForm
+          data={data}
+          completedFields={completedFields}
+          onPersonDataUpdate={handlePersonDataUpdate}
+          onContactInfoUpdate={updateContactInfo}
+        />
+      </MobileOptimizedCard>
+    );
+  }
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
