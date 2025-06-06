@@ -102,6 +102,23 @@ export const shouldAutoFillBasedOnContactInfo = (contactInfo: OnboardingData['co
          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
 };
 
+// Helper function to map companyType to registryType
+export const mapCompanyTypeToRegistryType = (companyType: string): 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' => {
+  // Direct mapping since we're using the same values
+  switch (companyType) {
+    case 'Živnosť':
+      return 'Živnosť';
+    case 'S.r.o.':
+      return 'S.r.o.';
+    case 'Nezisková organizácia':
+      return 'Nezisková organizácia';
+    case 'Akciová spoločnosť':
+      return 'Akciová spoločnosť';
+    default:
+      return 'S.r.o.'; // Default fallback
+  }
+};
+
 // New simplified auto-fill function that doesn't require roles
 export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
   if (!shouldAutoFillBasedOnContactInfo(contactInfo)) {
@@ -144,10 +161,9 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
     };
   }
 
-  // Always update company contact person
-  console.log('Updating company contact person');
-  updates.companyInfo = {
-    ...currentData.companyInfo,
+  // Always update company contact person AND registry type
+  console.log('Updating company contact person and registry type');
+  const companyUpdates: any = {
     contactPerson: {
       ...currentData.companyInfo.contactPerson,
       firstName: contactInfo.firstName,
@@ -156,6 +172,17 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
       phone: contactInfo.phone,
       isTechnicalPerson: true
     }
+  };
+
+  // Auto-fill registry type based on company type selection
+  if (contactInfo.companyType) {
+    console.log('Mapping company type to registry type:', contactInfo.companyType);
+    companyUpdates.registryType = mapCompanyTypeToRegistryType(contactInfo.companyType);
+  }
+
+  updates.companyInfo = {
+    ...currentData.companyInfo,
+    ...companyUpdates
   };
 
   // Always create/update business location
@@ -253,7 +280,8 @@ export const hasContactInfoChanged = (
          prev.email !== current.email ||
          prev.phone !== current.phone ||
          prev.phonePrefix !== current.phonePrefix ||
-         prev.userRole !== current.userRole;
+         prev.userRole !== current.userRole ||
+         prev.companyType !== current.companyType;
 };
 
 // Helper function to format phone number consistently

@@ -47,7 +47,7 @@ export const useSimplifiedContactInfoLogic = (
         setHasAutoFilled(true);
       }
     }
-  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix]);
+  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix, data.contactInfo.companyType]);
 
   // Watch for changes in contact info and propagate to other sections
   useEffect(() => {
@@ -70,7 +70,7 @@ export const useSimplifiedContactInfoLogic = (
 
     // Update ref for next comparison
     prevContactInfoRef.current = currentContactInfo;
-  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix]);
+  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix, data.contactInfo.companyType]);
 
   // Track completed fields for visual feedback
   useEffect(() => {

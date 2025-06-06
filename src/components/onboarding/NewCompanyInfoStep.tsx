@@ -1,9 +1,11 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { OnboardingData } from "@/types/onboarding";
+import { CheckCircle } from "lucide-react";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -34,6 +36,9 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
       });
     }
   };
+
+  // Check if registry type was auto-filled
+  const isRegistryTypeAutoFilled = data.companyInfo.registryType && data.contactInfo.companyType;
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
@@ -105,18 +110,27 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="registryType">Zápis v obchodnom registri *</Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="registryType">Typ spoločnosti *</Label>
+            {isRegistryTypeAutoFilled && (
+              <div className="flex items-center gap-1 text-xs text-green-600">
+                <CheckCircle className="h-3 w-3" />
+                <span>Automaticky vyplnené</span>
+              </div>
+            )}
+          </div>
           <Select
             value={data.companyInfo.registryType}
             onValueChange={(value) => updateCompanyInfo('registryType', value)}
           >
-            <SelectTrigger className="border-slate-300 focus:border-blue-500">
-              <SelectValue placeholder="Vyberte typ registra" />
+            <SelectTrigger className={`border-slate-300 focus:border-blue-500 ${isRegistryTypeAutoFilled ? 'bg-green-50 border-green-200' : ''}`}>
+              <SelectValue placeholder="Vyberte typ spoločnosti" />
             </SelectTrigger>
             <SelectContent className="bg-white border-slate-200">
-              <SelectItem value="public">Verejný register</SelectItem>
-              <SelectItem value="business">Živnostenský register</SelectItem>
-              <SelectItem value="other">Iný</SelectItem>
+              <SelectItem value="Živnosť">Živnosť</SelectItem>
+              <SelectItem value="S.r.o.">S.r.o.</SelectItem>
+              <SelectItem value="Nezisková organizácia">Nezisková organizácia</SelectItem>
+              <SelectItem value="Akciová spoločnosť">Akciová spoločnosť</SelectItem>
             </SelectContent>
           </Select>
         </div>
