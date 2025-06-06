@@ -51,11 +51,6 @@ const BusinessDetailsSection = ({
     console.log('=== TURNOVER CHANGE ===', { value });
     
     setTurnoverInput(value);
-    
-    // Parse and update parent component immediately
-    const numericValue = parseCurrencyInput(value);
-    console.log('=== PARSED NUMERIC VALUE ===', numericValue);
-    onUpdate('monthlyTurnover', numericValue);
   };
 
   const handleTurnoverFocus = () => {

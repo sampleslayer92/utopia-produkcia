@@ -128,21 +128,13 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
     });
   };
 
-  // Handle bank accounts update
+  // Handle bank accounts update - simplified to avoid duplicate IBAN updates
   const updateBankAccounts = (locationId: string, bankAccounts: BankAccount[]) => {
     console.log('=== UPDATE BANK ACCOUNTS ===', { locationId, bankAccounts });
     
+    // Update only bankAccounts, don't update backward compatibility IBAN field here
+    // to avoid conflicts with direct IBAN input
     updateBusinessLocation(locationId, 'bankAccounts', bankAccounts);
-    
-    // Update backward compatibility IBAN field
-    if (bankAccounts.length > 0) {
-      const firstAccount = bankAccounts[0];
-      if (firstAccount.format === 'IBAN' && firstAccount.iban) {
-        updateBusinessLocation(locationId, 'iban', firstAccount.iban);
-      } else if (firstAccount.format === 'CisloUctuKodBanky' && firstAccount.cisloUctu && firstAccount.kodBanky) {
-        updateBusinessLocation(locationId, 'iban', `${firstAccount.cisloUctu}/${firstAccount.kodBanky}`);
-      }
-    }
   };
 
   // Handle business details update
@@ -151,7 +143,7 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
     
     updateBusinessLocation(locationId, field, value);
     
-    // Update backward compatibility fields
+    // Update backward compatibility fields only for business details, not IBAN
     if (field === 'businessSubject') {
       updateBusinessLocation(locationId, 'businessSector', value);
     } else if (field === 'monthlyTurnover') {
