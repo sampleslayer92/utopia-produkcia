@@ -1,11 +1,10 @@
-
 import { Building } from "lucide-react";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
 import { MCC_CODES } from "../config/mccCodes";
 import { useState, useEffect } from "react";
-import { formatCurrencyInput, parseCurrencyInput } from "../utils/formatUtils";
+import { formatTurnoverInput, parseTurnoverInput } from "../utils/formatUtils";
 
 interface BusinessDetailsSectionProps {
   businessSubject: string;
@@ -29,7 +28,7 @@ const BusinessDetailsSection = ({
     label: code.label
   }));
 
-  // Initialize turnover input when component mounts or value changes externally
+  // Initialize turnover input - only format if there's an actual value and not focused
   useEffect(() => {
     console.log('=== BUSINESS DETAILS: Turnover effect ===', { 
       monthlyTurnover, 
@@ -38,10 +37,12 @@ const BusinessDetailsSection = ({
     });
     
     if (!isFocused) {
-      if (monthlyTurnover === 0) {
-        setTurnoverInput('');
+      // Only show formatted value if there's actually a value greater than 0
+      if (monthlyTurnover > 0) {
+        setTurnoverInput(formatTurnoverInput(monthlyTurnover.toString()));
       } else {
-        setTurnoverInput(formatCurrencyInput(monthlyTurnover.toString()));
+        // Keep field empty if no value or value is 0
+        setTurnoverInput('');
       }
     }
   }, [monthlyTurnover, isFocused]);
@@ -50,17 +51,19 @@ const BusinessDetailsSection = ({
     const value = e.target.value;
     console.log('=== TURNOVER CHANGE ===', { value });
     
-    setTurnoverInput(value);
+    // Allow only numbers when typing
+    const numericOnly = value.replace(/[^0-9]/g, '');
+    setTurnoverInput(numericOnly);
   };
 
   const handleTurnoverFocus = () => {
     console.log('=== TURNOVER FOCUS ===', { monthlyTurnover });
     setIsFocused(true);
-    // Show raw number for editing, or empty string if zero
-    if (monthlyTurnover === 0) {
-      setTurnoverInput('');
-    } else {
+    // Show raw number for editing, or empty string if zero/empty
+    if (monthlyTurnover > 0) {
       setTurnoverInput(monthlyTurnover.toString());
+    } else {
+      setTurnoverInput('');
     }
   };
 
@@ -69,17 +72,17 @@ const BusinessDetailsSection = ({
     setIsFocused(false);
     
     // Parse the current input value
-    const numericValue = parseCurrencyInput(turnoverInput);
+    const numericValue = parseTurnoverInput(turnoverInput);
     console.log('=== TURNOVER BLUR PARSED ===', numericValue);
     
     // Always update the parent with the final value
     onUpdate('monthlyTurnover', numericValue);
     
-    // Format the display value
-    if (numericValue === 0) {
-      setTurnoverInput('');
+    // Format the display value with € symbol and commas
+    if (numericValue > 0) {
+      setTurnoverInput(formatTurnoverInput(numericValue.toString()));
     } else {
-      setTurnoverInput(formatCurrencyInput(numericValue.toString()));
+      setTurnoverInput('');
     }
   };
 
@@ -109,12 +112,12 @@ const BusinessDetailsSection = ({
       <OnboardingInput
         label="Odhadovaný obrat (mesačne v EUR) *"
         type="text"
-        inputMode="decimal"
+        inputMode="numeric"
         value={turnoverInput}
         onChange={handleTurnoverChange}
         onFocus={handleTurnoverFocus}
         onBlur={handleTurnoverBlur}
-        placeholder={isFocused ? "Zadajte číslo" : "napr. 5 000, 12 500, 1 000 000"}
+        placeholder={isFocused ? "Zadajte číslo" : "napr. 5,000 €, 12,500 €, 1,000,000 €"}
       />
     </div>
   );

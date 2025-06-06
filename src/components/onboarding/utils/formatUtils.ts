@@ -44,6 +44,28 @@ export const formatCurrencyInput = (value: string): string => {
   }).format(num);
 };
 
+export const formatTurnoverInput = (value: string): string => {
+  // Remove all non-numeric characters
+  const cleaned = value.replace(/[^0-9]/g, '');
+  
+  if (cleaned === '') return '';
+  
+  // Parse as number
+  const num = parseInt(cleaned, 10);
+  if (isNaN(num)) return '';
+  
+  // Format with commas for thousands and add € symbol
+  const formatted = new Intl.NumberFormat('en-US').format(num);
+  return `${formatted} €`;
+};
+
+export const parseTurnoverInput = (formattedValue: string): number => {
+  // Remove all formatting (commas, €, spaces) and parse as number
+  const cleaned = formattedValue.replace(/[^\d]/g, '');
+  const num = parseInt(cleaned, 10);
+  return isNaN(num) ? 0 : num;
+};
+
 export const parseCurrencyInput = (formattedValue: string): number => {
   // Remove all formatting and parse as number
   const cleaned = formattedValue.replace(/[^\d.,]/g, '').replace(',', '.');
