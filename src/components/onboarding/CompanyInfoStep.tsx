@@ -7,7 +7,7 @@ import EnhancedCompanyBasicInfoCard from "./company/EnhancedCompanyBasicInfoCard
 import CompanyAddressCard from "./company/CompanyAddressCard";
 import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
 import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -19,7 +19,7 @@ interface CompanyInfoStepProps {
 const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
 
-  const updateCompanyInfo = (field: string, value: any) => {
+  const updateCompanyInfo = useCallback((field: string, value: any) => {
     console.log('=== COMPANY INFO STEP: updateCompanyInfo called ===');
     console.log('Field:', field);
     console.log('Value:', value);
@@ -29,9 +29,10 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     if (field === 'batchUpdate') {
       console.log('=== BATCH UPDATE: Applying complete company info update ===');
       console.log('New company info:', value);
-      updateData({
+      updateData(prevData => ({
+        ...prevData,
         companyInfo: value
-      });
+      }));
       console.log('Batch update dispatched');
       return;
     }
@@ -39,27 +40,29 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
       console.log('Updating nested field:', parent, '->', child);
-      updateData({
+      updateData(prevData => ({
+        ...prevData,
         companyInfo: {
-          ...data.companyInfo,
+          ...prevData.companyInfo,
           [parent]: {
-            ...(data.companyInfo[parent as keyof typeof data.companyInfo] as any),
+            ...(prevData.companyInfo[parent as keyof typeof prevData.companyInfo] as any),
             [child]: value
           }
         }
-      });
+      }));
     } else {
       console.log('Updating top-level field:', field);
-      updateData({
+      updateData(prevData => ({
+        ...prevData,
         companyInfo: {
-          ...data.companyInfo,
+          ...prevData.companyInfo,
           [field]: value
         }
-      });
+      }));
     }
     
     console.log('Update dispatched');
-  };
+  }, [updateData]);
 
   // Debug effect to track data changes
   useEffect(() => {
@@ -75,28 +78,30 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
 
   // Synchronize contact address with main address when checkbox is checked
   useEffect(() => {
-    if (data.companyInfo.contactAddressSameAsMain) {
-      updateData({
+    if (data.companyInfo.contactAddressSameAsMain && data.companyInfo.address) {
+      updateData(prevData => ({
+        ...prevData,
         companyInfo: {
-          ...data.companyInfo,
+          ...prevData.companyInfo,
           contactAddress: {
-            street: data.companyInfo.address.street,
-            city: data.companyInfo.address.city,
-            zipCode: data.companyInfo.address.zipCode
+            street: prevData.companyInfo.address.street,
+            city: prevData.companyInfo.address.city,
+            zipCode: prevData.companyInfo.address.zipCode
           }
         }
-      });
+      }));
     }
   }, [
     data.companyInfo.contactAddressSameAsMain,
-    data.companyInfo.address.street,
-    data.companyInfo.address.city,
-    data.companyInfo.address.zipCode
+    data.companyInfo.address?.street,
+    data.companyInfo.address?.city,
+    data.companyInfo.address?.zipCode,
+    updateData
   ]);
 
   // Synchronize operating address with head office when checkbox is checked
   useEffect(() => {
-    if (data.companyInfo.headOfficeEqualsOperatingAddress) {
+    if (data.companyInfo.headOfficeEqualsOperatingAddress && data.companyInfo.address) {
       const updatedLocations = [...data.businessLocations];
       
       // If no business locations exist, create one with head office address
@@ -164,26 +169,38 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         };
       }
 
-      updateData({
+      updateData(prevData => ({
+        ...prevData,
         businessLocations: updatedLocations
-      });
+      }));
     }
   }, [
     data.companyInfo.headOfficeEqualsOperatingAddress,
-    data.companyInfo.address.street,
-    data.companyInfo.address.city,
-    data.companyInfo.address.zipCode
+    data.companyInfo.address?.street,
+    data.companyInfo.address?.city,
+    data.companyInfo.address?.zipCode,
+    data.businessLocations,
+    data.contactInfo.userRoles,
+    data.contactInfo.firstName,
+    data.contactInfo.lastName,
+    data.contactInfo.email,
+    data.contactInfo.phone,
+    updateData
   ]);
 
   // Ensure headOfficeEqualsOperatingAddress has a default value
-  if (data.companyInfo.headOfficeEqualsOperatingAddress === undefined) {
-    updateCompanyInfo('headOfficeEqualsOperatingAddress', false);
-  }
+  useEffect(() => {
+    if (data.companyInfo.headOfficeEqualsOperatingAddress === undefined) {
+      updateCompanyInfo('headOfficeEqualsOperatingAddress', false);
+    }
+  }, [data.companyInfo.headOfficeEqualsOperatingAddress, updateCompanyInfo]);
 
   // Determine default accordion values based on whether contact address should be shown
-  const defaultAccordionValues = data.companyInfo.contactAddressSameAsMain 
-    ? ["basic-info", "address", "contact-person"]
-    : ["basic-info", "address", "contact-address", "contact-person"];
+  const defaultAccordionValues = useMemo(() => {
+    return data.companyInfo.contactAddressSameAsMain 
+      ? ["basic-info", "address", "contact-person"]
+      : ["basic-info", "address", "contact-address", "contact-person"];
+  }, [data.companyInfo.contactAddressSameAsMain]);
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
@@ -215,7 +232,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
               </div>
 
               {data.companyInfo.headOfficeEqualsOperatingAddress && (
-                <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
+                <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800 animate-fade-in">
                   <p className="font-medium mb-1">✓ Synchronizácia aktívna</p>
                   <p>Adresa sídla sa automaticky kopíruje do prvej prevádzky.</p>
                 </div>
@@ -234,7 +251,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <EnhancedCompanyBasicInfoCard
-                    key={`company-basic-${data.companyInfo.companyName}-${data.companyInfo.ico}`}
+                    key="company-basic-info"
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
                     autoFilledFields={autoFilledFields}
