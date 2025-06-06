@@ -105,7 +105,50 @@ const EnhancedCompanyBasicInfoCard = ({
   };
 
   const getFieldIndicator = (fieldName: string) => {
-    if (autoFilledFields.has(fieldName)) {
+    // Check if field is auto-filled AND has a value
+    const isAutoFilled = autoFilledFields.has(fieldName);
+    let hasValue = false;
+
+    // Check if the field actually has a value
+    switch (fieldName) {
+      case 'companyName':
+        hasValue = !!data.companyInfo.companyName?.trim();
+        break;
+      case 'ico':
+        hasValue = !!data.companyInfo.ico?.trim();
+        break;
+      case 'dic':
+        hasValue = !!data.companyInfo.dic?.trim();
+        break;
+      case 'court':
+        hasValue = !!data.companyInfo.court?.trim();
+        break;
+      case 'section':
+        hasValue = !!data.companyInfo.section?.trim();
+        break;
+      case 'insertNumber':
+        hasValue = !!data.companyInfo.insertNumber?.trim();
+        break;
+      case 'registryType':
+        hasValue = !!data.companyInfo.registryType?.trim();
+        break;
+      case 'isVatPayer':
+        hasValue = data.companyInfo.isVatPayer !== undefined;
+        break;
+      case 'address.street':
+        hasValue = !!data.companyInfo.address?.street?.trim();
+        break;
+      case 'address.city':
+        hasValue = !!data.companyInfo.address?.city?.trim();
+        break;
+      case 'address.zipCode':
+        hasValue = !!data.companyInfo.address?.zipCode?.trim();
+        break;
+      default:
+        hasValue = false;
+    }
+
+    if (isAutoFilled && hasValue) {
       return (
         <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
           <CheckCircle className="h-3 w-3" />

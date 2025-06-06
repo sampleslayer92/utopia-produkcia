@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,12 +24,22 @@ const CompanySearchModal = ({
   const [isSearching, setIsSearching] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<CompanyRecognitionResult | null>(null);
 
-  const handleSearch = async () => {
-    if (!query.trim()) return;
+  // Synchronize query with initialQuery and auto-search when modal opens
+  useEffect(() => {
+    if (open) {
+      setQuery(initialQuery);
+      if (initialQuery.trim()) {
+        handleSearchWithQuery(initialQuery);
+      }
+    }
+  }, [open, initialQuery]);
+
+  const handleSearchWithQuery = async (searchQuery: string) => {
+    if (!searchQuery.trim()) return;
     
     setIsSearching(true);
     try {
-      const searchResults = await searchCompanySuggestions(query);
+      const searchResults = await searchCompanySuggestions(searchQuery);
       setResults(searchResults);
     } catch (error) {
       console.error('Search error:', error);
@@ -37,6 +47,10 @@ const CompanySearchModal = ({
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleSearch = async () => {
+    await handleSearchWithQuery(query);
   };
 
   const handleSelectCompany = (company: CompanyRecognitionResult) => {
