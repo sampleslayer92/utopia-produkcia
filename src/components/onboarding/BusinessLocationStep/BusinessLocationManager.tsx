@@ -137,18 +137,35 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
     updateBusinessLocation(locationId, 'bankAccounts', bankAccounts);
   };
 
-  // Handle business details update
+  // Handle business details update - FIXED to properly update and trigger re-renders
   const updateBusinessDetails = (locationId: string, field: string, value: string | number) => {
     console.log('=== UPDATE BUSINESS DETAILS ===', { locationId, field, value });
     
+    // Update the main field first
     updateBusinessLocation(locationId, field, value);
     
-    // Update backward compatibility fields only for business details, not IBAN
-    if (field === 'businessSubject') {
-      updateBusinessLocation(locationId, 'businessSector', value);
-    } else if (field === 'monthlyTurnover') {
-      updateBusinessLocation(locationId, 'estimatedTurnover', value);
-    }
+    // Update backward compatibility fields immediately after main update
+    const updatedLocations = data.businessLocations.map(location => {
+      if (location.id !== locationId) return location;
+      
+      const updated = { ...location, [field]: value };
+      
+      // Update backward compatibility fields
+      if (field === 'businessSubject') {
+        updated.businessSector = value as string;
+      } else if (field === 'monthlyTurnover') {
+        updated.estimatedTurnover = value as number;
+      }
+      
+      return updated;
+    });
+    
+    console.log('=== BUSINESS DETAILS UPDATED LOCATIONS ===', updatedLocations);
+    
+    // Force update with the new data to trigger re-renders in all dependent components
+    updateData({
+      businessLocations: updatedLocations
+    });
   };
 
   // Handle opening hours update via modal

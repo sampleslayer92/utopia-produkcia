@@ -166,7 +166,7 @@ const BusinessLocationCard = ({
               />
             </div>
 
-            {/* Business Details */}
+            {/* Business Details - Use the correct update function */}
             <div className="border-t border-slate-100 pt-6">
               <BusinessDetailsSection
                 businessSubject={location.businessSubject || ''}
