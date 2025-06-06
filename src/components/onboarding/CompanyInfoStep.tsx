@@ -1,10 +1,12 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData, OpeningHours } from "@/types/onboarding";
 import { Building2 } from "lucide-react";
 import EnhancedCompanyBasicInfoCard from "./company/EnhancedCompanyBasicInfoCard";
 import CompanyAddressCard from "./company/CompanyAddressCard";
-import CompanyContactAddressCard from "./company/CompanyContactPersonCard";
+import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
+import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
 import MobileOptimizedCard from "./ui/MobileOptimizedCard";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { syncContactPersonData } from "./utils/crossStepAutoFill";
