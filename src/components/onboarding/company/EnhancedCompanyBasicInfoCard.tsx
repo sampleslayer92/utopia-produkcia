@@ -1,11 +1,12 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
+import CompanyAutocomplete from "../ui/CompanyAutocomplete";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Building2, Search, CheckCircle, Loader2 } from "lucide-react";
-import { recognizeCompanyFromName, CompanyRecognitionResult } from "../services/mockCompanyRecognition";
+import { Building2, CheckCircle } from "lucide-react";
+import { CompanyRecognitionResult } from "../services/mockCompanyRecognition";
 
 interface EnhancedCompanyBasicInfoCardProps {
   data: OnboardingData;
@@ -13,9 +14,7 @@ interface EnhancedCompanyBasicInfoCardProps {
 }
 
 const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompanyBasicInfoCardProps) => {
-  const [isSearching, setIsSearching] = useState(false);
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
-  const [searchError, setSearchError] = useState<string>("");
 
   const registryTypeOptions = [
     { value: "Živnosť", label: "Živnosť" },
@@ -24,28 +23,7 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
     { value: "Akciová spoločnosť", label: "Akciová spoločnosť" }
   ];
 
-  const handleCompanyNameChange = async (value: string) => {
-    updateCompanyInfo('companyName', value);
-    
-    if (value.length >= 3) {
-      setIsSearching(true);
-      setSearchError("");
-      
-      try {
-        const result = await recognizeCompanyFromName(value);
-        if (result) {
-          handleCompanyRecognition(result);
-        }
-      } catch (error) {
-        setSearchError("Chyba pri vyhľadávaní spoločnosti");
-        console.error('Company recognition error:', error);
-      } finally {
-        setIsSearching(false);
-      }
-    }
-  };
-
-  const handleCompanyRecognition = (result: CompanyRecognitionResult) => {
+  const handleCompanySelect = (result: CompanyRecognitionResult) => {
     const fieldsToUpdate = new Set<string>();
 
     // Update company info with recognized data
@@ -91,7 +69,7 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
 
     setAutoFilledFields(fieldsToUpdate);
     
-    console.log('Company recognized and auto-filled:', {
+    console.log('Company selected and auto-filled:', {
       company: result.companyName,
       type: result.registryType,
       fieldsUpdated: Array.from(fieldsToUpdate)
@@ -121,22 +99,15 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
         <h3 className="text-lg font-medium text-slate-900">Základné údaje o spoločnosti</h3>
       </div>
 
-      {/* Company Name - First field */}
+      {/* Company Name - Now with autocomplete */}
       <div className="space-y-2">
-        <div className="relative">
-          <OnboardingInput
-            label="Obchodné meno spoločnosti *"
-            value={data.companyInfo.companyName}
-            onChange={(e) => handleCompanyNameChange(e.target.value)}
-            placeholder="Začnite písať názov spoločnosti..."
-            className={getFieldClassName('companyName')}
-            icon={isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-          />
-          {getFieldIndicator('companyName')}
-          {searchError && (
-            <p className="text-xs text-red-600 mt-1">{searchError}</p>
-          )}
-        </div>
+        <CompanyAutocomplete
+          value={data.companyInfo.companyName}
+          onValueChange={(value) => updateCompanyInfo('companyName', value)}
+          onCompanySelect={handleCompanySelect}
+          className={getFieldClassName('companyName')}
+        />
+        {getFieldIndicator('companyName')}
       </div>
 
       {/* Company Type */}
@@ -200,6 +171,42 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
             placeholder="SK2012345678"
           />
         )}
+      </div>
+
+      {/* Court Registry Information */}
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="space-y-2">
+          <OnboardingInput
+            label="Súd"
+            value={data.companyInfo.court}
+            onChange={(e) => updateCompanyInfo('court', e.target.value)}
+            placeholder="Okresný súd"
+            className={getFieldClassName('court')}
+          />
+          {getFieldIndicator('court')}
+        </div>
+        
+        <div className="space-y-2">
+          <OnboardingInput
+            label="Oddiel"
+            value={data.companyInfo.section}
+            onChange={(e) => updateCompanyInfo('section', e.target.value)}
+            placeholder="Sro"
+            className={getFieldClassName('section')}
+          />
+          {getFieldIndicator('section')}
+        </div>
+        
+        <div className="space-y-2">
+          <OnboardingInput
+            label="Vložka"
+            value={data.companyInfo.insertNumber}
+            onChange={(e) => updateCompanyInfo('insertNumber', e.target.value)}
+            placeholder="12345/B"
+            className={getFieldClassName('insertNumber')}
+          />
+          {getFieldIndicator('insertNumber')}
+        </div>
       </div>
     </div>
   );
