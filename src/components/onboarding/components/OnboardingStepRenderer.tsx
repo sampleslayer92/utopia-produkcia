@@ -8,6 +8,7 @@ import FeesStep from "../FeesStep";
 import AuthorizedPersonsStep from "../AuthorizedPersonsStep";
 import ActualOwnersStep from "../ActualOwnersStep";
 import ConsentsStep from "../ConsentsStep";
+import { useCrossStepAutoFill } from "../hooks/useCrossStepAutoFill";
 
 interface OnboardingStepRendererProps {
   currentStep: number;
@@ -28,6 +29,9 @@ const OnboardingStepRenderer = ({
   onComplete,
   onSaveSignature
 }: OnboardingStepRendererProps) => {
+  // Initialize cross-step auto-fill logic
+  useCrossStepAutoFill({ data, updateData, currentStep });
+
   const commonProps = {
     data,
     updateData,

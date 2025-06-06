@@ -8,6 +8,7 @@ import BusinessLocationCard from "./BusinessLocationStep/BusinessLocationCard";
 import EmptyState from "./BusinessLocationStep/EmptyState";
 import BusinessLocationSidebar from "./BusinessLocationStep/BusinessLocationSidebar";
 import OpeningHoursModal from "./BusinessLocationStep/OpeningHoursModal";
+import AutoFillSuggestions from "./ui/AutoFillSuggestions";
 import { useBusinessLocationManager } from "./BusinessLocationStep/BusinessLocationManager";
 import { useState } from "react";
 
@@ -59,6 +60,13 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
             
             <div className="col-span-1 md:col-span-2 p-6 md:p-8">
               <OnboardingSection>
+                {/* Auto-fill suggestions */}
+                <AutoFillSuggestions 
+                  data={data} 
+                  updateData={updateData} 
+                  currentStep={2} 
+                />
+
                 {data.businessLocations.length === 0 ? (
                   <EmptyState onAddLocation={addBusinessLocation} />
                 ) : (

@@ -7,6 +7,7 @@ import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingSection from "./ui/OnboardingSection";
 import DocumentUpload from "./ui/DocumentUpload";
+import AutoFillSuggestions from "./ui/AutoFillSuggestions";
 import { useState } from "react";
 
 interface AuthorizedPersonsStepProps {
@@ -120,6 +121,13 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
           {/* Main content */}
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <OnboardingSection>
+              {/* Auto-fill suggestions */}
+              <AutoFillSuggestions 
+                data={data} 
+                updateData={updateData} 
+                currentStep={5} 
+              />
+
               {data.authorizedPersons.length === 0 && (
                 <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
                   <Users className="h-12 w-12 text-slate-400 mx-auto mb-4" />
@@ -184,7 +192,6 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   {expandedPersonId === person.id && (
                     <div className="p-4 animate-fade-in">
                       <div className="space-y-6">
-                        {/* Základné údaje - keep existing code */}
                         <div>
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <UserCheck className="h-4 w-4" />
@@ -233,7 +240,6 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                           />
                         </div>
 
-                        {/* Osobné údaje - keep existing code */}
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Fingerprint className="h-4 w-4" />
@@ -281,7 +287,6 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                           />
                         </div>
 
-                        {/* Doklad totožnosti - enhanced with document upload */}
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <FileText className="h-4 w-4" />
@@ -327,7 +332,6 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                             />
                           </div>
 
-                          {/* Document Upload Section */}
                           <div className="grid md:grid-cols-2 gap-6 mt-6">
                             <DocumentUpload
                               label="Predná strana dokladu *"
@@ -347,7 +351,6 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                           </div>
                         </div>
 
-                        {/* Ďalšie informácie - keep existing code */}
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Flag className="h-4 w-4" />
