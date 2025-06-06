@@ -1,4 +1,3 @@
-
 export interface ContactInfo {
   salutation?: 'Pan' | 'Pani';
   firstName: string;
@@ -6,7 +5,6 @@ export interface ContactInfo {
   email: string;
   phone: string;
   phonePrefix: string;
-  companyType?: string;
   salesNote?: string;
   userRole?: string;
   userRoles?: string[]; // Add support for multiple roles

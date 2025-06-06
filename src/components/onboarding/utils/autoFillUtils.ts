@@ -102,24 +102,7 @@ export const shouldAutoFillBasedOnContactInfo = (contactInfo: OnboardingData['co
          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
 };
 
-// Helper function to map companyType to registryType
-export const mapCompanyTypeToRegistryType = (companyType: string): 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' => {
-  // Direct mapping since we're using the same values
-  switch (companyType) {
-    case 'Živnosť':
-      return 'Živnosť';
-    case 'S.r.o.':
-      return 'S.r.o.';
-    case 'Nezisková organizácia':
-      return 'Nezisková organizácia';
-    case 'Akciová spoločnosť':
-      return 'Akciová spoločnosť';
-    default:
-      return 'S.r.o.'; // Default fallback
-  }
-};
-
-// New simplified auto-fill function that doesn't require roles
+// Simplified auto-fill function that doesn't depend on company type
 export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
   if (!shouldAutoFillBasedOnContactInfo(contactInfo)) {
     return {};
@@ -161,8 +144,8 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
     };
   }
 
-  // Always update company contact person AND registry type
-  console.log('Updating company contact person and registry type');
+  // Always update company contact person (removed registryType auto-fill)
+  console.log('Updating company contact person');
   const companyUpdates: any = {
     contactPerson: {
       ...currentData.companyInfo.contactPerson,
@@ -173,12 +156,6 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
       isTechnicalPerson: true
     }
   };
-
-  // Auto-fill registry type based on company type selection
-  if (contactInfo.companyType) {
-    console.log('Mapping company type to registry type:', contactInfo.companyType);
-    companyUpdates.registryType = mapCompanyTypeToRegistryType(contactInfo.companyType);
-  }
 
   updates.companyInfo = {
     ...currentData.companyInfo,
@@ -224,7 +201,35 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
   return updates;
 };
 
-// Legacy function for backward compatibility - we'll keep this but use our new simplified version
+// Helper function to check if contact info has changed significantly
+export const hasContactInfoChanged = (
+  prev: OnboardingData['contactInfo'], 
+  current: OnboardingData['contactInfo']
+) => {
+  return prev.firstName !== current.firstName ||
+         prev.lastName !== current.lastName ||
+         prev.email !== current.email ||
+         prev.phone !== current.phone ||
+         prev.phonePrefix !== current.phonePrefix ||
+         prev.userRole !== current.userRole ||
+         prev.companyType !== current.companyType;
+};
+
+// Helper function to format phone number consistently
+export const formatPhoneForDisplay = (phone: string, prefix: string = '+421') => {
+  if (!phone) return '';
+  
+  // Remove any existing formatting
+  const cleaned = phone.replace(/\D/g, '');
+  
+  // Format based on prefix
+  if (prefix === '+421' || prefix === '+420') {
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3').slice(0, 11);
+  }
+  return cleaned.replace(/(\d{3})(\d{3})(\d{3,4})/, '$1 $2 $3').slice(0, 13);
+};
+
+// Legacy function for backward compatibility
 export const getAutoFillUpdates = getAutoFillUpdatesSimplified;
 
 // Keep existing helper functions for backward compatibility
@@ -268,34 +273,6 @@ export const shouldAutoFillBasedOnRoles = (roles: string[], contactInfo: Onboard
          contactInfo.email && 
          contactInfo.phone &&
          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
-};
-
-// Helper function to check if contact info has changed significantly
-export const hasContactInfoChanged = (
-  prev: OnboardingData['contactInfo'], 
-  current: OnboardingData['contactInfo']
-) => {
-  return prev.firstName !== current.firstName ||
-         prev.lastName !== current.lastName ||
-         prev.email !== current.email ||
-         prev.phone !== current.phone ||
-         prev.phonePrefix !== current.phonePrefix ||
-         prev.userRole !== current.userRole ||
-         prev.companyType !== current.companyType;
-};
-
-// Helper function to format phone number consistently
-export const formatPhoneForDisplay = (phone: string, prefix: string = '+421') => {
-  if (!phone) return '';
-  
-  // Remove any existing formatting
-  const cleaned = phone.replace(/\D/g, '');
-  
-  // Format based on prefix
-  if (prefix === '+421' || prefix === '+420') {
-    return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3').slice(0, 11);
-  }
-  return cleaned.replace(/(\d{3})(\d{3})(\d{3,4})/, '$1 $2 $3').slice(0, 13);
 };
 
 // Legacy helper functions no longer used but kept for backward compatibility
