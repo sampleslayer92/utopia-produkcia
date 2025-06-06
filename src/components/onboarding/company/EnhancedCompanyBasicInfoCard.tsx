@@ -24,56 +24,69 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
   ];
 
   const handleCompanySelect = (result: CompanyRecognitionResult) => {
+    console.log('handleCompanySelect called with:', result);
     const fieldsToUpdate = new Set<string>();
 
-    // Update company info with recognized data
-    if (result.companyName !== data.companyInfo.companyName) {
-      updateCompanyInfo('companyName', result.companyName);
-      fieldsToUpdate.add('companyName');
-    }
+    try {
+      // Update company info with recognized data
+      if (result.companyName && result.companyName !== data.companyInfo.companyName) {
+        console.log('Updating company name:', result.companyName);
+        updateCompanyInfo('companyName', result.companyName);
+        fieldsToUpdate.add('companyName');
+      }
 
-    if (result.registryType) {
-      updateCompanyInfo('registryType', result.registryType);
-      fieldsToUpdate.add('registryType');
-    }
+      if (result.registryType) {
+        console.log('Updating registry type:', result.registryType);
+        updateCompanyInfo('registryType', result.registryType);
+        fieldsToUpdate.add('registryType');
+      }
 
-    if (result.ico) {
-      updateCompanyInfo('ico', result.ico);
-      fieldsToUpdate.add('ico');
-    }
+      if (result.ico) {
+        console.log('Updating ICO:', result.ico);
+        updateCompanyInfo('ico', result.ico);
+        fieldsToUpdate.add('ico');
+      }
 
-    if (result.dic) {
-      updateCompanyInfo('dic', result.dic);
-      fieldsToUpdate.add('dic');
-    }
+      if (result.dic) {
+        console.log('Updating DIC:', result.dic);
+        updateCompanyInfo('dic', result.dic);
+        fieldsToUpdate.add('dic');
+      }
 
-    if (result.isVatPayer !== undefined) {
-      updateCompanyInfo('isVatPayer', result.isVatPayer);
-      fieldsToUpdate.add('isVatPayer');
-    }
+      if (result.isVatPayer !== undefined) {
+        console.log('Updating VAT payer status:', result.isVatPayer);
+        updateCompanyInfo('isVatPayer', result.isVatPayer);
+        fieldsToUpdate.add('isVatPayer');
+      }
 
-    if (result.court) {
-      updateCompanyInfo('court', result.court);
-      fieldsToUpdate.add('court');
-    }
+      if (result.court) {
+        console.log('Updating court:', result.court);
+        updateCompanyInfo('court', result.court);
+        fieldsToUpdate.add('court');
+      }
 
-    if (result.section) {
-      updateCompanyInfo('section', result.section);
-      fieldsToUpdate.add('section');
-    }
+      if (result.section) {
+        console.log('Updating section:', result.section);
+        updateCompanyInfo('section', result.section);
+        fieldsToUpdate.add('section');
+      }
 
-    if (result.insertNumber) {
-      updateCompanyInfo('insertNumber', result.insertNumber);
-      fieldsToUpdate.add('insertNumber');
-    }
+      if (result.insertNumber) {
+        console.log('Updating insert number:', result.insertNumber);
+        updateCompanyInfo('insertNumber', result.insertNumber);
+        fieldsToUpdate.add('insertNumber');
+      }
 
-    setAutoFilledFields(fieldsToUpdate);
-    
-    console.log('Company selected and auto-filled:', {
-      company: result.companyName,
-      type: result.registryType,
-      fieldsUpdated: Array.from(fieldsToUpdate)
-    });
+      setAutoFilledFields(fieldsToUpdate);
+      
+      console.log('Company selected and auto-filled:', {
+        company: result.companyName,
+        type: result.registryType,
+        fieldsUpdated: Array.from(fieldsToUpdate)
+      });
+    } catch (error) {
+      console.error('Error in handleCompanySelect:', error);
+    }
   };
 
   const getFieldClassName = (fieldName: string) => {
@@ -103,7 +116,10 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
       <div className="space-y-2">
         <CompanyAutocomplete
           value={data.companyInfo.companyName}
-          onValueChange={(value) => updateCompanyInfo('companyName', value)}
+          onValueChange={(value) => {
+            console.log('Company name changed via input:', value);
+            updateCompanyInfo('companyName', value);
+          }}
           onCompanySelect={handleCompanySelect}
           className={getFieldClassName('companyName')}
         />

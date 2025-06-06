@@ -46,6 +46,7 @@ const CompanyAutocomplete = ({
         try {
           const results = await searchCompanySuggestions(searchQuery);
           setSuggestions(results);
+          console.log('Search results:', results);
         } catch (error) {
           console.error('Search error:', error);
           setSuggestions([]);
@@ -61,13 +62,21 @@ const CompanyAutocomplete = ({
   }, [searchQuery]);
 
   const handleSelect = (selectedCompany: CompanyRecognitionResult) => {
+    console.log('Company selected:', selectedCompany);
+    
+    // Update the input value
     onValueChange(selectedCompany.companyName);
-    onCompanySelect(selectedCompany);
-    setOpen(false);
     setSearchQuery(selectedCompany.companyName);
+    
+    // Call the callback to auto-fill other fields
+    onCompanySelect(selectedCompany);
+    
+    // Close the dropdown
+    setOpen(false);
   };
 
   const handleInputChange = (inputValue: string) => {
+    console.log('Input changed:', inputValue);
     setSearchQuery(inputValue);
     onValueChange(inputValue);
   };
@@ -114,9 +123,9 @@ const CompanyAutocomplete = ({
                 </div>
               ) : suggestions.length > 0 ? (
                 <CommandGroup>
-                  {suggestions.map((company) => (
+                  {suggestions.map((company, index) => (
                     <CommandItem
-                      key={company.companyName}
+                      key={`${company.companyName}-${index}`}
                       value={company.companyName}
                       onSelect={() => handleSelect(company)}
                       className="cursor-pointer hover:bg-slate-50"
