@@ -8,6 +8,7 @@ import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingSection from "./ui/OnboardingSection";
 import DocumentUpload from "./ui/DocumentUpload";
 import AutoFillSuggestions from "./ui/AutoFillSuggestions";
+import PhoneNumberInput from "./ui/PhoneNumberInput";
 import { useState } from "react";
 
 interface AuthorizedPersonsStepProps {
@@ -27,6 +28,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       lastName: '',
       email: '',
       phone: '',
+      phonePrefix: '+421', // Set default prefix
       maidenName: '',
       birthDate: '',
       birthPlace: '',
@@ -223,11 +225,14 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                               placeholder="email@priklad.sk"
                             />
 
-                            <OnboardingInput
+                            <PhoneNumberInput
                               label="Telefón *"
-                              value={person.phone}
-                              onChange={(e) => updateAuthorizedPerson(person.id, 'phone', e.target.value)}
-                              placeholder="+421 123 456 789"
+                              phoneValue={person.phone}
+                              prefixValue={person.phonePrefix || '+421'}
+                              onPhoneChange={(value) => updateAuthorizedPerson(person.id, 'phone', value)}
+                              onPrefixChange={(value) => updateAuthorizedPerson(person.id, 'phonePrefix', value)}
+                              placeholder="123 456 789"
+                              required
                             />
                           </div>
 

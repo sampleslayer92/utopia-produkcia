@@ -1,9 +1,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Lightbulb, UserPlus, Building, FileSignature, RefreshCw, AlertTriangle, CheckCheck } from "lucide-react";
+import { Lightbulb, UserPlus, Building, FileSignature, RefreshCw, AlertTriangle, CheckCheck, Phone, Mail } from "lucide-react";
 import { OnboardingData } from "@/types/onboarding";
-import { getAutoFillSuggestions, findDuplicatePersons, getDataConsistencyIssues } from "../utils/crossStepAutoFill";
+import { getAutoFillSuggestions, findDuplicatePersons, getDataConsistencyIssues, syncContactPersonData } from "../utils/crossStepAutoFill";
 import { useCrossStepAutoFill } from "../hooks/useCrossStepAutoFill";
 
 interface AutoFillSuggestionsProps {
@@ -54,7 +54,9 @@ const AutoFillSuggestions = ({ data, updateData, currentStep }: AutoFillSuggesti
   const handleIssueAction = (action: string) => {
     switch (action) {
       case 'sync-contact-data':
-        syncContactData();
+      case 'sync-contact-email':
+      case 'sync-contact-phone':
+        syncContactPersonData(data, updateData);
         break;
       case 'sync-business-location-address':
         syncAddresses();
@@ -74,10 +76,23 @@ const AutoFillSuggestions = ({ data, updateData, currentStep }: AutoFillSuggesti
       return <FileSignature className="h-4 w-4" />;
     } else if (suggestion.includes('prevádzku')) {
       return <Building className="h-4 w-4" />;
+    } else if (suggestion.includes('email')) {
+      return <Mail className="h-4 w-4" />;
+    } else if (suggestion.includes('telefón')) {
+      return <Phone className="h-4 w-4" />;
     } else if (suggestion.includes('rozdielne údaje') || suggestion.includes('nemá adresu')) {
       return <RefreshCw className="h-4 w-4" />;
     }
     return <Lightbulb className="h-4 w-4" />;
+  };
+
+  const getIssueIcon = (issue: any) => {
+    if (issue.type === 'email-mismatch') {
+      return <Mail className="h-4 w-4" />;
+    } else if (issue.type === 'phone-mismatch') {
+      return <Phone className="h-4 w-4" />;
+    }
+    return <AlertTriangle className="h-4 w-4" />;
   };
 
   const getCardColor = () => {
@@ -130,7 +145,7 @@ const AutoFillSuggestions = ({ data, updateData, currentStep }: AutoFillSuggesti
               {allIssues.map((issue, index) => (
                 <div key={`issue-${index}`} className="flex items-center justify-between p-2 bg-white rounded border border-orange-200">
                   <div className="flex items-center gap-2 text-sm text-orange-800">
-                    <AlertTriangle className="h-4 w-4" />
+                    {getIssueIcon(issue)}
                     <span>{issue.message}</span>
                   </div>
                   <Button

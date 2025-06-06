@@ -7,6 +7,7 @@ import CompanyAddressCard from "./company/CompanyAddressCard";
 import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
 import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { syncContactPersonData } from "./utils/crossStepAutoFill";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -72,6 +73,52 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
     console.log('Section:', data.companyInfo?.section);
     console.log('Insert Number:', data.companyInfo?.insertNumber);
   }, [data.companyInfo]);
+
+  // Real-time synchronization of contact person data with authorized persons
+  useEffect(() => {
+    console.log('=== CONTACT PERSON SYNC: Checking for changes ===');
+    
+    // Find the matching authorized person
+    const matchingAuthorizedPerson = data.authorizedPersons.find(person =>
+      person.firstName === data.companyInfo.contactPerson.firstName &&
+      person.lastName === data.companyInfo.contactPerson.lastName
+    );
+
+    if (matchingAuthorizedPerson) {
+      console.log('Found matching authorized person:', matchingAuthorizedPerson);
+      
+      // Check if contact data differs
+      const emailDiffers = matchingAuthorizedPerson.email !== data.companyInfo.contactPerson.email;
+      const phoneDiffers = matchingAuthorizedPerson.phone !== data.companyInfo.contactPerson.phone;
+      const prefixDiffers = (matchingAuthorizedPerson.phonePrefix || '+421') !== (data.contactInfo.phonePrefix || '+421');
+      
+      console.log('Data comparison:', {
+        emailDiffers,
+        phoneDiffers,
+        prefixDiffers,
+        contactEmail: data.companyInfo.contactPerson.email,
+        authorizedEmail: matchingAuthorizedPerson.email,
+        contactPhone: data.companyInfo.contactPerson.phone,
+        authorizedPhone: matchingAuthorizedPerson.phone,
+        contactPrefix: data.contactInfo.phonePrefix,
+        authorizedPrefix: matchingAuthorizedPerson.phonePrefix
+      });
+
+      if (emailDiffers || phoneDiffers || prefixDiffers) {
+        console.log('=== AUTO-SYNC: Updating authorized person data ===');
+        syncContactPersonData(data, updateData);
+      }
+    }
+  }, [
+    data.companyInfo.contactPerson.email,
+    data.companyInfo.contactPerson.phone,
+    data.contactInfo.phonePrefix,
+    data.companyInfo.contactPerson.firstName,
+    data.companyInfo.contactPerson.lastName,
+    data.authorizedPersons,
+    data,
+    updateData
+  ]);
 
   // Synchronize contact address with main address when checkbox is checked
   useEffect(() => {

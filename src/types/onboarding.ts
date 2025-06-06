@@ -152,6 +152,7 @@ export interface AuthorizedPerson {
   lastName: string;
   email: string;
   phone: string;
+  phonePrefix: string; // Add phonePrefix field
   maidenName?: string;
   birthDate: string;
   birthPlace: string;

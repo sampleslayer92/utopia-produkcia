@@ -1,8 +1,7 @@
-
 import { OnboardingData, AuthorizedPerson, ActualOwner, BusinessLocation, BankAccount, OpeningHours } from "@/types/onboarding";
 import { v4 as uuidv4 } from "uuid";
 
-export const createAuthorizedPersonFromCompanyContact = (companyInfo: OnboardingData['companyInfo']): AuthorizedPerson => {
+export const createAuthorizedPersonFromCompanyContact = (companyInfo: OnboardingData['companyInfo'], contactInfo?: OnboardingData['contactInfo']): AuthorizedPerson => {
   const position = getDefaultPositionByRegistryType(companyInfo.registryType);
   
   return {
@@ -11,6 +10,7 @@ export const createAuthorizedPersonFromCompanyContact = (companyInfo: Onboarding
     lastName: companyInfo.contactPerson.lastName,
     email: companyInfo.contactPerson.email,
     phone: companyInfo.contactPerson.phone,
+    phonePrefix: contactInfo?.phonePrefix || '+421', // Use contact prefix or default
     maidenName: '',
     birthDate: '',
     birthPlace: '',
@@ -211,14 +211,27 @@ export const findDuplicatePersons = (data: OnboardingData) => {
     person.lastName === data.companyInfo.contactPerson.lastName
   );
 
-  if (contactInAuthorized && 
-      (contactInAuthorized.email !== data.companyInfo.contactPerson.email ||
-       contactInAuthorized.phone !== data.companyInfo.contactPerson.phone)) {
-    duplicates.push({
-      type: 'inconsistent-contact',
-      message: 'Kontaktná osoba má rozdielne údaje v oprávnených osobách',
-      action: 'sync-contact-data'
-    });
+  if (contactInAuthorized) {
+    // Check for email differences
+    if (contactInAuthorized.email !== data.companyInfo.contactPerson.email) {
+      duplicates.push({
+        type: 'email-mismatch',
+        message: 'Kontaktná osoba má rozdielny email v oprávnených osobách',
+        action: 'sync-contact-email'
+      });
+    }
+
+    // Check for phone differences (handle both old format and new format)
+    const contactFullPhone = `${data.contactInfo.phonePrefix}${data.contactInfo.phone}`;
+    const authorizedFullPhone = `${contactInAuthorized.phonePrefix || '+421'}${contactInAuthorized.phone}`;
+    
+    if (contactFullPhone !== authorizedFullPhone) {
+      duplicates.push({
+        type: 'phone-mismatch',
+        message: 'Kontaktná osoba má rozdielne telefónne číslo v oprávnených osobách',
+        action: 'sync-contact-phone'
+      });
+    }
   }
 
   // Check for duplicate persons between authorized and actual owners
@@ -317,7 +330,8 @@ export const syncContactPersonData = (
       return {
         ...person,
         email: data.companyInfo.contactPerson.email,
-        phone: data.companyInfo.contactPerson.phone
+        phone: data.companyInfo.contactPerson.phone,
+        phonePrefix: data.contactInfo.phonePrefix || '+421'
       };
     }
     return person;
