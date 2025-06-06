@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Building } from "lucide-react";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
@@ -20,64 +20,50 @@ const BusinessDetailsSection = ({
   monthlyTurnover,
   onUpdate
 }: BusinessDetailsSectionProps) => {
-  // Local state for turnover input with formatting
-  const [turnoverInput, setTurnoverInput] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
+  // Simple local state for display value
+  const [displayValue, setDisplayValue] = useState('');
 
   const mccOptions = MCC_CODES.map(code => ({
     value: code.value,
     label: code.label
   }));
 
+  // Initialize display value only once
+  useEffect(() => {
+    if (monthlyTurnover > 0) {
+      setDisplayValue(formatTurnoverInput(monthlyTurnover.toString()));
+    } else {
+      setDisplayValue('');
+    }
+  }, []); // Only run on mount
+
   const handleTurnoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log('=== TURNOVER CHANGE ===', { value });
-    
     // Allow only numbers when typing
     const numericOnly = value.replace(/[^0-9]/g, '');
-    setTurnoverInput(numericOnly);
+    setDisplayValue(numericOnly);
   };
 
   const handleTurnoverFocus = () => {
-    console.log('=== TURNOVER FOCUS ===', { monthlyTurnover });
-    setIsFocused(true);
-    // Show current value as raw number for editing, or empty if no value
-    if (monthlyTurnover > 0) {
-      setTurnoverInput(monthlyTurnover.toString());
-    } else {
-      setTurnoverInput('');
+    // If the field is formatted, show only numbers for editing
+    if (displayValue.includes('€')) {
+      const numericValue = parseTurnoverInput(displayValue);
+      setDisplayValue(numericValue > 0 ? numericValue.toString() : '');
     }
   };
 
   const handleTurnoverBlur = () => {
-    console.log('=== TURNOVER BLUR ===', { turnoverInput });
-    setIsFocused(false);
-    
-    // Parse the current input value
-    const numericValue = parseTurnoverInput(turnoverInput);
-    console.log('=== TURNOVER BLUR PARSED ===', numericValue);
-    
-    // Always update the parent with the final value
+    // Parse and save the value
+    const numericValue = parseTurnoverInput(displayValue);
     onUpdate('monthlyTurnover', numericValue);
     
-    // Format the display value with € symbol and commas
+    // Format for display
     if (numericValue > 0) {
-      setTurnoverInput(formatTurnoverInput(numericValue.toString()));
+      setDisplayValue(formatTurnoverInput(numericValue.toString()));
     } else {
-      setTurnoverInput('');
+      setDisplayValue('');
     }
   };
-
-  // Set initial display value based on current data
-  React.useEffect(() => {
-    if (!isFocused) {
-      if (monthlyTurnover > 0) {
-        setTurnoverInput(formatTurnoverInput(monthlyTurnover.toString()));
-      } else {
-        setTurnoverInput('');
-      }
-    }
-  }, [monthlyTurnover, isFocused]);
 
   return (
     <div className="space-y-4">
@@ -106,11 +92,11 @@ const BusinessDetailsSection = ({
         label="Odhadovaný obrat (mesačne v EUR) *"
         type="text"
         inputMode="numeric"
-        value={turnoverInput}
+        value={displayValue}
         onChange={handleTurnoverChange}
         onFocus={handleTurnoverFocus}
         onBlur={handleTurnoverBlur}
-        placeholder={isFocused ? "Zadajte číslo" : "napr. 5,000 €, 12,500 €, 1,000,000 €"}
+        placeholder="napr. 5000, 12500, 1000000"
       />
     </div>
   );
