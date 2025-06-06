@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
@@ -21,85 +22,82 @@ const EnhancedCompanyBasicInfoCard = ({
   setAutoFilledFields 
 }: EnhancedCompanyBasicInfoCardProps) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isAutoFilling, setIsAutoFilling] = useState(false);
 
   const handleCompanySelect = (result: CompanyRecognitionResult) => {
-    console.log('=== COMPANY SELECT: Starting batch update ===');
-    console.log('Selected company:', result);
-    console.log('Current data before batch update:', {
+    console.log('=== COMPANY SELECT: Starting complete batch update ===');
+    console.log('Selected company data:', result);
+    console.log('Current data before update:', {
       companyName: data.companyInfo.companyName,
       ico: data.companyInfo.ico,
       dic: data.companyInfo.dic,
       address: data.companyInfo.address
     });
     
-    // Clear previous auto-filled state immediately
-    setAutoFilledFields(new Set());
+    setIsAutoFilling(true);
+    setAutoFilledFields(new Set()); // Clear previous auto-filled state
     
-    const fieldsToUpdate = new Set<string>();
-    const updates: Record<string, any> = {};
-
     try {
-      // Prepare all updates in a single object
-      console.log('=== PREPARING BATCH UPDATES ===');
-      
-      // Company name - force update
+      // Build complete company info object with all updates
+      const updatedCompanyInfo = {
+        ...data.companyInfo
+      };
+
+      const fieldsToUpdate = new Set<string>();
+
+      // Update all fields at once
       if (result.companyName) {
-        console.log('Adding companyName to batch:', result.companyName);
-        updates.companyName = result.companyName;
+        console.log('Setting companyName:', result.companyName);
+        updatedCompanyInfo.companyName = result.companyName;
         fieldsToUpdate.add('companyName');
       }
 
-      // Registry type
       if (result.registryType) {
-        console.log('Adding registryType to batch:', result.registryType);
-        updates.registryType = result.registryType;
+        console.log('Setting registryType:', result.registryType);
+        updatedCompanyInfo.registryType = result.registryType;
         fieldsToUpdate.add('registryType');
       }
 
-      // ICO
       if (result.ico) {
-        console.log('Adding ico to batch:', result.ico);
-        updates.ico = result.ico;
+        console.log('Setting ico:', result.ico);
+        updatedCompanyInfo.ico = result.ico;
         fieldsToUpdate.add('ico');
       }
 
-      // DIC
       if (result.dic) {
-        console.log('Adding dic to batch:', result.dic);
-        updates.dic = result.dic;
+        console.log('Setting dic:', result.dic);
+        updatedCompanyInfo.dic = result.dic;
         fieldsToUpdate.add('dic');
       }
 
-      // VAT status
       if (result.isVatPayer !== undefined) {
-        console.log('Adding isVatPayer to batch:', result.isVatPayer);
-        updates.isVatPayer = result.isVatPayer;
+        console.log('Setting isVatPayer:', result.isVatPayer);
+        updatedCompanyInfo.isVatPayer = result.isVatPayer;
         fieldsToUpdate.add('isVatPayer');
       }
 
-      // Court info
       if (result.court) {
-        console.log('Adding court to batch:', result.court);
-        updates.court = result.court;
+        console.log('Setting court:', result.court);
+        updatedCompanyInfo.court = result.court;
         fieldsToUpdate.add('court');
       }
 
       if (result.section) {
-        console.log('Adding section to batch:', result.section);
-        updates.section = result.section;
+        console.log('Setting section:', result.section);
+        updatedCompanyInfo.section = result.section;
         fieldsToUpdate.add('section');
       }
 
       if (result.insertNumber) {
-        console.log('Adding insertNumber to batch:', result.insertNumber);
-        updates.insertNumber = result.insertNumber;
+        console.log('Setting insertNumber:', result.insertNumber);
+        updatedCompanyInfo.insertNumber = result.insertNumber;
         fieldsToUpdate.add('insertNumber');
       }
 
-      // Address handling - create complete address object
+      // Handle address as a complete object
       if (result.address) {
-        console.log('Adding address to batch:', result.address);
-        updates.address = {
+        console.log('Setting complete address:', result.address);
+        updatedCompanyInfo.address = {
           street: result.address.street || '',
           city: result.address.city || '',
           zipCode: result.address.zipCode || ''
@@ -109,29 +107,22 @@ const EnhancedCompanyBasicInfoCard = ({
         fieldsToUpdate.add('address.zipCode');
       }
 
-      console.log('=== EXECUTING BATCH UPDATE ===');
-      console.log('Updates to apply:', updates);
-      console.log('Fields to mark as auto-filled:', Array.from(fieldsToUpdate));
-
-      // Apply all updates in sequence with small delays to ensure proper state updating
-      Object.entries(updates).forEach(([field, value], index) => {
-        setTimeout(() => {
-          console.log(`Applying update ${index + 1}:`, field, '=', value);
-          updateCompanyInfo(field, value);
-          
-          // If this is the last update, set auto-filled fields
-          if (index === Object.entries(updates).length - 1) {
-            setTimeout(() => {
-              console.log('Setting auto-filled fields:', Array.from(fieldsToUpdate));
-              setAutoFilledFields(fieldsToUpdate);
-              console.log('=== BATCH UPDATE COMPLETED ===');
-            }, 100);
-          }
-        }, index * 50);
-      });
+      console.log('=== APPLYING COMPLETE BATCH UPDATE ===');
+      console.log('Complete updated company info:', updatedCompanyInfo);
+      
+      // Apply all updates in one batch operation
+      updateCompanyInfo('batchUpdate', updatedCompanyInfo);
+      
+      // Set auto-filled fields after successful update
+      console.log('Setting auto-filled fields:', Array.from(fieldsToUpdate));
+      setAutoFilledFields(fieldsToUpdate);
+      
+      console.log('=== BATCH UPDATE COMPLETED SUCCESSFULLY ===');
       
     } catch (error) {
       console.error('Error in handleCompanySelect batch update:', error);
+    } finally {
+      setIsAutoFilling(false);
     }
   };
 
@@ -201,6 +192,12 @@ const EnhancedCompanyBasicInfoCard = ({
   };
 
   const handleCompanyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Prevent changes during auto-filling process
+    if (isAutoFilling) {
+      console.log('Ignoring manual change during auto-fill process');
+      return;
+    }
+
     const newValue = e.target.value;
     console.log('=== ENHANCED CARD: Manual company name change ===');
     console.log('From:', data.companyInfo.companyName);
@@ -236,9 +233,11 @@ const EnhancedCompanyBasicInfoCard = ({
             placeholder="Zadajte obchodné meno spoločnosti"
             className={`flex-1 min-w-0 text-sm ${getFieldClassName('companyName')}`}
             icon={<Building2 className="h-4 w-4" />}
+            disabled={isAutoFilling}
           />
           <CompanySearchButton 
             onClick={handleOpenSearchModal}
+            disabled={isAutoFilling}
           />
         </div>
         {getFieldIndicator('companyName')}

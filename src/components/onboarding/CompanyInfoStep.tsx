@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData, OpeningHours } from "@/types/onboarding";
@@ -23,6 +24,17 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     console.log('Field:', field);
     console.log('Value:', value);
     console.log('Current companyInfo before update:', data.companyInfo);
+    
+    // Handle batch update for complete company info replacement
+    if (field === 'batchUpdate') {
+      console.log('=== BATCH UPDATE: Applying complete company info update ===');
+      console.log('New company info:', value);
+      updateData({
+        companyInfo: value
+      });
+      console.log('Batch update dispatched');
+      return;
+    }
     
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
@@ -56,6 +68,9 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     console.log('ICO:', data.companyInfo?.ico);
     console.log('DIC:', data.companyInfo?.dic);
     console.log('Address:', data.companyInfo?.address);
+    console.log('Court:', data.companyInfo?.court);
+    console.log('Section:', data.companyInfo?.section);
+    console.log('Insert Number:', data.companyInfo?.insertNumber);
   }, [data.companyInfo]);
 
   // Synchronize contact address with main address when checkbox is checked
@@ -219,6 +234,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <EnhancedCompanyBasicInfoCard
+                    key={`company-basic-${data.companyInfo.companyName}-${data.companyInfo.ico}`}
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
                     autoFilledFields={autoFilledFields}
