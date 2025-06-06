@@ -1,4 +1,4 @@
-import { CompanyInfo } from "@/types/onboarding";
+import { CompanyInfo, CompanyAddress } from "@/types/onboarding";
 
 export interface CompanyRecognitionResult {
   companyName: string;
@@ -9,9 +9,10 @@ export interface CompanyRecognitionResult {
   section?: string;
   insertNumber?: string;
   isVatPayer?: boolean;
+  address?: CompanyAddress;
 }
 
-// Enhanced mock database with more companies for better testing
+// Enhanced mock database with more companies and addresses
 const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
   "Slovak Telekom": {
     companyName: "Slovak Telekom, a.s.",
@@ -21,7 +22,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "4677/B",
-    isVatPayer: true
+    isVatPayer: true,
+    address: {
+      street: "Bajkalská 28",
+      city: "Bratislava",
+      zipCode: "81762"
+    }
   },
   "Orange Slovensko": {
     companyName: "Orange Slovensko, a.s.",
@@ -31,7 +37,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "2988/B",
-    isVatPayer: true
+    isVatPayer: true,
+    address: {
+      street: "Metodova 8",
+      city: "Bratislava",
+      zipCode: "82109"
+    }
   },
   "Tatra banka": {
     companyName: "Tatra banka, a.s.",
@@ -41,7 +52,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "737/B",
-    isVatPayer: true
+    isVatPayer: true,
+    address: {
+      street: "Hodžovo námestie 3",
+      city: "Bratislava",
+      zipCode: "81106"
+    }
   },
   "Pekáreň Novák": {
     companyName: "Pekáreň Novák s.r.o.",
@@ -51,7 +67,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sro",
     insertNumber: "45678/B",
-    isVatPayer: false
+    isVatPayer: false,
+    address: {
+      street: "Hlavná ulica 15",
+      city: "Košice",
+      zipCode: "04001"
+    }
   },
   "Slovenská pošta": {
     companyName: "Slovenská pošta, a.s.",
@@ -61,7 +82,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "4534/B",
-    isVatPayer: true
+    isVatPayer: true,
+    address: {
+      street: "Partizánska cesta 9",
+      city: "Bratislava",
+      zipCode: "97599"
+    }
   },
   "RTVS": {
     companyName: "Rozhlas a televízia Slovenska",
@@ -71,7 +97,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Nz",
     insertNumber: "234/B",
-    isVatPayer: false
+    isVatPayer: false,
+    address: {
+      street: "Mýtna 1",
+      city: "Bratislava",
+      zipCode: "81790"
+    }
   },
   "Kaufland": {
     companyName: "Kaufland Slovenská republika v.o.s.",
@@ -81,7 +112,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sro",
     insertNumber: "8756/B",
-    isVatPayer: true
+    isVatPayer: true,
+    address: {
+      street: "Einsteinova 24",
+      city: "Bratislava",
+      zipCode: "85101"
+    }
   },
   "Tesco": {
     companyName: "Tesco Stores SR, a.s.",
@@ -91,7 +127,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "5534/B",
-    isVatPayer: true
+    isVatPayer: true,
+    address: {
+      street: "Kamenné námestie 1",
+      city: "Bratislava",
+      zipCode: "81106"
+    }
   }
 };
 
@@ -147,7 +188,7 @@ export const recognizeCompanyFromName = async (companyName: string): Promise<Com
   return suggestions.length > 0 ? suggestions[0] : null;
 };
 
-// Helper functions for generating mock data
+// Helper functions for generating mock data with addresses
 const generateMockSRO = (name: string): CompanyRecognitionResult => ({
   companyName: name.includes('s.r.o') ? name : `${name} s.r.o.`,
   registryType: "S.r.o.",
@@ -156,7 +197,8 @@ const generateMockSRO = (name: string): CompanyRecognitionResult => ({
   court: "Okresný súd Bratislava I",
   section: "Sro",
   insertNumber: `${Math.floor(Math.random() * 99999)}/B`,
-  isVatPayer: Math.random() > 0.5
+  isVatPayer: Math.random() > 0.5,
+  address: generateMockAddress()
 });
 
 const generateMockAS = (name: string): CompanyRecognitionResult => ({
@@ -167,7 +209,8 @@ const generateMockAS = (name: string): CompanyRecognitionResult => ({
   court: "Okresný súd Bratislava I",
   section: "Sa",
   insertNumber: `${Math.floor(Math.random() * 9999)}/B`,
-  isVatPayer: true
+  isVatPayer: true,
+  address: generateMockAddress()
 });
 
 const generateMockNO = (name: string): CompanyRecognitionResult => ({
@@ -178,7 +221,8 @@ const generateMockNO = (name: string): CompanyRecognitionResult => ({
   court: "Okresný súd Bratislava I",
   section: "Oz",
   insertNumber: `${Math.floor(Math.random() * 9999)}/B`,
-  isVatPayer: false
+  isVatPayer: false,
+  address: generateMockAddress()
 });
 
 const generateMockZivnost = (name: string): CompanyRecognitionResult => ({
@@ -186,8 +230,23 @@ const generateMockZivnost = (name: string): CompanyRecognitionResult => ({
   registryType: "Živnosť",
   ico: generateMockICO(),
   dic: generateMockDIC(),
-  isVatPayer: Math.random() > 0.7
+  isVatPayer: Math.random() > 0.7,
+  address: generateMockAddress()
 });
+
+const generateMockAddress = (): CompanyAddress => {
+  const streets = [
+    "Hlavná ulica", "Námestie SNP", "Štúrova", "Hviezdoslavovo námestie", 
+    "Kollárova", "Dunajská", "Obchodná", "Grosslingova", "Šancová"
+  ];
+  const cities = ["Bratislava", "Košice", "Prešov", "Žilina", "Banská Bystrica", "Nitra", "Trnava"];
+  
+  return {
+    street: `${streets[Math.floor(Math.random() * streets.length)]} ${Math.floor(Math.random() * 200) + 1}`,
+    city: cities[Math.floor(Math.random() * cities.length)],
+    zipCode: `${Math.floor(Math.random() * 90000) + 10000}`
+  };
+};
 
 const generateMockICO = (): string => {
   return Math.floor(10000000 + Math.random() * 90000000).toString();

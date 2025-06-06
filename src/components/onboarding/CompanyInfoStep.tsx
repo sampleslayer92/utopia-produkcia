@@ -3,11 +3,10 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { OnboardingData, OpeningHours } from "@/types/onboarding";
 import { Building2 } from "lucide-react";
 import EnhancedCompanyBasicInfoCard from "./company/EnhancedCompanyBasicInfoCard";
-import CompanyRegistryInfo from "./company/CompanyRegistryInfo";
 import CompanyAddressCard from "./company/CompanyAddressCard";
 import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
 import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -17,6 +16,8 @@ interface CompanyInfoStepProps {
 }
 
 const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
+  const [autoFilledAddressFields, setAutoFilledAddressFields] = useState<Set<string>>(new Set());
+
   const updateCompanyInfo = (field: string, value: any) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
@@ -151,16 +152,10 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         section: orsrData.section,
         insertNumber: orsrData.insertNumber,
         address: orsrData.address,
-        // Ensure registry_type is set to valid value
-        registryType: orsrData.registryType || 'business'
+        registryType: orsrData.registryType || 'Živnosť'
       }
     });
   };
-
-  // Ensure registry_type has a valid default value
-  if (!data.companyInfo.registryType || !['public', 'business', 'other'].includes(data.companyInfo.registryType)) {
-    updateCompanyInfo('registryType', 'business');
-  }
 
   // Ensure headOfficeEqualsOperatingAddress has a default value
   if (data.companyInfo.headOfficeEqualsOperatingAddress === undefined) {
@@ -187,7 +182,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
               </div>
               
               <p className="text-sm text-blue-800">
-                Začnite zadaním obchodného mena. Systém automaticky rozpozná typ spoločnosti a doplní základné údaje.
+                Začnite zadaním obchodného mena. Systém automaticky rozpozná typ spoločnosti a doplní všetky potrebné údaje vrátane adresy.
               </p>
               
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
@@ -196,6 +191,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                   <li>Rozpoznanie typu spoločnosti</li>
                   <li>Automatické doplnenie IČO/DIČ</li>
                   <li>Údaje z obchodného registra</li>
+                  <li>Adresa sídla spoločnosti</li>
                   <li>DPH status predikcia</li>
                 </ul>
               </div>
@@ -213,26 +209,13 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <Accordion type="multiple" defaultValue={defaultAccordionValues} className="space-y-4">
               
-              {/* Enhanced Basic Company Info */}
+              {/* Enhanced Basic Company Info (now includes registry info) */}
               <AccordionItem value="basic-info" className="border border-slate-200 rounded-lg">
                 <AccordionTrigger className="px-4 py-3 hover:no-underline">
                   <span className="font-medium text-slate-900">Základné údaje o spoločnosti</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <EnhancedCompanyBasicInfoCard
-                    data={data}
-                    updateCompanyInfo={updateCompanyInfo}
-                  />
-                </AccordionContent>
-              </AccordionItem>
-
-              {/* Registry Info */}
-              <AccordionItem value="registry-info" className="border border-slate-200 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-medium text-slate-900">Údaje z obchodného registra</span>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <CompanyRegistryInfo
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
                   />
@@ -248,6 +231,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                   <CompanyAddressCard
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
+                    autoFilledFields={autoFilledAddressFields}
                   />
                 </AccordionContent>
               </AccordionItem>

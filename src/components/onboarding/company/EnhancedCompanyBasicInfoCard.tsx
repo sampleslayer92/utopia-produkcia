@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
-import OnboardingSelect from "../ui/OnboardingSelect";
 import CompanyAutocomplete from "../ui/CompanyAutocomplete";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Building2, CheckCircle } from "lucide-react";
@@ -15,13 +14,6 @@ interface EnhancedCompanyBasicInfoCardProps {
 
 const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompanyBasicInfoCardProps) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
-
-  const registryTypeOptions = [
-    { value: "Živnosť", label: "Živnosť" },
-    { value: "S.r.o.", label: "S.r.o." },
-    { value: "Nezisková organizácia", label: "Nezisková organizácia" },
-    { value: "Akciová spoločnosť", label: "Akciová spoločnosť" }
-  ];
 
   const handleCompanySelect = (result: CompanyRecognitionResult) => {
     console.log('handleCompanySelect called with:', result);
@@ -77,6 +69,17 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
         fieldsToUpdate.add('insertNumber');
       }
 
+      // Auto-fill address if available
+      if (result.address) {
+        console.log('Updating address:', result.address);
+        updateCompanyInfo('address.street', result.address.street);
+        updateCompanyInfo('address.city', result.address.city);
+        updateCompanyInfo('address.zipCode', result.address.zipCode);
+        fieldsToUpdate.add('address.street');
+        fieldsToUpdate.add('address.city');
+        fieldsToUpdate.add('address.zipCode');
+      }
+
       setAutoFilledFields(fieldsToUpdate);
       
       console.log('Company selected and auto-filled:', {
@@ -126,18 +129,18 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
         {getFieldIndicator('companyName')}
       </div>
 
-      {/* Company Type */}
-      <div className="space-y-2">
-        <OnboardingSelect
-          label="Typ spoločnosti *"
-          value={data.companyInfo.registryType}
-          onValueChange={(value) => updateCompanyInfo('registryType', value)}
-          options={registryTypeOptions}
-          placeholder="Vyberte typ spoločnosti"
-          className={getFieldClassName('registryType')}
-        />
-        {getFieldIndicator('registryType')}
-      </div>
+      {/* Company Type - Read-only display when filled */}
+      {data.companyInfo.registryType && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-700">
+            Typ spoločnosti *
+          </label>
+          <div className={`h-11 px-3 border rounded-md flex items-center text-sm ${getFieldClassName('registryType')}`}>
+            {data.companyInfo.registryType}
+          </div>
+          {getFieldIndicator('registryType')}
+        </div>
+      )}
 
       {/* IČO and DIČ */}
       <div className="grid md:grid-cols-2 gap-6">
@@ -189,39 +192,42 @@ const EnhancedCompanyBasicInfoCard = ({ data, updateCompanyInfo }: EnhancedCompa
         )}
       </div>
 
-      {/* Court Registry Information */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="space-y-2">
-          <OnboardingInput
-            label="Súd"
-            value={data.companyInfo.court}
-            onChange={(e) => updateCompanyInfo('court', e.target.value)}
-            placeholder="Okresný súd"
-            className={getFieldClassName('court')}
-          />
-          {getFieldIndicator('court')}
-        </div>
-        
-        <div className="space-y-2">
-          <OnboardingInput
-            label="Oddiel"
-            value={data.companyInfo.section}
-            onChange={(e) => updateCompanyInfo('section', e.target.value)}
-            placeholder="Sro"
-            className={getFieldClassName('section')}
-          />
-          {getFieldIndicator('section')}
-        </div>
-        
-        <div className="space-y-2">
-          <OnboardingInput
-            label="Vložka"
-            value={data.companyInfo.insertNumber}
-            onChange={(e) => updateCompanyInfo('insertNumber', e.target.value)}
-            placeholder="12345/B"
-            className={getFieldClassName('insertNumber')}
-          />
-          {getFieldIndicator('insertNumber')}
+      {/* Court Registry Information - moved from CompanyRegistryInfo */}
+      <div className="space-y-4 pt-4 border-t border-slate-200">
+        <h4 className="text-md font-medium text-slate-900">Údaje v obchodnom registri</h4>
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="space-y-2">
+            <OnboardingInput
+              label="Súd"
+              value={data.companyInfo.court}
+              onChange={(e) => updateCompanyInfo('court', e.target.value)}
+              placeholder="Okresný súd"
+              className={getFieldClassName('court')}
+            />
+            {getFieldIndicator('court')}
+          </div>
+          
+          <div className="space-y-2">
+            <OnboardingInput
+              label="Oddiel"
+              value={data.companyInfo.section}
+              onChange={(e) => updateCompanyInfo('section', e.target.value)}
+              placeholder="Sro"
+              className={getFieldClassName('section')}
+            />
+            {getFieldIndicator('section')}
+          </div>
+          
+          <div className="space-y-2">
+            <OnboardingInput
+              label="Vložka"
+              value={data.companyInfo.insertNumber}
+              onChange={(e) => updateCompanyInfo('insertNumber', e.target.value)}
+              placeholder="12345/B"
+              className={getFieldClassName('insertNumber')}
+            />
+            {getFieldIndicator('insertNumber')}
+          </div>
         </div>
       </div>
     </div>
