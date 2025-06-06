@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
@@ -24,17 +23,24 @@ const EnhancedCompanyBasicInfoCard = ({
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const handleCompanySelect = (result: CompanyRecognitionResult) => {
-    console.log('=== Starting company selection ===');
-    console.log('Selected company:', result);
-    console.log('Current company name in data:', data.companyInfo.companyName);
-    console.log('Current auto-filled fields:', Array.from(autoFilledFields));
+    console.log('=== ENHANCED CARD: Starting company selection ===');
+    console.log('Selected company result:', result);
+    console.log('Current data before update:', {
+      companyName: data.companyInfo.companyName,
+      ico: data.companyInfo.ico,
+      dic: data.companyInfo.dic
+    });
     
-    // Clear ALL previous auto-filled fields and start completely fresh
+    // Force clear previous auto-filled state
+    setAutoFilledFields(new Set());
+    
     const fieldsToUpdate = new Set<string>();
 
     try {
-      // ALWAYS update company name with the exact name from search result
-      console.log('Force updating company name from:', data.companyInfo.companyName, 'to:', result.companyName);
+      // Force update company name - this is the critical fix
+      console.log('=== FORCING COMPANY NAME UPDATE ===');
+      console.log('From:', data.companyInfo.companyName);
+      console.log('To:', result.companyName);
       updateCompanyInfo('companyName', result.companyName);
       fieldsToUpdate.add('companyName');
 
@@ -91,15 +97,11 @@ const EnhancedCompanyBasicInfoCard = ({
         fieldsToUpdate.add('address.zipCode');
       }
 
-      // Completely replace auto-filled fields with new selection
-      console.log('Setting new auto-filled fields:', Array.from(fieldsToUpdate));
+      // Set auto-filled fields after all updates
+      console.log('Setting auto-filled fields:', Array.from(fieldsToUpdate));
       setAutoFilledFields(fieldsToUpdate);
       
-      console.log('=== Company selection completed ===', {
-        company: result.companyName,
-        type: result.registryType,
-        fieldsUpdated: Array.from(fieldsToUpdate)
-      });
+      console.log('=== ENHANCED CARD: Company selection completed ===');
     } catch (error) {
       console.error('Error in handleCompanySelect:', error);
     }
@@ -165,8 +167,26 @@ const EnhancedCompanyBasicInfoCard = ({
   };
 
   const handleOpenSearchModal = () => {
-    console.log('Opening search modal with current company name:', data.companyInfo.companyName);
+    console.log('=== ENHANCED CARD: Opening search modal ===');
+    console.log('Current company name for search:', data.companyInfo.companyName);
     setIsSearchModalOpen(true);
+  };
+
+  const handleCompanyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    console.log('=== ENHANCED CARD: Manual company name change ===');
+    console.log('From:', data.companyInfo.companyName);
+    console.log('To:', newValue);
+    
+    // If user manually changes the name, remove it from auto-filled fields
+    if (autoFilledFields.has('companyName')) {
+      const newAutoFilledFields = new Set(autoFilledFields);
+      newAutoFilledFields.delete('companyName');
+      setAutoFilledFields(newAutoFilledFields);
+      console.log('Removed companyName from auto-filled fields');
+    }
+    
+    updateCompanyInfo('companyName', newValue);
   };
 
   return (
@@ -184,10 +204,7 @@ const EnhancedCompanyBasicInfoCard = ({
         <div className="flex gap-2">
           <OnboardingInput
             value={data.companyInfo.companyName}
-            onChange={(e) => {
-              console.log('Company name changed via input:', e.target.value);
-              updateCompanyInfo('companyName', e.target.value);
-            }}
+            onChange={handleCompanyNameChange}
             placeholder="Zadajte obchodné meno spoločnosti"
             className={`flex-1 min-w-0 text-sm ${getFieldClassName('companyName')}`}
             icon={<Building2 className="h-4 w-4" />}

@@ -35,6 +35,13 @@ const OnboardingStepRenderer = ({
     onPrev
   };
 
+  console.log('=== OnboardingStepRenderer Debug ===', {
+    currentStep,
+    companyName: data.companyInfo?.companyName,
+    ico: data.companyInfo?.ico,
+    address: data.companyInfo?.address
+  });
+
   switch (currentStep) {
     case 0:
       return <ContactInfoStep {...commonProps} />;
