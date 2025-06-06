@@ -29,10 +29,9 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     if (field === 'batchUpdate') {
       console.log('=== BATCH UPDATE: Applying complete company info update ===');
       console.log('New company info:', value);
-      updateData(prevData => ({
-        ...prevData,
+      updateData({
         companyInfo: value
-      }));
+      });
       console.log('Batch update dispatched');
       return;
     }
@@ -40,29 +39,27 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
       console.log('Updating nested field:', parent, '->', child);
-      updateData(prevData => ({
-        ...prevData,
+      updateData({
         companyInfo: {
-          ...prevData.companyInfo,
+          ...data.companyInfo,
           [parent]: {
-            ...(prevData.companyInfo[parent as keyof typeof prevData.companyInfo] as any),
+            ...(data.companyInfo[parent as keyof typeof data.companyInfo] as any),
             [child]: value
           }
         }
-      }));
+      });
     } else {
       console.log('Updating top-level field:', field);
-      updateData(prevData => ({
-        ...prevData,
+      updateData({
         companyInfo: {
-          ...prevData.companyInfo,
+          ...data.companyInfo,
           [field]: value
         }
-      }));
+      });
     }
     
     console.log('Update dispatched');
-  }, [updateData]);
+  }, [updateData, data.companyInfo]);
 
   // Debug effect to track data changes
   useEffect(() => {
@@ -79,24 +76,24 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
   // Synchronize contact address with main address when checkbox is checked
   useEffect(() => {
     if (data.companyInfo.contactAddressSameAsMain && data.companyInfo.address) {
-      updateData(prevData => ({
-        ...prevData,
+      updateData({
         companyInfo: {
-          ...prevData.companyInfo,
+          ...data.companyInfo,
           contactAddress: {
-            street: prevData.companyInfo.address.street,
-            city: prevData.companyInfo.address.city,
-            zipCode: prevData.companyInfo.address.zipCode
+            street: data.companyInfo.address.street,
+            city: data.companyInfo.address.city,
+            zipCode: data.companyInfo.address.zipCode
           }
         }
-      }));
+      });
     }
   }, [
     data.companyInfo.contactAddressSameAsMain,
     data.companyInfo.address?.street,
     data.companyInfo.address?.city,
     data.companyInfo.address?.zipCode,
-    updateData
+    updateData,
+    data.companyInfo
   ]);
 
   // Synchronize operating address with head office when checkbox is checked
@@ -169,10 +166,9 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         };
       }
 
-      updateData(prevData => ({
-        ...prevData,
+      updateData({
         businessLocations: updatedLocations
-      }));
+      });
     }
   }, [
     data.companyInfo.headOfficeEqualsOperatingAddress,
@@ -251,7 +247,6 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <EnhancedCompanyBasicInfoCard
-                    key="company-basic-info"
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
                     autoFilledFields={autoFilledFields}
