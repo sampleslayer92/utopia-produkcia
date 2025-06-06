@@ -90,6 +90,8 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
   };
 
   const updateBusinessLocation = (id: string, field: string, value: any) => {
+    console.log('=== UPDATE BUSINESS LOCATION ===', { id, field, value });
+    
     // Prevent updating first location's address if head office sync is enabled
     if (field.startsWith('address.') && data.companyInfo.headOfficeEqualsOperatingAddress) {
       const firstLocationId = data.businessLocations[0]?.id;
@@ -99,31 +101,37 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
       }
     }
 
+    const updatedLocations = data.businessLocations.map(location => {
+      if (location.id !== id) return location;
+      
+      if (field.includes('.')) {
+        const [parent, child] = field.split('.');
+        return {
+          ...location,
+          [parent]: {
+            ...(location[parent as keyof BusinessLocation] as any),
+            [child]: value
+          }
+        };
+      } else {
+        return {
+          ...location,
+          [field]: value
+        };
+      }
+    });
+
+    console.log('=== UPDATED LOCATIONS ===', updatedLocations);
+    
     updateData({
-      businessLocations: data.businessLocations.map(location => {
-        if (location.id !== id) return location;
-        
-        if (field.includes('.')) {
-          const [parent, child] = field.split('.');
-          return {
-            ...location,
-            [parent]: {
-              ...(location[parent as keyof BusinessLocation] as any),
-              [child]: value
-            }
-          };
-        } else {
-          return {
-            ...location,
-            [field]: value
-          };
-        }
-      })
+      businessLocations: updatedLocations
     });
   };
 
   // Handle bank accounts update
   const updateBankAccounts = (locationId: string, bankAccounts: BankAccount[]) => {
+    console.log('=== UPDATE BANK ACCOUNTS ===', { locationId, bankAccounts });
+    
     updateBusinessLocation(locationId, 'bankAccounts', bankAccounts);
     
     // Update backward compatibility IBAN field
@@ -139,6 +147,8 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
 
   // Handle business details update
   const updateBusinessDetails = (locationId: string, field: string, value: string | number) => {
+    console.log('=== UPDATE BUSINESS DETAILS ===', { locationId, field, value });
+    
     updateBusinessLocation(locationId, field, value);
     
     // Update backward compatibility fields

@@ -48,6 +48,7 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
   };
 
   const updateBankAccount = (id: string, field: keyof BankAccount, value: any) => {
+    console.log('=== BANK ACCOUNT UPDATE ===', { id, field, value });
     const updated = bankAccounts.map(account => {
       if (account.id === id) {
         const updatedAccount = { ...account, [field]: value };
@@ -62,16 +63,23 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
           }
         }
         
+        console.log('=== UPDATED ACCOUNT ===', updatedAccount);
         return updatedAccount;
       }
       return account;
     });
+    console.log('=== ALL ACCOUNTS AFTER UPDATE ===', updated);
     onUpdateBankAccounts(updated);
   };
 
-  const handleIBANChange = (id: string, value: string) => {
-    // Format IBAN in real-time
-    const formattedValue = formatIBAN(value);
+  const handleIBANChange = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    console.log('=== IBAN INPUT CHANGE ===', { id, rawValue });
+    
+    // Format IBAN in real-time but don't restrict input
+    const formattedValue = formatIBAN(rawValue);
+    console.log('=== FORMATTED IBAN ===', formattedValue);
+    
     updateBankAccount(id, 'iban', formattedValue);
   };
 
@@ -178,7 +186,7 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
                       <OnboardingInput
                         label="IBAN *"
                         value={account.iban || ''}
-                        onChange={(e) => handleIBANChange(account.id, e.target.value)}
+                        onChange={(e) => handleIBANChange(account.id, e)}
                         placeholder="SK89 1200 0000 1987 4263 7541"
                         maxLength={29} // Maximum IBAN length with spaces
                       />

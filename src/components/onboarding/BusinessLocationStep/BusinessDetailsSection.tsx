@@ -31,6 +31,12 @@ const BusinessDetailsSection = ({
 
   // Initialize turnover input when component mounts or value changes externally
   useEffect(() => {
+    console.log('=== BUSINESS DETAILS: Turnover effect ===', { 
+      monthlyTurnover, 
+      isFocused,
+      currentInput: turnoverInput 
+    });
+    
     if (!isFocused) {
       if (monthlyTurnover === 0) {
         setTurnoverInput('');
@@ -42,14 +48,18 @@ const BusinessDetailsSection = ({
 
   const handleTurnoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    console.log('=== TURNOVER CHANGE ===', { value });
+    
     setTurnoverInput(value);
     
-    // Parse and update parent component
+    // Parse and update parent component immediately
     const numericValue = parseCurrencyInput(value);
+    console.log('=== PARSED NUMERIC VALUE ===', numericValue);
     onUpdate('monthlyTurnover', numericValue);
   };
 
   const handleTurnoverFocus = () => {
+    console.log('=== TURNOVER FOCUS ===', { monthlyTurnover });
     setIsFocused(true);
     // Clear field if it's 0 or show raw number for editing
     if (monthlyTurnover === 0) {
@@ -60,15 +70,21 @@ const BusinessDetailsSection = ({
   };
 
   const handleTurnoverBlur = () => {
+    console.log('=== TURNOVER BLUR ===', { turnoverInput });
     setIsFocused(false);
-    // Format the value for display
+    
+    // Parse the current input value
     const numericValue = parseCurrencyInput(turnoverInput);
+    console.log('=== TURNOVER BLUR PARSED ===', numericValue);
+    
+    // Always update the parent with the final value
+    onUpdate('monthlyTurnover', numericValue);
+    
+    // Format the display value
     if (numericValue === 0) {
       setTurnoverInput('');
-      onUpdate('monthlyTurnover', 0);
     } else {
       setTurnoverInput(formatCurrencyInput(numericValue.toString()));
-      onUpdate('monthlyTurnover', numericValue);
     }
   };
 
