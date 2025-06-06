@@ -1,9 +1,10 @@
+
 import { Building } from "lucide-react";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
 import { MCC_CODES } from "../config/mccCodes";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { formatTurnoverInput, parseTurnoverInput } from "../utils/formatUtils";
 
 interface BusinessDetailsSectionProps {
@@ -28,25 +29,6 @@ const BusinessDetailsSection = ({
     label: code.label
   }));
 
-  // Initialize turnover input - only format if there's an actual value and not focused
-  useEffect(() => {
-    console.log('=== BUSINESS DETAILS: Turnover effect ===', { 
-      monthlyTurnover, 
-      isFocused,
-      currentInput: turnoverInput 
-    });
-    
-    if (!isFocused) {
-      // Only show formatted value if there's actually a value greater than 0
-      if (monthlyTurnover > 0) {
-        setTurnoverInput(formatTurnoverInput(monthlyTurnover.toString()));
-      } else {
-        // Keep field empty if no value or value is 0
-        setTurnoverInput('');
-      }
-    }
-  }, [monthlyTurnover, isFocused]);
-
   const handleTurnoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     console.log('=== TURNOVER CHANGE ===', { value });
@@ -59,7 +41,7 @@ const BusinessDetailsSection = ({
   const handleTurnoverFocus = () => {
     console.log('=== TURNOVER FOCUS ===', { monthlyTurnover });
     setIsFocused(true);
-    // Show raw number for editing, or empty string if zero/empty
+    // Show current value as raw number for editing, or empty if no value
     if (monthlyTurnover > 0) {
       setTurnoverInput(monthlyTurnover.toString());
     } else {
@@ -85,6 +67,17 @@ const BusinessDetailsSection = ({
       setTurnoverInput('');
     }
   };
+
+  // Set initial display value based on current data
+  React.useEffect(() => {
+    if (!isFocused) {
+      if (monthlyTurnover > 0) {
+        setTurnoverInput(formatTurnoverInput(monthlyTurnover.toString()));
+      } else {
+        setTurnoverInput('');
+      }
+    }
+  }, [monthlyTurnover, isFocused]);
 
   return (
     <div className="space-y-4">

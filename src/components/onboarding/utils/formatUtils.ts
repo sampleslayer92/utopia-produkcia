@@ -55,8 +55,7 @@ export const formatTurnoverInput = (value: string): string => {
   if (isNaN(num)) return '';
   
   // Format with commas for thousands and add € symbol
-  const formatted = new Intl.NumberFormat('en-US').format(num);
-  return `${formatted} €`;
+  return `${num.toLocaleString('en-US')} €`;
 };
 
 export const parseTurnoverInput = (formattedValue: string): number => {
