@@ -1,10 +1,10 @@
 
+import React, { useState } from "react";
 import { Building } from "lucide-react";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
 import { MCC_CODES } from "../config/mccCodes";
-import { useState } from "react";
 import { formatTurnoverInput, parseTurnoverInput } from "../utils/formatUtils";
 
 interface BusinessDetailsSectionProps {
