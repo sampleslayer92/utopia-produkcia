@@ -4,6 +4,7 @@ import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import ORSRSearch from "../ui/ORSRSearch";
 import { Building2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface CompanyBasicInfoProps {
   data: OnboardingData;
@@ -12,10 +13,12 @@ interface CompanyBasicInfoProps {
 }
 
 const CompanyBasicInfo = ({ data, updateCompanyInfo, handleORSRData }: CompanyBasicInfoProps) => {
+  const { t } = useTranslation('forms');
+
   const registryTypeOptions = [
-    { value: "public", label: "Verejný register" },
-    { value: "business", label: "Živnostenský register" },
-    { value: "other", label: "Iný" }
+    { value: "public", label: t('companyInfo.registryTypeOptions.public') },
+    { value: "business", label: t('companyInfo.registryTypeOptions.business') },
+    { value: "other", label: t('companyInfo.registryTypeOptions.other') }
   ];
 
   return (
@@ -23,10 +26,10 @@ const CompanyBasicInfo = ({ data, updateCompanyInfo, handleORSRData }: CompanyBa
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <OnboardingInput
-            label="IČO *"
+            label={t('companyInfo.labels.icoRequired')}
             value={data.companyInfo.ico}
             onChange={(e) => updateCompanyInfo('ico', e.target.value)}
-            placeholder="12345678"
+            placeholder={t('companyInfo.placeholders.ico')}
             icon={<Building2 className="h-4 w-4" />}
           />
           <ORSRSearch
@@ -36,26 +39,26 @@ const CompanyBasicInfo = ({ data, updateCompanyInfo, handleORSRData }: CompanyBa
         </div>
         
         <OnboardingInput
-          label="DIČ *"
+          label={t('companyInfo.labels.dicRequired')}
           value={data.companyInfo.dic}
           onChange={(e) => updateCompanyInfo('dic', e.target.value)}
-          placeholder="SK2012345678"
+          placeholder={t('companyInfo.placeholders.dic')}
         />
       </div>
 
       <OnboardingInput
-        label="Obchodné meno spoločnosti *"
+        label={t('companyInfo.labels.companyNameRequired')}
         value={data.companyInfo.companyName}
         onChange={(e) => updateCompanyInfo('companyName', e.target.value)}
-        placeholder="Zadajte obchodné meno"
+        placeholder={t('companyInfo.placeholders.companyName')}
       />
 
       <OnboardingSelect
-        label="Zápis v obchodnom registri *"
+        label={t('companyInfo.labels.registryTypeRequired')}
         value={data.companyInfo.registryType}
         onValueChange={(value) => updateCompanyInfo('registryType', value)}
         options={registryTypeOptions}
-        placeholder="Vyberte typ registra"
+        placeholder={t('companyInfo.placeholders.selectRegistryType')}
       />
     </div>
   );

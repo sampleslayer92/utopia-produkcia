@@ -62,6 +62,13 @@
     ]
   },
   "companyInfo": {
+    "title": "Údaje o spoločnosti",
+    "description": "Začnite zadaním obchodného mena. Systém automaticky rozpozná spoločnosť a doplní všetky potrebné údaje vrátane sídla.",
+    "basicInfo": "Základné údaje o spoločnosti",
+    "registryInfo": "Údaje z registra",
+    "addressSection": "Sídlo spoločnosti",
+    "contactAddressSection": "Kontaktná adresa spoločnosti",
+    "contactPersonSection": "Kontaktná osoba",
     "ico": "IČO",
     "dic": "DIČ", 
     "companyName": "Obchodné meno",
@@ -74,11 +81,56 @@
     "address": "Adresa sídla",
     "contactAddress": "Korešpondenčná adresa",
     "contactPerson": "Kontaktná osoba",
+    "registryTypeOptions": {
+      "public": "Verejný register",
+      "business": "Živnostenský register",
+      "other": "Iný"
+    },
     "placeholders": {
       "ico": "12345678",
       "dic": "1234567890",
       "companyName": "ABC s.r.o.",
-      "vatNumber": "SK1234567890"
+      "vatNumber": "SK1234567890",
+      "selectRegistryType": "Vyberte typ registra",
+      "court": "Okresný súd",
+      "section": "Sro",
+      "insertNumber": "12345/B",
+      "firstName": "Ján",
+      "lastName": "Novák",
+      "email": "jan.novak@firma.sk"
+    },
+    "labels": {
+      "icoRequired": "IČO *",
+      "dicRequired": "DIČ *",
+      "companyNameRequired": "Obchodné meno spoločnosti *",
+      "registryTypeRequired": "Zápis v obchodnom registri *",
+      "vatNumberRequired": "IČ DPH *",
+      "courtLabel": "Súd",
+      "sectionLabel": "Oddiel",
+      "insertNumberLabel": "Vložka",
+      "firstNameRequired": "Meno *",
+      "lastNameRequired": "Priezvisko *",
+      "emailRequired": "Email *"
+    },
+    "checkboxes": {
+      "isVatPayer": "Je platcom DPH",
+      "isTechnicalPerson": "Je zároveň technická osoba",
+      "contactAddressSameAsMain": "Sídlo spoločnosti je rovnaké ako kontaktná adresa spoločnosti",
+      "headOfficeEqualsOperatingAddress": "Sídlo spoločnosti je rovnaké ako adresa prevádzky"
+    },
+    "smartFeatures": {
+      "title": "Inteligentné vyplnenie",
+      "recognition": "Rozpoznanie spoločnosti",
+      "autoFillIco": "Automatické doplnenie IČO/DIČ",
+      "registryData": "Údaje z obchodného registra",
+      "headOffice": "Sídlo spoločnosti",
+      "vatPrediction": "DPH status predikcia"
+    },
+    "messages": {
+      "contactAddressDifferent": "Zadávate kontaktnú adresu, ktorá sa líši od sídla spoločnosti.",
+      "syncActive": "✓ Synchronizácia aktívna",
+      "syncDescription": "Adresa sídla sa automaticky kopíruje do prvej prevádzky.",
+      "autoFilledField": "Automaticky vyplnené"
     }
   },
   "address": {
@@ -89,6 +141,11 @@
       "street": "Obchodná ulica 456",
       "city": "Bratislava", 
       "zipCode": "01001"
+    },
+    "labels": {
+      "streetRequired": "Ulica a číslo *",
+      "cityRequired": "Mesto *", 
+      "zipCodeRequired": "PSČ *"
     }
   },
   "businessLocation": {

@@ -1,6 +1,7 @@
 
 import { MapPin } from "lucide-react";
 import OnboardingInput from "./OnboardingInput";
+import { useTranslation } from "react-i18next";
 
 interface AddressData {
   street: string;
@@ -16,6 +17,8 @@ interface AddressFormProps {
 }
 
 const AddressForm = ({ title, data, onUpdate, className = "" }: AddressFormProps) => {
+  const { t } = useTranslation('forms');
+
   return (
     <div className={`space-y-4 ${className}`}>
       <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2">
@@ -26,26 +29,26 @@ const AddressForm = ({ title, data, onUpdate, className = "" }: AddressFormProps
       <div className="grid md:grid-cols-3 gap-4">
         <div className="md:col-span-2">
           <OnboardingInput
-            label="Ulica a číslo *"
+            label={t('address.labels.streetRequired')}
             value={data.street}
             onChange={(e) => onUpdate('street', e.target.value)}
-            placeholder="Obchodná ulica 456"
+            placeholder={t('address.placeholders.street')}
           />
         </div>
         
         <OnboardingInput
-          label="PSČ *"
+          label={t('address.labels.zipCodeRequired')}
           value={data.zipCode}
           onChange={(e) => onUpdate('zipCode', e.target.value)}
-          placeholder="01001"
+          placeholder={t('address.placeholders.zipCode')}
         />
       </div>
       
       <OnboardingInput
-        label="Mesto *"
+        label={t('address.labels.cityRequired')}
         value={data.city}
         onChange={(e) => onUpdate('city', e.target.value)}
-        placeholder="Bratislava"
+        placeholder={t('address.placeholders.city')}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MapPin, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface CompanyAddressCardProps {
   data: OnboardingData;
@@ -11,6 +12,8 @@ interface CompanyAddressCardProps {
 }
 
 const CompanyAddressCard = ({ data, updateCompanyInfo, autoFilledFields = new Set() }: CompanyAddressCardProps) => {
+  const { t } = useTranslation('forms');
+
   const getFieldClassName = (fieldName: string) => {
     return autoFilledFields.has(fieldName) ? 'bg-green-50 border-green-200' : '';
   };
@@ -20,7 +23,7 @@ const CompanyAddressCard = ({ data, updateCompanyInfo, autoFilledFields = new Se
       return (
         <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
           <CheckCircle className="h-3 w-3" />
-          <span>Automaticky vyplnené</span>
+          <span>{t('companyInfo.messages.autoFilledField')}</span>
         </div>
       );
     }
@@ -31,16 +34,16 @@ const CompanyAddressCard = ({ data, updateCompanyInfo, autoFilledFields = new Se
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-4">
         <MapPin className="h-5 w-5 text-blue-600" />
-        <h3 className="text-lg font-medium text-slate-900">Sídlo spoločnosti</h3>
+        <h3 className="text-lg font-medium text-slate-900">{t('companyInfo.addressSection')}</h3>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-2">
           <OnboardingInput
-            label="Ulica a číslo *"
+            label={t('address.labels.streetRequired')}
             value={data.companyInfo.address.street}
             onChange={(e) => updateCompanyInfo('address.street', e.target.value)}
-            placeholder="Hlavná ulica 123"
+            placeholder={t('address.placeholders.street')}
             className={getFieldClassName('address.street')}
           />
           {getFieldIndicator('address.street')}
@@ -48,10 +51,10 @@ const CompanyAddressCard = ({ data, updateCompanyInfo, autoFilledFields = new Se
         
         <div className="space-y-2">
           <OnboardingInput
-            label="PSČ *"
+            label={t('address.labels.zipCodeRequired')}
             value={data.companyInfo.address.zipCode}
             onChange={(e) => updateCompanyInfo('address.zipCode', e.target.value)}
-            placeholder="01001"
+            placeholder={t('address.placeholders.zipCode')}
             className={getFieldClassName('address.zipCode')}
           />
           {getFieldIndicator('address.zipCode')}
@@ -60,10 +63,10 @@ const CompanyAddressCard = ({ data, updateCompanyInfo, autoFilledFields = new Se
       
       <div className="space-y-2">
         <OnboardingInput
-          label="Mesto *"
+          label={t('address.labels.cityRequired')}
           value={data.companyInfo.address.city}
           onChange={(e) => updateCompanyInfo('address.city', e.target.value)}
-          placeholder="Bratislava"
+          placeholder={t('address.placeholders.city')}
           className={getFieldClassName('address.city')}
         />
         {getFieldIndicator('address.city')}
@@ -77,7 +80,7 @@ const CompanyAddressCard = ({ data, updateCompanyInfo, autoFilledFields = new Se
             onCheckedChange={(checked) => updateCompanyInfo('contactAddressSameAsMain', checked)}
           />
           <label htmlFor="contactAddressSameAsMain" className="text-sm text-slate-700">
-            Sídlo spoločnosti je rovnaké ako kontaktná adresa spoločnosti
+            {t('companyInfo.checkboxes.contactAddressSameAsMain')}
           </label>
         </div>
 
@@ -88,7 +91,7 @@ const CompanyAddressCard = ({ data, updateCompanyInfo, autoFilledFields = new Se
             onCheckedChange={(checked) => updateCompanyInfo('headOfficeEqualsOperatingAddress', checked)}
           />
           <label htmlFor="headOfficeEqualsOperatingAddress" className="text-sm text-slate-700">
-            Sídlo spoločnosti je rovnaké ako adresa prevádzky
+            {t('companyInfo.checkboxes.headOfficeEqualsOperatingAddress')}
           </label>
         </div>
       </div>

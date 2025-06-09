@@ -11,6 +11,7 @@ import MobileOptimizedCard from "./ui/MobileOptimizedCard";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { syncContactPersonData } from "./utils/crossStepAutoFill";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTranslation } from "react-i18next";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -23,6 +24,7 @@ interface CompanyInfoStepProps {
 const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: CompanyInfoStepProps) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
   const isMobile = useIsMobile();
+  const { t } = useTranslation('forms');
 
   const updateCompanyInfo = useCallback((field: string, value: any) => {
     console.log('=== COMPANY INFO STEP: updateCompanyInfo called ===');
@@ -258,20 +260,20 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
   }, [data.companyInfo.contactAddressSameAsMain, hideContactPerson]);
 
   const infoTooltipData = {
-    description: "Začnite zadaním obchodného mena. Systém automaticky rozpozná spoločnosť a doplní všetky potrebné údaje vrátane sídla.",
+    description: t('companyInfo.description'),
     features: [
-      "Rozpoznanie spoločnosti",
-      "Automatické doplnenie IČO/DIČ",
-      "Údaje z obchodného registra", 
-      "Sídlo spoločnosti",
-      "DPH status predikcia"
+      t('companyInfo.smartFeatures.recognition'),
+      t('companyInfo.smartFeatures.autoFillIco'),
+      t('companyInfo.smartFeatures.registryData'),
+      t('companyInfo.smartFeatures.headOffice'),
+      t('companyInfo.smartFeatures.vatPrediction')
     ]
   };
 
   if (isMobile) {
     return (
       <MobileOptimizedCard
-        title="Údaje o spoločnosti"
+        title={t('companyInfo.title')}
         icon={<Building2 className="h-4 w-4 text-blue-600" />}
         infoTooltip={infoTooltipData}
       >
@@ -318,28 +320,28 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
                 <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                   <Building2 className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="font-medium text-blue-900">Údaje o spoločnosti</h3>
+                <h3 className="font-medium text-blue-900">{t('companyInfo.title')}</h3>
               </div>
               
               <p className="text-sm text-blue-800">
-                Začnite zadaním obchodného mena. Systém automaticky rozpozná spoločnosť a doplní všetky potrebné údaje vrátane sídla.
+                {t('companyInfo.description')}
               </p>
               
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-                <p className="font-medium mb-2">Inteligentné vyplnenie</p>
+                <p className="font-medium mb-2">{t('companyInfo.smartFeatures.title')}</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  <li>Rozpoznanie spoločnosti</li>
-                  <li>Automatické doplnenie IČO/DIČ</li>
-                  <li>Údaje z obchodného registra</li>
-                  <li>Sídlo spoločnosti</li>
-                  <li>DPH status predikcia</li>
+                  <li>{t('companyInfo.smartFeatures.recognition')}</li>
+                  <li>{t('companyInfo.smartFeatures.autoFillIco')}</li>
+                  <li>{t('companyInfo.smartFeatures.registryData')}</li>
+                  <li>{t('companyInfo.smartFeatures.headOffice')}</li>
+                  <li>{t('companyInfo.smartFeatures.vatPrediction')}</li>
                 </ul>
               </div>
 
               {data.companyInfo.headOfficeEqualsOperatingAddress && (
                 <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800 animate-fade-in">
-                  <p className="font-medium mb-1">✓ Synchronizácia aktívna</p>
-                  <p>Adresa sídla sa automaticky kopíruje do prvej prevádzky.</p>
+                  <p className="font-medium mb-1">{t('companyInfo.messages.syncActive')}</p>
+                  <p>{t('companyInfo.messages.syncDescription')}</p>
                 </div>
               )}
             </div>
@@ -352,7 +354,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
               {/* Enhanced Basic Company Info */}
               <AccordionItem value="basic-info" className="border border-slate-200 rounded-lg">
                 <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-medium text-slate-900">Základné údaje o spoločnosti</span>
+                  <span className="font-medium text-slate-900">{t('companyInfo.basicInfo')}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <EnhancedCompanyBasicInfoCard
@@ -367,7 +369,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
               {/* Company Address */}
               <AccordionItem value="address" className="border border-slate-200 rounded-lg">
                 <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-medium text-slate-900">Sídlo spoločnosti</span>
+                  <span className="font-medium text-slate-900">{t('companyInfo.addressSection')}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <CompanyAddressCard
@@ -382,7 +384,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
               {!data.companyInfo.contactAddressSameAsMain && (
                 <AccordionItem value="contact-address" className="border border-slate-200 rounded-lg">
                   <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                    <span className="font-medium text-slate-900">Kontaktná adresa</span>
+                    <span className="font-medium text-slate-900">{t('companyInfo.contactAddressSection')}</span>
                   </AccordionTrigger>
                   <AccordionContent className="px-4 pb-4">
                     <CompanyContactAddressCard
@@ -397,7 +399,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
               {!hideContactPerson && (
                 <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
                   <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                    <span className="font-medium text-slate-900">Kontaktná osoba</span>
+                    <span className="font-medium text-slate-900">{t('companyInfo.contactPersonSection')}</span>
                   </AccordionTrigger>
                   <AccordionContent className="px-4 pb-4">
                     <CompanyContactPersonCard

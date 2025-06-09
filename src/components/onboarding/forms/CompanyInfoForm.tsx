@@ -6,6 +6,7 @@ import ContactPersonForm from "./ContactPersonForm";
 import { Building2, FileText, MapPin } from "lucide-react";
 import { companyInfoSchema, CompanyInfoFormData } from "../validation/schemas";
 import { useValidatedForm } from "../hooks/useValidatedForm";
+import { useTranslation } from "react-i18next";
 
 interface CompanyInfoFormProps {
   data: CompanyInfoFormData;
@@ -19,11 +20,12 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
     data,
     onUpdate
   );
+  const { t } = useTranslation('forms');
 
   const registryTypeOptions = [
-    { value: 'public', label: 'Verejný register' },
-    { value: 'business', label: 'Živnostenský register' },
-    { value: 'other', label: 'Iný' }
+    { value: 'public', label: t('companyInfo.registryTypeOptions.public') },
+    { value: 'business', label: t('companyInfo.registryTypeOptions.business') },
+    { value: 'other', label: t('companyInfo.registryTypeOptions.other') }
   ];
 
   const handleAddressUpdate = (field: keyof typeof data.address, value: string) => {
@@ -71,40 +73,40 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-slate-900 flex items-center gap-2">
           <Building2 className="h-5 w-5 text-blue-500" />
-          Základné údaje
+          {t('companyInfo.basicInfo')}
         </h3>
 
         <div className="grid md:grid-cols-2 gap-4">
           <OnboardingInput
-            label="IČO *"
+            label={t('companyInfo.labels.icoRequired')}
             value={data.ico}
             onChange={(e) => updateField('ico', e.target.value)}
-            placeholder="12345678"
+            placeholder={t('companyInfo.placeholders.ico')}
             isCompleted={completedFields.has('ico')}
             error={errors.ico}
           />
 
           <OnboardingInput
-            label="DIČ *"
+            label={t('companyInfo.labels.dicRequired')}
             value={data.dic}
             onChange={(e) => updateField('dic', e.target.value)}
-            placeholder="SK2012345678"
+            placeholder={t('companyInfo.placeholders.dic')}
             isCompleted={completedFields.has('dic')}
             error={errors.dic}
           />
         </div>
 
         <OnboardingInput
-          label="Obchodné meno *"
+          label={t('companyInfo.labels.companyNameRequired')}
           value={data.companyName}
           onChange={(e) => updateField('companyName', e.target.value)}
-          placeholder="Názov spoločnosti"
+          placeholder={t('companyInfo.placeholders.companyName')}
           isCompleted={completedFields.has('companyName')}
           error={errors.companyName}
         />
 
         <OnboardingSelect
-          label="Typ registra *"
+          label={t('companyInfo.labels.registryTypeRequired')}
           value={data.registryType}
           onValueChange={(value) => updateField('registryType', value)}
           options={registryTypeOptions}
@@ -123,16 +125,16 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
               className="rounded border-slate-300"
             />
             <label htmlFor="isVatPayer" className="text-sm text-slate-700">
-              Je platcom DPH
+              {t('companyInfo.checkboxes.isVatPayer')}
             </label>
           </div>
 
           {data.isVatPayer && (
             <OnboardingInput
-              label="IČ DPH *"
+              label={t('companyInfo.labels.vatNumberRequired')}
               value={data.vatNumber || ''}
               onChange={(e) => updateField('vatNumber', e.target.value)}
-              placeholder="SK2012345678"
+              placeholder={t('companyInfo.placeholders.vatNumber')}
               isCompleted={completedFields.has('vatNumber')}
               error={errors.vatNumber}
             />
@@ -144,33 +146,33 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-slate-900 flex items-center gap-2">
           <FileText className="h-5 w-5 text-blue-500" />
-          Údaje z registra
+          {t('companyInfo.registryInfo')}
         </h3>
 
         <div className="grid md:grid-cols-3 gap-4">
           <OnboardingInput
-            label="Súd"
+            label={t('companyInfo.labels.courtLabel')}
             value={data.court || ''}
             onChange={(e) => updateField('court', e.target.value)}
-            placeholder="Okresný súd"
+            placeholder={t('companyInfo.placeholders.court')}
             isCompleted={completedFields.has('court')}
             error={errors.court}
           />
 
           <OnboardingInput
-            label="Oddiel"
+            label={t('companyInfo.labels.sectionLabel')}
             value={data.section || ''}
             onChange={(e) => updateField('section', e.target.value)}
-            placeholder="Sro"
+            placeholder={t('companyInfo.placeholders.section')}
             isCompleted={completedFields.has('section')}
             error={errors.section}
           />
 
           <OnboardingInput
-            label="Vložka"
+            label={t('companyInfo.labels.insertNumberLabel')}
             value={data.insertNumber || ''}
             onChange={(e) => updateField('insertNumber', e.target.value)}
-            placeholder="12345/B"
+            placeholder={t('companyInfo.placeholders.insertNumber')}
             isCompleted={completedFields.has('insertNumber')}
             error={errors.insertNumber}
           />
@@ -179,7 +181,7 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
 
       {/* Address */}
       <AddressForm
-        title="Sídlo spoločnosti"
+        title={t('companyInfo.addressSection')}
         data={addressData}
         onUpdate={handleAddressUpdate}
       />
@@ -195,13 +197,13 @@ const CompanyInfoForm = ({ data, onUpdate, className = "" }: CompanyInfoFormProp
             className="rounded border-slate-300"
           />
           <label htmlFor="contactAddressSameAsMain" className="text-sm text-slate-700">
-            Kontaktná adresa je rovnaká ako sídlo spoločnosti
+            {t('companyInfo.checkboxes.contactAddressSameAsMain')}
           </label>
         </div>
 
         {!data.contactAddressSameAsMain && (
           <AddressForm
-            title="Kontaktná adresa"
+            title={t('companyInfo.contactAddressSection')}
             data={contactAddressData}
             onUpdate={handleContactAddressUpdate}
           />
