@@ -1,4 +1,12 @@
 
+// Re-export all types from smaller files for backward compatibility
+export * from './contact';
+export * from './company';
+export * from './business';
+export * from './consent';
+export * from './calculations';
+
+// Products types
 export interface AddonCard {
   id: string;
   category: string;
@@ -36,4 +44,21 @@ export interface ServiceCard {
   customValue?: string;
   addons?: AddonCard[];
   catalogId?: string;
+}
+
+// Main onboarding data interface
+export interface OnboardingData {
+  contractId?: string;
+  contractNumber?: string;
+  contactInfo: ContactInfo;
+  companyInfo: CompanyInfo;
+  businessLocations: BusinessLocation[];
+  devices: DeviceCard[];
+  services: ServiceCard[];
+  fees: Fees;
+  authorizedPersons: AuthorizedPerson[];
+  actualOwners: ActualOwner[];
+  consents: Consents;
+  submittedAt?: string;
+  status?: 'draft' | 'submitted' | 'approved' | 'rejected';
 }

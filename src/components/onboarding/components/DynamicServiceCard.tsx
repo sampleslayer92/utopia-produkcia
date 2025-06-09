@@ -19,7 +19,7 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
 
   const updateField = (field: keyof ServiceCard, value: any) => {
     try {
-      console.log(`Updating service field ${field} with value:`, value);
+      console.log(`Updating service field ${String(field)} with value:`, value);
       const updatedService = { ...service, [field]: value };
       onUpdate(updatedService);
     } catch (error) {
