@@ -5,55 +5,15 @@ export * from './company';
 export * from './business';
 export * from './consent';
 export * from './calculations';
+export * from './products';
 
-// Products types
-export interface AddonCard {
-  id: string;
-  category: string;
-  name: string;
-  description: string;
-  monthlyFee: number;
-  companyCost: number;
-  isPerDevice: boolean;
-  customQuantity?: number;
-}
-
-export interface DeviceCard {
-  id: string;
-  type: 'device';
-  name: string;
-  description: string;
-  category: string;
-  count: number;
-  monthlyFee: number;
-  companyCost: number;
-  image?: string;
-  addons?: AddonCard[];
-  catalogId?: string;
-  specifications?: string[];
-  simCards?: number;
-}
-
-export interface ServiceCard {
-  id: string;
-  type: 'service';
-  name: string;
-  description: string;
-  category: string;
-  count: number;
-  monthlyFee: number;
-  companyCost: number;
-  customValue?: string;
-  addons?: AddonCard[];
-  catalogId?: string;
-}
-
-// Device selection types
-export interface DeviceSelection {
-  selectedSolutions: string[];
-  dynamicCards: Array<DeviceCard | ServiceCard>;
-  note?: string;
-}
+// Import the types we need for the main interface
+import { ContactInfo, AuthorizedPerson, ActualOwner } from './contact';
+import { CompanyInfo } from './company';
+import { BusinessLocation } from './business';
+import { Consents } from './consent';
+import { Fees } from './calculations';
+import { DeviceCard, ServiceCard, AddonCard, DeviceSelection } from './products';
 
 // Alias types for backward compatibility
 export type DynamicCard = DeviceCard | ServiceCard;

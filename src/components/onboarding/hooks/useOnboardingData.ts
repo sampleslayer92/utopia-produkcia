@@ -50,6 +50,8 @@ const initialData: OnboardingData = {
     dynamicCards: [],
     note: ''
   },
+  devices: [], // Add missing devices array
+  services: [], // Add missing services array
   fees: {
     regulatedCards: 0.90,
     unregulatedCards: 0.90

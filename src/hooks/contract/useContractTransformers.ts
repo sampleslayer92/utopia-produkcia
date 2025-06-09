@@ -1,4 +1,3 @@
-
 import { OnboardingData, BankAccount, OpeningHours } from '@/types/onboarding';
 
 // Helper function to convert database salutation to frontend format
@@ -293,6 +292,9 @@ export const transformContractData = (
       dynamicCards: finalDynamicCards,
       note: deviceSelection?.note || ''
     },
+    
+    devices: [],
+    services: [],
     
     fees: {
       regulatedCards: deviceSelection?.mif_regulated_cards || 0.90,
