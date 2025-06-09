@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -64,22 +65,22 @@ const EnhancedCompanyBasicInfoCard = ({
 
   useEffect(() => {
     if (data.companyInfo.companyName && !autoFilledFields.has('companyName')) {
-      setAutoFilledFields(prev => new Set(prev).add('companyName'));
+      setAutoFilledFields(new Set([...autoFilledFields, 'companyName']));
     }
     if (data.companyInfo.ico && !autoFilledFields.has('ico')) {
-      setAutoFilledFields(prev => new Set(prev).add('ico'));
+      setAutoFilledFields(new Set([...autoFilledFields, 'ico']));
     }
     if (data.companyInfo.dic && !autoFilledFields.has('dic')) {
-      setAutoFilledFields(prev => new Set(prev).add('dic'));
+      setAutoFilledFields(new Set([...autoFilledFields, 'dic']));
     }
     if (data.companyInfo.court && !autoFilledFields.has('court')) {
-      setAutoFilledFields(prev => new Set(prev).add('court'));
+      setAutoFilledFields(new Set([...autoFilledFields, 'court']));
     }
     if (data.companyInfo.section && !autoFilledFields.has('section')) {
-      setAutoFilledFields(prev => new Set(prev).add('section'));
+      setAutoFilledFields(new Set([...autoFilledFields, 'section']));
     }
     if (data.companyInfo.insertNumber && !autoFilledFields.has('insertNumber')) {
-      setAutoFilledFields(prev => new Set(prev).add('insertNumber'));
+      setAutoFilledFields(new Set([...autoFilledFields, 'insertNumber']));
     }
   }, [data.companyInfo, setAutoFilledFields, autoFilledFields]);
 
@@ -130,7 +131,7 @@ const EnhancedCompanyBasicInfoCard = ({
               >
                 <div className="font-medium text-slate-900">{company.name}</div>
                 <div className="text-sm text-slate-600">IČO: {company.ico}</div>
-                <div className="text-xs text-slate-500">{company.address}</div>
+                <div className="text-xs text-slate-500">{company.street}, {company.city}</div>
               </div>
             ))}
           </div>

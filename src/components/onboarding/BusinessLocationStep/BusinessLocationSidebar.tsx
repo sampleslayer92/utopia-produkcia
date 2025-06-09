@@ -16,6 +16,9 @@ const BusinessLocationSidebar = ({
 }: BusinessLocationSidebarProps) => {
   const { t } = useTranslation();
 
+  // Get features as array or fallback to empty array
+  const features = t('steps.businessLocation.features', { returnObjects: true }) as string[] || [];
+
   return (
     <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-6 md:p-8">
       <div className="space-y-6">
@@ -33,7 +36,7 @@ const BusinessLocationSidebar = ({
         <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
           <p className="font-medium mb-2">{t('steps.businessLocation.sidebar.newFeatures')}</p>
           <ul className="space-y-2 list-disc list-inside">
-            {t('steps.businessLocation.features', { returnObjects: true }).map((feature: string, index: number) => (
+            {Array.isArray(features) && features.map((feature: string, index: number) => (
               <li key={index}>{feature}</li>
             ))}
           </ul>
