@@ -1,0 +1,25 @@
+
+{
+  "success": {
+    "contractCreated": "Zmluva vytvorená!",
+    "dataSaved": "Údaje boli úspešne uložené",
+    "signatureSaved": "Podpis bol uložený",
+    "stepCompleted": "Krok dokončený"
+  },
+  "error": {
+    "contractCreationFailed": "Chyba pri vytváraní zmluvy",
+    "saveFailed": "Nepodarilo sa uložiť údaje",
+    "loadFailed": "Nepodarilo sa načítať údaje",
+    "validationFailed": "Údaje nie sú správne vyplnené",
+    "tryAgain": "Skúste to prosím znova"
+  },
+  "warning": {
+    "unsavedChanges": "Máte neuložené zmeny",
+    "completeCurrentStep": "Najprv dokončite aktuálny krok",
+    "cannotSkipSteps": "Nemôžete preskočiť viacero krokov naraz"
+  },
+  "info": {
+    "autoSaving": "Automaticky sa ukladá...",
+    "contractNumber": "Číslo zmluvy"
+  }
+}

@@ -1,0 +1,25 @@
+
+{
+  "success": {
+    "contractCreated": "Contract Created!",
+    "dataSaved": "Data saved successfully",
+    "signatureSaved": "Signature saved",
+    "stepCompleted": "Step completed"
+  },
+  "error": {
+    "contractCreationFailed": "Contract creation failed",
+    "saveFailed": "Failed to save data",
+    "loadFailed": "Failed to load data",
+    "validationFailed": "Data is not properly filled",
+    "tryAgain": "Please try again"
+  },
+  "warning": {
+    "unsavedChanges": "You have unsaved changes",
+    "completeCurrentStep": "Please complete the current step first",
+    "cannotSkipSteps": "You cannot skip multiple steps at once"
+  },
+  "info": {
+    "autoSaving": "Auto-saving...",
+    "contractNumber": "Contract Number"
+  }
+}

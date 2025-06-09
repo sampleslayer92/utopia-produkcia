@@ -1,0 +1,36 @@
+
+{
+  "titles": {
+    "contactInfo": "Contact Information",
+    "companyInfo": "Company Information",
+    "businessLocations": "Business Locations", 
+    "deviceSelection": "Devices and Services",
+    "fees": "Fees",
+    "authorizedPersons": "Authorized Persons",
+    "actualOwners": "Actual Owners",
+    "consents": "Consents and Signature"
+  },
+  "descriptions": {
+    "contactInfo": "Basic contact information",
+    "companyInfo": "Legal entity information",
+    "businessLocations": "Operating locations and data",
+    "deviceSelection": "Technical equipment selection", 
+    "fees": "Fee and commission setup",
+    "authorizedPersons": "Persons authorized to act",
+    "actualOwners": "Ultimate beneficial owners",
+    "consents": "Confirmation and contract signature"
+  },
+  "sidebar": {
+    "title": "Registration Process",
+    "help": {
+      "title": "Need Help?",
+      "description": "For questions, contact us at +421 911 123 456 or info@utopia.sk"
+    },
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "next": "Next", 
+      "partiallyComplete": "Partially Complete"
+    }
+  }
+}

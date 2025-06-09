@@ -1,0 +1,55 @@
+
+{
+  "buttons": {
+    "next": "Next",
+    "back": "Back",
+    "save": "Save", 
+    "saveAndExit": "Save and Exit",
+    "complete": "Complete Registration",
+    "add": "Add",
+    "remove": "Remove",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "continue": "Continue",
+    "saveSignature": "Save Signature"
+  },
+  "navigation": {
+    "step": "Step",
+    "of": "of",
+    "progress": "Progress",
+    "completed": "completed",
+    "steps": "steps", 
+    "overall": "Overall Progress"
+  },
+  "status": {
+    "saving": "Saving...",
+    "saved": "Saved",
+    "loading": "Loading...",
+    "submitting": "Submitting...",
+    "error": "Error",
+    "success": "Success",
+    "draft": "Draft",
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "next": "Next",
+    "partiallyComplete": "Partially Complete"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email",
+    "invalidPhone": "Invalid phone number",
+    "invalidIco": "Invalid ICO",
+    "invalidDic": "Invalid DIC"
+  },
+  "general": {
+    "yes": "Yes",
+    "no": "No",
+    "optional": "Optional",
+    "required": "Required",
+    "contractNumber": "Contract Number",
+    "lastSaved": "Last Saved",
+    "autoSave": "Auto Save"
+  }
+}

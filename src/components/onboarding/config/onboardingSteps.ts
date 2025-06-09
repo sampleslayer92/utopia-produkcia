@@ -1,4 +1,54 @@
 
+import { useTranslation } from 'react-i18next';
+
+export const useOnboardingSteps = () => {
+  const { t } = useTranslation('steps');
+  
+  return [
+    { 
+      number: 0, 
+      title: t('titles.contactInfo'), 
+      description: t('descriptions.contactInfo') 
+    },
+    { 
+      number: 1, 
+      title: t('titles.companyInfo'), 
+      description: t('descriptions.companyInfo') 
+    },
+    { 
+      number: 2, 
+      title: t('titles.businessLocations'), 
+      description: t('descriptions.businessLocations') 
+    },
+    { 
+      number: 3, 
+      title: t('titles.deviceSelection'), 
+      description: t('descriptions.deviceSelection') 
+    },
+    { 
+      number: 4, 
+      title: t('titles.fees'), 
+      description: t('descriptions.fees') 
+    },
+    { 
+      number: 5, 
+      title: t('titles.authorizedPersons'), 
+      description: t('descriptions.authorizedPersons') 
+    },
+    { 
+      number: 6, 
+      title: t('titles.actualOwners'), 
+      description: t('descriptions.actualOwners') 
+    },
+    { 
+      number: 7, 
+      title: t('titles.consents'), 
+      description: t('descriptions.consents') 
+    }
+  ];
+};
+
+// Fallback for compatibility - can be removed after all components are updated
 export const onboardingSteps = [
   { number: 0, title: "Kontaktné údaje", description: "Základné kontaktné informácie" },
   { number: 1, title: "Údaje o spoločnosti", description: "Informácie o právnickej osobe" },

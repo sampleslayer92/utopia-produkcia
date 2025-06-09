@@ -1,0 +1,21 @@
+
+{
+  "contactInfo": {
+    "description": "Vyplňte vaše základné kontaktné údaje. Tieto informácie sa použijú pre automatické predvyplnenie ostatných krokov registrácie.",
+    "features": [
+      "Automatické predvyplnenie kontaktných osôb",
+      "Synchronizácia údajov medzi krokmi", 
+      "Overenie emailovej adresy",
+      "Formátovanie telefónneho čísla"
+    ]
+  },
+  "businessLocations": {
+    "description": "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
+    "features": [
+      "Správa viacerých bankových účtov",
+      "Detailné MCC kódy a predmet podnikania",
+      "Interaktívne otváracie hodiny s rýchlymi akciami", 
+      "Podpora rôznych mien (EUR, CZK, USD)"
+    ]
+  }
+}

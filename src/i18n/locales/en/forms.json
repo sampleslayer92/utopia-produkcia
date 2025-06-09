@@ -1,0 +1,63 @@
+
+{
+  "contactInfo": {
+    "salutation": "Salutation",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email", 
+    "phone": "Phone",
+    "phonePrefix": "Prefix",
+    "companyType": "Company Type",
+    "salesNote": "Sales Note",
+    "userRole": "Position in Company",
+    "placeholders": {
+      "firstName": "Enter first name",
+      "lastName": "Enter last name",
+      "email": "your@email.com",
+      "phone": "912 345 678",
+      "salesNote": "Notes for sales team..."
+    }
+  },
+  "companyInfo": {
+    "ico": "ICO",
+    "dic": "DIC",
+    "companyName": "Company Name",
+    "registryType": "Registry Type",
+    "isVatPayer": "VAT Payer",
+    "vatNumber": "VAT Number",
+    "court": "Court",
+    "section": "Section", 
+    "insertNumber": "Insert No.",
+    "address": "Registered Address",
+    "contactAddress": "Correspondence Address",
+    "contactPerson": "Contact Person",
+    "placeholders": {
+      "ico": "12345678",
+      "dic": "1234567890",
+      "companyName": "ABC Ltd.",
+      "vatNumber": "SK1234567890"
+    }
+  },
+  "address": {
+    "street": "Street and Number",
+    "city": "City",
+    "zipCode": "ZIP Code",
+    "placeholders": {
+      "street": "Business Street 456",
+      "city": "Bratislava",
+      "zipCode": "01001"
+    }
+  },
+  "businessLocation": {
+    "name": "Location Name",
+    "hasPos": "Has POS Terminal",
+    "address": "Location Address",
+    "contactPerson": "Contact Person",
+    "businessSector": "Business Sector",
+    "estimatedTurnover": "Estimated Turnover",
+    "averageTransaction": "Average Transaction", 
+    "openingHours": "Opening Hours",
+    "seasonality": "Seasonality",
+    "bankAccounts": "Bank Accounts"
+  }
+}

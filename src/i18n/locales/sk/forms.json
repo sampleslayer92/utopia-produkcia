@@ -1,0 +1,63 @@
+
+{
+  "contactInfo": {
+    "salutation": "Oslovenie",
+    "firstName": "Meno",
+    "lastName": "Priezvisko", 
+    "email": "Email",
+    "phone": "Telefón",
+    "phonePrefix": "Predvoľba",
+    "companyType": "Typ spoločnosti",
+    "salesNote": "Obchodná poznámka",
+    "userRole": "Pozícia vo firme",
+    "placeholders": {
+      "firstName": "Zadajte meno",
+      "lastName": "Zadajte priezvisko",
+      "email": "vas@email.sk",
+      "phone": "912 345 678",
+      "salesNote": "Poznámky pre obchodný tím..."
+    }
+  },
+  "companyInfo": {
+    "ico": "IČO",
+    "dic": "DIČ", 
+    "companyName": "Obchodné meno",
+    "registryType": "Typ registra",
+    "isVatPayer": "Platca DPH",
+    "vatNumber": "IČ DPH",
+    "court": "Súd",
+    "section": "Oddiel",
+    "insertNumber": "Vložka č.",
+    "address": "Adresa sídla",
+    "contactAddress": "Korešpondenčná adresa",
+    "contactPerson": "Kontaktná osoba",
+    "placeholders": {
+      "ico": "12345678",
+      "dic": "1234567890",
+      "companyName": "ABC s.r.o.",
+      "vatNumber": "SK1234567890"
+    }
+  },
+  "address": {
+    "street": "Ulica a číslo",
+    "city": "Mesto",
+    "zipCode": "PSČ",
+    "placeholders": {
+      "street": "Obchodná ulica 456",
+      "city": "Bratislava", 
+      "zipCode": "01001"
+    }
+  },
+  "businessLocation": {
+    "name": "Názov prevádzky",
+    "hasPos": "Má POS terminál",
+    "address": "Adresa prevádzky",
+    "contactPerson": "Kontaktná osoba",
+    "businessSector": "Predmet podnikania", 
+    "estimatedTurnover": "Odhadovaný obrat",
+    "averageTransaction": "Priemerná transakcia",
+    "openingHours": "Otváracie hodiny",
+    "seasonality": "Sezónnosť",
+    "bankAccounts": "Bankové účty"
+  }
+}

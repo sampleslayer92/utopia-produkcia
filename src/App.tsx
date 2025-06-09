@@ -13,6 +13,9 @@ import ContractEditPage from "./pages/ContractEditPage";
 import ContractDetail from "./components/admin/ContractDetail";
 import NotFound from "./pages/NotFound";
 
+// Import i18n configuration
+import './i18n/config';
+
 const queryClient = new QueryClient();
 
 const App = () => (

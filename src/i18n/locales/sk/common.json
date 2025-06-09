@@ -1,0 +1,55 @@
+
+{
+  "buttons": {
+    "next": "Ďalej",
+    "back": "Späť", 
+    "save": "Uložiť",
+    "saveAndExit": "Uložiť a ukončiť",
+    "complete": "Dokončiť registráciu",
+    "add": "Pridať",
+    "remove": "Odstrániť",
+    "edit": "Upraviť",
+    "cancel": "Zrušiť",
+    "confirm": "Potvrdiť",
+    "close": "Zavrieť",
+    "continue": "Pokračovať",
+    "saveSignature": "Uložiť podpis"
+  },
+  "navigation": {
+    "step": "Krok",
+    "of": "z",
+    "progress": "Postup",
+    "completed": "dokončené",
+    "steps": "krokov",
+    "overall": "Celkový postup"
+  },
+  "status": {
+    "saving": "Ukladá sa...",
+    "saved": "Uložené",
+    "loading": "Načítava sa...",
+    "submitting": "Odosiela sa...",
+    "error": "Chyba",
+    "success": "Úspech",
+    "draft": "Koncept",
+    "completed": "Dokončené",
+    "inProgress": "Prebieha",
+    "next": "Nasledujúci",
+    "partiallyComplete": "Čiastočne vyplnené"
+  },
+  "validation": {
+    "required": "Toto pole je povinné",
+    "invalidEmail": "Neplatný email",
+    "invalidPhone": "Neplatné telefónne číslo",
+    "invalidIco": "Neplatné IČO",
+    "invalidDic": "Neplatné DIČ"
+  },
+  "general": {
+    "yes": "Áno",
+    "no": "Nie",
+    "optional": "Voliteľné",
+    "required": "Povinné",
+    "contractNumber": "Číslo zmluvy",
+    "lastSaved": "Naposledy uložené",
+    "autoSave": "Automatické ukladanie"
+  }
+}

@@ -1,0 +1,36 @@
+
+{
+  "titles": {
+    "contactInfo": "Kontaktné údaje",
+    "companyInfo": "Údaje o spoločnosti", 
+    "businessLocations": "Prevádzky",
+    "deviceSelection": "Zariadenia a služby",
+    "fees": "Poplatky",
+    "authorizedPersons": "Oprávnené osoby",
+    "actualOwners": "Skutoční majitelia",
+    "consents": "Súhlasy a podpis"
+  },
+  "descriptions": {
+    "contactInfo": "Základné kontaktné informácie",
+    "companyInfo": "Informácie o právnickej osobe",
+    "businessLocations": "Prevádzkové lokality a údaje", 
+    "deviceSelection": "Výber technického vybavenia",
+    "fees": "Nastavenie poplatkov a provízie",
+    "authorizedPersons": "Osoby oprávnené konať",
+    "actualOwners": "Koneční beneficienti",
+    "consents": "Potvrdenie a podpis zmluvy"
+  },
+  "sidebar": {
+    "title": "Registračný proces",
+    "help": {
+      "title": "Potrebujete pomoc?",
+      "description": "V prípade otázok nás kontaktujte na čísle +421 911 123 456 alebo na info@utopia.sk"
+    },
+    "status": {
+      "completed": "Dokončené",
+      "inProgress": "Prebieha", 
+      "next": "Nasledujúci",
+      "partiallyComplete": "Čiastočne vyplnené"
+    }
+  }
+}

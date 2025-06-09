@@ -1,10 +1,10 @@
-
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { useTranslation } from 'react-i18next';
 import { useOnboardingData } from "./hooks/useOnboardingData";
 import { useOnboardingNavigation } from "./hooks/useOnboardingNavigation";
 import { useAutoSave } from "./hooks/useAutoSave";
 import { useProgressTracking } from "./hooks/useProgressTracking";
-import { onboardingSteps } from "./config/onboardingSteps";
+import { useOnboardingSteps } from "./config/onboardingSteps";
 import OnboardingSidebar from "./ui/OnboardingSidebar";
 import OnboardingNavigation from "./ui/OnboardingNavigation";
 import OnboardingHeader from "./ui/OnboardingHeader";
@@ -18,6 +18,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
 const OnboardingFlow = () => {
+  const { t } = useTranslation(['common', 'notifications']);
   const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData();
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -28,6 +29,7 @@ const OnboardingFlow = () => {
   const { saveContractData } = useContractPersistence();
   const { overallProgress } = useProgressTracking(onboardingData, currentStep);
   const isMobile = useIsMobile();
+  const onboardingSteps = useOnboardingSteps();
 
   const {
     totalSteps,
@@ -96,11 +98,11 @@ const OnboardingFlow = () => {
             contractId: result.contractId,
             contractNumber: result.contractNumber?.toString()
           });
-          toast.success('Zmluva bola vytvorená');
+          toast.success(t('notifications:success.contractCreated'));
         }
       } catch (error) {
         console.error('Failed to create contract:', error);
-        toast.error('Nepodarilo sa vytvoriť zmluvu');
+        toast.error(t('notifications:error.contractCreationFailed'));
         setContractCreationAttempted(false);
       }
     };
@@ -113,7 +115,8 @@ const OnboardingFlow = () => {
     isCreating,
     contractCreationAttempted,
     createContract,
-    updateData
+    updateData,
+    t
   ]);
 
   const handleUpdateData = useCallback((data: any) => {
@@ -150,7 +153,7 @@ const OnboardingFlow = () => {
           <MobileStepper
             currentStep={currentStep}
             totalSteps={totalSteps}
-            stepTitle={currentStepData?.title || 'Krok'}
+            stepTitle={currentStepData?.title || t('common:navigation.step')}
             progress={overallProgress.overallPercentage}
             onBack={prevStep}
             showBackButton={currentStep > 0}
@@ -174,8 +177,8 @@ const OnboardingFlow = () => {
               {!isMobile && (
                 <div className="flex justify-between items-center mb-4">
                   <div className="text-sm text-slate-600">
-                    Celkový postup: {overallProgress.overallPercentage}% 
-                    ({overallProgress.completedSteps}/{overallProgress.totalSteps} krokov)
+                    {t('common:navigation.overall')}: {overallProgress.overallPercentage}% 
+                    ({overallProgress.completedSteps}/{overallProgress.totalSteps} {t('common:navigation.steps')})
                   </div>
                   
                   <AutoSaveIndicator 

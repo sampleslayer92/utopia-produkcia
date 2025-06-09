@@ -1,20 +1,10 @@
 
-import { Badge } from "@/components/ui/badge";
+import { useTranslation } from 'react-i18next';
+import { Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FileText, Trash2, Loader2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import { useOnboardingContractDelete } from "@/hooks/useOnboardingContractDelete";
-import { useNavigate } from "react-router-dom";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 interface OnboardingHeaderProps {
   contractNumber?: string;
@@ -29,93 +19,74 @@ const OnboardingHeader = ({
   onContractDeleted,
   isCreatingContract = false 
 }: OnboardingHeaderProps) => {
+  const { t } = useTranslation(['common', 'notifications']);
   const { deleteContract, isDeleting } = useOnboardingContractDelete();
-  const navigate = useNavigate();
 
   const handleDeleteContract = async () => {
     if (!contractId) return;
     
-    const result = await deleteContract(contractId);
-    if (result.success) {
-      // Clear local storage and reset onboarding state
-      localStorage.removeItem('onboarding_data');
-      
-      // Call the callback to reset the parent state
-      if (onContractDeleted) {
-        onContractDeleted();
-      }
-      
-      // Navigate to welcome page
-      navigate('/');
+    const confirmed = window.confirm(
+      'Naozaj chcete zmazať túto zmluvu? Táto akcia sa nedá vrátiť späť.'
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      await deleteContract(contractId);
+      toast.success(t('notifications:success.dataSaved'));
+      onContractDeleted?.();
+    } catch (error) {
+      console.error('Error deleting contract:', error);
+      toast.error(t('notifications:error.saveFailed'));
     }
   };
 
   return (
-    <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-10">
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <img 
-              src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
-              alt="Utopia Logo" 
-              className="h-10 w-auto"
-            />
-          </div>
-          <div className="flex items-center gap-3">
-            {isCreatingContract && (
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 flex items-center gap-2">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  <span className="text-xs">Vytvára sa zmluva...</span>
-                </Badge>
-              </div>
-            )}
-            {contractNumber && contractId && (
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="border-green-200 text-green-700 bg-green-50 flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Zmluva č. {contractNumber}
-                </Badge>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-red-200 text-red-700 hover:bg-red-50"
-                      disabled={isDeleting}
-                    >
-                      {isDeleting ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Vymazať zmluvu</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Naozaj chcete vymazať zmluvu č. {contractNumber}? Táto akcia sa nedá vrátiť späť a všetky údaje budú trvalo odstránené.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Zrušiť</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDeleteContract}
-                        className="bg-red-600 hover:bg-red-700"
-                        disabled={isDeleting}
-                      >
-                        {isDeleting ? 'Vymazávam...' : 'Vymazať zmluvu'}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            )}
-          </div>
+    <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-6 py-4 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h1 className="text-xl font-bold text-slate-900">
+            Utopia Registration
+          </h1>
+          
+          {isCreatingContract && (
+            <div className="flex items-center text-sm text-slate-600">
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              Vytváram zmluvu...
+            </div>
+          )}
+          
+          {contractNumber && (
+            <div className="flex items-center text-sm text-slate-600">
+              <span className="font-medium">{t('common:general.contractNumber')}:</span>
+              <span className="ml-1 font-mono bg-slate-100 px-2 py-1 rounded">
+                {contractNumber}
+              </span>
+            </div>
+          )}
+        </div>
+        
+        <div className="flex items-center space-x-3">
+          <LanguageSwitcher />
+          
+          {contractId && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDeleteContract}
+              disabled={isDeleting}
+              className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+            >
+              {isDeleting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
+            </Button>
+          )}
         </div>
       </div>
-    </header>
+    </div>
   );
 };
 

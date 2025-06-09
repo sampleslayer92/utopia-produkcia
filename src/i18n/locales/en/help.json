@@ -1,0 +1,21 @@
+
+{
+  "contactInfo": {
+    "description": "Fill in your basic contact details. This information will be used to automatically pre-fill other registration steps.",
+    "features": [
+      "Automatic pre-filling of contact persons",
+      "Data synchronization between steps",
+      "Email address verification", 
+      "Phone number formatting"
+    ]
+  },
+  "businessLocations": {
+    "description": "Manage your business locations with detailed information about bank accounts, business activities and opening hours.",
+    "features": [
+      "Multiple bank account management",
+      "Detailed MCC codes and business activities",
+      "Interactive opening hours with quick actions",
+      "Support for various currencies (EUR, CZK, USD)"
+    ]
+  }
+}
