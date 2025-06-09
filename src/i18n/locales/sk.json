@@ -66,7 +66,9 @@
       "placeholders": {
         "street": "Hlavná ulica 123",
         "city": "Bratislava",
-        "zipCode": "01001"
+        "zipCode": "01001",
+        "ico": "12345678",
+        "companyName": "Názov spoločnosti s.r.o."
       },
       "basicInfo": {
         "title": "Základné údaje o spoločnosti",
@@ -74,7 +76,12 @@
         "ico": "IČO",
         "dic": "DIČ",
         "vatPayer": "Platca DPH",
-        "vatNumber": "IČ DPH"
+        "vatNumber": "IČ DPH",
+        "registryType": "Typ registra",
+        "court": "Súd",
+        "section": "Oddiel",
+        "insertNumber": "Vložka číslo",
+        "isVatPayer": "Je platca DPH"
       },
       "address": {
         "title": "Adresa spoločnosti",
@@ -183,7 +190,27 @@
       "title": "Automatické dopĺňanie",
       "suggestion": "Návrh na automatické dopĺňanie",
       "apply": "Použiť",
-      "applied": "Použité"
+      "applied": "Použité",
+      "suggestions": "Návrhy",
+      "contactPerson": "Kontaktná osoba",
+      "useAsAuthorizedPerson": "Použiť ako oprávnenú osobu",
+      "useAsActualOwner": "Použiť ako skutočného majiteľa"
+    },
+    "businessDetails": {
+      "title": "Obchodné údaje",
+      "businessSubject": "Predmet podnikania",
+      "businessSubjectPlaceholder": "Opíšte predmet vášho podnikania...",
+      "mccCode": "MCC kód",
+      "mccCodePlaceholder": "Vyberte MCC kód",
+      "monthlyTurnover": "Mesačný obrat (€)",
+      "monthlyTurnoverPlaceholder": "Zadajte mesačný obrat"
+    },
+    "openingHours": {
+      "title": "Prevádzkové hodiny",
+      "set": "Nastaviť",
+      "closedAllDays": "Zatvorené všetky dni",
+      "edit": "Upraviť",
+      "closed": "Zatvorené"
     }
   }
 }

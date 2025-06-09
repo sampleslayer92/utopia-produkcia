@@ -66,7 +66,9 @@
       "placeholders": {
         "street": "Main Street 123",
         "city": "Bratislava",
-        "zipCode": "01001"
+        "zipCode": "01001",
+        "ico": "12345678",
+        "companyName": "Company Name Ltd."
       },
       "basicInfo": {
         "title": "Basic Company Information",
@@ -74,7 +76,12 @@
         "ico": "Company ID",
         "dic": "Tax ID",
         "vatPayer": "VAT Payer",
-        "vatNumber": "VAT Number"
+        "vatNumber": "VAT Number",
+        "registryType": "Registry Type",
+        "court": "Court",
+        "section": "Section",
+        "insertNumber": "Insert Number",
+        "isVatPayer": "Is VAT Payer"
       },
       "address": {
         "title": "Company Address",
@@ -183,7 +190,27 @@
       "title": "Auto-fill",
       "suggestion": "Auto-fill suggestion",
       "apply": "Apply",
-      "applied": "Applied"
+      "applied": "Applied",
+      "suggestions": "Suggestions",
+      "contactPerson": "Contact Person",
+      "useAsAuthorizedPerson": "Use as authorized person",
+      "useAsActualOwner": "Use as actual owner"
+    },
+    "businessDetails": {
+      "title": "Business Data",
+      "businessSubject": "Business Subject",
+      "businessSubjectPlaceholder": "Describe your business subject...",
+      "mccCode": "MCC Code",
+      "mccCodePlaceholder": "Select MCC code",
+      "monthlyTurnover": "Monthly Turnover (€)",
+      "monthlyTurnoverPlaceholder": "Enter monthly turnover"
+    },
+    "openingHours": {
+      "title": "Operating Hours",
+      "set": "Set",
+      "closedAllDays": "Closed all days",
+      "edit": "Edit",
+      "closed": "Closed"
     }
   }
 }
