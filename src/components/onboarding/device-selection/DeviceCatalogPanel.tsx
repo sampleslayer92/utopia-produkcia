@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Zap, CreditCard, Monitor, Globe, Smartphone } from "lucide-react";
@@ -183,7 +184,7 @@ const DeviceCatalogPanel = ({
                   <CreditCard className="h-5 w-5 text-blue-600" />
                   <span className="font-semibold">{t('deviceSelection.catalog.deviceGroups.terminals')}</span>
                   <Badge variant="outline" className="ml-auto">
-                    {t('deviceSelection.catalog.deviceCount', { count: availableDevices.terminal.length })}
+                    {availableDevices.terminal.length} {t('deviceSelection.catalog.deviceCount')}
                   </Badge>
                 </div>
               </AccordionTrigger>
@@ -208,7 +209,7 @@ const DeviceCatalogPanel = ({
                   <Monitor className="h-5 w-5 text-green-600" />
                   <span className="font-semibold">{t('deviceSelection.catalog.deviceGroups.pos')}</span>
                   <Badge variant="outline" className="ml-auto">
-                    {t('deviceSelection.catalog.deviceCount', { count: availableDevices.pos.length })}
+                    {availableDevices.pos.length} {t('deviceSelection.catalog.deviceCount')}
                   </Badge>
                 </div>
               </AccordionTrigger>
@@ -234,7 +235,7 @@ const DeviceCatalogPanel = ({
                   {group.icon}
                   <span className="font-semibold">{group.title}</span>
                   <Badge variant="outline" className="ml-auto">
-                    {t('deviceSelection.catalog.serviceCount', { count: group.items.length })}
+                    {group.items.length} {t('deviceSelection.catalog.serviceCount')}
                   </Badge>
                 </div>
               </AccordionTrigger>

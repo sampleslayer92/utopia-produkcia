@@ -71,7 +71,7 @@ const CardHeader = ({ card, onEdit, onRemove }: CardHeaderProps) => {
               {card.category}
             </Badge>
             <Badge variant="outline" className="text-xs">
-              {t('deviceSelection.cards.count', { count: card.count })}
+              {card.count} {t('deviceSelection.preview.count.pieces')}
             </Badge>
             {(card.addons?.length || 0) > 0 && (
               <Badge variant="outline" className="text-xs text-green-600">

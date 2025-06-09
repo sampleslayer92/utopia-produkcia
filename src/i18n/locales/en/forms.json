@@ -1,3 +1,4 @@
+
 {
   "contactInfo": {
     "title": "Contact Information",
@@ -356,8 +357,8 @@
         "technical": "Technical Services",
         "accessories": "Accessories"
       },
-      "deviceCount": "{count} devices",
-      "serviceCount": "{count} services",
+      "deviceCount": "devices",
+      "serviceCount": "services",
       "addDevice": "Add Device",
       "addService": "Add Service",
       "products": {
@@ -398,7 +399,12 @@
         "technical": "Technical Services",
         "accessories": "Accessories"
       },
-      "types": "types"
+      "count": {
+        "devices": "devices",
+        "services": "services",
+        "items": "items",
+        "pieces": "pcs"
+      }
     },
     "modal": {
       "addTitle": "Add - {name}",

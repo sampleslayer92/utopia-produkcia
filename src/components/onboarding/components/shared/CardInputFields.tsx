@@ -6,74 +6,41 @@ import { useTranslation } from "react-i18next";
 
 interface CardInputFieldsProps {
   card: DeviceCard | ServiceCard;
-  onUpdate: (field: keyof (DeviceCard | ServiceCard), value: any) => void;
+  onUpdate: (field: string, value: any) => void;
 }
 
 const CardInputFields = ({ card, onUpdate }: CardInputFieldsProps) => {
   const { t } = useTranslation('forms');
 
-  // Type guard to check if card is a ServiceCard
-  const isServiceCard = (card: DeviceCard | ServiceCard): card is ServiceCard => {
-    return card.type === 'service';
-  };
-
-  const handleCustomValueUpdate = (value: string) => {
-    if (isServiceCard(card)) {
-      // Cast to any to bypass the strict typing for this specific case
-      (onUpdate as any)('customValue', value);
-    }
-  };
-
   return (
     <div className="grid grid-cols-2 gap-4">
-      <div className="space-y-2">
-        <Label htmlFor={`count-${card.id}`}>{t('deviceSelection.cards.quantityLabel')}</Label>
+      <div>
+        <Label htmlFor={`count-${card.id}`} className="text-sm font-medium text-slate-700">
+          {t('deviceSelection.cards.quantityLabel')}
+        </Label>
         <Input
           id={`count-${card.id}`}
           type="number"
           min="1"
           value={card.count}
           onChange={(e) => onUpdate('count', parseInt(e.target.value) || 1)}
-          className="border-slate-300 focus:border-blue-500"
+          className="mt-1"
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor={`fee-${card.id}`}>{t('deviceSelection.cards.monthlyFeeLabel')}</Label>
+      <div>
+        <Label htmlFor={`monthlyFee-${card.id}`} className="text-sm font-medium text-slate-700">
+          {t('deviceSelection.cards.monthlyFeeLabel')}
+        </Label>
         <Input
-          id={`fee-${card.id}`}
+          id={`monthlyFee-${card.id}`}
           type="number"
           min="0"
           step="0.01"
           value={card.monthlyFee}
           onChange={(e) => onUpdate('monthlyFee', parseFloat(e.target.value) || 0)}
-          className="border-slate-300 focus:border-blue-500"
+          className="mt-1"
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor={`company-cost-${card.id}`}>{t('deviceSelection.cards.companyCostLabel')}</Label>
-        <Input
-          id={`company-cost-${card.id}`}
-          type="number"
-          min="0"
-          step="0.01"
-          value={card.companyCost}
-          onChange={(e) => onUpdate('companyCost', parseFloat(e.target.value) || 0)}
-          className="border-slate-300 focus:border-blue-500"
-        />
-      </div>
-      {card.name === 'Iný' && isServiceCard(card) && (
-        <div className="space-y-2">
-          <Label htmlFor={`custom-${card.id}`}>{t('deviceSelection.cards.specifications')}</Label>
-          <Input
-            id={`custom-${card.id}`}
-            type="text"
-            value={card.customValue || ''}
-            onChange={(e) => handleCustomValueUpdate(e.target.value)}
-            className="border-slate-300 focus:border-blue-500"
-            placeholder={t('deviceSelection.modal.customSpecificationPlaceholder')}
-          />
-        </div>
-      )}
     </div>
   );
 };

@@ -19,8 +19,17 @@ const SelectedItemsSection = ({
 }: SelectedItemsSectionProps) => {
   const { t } = useTranslation('forms');
   const totalMonthlyFee = dynamicCards.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0);
-  const deviceCount = dynamicCards.filter(card => card.type === 'device').length;
-  const serviceCount = dynamicCards.filter(card => card.type === 'service').length;
+  
+  // Calculate actual counts of items (sum of card.count for each type)
+  const totalDeviceCount = dynamicCards
+    .filter(card => card.type === 'device')
+    .reduce((sum, card) => sum + card.count, 0);
+    
+  const totalServiceCount = dynamicCards
+    .filter(card => card.type === 'service')
+    .reduce((sum, card) => sum + card.count, 0);
+    
+  const totalItemCount = totalDeviceCount + totalServiceCount;
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
@@ -36,8 +45,12 @@ const SelectedItemsSection = ({
             </CardTitle>
           </div>
           <div className="flex gap-2">
-            <Badge variant="secondary">{deviceCount} {t('deviceSelection.preview.stats.devices').toLowerCase()}</Badge>
-            <Badge variant="secondary">{serviceCount} {t('deviceSelection.preview.stats.services').toLowerCase()}</Badge>
+            <Badge variant="secondary">
+              {totalDeviceCount} {t('deviceSelection.preview.count.devices')}
+            </Badge>
+            <Badge variant="secondary">
+              {totalServiceCount} {t('deviceSelection.preview.count.services')}
+            </Badge>
           </div>
         </div>
         {totalMonthlyFee > 0 && (

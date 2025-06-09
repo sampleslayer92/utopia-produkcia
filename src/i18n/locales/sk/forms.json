@@ -1,24 +1,25 @@
+
 {
   "contactInfo": {
     "title": "Kontaktné údaje",
     "description": "Vyplňte vaše základné kontaktné údaje. Tieto informácie sa použijú pre automatické predvyplnenie ostatných krokov registrácie.",
     "salutation": "Oslovenie",
     "firstName": "Meno",
-    "lastName": "Priezvisko", 
+    "lastName": "Priezvisko",
     "email": "Email",
     "phone": "Telefón",
     "phonePrefix": "Predvoľba",
     "companyType": "Typ spoločnosti",
-    "salesNote": "Chcete nám niečo odkázať?",
-    "userRole": "Pozícia vo firme",
+    "salesNote": "Chcete nám niečo povedať?",
+    "userRole": "Pozícia v spoločnosti",
     "personalData": "Osobné údaje",
     "salutationOptions": {
-      "pan": "Pan",
+      "pan": "Pán",
       "pani": "Pani"
     },
     "companyTypeOptions": {
       "zivnost": "Živnosť",
-      "sro": "S.r.o.",
+      "sro": "Spoločnosť s ručením obmedzeným",
       "neziskova": "Nezisková organizácia",
       "as": "Akciová spoločnosť"
     },
@@ -33,7 +34,7 @@
     },
     "sidebar": {
       "title": "Kontaktné údaje",
-      "description": "Vyberte svoju pozíciu v spoločnosti a zadajte kontaktné údaje. Tieto informácie sa automaticky použijú vo všetkých potrebných sekciách.",
+      "description": "Vyberte vašu pozíciu v spoločnosti a zadajte kontaktné údaje. Tieto informácie sa automaticky použijú vo všetkých potrebných sekciách.",
       "contractCreated": "Zmluva vytvorená",
       "contractNumber": "Číslo",
       "autoFill": {
@@ -43,46 +44,46 @@
         "completedDescription": "Vaše údaje boli automaticky použité v príslušných sekciách podľa vašej pozície. Môžete ich neskôr upraviť v príslušných krokoch.",
         "items": {
           "companyContact": "Kontaktná osoba spoločnosti",
-          "firstLocation": "Prvá prevádzka",
-          "authorizedPerson": "Oprávnená osoba (iba Konateľ)",
-          "actualOwner": "Skutočný majiteľ (Majiteľ a Konateľ)"
+          "firstLocation": "Prvá prevádzkareň",
+          "authorizedPerson": "Oprávnená osoba (len Manager)",
+          "actualOwner": "Skutočný majiteľ (Majiteľ a Manager)"
         }
       },
       "requiredData": {
         "title": "Potrebné údaje",
-        "description": "Vyplňte pozíciu, meno, priezvisko, email a telefónne číslo pre automatické vyplnenie ostatných sekcií."
+        "description": "Vyplňte pozíciu, meno, priezvisko, email a telefón pre automatické vyplnenie ostatných sekcií."
       }
     },
     "features": [
       "Automatické predvyplnenie kontaktných osôb",
       "Synchronizácia údajov medzi krokmi",
-      "Overenie emailovej adresy", 
+      "Overenie emailovej adresy",
       "Formátovanie telefónneho čísla"
     ]
   },
   "companyInfo": {
     "title": "Údaje o spoločnosti",
-    "description": "Začnite zadaním obchodného mena. Systém automaticky rozpozná spoločnosť a doplní všetky potrebné údaje vrátane sídla.",
-    "basicInfo": "Základné údaje o spoločnosti",
+    "description": "Začnite zadaním názvu spoločnosti. Systém automaticky rozpozná spoločnosť a vyplní všetky potrebné údaje vrátane sídla spoločnosti.",
+    "basicInfo": "Základné údaje spoločnosti",
     "registryInfo": "Údaje z registra",
     "addressSection": "Sídlo spoločnosti",
-    "contactAddressSection": "Kontaktná adresa spoločnosti",
+    "contactAddressSection": "Korešpondenčná adresa",
     "contactPersonSection": "Kontaktná osoba",
     "ico": "IČO",
-    "dic": "DIČ", 
-    "companyName": "Obchodné meno",
+    "dic": "DIČ",
+    "companyName": "Názov spoločnosti",
     "registryType": "Typ registra",
     "isVatPayer": "Platca DPH",
     "vatNumber": "IČ DPH",
     "court": "Súd",
     "section": "Oddiel",
     "insertNumber": "Vložka č.",
-    "address": "Adresa sídla",
+    "address": "Sídlo spoločnosti",
     "contactAddress": "Korešpondenčná adresa",
     "contactPerson": "Kontaktná osoba",
     "registryTypeOptions": {
       "public": "Verejný register",
-      "business": "Živnostenský register",
+      "business": "Obchodný register",
       "other": "Iný"
     },
     "placeholders": {
@@ -96,13 +97,13 @@
       "insertNumber": "12345/B",
       "firstName": "Ján",
       "lastName": "Novák",
-      "email": "jan.novak@firma.sk"
+      "email": "jan.novak@spolocnost.sk"
     },
     "labels": {
       "icoRequired": "IČO *",
       "dicRequired": "DIČ *",
-      "companyNameRequired": "Obchodné meno spoločnosti *",
-      "registryTypeRequired": "Zápis v obchodnom registri *",
+      "companyNameRequired": "Názov spoločnosti *",
+      "registryTypeRequired": "Zápis v registri *",
       "vatNumberRequired": "IČ DPH *",
       "courtLabel": "Súd",
       "sectionLabel": "Oddiel",
@@ -113,44 +114,44 @@
     },
     "checkboxes": {
       "isVatPayer": "Je platcom DPH",
-      "isTechnicalPerson": "Je zároveň technická osoba",
-      "contactAddressSameAsMain": "Sídlo spoločnosti je rovnaké ako kontaktná adresa spoločnosti",
-      "headOfficeEqualsOperatingAddress": "Sídlo spoločnosti je rovnaké ako adresa prevádzky"
+      "isTechnicalPerson": "Je aj technickou osobou",
+      "contactAddressSameAsMain": "Sídlo spoločnosti je zhodné s korešpondenčnou adresou",
+      "headOfficeEqualsOperatingAddress": "Sídlo spoločnosti je zhodné s adresou prevádzky"
     },
     "smartFeatures": {
       "title": "Inteligentné vyplnenie",
       "recognition": "Rozpoznanie spoločnosti",
-      "autoFillIco": "Automatické doplnenie IČO/DIČ",
+      "autoFillIco": "Automatické dopĺňanie IČO/DIČ",
       "registryData": "Údaje z obchodného registra",
       "headOffice": "Sídlo spoločnosti",
-      "vatPrediction": "DPH status predikcia"
+      "vatPrediction": "Predikcia DPH statusu"
     },
     "messages": {
-      "contactAddressDifferent": "Zadávate kontaktnú adresu, ktorá sa líši od sídla spoločnosti.",
+      "contactAddressDifferent": "Zadávate korešpondenčnú adresu, ktorá sa líši od sídla spoločnosti.",
       "syncActive": "✓ Synchronizácia aktívna",
-      "syncDescription": "Adresa sídla sa automaticky kopíruje do prvej prevádzky.",
+      "syncDescription": "Sídlo spoločnosti sa automaticky kopíruje do prvej prevádzky.",
       "autoFilledField": "Automaticky vyplnené"
     },
     "basicInfoCard": {
-      "title": "Základné údaje o spoločnosti",
-      "autoFilling": "Vyplňujem údaje...",
-      "companyNameLabel": "Obchodné meno spoločnosti *",
-      "companyNamePlaceholder": "Zadajte obchodné meno spoločnosti",
+      "title": "Základné údaje spoločnosti",
+      "autoFilling": "Dopĺňajú sa údaje...",
+      "companyNameLabel": "Názov spoločnosti *",
+      "companyNamePlaceholder": "Zadajte názov spoločnosti",
       "autoFilledIndicator": "Automaticky vyplnené",
-      "registryInfoTitle": "Údaje z obchodného registra",
+      "registryInfoTitle": "Informácie z obchodného registra",
       "vatPayerLabel": "Je platcom DPH",
-      "registryDataTitle": "Údaje v obchodnom registri"
+      "registryDataTitle": "Údaje z obchodného registra"
     },
     "search": {
       "buttonText": "Vyhľadať",
       "modalTitle": "Vyhľadávanie spoločnosti",
       "searchPlaceholder": "Zadajte názov spoločnosti...",
-      "searchingText": "Hľadám...",
-      "searchButtonText": "Hľadať",
+      "searchingText": "Vyhľadáva sa...",
+      "searchButtonText": "Vyhľadať",
       "resultsTitle": "Výsledky vyhľadávania:",
-      "vatPayerBadge": "DPH platca",
+      "vatPayerBadge": "Platca DPH",
       "registrationLabel": "Registrácia:",
-      "selectedCompanyTitle": "Vybratá spoločnosť:",
+      "selectedCompanyTitle": "Vybraná spoločnosť:",
       "selectedCompanyDescription": "Automaticky sa vyplnia všetky dostupné údaje vrátane adresy.",
       "cancelButton": "Zrušiť",
       "selectButton": "Vybrať spoločnosť"
@@ -158,7 +159,7 @@
     "notifications": {
       "companyDataUpdated": "Údaje spoločnosti aktualizované",
       "companyDataUpdatedDescription": "Automaticky vyplnené údaje pre {companyName}",
-      "updateError": "Chyba pri aktualizácii",
+      "updateError": "Chyba aktualizácie",
       "updateErrorDescription": "Nepodarilo sa aktualizovať údaje spoločnosti"
     }
   },
@@ -167,31 +168,31 @@
     "city": "Mesto",
     "zipCode": "PSČ",
     "placeholders": {
-      "street": "Obchodná ulica 456",
-      "city": "Bratislava", 
+      "street": "Obchodná 456",
+      "city": "Bratislava",
       "zipCode": "01001"
     },
     "labels": {
       "streetRequired": "Ulica a číslo *",
-      "cityRequired": "Mesto *", 
+      "cityRequired": "Mesto *",
       "zipCodeRequired": "PSČ *"
     }
   },
   "businessLocation": {
-    "title": "Údaje o prevádzke",
+    "title": "Údaje o prevádzkach",
     "description": "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
     "name": "Názov prevádzky",
     "hasPos": "Má POS terminál",
     "address": "Adresa prevádzky",
     "contactPerson": "Kontaktná osoba",
-    "businessSector": "Predmet podnikania", 
-    "estimatedTurnover": "Odhadovaný obrat",
+    "businessSector": "Sektor podnikania",
+    "estimatedTurnover": "Očakávaný obrat",
     "averageTransaction": "Priemerná transakcia",
     "openingHours": "Otváracie hodiny",
     "seasonality": "Sezónnosť",
     "bankAccounts": "Bankové účty",
     "sidebar": {
-      "title": "Údaje o prevádzke",
+      "title": "Údaje o prevádzkach",
       "description": "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
       "newFeatures": "Nové funkcie v tejto verzii",
       "features": [
@@ -201,21 +202,21 @@
         "Podpora rôznych mien (EUR, CZK, USD)"
       ],
       "autoFillTitle": "Automatické predvyplnenie",
-      "autoFillDescription": "Vaše kontaktné údaje sa automaticky predvyplnia pre nové prevádzky na základe vašej roly \"{userRole}\".",
+      "autoFillDescription": "Vaše kontaktné údaje sa automaticky predvyplnia pre nové lokality na základe vašej roly \"{userRole}\".",
       "addButton": "Pridať prevádzku"
     },
     "emptyState": {
       "title": "Zatiaľ žiadne prevádzky",
-      "description": "Pridajte svoju prvú prevádzkovou lokalitu",
+      "description": "Pridajte vašu prvú prevádzku",
       "addButton": "Pridať prevádzku"
     },
     "card": {
-      "basicInfo": "Základné údaje",
-      "locationNameRequired": "Názov obchodného miesta *",
-      "locationNamePlaceholder": "Názov predajne/prevádzky",
+      "basicInfo": "Základné informácie",
+      "locationNameRequired": "Názov prevádzky *",
+      "locationNamePlaceholder": "Názov obchodu/prevádzky",
       "hasPosLabel": "Je na prevádzke POS?",
       "addressTitle": "Adresa prevádzky",
-      "addressSyncMessage": "Táto prevádzka používa adresu sídla spoločnosti. Adresa sa automaticky synchronizuje s hlavnou adresou.",
+      "addressSyncMessage": "Táto prevádzka používa sídlo spoločnosti. Adresa sa automaticky synchronizuje s hlavnou adresou.",
       "currentAddressLabel": "Aktuálna adresa:",
       "averageTransactionRequired": "Priemerná výška transakcie (EUR) *",
       "averageTransactionPlaceholder": "25",
@@ -237,12 +238,12 @@
       "currencyRequired": "Mena *",
       "ibanRequired": "IBAN *",
       "ibanPlaceholder": "SK89 1200 0000 1987 4263 7541",
-      "ibanInvalid": "Neplatný IBAN formát",
+      "ibanInvalid": "Neplatný formát IBAN",
       "accountNumberRequired": "Číslo účtu *",
       "accountNumberPlaceholder": "1234567890",
       "bankCodeRequired": "Kód banky *",
       "bankCodePlaceholder": "1200",
-      "minimumAccountNote": "* Minimálne jeden bankový účet musí byť zadaný",
+      "minimumAccountNote": "* Musí byť zadaný minimálne jeden bankový účet",
       "formatOptions": {
         "iban": "IBAN",
         "accountNumber": "Číslo účtu / Kód banky"
@@ -254,9 +255,9 @@
       }
     },
     "businessDetails": {
-      "title": "Údaje o podnikaní",
+      "title": "Obchodné informácie",
       "businessSubjectRequired": "Predmet podnikania *",
-      "businessSubjectPlaceholder": "Opíšte hlavné aktivity vašej prevádzky...",
+      "businessSubjectPlaceholder": "Opíšte hlavné činnosti vašej prevádzky...",
       "mccCodeRequired": "MCC kód *",
       "mccCodePlaceholder": "Vyberte kategóriu podnikania",
       "monthlyTurnoverRequired": "Odhadovaný obrat (mesačne v EUR) *",
@@ -272,7 +273,7 @@
         "po": "Po",
         "ut": "Ut",
         "st": "St",
-        "st2": "Št", 
+        "st2": "Št",
         "pi": "Pi",
         "so": "So",
         "ne": "Ne",
@@ -298,7 +299,7 @@
       "saveButton": "Uložiť zmeny",
       "quickActionButtons": {
         "workWeek": "Pracovný týždeň",
-        "fullWeek": "Celý týždeň", 
+        "fullWeek": "Celý týždeň",
         "weekends": "Víkendy",
         "closed": "Zatvorené",
         "reset": "Resetovať"
@@ -307,34 +308,34 @@
   },
   "deviceSelection": {
     "title": "Výber zariadení a služieb",
-    "description": "Vyberte a nakonfigurujte zariadenia a služby pre vašu prevádzku",
+    "description": "Vyberte a nakonfigurujte zariadenia a služby pre vaše podnikanie",
     "solutionSelection": {
-      "title": "Výber riešenia",
+      "title": "Výber riešení",
       "description": "Vyberte typy riešení, ktoré chcete používať vo vašom podnikaní",
       "stepProgress": "Krok 1 z 4",
       "selectedSolutions": "Vybrané riešenia: {count}",
-      "continueMessage": "Pokračujte na konfiguráciu zariadení a služieb",
+      "continueMessage": "Pokračovať do konfigurácie zariadení a služieb",
       "nextButton": "Ďalší krok - Výber zariadení a služieb",
       "solutions": {
         "terminal": {
           "title": "Platobný terminál",
-          "description": "Klasické platobné terminály pre prijímanie kariet"
+          "description": "Klasické platobné terminály na prijímanie kariet"
         },
         "pos": {
-          "title": "Pokladničné riešenie",
-          "description": "Komplexné POS systémy s tabletmi"
+          "title": "POS riešenie",
+          "description": "Kompletné POS systémy s tabletmi"
         },
         "gateway": {
           "title": "Platobná brána",
           "description": "Online platby pre e-commerce"
         },
         "softpos": {
-          "title": "Terminál v mobile (SoftPOS)",
-          "description": "Mobilné aplikácie pre platby"
+          "title": "Mobilný terminál (SoftPOS)",
+          "description": "Mobilné platobné aplikácie"
         },
         "charging": {
           "title": "Nabíjacia stanica",
-          "description": "Riešenia pre elektromobily"
+          "description": "Riešenia pre elektrické vozidlá"
         }
       },
       "solutionBadges": {
@@ -349,24 +350,24 @@
       "title": "Katalóg zariadení a služieb",
       "deviceGroups": {
         "terminals": "Platobné terminály",
-        "pos": "POS Tablety"
+        "pos": "POS tablety"
       },
       "serviceGroups": {
         "software": "Softvérové riešenia",
         "technical": "Technické služby",
         "accessories": "Príslušenstvo"
       },
-      "deviceCount": "{count} zariadení",
-      "serviceCount": "{count} služieb",
+      "deviceCount": "zariadení",
+      "serviceCount": "služieb",
       "addDevice": "Pridať zariadenie",
       "addService": "Pridať službu",
       "products": {
-        "posService": "POS Software",
-        "inventory": "Správa skladu",
-        "reporting": "Reporting a analytika",
+        "posService": "POS softvér",
+        "inventory": "Správa zásob",
+        "reporting": "Reporty a analýzy",
         "installation": "Inštalácia a nastavenie",
         "training": "Školenie personálu",
-        "support": "24/7 Technická podpora",
+        "support": "24/7 technická podpora",
         "receiptPrinter": "Tlačiareň účteniek",
         "cashDrawer": "Pokladničná zásuvka",
         "barcodeScanner": "Čítačka čiarových kódov"
@@ -375,17 +376,17 @@
     "preview": {
       "title": "Vaša objednávka",
       "emptyTitle": "Žiadne položky",
-      "emptyDescription": "Začnite pridávaním zariadení a služieb z katalógu na ľavej strane",
+      "emptyDescription": "Začnite pridávaním zariadení a služieb z katalógu vľavo",
       "clearAll": "Vymazať všetko",
       "stats": {
-        "devices": "Zariadení",
-        "services": "Služieb",
+        "devices": "Zariadenia",
+        "services": "Služby",
         "totalItems": "Celkom položiek"
       },
       "costSummary": {
         "title": "Celkové náklady",
-        "monthly": "{amount} €/mes",
-        "yearly": "{amount} € ročne"
+        "monthly": "€{amount}/mesačne",
+        "yearly": "€{amount} ročne"
       },
       "sections": {
         "devices": "Zariadenia",
@@ -398,19 +399,24 @@
         "technical": "Technické služby",
         "accessories": "Príslušenstvo"
       },
-      "types": "typov"
+      "count": {
+        "devices": "zariadení",
+        "services": "služieb",
+        "items": "položiek",
+        "pieces": "ks"
+      }
     },
     "modal": {
       "addTitle": "Pridať - {name}",
       "editTitle": "Upraviť - {name}",
-      "quantity": "Počet kusov",
+      "quantity": "Množstvo",
       "pricingMode": "Spôsob platby",
       "rental": "Prenájom",
       "purchase": "Kúpa",
-      "monthlyFeeDevice": "Mesačný poplatok za 1 kus (€)",
-      "purchasePriceDevice": "Jednorázová cena za 1 kus (€)",
-      "monthlyFeeService": "Mesačný poplatok za 1 kus (€)",
-      "companyCost": "Mesačný náklad pre firmu za 1 kus (€)",
+      "monthlyFeeDevice": "Mesačný poplatok za kus (€)",
+      "purchasePriceDevice": "Jednorazová cena za kus (€)",
+      "monthlyFeeService": "Mesačný poplatok za kus (€)",
+      "companyCost": "Mesačné náklady spoločnosti za kus (€)",
       "customSpecification": "Špecifikácia služby",
       "customSpecificationPlaceholder": "Opíšte službu...",
       "addToCart": "Pridať do košíka",
@@ -423,18 +429,18 @@
       "count": "{count} ks",
       "countPieces": "ks",
       "items": "položiek",
-      "monthlyFee": "{amount} €/mes",
+      "monthlyFee": "€{amount}/mesiac",
       "mainItem": "Hlavná položka:",
       "addons": "Doplnky:",
       "total": "Celkom:",
       "addonsCount": "+{count} doplnkov",
       "specifications": "Špecifikácie",
       "automatic": "(automaticky)",
-      "quantityLabel": "Počet ks",
+      "quantityLabel": "Množstvo",
       "monthlyFeeLabel": "Mesačný poplatok (EUR)",
-      "companyCostLabel": "Náklad firmy (EUR)",
+      "companyCostLabel": "Náklady spoločnosti (EUR)",
       "addonsTitle": "Doplnky",
-      "perMonth": "/mes"
+      "perMonth": "/mesiac"
     },
     "navigation": {
       "back": "Späť",
