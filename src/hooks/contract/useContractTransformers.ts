@@ -1,4 +1,5 @@
 
+
 import { BusinessLocation, DeviceCard, OnboardingData, AuthorizedPerson, ActualOwner, BankAccount } from "@/types/onboarding";
 
 export const transformBusinessLocationForContract = (location: BusinessLocation) => {
@@ -291,6 +292,7 @@ export const transformContractData = (
       electronicCommunication: consents?.electronic_communication || false,
       signatureDate: consents?.signature_date || '',
       signingPersonId: consents?.signing_person_id || ''
-    }
+    },
+    visitedSteps: [0, 1, 2, 3, 4, 5, 6, 7] // Default to all steps visited for loaded contracts
   };
 };
