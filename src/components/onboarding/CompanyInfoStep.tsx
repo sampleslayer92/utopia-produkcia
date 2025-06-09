@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData, OpeningHours } from "@/types/onboarding";
@@ -180,7 +179,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
           iban: '',
           bankAccounts: [{
             id: Date.now().toString(),
-            format: 'IBAN' as const,
+            typ: 'IBAN' as const,
             iban: '',
             mena: 'EUR' as const
           }],

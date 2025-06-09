@@ -1,355 +1,143 @@
+import { BusinessLocation, DeviceCard, OnboardingData, AuthorizedPerson, ActualOwner, BankAccount } from "@/types/onboarding";
 
-import { OnboardingData, BankAccount, OpeningHours } from '@/types/onboarding';
-
-// Helper function to convert database salutation to frontend format
-const convertSalutation = (dbSalutation: string): 'Pan' | 'Pani' | undefined => {
-  if (dbSalutation === 'Pan' || dbSalutation === 'Pani') {
-    return dbSalutation;
-  }
-  return undefined;
-};
-
-// Helper function to convert database registry type to frontend format
-const convertRegistryType = (dbRegistryType: string): 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' => {
-  switch (dbRegistryType) {
-    case 'public':
-      return 'Nezisková organizácia';
-    case 'business':
-      return 'S.r.o.';
-    case 'other':
-    default:
-      return 'Živnosť';
-  }
-};
-
-export const transformContractData = (
-  contract: any,
-  contactInfo: any,
-  companyInfo: any,
-  businessLocations: any[],
-  deviceSelection: any,
-  contractItems: any[],
-  contractCalculations: any,
-  authorizedPersons: any[],
-  actualOwners: any[],
-  consents: any
-): OnboardingData => {
-  console.log('Transforming contract data:', {
-    contract,
-    contactInfo,
-    companyInfo,
-    businessLocations,
-    deviceSelection,
-    contractItems,
-    contractCalculations,
-    authorizedPersons,
-    actualOwners,
-    consents
-  });
-
-  // Transform contract items and addons into dynamic cards
-  const transformedDynamicCards = contractItems?.map(item => {
-    const transformedAddons = item.contract_item_addons?.map((addon: any) => ({
-      id: addon.addon_id,
-      type: 'addon' as const,
-      category: addon.category,
-      name: addon.name,
-      description: addon.description || '',
-      monthlyFee: Number(addon.monthly_fee) || 0,
-      companyCost: Number(addon.company_cost) || 0,
-      isPerDevice: addon.is_per_device || false,
-      customQuantity: addon.quantity || 1
-    })) || [];
-
-    if (item.item_type === 'device') {
-      return {
-        id: item.id,
-        type: 'device' as const,
-        category: item.category,
-        name: item.name,
-        description: item.description || '',
-        count: item.count || 1,
-        monthlyFee: Number(item.monthly_fee) || 0,
-        companyCost: Number(item.company_cost) || 0,
-        specifications: [],
-        addons: transformedAddons,
-        itemType: 'device'
-      };
-    } else {
-      return {
-        id: item.id,
-        type: 'service' as const,
-        category: item.category,
-        name: item.name,
-        description: item.description || '',
-        count: item.count || 1,
-        monthlyFee: Number(item.monthly_fee) || 0,
-        companyCost: Number(item.company_cost) || 0,
-        customValue: item.custom_value || undefined,
-        addons: transformedAddons,
-        itemType: 'service'
-      };
-    }
-  }) || [];
-
-  // If no contract items exist, fall back to legacy device_selection
-  const legacyDynamicCards = deviceSelection ? [
-    ...(deviceSelection.pax_a920_pro_count > 0 ? [{
-      id: 'pax-a920-pro-legacy',
-      type: 'device' as const,
-      category: 'terminal',
-      name: 'PAX A920 PRO',
-      description: 'Mobilný terminál',
-      count: deviceSelection.pax_a920_pro_count,
-      monthlyFee: deviceSelection.pax_a920_pro_monthly_fee || 0,
-      companyCost: 0,
-      specifications: [],
-      addons: [],
-      itemType: 'device'
-    }] : []),
-    ...(deviceSelection.pax_a80_count > 0 ? [{
-      id: 'pax-a80-legacy',
-      type: 'device' as const,
-      category: 'terminal',
-      name: 'PAX A80',
-      description: 'Stacionárny terminál',
-      count: deviceSelection.pax_a80_count,
-      monthlyFee: deviceSelection.pax_a80_monthly_fee || 0,
-      companyCost: 0,
-      specifications: [],
-      addons: [],
-      itemType: 'device'
-    }] : []),
-    ...(deviceSelection.tablet_10_count > 0 ? [{
-      id: 'tablet-10-legacy',
-      type: 'device' as const,
-      category: 'pos',
-      name: 'Tablet 10"',
-      description: 'Kompaktný tablet pre POS systém',
-      count: deviceSelection.tablet_10_count,
-      monthlyFee: deviceSelection.tablet_10_monthly_fee || 0,
-      companyCost: 0,
-      specifications: [],
-      addons: [],
-      itemType: 'device'
-    }] : []),
-    ...(deviceSelection.tablet_15_count > 0 ? [{
-      id: 'tablet-15-legacy',
-      type: 'device' as const,
-      category: 'pos',
-      name: 'Tablet 15"',
-      description: 'Veľký tablet pre POS systém',
-      count: deviceSelection.tablet_15_count,
-      monthlyFee: deviceSelection.tablet_15_monthly_fee || 0,
-      companyCost: 0,
-      specifications: [],
-      addons: [],
-      itemType: 'device'
-    }] : []),
-    ...(deviceSelection.tablet_pro_15_count > 0 ? [{
-      id: 'tablet-pro-15-legacy',
-      type: 'device' as const,
-      category: 'pos',
-      name: 'Tablet Pro 15"',
-      description: 'Profesionálny tablet pre POS systém',
-      count: deviceSelection.tablet_pro_15_count,
-      monthlyFee: deviceSelection.tablet_pro_15_monthly_fee || 0,
-      companyCost: 0,
-      specifications: [],
-      addons: [],
-      itemType: 'device'
-    }] : []),
-  ] : [];
-
-  const finalDynamicCards = transformedDynamicCards.length > 0 ? transformedDynamicCards : legacyDynamicCards;
-
-  // Transform calculation results
-  const calculatorResults = contractCalculations ? {
-    monthlyTurnover: Number(contractCalculations.monthly_turnover) || 0,
-    totalCustomerPayments: Number(contractCalculations.total_customer_payments) || 0,
-    totalCompanyCosts: Number(contractCalculations.total_company_costs) || 0,
-    effectiveRegulated: Number(contractCalculations.effective_regulated) || 0,
-    effectiveUnregulated: Number(contractCalculations.effective_unregulated) || 0,
-    regulatedFee: Number(contractCalculations.regulated_fee) || 0,
-    unregulatedFee: Number(contractCalculations.unregulated_fee) || 0,
-    transactionMargin: Number(contractCalculations.transaction_margin) || 0,
-    serviceMargin: Number(contractCalculations.service_margin) || 0,
-    totalMonthlyProfit: Number(contractCalculations.total_monthly_profit) || 0,
-    customerPaymentBreakdown: contractCalculations.calculation_data?.customerPaymentBreakdown || [],
-    companyCostBreakdown: contractCalculations.calculation_data?.companyCostBreakdown || []
-  } : undefined;
-
-  const transformedData: OnboardingData = {
-    contactInfo: contactInfo ? {
-      salutation: convertSalutation(contactInfo.salutation || ''),
-      firstName: contactInfo.first_name || '',
-      lastName: contactInfo.last_name || '',
-      email: contactInfo.email || '',
-      phone: contactInfo.phone || '',
-      phonePrefix: contactInfo.phone_prefix || '+421',
-      salesNote: contactInfo.sales_note || '',
-      userRoles: contactInfo.user_role ? [contactInfo.user_role] : []
-    } : {
-      salutation: undefined, 
-      firstName: '', 
-      lastName: '', 
-      email: '', 
-      phone: '', 
-      phonePrefix: '+421', 
-      salesNote: '',
-      userRoles: []
-    },
-    
-    companyInfo: companyInfo ? {
-      ico: companyInfo.ico || '',
-      dic: companyInfo.dic || '',
-      companyName: companyInfo.company_name || '',
-      registryType: convertRegistryType(companyInfo.registry_type || 'other'),
-      isVatPayer: companyInfo.is_vat_payer || false,
-      vatNumber: companyInfo.vat_number || '',
-      court: companyInfo.court || '',
-      section: companyInfo.section || '',
-      insertNumber: companyInfo.insert_number || '',
-      address: {
-        street: companyInfo.address_street || '',
-        city: companyInfo.address_city || '',
-        zipCode: companyInfo.address_zip_code || ''
-      },
-      contactAddress: {
-        street: companyInfo.contact_address_street || companyInfo.address_street || '',
-        city: companyInfo.contact_address_city || companyInfo.address_city || '',
-        zipCode: companyInfo.contact_address_zip_code || companyInfo.address_zip_code || ''
-      },
-      contactAddressSameAsMain: companyInfo.contact_address_same_as_main ?? true,
-      headOfficeEqualsOperatingAddress: false,
-      contactPerson: {
-        firstName: companyInfo.contact_person_first_name || '',
-        lastName: companyInfo.contact_person_last_name || '',
-        email: companyInfo.contact_person_email || '',
-        phone: companyInfo.contact_person_phone || '',
-        isTechnicalPerson: companyInfo.contact_person_is_technical ?? false
-      }
-    } : {
-      ico: '', dic: '', companyName: '', registryType: 'Živnosť', isVatPayer: false, vatNumber: '', court: '', section: '', insertNumber: '',
-      address: { street: '', city: '', zipCode: '' },
-      contactAddress: { street: '', city: '', zipCode: '' },
-      contactAddressSameAsMain: true,
-      headOfficeEqualsOperatingAddress: false,
-      contactPerson: { firstName: '', lastName: '', email: '', phone: '', isTechnicalPerson: false }
-    },
-    
-    businessLocations: businessLocations?.map(loc => {
-      // Default bank account from legacy IBAN
-      const defaultBankAccount: BankAccount = {
-        id: `legacy-${loc.location_id}`,
-        format: 'IBAN',
-        iban: loc.iban || '',
-        mena: 'EUR'
-      };
-
-      // Default opening hours (weekdays open, weekends closed)
-      const defaultOpeningHours: OpeningHours[] = [
-        { day: "Po", open: "09:00", close: "17:00", otvorene: true },
-        { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
-        { day: "St", open: "09:00", close: "17:00", otvorene: true },
-        { day: "Št", open: "09:00", close: "17:00", otvorene: true },
-        { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
-        { day: "So", open: "09:00", close: "14:00", otvorene: false },
-        { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
-      ];
-
-      return {
-        id: loc.location_id,
-        name: loc.name,
-        hasPOS: loc.has_pos,
-        address: {
-          street: loc.address_street,
-          city: loc.address_city,
-          zipCode: loc.address_zip_code
-        },
-        iban: loc.iban,
-        bankAccounts: [defaultBankAccount],
-        contactPerson: {
-          name: loc.contact_person_name,
-          phone: loc.contact_person_phone,
-          email: loc.contact_person_email
-        },
-        businessSector: loc.business_sector,
-        businessSubject: loc.business_sector || '',
-        mccCode: '',
-        estimatedTurnover: loc.estimated_turnover,
-        monthlyTurnover: loc.estimated_turnover || 0,
-        averageTransaction: loc.average_transaction,
-        openingHours: loc.opening_hours,
-        openingHoursDetailed: defaultOpeningHours,
-        seasonality: loc.seasonality,
-        seasonalWeeks: loc.seasonal_weeks,
-        assignedPersons: []
-      };
-    }) || [],
-    
-    deviceSelection: {
-      selectedSolutions: [],
-      dynamicCards: finalDynamicCards,
-      note: deviceSelection?.note || ''
-    },
-    
-    fees: {
-      regulatedCards: deviceSelection?.mif_regulated_cards || 0.90,
-      unregulatedCards: deviceSelection?.mif_unregulated_cards || 0.90,
-      calculatorResults
-    },
-    
-    authorizedPersons: authorizedPersons?.map(person => ({
-      id: person.person_id,
-      firstName: person.first_name,
-      lastName: person.last_name,
-      birthDate: person.birth_date,
-      birthPlace: person.birth_place,
-      birthNumber: person.birth_number,
-      maidenName: person.maiden_name,
-      citizenship: person.citizenship,
-      permanentAddress: person.permanent_address,
-      documentType: person.document_type,
-      documentNumber: person.document_number,
-      documentValidity: person.document_validity,
-      documentIssuer: person.document_issuer,
-      documentCountry: person.document_country,
-      position: person.position,
-      phone: person.phone,
-      phonePrefix: person.phone_prefix || '+421',
-      email: person.email,
-      isPoliticallyExposed: person.is_politically_exposed,
-      isUSCitizen: person.is_us_citizen
-    })) || [],
-    
-    actualOwners: actualOwners?.map(owner => ({
-      id: owner.owner_id,
-      firstName: owner.first_name,
-      lastName: owner.last_name,
-      birthDate: owner.birth_date,
-      birthPlace: owner.birth_place,
-      birthNumber: owner.birth_number,
-      maidenName: owner.maiden_name,
-      citizenship: owner.citizenship,
-      permanentAddress: owner.permanent_address,
-      isPoliticallyExposed: owner.is_politically_exposed
-    })) || [],
-    
-    consents: consents ? {
-      gdpr: consents.gdpr_consent || false,
-      terms: consents.terms_consent || false,
-      electronicCommunication: consents.electronic_communication_consent || false,
-      signatureDate: consents.signature_date || '',
-      signingPersonId: consents.signing_person_id || ''
-    } : {
-      gdpr: false, terms: false, electronicCommunication: false, signatureDate: '', signingPersonId: ''
-    },
-    
-    visitedSteps: [],
-    currentStep: 0
+export const transformBusinessLocationForContract = (location: BusinessLocation) => {
+  return {
+    location_id: location.id,
+    name: location.name,
+    has_pos: location.hasPOS,
+    address_street: location.address.street,
+    address_city: location.address.city,
+    address_zip_code: location.address.zipCode,
+    iban: location.bankAccounts?.[0]?.iban || location.iban || '',
+    contact_person_name: location.contactPerson.name,
+    contact_person_email: location.contactPerson.email,
+    contact_person_phone: location.contactPerson.phone,
+    business_sector: location.businessSubject || location.businessSector || '',
+    estimated_turnover: location.monthlyTurnover || location.estimatedTurnover || 0,
+    average_transaction: location.averageTransaction,
+    opening_hours: location.openingHours,
+    seasonality: location.seasonality,
+    seasonal_weeks: location.seasonalWeeks
   };
+};
 
-  console.log('Transformed onboarding data:', transformedData);
-  return transformedData;
+export const transformBankAccountForContract = (bankAccount: BankAccount) => {
+  return {
+    typ: bankAccount.typ,
+    iban: bankAccount.iban || '',
+    cislo_uctu: bankAccount.cisloUctu || '',
+    kod_banky: bankAccount.kodBanky || '',
+    mena: bankAccount.mena
+  };
+};
+
+export const transformDeviceCardForContract = (device: DeviceCard) => {
+  return {
+    device_id: device.id,
+    category: device.category,
+    name: device.name,
+    description: device.description,
+    count: device.count,
+    monthly_fee: device.monthlyFee,
+    company_cost: device.companyCost,
+    specifications: device.specifications?.join(', ') || '',
+    sim_cards: device.simCards,
+    custom_value: device.customValue
+  };
+};
+
+export const transformAuthorizedPersonForContract = (person: AuthorizedPerson) => {
+  return {
+    first_name: person.firstName,
+    last_name: person.lastName,
+    email: person.email,
+    phone: person.phone,
+    phone_prefix: person.phonePrefix,
+    maiden_name: person.maidenName,
+    birth_date: person.birthDate,
+    birth_place: person.birthPlace,
+    birth_number: person.birthNumber,
+    permanent_address: person.permanentAddress,
+    position: person.position,
+    document_type: person.documentType,
+    document_number: person.documentNumber,
+    document_validity: person.documentValidity,
+    document_issuer: person.documentIssuer,
+    document_country: person.documentCountry,
+    citizenship: person.citizenship,
+    is_politically_exposed: person.isPoliticallyExposed,
+    is_us_citizen: person.isUSCitizen
+  };
+};
+
+export const transformActualOwnerForContract = (owner: ActualOwner) => {
+  return {
+    first_name: owner.firstName,
+    last_name: owner.lastName,
+    maiden_name: owner.maidenName,
+    birth_date: owner.birthDate,
+    birth_place: owner.birthPlace,
+    birth_number: owner.birthNumber,
+    citizenship: owner.citizenship,
+    permanent_address: owner.permanentAddress,
+    is_politically_exposed: owner.isPoliticallyExposed
+  };
+};
+
+export const transformOnboardingDataForContract = (data: OnboardingData) => {
+  return {
+    contact_info: {
+      salutation: data.contactInfo.salutation,
+      first_name: data.contactInfo.firstName,
+      last_name: data.contactInfo.lastName,
+      email: data.contactInfo.email,
+      phone: data.contactInfo.phone,
+      phone_prefix: data.contactInfo.phonePrefix,
+      sales_note: data.contactInfo.salesNote,
+      user_role: data.contactInfo.userRole,
+      user_roles: data.contactInfo.userRoles?.join(', ')
+    },
+    company_info: {
+      ico: data.companyInfo.ico,
+      dic: data.companyInfo.dic,
+      company_name: data.companyInfo.companyName,
+      registry_type: data.companyInfo.registryType,
+      is_vat_payer: data.companyInfo.isVatPayer,
+      vat_number: data.companyInfo.vatNumber,
+      court: data.companyInfo.court,
+      section: data.companyInfo.section,
+      insert_number: data.companyInfo.insertNumber,
+      address_street: data.companyInfo.address.street,
+      address_city: data.companyInfo.address.city,
+      address_zip_code: data.companyInfo.address.zipCode,
+      contact_address_same_as_main: data.companyInfo.contactAddressSameAsMain,
+      contact_address_street: data.companyInfo.contactAddress?.street,
+      contact_address_city: data.companyInfo.contactAddress?.city,
+      contact_address_zip_code: data.companyInfo.contactAddress?.zipCode,
+      contact_person_first_name: data.companyInfo.contactPerson.firstName,
+      contact_person_last_name: data.companyInfo.contactPerson.lastName,
+      contact_person_email: data.companyInfo.contactPerson.email,
+      contact_person_phone: data.companyInfo.contactPerson.phone,
+      is_technical_person: data.companyInfo.contactPerson.isTechnicalPerson
+    },
+    business_locations: data.businessLocations.map(transformBusinessLocationForContract),
+    device_selection: {
+      selected_solutions: data.deviceSelection.selectedSolutions.join(', '),
+      dynamic_cards: data.deviceSelection.dynamicCards.map(transformDeviceCardForContract),
+      note: data.deviceSelection.note
+    },
+    fees: {
+      regulated_cards: data.fees.regulatedCards,
+      unregulated_cards: data.fees.unregulatedCards
+    },
+    authorized_persons: data.authorizedPersons.map(transformAuthorizedPersonForContract),
+    actual_owners: data.actualOwners.map(transformActualOwnerForContract),
+    consents: {
+      gdpr: data.consents.gdpr,
+      terms: data.consents.terms,
+      electronic_communication: data.consents.electronicCommunication,
+      signature_date: data.consents.signatureDate,
+      signing_person_id: data.consents.signingPersonId
+    }
+  };
 };
