@@ -129,9 +129,9 @@ const EnhancedAdminTable = () => {
     }
   };
 
-  const handleBulkAction = (action: string, contractIds: string[]) => {
-    console.log(`Bulk action: ${action} on contracts:`, contractIds);
-    toast.success(`Akcia "${action}" vykonaná na ${contractIds.length} zmluvách`);
+  const handleBulkAction = (action: string) => {
+    console.log(`Bulk action: ${action} on contracts:`, selectedContracts);
+    toast.success(`Akcia "${action}" vykonaná na ${selectedContracts.length} zmluvách`);
     setSelectedContracts([]);
   };
 
@@ -176,7 +176,6 @@ const EnhancedAdminTable = () => {
       {selectedContracts.length > 0 && (
         <BulkActionsPanel
           selectedCount={selectedContracts.length}
-          onBulkAction={handleBulkAction}
           selectedContracts={selectedContracts}
           onClose={() => setSelectedContracts([])}
         />

@@ -14,13 +14,13 @@ import { useContractDelete } from "@/hooks/useContractDelete";
 
 interface ContractActionsDropdownProps {
   contractId: string;
-  contractNumber: string; // Changed from number to string
+  contractNumber: string;
 }
 
 const ContractActionsDropdown = ({ contractId, contractNumber }: ContractActionsDropdownProps) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const { deleteContract, isDeleting } = useContractDelete();
+  const contractDeleteMutation = useContractDelete();
 
   const handleView = () => {
     navigate(`/admin/contract/${contractId}/view`);
@@ -40,7 +40,7 @@ const ContractActionsDropdown = ({ contractId, contractNumber }: ContractActions
     if (!confirmed) return;
 
     try {
-      await deleteContract(contractId);
+      await contractDeleteMutation.mutateAsync(contractId);
       toast.success("Zmluva bola úspešne zmazaná");
     } catch (error) {
       console.error('Error deleting contract:', error);
@@ -79,10 +79,10 @@ const ContractActionsDropdown = ({ contractId, contractNumber }: ContractActions
         <DropdownMenuItem 
           onClick={handleDelete} 
           className="text-red-600"
-          disabled={isDeleting}
+          disabled={contractDeleteMutation.isPending}
         >
           <Trash2 className="mr-2 h-4 w-4" />
-          {isDeleting ? "Mazanie..." : "Zmazať"}
+          {contractDeleteMutation.isPending ? "Mazanie..." : "Zmazať"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
