@@ -141,3 +141,153 @@ export const transformOnboardingDataForContract = (data: OnboardingData) => {
     }
   };
 };
+
+export const transformContractData = (
+  contract: any,
+  contactInfo: any,
+  companyInfo: any,
+  businessLocations: any[],
+  deviceSelection: any,
+  contractItems: any[],
+  contractCalculations: any,
+  authorizedPersons: any[],
+  actualOwners: any[],
+  consents: any
+): OnboardingData => {
+  return {
+    contactInfo: {
+      salutation: contactInfo?.salutation || '',
+      firstName: contactInfo?.first_name || '',
+      lastName: contactInfo?.last_name || '',
+      email: contactInfo?.email || '',
+      phone: contactInfo?.phone || '',
+      phonePrefix: contactInfo?.phone_prefix || '+421',
+      salesNote: contactInfo?.sales_note || '',
+      userRole: contactInfo?.user_role || '',
+      userRoles: contactInfo?.user_roles?.split(', ') || []
+    },
+    companyInfo: {
+      ico: companyInfo?.ico || '',
+      dic: companyInfo?.dic || '',
+      companyName: companyInfo?.company_name || '',
+      registryType: companyInfo?.registry_type || '',
+      isVatPayer: companyInfo?.is_vat_payer || false,
+      vatNumber: companyInfo?.vat_number || '',
+      court: companyInfo?.court || '',
+      section: companyInfo?.section || '',
+      insertNumber: companyInfo?.insert_number || '',
+      address: {
+        street: companyInfo?.address_street || '',
+        city: companyInfo?.address_city || '',
+        zipCode: companyInfo?.address_zip_code || ''
+      },
+      contactAddressSameAsMain: companyInfo?.contact_address_same_as_main || false,
+      contactAddress: companyInfo?.contact_address_street ? {
+        street: companyInfo?.contact_address_street || '',
+        city: companyInfo?.contact_address_city || '',
+        zipCode: companyInfo?.contact_address_zip_code || ''
+      } : undefined,
+      contactPerson: {
+        firstName: companyInfo?.contact_person_first_name || '',
+        lastName: companyInfo?.contact_person_last_name || '',
+        email: companyInfo?.contact_person_email || '',
+        phone: companyInfo?.contact_person_phone || '',
+        isTechnicalPerson: companyInfo?.is_technical_person || false
+      },
+      headOfficeEqualsOperatingAddress: false
+    },
+    businessLocations: businessLocations?.map((location: any) => ({
+      id: location.location_id || location.id || Date.now().toString(),
+      name: location.name || '',
+      hasPOS: location.has_pos || false,
+      address: {
+        street: location.address_street || '',
+        city: location.address_city || '',
+        zipCode: location.address_zip_code || ''
+      },
+      iban: location.iban || '',
+      bankAccounts: [{
+        id: Date.now().toString(),
+        typ: 'IBAN' as const,
+        iban: location.iban || '',
+        mena: 'EUR' as const
+      }],
+      contactPerson: {
+        name: location.contact_person_name || '',
+        email: location.contact_person_email || '',
+        phone: location.contact_person_phone || ''
+      },
+      businessSector: location.business_sector || '',
+      businessSubject: location.business_sector || '',
+      mccCode: '',
+      estimatedTurnover: location.estimated_turnover || 0,
+      monthlyTurnover: location.estimated_turnover || 0,
+      averageTransaction: location.average_transaction || 0,
+      openingHours: location.opening_hours || '',
+      seasonality: location.seasonality || 'year-round',
+      seasonalWeeks: location.seasonal_weeks,
+      assignedPersons: []
+    })) || [],
+    deviceSelection: {
+      selectedSolutions: deviceSelection?.selected_solutions?.split(', ') || [],
+      dynamicCards: contractItems?.map((item: any) => ({
+        id: item.device_id || item.id || Date.now().toString(),
+        category: item.category || '',
+        name: item.name || '',
+        description: item.description || '',
+        count: item.count || 1,
+        monthlyFee: item.monthly_fee || 0,
+        companyCost: item.company_cost || 0,
+        specifications: item.specifications?.split(', ') || [],
+        simCards: item.sim_cards || 0,
+        customValue: item.custom_value
+      })) || [],
+      note: deviceSelection?.note || ''
+    },
+    fees: {
+      regulatedCards: contractCalculations?.regulated_cards || 0,
+      unregulatedCards: contractCalculations?.unregulated_cards || 0
+    },
+    authorizedPersons: authorizedPersons?.map((person: any) => ({
+      id: person.id || Date.now().toString(),
+      firstName: person.first_name || '',
+      lastName: person.last_name || '',
+      email: person.email || '',
+      phone: person.phone || '',
+      phonePrefix: person.phone_prefix || '+421',
+      maidenName: person.maiden_name || '',
+      birthDate: person.birth_date || '',
+      birthPlace: person.birth_place || '',
+      birthNumber: person.birth_number || '',
+      permanentAddress: person.permanent_address || '',
+      position: person.position || '',
+      documentType: person.document_type || 'OP',
+      documentNumber: person.document_number || '',
+      documentValidity: person.document_validity || '',
+      documentIssuer: person.document_issuer || '',
+      documentCountry: person.document_country || 'Slovensko',
+      citizenship: person.citizenship || 'Slovensko',
+      isPoliticallyExposed: person.is_politically_exposed || false,
+      isUSCitizen: person.is_us_citizen || false
+    })) || [],
+    actualOwners: actualOwners?.map((owner: any) => ({
+      id: owner.id || Date.now().toString(),
+      firstName: owner.first_name || '',
+      lastName: owner.last_name || '',
+      maidenName: owner.maiden_name || '',
+      birthDate: owner.birth_date || '',
+      birthPlace: owner.birth_place || '',
+      birthNumber: owner.birth_number || '',
+      citizenship: owner.citizenship || 'Slovensko',
+      permanentAddress: owner.permanent_address || '',
+      isPoliticallyExposed: owner.is_politically_exposed || false
+    })) || [],
+    consents: {
+      gdpr: consents?.gdpr || false,
+      terms: consents?.terms || false,
+      electronicCommunication: consents?.electronic_communication || false,
+      signatureDate: consents?.signature_date || '',
+      signingPersonId: consents?.signing_person_id || ''
+    }
+  };
+};
