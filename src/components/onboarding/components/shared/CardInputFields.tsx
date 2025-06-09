@@ -12,6 +12,18 @@ interface CardInputFieldsProps {
 const CardInputFields = ({ card, onUpdate }: CardInputFieldsProps) => {
   const { t } = useTranslation('forms');
 
+  // Type guard to check if card is a ServiceCard
+  const isServiceCard = (card: DeviceCard | ServiceCard): card is ServiceCard => {
+    return card.type === 'service';
+  };
+
+  const handleCustomValueUpdate = (value: string) => {
+    if (isServiceCard(card)) {
+      // Cast to any to bypass the strict typing for this specific case
+      (onUpdate as any)('customValue', value);
+    }
+  };
+
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-2">
@@ -49,14 +61,14 @@ const CardInputFields = ({ card, onUpdate }: CardInputFieldsProps) => {
           className="border-slate-300 focus:border-blue-500"
         />
       </div>
-      {card.name === 'Iný' && (
+      {card.name === 'Iný' && isServiceCard(card) && (
         <div className="space-y-2">
           <Label htmlFor={`custom-${card.id}`}>{t('deviceSelection.cards.specifications')}</Label>
           <Input
             id={`custom-${card.id}`}
             type="text"
-            value={(card as ServiceCard).customValue || ''}
-            onChange={(e) => onUpdate('customValue', e.target.value)}
+            value={card.customValue || ''}
+            onChange={(e) => handleCustomValueUpdate(e.target.value)}
             className="border-slate-300 focus:border-blue-500"
             placeholder={t('deviceSelection.modal.customSpecificationPlaceholder')}
           />
