@@ -1,55 +1,71 @@
 
-import { useTranslation } from "react-i18next";
-import { format } from "date-fns";
-import { Check, Loader2, AlertCircle } from "lucide-react";
+import { Check, Loader2, AlertCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AutoSaveIndicatorProps {
   status: 'idle' | 'saving' | 'saved' | 'error';
   lastSaved?: Date;
+  className?: string;
 }
 
-const AutoSaveIndicator = ({ status, lastSaved }: AutoSaveIndicatorProps) => {
-  const { t } = useTranslation();
-
-  if (status === 'idle') return null;
-
-  const getStatusConfig = () => {
+const AutoSaveIndicator = ({ status, lastSaved, className }: AutoSaveIndicatorProps) => {
+  const getStatusInfo = () => {
     switch (status) {
       case 'saving':
         return {
           icon: <Loader2 className="h-3 w-3 animate-spin" />,
-          text: t('onboarding.autoSave.saving'),
-          className: 'text-blue-600'
+          text: 'Ukladá sa...',
+          color: 'text-blue-600'
         };
       case 'saved':
         return {
           icon: <Check className="h-3 w-3" />,
-          text: t('onboarding.autoSave.saved'),
-          className: 'text-green-600'
+          text: 'Uložené',
+          color: 'text-green-600'
         };
       case 'error':
         return {
           icon: <AlertCircle className="h-3 w-3" />,
-          text: t('onboarding.autoSave.error'),
-          className: 'text-red-600'
+          text: 'Chyba pri ukladaní',
+          color: 'text-red-600'
         };
       default:
         return null;
     }
   };
 
-  const config = getStatusConfig();
-  if (!config) return null;
+  const statusInfo = getStatusInfo();
+  
+  if (!statusInfo) return null;
+
+  const formatLastSaved = (date: Date) => {
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return 'práve teraz';
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `pred ${minutes} min`;
+    } else {
+      return date.toLocaleTimeString('sk-SK', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    }
+  };
 
   return (
-    <div className={`flex items-center gap-2 text-xs ${config.className}`}>
-      {config.icon}
-      <span>{config.text}</span>
+    <div className={cn(
+      'flex items-center space-x-1 text-xs',
+      statusInfo.color,
+      className
+    )}>
+      {statusInfo.icon}
+      <span>{statusInfo.text}</span>
       {status === 'saved' && lastSaved && (
         <span className="text-slate-500">
-          {t('onboarding.autoSave.lastSaved', { 
-            time: format(lastSaved, 'HH:mm:ss') 
-          })}
+          • {formatLastSaved(lastSaved)}
         </span>
       )}
     </div>

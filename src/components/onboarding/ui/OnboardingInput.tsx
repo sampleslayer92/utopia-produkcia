@@ -9,15 +9,13 @@ interface OnboardingInputProps extends React.InputHTMLAttributes<HTMLInputElemen
   isCompleted?: boolean;
   error?: string;
   icon?: React.ReactNode;
-  suffix?: React.ReactNode;
-  hideLabel?: boolean;
 }
 
 const OnboardingInput = forwardRef<HTMLInputElement, OnboardingInputProps>(
-  ({ label, isCompleted, error, icon, suffix, hideLabel, className, ...props }, ref) => {
+  ({ label, isCompleted, error, icon, className, ...props }, ref) => {
     return (
       <div className="space-y-2">
-        {label && !hideLabel && (
+        {label && (
           <Label className="text-sm font-medium text-slate-700">
             {label}
           </Label>
@@ -33,20 +31,13 @@ const OnboardingInput = forwardRef<HTMLInputElement, OnboardingInputProps>(
             className={`h-12 border-2 transition-all duration-200 ${
               icon ? 'pl-10' : ''
             } ${
-              suffix ? 'pr-10' : ''
-            } ${
               error
                 ? 'border-red-300 bg-red-50'
                 : 'border-slate-200 bg-white/80 hover:border-slate-300 focus:border-blue-500 focus:shadow-md focus:shadow-blue-500/20'
             } ${className}`}
             {...props}
           />
-          {suffix && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              {suffix}
-            </div>
-          )}
-          {isCompleted && !suffix && (
+          {isCompleted && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2">
               <Check className="h-4 w-4 text-green-500" />
             </div>

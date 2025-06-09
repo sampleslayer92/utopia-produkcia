@@ -1,9 +1,0 @@
-
-{
-  "notifications": {
-    "contractCreated": "Zmluva bola úspešne vytvorená",
-    "contractCreationFailed": "Nepodarilo sa vytvoriť zmluvu",
-    "stepNotAccessible": "Krok nie je dostupný",
-    "stepNotAccessibleDescription": "Najprv dokončite predchádzajúce kroky"
-  }
-}

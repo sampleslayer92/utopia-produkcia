@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { Building } from "lucide-react";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
@@ -21,7 +20,7 @@ const BusinessDetailsSection = ({
   monthlyTurnover,
   onUpdate
 }: BusinessDetailsSectionProps) => {
-  const { t } = useTranslation();
+  // Simple local state for display value
   const [displayValue, setDisplayValue] = useState('');
 
   const mccOptions = MCC_CODES.map(code => ({
@@ -70,34 +69,34 @@ const BusinessDetailsSection = ({
     <div className="space-y-4">
       <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2">
         <Building className="h-4 w-4" />
-        {t('ui.businessDetails.title')}
+        Údaje o podnikaní
       </h4>
       
       <OnboardingTextarea
-        label={t('ui.businessDetails.businessSubject')}
+        label="Predmet podnikania *"
         value={businessSubject}
         onChange={(e) => onUpdate('businessSubject', e.target.value)}
-        placeholder={t('ui.businessDetails.businessSubjectPlaceholder')}
+        placeholder="Opíšte hlavné aktivity vašej prevádzky..."
         rows={3}
       />
 
       <OnboardingSelect
-        label={t('ui.businessDetails.mccCode')}
-        placeholder={t('ui.businessDetails.mccCodePlaceholder')}
+        label="MCC kód *"
+        placeholder="Vyberte kategóriu podnikania"
         value={mccCode}
         onValueChange={(value) => onUpdate('mccCode', value)}
         options={mccOptions}
       />
 
       <OnboardingInput
-        label={t('ui.businessDetails.monthlyTurnover')}
+        label="Odhadovaný obrat (mesačne v EUR) *"
         type="text"
         inputMode="numeric"
         value={displayValue}
         onChange={handleTurnoverChange}
         onFocus={handleTurnoverFocus}
         onBlur={handleTurnoverBlur}
-        placeholder={t('ui.businessDetails.monthlyTurnoverPlaceholder')}
+        placeholder="napr. 5000, 12500, 1000000"
       />
     </div>
   );

@@ -1,8 +1,10 @@
-import { useTranslation } from "react-i18next";
+
 import { Button } from "@/components/ui/button";
-import { User, CheckCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Lightbulb, UserPlus, Building, FileSignature, RefreshCw, AlertTriangle, CheckCheck, Phone, Mail } from "lucide-react";
 import { OnboardingData } from "@/types/onboarding";
-import { useState } from "react";
+import { getAutoFillSuggestions, findDuplicatePersons, getDataConsistencyIssues, syncContactPersonData } from "../utils/crossStepAutoFill";
+import { useCrossStepAutoFill } from "../hooks/useCrossStepAutoFill";
 
 interface AutoFillSuggestionsProps {
   data: OnboardingData;
@@ -11,128 +13,176 @@ interface AutoFillSuggestionsProps {
 }
 
 const AutoFillSuggestions = ({ data, updateData, currentStep }: AutoFillSuggestionsProps) => {
-  const { t } = useTranslation();
-  const [appliedSuggestions, setAppliedSuggestions] = useState<Set<string>>(new Set());
+  const suggestions = getAutoFillSuggestions(data);
+  const duplicates = findDuplicatePersons(data);
+  const consistencyIssues = getDataConsistencyIssues(data);
+  const { 
+    autoFillAuthorizedPerson, 
+    autoFillActualOwner, 
+    autoFillBusinessLocation,
+    syncContactData,
+    syncAddresses,
+    applyAllSuggestions
+  } = useCrossStepAutoFill({
+    data,
+    updateData,
+    currentStep
+  });
 
-  const showSuggestions = currentStep === 5 || currentStep === 6;
+  const allIssues = [...duplicates, ...consistencyIssues];
+  const hasBasicSuggestions = suggestions.length > allIssues.length;
+  const hasIssues = allIssues.length > 0;
 
-  const handleApplyAsAuthorizedPerson = () => {
-    updateData({
-      authorizedPersons: [{
-        id: Date.now().toString(),
-        firstName: data.contactInfo.firstName,
-        lastName: data.contactInfo.lastName,
-        email: data.contactInfo.email,
-        phone: data.contactInfo.phone,
-        phonePrefix: data.contactInfo.phonePrefix || '+421',
-        maidenName: '',
-        birthDate: '',
-        birthPlace: '',
-        birthNumber: '',
-        permanentAddress: '',
-        position: '',
-        documentType: 'OP',
-        documentNumber: '',
-        documentValidity: '',
-        documentIssuer: '',
-        documentCountry: 'Slovensko',
-        citizenship: 'Slovensko',
-        isPoliticallyExposed: false,
-        isUSCitizen: false,
-        documentFrontUrl: '',
-        documentBackUrl: ''
-      }, ...data.authorizedPersons]
-    });
-    setAppliedSuggestions(prev => new Set(prev).add('authorized'));
+  if (suggestions.length === 0) {
+    return null;
+  }
+
+  const handleSuggestionClick = (suggestion: string) => {
+    if (suggestion.includes('oprávnených osôb')) {
+      autoFillAuthorizedPerson();
+    } else if (suggestion.includes('skutočného majiteľa')) {
+      autoFillActualOwner();
+    } else if (suggestion.includes('prevádzku')) {
+      autoFillBusinessLocation();
+    } else if (suggestion.includes('rozdielne údaje')) {
+      syncContactData();
+    } else if (suggestion.includes('nemá adresu sídla')) {
+      syncAddresses();
+    }
   };
 
-  const handleApplyAsActualOwner = () => {
-    updateData({
-      actualOwners: [{
-        id: Date.now().toString(),
-        firstName: data.contactInfo.firstName,
-        lastName: data.contactInfo.lastName,
-        maidenName: '',
-        birthDate: '',
-        birthPlace: '',
-        birthNumber: '',
-        citizenship: 'Slovensko',
-        permanentAddress: '',
-        isPoliticallyExposed: false
-      }, ...data.actualOwners]
-    });
-    setAppliedSuggestions(prev => new Set(prev).add('owner'));
+  const handleIssueAction = (action: string) => {
+    switch (action) {
+      case 'sync-contact-data':
+      case 'sync-contact-email':
+      case 'sync-contact-phone':
+        syncContactPersonData(data, updateData);
+        break;
+      case 'sync-business-location-address':
+        syncAddresses();
+        break;
+      case 'add-contact-to-authorized':
+        autoFillAuthorizedPerson();
+        break;
+      default:
+        break;
+    }
   };
 
-  if (!showSuggestions) return null;
+  const getSuggestionIcon = (suggestion: string) => {
+    if (suggestion.includes('oprávnených osôb')) {
+      return <UserPlus className="h-4 w-4" />;
+    } else if (suggestion.includes('skutočného majiteľa')) {
+      return <FileSignature className="h-4 w-4" />;
+    } else if (suggestion.includes('prevádzku')) {
+      return <Building className="h-4 w-4" />;
+    } else if (suggestion.includes('email')) {
+      return <Mail className="h-4 w-4" />;
+    } else if (suggestion.includes('telefón')) {
+      return <Phone className="h-4 w-4" />;
+    } else if (suggestion.includes('rozdielne údaje') || suggestion.includes('nemá adresu')) {
+      return <RefreshCw className="h-4 w-4" />;
+    }
+    return <Lightbulb className="h-4 w-4" />;
+  };
+
+  const getIssueIcon = (issue: any) => {
+    if (issue.type === 'email-mismatch') {
+      return <Mail className="h-4 w-4" />;
+    } else if (issue.type === 'phone-mismatch') {
+      return <Phone className="h-4 w-4" />;
+    }
+    return <AlertTriangle className="h-4 w-4" />;
+  };
+
+  const getCardColor = () => {
+    if (hasIssues) {
+      return "border-orange-200 bg-orange-50";
+    }
+    return "border-amber-200 bg-amber-50";
+  };
+
+  const getIconColor = () => {
+    if (hasIssues) {
+      return "bg-orange-100 text-orange-600";
+    }
+    return "bg-amber-100 text-amber-600";
+  };
+
+  const getButtonColor = () => {
+    if (hasIssues) {
+      return "border-orange-300 text-orange-700 hover:bg-orange-100";
+    }
+    return "border-amber-300 text-amber-700 hover:bg-amber-100";
+  };
 
   return (
-    <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-      <h4 className="font-medium text-blue-900 mb-3 flex items-center gap-2">
-        <User className="h-4 w-4" />
-        {t('ui.autoFill.suggestions')}
-      </h4>
-      
-      <div className="space-y-2">
-        {/* Contact Person Suggestion */}
-        {currentStep === 5 && data.contactInfo.firstName && data.contactInfo.lastName && (
-          <div className="flex items-center justify-between p-3 bg-white border border-blue-200 rounded">
-            <div>
-              <p className="text-sm font-medium text-slate-700">
-                {t('ui.autoFill.contactPerson')}: {data.contactInfo.firstName} {data.contactInfo.lastName}
-              </p>
-              <p className="text-xs text-slate-500">{data.contactInfo.email}</p>
-            </div>
-            <div className="flex gap-2">
-              {!appliedSuggestions.has('authorized') ? (
+    <Card className={`${getCardColor()} shadow-sm mb-6`}>
+      <CardContent className="p-4">
+        <div className="flex items-start gap-3">
+          <div className={`h-8 w-8 rounded-full ${getIconColor()} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+            {hasIssues ? <AlertTriangle className="h-4 w-4" /> : <Lightbulb className="h-4 w-4" />}
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className={`text-sm font-medium ${hasIssues ? 'text-orange-900' : 'text-amber-900'}`}>
+                {hasIssues ? 'Problémy s údajmi a návrhy' : 'Inteligentné návrhy na vyplnenie'}
+              </h3>
+              {hasBasicSuggestions && (
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={handleApplyAsAuthorizedPerson}
-                  className="text-xs"
+                  onClick={applyAllSuggestions}
+                  className={`${getButtonColor()} gap-1`}
                 >
-                  {t('ui.autoFill.useAsAuthorizedPerson')}
+                  <CheckCheck className="h-3 w-3" />
+                  Aplikovať všetko
                 </Button>
-              ) : (
-                <div className="flex items-center gap-1 text-green-600 text-xs">
-                  <CheckCircle className="h-3 w-3" />
-                  {t('ui.autoFill.applied')}
-                </div>
               )}
             </div>
-          </div>
-        )}
-
-        {/* Actual Owner Suggestion */}
-        {currentStep === 6 && data.contactInfo.firstName && data.contactInfo.lastName && (
-          <div className="flex items-center justify-between p-3 bg-white border border-blue-200 rounded">
-            <div>
-              <p className="text-sm font-medium text-slate-700">
-                {t('ui.autoFill.contactPerson')}: {data.contactInfo.firstName} {data.contactInfo.lastName}
-              </p>
-              <p className="text-xs text-slate-500">{data.contactInfo.email}</p>
-            </div>
-            <div className="flex gap-2">
-              {!appliedSuggestions.has('owner') ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleApplyAsActualOwner}
-                  className="text-xs"
-                >
-                  {t('ui.autoFill.useAsActualOwner')}
-                </Button>
-              ) : (
-                <div className="flex items-center gap-1 text-green-600 text-xs">
-                  <CheckCircle className="h-3 w-3" />
-                  {t('ui.autoFill.applied')}
+            <div className="space-y-2">
+              {/* Issues first */}
+              {allIssues.map((issue, index) => (
+                <div key={`issue-${index}`} className="flex items-center justify-between p-2 bg-white rounded border border-orange-200">
+                  <div className="flex items-center gap-2 text-sm text-orange-800">
+                    {getIssueIcon(issue)}
+                    <span>{issue.message}</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleIssueAction(issue.action)}
+                    className="border-orange-300 text-orange-700 hover:bg-orange-100"
+                  >
+                    Opraviť
+                  </Button>
                 </div>
-              )}
+              ))}
+              
+              {/* Basic suggestions */}
+              {suggestions.filter(suggestion => 
+                !allIssues.some(issue => issue.message === suggestion)
+              ).map((suggestion, index) => (
+                <div key={`suggestion-${index}`} className="flex items-center justify-between p-2 bg-white rounded border border-amber-200">
+                  <div className="flex items-center gap-2 text-sm text-amber-800">
+                    {getSuggestionIcon(suggestion)}
+                    <span>{suggestion}</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className={getButtonColor()}
+                  >
+                    Aplikovať
+                  </Button>
+                </div>
+              ))}
             </div>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

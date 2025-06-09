@@ -143,13 +143,6 @@ const ContractEditPage = () => {
 
   const { contract } = contractDataResult.data;
 
-  // Transform steps for sidebar
-  const sidebarSteps = onboardingSteps.map((step, index) => ({
-    number: index,
-    title: step.title,
-    description: step.description
-  }));
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Header */}
@@ -220,7 +213,7 @@ const ContractEditPage = () => {
       <div className="flex">
         <OnboardingSidebar
           currentStep={currentStep}
-          steps={sidebarSteps}
+          steps={onboardingSteps}
           onStepClick={setCurrentStep}
           onboardingData={editData}
         />

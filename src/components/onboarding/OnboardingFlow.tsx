@@ -1,6 +1,5 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { useOnboardingData } from "./hooks/useOnboardingData";
 import { useOnboardingNavigation } from "./hooks/useOnboardingNavigation";
 import { useAutoSave } from "./hooks/useAutoSave";
@@ -19,7 +18,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
 const OnboardingFlow = () => {
-  const { t } = useTranslation();
   const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData();
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -61,10 +59,7 @@ const OnboardingFlow = () => {
   ]);
 
   const handleAutoSave = useCallback(async (data: typeof onboardingData) => {
-    if (!data.contractId) {
-      console.log('No contract ID available for auto-save');
-      return;
-    }
+    if (!data.contractId) return;
     
     setAutoSaveStatus('saving');
     try {
@@ -74,15 +69,9 @@ const OnboardingFlow = () => {
     } catch (error) {
       console.error('Auto-save failed:', error);
       setAutoSaveStatus('error');
-      // Reset contract ID if it doesn't exist in database
-      if (error instanceof Error && error.message.includes('not found')) {
-        console.log('Contract not found, resetting contract ID');
-        updateData({ contractId: undefined, contractNumber: undefined });
-        setContractCreationAttempted(false);
-      }
       throw error;
     }
-  }, [saveContractData, updateData]);
+  }, [saveContractData]);
 
   const { isSaving } = useAutoSave(onboardingData, {
     enabled: Boolean(onboardingData.contractId),
@@ -107,14 +96,11 @@ const OnboardingFlow = () => {
             contractId: result.contractId,
             contractNumber: result.contractNumber?.toString()
           });
-          toast.success(t('notifications.contractCreated'));
-        } else {
-          toast.error(t('notifications.contractCreationFailed'));
-          setContractCreationAttempted(false);
+          toast.success('Zmluva bola vytvorená');
         }
       } catch (error) {
         console.error('Failed to create contract:', error);
-        toast.error(t('notifications.contractCreationFailed'));
+        toast.error('Nepodarilo sa vytvoriť zmluvu');
         setContractCreationAttempted(false);
       }
     };
@@ -127,8 +113,7 @@ const OnboardingFlow = () => {
     isCreating,
     contractCreationAttempted,
     createContract,
-    updateData,
-    t
+    updateData
   ]);
 
   const handleUpdateData = useCallback((data: any) => {
@@ -150,13 +135,6 @@ const OnboardingFlow = () => {
 
   const currentStepData = onboardingSteps[currentStep];
 
-  // Transform steps for sidebar
-  const sidebarSteps = onboardingSteps.map((step, index) => ({
-    number: index,
-    title: step.title,
-    description: step.description
-  }));
-
   return (
     <OnboardingErrorBoundary onReset={handleErrorReset}>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -172,7 +150,7 @@ const OnboardingFlow = () => {
           <MobileStepper
             currentStep={currentStep}
             totalSteps={totalSteps}
-            stepTitle={currentStepData?.title || t('common.loading')}
+            stepTitle={currentStepData?.title || 'Krok'}
             progress={overallProgress.overallPercentage}
             onBack={prevStep}
             showBackButton={currentStep > 0}
@@ -184,7 +162,7 @@ const OnboardingFlow = () => {
           {!isMobile && (
             <OnboardingSidebar
               currentStep={currentStep}
-              steps={sidebarSteps}
+              steps={onboardingSteps}
               onStepClick={handleStepClick}
               onboardingData={onboardingData}
             />
@@ -196,11 +174,8 @@ const OnboardingFlow = () => {
               {!isMobile && (
                 <div className="flex justify-between items-center mb-4">
                   <div className="text-sm text-slate-600">
-                    {t('onboarding.header.progressWithSteps', { 
-                      percentage: overallProgress.overallPercentage,
-                      completed: overallProgress.completedSteps,
-                      total: overallProgress.totalSteps
-                    })}
+                    Celkový postup: {overallProgress.overallPercentage}% 
+                    ({overallProgress.completedSteps}/{overallProgress.totalSteps} krokov)
                   </div>
                   
                   <AutoSaveIndicator 

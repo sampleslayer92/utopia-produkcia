@@ -1,8 +1,8 @@
 
-import { useTranslation } from "react-i18next";
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
 import PhoneNumberInput from "../ui/PhoneNumberInput";
+import { Checkbox } from "@/components/ui/checkbox";
 import { User } from "lucide-react";
 
 interface CompanyContactPersonCardProps {
@@ -11,45 +11,57 @@ interface CompanyContactPersonCardProps {
 }
 
 const CompanyContactPersonCard = ({ data, updateCompanyInfo }: CompanyContactPersonCardProps) => {
-  const { t } = useTranslation();
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-4">
-        <User className="h-5 w-5 text-green-600" />
-        <h3 className="text-lg font-medium text-slate-900">{t('steps.companyInfo.contactPerson.title')}</h3>
+        <User className="h-5 w-5 text-blue-600" />
+        <h3 className="text-lg font-medium text-slate-900">Kontaktná osoba</h3>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <OnboardingInput
+          label="Meno *"
+          value={data.companyInfo.contactPerson.firstName}
+          onChange={(e) => updateCompanyInfo('contactPerson.firstName', e.target.value)}
+          placeholder="Ján"
+        />
+        
+        <OnboardingInput
+          label="Priezvisko *"
+          value={data.companyInfo.contactPerson.lastName}
+          onChange={(e) => updateCompanyInfo('contactPerson.lastName', e.target.value)}
+          placeholder="Novák"
+        />
       </div>
       
       <div className="grid md:grid-cols-2 gap-6">
         <OnboardingInput
-          label={t('steps.companyInfo.contactPerson.fields.firstName')}
-          value={data.companyInfo.contactPerson?.firstName || ''}
-          onChange={(e) => updateCompanyInfo('contactPerson.firstName', e.target.value)}
-          placeholder={t('steps.companyInfo.contactPerson.placeholders.firstName')}
+          label="Email *"
+          type="email"
+          value={data.companyInfo.contactPerson.email}
+          onChange={(e) => updateCompanyInfo('contactPerson.email', e.target.value)}
+          placeholder="jan.novak@firma.sk"
         />
         
-        <OnboardingInput
-          label={t('steps.companyInfo.contactPerson.fields.lastName')}
-          value={data.companyInfo.contactPerson?.lastName || ''}
-          onChange={(e) => updateCompanyInfo('contactPerson.lastName', e.target.value)}
-          placeholder={t('steps.companyInfo.contactPerson.placeholders.lastName')}
+        <PhoneNumberInput
+          phoneValue={data.companyInfo.contactPerson.phone}
+          prefixValue="+421"
+          onPhoneChange={(value) => updateCompanyInfo('contactPerson.phone', value)}
+          onPrefixChange={() => {}} // Contact person phone doesn't need prefix changes for now
+          required={true}
         />
       </div>
       
-      <OnboardingInput
-        label={t('steps.companyInfo.contactPerson.fields.email')}
-        type="email"
-        value={data.companyInfo.contactPerson?.email || ''}
-        onChange={(e) => updateCompanyInfo('contactPerson.email', e.target.value)}
-        placeholder={t('steps.companyInfo.contactPerson.placeholders.email')}
-      />
-      
-      <PhoneNumberInput
-        value={data.companyInfo.contactPerson?.phone || ''}
-        onChange={(value) => updateCompanyInfo('contactPerson.phone', value)}
-        prefix={data.contactInfo.phonePrefix || '+421'}
-        onPrefixChange={(prefix) => updateCompanyInfo('contactPerson.phonePrefix', prefix)}
-      />
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="isTechnicalPerson"
+          checked={data.companyInfo.contactPerson.isTechnicalPerson}
+          onCheckedChange={(checked) => updateCompanyInfo('contactPerson.isTechnicalPerson', checked)}
+        />
+        <label htmlFor="isTechnicalPerson" className="text-sm text-slate-700">
+          Je zároveň technická osoba
+        </label>
+      </div>
     </div>
   );
 };

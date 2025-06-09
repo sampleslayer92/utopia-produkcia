@@ -1,4 +1,3 @@
-
 export interface ContactInfo {
   salutation?: 'Pan' | 'Pani';
   firstName: string;
@@ -44,7 +43,7 @@ export interface CompanyInfo {
 
 export interface BankAccount {
   id: string;
-  typ: 'IBAN' | 'CisloUctuKodBanky'; // Changed from 'format' to 'typ' to match usage
+  format: 'IBAN' | 'CisloUctuKodBanky';
   iban?: string;
   cisloUctu?: string;
   kodBanky?: string;
@@ -160,7 +159,6 @@ export interface AuthorizedPerson {
   birthNumber: string;
   permanentAddress: string;
   position: string;
-  authorizationScope?: string; // Add missing property
   documentType: 'OP' | 'Pas';
   documentNumber: string;
   documentValidity: string;
@@ -190,9 +188,6 @@ export interface Consents {
   gdpr: boolean;
   terms: boolean;
   electronicCommunication: boolean;
-  dataProcessing?: boolean; // Add missing property
-  termsAndConditions?: boolean; // Add missing property
-  marketing?: boolean; // Add missing property
   signatureDate?: string;
   signingPersonId?: string;
   signatureUrl?: string;

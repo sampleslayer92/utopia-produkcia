@@ -1,5 +1,4 @@
 
-import { useTranslation } from "react-i18next";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
 import OnboardingSection from "../ui/OnboardingSection";
 import PersonInputGroup from "../ui/PersonInputGroup";
@@ -19,8 +18,6 @@ const ContactInfoForm = ({
   onPersonDataUpdate,
   onContactInfoUpdate
 }: ContactInfoFormProps) => {
-  const { t } = useTranslation();
-
   return (
     <div className="col-span-1 md:col-span-2 p-6 md:p-8">
       <OnboardingSection>
@@ -34,10 +31,10 @@ const ContactInfoForm = ({
 
         {/* Optional Note Section */}
         <OnboardingTextarea
-          label={t('steps.contactInfo.fields.salesNote')}
+          label="Chcete nám niečo odkázať?"
           value={data.contactInfo.salesNote || ''}
           onChange={(e) => onContactInfoUpdate('salesNote', e.target.value)}
-          placeholder={t('steps.contactInfo.fields.salesNotePlaceholder')}
+          placeholder="Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie..."
           rows={4}
         />
       </OnboardingSection>

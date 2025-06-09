@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,6 @@ import { OnboardingData, ActualOwner } from "@/types/onboarding";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSection from "./ui/OnboardingSection";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 interface ActualOwnersStepProps {
   data: OnboardingData;
@@ -17,7 +15,6 @@ interface ActualOwnersStepProps {
 }
 
 const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
-  const { t } = useTranslation();
   const [expandedOwnerId, setExpandedOwnerId] = useState<string | null>(null);
 
   const addActualOwner = () => {
@@ -29,7 +26,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
       birthDate: '',
       birthPlace: '',
       birthNumber: '',
-      citizenship: t('steps.actualOwners.form.citizenshipPlaceholder'),
+      citizenship: 'Slovensko',
       permanentAddress: '',
       isPoliticallyExposed: false
     };
@@ -74,19 +71,19 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                 <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                   <Users2 className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="font-medium text-blue-900">{t('steps.actualOwners.sidebar.title')}</h3>
+                <h3 className="font-medium text-blue-900">Skutoční majitelia</h3>
               </div>
               
               <p className="text-sm text-blue-800">
-                {t('steps.actualOwners.sidebar.description')}
+                Skutoční majitelia sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.
               </p>
               
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-                <p className="font-medium mb-2">{t('steps.actualOwners.sidebar.whoIsOwner')}</p>
+                <p className="font-medium mb-2">Kto je skutočný majiteľ?</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  {(t('steps.actualOwners.sidebar.ownerCriteria', { returnObjects: true }) as string[]).map((criterion, index) => (
-                    <li key={index}>{criterion}</li>
-                  ))}
+                  <li>Osoba, ktorá má priamy alebo nepriamy podiel najmenej 25%</li>
+                  <li>Osoba, ktorá má právo vymenovať alebo odvolať štatutárny orgán</li>
+                  <li>Osoba, ktorá iným spôsobom kontroluje spoločnosť</li>
                 </ul>
               </div>
               
@@ -97,7 +94,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                   className="w-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700 flex items-center justify-center gap-2"
                 >
                   <UserPlus className="h-4 w-4" />
-                  {t('steps.actualOwners.sidebar.addOwner')}
+                  Pridať majiteľa
                 </Button>
               </div>
             </div>
@@ -109,15 +106,15 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
               {data.actualOwners.length === 0 && (
                 <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
                   <Users2 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-slate-700 mb-2">{t('steps.actualOwners.empty.title')}</h3>
-                  <p className="text-sm text-slate-500 mb-6">{t('steps.actualOwners.empty.description')}</p>
+                  <h3 className="text-lg font-medium text-slate-700 mb-2">Zatiaľ žiadni skutoční majitelia</h3>
+                  <p className="text-sm text-slate-500 mb-6">Pridajte aspoň jedného konečného užívateľa výhod</p>
                   <Button 
                     onClick={addActualOwner}
                     variant="outline" 
                     className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
-                    {t('steps.actualOwners.empty.addButton')}
+                    Pridať skutočného majiteľa
                   </Button>
                 </div>
               )}
@@ -140,10 +137,10 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                         <h3 className="font-medium text-slate-900">
                           {owner.firstName && owner.lastName 
                             ? `${owner.firstName} ${owner.lastName}`
-                            : t('steps.actualOwners.form.ownerNumber', { number: index + 1 })}
+                            : `Skutočný majiteľ ${index + 1}`}
                         </h3>
                         {owner.birthDate && (
-                          <p className="text-xs text-slate-500">{t('steps.actualOwners.form.bornOn', { date: owner.birthDate })}</p>
+                          <p className="text-xs text-slate-500">Narodený/á: {owner.birthDate}</p>
                         )}
                       </div>
                     </div>
@@ -169,30 +166,30 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                         <div>
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Users2 className="h-4 w-4" />
-                            {t('steps.actualOwners.form.basicInfo')}
+                            Základné údaje
                           </h4>
                           
                           <div className="grid md:grid-cols-2 gap-4">
                             <OnboardingInput
-                              label={t('steps.actualOwners.form.firstName')}
+                              label="Meno *"
                               value={owner.firstName}
                               onChange={(e) => updateActualOwner(owner.id, 'firstName', e.target.value)}
-                              placeholder={t('steps.actualOwners.form.firstNamePlaceholder')}
+                              placeholder="Zadajte meno"
                             />
 
                             <OnboardingInput
-                              label={t('steps.actualOwners.form.lastName')}
+                              label="Priezvisko *"
                               value={owner.lastName}
                               onChange={(e) => updateActualOwner(owner.id, 'lastName', e.target.value)}
-                              placeholder={t('steps.actualOwners.form.lastNamePlaceholder')}
+                              placeholder="Zadajte priezvisko"
                             />
                           </div>
 
                           <OnboardingInput
-                            label={t('steps.actualOwners.form.maidenName')}
+                            label="Rodné priezvisko"
                             value={owner.maidenName}
                             onChange={(e) => updateActualOwner(owner.id, 'maidenName', e.target.value)}
-                            placeholder={t('steps.actualOwners.form.maidenNamePlaceholder')}
+                            placeholder="Rodné priezvisko"
                             className="mt-4"
                           />
                         </div>
@@ -200,38 +197,38 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Fingerprint className="h-4 w-4" />
-                            {t('steps.actualOwners.form.personalInfo')}
+                            Osobné údaje
                           </h4>
 
                           <div className="grid md:grid-cols-2 gap-4">
                             <OnboardingInput
-                              label={t('steps.actualOwners.form.birthDate')}
+                              label="Dátum narodenia *"
                               type="date"
                               value={owner.birthDate}
                               onChange={(e) => updateActualOwner(owner.id, 'birthDate', e.target.value)}
                             />
 
                             <OnboardingInput
-                              label={t('steps.actualOwners.form.birthPlace')}
+                              label="Miesto narodenia *"
                               value={owner.birthPlace}
                               onChange={(e) => updateActualOwner(owner.id, 'birthPlace', e.target.value)}
-                              placeholder={t('steps.actualOwners.form.birthPlacePlaceholder')}
+                              placeholder="Bratislava"
                             />
                           </div>
 
                           <OnboardingInput
-                            label={t('steps.actualOwners.form.birthNumber')}
+                            label="Rodné číslo *"
                             value={owner.birthNumber}
                             onChange={(e) => updateActualOwner(owner.id, 'birthNumber', e.target.value)}
-                            placeholder={t('steps.actualOwners.form.birthNumberPlaceholder')}
+                            placeholder="123456/7890"
                             className="mt-4"
                           />
 
                           <OnboardingInput
-                            label={t('steps.actualOwners.form.permanentAddress')}
+                            label="Trvalé bydlisko *"
                             value={owner.permanentAddress}
                             onChange={(e) => updateActualOwner(owner.id, 'permanentAddress', e.target.value)}
-                            placeholder={t('steps.actualOwners.form.permanentAddressPlaceholder')}
+                            placeholder="Hlavná 123, 010 01 Bratislava"
                             className="mt-4"
                           />
                         </div>
@@ -239,14 +236,14 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Flag className="h-4 w-4" />
-                            {t('steps.actualOwners.form.additionalInfo')}
+                            Ďalšie informácie
                           </h4>
 
                           <OnboardingInput
-                            label={t('steps.actualOwners.form.citizenship')}
+                            label="Občianstvo *"
                             value={owner.citizenship}
                             onChange={(e) => updateActualOwner(owner.id, 'citizenship', e.target.value)}
-                            placeholder={t('steps.actualOwners.form.citizenshipPlaceholder')}
+                            placeholder="Slovensko"
                           />
 
                           <div className="flex items-center space-x-2 mt-4">
@@ -257,12 +254,12 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                             />
                             <div>
                               <label htmlFor={`isPoliticallyExposed-${owner.id}`} className="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                {t('steps.actualOwners.form.isPoliticallyExposed')}
+                                Politicky exponovaná osoba
                                 {owner.isPoliticallyExposed && <AlertTriangle className="h-3 w-3 text-blue-500" />}
                               </label>
                               {owner.isPoliticallyExposed && (
                                 <p className="text-xs text-slate-500 mt-1">
-                                  {t('steps.actualOwners.form.politicallyExposedDescription')}
+                                  Politicky exponovanou osobou je osoba vo významnej verejnej funkcii.
                                 </p>
                               )}
                             </div>
@@ -281,7 +278,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                   className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  {t('steps.actualOwners.form.addAnother')}
+                  Pridať ďalšieho skutočného majiteľa
                 </Button>
               )}
             </OnboardingSection>

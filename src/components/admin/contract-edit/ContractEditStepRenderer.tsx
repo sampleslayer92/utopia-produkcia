@@ -45,6 +45,7 @@ const ContractEditStepRenderer = ({
             updateData={updateData}
             onNext={onNext}
             onPrev={onPrev}
+            hideContactPerson={false}
           />
         );
       case 2:

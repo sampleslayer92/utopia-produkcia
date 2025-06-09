@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+
 import { Clock, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,15 @@ interface OpeningHoursSummaryProps {
 }
 
 const OpeningHoursSummary = ({ openingHours, onEdit }: OpeningHoursSummaryProps) => {
-  const { t } = useTranslation();
+  const daysMap = {
+    "Po": "Pondelok",
+    "Ut": "Utorok", 
+    "St": "Streda",
+    "Št": "Štvrtok",
+    "Pi": "Piatok",
+    "So": "Sobota",
+    "Ne": "Nedeľa"
+  };
 
   const openDays = openingHours.filter(h => h.otvorene);
   const closedDays = openingHours.filter(h => !h.otvorene);
@@ -31,7 +39,7 @@ const OpeningHoursSummary = ({ openingHours, onEdit }: OpeningHoursSummaryProps)
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-slate-400" />
-            <span className="text-sm text-slate-600">{t('ui.openingHours.title')}</span>
+            <span className="text-sm text-slate-600">Otváracie hodiny</span>
           </div>
           <Button
             variant="outline"
@@ -40,10 +48,10 @@ const OpeningHoursSummary = ({ openingHours, onEdit }: OpeningHoursSummaryProps)
             className="text-xs"
           >
             <Edit3 className="h-3 w-3 mr-1" />
-            {t('ui.openingHours.set')}
+            Nastaviť
           </Button>
         </div>
-        <p className="text-sm text-slate-500 mt-2">{t('ui.openingHours.closedAllDays')}</p>
+        <p className="text-sm text-slate-500 mt-2">Zatvorené všetky dni</p>
       </div>
     );
   }
@@ -53,7 +61,7 @@ const OpeningHoursSummary = ({ openingHours, onEdit }: OpeningHoursSummaryProps)
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Clock className="h-4 w-4 text-blue-600" />
-          <span className="text-sm font-medium text-slate-700">{t('ui.openingHours.title')}</span>
+          <span className="text-sm font-medium text-slate-700">Otváracie hodiny</span>
         </div>
         <Button
           variant="outline"
@@ -62,7 +70,7 @@ const OpeningHoursSummary = ({ openingHours, onEdit }: OpeningHoursSummaryProps)
           className="text-xs"
         >
           <Edit3 className="h-3 w-3 mr-1" />
-          {t('ui.openingHours.edit')}
+          Upraviť
         </Button>
       </div>
 
@@ -92,7 +100,7 @@ const OpeningHoursSummary = ({ openingHours, onEdit }: OpeningHoursSummaryProps)
                 {closedDays.map(day => day.day).join(', ')}
               </Badge>
             </div>
-            <span className="text-slate-500 italic">{t('ui.openingHours.closed')}</span>
+            <span className="text-slate-500 italic">Zatvorené</span>
           </div>
         )}
       </div>
