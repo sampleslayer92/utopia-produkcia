@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -114,8 +113,7 @@ const EnhancedAdminTable = () => {
     }));
   };
 
-  const handleSelectContract = (contractId: string, event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent row click when clicking checkbox
+  const handleSelectContract = (contractId: string) => {
     setSelectedContracts(prev => 
       prev.includes(contractId) 
         ? prev.filter(id => id !== contractId)
@@ -370,7 +368,7 @@ const EnhancedAdminTable = () => {
                         <input
                           type="checkbox"
                           checked={selectedContracts.includes(contract.id)}
-                          onChange={(e) => handleSelectContract(contract.id, e)}
+                          onChange={() => handleSelectContract(contract.id)}
                           className="rounded border-slate-300"
                         />
                       </TableCell>
