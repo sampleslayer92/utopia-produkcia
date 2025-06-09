@@ -1,10 +1,73 @@
 
 {
+  "onboarding": {
+    "header": {
+      "title": "Registrácia obchodníka",
+      "progress": "Pokrok: {percentage}%",
+      "stepsCompleted": "{completed} z {total} krokov dokončených",
+      "contractNumber": "Zmluva č. {number}",
+      "creatingContract": "Vytváram zmluvu..."
+    },
+    "navigation": {
+      "back": "Späť",
+      "next": "Ďalej",
+      "saveAndExit": "Uložiť a ukončiť",
+      "saveSignature": "Uložiť podpis",
+      "completeRegistration": "Dokončiť registráciu",
+      "submitting": "Odosiela sa..."
+    }
+  },
+  "common": {
+    "loading": "Načítava sa...",
+    "delete": "Odstrániť",
+    "cancel": "Zrušiť",
+    "confirm": "Potvrdiť",
+    "save": "Uložiť",
+    "edit": "Upraviť",
+    "add": "Pridať",
+    "remove": "Odstrániť",
+    "close": "Zavrieť",
+    "submit": "Odoslať"
+  },
+  "notifications": {
+    "contractCreated": "Zmluva bola úspešne vytvorená",
+    "contractCreationFailed": "Nepodarilo sa vytvoriť zmluvu"
+  },
   "steps": {
+    "contactInfo": {
+      "title": "Kontaktné údaje",
+      "description": "Zadajte vaše základné kontaktné informácie",
+      "features": [
+        "Automatické vyplnenie údajov",
+        "Validácia e-mailovej adresy",
+        "Medzinárodné telefónne čísla"
+      ],
+      "fields": {
+        "firstName": "Meno",
+        "lastName": "Priezvisko",
+        "email": "Email",
+        "phone": "Telefón",
+        "salesNote": "Poznámka pre obchod",
+        "salesNotePlaceholder": "Napríklad: kontakt cez webstránku, odporúčanie..."
+      },
+      "placeholders": {
+        "firstName": "Ján",
+        "lastName": "Novák",
+        "email": "jan.novak@email.sk"
+      }
+    },
     "companyInfo": {
       "title": "Údaje o spoločnosti",
       "searchCompany": "Vyhľadať spoločnosť",
       "searchPlaceholder": "Zadajte názov alebo IČO",
+      "contactAddress": {
+        "title": "Korešpondenčná adresa"
+      },
+      "placeholders": {
+        "street": "Hlavná ulica 123",
+        "city": "Bratislava",
+        "zipCode": "01001"
+      },
       "basicInfo": {
         "title": "Základné údaje o spoločnosti",
         "companyName": "Názov spoločnosti",

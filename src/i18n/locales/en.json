@@ -1,10 +1,73 @@
 
 {
+  "onboarding": {
+    "header": {
+      "title": "Merchant Registration",
+      "progress": "Progress: {percentage}%",
+      "stepsCompleted": "{completed} of {total} steps completed",
+      "contractNumber": "Contract No. {number}",
+      "creatingContract": "Creating contract..."
+    },
+    "navigation": {
+      "back": "Back",
+      "next": "Next",
+      "saveAndExit": "Save and Exit",
+      "saveSignature": "Save Signature",
+      "completeRegistration": "Complete Registration",
+      "submitting": "Submitting..."
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "close": "Close",
+    "submit": "Submit"
+  },
+  "notifications": {
+    "contractCreated": "Contract created successfully",
+    "contractCreationFailed": "Failed to create contract"
+  },
   "steps": {
+    "contactInfo": {
+      "title": "Contact Information",
+      "description": "Enter your basic contact information",
+      "features": [
+        "Auto-fill functionality",
+        "Email validation",
+        "International phone numbers"
+      ],
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "phone": "Phone",
+        "salesNote": "Sales Note",
+        "salesNotePlaceholder": "For example: website contact, referral..."
+      },
+      "placeholders": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@email.com"
+      }
+    },
     "companyInfo": {
       "title": "Company Information",
       "searchCompany": "Search Company",
       "searchPlaceholder": "Enter company name or ID",
+      "contactAddress": {
+        "title": "Correspondence Address"
+      },
+      "placeholders": {
+        "street": "Main Street 123",
+        "city": "Bratislava",
+        "zipCode": "01001"
+      },
       "basicInfo": {
         "title": "Basic Company Information",
         "companyName": "Company Name",
