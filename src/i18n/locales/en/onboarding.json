@@ -35,6 +35,27 @@
     "help": {
       "title": "Need help?",
       "description": "Contact us if you have questions about registration."
+    },
+    "common": {
+      "loading": "Loading...",
+      "required": "Required",
+      "optional": "Optional",
+      "select": "Select",
+      "add": "Add",
+      "remove": "Remove",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "yes": "Yes",
+      "no": "No",
+      "continue": "Continue",
+      "finish": "Finish",
+      "close": "Close"
+    },
+    "sidebar": {
+      "steps": "Steps",
+      "progress": "Progress",
+      "help": "Help"
     }
   }
 }

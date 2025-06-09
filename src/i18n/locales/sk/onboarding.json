@@ -35,6 +35,27 @@
     "help": {
       "title": "Potrebujete pomoc?",
       "description": "Kontaktujte nás ak máte otázky ohľadom registrácie."
+    },
+    "common": {
+      "loading": "Načítava sa...",
+      "required": "Povinné",
+      "optional": "Nepovinné",
+      "select": "Vyberte",
+      "add": "Pridať",
+      "remove": "Odstrániť",
+      "edit": "Upraviť",
+      "save": "Uložiť",
+      "cancel": "Zrušiť",
+      "yes": "Áno",
+      "no": "Nie",
+      "continue": "Pokračovať",
+      "finish": "Dokončiť",
+      "close": "Zavrieť"
+    },
+    "sidebar": {
+      "steps": "Kroky",
+      "progress": "Pokrok",
+      "help": "Pomoc"
     }
   }
 }
