@@ -387,7 +387,8 @@
         "software": "Softvérové riešenia",
         "technical": "Technické služby",
         "accessories": "Príslušenstvo"
-      }
+      },
+      "types": "typov"
     },
     "modal": {
       "addTitle": "Pridať - {name}",
@@ -414,7 +415,12 @@
       "total": "Celkom:",
       "addonsCount": "+{count} doplnkov",
       "specifications": "Špecifikácie",
-      "automatic": "(automaticky)"
+      "automatic": "(automaticky)",
+      "quantityLabel": "Počet ks",
+      "monthlyFeeLabel": "Mesačný poplatok (EUR)",
+      "companyCostLabel": "Náklad firmy (EUR)",
+      "addonsTitle": "Doplnky",
+      "perMonth": "/mes"
     },
     "navigation": {
       "back": "Späť",

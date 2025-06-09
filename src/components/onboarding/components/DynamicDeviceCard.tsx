@@ -113,7 +113,7 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
         {/* Main item pricing */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor={`count-${device.id}`}>Počet ks</Label>
+            <Label htmlFor={`count-${device.id}`}>{t('deviceSelection.cards.quantityLabel')}</Label>
             <Input
               id={`count-${device.id}`}
               type="number"
@@ -124,7 +124,7 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`fee-${device.id}`}>Mesačný poplatok (EUR)</Label>
+            <Label htmlFor={`fee-${device.id}`}>{t('deviceSelection.cards.monthlyFeeLabel')}</Label>
             <Input
               id={`fee-${device.id}`}
               type="number"
@@ -136,7 +136,7 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`company-cost-${device.id}`}>Náklad firmy (EUR)</Label>
+            <Label htmlFor={`company-cost-${device.id}`}>{t('deviceSelection.cards.companyCostLabel')}</Label>
             <Input
               id={`company-cost-${device.id}`}
               type="number"
@@ -153,7 +153,7 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
         {device.addons && device.addons.length > 0 && (
           <div className="border-t pt-4">
             <h5 className="font-medium text-slate-900 mb-3 flex items-center gap-2">
-              🔧 Doplnky ({device.addons.length})
+              🔧 {t('deviceSelection.cards.addonsTitle')} ({device.addons.length})
             </h5>
             <div className="space-y-2">
               {device.addons.map((addon: AddonCard) => {
@@ -169,7 +169,7 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
                         <div>
                           <p className="text-sm font-medium text-slate-900">{addon.name}</p>
                           <p className="text-xs text-slate-600">
-                            {quantity} ks x {addon.monthlyFee.toFixed(2)} €
+                            {t('deviceSelection.cards.count', { count: quantity })} x {addon.monthlyFee.toFixed(2)} €
                             {addon.isPerDevice && (
                               <span className="text-blue-600 ml-1">
                                 {t('deviceSelection.cards.automatic')}
@@ -209,7 +209,7 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
             <div className="flex justify-between items-center border-t pt-2">
               <span className="font-bold text-slate-900">{t('deviceSelection.cards.total')}</span>
               <span className={`font-bold text-xl ${totalSubtotalFormatted.className || 'text-green-600'}`}>
-                {totalSubtotalFormatted.value}/mes
+                {totalSubtotalFormatted.value}{t('deviceSelection.cards.perMonth')}
               </span>
             </div>
           </div>

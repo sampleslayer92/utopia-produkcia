@@ -387,7 +387,8 @@
         "software": "Software Solutions",
         "technical": "Technical Services",
         "accessories": "Accessories"
-      }
+      },
+      "types": "types"
     },
     "modal": {
       "addTitle": "Add - {name}",
@@ -414,7 +415,12 @@
       "total": "Total:",
       "addonsCount": "+{count} add-ons",
       "specifications": "Specifications",
-      "automatic": "(automatic)"
+      "automatic": "(automatic)",
+      "quantityLabel": "Quantity",
+      "monthlyFeeLabel": "Monthly fee (EUR)",
+      "companyCostLabel": "Company cost (EUR)",
+      "addonsTitle": "Add-ons",
+      "perMonth": "/month"
     },
     "navigation": {
       "back": "Back",

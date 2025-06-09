@@ -242,9 +242,9 @@ const LivePreviewPanel = ({
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4" />
                   <h4 className="font-semibold text-slate-900">{t('deviceSelection.preview.sections.devices')}</h4>
-                  <Badge variant="secondary">{deviceCards.length} typov</Badge>
+                  <Badge variant="secondary">{deviceCards.length} {t('deviceSelection.preview.types')}</Badge>
                   <Badge variant="outline" className="text-blue-600 border-blue-300 ml-auto">
-                    {deviceCards.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €/mes
+                    {deviceCards.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €{t('deviceSelection.cards.perMonth')}
                   </Badge>
                 </div>
               </AccordionTrigger>
@@ -265,9 +265,9 @@ const LivePreviewPanel = ({
                   <h4 className="font-semibold text-slate-900">
                     {t(`deviceSelection.preview.categoryNames.${category}`)}
                   </h4>
-                  <Badge variant="secondary">{services.length} typov</Badge>
+                  <Badge variant="secondary">{services.length} {t('deviceSelection.preview.types')}</Badge>
                   <Badge variant="outline" className="text-green-600 border-green-300 ml-auto">
-                    {services.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €/mes
+                    {services.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €{t('deviceSelection.cards.perMonth')}
                   </Badge>
                 </div>
               </AccordionTrigger>
