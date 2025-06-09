@@ -359,7 +359,18 @@
       "deviceCount": "{count} devices",
       "serviceCount": "{count} services",
       "addDevice": "Add Device",
-      "addService": "Add Service"
+      "addService": "Add Service",
+      "products": {
+        "posService": "POS Software",
+        "inventory": "Inventory Management",
+        "reporting": "Reporting and Analytics",
+        "installation": "Installation and Setup",
+        "training": "Staff Training",
+        "support": "24/7 Technical Support",
+        "receiptPrinter": "Receipt Printer",
+        "cashDrawer": "Cash Drawer",
+        "barcodeScanner": "Barcode Scanner"
+      }
     },
     "preview": {
       "title": "Your Order",
@@ -404,10 +415,14 @@
       "customSpecificationPlaceholder": "Describe the service...",
       "addToCart": "Add to Cart",
       "saveChanges": "Save Changes",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "add": "Add",
+      "save": "Save"
     },
     "cards": {
       "count": "{count} pcs",
+      "countPieces": "pcs",
+      "items": "items",
       "monthlyFee": "€{amount}/month",
       "mainItem": "Main item:",
       "addons": "Add-ons:",

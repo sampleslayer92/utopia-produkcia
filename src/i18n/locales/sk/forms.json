@@ -359,7 +359,18 @@
       "deviceCount": "{count} zariadení",
       "serviceCount": "{count} služieb",
       "addDevice": "Pridať zariadenie",
-      "addService": "Pridať službu"
+      "addService": "Pridať službu",
+      "products": {
+        "posService": "POS Software",
+        "inventory": "Správa skladu",
+        "reporting": "Reporting a analytika",
+        "installation": "Inštalácia a nastavenie",
+        "training": "Školenie personálu",
+        "support": "24/7 Technická podpora",
+        "receiptPrinter": "Tlačiareň účteniek",
+        "cashDrawer": "Pokladničná zásuvka",
+        "barcodeScanner": "Čítačka čiarových kódov"
+      }
     },
     "preview": {
       "title": "Vaša objednávka",
@@ -404,10 +415,14 @@
       "customSpecificationPlaceholder": "Opíšte službu...",
       "addToCart": "Pridať do košíka",
       "saveChanges": "Uložiť zmeny",
-      "cancel": "Zrušiť"
+      "cancel": "Zrušiť",
+      "add": "Pridať",
+      "save": "Uložiť"
     },
     "cards": {
       "count": "{count} ks",
+      "countPieces": "ks",
+      "items": "položiek",
       "monthlyFee": "{amount} €/mes",
       "mainItem": "Hlavná položka:",
       "addons": "Doplnky:",

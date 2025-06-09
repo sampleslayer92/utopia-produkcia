@@ -125,27 +125,27 @@ const DeviceCatalogPanel = ({
       title: t('deviceSelection.catalog.serviceGroups.software'),
       icon: <Monitor className="h-5 w-5 text-green-600" />,
       items: [
-        { id: 'pos-software', name: 'POS Software', description: 'Komplexný pokladničný systém' },
-        { id: 'inventory', name: 'Správa skladu', description: 'Sledovanie zásob a produktov' },
-        { id: 'reporting', name: 'Reporting a analytika', description: 'Detailné reporty a štatistiky' }
+        { id: 'pos-software', name: t('deviceSelection.catalog.products.posService'), description: 'Komplexný pokladničný systém' },
+        { id: 'inventory', name: t('deviceSelection.catalog.products.inventory'), description: 'Sledovanie zásob a produktov' },
+        { id: 'reporting', name: t('deviceSelection.catalog.products.reporting'), description: 'Detailné reporty a štatistiky' }
       ]
     },
     technical: {
       title: t('deviceSelection.catalog.serviceGroups.technical'),
       icon: <Zap className="h-5 w-5 text-orange-600" />,
       items: [
-        { id: 'installation', name: 'Inštalácia a nastavenie', description: 'Profesionálna inštalácia' },
-        { id: 'training', name: 'Školenie personálu', description: 'Komplexné zaškolenie' },
-        { id: 'support', name: '24/7 Technická podpora', description: 'Nepretržitá podpora' }
+        { id: 'installation', name: t('deviceSelection.catalog.products.installation'), description: 'Profesionálna inštalácia' },
+        { id: 'training', name: t('deviceSelection.catalog.products.training'), description: 'Komplexné zaškolenie' },
+        { id: 'support', name: t('deviceSelection.catalog.products.support'), description: 'Nepretržitá podpora' }
       ]
     },
     accessories: {
       title: t('deviceSelection.catalog.serviceGroups.accessories'),
       icon: <CreditCard className="h-5 w-5 text-purple-600" />,
       items: [
-        { id: 'receipt-printer', name: 'Tlačiareň účteniek', description: 'Termálna tlačiareň 80mm' },
-        { id: 'cash-drawer', name: 'Pokladničná zásuvka', description: 'Bezpečná kovová zásuvka' },
-        { id: 'barcode-scanner', name: 'Čítačka čiarových kódov', description: '2D/1D skener' }
+        { id: 'receipt-printer', name: t('deviceSelection.catalog.products.receiptPrinter'), description: 'Termálna tlačiareň 80mm' },
+        { id: 'cash-drawer', name: t('deviceSelection.catalog.products.cashDrawer'), description: 'Bezpečná kovová zásuvka' },
+        { id: 'barcode-scanner', name: t('deviceSelection.catalog.products.barcodeScanner'), description: '2D/1D skener' }
       ]
     }
   };
