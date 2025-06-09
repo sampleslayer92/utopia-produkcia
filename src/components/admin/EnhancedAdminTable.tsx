@@ -129,9 +129,15 @@ const EnhancedAdminTable = () => {
     }
   };
 
-  const handleBulkAction = (action: string) => {
-    console.log(`Bulk action: ${action} on contracts:`, selectedContracts);
-    toast.success(`Akcia "${action}" vykonaná na ${selectedContracts.length} zmluvách`);
+  const handleBulkUpdate = (field: string, value: string) => {
+    console.log(`Bulk update: ${field} = ${value} on contracts:`, selectedContracts);
+    toast.success(`Pole "${field}" aktualizované na "${value}" pre ${selectedContracts.length} zmlúv`);
+    setSelectedContracts([]);
+  };
+
+  const handleBulkDelete = () => {
+    console.log('Bulk delete contracts:', selectedContracts);
+    toast.success(`Vymazaných ${selectedContracts.length} zmlúv`);
     setSelectedContracts([]);
   };
 
@@ -176,8 +182,9 @@ const EnhancedAdminTable = () => {
       {selectedContracts.length > 0 && (
         <BulkActionsPanel
           selectedCount={selectedContracts.length}
-          selectedContracts={selectedContracts}
-          onClose={() => setSelectedContracts([])}
+          onClearSelection={() => setSelectedContracts([])}
+          onBulkUpdate={handleBulkUpdate}
+          onBulkDelete={handleBulkDelete}
         />
       )}
       
