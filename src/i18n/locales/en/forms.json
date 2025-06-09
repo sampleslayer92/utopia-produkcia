@@ -179,6 +179,8 @@
     }
   },
   "businessLocation": {
+    "title": "Business Location Data",
+    "description": "Manage your business locations with detailed information about bank accounts, business activities and opening hours.",
     "name": "Location Name",
     "hasPos": "Has POS Terminal",
     "address": "Location Address",
@@ -188,6 +190,120 @@
     "averageTransaction": "Average Transaction",
     "openingHours": "Opening Hours",
     "seasonality": "Seasonality",
-    "bankAccounts": "Bank Accounts"
+    "bankAccounts": "Bank Accounts",
+    "sidebar": {
+      "title": "Business Location Data",
+      "description": "Manage your business locations with detailed information about bank accounts, business activities and opening hours.",
+      "newFeatures": "New features in this version",
+      "features": [
+        "Management of multiple bank accounts",
+        "Detailed MCC codes and business activities",
+        "Interactive opening hours with quick actions",
+        "Support for different currencies (EUR, CZK, USD)"
+      ],
+      "autoFillTitle": "Automatic pre-filling",
+      "autoFillDescription": "Your contact details will be automatically pre-filled for new locations based on your role \"{userRole}\".",
+      "addButton": "Add Location"
+    },
+    "emptyState": {
+      "title": "No locations yet",
+      "description": "Add your first business location",
+      "addButton": "Add Location"
+    },
+    "card": {
+      "basicInfo": "Basic Information",
+      "locationNameRequired": "Business Location Name *",
+      "locationNamePlaceholder": "Store/Location name",
+      "hasPosLabel": "Is there a POS at the location?",
+      "addressTitle": "Location Address",
+      "addressSyncMessage": "This location uses the company's registered address. The address is automatically synchronized with the main address.",
+      "currentAddressLabel": "Current address:",
+      "averageTransactionRequired": "Average Transaction Amount (EUR) *",
+      "averageTransactionPlaceholder": "25",
+      "seasonalityRequired": "Seasonality *",
+      "seasonalWeeksLabel": "Number of weeks in season",
+      "seasonalWeeksPlaceholder": "20"
+    },
+    "seasonalityOptions": {
+      "yearRound": "Year-round",
+      "seasonal": "Seasonal"
+    },
+    "bankAccounts": {
+      "title": "Bank Accounts",
+      "addButton": "Add Account",
+      "accountTitle": "Bank Account {index}",
+      "accountNotSet": "IBAN not entered",
+      "accountNumberNotSet": "Account not entered",
+      "formatRequired": "Account Format *",
+      "currencyRequired": "Currency *",
+      "ibanRequired": "IBAN *",
+      "ibanPlaceholder": "SK89 1200 0000 1987 4263 7541",
+      "ibanInvalid": "Invalid IBAN format",
+      "accountNumberRequired": "Account Number *",
+      "accountNumberPlaceholder": "1234567890",
+      "bankCodeRequired": "Bank Code *",
+      "bankCodePlaceholder": "1200",
+      "minimumAccountNote": "* At least one bank account must be entered",
+      "formatOptions": {
+        "iban": "IBAN",
+        "accountNumber": "Account Number / Bank Code"
+      },
+      "currencyOptions": {
+        "eur": "EUR",
+        "czk": "CZK",
+        "usd": "USD"
+      }
+    },
+    "businessDetails": {
+      "title": "Business Information",
+      "businessSubjectRequired": "Business Activity *",
+      "businessSubjectPlaceholder": "Describe the main activities of your location...",
+      "mccCodeRequired": "MCC Code *",
+      "mccCodePlaceholder": "Select business category",
+      "monthlyTurnoverRequired": "Estimated Turnover (monthly in EUR) *",
+      "monthlyTurnoverPlaceholder": "e.g. 5000, 12500, 1000000"
+    },
+    "openingHours": {
+      "title": "Opening Hours",
+      "editButton": "Edit",
+      "setButton": "Set",
+      "closedAllDays": "Closed all days",
+      "closed": "Closed",
+      "days": {
+        "po": "Mon",
+        "ut": "Tue",
+        "st": "Wed",
+        "st2": "Thu", 
+        "pi": "Fri",
+        "so": "Sat",
+        "ne": "Sun",
+        "pondelok": "Monday",
+        "utorok": "Tuesday",
+        "streda": "Wednesday",
+        "stvrtok": "Thursday",
+        "piatok": "Friday",
+        "sobota": "Saturday",
+        "nedela": "Sunday"
+      }
+    },
+    "modal": {
+      "title": "Opening Hours",
+      "quickActions": "Quick Actions",
+      "daySelection": "Day Selection",
+      "daySelectionDescription": "Click on the days when the location should be open",
+      "sameTimeLabel": "Same time for all selected days",
+      "openingLabel": "Opening",
+      "closingLabel": "Closing",
+      "selectDaysMessage": "Select the days when the location should be open",
+      "cancelButton": "Cancel",
+      "saveButton": "Save Changes",
+      "quickActionButtons": {
+        "workWeek": "Work Week",
+        "fullWeek": "Full Week", 
+        "weekends": "Weekends",
+        "closed": "Closed",
+        "reset": "Reset"
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Building } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
@@ -20,6 +21,7 @@ const BusinessDetailsSection = ({
   monthlyTurnover,
   onUpdate
 }: BusinessDetailsSectionProps) => {
+  const { t } = useTranslation('forms');
   // Simple local state for display value
   const [displayValue, setDisplayValue] = useState('');
 
@@ -69,34 +71,34 @@ const BusinessDetailsSection = ({
     <div className="space-y-4">
       <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2">
         <Building className="h-4 w-4" />
-        Údaje o podnikaní
+        {t('businessLocation.businessDetails.title')}
       </h4>
       
       <OnboardingTextarea
-        label="Predmet podnikania *"
+        label={t('businessLocation.businessDetails.businessSubjectRequired')}
         value={businessSubject}
         onChange={(e) => onUpdate('businessSubject', e.target.value)}
-        placeholder="Opíšte hlavné aktivity vašej prevádzky..."
+        placeholder={t('businessLocation.businessDetails.businessSubjectPlaceholder')}
         rows={3}
       />
 
       <OnboardingSelect
-        label="MCC kód *"
-        placeholder="Vyberte kategóriu podnikania"
+        label={t('businessLocation.businessDetails.mccCodeRequired')}
+        placeholder={t('businessLocation.businessDetails.mccCodePlaceholder')}
         value={mccCode}
         onValueChange={(value) => onUpdate('mccCode', value)}
         options={mccOptions}
       />
 
       <OnboardingInput
-        label="Odhadovaný obrat (mesačne v EUR) *"
+        label={t('businessLocation.businessDetails.monthlyTurnoverRequired')}
         type="text"
         inputMode="numeric"
         value={displayValue}
         onChange={handleTurnoverChange}
         onFocus={handleTurnoverFocus}
         onBlur={handleTurnoverBlur}
-        placeholder="napr. 5000, 12500, 1000000"
+        placeholder={t('businessLocation.businessDetails.monthlyTurnoverPlaceholder')}
       />
     </div>
   );

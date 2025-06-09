@@ -1,5 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { Clock, Calendar, Zap } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,14 +17,16 @@ interface OpeningHoursModalProps {
 }
 
 const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHoursModalProps) => {
+  const { t } = useTranslation('forms');
+
   const daysOfWeek: Array<{ key: OpeningHours['day'], label: string, shortLabel: string }> = [
-    { key: "Po", label: "Pondelok", shortLabel: "Po" },
-    { key: "Ut", label: "Utorok", shortLabel: "Ut" },
-    { key: "St", label: "Streda", shortLabel: "St" },
-    { key: "Št", label: "Štvrtok", shortLabel: "Št" },
-    { key: "Pi", label: "Piatok", shortLabel: "Pi" },
-    { key: "So", label: "Sobota", shortLabel: "So" },
-    { key: "Ne", label: "Nedeľa", shortLabel: "Ne" }
+    { key: "Po", label: t('businessLocation.openingHours.days.pondelok'), shortLabel: t('businessLocation.openingHours.days.po') },
+    { key: "Ut", label: t('businessLocation.openingHours.days.utorok'), shortLabel: t('businessLocation.openingHours.days.ut') },
+    { key: "St", label: t('businessLocation.openingHours.days.streda'), shortLabel: t('businessLocation.openingHours.days.st') },
+    { key: "Št", label: t('businessLocation.openingHours.days.stvrtok'), shortLabel: t('businessLocation.openingHours.days.st2') },
+    { key: "Pi", label: t('businessLocation.openingHours.days.piatok'), shortLabel: t('businessLocation.openingHours.days.pi') },
+    { key: "So", label: t('businessLocation.openingHours.days.sobota'), shortLabel: t('businessLocation.openingHours.days.so') },
+    { key: "Ne", label: t('businessLocation.openingHours.days.nedela'), shortLabel: t('businessLocation.openingHours.days.ne') }
   ];
 
   const [localHours, setLocalHours] = useState<OpeningHours[]>([]);
@@ -206,7 +210,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-blue-600" />
-            Otváracie hodiny
+            {t('businessLocation.modal.title')}
           </DialogTitle>
         </DialogHeader>
 
@@ -215,7 +219,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
           <div className="space-y-3">
             <h4 className="text-sm font-medium text-slate-700 flex items-center gap-2">
               <Zap className="h-4 w-4" />
-              Rýchle akcie
+              {t('businessLocation.modal.quickActions')}
             </h4>
             
             <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
@@ -225,7 +229,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
                 onClick={quickActionWorkWeek}
                 className="text-xs"
               >
-                Pracovný týždeň
+                {t('businessLocation.modal.quickActionButtons.workWeek')}
               </Button>
               <Button
                 variant="outline"
@@ -233,7 +237,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
                 onClick={quickActionFullWeek}
                 className="text-xs"
               >
-                Celý týždeň
+                {t('businessLocation.modal.quickActionButtons.fullWeek')}
               </Button>
               <Button
                 variant="outline"
@@ -241,7 +245,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
                 onClick={quickActionWeekends}
                 className="text-xs"
               >
-                Víkendy
+                {t('businessLocation.modal.quickActionButtons.weekends')}
               </Button>
               <Button
                 variant="outline"
@@ -249,7 +253,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
                 onClick={quickActionClosed}
                 className="text-xs"
               >
-                Zatvorené
+                {t('businessLocation.modal.quickActionButtons.closed')}
               </Button>
               <Button
                 variant="outline"
@@ -257,7 +261,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
                 onClick={quickActionReset}
                 className="text-xs"
               >
-                Resetovať
+                {t('businessLocation.modal.quickActionButtons.reset')}
               </Button>
             </div>
           </div>
@@ -266,7 +270,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
           <div className="space-y-3">
             <h4 className="text-sm font-medium text-slate-700 flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Výber dní
+              {t('businessLocation.modal.daySelection')}
             </h4>
             
             <div className="flex flex-wrap gap-2">
@@ -288,7 +292,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
             </div>
             
             <p className="text-xs text-slate-500">
-              Kliknite na dni, kedy má byť prevádzka otvorená
+              {t('businessLocation.modal.daySelectionDescription')}
             </p>
           </div>
 
@@ -302,14 +306,14 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
                   onCheckedChange={handleSameTimeToggle}
                 />
                 <label htmlFor="sameTime" className="text-sm font-medium text-slate-700">
-                  Rovnaký čas pre všetky vybrané dni
+                  {t('businessLocation.modal.sameTimeLabel')}
                 </label>
               </div>
 
               {sameTimeForAll ? (
                 <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div>
-                    <label className="text-xs font-medium text-slate-600 mb-1 block">Otvorenie</label>
+                    <label className="text-xs font-medium text-slate-600 mb-1 block">{t('businessLocation.modal.openingLabel')}</label>
                     <OnboardingInput
                       type="time"
                       value={uniformOpen}
@@ -318,7 +322,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-slate-600 mb-1 block">Zatvorenie</label>
+                    <label className="text-xs font-medium text-slate-600 mb-1 block">{t('businessLocation.modal.closingLabel')}</label>
                     <OnboardingInput
                       type="time"
                       value={uniformClose}
@@ -365,17 +369,17 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
           {selectedDays.size === 0 && (
             <div className="text-center py-8 text-slate-500">
               <Calendar className="h-12 w-12 mx-auto mb-3 text-slate-300" />
-              <p>Vyberte dni, kedy má byť prevádzka otvorená</p>
+              <p>{t('businessLocation.modal.selectDaysMessage')}</p>
             </div>
           )}
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={handleCancel}>
-            Zrušiť
+            {t('businessLocation.modal.cancelButton')}
           </Button>
           <Button onClick={handleSave}>
-            Uložiť zmeny
+            {t('businessLocation.modal.saveButton')}
           </Button>
         </DialogFooter>
       </DialogContent>

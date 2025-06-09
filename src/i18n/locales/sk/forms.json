@@ -179,6 +179,8 @@
     }
   },
   "businessLocation": {
+    "title": "Údaje o prevádzke",
+    "description": "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
     "name": "Názov prevádzky",
     "hasPos": "Má POS terminál",
     "address": "Adresa prevádzky",
@@ -188,6 +190,120 @@
     "averageTransaction": "Priemerná transakcia",
     "openingHours": "Otváracie hodiny",
     "seasonality": "Sezónnosť",
-    "bankAccounts": "Bankové účty"
+    "bankAccounts": "Bankové účty",
+    "sidebar": {
+      "title": "Údaje o prevádzke",
+      "description": "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
+      "newFeatures": "Nové funkcie v tejto verzii",
+      "features": [
+        "Správa viacerých bankových účtov",
+        "Detailné MCC kódy a predmet podnikania",
+        "Interaktívne otváracie hodiny s rýchlymi akciami",
+        "Podpora rôznych mien (EUR, CZK, USD)"
+      ],
+      "autoFillTitle": "Automatické predvyplnenie",
+      "autoFillDescription": "Vaše kontaktné údaje sa automaticky predvyplnia pre nové prevádzky na základe vašej roly \"{userRole}\".",
+      "addButton": "Pridať prevádzku"
+    },
+    "emptyState": {
+      "title": "Zatiaľ žiadne prevádzky",
+      "description": "Pridajte svoju prvú prevádzkovou lokalitu",
+      "addButton": "Pridať prevádzku"
+    },
+    "card": {
+      "basicInfo": "Základné údaje",
+      "locationNameRequired": "Názov obchodného miesta *",
+      "locationNamePlaceholder": "Názov predajne/prevádzky",
+      "hasPosLabel": "Je na prevádzke POS?",
+      "addressTitle": "Adresa prevádzky",
+      "addressSyncMessage": "Táto prevádzka používa adresu sídla spoločnosti. Adresa sa automaticky synchronizuje s hlavnou adresou.",
+      "currentAddressLabel": "Aktuálna adresa:",
+      "averageTransactionRequired": "Priemerná výška transakcie (EUR) *",
+      "averageTransactionPlaceholder": "25",
+      "seasonalityRequired": "Sezónnosť *",
+      "seasonalWeeksLabel": "Počet týždňov v sezóne",
+      "seasonalWeeksPlaceholder": "20"
+    },
+    "seasonalityOptions": {
+      "yearRound": "Celoročne",
+      "seasonal": "Sezónne"
+    },
+    "bankAccounts": {
+      "title": "Bankové účty",
+      "addButton": "Pridať účet",
+      "accountTitle": "Bankový účet {index}",
+      "accountNotSet": "IBAN nezadaný",
+      "accountNumberNotSet": "Účet nezadaný",
+      "formatRequired": "Formát účtu *",
+      "currencyRequired": "Mena *",
+      "ibanRequired": "IBAN *",
+      "ibanPlaceholder": "SK89 1200 0000 1987 4263 7541",
+      "ibanInvalid": "Neplatný IBAN formát",
+      "accountNumberRequired": "Číslo účtu *",
+      "accountNumberPlaceholder": "1234567890",
+      "bankCodeRequired": "Kód banky *",
+      "bankCodePlaceholder": "1200",
+      "minimumAccountNote": "* Minimálne jeden bankový účet musí byť zadaný",
+      "formatOptions": {
+        "iban": "IBAN",
+        "accountNumber": "Číslo účtu / Kód banky"
+      },
+      "currencyOptions": {
+        "eur": "EUR",
+        "czk": "CZK",
+        "usd": "USD"
+      }
+    },
+    "businessDetails": {
+      "title": "Údaje o podnikaní",
+      "businessSubjectRequired": "Predmet podnikania *",
+      "businessSubjectPlaceholder": "Opíšte hlavné aktivity vašej prevádzky...",
+      "mccCodeRequired": "MCC kód *",
+      "mccCodePlaceholder": "Vyberte kategóriu podnikania",
+      "monthlyTurnoverRequired": "Odhadovaný obrat (mesačne v EUR) *",
+      "monthlyTurnoverPlaceholder": "napr. 5000, 12500, 1000000"
+    },
+    "openingHours": {
+      "title": "Otváracie hodiny",
+      "editButton": "Upraviť",
+      "setButton": "Nastaviť",
+      "closedAllDays": "Zatvorené všetky dni",
+      "closed": "Zatvorené",
+      "days": {
+        "po": "Po",
+        "ut": "Ut",
+        "st": "St",
+        "st2": "Št", 
+        "pi": "Pi",
+        "so": "So",
+        "ne": "Ne",
+        "pondelok": "Pondelok",
+        "utorok": "Utorok",
+        "streda": "Streda",
+        "stvrtok": "Štvrtok",
+        "piatok": "Piatok",
+        "sobota": "Sobota",
+        "nedela": "Nedeľa"
+      }
+    },
+    "modal": {
+      "title": "Otváracie hodiny",
+      "quickActions": "Rýchle akcie",
+      "daySelection": "Výber dní",
+      "daySelectionDescription": "Kliknite na dni, kedy má byť prevádzka otvorená",
+      "sameTimeLabel": "Rovnaký čas pre všetky vybrané dni",
+      "openingLabel": "Otvorenie",
+      "closingLabel": "Zatvorenie",
+      "selectDaysMessage": "Vyberte dni, kedy má byť prevádzka otvorená",
+      "cancelButton": "Zrušiť",
+      "saveButton": "Uložiť zmeny",
+      "quickActionButtons": {
+        "workWeek": "Pracovný týždeň",
+        "fullWeek": "Celý týždeň", 
+        "weekends": "Víkendy",
+        "closed": "Zatvorené",
+        "reset": "Resetovať"
+      }
+    }
   }
 }

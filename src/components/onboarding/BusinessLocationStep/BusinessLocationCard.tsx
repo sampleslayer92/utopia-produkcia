@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Store, Trash2, MapPin } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTranslation } from "react-i18next";
 import { BusinessLocation, OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
@@ -35,9 +36,11 @@ const BusinessLocationCard = ({
   onBusinessDetailsUpdate,
   onOpeningHoursEdit
 }: BusinessLocationCardProps) => {
+  const { t } = useTranslation('forms');
+
   const seasonalityOptions = [
-    { value: "year-round", label: "Celoročne" },
-    { value: "seasonal", label: "Sezónne" }
+    { value: "year-round", label: t('businessLocation.seasonalityOptions.yearRound') },
+    { value: "seasonal", label: t('businessLocation.seasonalityOptions.seasonal') }
   ];
 
   const updateContactPerson = (field: string, value: any) => {
@@ -63,7 +66,7 @@ const BusinessLocationCard = ({
           </div>
           <div>
             <h3 className="font-medium text-slate-900">
-              {location.name || `Prevádzka ${index + 1}`}
+              {location.name || `${t('businessLocation.name')} ${index + 1}`}
             </h3>
             {location.address.street && (
               <p className="text-xs text-slate-500">{location.address.street}, {location.address.city}</p>
@@ -71,7 +74,7 @@ const BusinessLocationCard = ({
             {shouldHideAddress && (
               <p className="text-xs text-green-600">
                 <MapPin className="h-3 w-3 inline mr-1" />
-                Používa adresu sídla spoločnosti
+                {t('companyInfo.messages.syncDescription')}
               </p>
             )}
           </div>
@@ -99,15 +102,15 @@ const BusinessLocationCard = ({
             <div>
               <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                 <Store className="h-4 w-4" />
-                Základné údaje
+                {t('businessLocation.card.basicInfo')}
               </h4>
               
               <div className="grid md:grid-cols-2 gap-4">
                 <OnboardingInput
-                  label="Názov obchodného miesta *"
+                  label={t('businessLocation.card.locationNameRequired')}
                   value={location.name}
                   onChange={(e) => onUpdate('name', e.target.value)}
-                  placeholder="Názov predajne/prevádzky"
+                  placeholder={t('businessLocation.card.locationNamePlaceholder')}
                 />
                 
                 <div className="flex items-end h-full pb-2">
@@ -118,7 +121,7 @@ const BusinessLocationCard = ({
                       onCheckedChange={(checked) => onUpdate('hasPOS', checked)}
                     />
                     <label htmlFor={`hasPOS-${location.id}`} className="text-sm text-slate-700">
-                      Je na prevádzke POS?
+                      {t('businessLocation.card.hasPosLabel')}
                     </label>
                   </div>
                 </div>
@@ -129,7 +132,7 @@ const BusinessLocationCard = ({
             {!shouldHideAddress && (
               <div className="border-t border-slate-100 pt-6">
                 <AddressForm
-                  title="Adresa prevádzky"
+                  title={t('businessLocation.card.addressTitle')}
                   data={location.address}
                   onUpdate={(field, value) => onUpdate(`address.${field}`, value)}
                 />
@@ -143,12 +146,12 @@ const BusinessLocationCard = ({
                   <div className="flex items-start gap-3">
                     <MapPin className="h-5 w-5 text-blue-600 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-blue-900">Adresa prevádzky</p>
+                      <p className="text-sm font-medium text-blue-900">{t('businessLocation.card.addressTitle')}</p>
                       <p className="text-sm text-blue-800 mt-1">
-                        Táto prevádzka používa adresu sídla spoločnosti. Adresa sa automaticky synchronizuje s hlavnou adresou.
+                        {t('businessLocation.card.addressSyncMessage')}
                       </p>
                       <div className="mt-2 text-sm text-blue-700">
-                        <p className="font-medium">Aktuálna adresa:</p>
+                        <p className="font-medium">{t('businessLocation.card.currentAddressLabel')}</p>
                         <p>{location.address.street}</p>
                         <p>{location.address.zipCode} {location.address.city}</p>
                       </div>
@@ -180,15 +183,15 @@ const BusinessLocationCard = ({
             <div className="border-t border-slate-100 pt-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <OnboardingInput
-                  label="Priemerná výška transakcie (EUR) *"
+                  label={t('businessLocation.card.averageTransactionRequired')}
                   type="number"
                   value={location.averageTransaction || ''}
                   onChange={(e) => onUpdate('averageTransaction', Number(e.target.value))}
-                  placeholder="25"
+                  placeholder={t('businessLocation.card.averageTransactionPlaceholder')}
                 />
                 
                 <OnboardingSelect
-                  label="Sezónnosť *"
+                  label={t('businessLocation.card.seasonalityRequired')}
                   value={location.seasonality}
                   onValueChange={(value) => onUpdate('seasonality', value)}
                   options={seasonalityOptions}
@@ -197,11 +200,11 @@ const BusinessLocationCard = ({
               
               {location.seasonality === 'seasonal' && (
                 <OnboardingInput
-                  label="Počet týždňov v sezóne"
+                  label={t('businessLocation.card.seasonalWeeksLabel')}
                   type="number"
                   value={location.seasonalWeeks || ''}
                   onChange={(e) => onUpdate('seasonalWeeks', Number(e.target.value))}
-                  placeholder="20"
+                  placeholder={t('businessLocation.card.seasonalWeeksPlaceholder')}
                   min="1"
                   max="52"
                   className="mt-4"

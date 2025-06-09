@@ -1,6 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Store } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import BusinessLocationSidebar from "./BusinessLocationStep/BusinessLocationSidebar";
 import BusinessLocationCard from "./BusinessLocationStep/BusinessLocationCard";
 import MobileOptimizedCard from "./ui/MobileOptimizedCard";
@@ -19,6 +20,7 @@ interface BusinessLocationStepProps {
 }
 
 const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) => {
+  const { t } = useTranslation('forms');
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [isOpeningHoursModalOpen, setIsOpeningHoursModalOpen] = useState(false);
   const isMobile = useIsMobile();
@@ -49,13 +51,8 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
   };
 
   const infoTooltipData = {
-    description: "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
-    features: [
-      "Správa viacerých bankových účtov",
-      "Detailné MCC kódy a predmet podnikania", 
-      "Interaktívne otváracie hodiny s rýchlymi akciami",
-      "Podpora rôznych mien (EUR, CZK, USD)"
-    ]
+    description: t('businessLocation.description'),
+    features: t('businessLocation.sidebar.features', { returnObjects: true }) as string[]
   };
 
   const renderContent = () => {
@@ -88,7 +85,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     return (
       <>
         <MobileOptimizedCard
-          title="Údaje o prevádzke"
+          title={t('businessLocation.title')}
           icon={<Store className="h-4 w-4 text-blue-600" />}
           infoTooltip={infoTooltipData}
         >

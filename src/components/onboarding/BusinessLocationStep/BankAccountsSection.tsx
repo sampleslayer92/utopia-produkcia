@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, CreditCard } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import { BankAccount } from "@/types/onboarding";
@@ -13,17 +14,18 @@ interface BankAccountsSectionProps {
 }
 
 const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccountsSectionProps) => {
+  const { t } = useTranslation('forms');
   const [expandedAccountId, setExpandedAccountId] = useState<string | null>(null);
 
   const currencyOptions = [
-    { value: "EUR", label: "EUR" },
-    { value: "CZK", label: "CZK" },
-    { value: "USD", label: "USD" }
+    { value: "EUR", label: t('businessLocation.bankAccounts.currencyOptions.eur') },
+    { value: "CZK", label: t('businessLocation.bankAccounts.currencyOptions.czk') },
+    { value: "USD", label: t('businessLocation.bankAccounts.currencyOptions.usd') }
   ];
 
   const formatOptions = [
-    { value: "IBAN", label: "IBAN" },
-    { value: "CisloUctuKodBanky", label: "Číslo účtu / Kód banky" }
+    { value: "IBAN", label: t('businessLocation.bankAccounts.formatOptions.iban') },
+    { value: "CisloUctuKodBanky", label: t('businessLocation.bankAccounts.formatOptions.accountNumber') }
   ];
 
   const addBankAccount = () => {
@@ -93,7 +95,7 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
     const isValid = validateIBAN(iban);
     return {
       isValid,
-      message: isValid ? '' : 'Neplatný IBAN formát'
+      message: isValid ? '' : t('businessLocation.bankAccounts.ibanInvalid')
     };
   };
 
@@ -102,7 +104,7 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2">
           <CreditCard className="h-4 w-4" />
-          Bankové účty
+          {t('businessLocation.bankAccounts.title')}
         </h4>
         <Button
           onClick={addBankAccount}
@@ -111,7 +113,7 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
           className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Pridať účet
+          {t('businessLocation.bankAccounts.addButton')}
         </Button>
       </div>
 
@@ -132,11 +134,13 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
                 </div>
                 <div>
                   <h5 className="font-medium text-slate-900">
-                    Bankový účet {index + 1}
+                    {t('businessLocation.bankAccounts.accountTitle', { index: index + 1 })}
                   </h5>
                   <p className="text-xs text-slate-500">
-                    {account.format === 'IBAN' ? account.iban || 'IBAN nezadaný' : 
-                     `${account.cisloUctu || ''}${account.cisloUctu && account.kodBanky ? '/' : ''}${account.kodBanky || ''}` || 'Účet nezadaný'} 
+                    {account.format === 'IBAN' ? 
+                      account.iban || t('businessLocation.bankAccounts.accountNotSet') : 
+                      `${account.cisloUctu || ''}${account.cisloUctu && account.kodBanky ? '/' : ''}${account.kodBanky || ''}` || 
+                      t('businessLocation.bankAccounts.accountNumberNotSet')} 
                     • {account.mena}
                   </p>
                 </div>
@@ -167,14 +171,14 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
                 <div className="space-y-4">
                   <div className="grid md:grid-cols-2 gap-4">
                     <OnboardingSelect
-                      label="Formát účtu *"
+                      label={t('businessLocation.bankAccounts.formatRequired')}
                       value={account.format}
                       onValueChange={(value) => updateBankAccount(account.id, 'format', value)}
                       options={formatOptions}
                     />
                     
                     <OnboardingSelect
-                      label="Mena *"
+                      label={t('businessLocation.bankAccounts.currencyRequired')}
                       value={account.mena}
                       onValueChange={(value) => updateBankAccount(account.id, 'mena', value)}
                       options={currencyOptions}
@@ -184,10 +188,10 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
                   {account.format === 'IBAN' ? (
                     <div>
                       <OnboardingInput
-                        label="IBAN *"
+                        label={t('businessLocation.bankAccounts.ibanRequired')}
                         value={account.iban || ''}
                         onChange={(e) => handleIBANChange(account.id, e)}
-                        placeholder="SK89 1200 0000 1987 4263 7541"
+                        placeholder={t('businessLocation.bankAccounts.ibanPlaceholder')}
                         maxLength={29} // Maximum IBAN length with spaces
                       />
                       {!ibanValidation.isValid && account.iban && (
@@ -197,16 +201,16 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
                   ) : (
                     <div className="grid md:grid-cols-2 gap-4">
                       <OnboardingInput
-                        label="Číslo účtu *"
+                        label={t('businessLocation.bankAccounts.accountNumberRequired')}
                         value={account.cisloUctu || ''}
                         onChange={(e) => updateBankAccount(account.id, 'cisloUctu', e.target.value)}
-                        placeholder="1234567890"
+                        placeholder={t('businessLocation.bankAccounts.accountNumberPlaceholder')}
                       />
                       <OnboardingInput
-                        label="Kód banky *"
+                        label={t('businessLocation.bankAccounts.bankCodeRequired')}
                         value={account.kodBanky || ''}
                         onChange={(e) => updateBankAccount(account.id, 'kodBanky', e.target.value)}
-                        placeholder="1200"
+                        placeholder={t('businessLocation.bankAccounts.bankCodePlaceholder')}
                       />
                     </div>
                   )}
@@ -219,7 +223,7 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
 
       {bankAccounts.length === 1 && (
         <p className="text-xs text-slate-500 italic">
-          * Minimálne jeden bankový účet musí byť zadaný
+          {t('businessLocation.bankAccounts.minimumAccountNote')}
         </p>
       )}
     </div>
