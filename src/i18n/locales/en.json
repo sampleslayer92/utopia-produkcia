@@ -1,4 +1,3 @@
-
 {
   "onboarding": {
     "header": {
@@ -15,7 +14,14 @@
       "saveSignature": "Save Signature",
       "completeRegistration": "Complete Registration",
       "submitting": "Submitting..."
-    }
+    },
+    "stepper": {
+      "partiallyComplete": "Partially Complete",
+      "next": "Next",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "deleteConfirmation": "Are you sure you want to delete this contract? This action cannot be undone."
   },
   "common": {
     "loading": "Loading...",

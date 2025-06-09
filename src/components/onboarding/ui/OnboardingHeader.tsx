@@ -104,7 +104,7 @@ const OnboardingHeader = ({
               </h3>
             </div>
             <p className="text-slate-600 mb-6">
-              Naozaj chcete odstrániť túto zmluvu? Táto akcia sa nedá vrátiť späť.
+              {t('onboarding.deleteConfirmation')}
             </p>
             <div className="flex space-x-3">
               <Button
