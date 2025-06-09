@@ -57,7 +57,9 @@ const ConsentsStep = ({
   };
 
   const isFormValid = () => {
-    const consents = data.consents || {};
+    if (!data.consents) return false;
+    
+    const consents = data.consents;
     return (
       (consents.dataProcessing === true || consents.gdpr === true) &&
       consents.terms === true &&
