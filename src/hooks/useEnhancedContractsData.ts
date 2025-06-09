@@ -1,9 +1,10 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface EnhancedContractData {
   id: string;
-  contract_number: string; // Changed from number to string
+  contract_number: string;
   status: string;
   created_at: string;
   submitted_at: string | null;
@@ -53,8 +54,8 @@ const calculateCompletedSteps = (contract: any) => {
     completed++;
   }
 
-  // Step 4: Device Selection
-  if (contract.device_selection) {
+  // Step 4: Device Selection (check contract_items)
+  if (contract.contract_items && contract.contract_items.length > 0) {
     completed++;
   }
 
@@ -76,11 +77,41 @@ const calculateCompletedSteps = (contract: any) => {
   return completed;
 };
 
-const determineContractType = (deviceSelection: any) => {
-  if (!deviceSelection) return 'Nedefinovaný';
+const mapContractItemsToDeviceSelection = (contractItems: any[]) => {
+  const deviceCounts = {
+    pax_a80_count: 0,
+    pax_a920_pro_count: 0,
+    tablet_10_count: 0,
+    tablet_15_count: 0,
+    tablet_pro_15_count: 0,
+  };
 
-  const hasPos = (deviceSelection.pax_a80_count || 0) + (deviceSelection.pax_a920_pro_count || 0) > 0;
-  const hasTablet = (deviceSelection.tablet_10_count || 0) + (deviceSelection.tablet_15_count || 0) + (deviceSelection.tablet_pro_15_count || 0) > 0;
+  contractItems?.forEach(item => {
+    const itemName = item.name?.toLowerCase() || '';
+    
+    if (itemName.includes('pax a80')) {
+      deviceCounts.pax_a80_count += item.count || 0;
+    } else if (itemName.includes('pax a920') || itemName.includes('pax a920 pro')) {
+      deviceCounts.pax_a920_pro_count += item.count || 0;
+    } else if (itemName.includes('tablet 10')) {
+      deviceCounts.tablet_10_count += item.count || 0;
+    } else if (itemName.includes('tablet 15') && !itemName.includes('pro')) {
+      deviceCounts.tablet_15_count += item.count || 0;
+    } else if (itemName.includes('tablet pro 15') || itemName.includes('tablet 15 pro')) {
+      deviceCounts.tablet_pro_15_count += item.count || 0;
+    }
+  });
+
+  return deviceCounts;
+};
+
+const determineContractType = (contractItems: any[]) => {
+  if (!contractItems || contractItems.length === 0) return 'E-commerce';
+
+  const deviceCounts = mapContractItemsToDeviceSelection(contractItems);
+  
+  const hasPos = (deviceCounts.pax_a80_count || 0) + (deviceCounts.pax_a920_pro_count || 0) > 0;
+  const hasTablet = (deviceCounts.tablet_10_count || 0) + (deviceCounts.tablet_15_count || 0) + (deviceCounts.tablet_pro_15_count || 0) > 0;
 
   if (hasPos && hasTablet) return 'POS + SoftPOS';
   if (hasPos) return 'POS';
@@ -103,11 +134,10 @@ const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
   const statusMap: Record<string, DatabaseStatus> = {
     'draft': 'draft',
     'submitted': 'submitted',
-    'opened': 'submitted', // Map 'opened' to existing status
-    'viewed': 'submitted', // Map 'viewed' to existing status  
+    'opened': 'submitted',
+    'viewed': 'submitted',
     'approved': 'approved',
     'rejected': 'rejected',
-    // Remove unsupported statuses for now
   };
   return statusMap[uiStatus] || null;
 };
@@ -146,12 +176,10 @@ export const useEnhancedContractsData = (filters?: {
           contract_calculations (
             total_monthly_profit
           ),
-          device_selection (
-            pax_a80_count,
-            pax_a920_pro_count,
-            tablet_10_count,
-            tablet_15_count,
-            tablet_pro_15_count
+          contract_items (
+            name,
+            count,
+            item_type
           ),
           business_locations (*),
           authorized_persons (*),
@@ -183,6 +211,8 @@ export const useEnhancedContractsData = (filters?: {
         throw error;
       }
 
+      console.log('Raw contracts data:', data);
+
       // Transform the data
       const transformedData: EnhancedContractData[] = data?.map(contract => {
         const completedSteps = calculateCompletedSteps(contract);
@@ -191,9 +221,11 @@ export const useEnhancedContractsData = (filters?: {
         const contactInfo = extractSingleRecord(contract.contact_info);
         const companyInfo = extractSingleRecord(contract.company_info);
         const contractCalculations = extractSingleRecord(contract.contract_calculations);
-        const deviceSelection = extractSingleRecord(contract.device_selection);
         
-        const contractType = determineContractType(deviceSelection);
+        // Map contract items to device selection format for backward compatibility
+        const deviceSelection = mapContractItemsToDeviceSelection(contract.contract_items || []);
+        
+        const contractType = determineContractType(contract.contract_items || []);
         const contractValue = contractCalculations?.total_monthly_profit || 0;
         
         const clientName = companyInfo?.company_name || 
@@ -203,7 +235,7 @@ export const useEnhancedContractsData = (filters?: {
 
         return {
           id: contract.id,
-          contract_number: contract.contract_number, // Already a string
+          contract_number: contract.contract_number,
           status: contract.status,
           created_at: contract.created_at,
           submitted_at: contract.submitted_at,
@@ -252,12 +284,23 @@ export const useContractTypeOptions = () => {
     queryKey: ['contract-types'],
     queryFn: async () => {
       const { data } = await supabase
-        .from('device_selection')
-        .select('*');
+        .from('contract_items')
+        .select('name, count')
+        .eq('item_type', 'device');
 
       const types = new Set<string>();
-      data?.forEach(device => {
-        types.add(determineContractType(device));
+      
+      // Group items by contract and determine contract types
+      const contractGroups: { [key: string]: any[] } = {};
+      data?.forEach(item => {
+        if (!contractGroups[item.contract_id]) {
+          contractGroups[item.contract_id] = [];
+        }
+        contractGroups[item.contract_id].push(item);
+      });
+
+      Object.values(contractGroups).forEach(items => {
+        types.add(determineContractType(items));
       });
 
       return Array.from(types);
