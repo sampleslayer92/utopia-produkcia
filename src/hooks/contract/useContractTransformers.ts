@@ -1,3 +1,4 @@
+
 import { BusinessLocation, DeviceCard, OnboardingData, AuthorizedPerson, ActualOwner, BankAccount } from "@/types/onboarding";
 
 export const transformBusinessLocationForContract = (location: BusinessLocation) => {
@@ -232,6 +233,7 @@ export const transformContractData = (
       selectedSolutions: deviceSelection?.selected_solutions?.split(', ') || [],
       dynamicCards: contractItems?.map((item: any) => ({
         id: item.device_id || item.id || Date.now().toString(),
+        type: (item.item_type || 'device') as 'device' | 'service',
         category: item.category || '',
         name: item.name || '',
         description: item.description || '',
@@ -240,7 +242,8 @@ export const transformContractData = (
         companyCost: item.company_cost || 0,
         specifications: item.specifications?.split(', ') || [],
         simCards: item.sim_cards || 0,
-        customValue: item.custom_value
+        customValue: item.custom_value,
+        addons: []
       })) || [],
       note: deviceSelection?.note || ''
     },
