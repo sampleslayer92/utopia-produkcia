@@ -1,0 +1,236 @@
+
+{
+  "welcome": {
+    "title": "Stress-free registration.",
+    "subtitle": "Welcome to the onboarding of the future.",
+    "login": "Sign In",
+    "loginDescription": "Select your role and proceed to the system",
+    "startOnboarding": "Start Onboarding",
+    "startOnboardingDescription": "Register a new company in the system",
+    "selectRole": "Select your role",
+    "back": "Back",
+    "roles": {
+      "admin": "Admin (ISO organization)",
+      "adminDescription": "Full system access",
+      "partner": "Business Partner",
+      "partnerDescription": "Manage your own clients",
+      "merchant": "Client (merchant)",
+      "merchantDescription": "View your own data"
+    },
+    "footer": "Utopia Research Lab 2025"
+  },
+  "onboarding": {
+    "header": {
+      "title": "Registration Process",
+      "progress": "{{percentage}}% completed",
+      "stepsCompleted": "{{completed}}/{{total}} steps",
+      "contractNumber": "Contract number: {{number}}",
+      "creatingContract": "Creating contract..."
+    },
+    "navigation": {
+      "back": "Back",
+      "next": "Next",
+      "saveAndExit": "Save and Exit",
+      "saveSignature": "Save Signature",
+      "completeRegistration": "Complete Registration",
+      "submitting": "Submitting..."
+    },
+    "stepper": {
+      "next": "Next",
+      "inProgress": "In Progress",
+      "partiallyComplete": "Partially Complete",
+      "completed": "Completed"
+    },
+    "help": {
+      "title": "Need help?",
+      "description": "For questions, contact us at +421 911 123 456 or info@utopia.sk"
+    },
+    "autoSave": {
+      "saving": "Saving...",
+      "saved": "Saved",
+      "lastSaved": "Last saved: {{time}}",
+      "error": "Save error"
+    }
+  },
+  "steps": {
+    "contactInfo": {
+      "title": "Contact Information",
+      "description": "Fill in your basic contact details. This information will be used for automatic pre-filling of other registration steps.",
+      "features": [
+        "Automatic contact person pre-filling",
+        "Data synchronization between steps",
+        "Email address verification",
+        "Phone number formatting"
+      ],
+      "fields": {
+        "firstName": "First Name *",
+        "lastName": "Last Name *",
+        "email": "Email *",
+        "phone": "Phone *",
+        "salesNote": "Would you like to tell us something?",
+        "salesNotePlaceholder": "For example: Best time to contact, preferred communication method..."
+      },
+      "placeholders": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john.doe@example.com",
+        "phone": "+421 901 234 567"
+      },
+      "sidebar": {
+        "autoFillTitle": "Auto-fill",
+        "autoFillDescription": "Your contact details will be automatically used in the following steps",
+        "contractInfo": "Contract Information",
+        "basicInfoComplete": "Basic information is complete",
+        "basicInfoIncomplete": "Complete basic information"
+      }
+    },
+    "companyInfo": {
+      "title": "Company Information",
+      "searchCompany": "Search",
+      "searchPlaceholder": "Enter company ID or company name",
+      "basicInfo": {
+        "title": "Basic Information",
+        "ico": "Company ID *",
+        "dic": "Tax ID",
+        "companyName": "Company Name *",
+        "registryType": "Registry Type *",
+        "isVatPayer": "I am a VAT payer",
+        "vatNumber": "VAT Number",
+        "court": "Court",
+        "section": "Section",
+        "insertNumber": "Insert Number"
+      },
+      "address": {
+        "title": "Registered Address",
+        "street": "Street and Number *",
+        "city": "City *",
+        "zipCode": "ZIP Code *"
+      },
+      "contactAddress": {
+        "title": "Correspondence Address",
+        "sameAsMain": "Same as registered address"
+      },
+      "contactPerson": {
+        "title": "Contact Person",
+        "headOfficeEquals": "Head office = operating location"
+      },
+      "placeholders": {
+        "ico": "12345678",
+        "companyName": "Business Company Ltd.",
+        "street": "Business Street 456",
+        "city": "Bratislava",
+        "zipCode": "01001"
+      }
+    },
+    "businessLocation": {
+      "title": "Business Locations",
+      "empty": {
+        "title": "No locations yet",
+        "description": "Add your first business location",
+        "addButton": "Add Location"
+      },
+      "addLocation": "Add New Location",
+      "edit": "Edit",
+      "delete": "Delete",
+      "businessDetails": {
+        "title": "Business Details",
+        "name": "Location Name *",
+        "mccCode": "MCC Code *",
+        "monthlyTurnover": "Monthly Turnover *",
+        "openingHours": "Opening Hours",
+        "setHours": "Set Hours",
+        "website": "Website",
+        "description": "Business Description"
+      },
+      "bankAccounts": {
+        "title": "Bank Accounts",
+        "addAccount": "Add Account",
+        "iban": "IBAN *",
+        "bank": "Bank *",
+        "currency": "Currency *"
+      },
+      "placeholders": {
+        "name": "Main Branch",
+        "website": "https://yourwebsite.com",
+        "description": "Description of main business activity...",
+        "iban": "SK89 0000 0000 0000 0000 0000"
+      }
+    },
+    "deviceSelection": {
+      "title": "Device and Service Selection",
+      "solutions": "Solutions",
+      "devices": "Devices",
+      "services": "Services", 
+      "selectedItems": "Selected Items",
+      "addDevice": "Add Device",
+      "addService": "Add Service",
+      "quantity": "Quantity",
+      "totalCost": "Total Cost",
+      "monthlyCost": "Monthly Cost"
+    },
+    "fees": {
+      "title": "Fees and Calculation",
+      "calculator": "Profit Calculator",
+      "monthlyRevenue": "Monthly Revenue",
+      "transactionFee": "Transaction Fee",
+      "expectedProfit": "Expected Profit"
+    },
+    "authorizedPersons": {
+      "title": "Authorized Persons",
+      "addPerson": "Add Person",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "actualOwners": {
+      "title": "Beneficial Owners",
+      "addOwner": "Add Owner",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "consents": {
+      "title": "Consents and Signature",
+      "dataProcessing": "Consent to personal data processing",
+      "gdpr": "GDPR consent",
+      "terms": "Terms and conditions consent",
+      "signature": "Electronic signature",
+      "signHere": "Sign here",
+      "clear": "Clear",
+      "required": "All consents are required"
+    }
+  },
+  "common": {
+    "required": "Required field",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "currency": "€",
+    "percentage": "%"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email format",
+    "phone": "Invalid phone format",
+    "minLength": "Minimum {{min}} characters",
+    "maxLength": "Maximum {{max}} characters"
+  },
+  "notifications": {
+    "contractCreated": "Contract has been created",
+    "contractCreationFailed": "Failed to create contract",
+    "dataSaved": "Data has been saved",
+    "dataLoadFailed": "Failed to load data",
+    "registrationComplete": "Registration completed!",
+    "signatureSaved": "Signature saved",
+    "signatureDescription": "Electronic signature has been successfully saved",
+    "onboardingDataSaved": "Onboarding data saved",
+    "onboardingDescription": "You can continue later from the same place",
+    "stepNotAccessible": "Complete the current step first",
+    "stepNotAccessibleDescription": "You cannot skip multiple steps at once"
+  }
+}

@@ -1,0 +1,236 @@
+
+{
+  "welcome": {
+    "title": "Registrácia bez stresu.",
+    "subtitle": "Vitaj v onboardingu budúcnosti.",
+    "login": "Prihlásiť sa",
+    "loginDescription": "Vyberte svoju rolu a pokračujte do systému",
+    "startOnboarding": "Začať onboarding",
+    "startOnboardingDescription": "Registrácia novej spoločnosti do systému",
+    "selectRole": "Vyberte svoju rolu",
+    "back": "Späť",
+    "roles": {
+      "admin": "Admin (ISO organizácia)",
+      "adminDescription": "Plný prístup k systému",
+      "partner": "Obchodný partner",
+      "partnerDescription": "Správa vlastných klientov",
+      "merchant": "Klient (merchant)",
+      "merchantDescription": "Zobrazenie vlastných dát"
+    },
+    "footer": "Utopia Research Lab 2025"
+  },
+  "onboarding": {
+    "header": {
+      "title": "Registračný proces",
+      "progress": "{{percentage}}% dokončené",
+      "stepsCompleted": "{{completed}}/{{total}} krokov",
+      "contractNumber": "Číslo zmluvy: {{number}}",
+      "creatingContract": "Vytvára sa zmluva..."
+    },
+    "navigation": {
+      "back": "Späť",
+      "next": "Ďalej",
+      "saveAndExit": "Uložiť a ukončiť",
+      "saveSignature": "Uložiť podpis",
+      "completeRegistration": "Dokončiť registráciu",
+      "submitting": "Odosiela sa..."
+    },
+    "stepper": {
+      "next": "Nasledujúci",
+      "inProgress": "Prebieha",
+      "partiallyComplete": "Čiastočne vyplnené",
+      "completed": "Dokončené"
+    },
+    "help": {
+      "title": "Potrebujete pomoc?",
+      "description": "V prípade otázok nás kontaktujte na čísle +421 911 123 456 alebo na info@utopia.sk"
+    },
+    "autoSave": {
+      "saving": "Ukladá sa...",
+      "saved": "Uložené",
+      "lastSaved": "Naposledy uložené: {{time}}",
+      "error": "Chyba pri ukladaní"
+    }
+  },
+  "steps": {
+    "contactInfo": {
+      "title": "Kontaktné údaje",
+      "description": "Vyplňte vaše základné kontaktné údaje. Tieto informácie sa použijú pre automatické predvyplnenie ostatných krokov registrácie.",
+      "features": [
+        "Automatické predvyplnenie kontaktných osôb",
+        "Synchronizácia údajov medzi krokmi", 
+        "Overenie emailovej adresy",
+        "Formátovanie telefónneho čísla"
+      ],
+      "fields": {
+        "firstName": "Meno *",
+        "lastName": "Priezvisko *",
+        "email": "E-mail *",
+        "phone": "Telefón *",
+        "salesNote": "Chcete nám niečo odkázať?",
+        "salesNotePlaceholder": "Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie..."
+      },
+      "placeholders": {
+        "firstName": "Ján",
+        "lastName": "Novák",
+        "email": "jan.novak@example.com",
+        "phone": "+421 901 234 567"
+      },
+      "sidebar": {
+        "autoFillTitle": "Automatické vyplnenie",
+        "autoFillDescription": "Vaše kontaktné údaje sa automaticky použijú v ďalších krokoch",
+        "contractInfo": "Informácie o zmluve",
+        "basicInfoComplete": "Základné údaje sú kompletné",
+        "basicInfoIncomplete": "Dokončite základné údaje"
+      }
+    },
+    "companyInfo": {
+      "title": "Údaje o spoločnosti",
+      "searchCompany": "Vyhľadať",
+      "searchPlaceholder": "Zadajte IČO alebo názov spoločnosti",
+      "basicInfo": {
+        "title": "Základné údaje",
+        "ico": "IČO *",
+        "dic": "DIČ",
+        "companyName": "Názov spoločnosti *",
+        "registryType": "Typ registra *",
+        "isVatPayer": "Som plátca DPH",
+        "vatNumber": "IČ DPH",
+        "court": "Súd",
+        "section": "Oddiel",
+        "insertNumber": "Vložka číslo"
+      },
+      "address": {
+        "title": "Adresa sídla",
+        "street": "Ulica a číslo *",
+        "city": "Mesto *",
+        "zipCode": "PSČ *"
+      },
+      "contactAddress": {
+        "title": "Korešpondenčná adresa",
+        "sameAsMain": "Rovnaká ako adresa sídla"
+      },
+      "contactPerson": {
+        "title": "Kontaktná osoba",
+        "headOfficeEquals": "Sídlo = prevádzkové miesto"
+      },
+      "placeholders": {
+        "ico": "12345678",
+        "companyName": "Obchodná spoločnosť s.r.o.",
+        "street": "Obchodná ulica 456",
+        "city": "Bratislava",
+        "zipCode": "01001"
+      }
+    },
+    "businessLocation": {
+      "title": "Prevádzkové miesta",
+      "empty": {
+        "title": "Zatiaľ žiadne prevádzky",
+        "description": "Pridajte svoju prvú prevádzkovou lokalitu",
+        "addButton": "Pridať prevádzku"
+      },
+      "addLocation": "Pridať novú prevádzku",
+      "edit": "Upraviť",
+      "delete": "Odstrániť",
+      "businessDetails": {
+        "title": "Detaily prevádzky",
+        "name": "Názov prevádzky *",
+        "mccCode": "MCC kód *",
+        "monthlyTurnover": "Mesačný obrat *",
+        "openingHours": "Otváracie hodiny",
+        "setHours": "Nastaviť hodiny",
+        "website": "Webová stránka",
+        "description": "Popis činnosti"
+      },
+      "bankAccounts": {
+        "title": "Bankové účty",
+        "addAccount": "Pridať účet",
+        "iban": "IBAN *",
+        "bank": "Banka *",
+        "currency": "Mena *"
+      },
+      "placeholders": {
+        "name": "Hlavná pobočka",
+        "website": "https://vasastranka.sk",
+        "description": "Popis hlavnej činnosti prevádzky...",
+        "iban": "SK89 0000 0000 0000 0000 0000"
+      }
+    },
+    "deviceSelection": {
+      "title": "Výber zariadení a služieb",
+      "solutions": "Riešenia",
+      "devices": "Zariadenia", 
+      "services": "Služby",
+      "selectedItems": "Vybrané položky",
+      "addDevice": "Pridať zariadenie",
+      "addService": "Pridať službu",
+      "quantity": "Množstvo",
+      "totalCost": "Celkové náklady",
+      "monthlyCost": "Mesačné náklady"
+    },
+    "fees": {
+      "title": "Poplatky a kalkulácia",
+      "calculator": "Kalkulačka zisku",
+      "monthlyRevenue": "Mesačné tržby",
+      "transactionFee": "Transakčný poplatok",
+      "expectedProfit": "Očakávaný zisk"
+    },
+    "authorizedPersons": {
+      "title": "Oprávnené osoby",
+      "addPerson": "Pridať osobu",
+      "edit": "Upraviť",
+      "delete": "Odstrániť"
+    },
+    "actualOwners": {
+      "title": "Skutoční majitelia",
+      "addOwner": "Pridať majiteľa",
+      "edit": "Upraviť", 
+      "delete": "Odstrániť"
+    },
+    "consents": {
+      "title": "Súhlasy a podpis",
+      "dataProcessing": "Súhlas so spracovaním osobných údajov",
+      "gdpr": "Súhlas s GDPR",
+      "terms": "Súhlas s obchodnými podmienkami",
+      "signature": "Elektronický podpis",
+      "signHere": "Podpíšte sa tu",
+      "clear": "Vymazať",
+      "required": "Všetky súhlasy sú povinné"
+    }
+  },
+  "common": {
+    "required": "Povinné pole",
+    "save": "Uložiť",
+    "cancel": "Zrušiť",
+    "edit": "Upraviť",
+    "delete": "Odstrániť",
+    "add": "Pridať",
+    "close": "Zavrieť",
+    "confirm": "Potvrdiť",
+    "loading": "Načítava sa...",
+    "error": "Chyba",
+    "success": "Úspech",
+    "currency": "€",
+    "percentage": "%"
+  },
+  "validation": {
+    "required": "Toto pole je povinné",
+    "email": "Neplatný formát e-mailu",
+    "phone": "Neplatný formát telefónu",
+    "minLength": "Minimálne {{min}} znakov",
+    "maxLength": "Maximálne {{max}} znakov"
+  },
+  "notifications": {
+    "contractCreated": "Zmluva bola vytvorená",
+    "contractCreationFailed": "Nepodarilo sa vytvoriť zmluvu",
+    "dataSaved": "Údaje boli uložené",
+    "dataLoadFailed": "Nepodarilo sa načítať údaje",
+    "registrationComplete": "Registrácia dokončená!",
+    "signatureSaved": "Podpis uložený",
+    "signatureDescription": "Elektronický podpis bol úspešne uložený",
+    "onboardingDataSaved": "Onboarding údaje uložené",
+    "onboardingDescription": "Môžete pokračovať neskôr z rovnakého miesta",
+    "stepNotAccessible": "Najprv dokončite aktuálny krok",
+    "stepNotAccessibleDescription": "Nemôžete preskočiť viacero krokov naraz"
+  }
+}
