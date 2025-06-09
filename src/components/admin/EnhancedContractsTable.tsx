@@ -49,7 +49,7 @@ const EnhancedContractsTable = () => {
   // Filter contracts based on search term and status
   const filteredContracts = contracts?.filter((contract: ContractWithInfo) => {
     const matchesSearch = 
-      contract.contract_number.toString().includes(searchTerm) ||
+      contract.contract_number.includes(searchTerm) || // Changed from toString() since it's already a string
       contract.contact_info?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contract.contact_info?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contract.contact_info?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -220,7 +220,7 @@ const EnhancedContractsTable = () => {
                     <TableCell>
                       <ContractActionsDropdown 
                         contractId={contract.id} 
-                        contractNumber={contract.contract_number}
+                        contractNumber={contract.contract_number} // Already a string
                       />
                     </TableCell>
                   </TableRow>

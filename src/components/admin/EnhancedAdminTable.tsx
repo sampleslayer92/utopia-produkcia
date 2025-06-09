@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -117,6 +116,17 @@ const EnhancedAdminTable = () => {
       if (from && contractDate < from) return false;
       if (to && contractDate > to) return false;
     }
+    if (filters?.search) {
+      const searchTerm = filters.search.toLowerCase();
+      return (
+        contract.contract_number.includes(searchTerm) ||
+        contract.clientName.toLowerCase().includes(searchTerm) ||
+        contract.salesPerson.toLowerCase().includes(searchTerm) ||
+        contract.contractType.toLowerCase().includes(searchTerm) ||
+        contract.contact_info?.email?.toLowerCase().includes(searchTerm)
+      );
+    }
+
     return true;
   });
 

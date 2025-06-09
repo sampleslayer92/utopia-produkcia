@@ -95,8 +95,8 @@ const extractSingleRecord = (data: any) => {
   return Array.isArray(data) ? null : data;
 };
 
-// Define valid database status types - updated to match actual database enum
-type DatabaseStatus = 'draft' | 'submitted' | 'in_review' | 'approved' | 'rejected' | 'completed' | 'signed';
+// Define valid database status types - match actual database enum exactly
+type DatabaseStatus = 'draft' | 'submitted' | 'approved' | 'rejected';
 
 // Map UI filter values to database enum values
 const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
@@ -104,11 +104,10 @@ const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
     'draft': 'draft',
     'submitted': 'submitted',
     'opened': 'submitted', // Map 'opened' to existing status
-    'viewed': 'in_review', // Map 'viewed' to existing status
+    'viewed': 'submitted', // Map 'viewed' to existing status  
     'approved': 'approved',
     'rejected': 'rejected',
-    'completed': 'completed',
-    'signed': 'signed'
+    // Remove unsupported statuses for now
   };
   return statusMap[uiStatus] || null;
 };
