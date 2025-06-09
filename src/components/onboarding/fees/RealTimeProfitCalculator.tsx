@@ -3,7 +3,7 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calculator, TrendingUp, TrendingDown } from "lucide-react";
+import { Calculator, TrendingUp, TrendingDown, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { OnboardingData, ItemBreakdown } from "@/types/onboarding";
 import { formatCurrency, formatCurrencyWithColor, formatPercentage } from "../utils/currencyUtils";
@@ -17,9 +17,8 @@ interface RealTimeProfitCalculatorProps {
 const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculatorProps) => {
   const { t } = useTranslation('forms');
   
-  // Local state for inputs with debounced updates
-  const [localRegulatedRate, setLocalRegulatedRate] = useState(data.fees.regulatedCards);
-  const [localUnregulatedRate, setLocalUnregulatedRate] = useState(data.fees.unregulatedCards);
+  // Local state for unified MIF++ rate with debounced updates
+  const [localMifRate, setLocalMifRate] = useState(data.fees.regulatedCards);
 
   // Calculate monthly turnover from all business locations (using both old and new field names for compatibility)
   const monthlyTurnover = useMemo(() => {
@@ -58,21 +57,25 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
     }, 0);
   }, [data.deviceSelection.dynamicCards]);
 
-  // Real-time calculations
+  // Real-time calculations with unified MIF++ rate
   const calculations = useMemo(() => {
-    const effectiveRegulated = Math.max(0, localRegulatedRate - 0.2);
-    const effectiveUnregulated = Math.max(0, localUnregulatedRate - 0.2);
+    const effectiveMifRate = Math.max(0, localMifRate - 0.2);
     
-    const regulatedFee = monthlyTurnover * (effectiveRegulated / 100);
-    const unregulatedFee = monthlyTurnover * (effectiveUnregulated / 100);
+    // Split turnover between regulated and unregulated cards (60/40 ratio)
+    const regulatedTurnover = monthlyTurnover * 0.6;
+    const unregulatedTurnover = monthlyTurnover * 0.4;
+    
+    const regulatedFee = regulatedTurnover * (effectiveMifRate / 100);
+    const unregulatedFee = unregulatedTurnover * (effectiveMifRate / 100);
     const transactionMargin = regulatedFee + unregulatedFee;
     const serviceMargin = totalCustomerPayments - totalCompanyCosts;
     const totalMonthlyProfit = transactionMargin + serviceMargin;
 
     console.log('Calculations updated:', {
       monthlyTurnover,
-      effectiveRegulated,
-      effectiveUnregulated,
+      effectiveMifRate,
+      regulatedTurnover,
+      unregulatedTurnover,
       regulatedFee,
       unregulatedFee,
       transactionMargin,
@@ -84,15 +87,17 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
       monthlyTurnover,
       totalCustomerPayments,
       totalCompanyCosts,
-      effectiveRegulated,
-      effectiveUnregulated,
+      effectiveRegulated: effectiveMifRate,
+      effectiveUnregulated: effectiveMifRate,
       regulatedFee,
       unregulatedFee,
       transactionMargin,
       serviceMargin,
-      totalMonthlyProfit
+      totalMonthlyProfit,
+      regulatedTurnover,
+      unregulatedTurnover
     };
-  }, [monthlyTurnover, totalCustomerPayments, totalCompanyCosts, localRegulatedRate, localUnregulatedRate]);
+  }, [monthlyTurnover, totalCustomerPayments, totalCompanyCosts, localMifRate]);
 
   // Force re-calculation when business locations change
   useEffect(() => {
@@ -100,7 +105,7 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
     console.log('Current business locations:', data.businessLocations);
   }, [data.businessLocations]);
 
-  // Debounced update to global state
+  // Debounced update to global state (both regulated and unregulated get the same rate)
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       // Create detailed breakdowns for compatibility
@@ -137,8 +142,8 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
       updateData({
         fees: {
           ...data.fees,
-          regulatedCards: localRegulatedRate,
-          unregulatedCards: localUnregulatedRate,
+          regulatedCards: localMifRate,
+          unregulatedCards: localMifRate, // Both use the same rate now
           calculatorResults: {
             ...calculations,
             customerPaymentBreakdown,
@@ -149,16 +154,11 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [localRegulatedRate, localUnregulatedRate, calculations, data.deviceSelection.dynamicCards, data.fees, updateData]);
+  }, [localMifRate, calculations, data.deviceSelection.dynamicCards, data.fees, updateData]);
 
-  const handleRegulatedRateChange = useCallback((value: string) => {
+  const handleMifRateChange = useCallback((value: string) => {
     const numValue = parseFloat(value) || 0;
-    setLocalRegulatedRate(numValue);
-  }, []);
-
-  const handleUnregulatedRateChange = useCallback((value: string) => {
-    const numValue = parseFloat(value) || 0;
-    setLocalUnregulatedRate(numValue);
+    setLocalMifRate(numValue);
   }, []);
 
   // Show turnover breakdown for transparency
@@ -216,50 +216,50 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
               </div>
             </div>
 
-            {/* Regulated Cards Rate */}
+            {/* Unified MIF++ Rate */}
             <div className="space-y-2">
-              <Label htmlFor="regulatedCards">
-                {t('fees.calculator.inputs.regulatedCards.label')}
+              <Label htmlFor="mifRate" className="flex items-center gap-2">
+                {t('fees.calculator.inputs.mifRate.label')}
+                <Info className="h-4 w-4 text-slate-400" />
               </Label>
               <Input
-                id="regulatedCards"
+                id="mifRate"
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                value={localRegulatedRate}
-                onChange={(e) => handleRegulatedRateChange(e.target.value)}
+                value={localMifRate}
+                onChange={(e) => handleMifRateChange(e.target.value)}
                 className="border-slate-300 focus:border-green-500"
-                placeholder={t('fees.calculator.inputs.regulatedCards.placeholder')}
+                placeholder={t('fees.calculator.inputs.mifRate.placeholder')}
               />
-              <p className="text-sm text-green-600">
-                {t('fees.calculator.inputs.regulatedCards.effectiveRate', { 
-                  rate: formatPercentage(calculations.effectiveRegulated) 
-                })}
-              </p>
+              <div className="space-y-1 text-sm">
+                <p className="text-green-600">
+                  {t('fees.calculator.inputs.mifRate.effectiveRate', { 
+                    rate: formatPercentage(calculations.effectiveRegulated) 
+                  })}
+                </p>
+                <p className="text-xs text-slate-500">
+                  {t('fees.calculator.inputs.mifRate.description')}
+                </p>
+              </div>
             </div>
 
-            {/* Unregulated Cards Rate */}
-            <div className="space-y-2">
-              <Label htmlFor="unregulatedCards">
-                {t('fees.calculator.inputs.unregulatedCards.label')}
-              </Label>
-              <Input
-                id="unregulatedCards"
-                type="number"
-                min="0"
-                max="100"
-                step="0.01"
-                value={localUnregulatedRate}
-                onChange={(e) => handleUnregulatedRateChange(e.target.value)}
-                className="border-slate-300 focus:border-green-500"
-                placeholder={t('fees.calculator.inputs.unregulatedCards.placeholder')}
-              />
-              <p className="text-sm text-green-600">
-                {t('fees.calculator.inputs.unregulatedCards.effectiveRate', { 
-                  rate: formatPercentage(calculations.effectiveUnregulated) 
-                })}
-              </p>
+            {/* Turnover Distribution Info */}
+            <div className="bg-blue-50 p-3 rounded-lg">
+              <h4 className="text-sm font-medium text-blue-900 mb-2">
+                {t('fees.calculator.inputs.turnoverDistribution.title')}
+              </h4>
+              <div className="text-xs text-blue-700 space-y-1">
+                <p>• {t('fees.calculator.inputs.turnoverDistribution.regulated', { 
+                  amount: formatCurrency(calculations.regulatedTurnover),
+                  percentage: '60%'
+                })}</p>
+                <p>• {t('fees.calculator.inputs.turnoverDistribution.unregulated', { 
+                  amount: formatCurrency(calculations.unregulatedTurnover),
+                  percentage: '40%'
+                })}</p>
+              </div>
             </div>
           </div>
 

@@ -1,3 +1,4 @@
+
 {
   "contactInfo": {
     "title": "Contact Information",
@@ -463,15 +464,16 @@
           "breakdown": "Breakdown:",
           "noTurnoverWarning": "⚠️ No turnover entered in business locations (Step 3)"
         },
-        "regulatedCards": {
-          "label": "MIF++ Regulated Cards (%)",
+        "mifRate": {
+          "label": "MIF++ Rate (%)",
           "placeholder": "0.90",
-          "effectiveRate": "→ Effective rate: {rate}"
+          "effectiveRate": "→ Effective rate: {rate}",
+          "description": "Unified rate for both regulated and unregulated cards (0.2% automatically deducted)"
         },
-        "unregulatedCards": {
-          "label": "MIF++ Unregulated Cards (%)",
-          "placeholder": "1.50",
-          "effectiveRate": "→ Effective rate: {rate}"
+        "turnoverDistribution": {
+          "title": "Turnover Distribution",
+          "regulated": "Regulated cards ({percentage}): {amount}",
+          "unregulated": "Unregulated cards ({percentage}): {amount}"
         }
       },
       "results": {

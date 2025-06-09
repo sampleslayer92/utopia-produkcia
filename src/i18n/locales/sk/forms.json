@@ -1,3 +1,4 @@
+
 {
   "contactInfo": {
     "title": "Kontaktné údaje",
@@ -463,15 +464,16 @@
           "breakdown": "Rozklad:",
           "noTurnoverWarning": "⚠️ Žiadny obrat nie je zadaný v prevádzkach (Krok 3)"
         },
-        "regulatedCards": {
-          "label": "MIF++ regulované karty (%)",
+        "mifRate": {
+          "label": "MIF++ sadzba (%)",
           "placeholder": "0.90",
-          "effectiveRate": "→ Efektívna provízia: {rate}"
+          "effectiveRate": "→ Efektívna provízia: {rate}",
+          "description": "Jednotná sadzba pre regulované aj neregulované karty (automaticky sa odčíta 0,2%)"
         },
-        "unregulatedCards": {
-          "label": "MIF++ neregulované karty (%)",
-          "placeholder": "1.50",
-          "effectiveRate": "→ Efektívna provízia: {rate}"
+        "turnoverDistribution": {
+          "title": "Rozdelenie obratu",
+          "regulated": "Regulované karty ({percentage}): {amount}",
+          "unregulated": "Neregulované karty ({percentage}): {amount}"
         }
       },
       "results": {
