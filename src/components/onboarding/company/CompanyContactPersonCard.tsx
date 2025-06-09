@@ -22,26 +22,26 @@ const CompanyContactPersonCard = ({ data, updateCompanyInfo }: CompanyContactPer
       
       <div className="grid md:grid-cols-2 gap-6">
         <OnboardingInput
-          label={t('steps.contactInfo.fields.firstName')}
+          label={t('steps.companyInfo.contactPerson.fields.firstName')}
           value={data.companyInfo.contactPerson?.firstName || ''}
           onChange={(e) => updateCompanyInfo('contactPerson.firstName', e.target.value)}
-          placeholder={t('steps.contactInfo.placeholders.firstName')}
+          placeholder={t('steps.companyInfo.contactPerson.placeholders.firstName')}
         />
         
         <OnboardingInput
-          label={t('steps.contactInfo.fields.lastName')}
+          label={t('steps.companyInfo.contactPerson.fields.lastName')}
           value={data.companyInfo.contactPerson?.lastName || ''}
           onChange={(e) => updateCompanyInfo('contactPerson.lastName', e.target.value)}
-          placeholder={t('steps.contactInfo.placeholders.lastName')}
+          placeholder={t('steps.companyInfo.contactPerson.placeholders.lastName')}
         />
       </div>
       
       <OnboardingInput
-        label={t('steps.contactInfo.fields.email')}
+        label={t('steps.companyInfo.contactPerson.fields.email')}
         type="email"
         value={data.companyInfo.contactPerson?.email || ''}
         onChange={(e) => updateCompanyInfo('contactPerson.email', e.target.value)}
-        placeholder={t('steps.contactInfo.placeholders.email')}
+        placeholder={t('steps.companyInfo.contactPerson.placeholders.email')}
       />
       
       <PhoneNumberInput

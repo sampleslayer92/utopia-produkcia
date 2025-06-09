@@ -1,4 +1,3 @@
-
 {
   "steps": {
     "contactInfo": {
@@ -28,8 +27,16 @@
         "contractNumber": "Contract number: {number}"
       },
       "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
         "salesNote": "Sales note",
         "salesNotePlaceholder": "Additional information for the sales team..."
+      },
+      "placeholders": {
+        "firstName": "Your first name",
+        "lastName": "Your last name",
+        "email": "your@email.com"
       }
     },
     "companyInfo": {
@@ -85,7 +92,19 @@
       "contactPerson": {
         "title": "Contact Person",
         "isTechnicalPerson": "Is also technical person",
-        "headOfficeEquals": "Head office = business location"
+        "headOfficeEquals": "Head office = business location",
+        "fields": {
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "email": "Email",
+          "phone": "Phone"
+        },
+        "placeholders": {
+          "firstName": "Contact person first name",
+          "lastName": "Contact person last name",
+          "email": "email@company.com",
+          "phone": "Phone number"
+        }
       }
     },
     "businessLocation": {

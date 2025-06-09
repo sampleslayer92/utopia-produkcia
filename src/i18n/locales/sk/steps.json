@@ -1,4 +1,3 @@
-
 {
   "steps": {
     "contactInfo": {
@@ -28,8 +27,16 @@
         "contractNumber": "Číslo zmluvy: {number}"
       },
       "fields": {
+        "firstName": "Meno",
+        "lastName": "Priezvisko",
+        "email": "Email",
         "salesNote": "Poznámka pre obchod",
         "salesNotePlaceholder": "Doplňujúce informácie pre obchodný tím..."
+      },
+      "placeholders": {
+        "firstName": "Vaše meno",
+        "lastName": "Vaše priezvisko",
+        "email": "vas@email.sk"
       }
     },
     "companyInfo": {
@@ -85,7 +92,19 @@
       "contactPerson": {
         "title": "Kontaktná osoba",
         "isTechnicalPerson": "Je zároveň technická osoba",
-        "headOfficeEquals": "Sídlo = miesto podnikania"
+        "headOfficeEquals": "Sídlo = miesto podnikania",
+        "fields": {
+          "firstName": "Meno",
+          "lastName": "Priezvisko",
+          "email": "Email",
+          "phone": "Telefón"
+        },
+        "placeholders": {
+          "firstName": "Meno kontaktnej osoby",
+          "lastName": "Priezvisko kontaktnej osoby",
+          "email": "email@spolocnost.sk",
+          "phone": "Telefónne číslo"
+        }
       }
     },
     "businessLocation": {
