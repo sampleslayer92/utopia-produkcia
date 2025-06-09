@@ -1,15 +1,12 @@
 
-import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { DeviceCard, ServiceCard, AddonCard } from "@/types/onboarding";
-import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
+import { DeviceCard, ServiceCard } from "@/types/onboarding";
 import { useTranslation } from "react-i18next";
 import EnhancedAddonManager from "./EnhancedAddonManager";
+import ProductForm from "./ProductDetailModal/ProductForm";
+import ProductModalActions from "./ProductDetailModal/ProductModalActions";
+import { useProductForm } from "./ProductDetailModal/hooks/useProductForm";
+import { createProductCard } from "./ProductDetailModal/utils/productSaveUtils";
 
 interface ProductDetailModalProps {
   isOpen: boolean;
@@ -32,82 +29,25 @@ const ProductDetailModal = ({
 }: ProductDetailModalProps) => {
   const { t } = useTranslation('forms');
   
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    count: 1,
-    monthlyFee: 0,
-    companyCost: 0,
-    customValue: ''
-  });
-  
-  const [selectedAddons, setSelectedAddons] = useState<AddonCard[]>([]);
-
-  // Generate proper UUID for new products
-  const generateUUID = () => {
-    return crypto.randomUUID();
-  };
-
-  useEffect(() => {
-    if (mode === 'add' && product) {
-      // For new products, use the template but generate new UUID
-      setFormData({
-        name: product.name || '',
-        description: product.description || '',
-        count: 1,
-        monthlyFee: product.monthlyFee || 0,
-        companyCost: product.companyCost || 0,
-        customValue: ''
-      });
-      setSelectedAddons([]);
-    } else if (mode === 'edit' && editingCard) {
-      // For editing, preserve existing data
-      setFormData({
-        name: editingCard.name,
-        description: editingCard.description,
-        count: editingCard.count,
-        monthlyFee: editingCard.monthlyFee,
-        companyCost: editingCard.companyCost,
-        customValue: (editingCard as ServiceCard).customValue || ''
-      });
-      setSelectedAddons(editingCard.addons || []);
-    }
-  }, [mode, product, editingCard, isOpen]);
+  const {
+    formData,
+    selectedAddons,
+    updateField,
+    handleAddAddon,
+    handleRemoveAddon,
+    handleUpdateAddon
+  } = useProductForm({ mode, product, editingCard, isOpen });
 
   const handleSave = () => {
-    console.log('Saving product with data:', formData);
-    
     try {
-      const baseCard = {
-        name: formData.name,
-        description: formData.description,
-        count: formData.count,
-        monthlyFee: formData.monthlyFee,
-        companyCost: formData.companyCost,
-        addons: selectedAddons
-      };
-
-      let savedCard: DeviceCard | ServiceCard;
-
-      if (productType === 'device') {
-        savedCard = {
-          ...baseCard,
-          id: mode === 'edit' ? editingCard!.id : generateUUID(),
-          type: 'device',
-          category: product?.category || editingCard?.category || 'terminal',
-          image: product?.image || (editingCard as DeviceCard)?.image,
-          catalogId: product?.id || editingCard?.catalogId // Keep reference to original catalog item
-        } as DeviceCard;
-      } else {
-        savedCard = {
-          ...baseCard,
-          id: mode === 'edit' ? editingCard!.id : generateUUID(),
-          type: 'service',
-          category: product?.category || editingCard?.category || 'software',
-          customValue: formData.customValue,
-          catalogId: product?.id || editingCard?.catalogId // Keep reference to original catalog item
-        } as ServiceCard;
-      }
+      const savedCard = createProductCard({
+        formData,
+        selectedAddons,
+        productType,
+        mode,
+        product,
+        editingCard
+      });
 
       console.log('Generated card with UUID:', savedCard.id);
       onSave(savedCard);
@@ -116,24 +56,6 @@ const ProductDetailModal = ({
       console.error('Error saving product:', error);
       // TODO: Add toast notification for error
     }
-  };
-
-  const updateField = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleAddAddon = (addon: AddonCard) => {
-    setSelectedAddons(prev => [...prev, addon]);
-  };
-
-  const handleRemoveAddon = (addonId: string) => {
-    setSelectedAddons(prev => prev.filter(addon => addon.id !== addonId));
-  };
-
-  const handleUpdateAddon = (addonId: string, updatedAddon: AddonCard) => {
-    setSelectedAddons(prev => 
-      prev.map(addon => addon.id === addonId ? updatedAddon : addon)
-    );
   };
 
   return (
@@ -146,54 +68,8 @@ const ProductDetailModal = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Product Details */}
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{t('deviceSelection.modal.quantity')}</Label>
-                <Input
-                  type="number"
-                  min="1"
-                  value={formData.count}
-                  onChange={(e) => updateField('count', parseInt(e.target.value) || 1)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t('deviceSelection.modal.monthlyFee')}</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.monthlyFee}
-                  onChange={(e) => updateField('monthlyFee', parseFloat(e.target.value) || 0)}
-                />
-              </div>
-            </div>
+          <ProductForm formData={formData} onUpdateField={updateField} />
 
-            <div className="space-y-2">
-              <Label>{t('deviceSelection.modal.companyCost')}</Label>
-              <Input
-                type="number"
-                min="0"
-                step="0.01"
-                value={formData.companyCost}
-                onChange={(e) => updateField('companyCost', parseFloat(e.target.value) || 0)}
-              />
-            </div>
-
-            {formData.name === 'Iný' && (
-              <div className="space-y-2">
-                <Label>{t('deviceSelection.modal.customSpecification')}</Label>
-                <Textarea
-                  value={formData.customValue}
-                  onChange={(e) => updateField('customValue', e.target.value)}
-                  placeholder={t('deviceSelection.modal.customSpecificationPlaceholder')}
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Addons Section */}
           <EnhancedAddonManager
             selectedAddons={selectedAddons}
             onAddAddon={handleAddAddon}
@@ -201,15 +77,11 @@ const ProductDetailModal = ({
             onUpdateAddon={handleUpdateAddon}
           />
 
-          {/* Actions */}
-          <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button variant="outline" onClick={onClose}>
-              {t('deviceSelection.modal.cancel')}
-            </Button>
-            <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
-              {mode === 'add' ? t('deviceSelection.modal.add') : t('deviceSelection.modal.save')}
-            </Button>
-          </div>
+          <ProductModalActions
+            mode={mode}
+            onSave={handleSave}
+            onClose={onClose}
+          />
         </div>
       </DialogContent>
     </Dialog>
