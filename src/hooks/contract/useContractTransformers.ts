@@ -1,4 +1,26 @@
+
 import { OnboardingData, BankAccount, OpeningHours } from '@/types/onboarding';
+
+// Helper function to convert database salutation to frontend format
+const convertSalutation = (dbSalutation: string): 'Pan' | 'Pani' | undefined => {
+  if (dbSalutation === 'Pan' || dbSalutation === 'Pani') {
+    return dbSalutation;
+  }
+  return undefined;
+};
+
+// Helper function to convert database registry type to frontend format
+const convertRegistryType = (dbRegistryType: string): 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' => {
+  switch (dbRegistryType) {
+    case 'public':
+      return 'Nezisková organizácia';
+    case 'business':
+      return 'S.r.o.';
+    case 'other':
+    default:
+      return 'Živnosť';
+  }
+};
 
 export const transformContractData = (
   contract: any,
@@ -12,6 +34,19 @@ export const transformContractData = (
   actualOwners: any[],
   consents: any
 ): OnboardingData => {
+  console.log('Transforming contract data:', {
+    contract,
+    contactInfo,
+    companyInfo,
+    businessLocations,
+    deviceSelection,
+    contractItems,
+    contractCalculations,
+    authorizedPersons,
+    actualOwners,
+    consents
+  });
+
   // Transform contract items and addons into dynamic cards
   const transformedDynamicCards = contractItems?.map(item => {
     const transformedAddons = item.contract_item_addons?.map((addon: any) => ({
@@ -28,7 +63,7 @@ export const transformContractData = (
 
     if (item.item_type === 'device') {
       return {
-        id: item.id, // Use database ID instead of item_id
+        id: item.id,
         type: 'device' as const,
         category: item.category,
         name: item.name,
@@ -38,11 +73,11 @@ export const transformContractData = (
         companyCost: Number(item.company_cost) || 0,
         specifications: [],
         addons: transformedAddons,
-        itemType: 'device' // Add for consistency
+        itemType: 'device'
       };
     } else {
       return {
-        id: item.id, // Use database ID instead of item_id
+        id: item.id,
         type: 'service' as const,
         category: item.category,
         name: item.name,
@@ -52,7 +87,7 @@ export const transformContractData = (
         companyCost: Number(item.company_cost) || 0,
         customValue: item.custom_value || undefined,
         addons: transformedAddons,
-        itemType: 'service' // Add for consistency
+        itemType: 'service'
       };
     }
   }) || [];
@@ -144,24 +179,32 @@ export const transformContractData = (
     companyCostBreakdown: contractCalculations.calculation_data?.companyCostBreakdown || []
   } : undefined;
 
-  return {
+  const transformedData: OnboardingData = {
     contactInfo: contactInfo ? {
-      salutation: (contactInfo.salutation || '') as 'Pan' | 'Pani' | '',
+      salutation: convertSalutation(contactInfo.salutation || ''),
       firstName: contactInfo.first_name || '',
       lastName: contactInfo.last_name || '',
       email: contactInfo.email || '',
       phone: contactInfo.phone || '',
       phonePrefix: contactInfo.phone_prefix || '+421',
-      salesNote: contactInfo.sales_note || ''
+      salesNote: contactInfo.sales_note || '',
+      userRoles: contactInfo.user_role ? [contactInfo.user_role] : []
     } : {
-      salutation: '', firstName: '', lastName: '', email: '', phone: '', phonePrefix: '+421', salesNote: ''
+      salutation: undefined, 
+      firstName: '', 
+      lastName: '', 
+      email: '', 
+      phone: '', 
+      phonePrefix: '+421', 
+      salesNote: '',
+      userRoles: []
     },
     
     companyInfo: companyInfo ? {
       ico: companyInfo.ico || '',
       dic: companyInfo.dic || '',
       companyName: companyInfo.company_name || '',
-      registryType: (companyInfo.registry_type || 'other') as 'public' | 'business' | 'other' | '',
+      registryType: convertRegistryType(companyInfo.registry_type || 'other'),
       isVatPayer: companyInfo.is_vat_payer || false,
       vatNumber: companyInfo.vat_number || '',
       court: companyInfo.court || '',
@@ -173,11 +216,12 @@ export const transformContractData = (
         zipCode: companyInfo.address_zip_code || ''
       },
       contactAddress: {
-        street: companyInfo.contact_address_street || '',
-        city: companyInfo.contact_address_city || '',
-        zipCode: companyInfo.address_zip_code || ''
+        street: companyInfo.contact_address_street || companyInfo.address_street || '',
+        city: companyInfo.contact_address_city || companyInfo.address_city || '',
+        zipCode: companyInfo.contact_address_zip_code || companyInfo.address_zip_code || ''
       },
       contactAddressSameAsMain: companyInfo.contact_address_same_as_main ?? true,
+      headOfficeEqualsOperatingAddress: false,
       contactPerson: {
         firstName: companyInfo.contact_person_first_name || '',
         lastName: companyInfo.contact_person_last_name || '',
@@ -186,10 +230,11 @@ export const transformContractData = (
         isTechnicalPerson: companyInfo.contact_person_is_technical ?? false
       }
     } : {
-      ico: '', dic: '', companyName: '', registryType: 'other', isVatPayer: false, vatNumber: '', court: '', section: '', insertNumber: '',
+      ico: '', dic: '', companyName: '', registryType: 'Živnosť', isVatPayer: false, vatNumber: '', court: '', section: '', insertNumber: '',
       address: { street: '', city: '', zipCode: '' },
       contactAddress: { street: '', city: '', zipCode: '' },
       contactAddressSameAsMain: true,
+      headOfficeEqualsOperatingAddress: false,
       contactPerson: { firstName: '', lastName: '', email: '', phone: '', isTechnicalPerson: false }
     },
     
@@ -222,20 +267,20 @@ export const transformContractData = (
           city: loc.address_city,
           zipCode: loc.address_zip_code
         },
-        iban: loc.iban, // Keep for backward compatibility
+        iban: loc.iban,
         bankAccounts: [defaultBankAccount],
         contactPerson: {
           name: loc.contact_person_name,
           phone: loc.contact_person_phone,
           email: loc.contact_person_email
         },
-        businessSector: loc.business_sector, // Keep for backward compatibility
+        businessSector: loc.business_sector,
         businessSubject: loc.business_sector || '',
         mccCode: '',
-        estimatedTurnover: loc.estimated_turnover, // Keep for backward compatibility
+        estimatedTurnover: loc.estimated_turnover,
         monthlyTurnover: loc.estimated_turnover || 0,
         averageTransaction: loc.average_transaction,
-        openingHours: loc.opening_hours, // Keep for backward compatibility
+        openingHours: loc.opening_hours,
         openingHoursDetailed: defaultOpeningHours,
         seasonality: loc.seasonality,
         seasonalWeeks: loc.seasonal_weeks,
@@ -248,9 +293,6 @@ export const transformContractData = (
       dynamicCards: finalDynamicCards,
       note: deviceSelection?.note || ''
     },
-    
-    // Add contractItems for easy access in admin components
-    contractItems: finalDynamicCards,
     
     fees: {
       regulatedCards: deviceSelection?.mif_regulated_cards || 0.90,
@@ -275,6 +317,7 @@ export const transformContractData = (
       documentCountry: person.document_country,
       position: person.position,
       phone: person.phone,
+      phonePrefix: person.phone_prefix || '+421',
       email: person.email,
       isPoliticallyExposed: person.is_politically_exposed,
       isUSCitizen: person.is_us_citizen
@@ -303,6 +346,10 @@ export const transformContractData = (
       gdpr: false, terms: false, electronicCommunication: false, signatureDate: '', signingPersonId: ''
     },
     
+    visitedSteps: [],
     currentStep: 0
   };
+
+  console.log('Transformed onboarding data:', transformedData);
+  return transformedData;
 };

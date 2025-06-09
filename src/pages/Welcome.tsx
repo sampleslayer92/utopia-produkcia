@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Users, Building2, User, ArrowRight, UserCheck } from "lucide-react";
+import { Users, Building2, User, ArrowRight, UserCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Welcome = () => {
@@ -35,12 +35,11 @@ const Welcome = () => {
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center mx-auto mb-4">
-              <CreditCard className="h-8 w-8 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-              Utopia
-            </h1>
+            <img 
+              src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+              alt="Utopia Logo" 
+              className="h-16 w-auto mx-auto mb-4"
+            />
             <p className="text-slate-600 mt-2">Vyberte svoju rolu</p>
           </div>
 
@@ -121,15 +120,19 @@ const Welcome = () => {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center mx-auto mb-6">
-            <CreditCard className="h-10 w-10 text-white" />
+          <img 
+            src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+            alt="Utopia Logo" 
+            className="h-20 w-auto mx-auto mb-8 animate-fade-in"
+          />
+          <div className="space-y-3">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent leading-tight animate-fade-in">
+              Registrácia bez stresu.
+            </h1>
+            <p className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-slate-600 to-slate-800 bg-clip-text text-transparent animate-fade-in">
+              Vitaj v onboardingu budúcnosti.
+            </p>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-3">
-            Utopia
-          </h1>
-          <p className="text-slate-600 text-lg">
-            Platobná platforma pre ISO organizácie, obchodných partnerov a klientov
-          </p>
         </div>
 
         {/* Main Options */}
@@ -163,7 +166,11 @@ const Welcome = () => {
             <CardContent className="p-8">
               <div className="flex items-center space-x-4">
                 <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <CreditCard className="h-7 w-7 text-white" />
+                  <img 
+                    src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+                    alt="Utopia Logo" 
+                    className="h-7 w-7 object-contain brightness-0 invert"
+                  />
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold text-slate-900 mb-1">
@@ -180,8 +187,12 @@ const Welcome = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-sm text-slate-500">
-          Demo verzia - bez skutočného prihlásenia
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100">
+            <span className="text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Utopia Research Lab 2025
+            </span>
+          </div>
         </div>
       </div>
     </div>

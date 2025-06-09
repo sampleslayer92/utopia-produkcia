@@ -1,44 +1,44 @@
 export interface ContactInfo {
-  salutation: 'Pan' | 'Pani' | '';
+  salutation?: 'Pan' | 'Pani';
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
   phonePrefix: string;
   salesNote?: string;
-  companyType?: 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' | '';
-  userRoles?: ('Majiteľ' | 'Konateľ' | 'Kontaktná osoba na prevádzku' | 'Kontaktná osoba pre technické záležitosti')[]; // Keep for backward compatibility
-  userRole?: 'Majiteľ' | 'Konateľ' | 'Prevádzkar' | ''; // Keep for backward compatibility
+  userRole?: string;
+  userRoles?: string[]; // Add support for multiple roles
+}
+
+export interface CompanyAddress {
+  street: string;
+  city: string;
+  zipCode: string;
+}
+
+export interface ContactPerson {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  isTechnicalPerson: boolean;
 }
 
 export interface CompanyInfo {
   ico: string;
   dic: string;
   companyName: string;
-  registryType: 'public' | 'business' | 'other' | '';
+  registryType: 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť';
   isVatPayer: boolean;
-  vatNumber: string;
-  court: string;
-  section: string;
-  insertNumber: string;
-  address: {
-    street: string;
-    city: string;
-    zipCode: string;
-  };
-  contactAddress?: {
-    street: string;
-    city: string;
-    zipCode: string;
-  };
+  vatNumber?: string;
+  court?: string;
+  section?: string;
+  insertNumber?: string;
+  address: CompanyAddress;
   contactAddressSameAsMain: boolean;
-  contactPerson: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    isTechnicalPerson: boolean;
-  };
+  contactAddress?: CompanyAddress;
+  headOfficeEqualsOperatingAddress: boolean; // New field for operating address sync
+  contactPerson: ContactPerson;
 }
 
 export interface BankAccount {
@@ -52,8 +52,8 @@ export interface BankAccount {
 
 export interface OpeningHours {
   day: 'Po' | 'Ut' | 'St' | 'Št' | 'Pi' | 'So' | 'Ne';
-  open: string; // 08:00
-  close: string; // 17:00
+  open: string;
+  close: string;
   otvorene: boolean;
 }
 
@@ -61,105 +61,89 @@ export interface BusinessLocation {
   id: string;
   name: string;
   hasPOS: boolean;
-  address: {
-    street: string;
-    city: string;
-    zipCode: string;
-  };
-  iban: string; // Keep for backward compatibility
-  bankAccounts: BankAccount[];
+  address: CompanyAddress;
+  iban: string;
+  bankAccounts?: BankAccount[];
   contactPerson: {
     name: string;
     email: string;
     phone: string;
   };
-  businessSector: string; // Keep for backward compatibility
-  businessSubject: string;
-  mccCode: string;
-  estimatedTurnover: number; // Keep for backward compatibility
-  monthlyTurnover: number;
+  businessSector: string;
+  businessSubject?: string;
+  mccCode?: string;
+  estimatedTurnover: number;
+  monthlyTurnover?: number;
   averageTransaction: number;
-  openingHours: string; // Keep for backward compatibility
-  openingHoursDetailed: OpeningHours[];
+  openingHours: string;
+  openingHoursDetailed?: OpeningHours[];
   seasonality: 'year-round' | 'seasonal';
   seasonalWeeks?: number;
-  assignedPersons: string[];
+  assignedPersons?: string[];
 }
 
-export interface AddonCard {
+export interface Addon {
   id: string;
-  type: 'addon';
-  category: 'sim' | 'docking' | 'case' | 'backup' | 'printer' | 'drawer';
+  type?: 'addon';
+  category: string;
   name: string;
-  description: string;
+  description?: string;
   monthlyFee: number;
   companyCost: number;
   isPerDevice: boolean;
   customQuantity?: number;
 }
 
+// Export AddonCard as alias for Addon
+export type AddonCard = Addon;
+
 export interface DeviceCard {
   id: string;
-  type: 'device';
+  type: 'device' | 'service';
   category: string;
   name: string;
-  description: string;
+  description?: string;
+  count: number;
+  monthlyFee: number;
+  companyCost: number;
+  addons: Addon[];
   image?: string;
-  count: number;
-  monthlyFee: number;
-  companyCost: number;
+  specifications?: string[];
   simCards?: number;
-  specifications: string[];
-  addons: AddonCard[];
-}
-
-export interface ServiceCard {
-  id: string;
-  type: 'service';
-  category: string;
-  name: string;
-  description: string;
-  count: number;
-  monthlyFee: number;
-  companyCost: number;
   customValue?: string;
-  addons: AddonCard[];
 }
 
-export type DynamicCard = DeviceCard | ServiceCard;
+// Export ServiceCard as alias for DeviceCard for backward compatibility
+export type ServiceCard = DeviceCard;
+
+// Add DynamicCard as alias for DeviceCard for backward compatibility
+export type DynamicCard = DeviceCard;
 
 export interface DeviceSelection {
   selectedSolutions: string[];
-  dynamicCards: Array<DeviceCard | ServiceCard>;
-  note: string;
+  dynamicCards: DeviceCard[];
+  note?: string;
 }
 
-export interface ItemBreakdown {
-  id: string;
-  name: string;
-  count: number;
-  unitPrice: number;
-  subtotal: number;
-  addons?: ItemBreakdown[];
+export interface CalculatorResults {
+  monthlyTurnover: number;
+  totalCustomerPayments: number;
+  totalCompanyCosts: number;
+  effectiveRegulated: number;
+  effectiveUnregulated: number;
+  regulatedFee: number;
+  unregulatedFee: number;
+  transactionMargin: number;
+  serviceMargin: number;
+  totalMonthlyProfit: number;
+  customerPaymentBreakdown?: any;
+  companyCostBreakdown?: any;
 }
 
 export interface Fees {
   regulatedCards: number;
   unregulatedCards: number;
-  calculatorResults?: {
-    monthlyTurnover: number;
-    totalCustomerPayments: number;
-    totalCompanyCosts: number;
-    effectiveRegulated: number;
-    effectiveUnregulated: number;
-    regulatedFee: number;
-    unregulatedFee: number;
-    transactionMargin: number;
-    serviceMargin: number;
-    totalMonthlyProfit: number;
-    customerPaymentBreakdown: ItemBreakdown[];
-    companyCostBreakdown: ItemBreakdown[];
-  };
+  calculatorResults?: CalculatorResults;
 }
 
 export interface AuthorizedPerson {
@@ -168,7 +152,8 @@ export interface AuthorizedPerson {
   lastName: string;
   email: string;
   phone: string;
-  maidenName: string;
+  phonePrefix: string; // Add phonePrefix field
+  maidenName?: string;
   birthDate: string;
   birthPlace: string;
   birthNumber: string;
@@ -182,13 +167,15 @@ export interface AuthorizedPerson {
   citizenship: string;
   isPoliticallyExposed: boolean;
   isUSCitizen: boolean;
+  documentFrontUrl?: string;
+  documentBackUrl?: string;
 }
 
 export interface ActualOwner {
   id: string;
   firstName: string;
   lastName: string;
-  maidenName: string;
+  maidenName?: string;
   birthDate: string;
   birthPlace: string;
   birthNumber: string;
@@ -201,11 +188,26 @@ export interface Consents {
   gdpr: boolean;
   terms: boolean;
   electronicCommunication: boolean;
-  signatureDate: string;
-  signingPersonId: string;
+  signatureDate?: string;
+  signingPersonId?: string;
+  signatureUrl?: string;
+}
+
+// Export ItemBreakdown interface for fee calculations
+export interface ItemBreakdown {
+  id: string;
+  name: string;
+  count: number;
+  unitPrice: number;
+  subtotal: number;
+  addons?: ItemBreakdown[];
 }
 
 export interface OnboardingData {
+  contractId?: string;
+  contractNumber?: string;
+  currentStep?: number;
+  visitedSteps: number[]; // Add visitedSteps field
   contactInfo: ContactInfo;
   companyInfo: CompanyInfo;
   businessLocations: BusinessLocation[];
@@ -214,8 +216,4 @@ export interface OnboardingData {
   authorizedPersons: AuthorizedPerson[];
   actualOwners: ActualOwner[];
   consents: Consents;
-  currentStep: number;
-  contractId?: string;
-  contractNumber?: string;
-  contractItems?: DynamicCard[];
 }

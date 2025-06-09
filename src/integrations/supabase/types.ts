@@ -73,7 +73,9 @@ export type Database = {
           citizenship: string
           contract_id: string | null
           created_at: string
+          document_back_url: string | null
           document_country: string
+          document_front_url: string | null
           document_issuer: string
           document_number: string
           document_type: Database["public"]["Enums"]["document_type"]
@@ -97,7 +99,9 @@ export type Database = {
           citizenship: string
           contract_id?: string | null
           created_at?: string
+          document_back_url?: string | null
           document_country: string
+          document_front_url?: string | null
           document_issuer: string
           document_number: string
           document_type: Database["public"]["Enums"]["document_type"]
@@ -121,7 +125,9 @@ export type Database = {
           citizenship?: string
           contract_id?: string | null
           created_at?: string
+          document_back_url?: string | null
           document_country?: string
+          document_front_url?: string | null
           document_issuer?: string
           document_number?: string
           document_type?: Database["public"]["Enums"]["document_type"]
@@ -322,6 +328,7 @@ export type Database = {
           gdpr_consent: boolean | null
           id: string
           signature_date: string | null
+          signature_url: string | null
           signing_person_id: string | null
           terms_consent: boolean | null
         }
@@ -332,6 +339,7 @@ export type Database = {
           gdpr_consent?: boolean | null
           id?: string
           signature_date?: string | null
+          signature_url?: string | null
           signing_person_id?: string | null
           terms_consent?: boolean | null
         }
@@ -342,6 +350,7 @@ export type Database = {
           gdpr_consent?: boolean | null
           id?: string
           signature_date?: string | null
+          signature_url?: string | null
           signing_person_id?: string | null
           terms_consent?: boolean | null
         }
@@ -780,7 +789,8 @@ export type Database = {
           full_name: string
           id: string
           is_active: boolean | null
-          role: string
+          profile_id: string | null
+          role: string | null
           updated_at: string | null
         }
         Insert: {
@@ -791,7 +801,8 @@ export type Database = {
           full_name: string
           id?: string
           is_active?: boolean | null
-          role?: string
+          profile_id?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -802,7 +813,8 @@ export type Database = {
           full_name?: string
           id?: string
           is_active?: boolean | null
-          role?: string
+          profile_id?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Relationships: [

@@ -6,6 +6,9 @@ import { OnboardingData, AuthorizedPerson } from "@/types/onboarding";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingSection from "./ui/OnboardingSection";
+import DocumentUpload from "./ui/DocumentUpload";
+import AutoFillSuggestions from "./ui/AutoFillSuggestions";
+import PhoneNumberInput from "./ui/PhoneNumberInput";
 import { useState } from "react";
 
 interface AuthorizedPersonsStepProps {
@@ -25,6 +28,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       lastName: '',
       email: '',
       phone: '',
+      phonePrefix: '+421', // Set default prefix
       maidenName: '',
       birthDate: '',
       birthPlace: '',
@@ -38,14 +42,15 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       documentCountry: 'Slovensko',
       citizenship: 'Slovensko',
       isPoliticallyExposed: false,
-      isUSCitizen: false
+      isUSCitizen: false,
+      documentFrontUrl: '',
+      documentBackUrl: ''
     };
 
     updateData({
       authorizedPersons: [...data.authorizedPersons, newPerson]
     });
     
-    // Automatically expand the new person
     setExpandedPersonId(newPerson.id);
   };
 
@@ -118,6 +123,13 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
           {/* Main content */}
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <OnboardingSection>
+              {/* Auto-fill suggestions */}
+              <AutoFillSuggestions 
+                data={data} 
+                updateData={updateData} 
+                currentStep={5} 
+              />
+
               {data.authorizedPersons.length === 0 && (
                 <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
                   <Users className="h-12 w-12 text-slate-400 mx-auto mb-4" />
@@ -213,11 +225,14 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                               placeholder="email@priklad.sk"
                             />
 
-                            <OnboardingInput
+                            <PhoneNumberInput
                               label="Telefón *"
-                              value={person.phone}
-                              onChange={(e) => updateAuthorizedPerson(person.id, 'phone', e.target.value)}
-                              placeholder="+421 123 456 789"
+                              phoneValue={person.phone}
+                              prefixValue={person.phonePrefix || '+421'}
+                              onPhoneChange={(value) => updateAuthorizedPerson(person.id, 'phone', value)}
+                              onPrefixChange={(value) => updateAuthorizedPerson(person.id, 'phonePrefix', value)}
+                              placeholder="123 456 789"
+                              required
                             />
                           </div>
 
@@ -319,6 +334,24 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                               value={person.documentCountry}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'documentCountry', e.target.value)}
                               placeholder="Slovensko"
+                            />
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-6 mt-6">
+                            <DocumentUpload
+                              label="Predná strana dokladu *"
+                              value={person.documentFrontUrl}
+                              onChange={(url) => updateAuthorizedPerson(person.id, 'documentFrontUrl', url)}
+                              personId={person.id}
+                              documentSide="front"
+                            />
+
+                            <DocumentUpload
+                              label="Zadná strana dokladu *"
+                              value={person.documentBackUrl}
+                              onChange={(url) => updateAuthorizedPerson(person.id, 'documentBackUrl', url)}
+                              personId={person.id}
+                              documentSide="back"
                             />
                           </div>
                         </div>

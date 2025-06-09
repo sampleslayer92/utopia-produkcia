@@ -33,7 +33,7 @@ const ContactInfoSidebar = ({
         </div>
         
         <p className="text-sm text-blue-800">
-          Zadajte svoje kontaktné údaje. Tieto informácie sa automaticky použijú vo všetkých potrebných sekciách onboarding procesu.
+          Vyberte svoju pozíciu v spoločnosti a zadajte kontaktné údaje. Tieto informácie sa automaticky použijú vo všetkých potrebných sekciách.
         </p>
 
         {contractId && contractNumber && (
@@ -49,7 +49,7 @@ const ContactInfoSidebar = ({
         <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
           <p className="font-medium mb-2">Automatické vyplnenie</p>
           <p className="mb-3">
-            Po vyplnení kontaktných údajov sa automaticky vytvorí:
+            Po vyplnení pozície a kontaktných údajov sa automaticky vytvorí:
           </p>
           <ul className="space-y-2">
             <li className="flex items-center gap-2">
@@ -71,14 +71,14 @@ const ContactInfoSidebar = ({
                 <CheckCircle className="h-3 w-3 text-green-600" /> : 
                 <Clock className="h-3 w-3 text-blue-500" />
               }
-              <span>Oprávnená osoba</span>
+              <span>Oprávnená osoba (iba Konateľ)</span>
             </li>
             <li className="flex items-center gap-2">
               {autoFillStatus.actualOwners ? 
                 <CheckCircle className="h-3 w-3 text-green-600" /> : 
                 <Clock className="h-3 w-3 text-blue-500" />
               }
-              <span>Skutočný majiteľ</span>
+              <span>Skutočný majiteľ (Majiteľ a Konateľ)</span>
             </li>
           </ul>
         </div>
@@ -90,7 +90,7 @@ const ContactInfoSidebar = ({
               <span className="font-medium">Automatické vyplnenie dokončené</span>
             </div>
             <p>
-              Vaše údaje boli automaticky použité vo všetkých potrebných sekciách. 
+              Vaše údaje boli automaticky použité v príslušných sekciách podľa vašej pozície. 
               Môžete ich neskôr upraviť v príslušných krokoch.
             </p>
           </div>
@@ -103,7 +103,7 @@ const ContactInfoSidebar = ({
               <span className="font-medium">Potrebné údaje</span>
             </div>
             <p>
-              Vyplňte meno, priezvisko, email a telefónne číslo pre automatické vyplnenie ostatných sekcií.
+              Vyplňte pozíciu, meno, priezvisko, email a telefónne číslo pre automatické vyplnenie ostatných sekcií.
             </p>
           </div>
         )}

@@ -37,12 +37,12 @@ export const useSimplifiedContactInfoLogic = (
            data.contactInfo.phone;
   };
 
-  // Auto-fill when basic info is complete
+  // Auto-fill when basic info is complete using our simplified logic
   useEffect(() => {
     if (isBasicInfoComplete()) {
       const autoFillUpdates = getAutoFillUpdatesSimplified(data.contactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
-        console.log('Auto-filling simplified from useEffect:', autoFillUpdates);
+        console.log('Auto-filling with simplified logic:', autoFillUpdates);
         updateData(autoFillUpdates);
         setHasAutoFilled(true);
       }
@@ -80,7 +80,6 @@ export const useSimplifiedContactInfoLogic = (
     if (data.contactInfo.lastName) newCompleted.add('lastName');
     if (data.contactInfo.email && isEmailValid(data.contactInfo.email)) newCompleted.add('email');
     if (data.contactInfo.phone) newCompleted.add('phone');
-    if (data.contactInfo.companyType) newCompleted.add('companyType');
     setCompletedFields(newCompleted);
   }, [data.contactInfo]);
 

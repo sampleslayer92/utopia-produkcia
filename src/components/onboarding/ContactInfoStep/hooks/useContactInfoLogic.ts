@@ -68,7 +68,7 @@ export const useContactInfoLogic = (
 
     // Apply auto-fill logic immediately if basic info is complete
     if (isBasicInfoComplete()) {
-      const autoFillUpdates = getAutoFillUpdates(roles, data.contactInfo, data);
+      const autoFillUpdates = getAutoFillUpdates(data.contactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
         console.log('Applying auto-fill updates:', autoFillUpdates);
         updateData(autoFillUpdates);
@@ -88,7 +88,7 @@ export const useContactInfoLogic = (
   // Auto-fill when roles and basic info are complete
   useEffect(() => {
     if (data.contactInfo.userRoles && data.contactInfo.userRoles.length > 0 && isBasicInfoComplete()) {
-      const autoFillUpdates = getAutoFillUpdates(data.contactInfo.userRoles, data.contactInfo, data);
+      const autoFillUpdates = getAutoFillUpdates(data.contactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
         console.log('Auto-filling from useEffect:', autoFillUpdates);
         updateData(autoFillUpdates);
@@ -123,7 +123,7 @@ export const useContactInfoLogic = (
         roles: currentContactInfo.userRoles
       });
 
-      const autoFillUpdates = getAutoFillUpdates(currentContactInfo.userRoles, currentContactInfo, data);
+      const autoFillUpdates = getAutoFillUpdates(currentContactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
         updateData(autoFillUpdates);
         setHasAutoFilled(true);
@@ -142,7 +142,6 @@ export const useContactInfoLogic = (
     if (data.contactInfo.lastName) newCompleted.add('lastName');
     if (data.contactInfo.email && isEmailValid(data.contactInfo.email)) newCompleted.add('email');
     if (data.contactInfo.phone) newCompleted.add('phone');
-    if (data.contactInfo.companyType) newCompleted.add('companyType');
     if (data.contactInfo.userRoles && data.contactInfo.userRoles.length > 0) newCompleted.add('userRoles');
     setCompletedFields(newCompleted);
   }, [data.contactInfo]);

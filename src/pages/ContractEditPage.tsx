@@ -1,6 +1,6 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,19 +8,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { useContractData } from "@/hooks/useContractData";
 import { useContractUpdate } from "@/hooks/useContractUpdate";
-import OnboardingStepRenderer from "@/components/onboarding/components/OnboardingStepRenderer";
+import ContractEditStepRenderer from "@/components/admin/contract-edit/ContractEditStepRenderer";
 import OnboardingSidebar from "@/components/onboarding/ui/OnboardingSidebar";
 import { onboardingSteps } from "@/components/onboarding/config/onboardingSteps";
 import { OnboardingData } from "@/types/onboarding";
 import { Database } from "@/integrations/supabase/types";
+import { useToast } from "@/hooks/use-toast";
 
 type ContractStatus = Database['public']['Enums']['contract_status'];
 
 const ContractEditPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState<ContractStatus>("draft");
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const contractDataResult = useContractData(id!);
   const updateContract = useContractUpdate(id!);
@@ -28,23 +31,60 @@ const ContractEditPage = () => {
   const [editData, setEditData] = useState<OnboardingData | null>(null);
 
   // Initialize edit data when contract data loads
-  if (contractDataResult.data?.onboardingData && !editData) {
-    setEditData(contractDataResult.data.onboardingData);
-    setSelectedStatus(contractDataResult.data.contract.status);
-  }
+  useEffect(() => {
+    if (contractDataResult.data?.onboardingData && !editData) {
+      console.log('Initializing edit data with:', contractDataResult.data.onboardingData);
+      setEditData(contractDataResult.data.onboardingData);
+      setSelectedStatus(contractDataResult.data.contract.status);
+    }
+  }, [contractDataResult.data, editData]);
 
-  const handleSave = () => {
-    if (!editData) return;
+  const handleSave = async () => {
+    if (!editData) {
+      console.error('No edit data available for saving');
+      return;
+    }
     
-    updateContract.mutate({
-      data: editData,
-      status: selectedStatus !== contractDataResult.data?.contract.status ? selectedStatus : undefined
-    });
+    console.log('Saving contract data:', editData);
+    
+    try {
+      await updateContract.mutateAsync({
+        data: editData,
+        status: selectedStatus !== contractDataResult.data?.contract.status ? selectedStatus : undefined
+      });
+      
+      setHasUnsavedChanges(false);
+      
+      toast({
+        title: "Zmluva uložená",
+        description: "Všetky zmeny boli úspešne uložené.",
+      });
+    } catch (error) {
+      console.error('Error saving contract:', error);
+      toast({
+        title: "Chyba pri ukladaní",
+        description: "Nepodarilo sa uložiť zmeny. Skúste to znovu.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDataUpdate = (data: Partial<OnboardingData>) => {
     if (!editData) return;
-    setEditData(prev => ({ ...prev!, ...data }));
+    
+    console.log('Updating contract data:', data);
+    
+    const newData = { ...editData, ...data };
+    setEditData(newData);
+    setHasUnsavedChanges(true);
+    
+    console.log('Updated edit data:', newData);
+  };
+
+  const handleStatusChange = (newStatus: ContractStatus) => {
+    console.log('Status changed from', selectedStatus, 'to', newStatus);
+    setSelectedStatus(newStatus);
+    setHasUnsavedChanges(true);
   };
 
   const statusOptions = [
@@ -124,6 +164,7 @@ const ContractEditPage = () => {
                 </h1>
                 <p className="text-sm text-slate-600">
                   Vytvorená: {new Date(contract.created_at).toLocaleDateString('sk-SK')}
+                  {hasUnsavedChanges && <span className="text-orange-600 ml-2">• Neuložené zmeny</span>}
                 </p>
               </div>
             </div>
@@ -134,7 +175,7 @@ const ContractEditPage = () => {
                 {getStatusBadge(contract.status)}
               </div>
               
-              <Select value={selectedStatus} onValueChange={(value: ContractStatus) => setSelectedStatus(value)}>
+              <Select value={selectedStatus} onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Zmeniť stav" />
                 </SelectTrigger>
@@ -149,7 +190,7 @@ const ContractEditPage = () => {
               
               <Button
                 onClick={handleSave}
-                disabled={updateContract.isPending}
+                disabled={updateContract.isPending || !hasUnsavedChanges}
                 className="bg-emerald-600 hover:bg-emerald-700"
               >
                 {updateContract.isPending ? (
@@ -174,11 +215,12 @@ const ContractEditPage = () => {
           currentStep={currentStep}
           steps={onboardingSteps}
           onStepClick={setCurrentStep}
+          onboardingData={editData}
         />
         
         <div className="flex-1 p-6">
           <div className="max-w-4xl mx-auto">
-            <OnboardingStepRenderer
+            <ContractEditStepRenderer
               currentStep={currentStep}
               data={editData}
               updateData={handleDataUpdate}

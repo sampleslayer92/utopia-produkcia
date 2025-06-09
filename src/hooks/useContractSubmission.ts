@@ -39,9 +39,9 @@ export const useContractSubmission = () => {
         throw new Error('Zmluva nebola vytvorená. Prosím obnovte stránku a skúste znova.');
       }
 
-      // Additional validation for enum fields
-      if (onboardingData.companyInfo.registryType === '') {
-        onboardingData.companyInfo.registryType = 'other';
+      // Additional validation for enum fields - use default value instead of 'other'
+      if (!onboardingData.companyInfo.registryType) {
+        onboardingData.companyInfo.registryType = 'Živnosť';
       }
       
       // Use existing contract ID

@@ -1,11 +1,15 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { OnboardingData } from "@/types/onboarding";
 import { AlertCircle, FileDigit, FileCheck, FileWarning } from "lucide-react";
+import { useEffect } from "react";
+import { format } from "date-fns";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSelect from "./ui/OnboardingSelect";
 import OnboardingSection from "./ui/OnboardingSection";
+import SignaturePad from "./ui/SignaturePad";
 
 interface ConsentsStepProps {
   data: OnboardingData;
@@ -13,9 +17,18 @@ interface ConsentsStepProps {
   onNext: () => void;
   onPrev: () => void;
   onComplete: () => void;
+  onSaveSignature?: () => void;
 }
 
-const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
+const ConsentsStep = ({ data, updateData, onSaveSignature }: ConsentsStepProps) => {
+  // Automatically set today's date if signature date is empty
+  useEffect(() => {
+    if (!data.consents.signatureDate) {
+      const today = format(new Date(), 'yyyy-MM-dd');
+      updateConsents('signatureDate', today);
+    }
+  }, []);
+
   const updateConsents = (field: string, value: any) => {
     updateData({
       consents: {
@@ -33,7 +46,16 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
   const allRequiredConsentsProvided = data.consents.gdpr && 
                                      data.consents.terms && 
                                      data.consents.signatureDate && 
-                                     data.consents.signingPersonId;
+                                     data.consents.signingPersonId &&
+                                     data.consents.signatureUrl;
+
+  const handleSignatureChange = (url: string) => {
+    updateConsents('signatureUrl', url);
+    // Automatically call onSaveSignature when signature is created
+    if (url && onSaveSignature) {
+      onSaveSignature();
+    }
+  };
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
@@ -50,15 +72,15 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
               </div>
               
               <p className="text-sm text-blue-800">
-                Finálny krok onboardingu - potvrdenie súhlasov a podpísanie zmluvy.
+                Finálny krok onboardingu - potvrdenie súhlasov a elektronický podpis zmluvy.
               </p>
               
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-                <p className="font-medium mb-2">Ďalšie kroky po odoslaní</p>
+                <p className="font-medium mb-2">Čo obsahuje tento krok</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  <li>Generovanie zmluvy na základe zadaných údajov</li>
-                  <li>Elektronické podpísanie zmluvy</li>
-                  <li>Aktivácia účtu a doručenie zariadení</li>
+                  <li>Súhlasy s podmienkami a GDPR</li>
+                  <li>Elektronický podpis</li>
+                  <li>Finálne dokončenie registrácie</li>
                 </ul>
               </div>
               
@@ -76,14 +98,14 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
                   <div>
                     <p className="font-medium text-xs">
                       {allRequiredConsentsProvided 
-                        ? 'Všetky povinné súhlasy sú udelené' 
-                        : 'Chýbajú povinné súhlasy'
+                        ? 'Všetko je pripravené na dokončenie' 
+                        : 'Dokončite povinné kroky'
                       }
                     </p>
                     <p className="text-xs mt-1">
                       {allRequiredConsentsProvided 
                         ? 'Registráciu môžete dokončiť' 
-                        : 'Pre dokončenie registrácie udeľte všetky povinné súhlasy'
+                        : 'Udeľte súhlasy a podpíšte zmluvu'
                       }
                     </p>
                   </div>
@@ -96,6 +118,7 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
             <OnboardingSection>
               <div className="space-y-6">
+                {/* Consents section - keep existing code */}
                 <div className="space-y-4">
                   <div className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50/50 transition-colors">
                     <div className="flex items-start space-x-3">
@@ -173,6 +196,7 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
                   </div>
                 </div>
 
+                {/* Signature information */}
                 <div className="border-t border-slate-200 pt-6 space-y-4">
                   <h3 className="font-medium text-slate-900 flex items-center gap-2">
                     <FileDigit className="h-4 w-4 text-blue-500" />
@@ -199,6 +223,24 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
                   </div>
                 </div>
 
+                {/* Electronic Signature */}
+                <div className="border-t border-slate-200 pt-6">
+                  <SignaturePad
+                    value={data.consents.signatureUrl}
+                    onSignatureChange={handleSignatureChange}
+                    disabled={!data.consents.signingPersonId}
+                  />
+                  
+                  {!data.consents.signingPersonId && (
+                    <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <p className="text-sm text-amber-800">
+                        Najprv vyberte podpisujúcu osobu, potom môžete vytvoriť elektronický podpis.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Next steps info - keep existing code */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-5 mt-6">
                   <div className="flex items-start gap-3">
                     <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
@@ -230,8 +272,8 @@ const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
                   <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
                   <div>
                     <p className="text-sm text-amber-800">
-                      <span className="font-medium">Dôležité:</span> Všetky povinné polia musia byť vyplnené a súhlasy udelené
-                      pred dokončením registrácie. Skontrolujte prosím všetky údaje v predchádzajúcich krokoch.
+                      <span className="font-medium">Dôležité:</span> Všetky povinné polia musia byť vyplnené, súhlasy udelené
+                      a elektronický podpis vytvorený pred dokončením registrácie.
                     </p>
                   </div>
                 </div>
