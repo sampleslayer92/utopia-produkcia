@@ -4,6 +4,7 @@
     "header": {
       "title": "Merchant Registration",
       "progress": "Progress: {percentage}%",
+      "progressWithSteps": "Progress: {percentage}% ({completed} of {total} steps completed)",
       "stepsCompleted": "{completed} of {total} steps completed",
       "contractNumber": "Contract No. {number}",
       "creatingContract": "Creating contract..."

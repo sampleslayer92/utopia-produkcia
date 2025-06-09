@@ -4,6 +4,7 @@
     "header": {
       "title": "Registrácia obchodníka",
       "progress": "Pokrok: {percentage}%",
+      "progressWithSteps": "Pokrok: {percentage}% ({completed} z {total} krokov dokončených)",
       "stepsCompleted": "{completed} z {total} krokov dokončených",
       "contractNumber": "Zmluva č. {number}",
       "creatingContract": "Vytváram zmluvu..."

@@ -2,156 +2,109 @@
 {
   "steps": {
     "contactInfo": {
-      "title": "Kontaktné údaje",
-      "description": "Zadajte vaše základné kontaktné informácie",
+      "title": "Kontaktné informácie",
+      "description": "Zadajte vaše základné kontaktné údaje pre vytvorenie zmluvy",
       "features": [
-        "Automatické vyplnenie údajov",
-        "Validácia e-mailovej adresy",
-        "Medzinárodné telefónne čísla"
+        "Základné osobné údaje",
+        "Kontaktné informácie",
+        "Automatické dopĺňanie ďalších krokov"
       ],
-      "fields": {
-        "firstName": "Meno",
-        "lastName": "Priezvisko",
-        "email": "Email",
-        "phone": "Telefón",
-        "salesNote": "Poznámka pre obchod",
-        "salesNotePlaceholder": "Napríklad: kontakt cez webstránku, odporúčanie..."
-      },
-      "placeholders": {
-        "firstName": "Ján",
-        "lastName": "Novák",
-        "email": "jan.novak@email.sk"
-      },
       "sidebar": {
         "title": "Kontaktné údaje",
-        "description": "Vyberte svoju pozíciu v spoločnosti a zadajte kontaktné údaje. Tieto informácie sa automaticky použijú vo všetkých potrebných sekciách.",
-        "contractCreated": "Zmluva vytvorená",
-        "contractNumber": "Číslo: {number}",
-        "autoFillTitle": "Automatické vyplnenie",
-        "autoFillDescription": "Po vyplnení pozície a kontaktných údajov sa automaticky vytvorí:",
+        "description": "Zadajte vaše základné kontaktné údaje. Tieto informácie budú použité na automatické dopĺňanie ďalších krokov.",
+        "autoFillTitle": "Automatické dopĺňanie",
+        "autoFillDescription": "Po zadaní základných údajov automaticky predvyplníme:",
         "autoFillItems": {
-          "companyContact": "Kontaktná osoba spoločnosti",
-          "firstLocation": "Prvá prevádzka",
-          "authorizedPerson": "Oprávnená osoba (iba Konateľ)",
-          "actualOwner": "Skutočný majiteľ (Majiteľ a Konateľ)"
+          "companyContact": "Kontaktnú osobu spoločnosti",
+          "firstLocation": "Prvé miesto podnikania",
+          "authorizedPerson": "Oprávnenú osobu",
+          "actualOwner": "Skutočného majiteľa"
         },
-        "autoFillCompleted": "Automatické vyplnenie dokončené",
-        "autoFillCompletedDescription": "Vaše údaje boli automaticky použité v príslušných sekciách podľa vašej pozície. Môžete ich neskôr upraviť v príslušných krokoch.",
-        "requiredDataTitle": "Potrebné údaje",
-        "requiredDataDescription": "Vyplňte pozíciu, meno, priezvisko, email a telefónne číslo pre automatické vyplnenie ostatných sekcií."
+        "autoFillCompleted": "Automatické dopĺňanie dokončené",
+        "autoFillCompletedDescription": "Vaše údaje boli automaticky predvyplnené do ďalších krokov. Môžete ich upraviť podľa potreby.",
+        "requiredDataTitle": "Povinné údaje",
+        "requiredDataDescription": "Pre pokračovanie zadajte všetky povinné údaje označené hviezdičkou.",
+        "contractCreated": "Zmluva vytvorená",
+        "contractNumber": "Číslo zmluvy: {number}"
+      },
+      "fields": {
+        "salesNote": "Poznámka pre obchod",
+        "salesNotePlaceholder": "Doplňujúce informácie pre obchodný tím..."
       }
     },
     "companyInfo": {
       "title": "Údaje o spoločnosti",
-      "searchCompany": "Vyhľadať spoločnosť",
-      "searchPlaceholder": "Zadajte názov alebo IČO",
-      "contactAddress": {
-        "title": "Korešpondenčná adresa",
-        "sameAsMain": "Korešpondenčná adresa je rovnaká ako adresa sídla"
-      },
-      "placeholders": {
-        "street": "Hlavná ulica 123",
-        "city": "Bratislava",
-        "zipCode": "01001",
-        "ico": "12345678",
-        "companyName": "Názov spoločnosti s.r.o."
-      },
-      "basicInfo": {
-        "title": "Základné údaje o spoločnosti",
-        "companyName": "Názov spoločnosti",
-        "ico": "IČO",
-        "dic": "DIČ",
-        "vatPayer": "Platca DPH",
-        "vatNumber": "IČ DPH",
-        "registryType": "Typ registra",
-        "court": "Súd",
-        "section": "Oddiel",
-        "insertNumber": "Vložka číslo",
-        "isVatPayer": "Je platca DPH"
-      },
-      "address": {
-        "title": "Adresa spoločnosti",
-        "street": "Ulica a číslo",
-        "city": "Mesto",
-        "zipCode": "PSČ",
-        "contactAddressSame": "Korešpondenčná adresa je rovnaká ako adresa sídla"
-      },
-      "contactPerson": {
-        "title": "Kontaktná osoba",
-        "firstName": "Meno",
-        "lastName": "Priezvisko",
-        "email": "Email",
-        "phone": "Telefón",
-        "isTechnicalPerson": "Je zároveň technická osoba",
-        "headOfficeEquals": "Sídlo spoločnosti = prevádzkové miesto"
-      }
+      "description": "Zadajte základné informácie o vašej spoločnosti",
+      "features": [
+        "Základné údaje firmy",
+        "Adresa sídla",
+        "Kontaktná osoba"
+      ]
     },
     "businessLocation": {
-      "title": "Prevádzkové miesta",
-      "addLocation": "Pridať prevádzkové miesto",
-      "features": [
-        "Detailné nastavenie prevádzkových hodín",
-        "Správa bankových účtov pre každé miesto",
-        "Priradenie oprávnených osôb",
-        "Sledovanie obratu a transakcií"
-      ],
+      "title": "Miesta podnikania",
+      "description": "Definujte miesta kde budete vykonávať podnikateľskú činnosť"
+    },
+    "deviceSelection": {
+      "title": "Výber zariadení",
+      "description": "Vyberte potrebné zariadenia a služby"
+    },
+    "fees": {
+      "title": "Poplatky",
+      "description": "Nastavte poplatky a podmienky"
+    },
+    "authorizedPersons": {
+      "title": "Oprávnené osoby",
+      "description": "Zadajte osoby oprávnené konať za spoločnosť"
+    },
+    "actualOwners": {
+      "title": "Skutoční majitelia",
+      "description": "Identifikujte skutočných majiteľov spoločnosti",
       "sidebar": {
-        "title": "Prevádzkové miesta",
-        "description": "Nastavte všetky miesta kde budete prijímať platby kartou.",
-        "newFeatures": "Nové funkcie:",
-        "autoFillTitle": "Automatické dopĺňanie",
-        "autoFillDescription": "Údaje sa automaticky predvyplnia na základe vašej roly: {userRole}"
+        "title": "Skutoční majitelia",
+        "description": "Skutoční majitelia sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
+        "whoIsOwner": "Kto je skutočný majiteľ?",
+        "ownerCriteria": [
+          "Osoba, ktorá má priamy alebo nepriamy podiel najmenej 25%",
+          "Osoba, ktorá má právo vymenovať alebo odvolať štatutárny orgán",
+          "Osoba, ktorá iným spôsobom kontroluje spoločnosť"
+        ],
+        "addOwner": "Pridať majiteľa"
       },
-      "details": {
-        "title": "Základné údaje",
-        "name": "Názov prevádzkového miesta",
-        "address": "Adresa",
-        "street": "Ulica a číslo",
-        "city": "Mesto",
-        "zipCode": "PSČ",
-        "contactPerson": "Kontaktná osoba",
-        "phone": "Telefón",
-        "email": "Email",
-        "business": {
-          "title": "Obchodné údaje",
-          "sector": "Sektor podnikania",
-          "subject": "Predmet podnikania",
-          "mccCode": "MCC kód",
-          "turnover": "Odhadovaný ročný obrat (€)",
-          "monthlyTurnover": "Mesačný obrat (€)",
-          "averageTransaction": "Priemerná transakcia (€)"
-        },
-        "hours": {
-          "title": "Prevádzkové hodiny",
-          "summary": "Prevádzkové hodiny",
-          "detailed": "Detailné hodiny",
-          "seasonality": "Sezónnosť",
-          "yearRound": "Celoročne",
-          "seasonal": "Sezónne",
-          "seasonalWeeks": "Počet týždňov v roku"
-        }
+      "empty": {
+        "title": "Zatiaľ žiadni skutoční majitelia",
+        "description": "Pridajte aspoň jedného konečného užívateľa výhod",
+        "addButton": "Pridať skutočného majiteľa"
       },
-      "bankAccounts": {
-        "title": "Bankové účty",
-        "add": "Pridať účet",
-        "account": "Účet",
-        "type": "Typ účtu",
-        "selectType": "Vyberte typ účtu",
-        "iban": "IBAN",
-        "accountNumber": "Číslo účtu",
-        "bankCode": "Kód banky",
-        "currency": "Mena",
-        "empty": "Žiadne bankové účty neboli pridané",
-        "types": {
-          "iban": "IBAN",
-          "accountNumber": "Číslo účtu + kód banky"
-        }
-      },
-      "emptyState": {
-        "title": "Zatiaľ žiadne prevádzkové miesta",
-        "description": "Pridajte aspoň jedno prevádzkové miesto kde budete prijímať platby kartou.",
-        "addButton": "Pridať prevádzkové miesto"
+      "form": {
+        "ownerNumber": "Skutočný majiteľ {number}",
+        "addAnother": "Pridať ďalšieho skutočného majiteľa",
+        "basicInfo": "Základné údaje",
+        "personalInfo": "Osobné údaje",
+        "additionalInfo": "Ďalšie informácie",
+        "firstName": "Meno *",
+        "firstNamePlaceholder": "Zadajte meno",
+        "lastName": "Priezvisko *",
+        "lastNamePlaceholder": "Zadajte priezvisko",
+        "maidenName": "Rodné priezvisko",
+        "maidenNamePlaceholder": "Rodné priezvisko",
+        "birthDate": "Dátum narodenia *",
+        "birthPlace": "Miesto narodenia *",
+        "birthPlacePlaceholder": "Bratislava",
+        "birthNumber": "Rodné číslo *",
+        "birthNumberPlaceholder": "123456/7890",
+        "permanentAddress": "Trvalé bydlisko *",
+        "permanentAddressPlaceholder": "Hlavná 123, 010 01 Bratislava",
+        "citizenship": "Občianstvo *",
+        "citizenshipPlaceholder": "Slovensko",
+        "isPoliticallyExposed": "Politicky exponovaná osoba",
+        "politicallyExposedDescription": "Politicky exponovanou osobou je osoba vo významnej verejnej funkcii.",
+        "bornOn": "Narodený/á: {date}"
       }
+    },
+    "consents": {
+      "title": "Súhlasy",
+      "description": "Potvrďte súhlasy a dokončite registráciu"
     }
   }
 }

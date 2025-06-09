@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useOnboardingData } from "./hooks/useOnboardingData";
@@ -189,11 +188,11 @@ const OnboardingFlow = () => {
               {!isMobile && (
                 <div className="flex justify-between items-center mb-4">
                   <div className="text-sm text-slate-600">
-                    {t('onboarding.header.progress', { percentage: overallProgress.overallPercentage })}
-                    ({t('onboarding.header.stepsCompleted', { 
-                      completed: overallProgress.completedSteps, 
-                      total: overallProgress.totalSteps 
-                    })})
+                    {t('onboarding.header.progressWithSteps', { 
+                      percentage: overallProgress.overallPercentage,
+                      completed: overallProgress.completedSteps,
+                      total: overallProgress.totalSteps
+                    })}
                   </div>
                   
                   <AutoSaveIndicator 

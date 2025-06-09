@@ -3,155 +3,108 @@
   "steps": {
     "contactInfo": {
       "title": "Contact Information",
-      "description": "Enter your basic contact information",
+      "description": "Enter your basic contact details to create the contract",
       "features": [
-        "Auto-fill functionality",
-        "Email validation",
-        "International phone numbers"
+        "Basic personal information",
+        "Contact details",
+        "Auto-fill for next steps"
       ],
-      "fields": {
-        "firstName": "First Name",
-        "lastName": "Last Name",
-        "email": "Email",
-        "phone": "Phone",
-        "salesNote": "Sales Note",
-        "salesNotePlaceholder": "For example: website contact, referral..."
-      },
-      "placeholders": {
-        "firstName": "John",
-        "lastName": "Smith",
-        "email": "john.smith@email.com"
-      },
       "sidebar": {
         "title": "Contact Information",
-        "description": "Select your position in the company and enter contact details. This information will be automatically used in all necessary sections.",
-        "contractCreated": "Contract created",
-        "contractNumber": "Number: {number}",
+        "description": "Enter your basic contact information. This data will be used to automatically fill subsequent steps.",
         "autoFillTitle": "Auto-fill",
-        "autoFillDescription": "After filling position and contact details, the following will be automatically created:",
+        "autoFillDescription": "After entering basic information, we'll automatically pre-fill:",
         "autoFillItems": {
           "companyContact": "Company contact person",
           "firstLocation": "First business location",
-          "authorizedPerson": "Authorized person (Director only)",
-          "actualOwner": "Actual owner (Owner and Director)"
+          "authorizedPerson": "Authorized person",
+          "actualOwner": "Actual owner"
         },
         "autoFillCompleted": "Auto-fill completed",
-        "autoFillCompletedDescription": "Your data has been automatically used in relevant sections according to your position. You can edit them later in the respective steps.",
+        "autoFillCompletedDescription": "Your data has been automatically pre-filled in subsequent steps. You can modify it as needed.",
         "requiredDataTitle": "Required data",
-        "requiredDataDescription": "Fill in position, first name, last name, email and phone number for automatic filling of other sections."
+        "requiredDataDescription": "To continue, enter all required data marked with an asterisk.",
+        "contractCreated": "Contract created",
+        "contractNumber": "Contract number: {number}"
+      },
+      "fields": {
+        "salesNote": "Sales note",
+        "salesNotePlaceholder": "Additional information for the sales team..."
       }
     },
     "companyInfo": {
       "title": "Company Information",
-      "searchCompany": "Search Company",
-      "searchPlaceholder": "Enter company name or ID",
-      "contactAddress": {
-        "title": "Correspondence Address",
-        "sameAsMain": "Correspondence address is the same as registered address"
-      },
-      "placeholders": {
-        "street": "Main Street 123",
-        "city": "Bratislava",
-        "zipCode": "01001",
-        "ico": "12345678",
-        "companyName": "Company Name Ltd."
-      },
-      "basicInfo": {
-        "title": "Basic Company Information",
-        "companyName": "Company Name",
-        "ico": "Company ID",
-        "dic": "Tax ID",
-        "vatPayer": "VAT Payer",
-        "vatNumber": "VAT Number",
-        "registryType": "Registry Type",
-        "court": "Court",
-        "section": "Section",
-        "insertNumber": "Insert Number",
-        "isVatPayer": "Is VAT Payer"
-      },
-      "address": {
-        "title": "Company Address",
-        "street": "Street and Number",
-        "city": "City",
-        "zipCode": "ZIP Code",
-        "contactAddressSame": "Correspondence address is the same as registered address"
-      },
-      "contactPerson": {
-        "title": "Contact Person",
-        "firstName": "First Name",
-        "lastName": "Last Name",
-        "email": "Email",
-        "phone": "Phone",
-        "isTechnicalPerson": "Is also a technical person",
-        "headOfficeEquals": "Head office = operating location"
-      }
+      "description": "Enter basic information about your company",
+      "features": [
+        "Basic company data",
+        "Registered address",
+        "Contact person"
+      ]
     },
     "businessLocation": {
       "title": "Business Locations",
-      "addLocation": "Add Business Location",
-      "features": [
-        "Detailed operating hours settings",
-        "Bank account management for each location",
-        "Assignment of authorized persons",
-        "Turnover and transaction tracking"
-      ],
+      "description": "Define locations where you will conduct business activities"
+    },
+    "deviceSelection": {
+      "title": "Device Selection",
+      "description": "Select required devices and services"
+    },
+    "fees": {
+      "title": "Fees",
+      "description": "Set fees and conditions"
+    },
+    "authorizedPersons": {
+      "title": "Authorized Persons",
+      "description": "Enter persons authorized to act on behalf of the company"
+    },
+    "actualOwners": {
+      "title": "Actual Owners",
+      "description": "Identify the actual owners of the company",
       "sidebar": {
-        "title": "Business Locations",
-        "description": "Set up all locations where you will accept card payments.",
-        "newFeatures": "New features:",
-        "autoFillTitle": "Auto-fill",
-        "autoFillDescription": "Data will be automatically filled based on your role: {userRole}"
+        "title": "Actual Owners",
+        "description": "Actual owners are natural persons who actually own or control the company.",
+        "whoIsOwner": "Who is an actual owner?",
+        "ownerCriteria": [
+          "Person who has a direct or indirect share of at least 25%",
+          "Person who has the right to appoint or dismiss statutory body",
+          "Person who otherwise controls the company"
+        ],
+        "addOwner": "Add Owner"
       },
-      "details": {
-        "title": "Basic Information",
-        "name": "Business Location Name",
-        "address": "Address",
-        "street": "Street and Number",
-        "city": "City",
-        "zipCode": "ZIP Code",
-        "contactPerson": "Contact Person",
-        "phone": "Phone",
-        "email": "Email",
-        "business": {
-          "title": "Business Data",
-          "sector": "Business Sector",
-          "subject": "Business Subject",
-          "mccCode": "MCC Code",
-          "turnover": "Estimated Annual Turnover (€)",
-          "monthlyTurnover": "Monthly Turnover (€)",
-          "averageTransaction": "Average Transaction (€)"
-        },
-        "hours": {
-          "title": "Operating Hours",
-          "summary": "Operating Hours",
-          "detailed": "Detailed Hours",
-          "seasonality": "Seasonality",
-          "yearRound": "Year-round",
-          "seasonal": "Seasonal",
-          "seasonalWeeks": "Number of weeks per year"
-        }
+      "empty": {
+        "title": "No actual owners yet",
+        "description": "Add at least one beneficial owner",
+        "addButton": "Add Actual Owner"
       },
-      "bankAccounts": {
-        "title": "Bank Accounts",
-        "add": "Add Account",
-        "account": "Account",
-        "type": "Account Type",
-        "selectType": "Select account type",
-        "iban": "IBAN",
-        "accountNumber": "Account Number",
-        "bankCode": "Bank Code",
-        "currency": "Currency",
-        "empty": "No bank accounts have been added",
-        "types": {
-          "iban": "IBAN",
-          "accountNumber": "Account Number + Bank Code"
-        }
-      },
-      "emptyState": {
-        "title": "No business locations yet",
-        "description": "Add at least one business location where you will accept card payments.",
-        "addButton": "Add Business Location"
+      "form": {
+        "ownerNumber": "Actual Owner {number}",
+        "addAnother": "Add Another Actual Owner",
+        "basicInfo": "Basic Information",
+        "personalInfo": "Personal Information",
+        "additionalInfo": "Additional Information",
+        "firstName": "First Name *",
+        "firstNamePlaceholder": "Enter first name",
+        "lastName": "Last Name *",
+        "lastNamePlaceholder": "Enter last name",
+        "maidenName": "Maiden Name",
+        "maidenNamePlaceholder": "Maiden name",
+        "birthDate": "Date of Birth *",
+        "birthPlace": "Place of Birth *",
+        "birthPlacePlaceholder": "Bratislava",
+        "birthNumber": "Birth Number *",
+        "birthNumberPlaceholder": "123456/7890",
+        "permanentAddress": "Permanent Address *",
+        "permanentAddressPlaceholder": "Main 123, 010 01 Bratislava",
+        "citizenship": "Citizenship *",
+        "citizenshipPlaceholder": "Slovakia",
+        "isPoliticallyExposed": "Politically Exposed Person",
+        "politicallyExposedDescription": "A politically exposed person is a person in a significant public function.",
+        "bornOn": "Born: {date}"
       }
+    },
+    "consents": {
+      "title": "Consents",
+      "description": "Confirm consents and complete registration"
     }
   }
 }
