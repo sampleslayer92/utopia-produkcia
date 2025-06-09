@@ -1,212 +1,165 @@
-
-import React, { useRef, useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pen, RotateCcw, Check } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { useTranslation } from "react-i18next";
+import { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { PenTool, Trash2 } from "lucide-react";
 
 interface SignaturePadProps {
-  onSignatureChange: (signatureUrl: string | null) => void;
   value?: string;
+  onSignatureChange: (signature: string) => void;
   disabled?: boolean;
 }
 
-const SignaturePad = ({ onSignatureChange, value, disabled }: SignaturePadProps) => {
+const SignaturePad = ({ value, onSignatureChange, disabled = false }: SignaturePadProps) => {
+  const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [hasSignature, setHasSignature] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [hasSignature, setHasSignature] = useState(!!value);
 
   useEffect(() => {
-    if (value) {
-      setHasSignature(true);
-      loadSignature(value);
-    }
+    setHasSignature(!!value);
   }, [value]);
 
-  const loadSignature = async (url: string) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const img = new Image();
-    img.onload = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    };
-    img.src = url;
-  };
-
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const startDrawing = (e: MouseEvent) => {
     if (disabled) return;
-    
+    setIsDrawing(true);
     const canvas = canvasRef.current;
     if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-    
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    setIsDrawing(true);
-    setHasSignature(true);
+    ctx.moveTo(e.offsetX, e.offsetY);
   };
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const draw = (e: MouseEvent) => {
     if (!isDrawing || disabled) return;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-    
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    ctx.lineTo(x, y);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
     ctx.stroke();
   };
 
   const stopDrawing = () => {
     setIsDrawing(false);
+    saveSignature();
+  };
+
+  const handleTouchStart = (e: TouchEvent) => {
+    if (disabled) return;
+    e.preventDefault();
+    setIsDrawing(true);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isDrawing || disabled) return;
+    e.preventDefault();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  };
+
+  const saveSignature = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const dataUrl = canvas.toDataURL();
+    onSignatureChange(dataUrl);
+    setHasSignature(true);
   };
 
   const clearSignature = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    onSignatureChange('');
     setHasSignature(false);
-    onSignatureChange(null);
   };
-
-  const saveSignature = async () => {
-    const canvas = canvasRef.current;
-    if (!canvas || !hasSignature) return;
-
-    setIsUploading(true);
-    try {
-      // Convert canvas to blob
-      const blob = await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob(resolve, 'image/png');
-      });
-
-      if (!blob) throw new Error('Failed to create signature blob');
-
-      const fileName = `signature_${Date.now()}.png`;
-      const filePath = `signatures/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('signatures')
-        .upload(filePath, blob);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('signatures')
-        .getPublicUrl(filePath);
-
-      onSignatureChange(data.publicUrl);
-      toast.success('Podpis úspešne uložený');
-    } catch (error) {
-      console.error('Signature save error:', error);
-      toast.error('Chyba pri ukladaní podpisu');
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas drawing properties
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    // Set canvas size
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
-  }, []);
 
   return (
-    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-medium text-slate-900 flex items-center gap-2">
-          <Pen className="h-5 w-5 text-blue-600" />
-          Elektronický podpis
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="border-2 border-slate-200 rounded-lg p-4 bg-white">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-32 cursor-crosshair touch-none"
-            onMouseDown={startDrawing}
-            onMouseMove={draw}
-            onMouseUp={stopDrawing}
-            onMouseLeave={stopDrawing}
-            onTouchStart={startDrawing}
-            onTouchMove={draw}
-            onTouchEnd={stopDrawing}
-            style={{ touchAction: 'none' }}
-          />
-        </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-medium text-slate-900 flex items-center gap-2">
+          <PenTool className="h-4 w-4 text-blue-500" />
+          {t('ui.signaturePad.signature')}
+        </h3>
         
-        <div className="flex gap-2 justify-between">
+        {hasSignature && !disabled && (
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={clearSignature}
-            disabled={!hasSignature || disabled || isUploading}
-            className="flex items-center gap-2"
+            className="text-red-600 hover:text-red-700"
           >
-            <RotateCcw className="h-4 w-4" />
-            Vymazať
+            <Trash2 className="h-4 w-4 mr-1" />
+            {t('ui.signaturePad.clear')}
           </Button>
-          
-          <Button
-            type="button"
-            size="sm"
-            onClick={saveSignature}
-            disabled={!hasSignature || disabled || isUploading}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
-          >
-            <Check className="h-4 w-4" />
-            {isUploading ? 'Ukladám...' : 'Uložiť podpis'}
-          </Button>
-        </div>
-        
-        <p className="text-xs text-slate-500 text-center">
-          Podpíšte sa do poľa vyššie pomocou myši alebo dotyku
-        </p>
-      </CardContent>
-    </Card>
+        )}
+      </div>
+
+      <div className={`border-2 border-dashed rounded-lg p-4 ${
+        disabled ? 'bg-slate-50 border-slate-200' : 'border-slate-300 hover:border-slate-400'
+      }`}>
+        {disabled ? (
+          <div className="h-32 flex items-center justify-center text-slate-500">
+            <p className="text-sm">{t('ui.signaturePad.disabled')}</p>
+          </div>
+        ) : (
+          <>
+            <canvas
+              ref={canvasRef}
+              width={400}
+              height={120}
+              className="w-full border border-slate-200 rounded bg-white cursor-crosshair"
+              onMouseDown={startDrawing}
+              onMouseMove={draw}
+              onMouseUp={stopDrawing}
+              onMouseLeave={stopDrawing}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={stopDrawing}
+            />
+            
+            {!hasSignature && (
+              <p className="text-sm text-slate-500 text-center mt-2">
+                {t('ui.signaturePad.signHere')}
+              </p>
+            )}
+          </>
+        )}
+      </div>
+
+      {!hasSignature && !disabled && (
+        <p className="text-sm text-red-600">{t('ui.signaturePad.required')}</p>
+      )}
+    </div>
   );
 };
 

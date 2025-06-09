@@ -1,13 +1,12 @@
-
-import { useState, useCallback, useMemo } from "react";
-import { OnboardingData } from "@/types/onboarding";
-import OnboardingInput from "../ui/OnboardingInput";
-import CompanySearchModal from "../ui/CompanySearchModal";
-import CompanySearchButton from "../ui/CompanySearchButton";
+import React, { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Building2, CheckCircle, Loader2 } from "lucide-react";
-import { CompanyRecognitionResult } from "../services/mockCompanyRecognition";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Building, Search, CheckCircle, Loader2 } from "lucide-react";
+import OnboardingInput from "../ui/OnboardingInput";
+import OnboardingSelect from "../ui/OnboardingSelect";
+import { OnboardingData } from "@/types/onboarding";
+import { mockCompanySearch } from "../utils/mockCompanySearch";
 
 interface EnhancedCompanyBasicInfoCardProps {
   data: OnboardingData;
@@ -16,414 +15,226 @@ interface EnhancedCompanyBasicInfoCardProps {
   setAutoFilledFields: (fields: Set<string>) => void;
 }
 
-const EnhancedCompanyBasicInfoCard = ({ 
-  data, 
-  updateCompanyInfo, 
-  autoFilledFields, 
-  setAutoFilledFields 
+const EnhancedCompanyBasicInfoCard = ({
+  data,
+  updateCompanyInfo,
+  autoFilledFields,
+  setAutoFilledFields
 }: EnhancedCompanyBasicInfoCardProps) => {
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const [isAutoFilling, setIsAutoFilling] = useState(false);
-  const { toast } = useToast();
+  const { t } = useTranslation();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  const handleCompanySelect = useCallback(async (result: CompanyRecognitionResult) => {
-    console.log('=== COMPANY SELECT: Starting complete batch update ===');
-    console.log('Selected company data:', result);
-    
-    setIsAutoFilling(true);
-    
-    try {
-      // Build complete company info object with all updates
-      const updatedCompanyInfo = {
-        ...data.companyInfo
-      };
+  const handleSearch = useCallback(async () => {
+    setIsSearching(true);
+    setHasSearched(true);
+    setSearchResults([]);
 
-      const fieldsToUpdate = new Set<string>();
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Update all fields at once
-      if (result.companyName) {
-        console.log('Setting companyName:', result.companyName);
-        updatedCompanyInfo.companyName = result.companyName;
-        fieldsToUpdate.add('companyName');
-      }
+    // Mock search results
+    const results = mockCompanySearch(searchQuery);
+    setSearchResults(results);
+    setIsSearching(false);
+  }, [searchQuery]);
 
-      if (result.registryType) {
-        console.log('Setting registryType:', result.registryType);
-        updatedCompanyInfo.registryType = result.registryType;
-        fieldsToUpdate.add('registryType');
-      }
+  const handleCompanySelect = useCallback((company: any) => {
+    console.log('Selected company:', company);
+    updateCompanyInfo('batchUpdate', {
+      ico: company.ico,
+      dic: company.dic,
+      companyName: company.name,
+      address: {
+        street: company.street,
+        city: company.city,
+        zipCode: company.zipCode
+      },
+      court: company.court,
+      section: company.section,
+      insertNumber: company.insertNumber
+    });
 
-      if (result.ico) {
-        console.log('Setting ico:', result.ico);
-        updatedCompanyInfo.ico = result.ico;
-        fieldsToUpdate.add('ico');
-      }
+    setAutoFilledFields(new Set(['ico', 'dic', 'companyName', 'address.street', 'address.city', 'address.zipCode', 'court', 'section', 'insertNumber']));
+    setSearchResults([]);
+    setSearchQuery('');
+  }, [updateCompanyInfo, setAutoFilledFields]);
 
-      if (result.dic) {
-        console.log('Setting dic:', result.dic);
-        updatedCompanyInfo.dic = result.dic;
-        fieldsToUpdate.add('dic');
-      }
-
-      if (result.isVatPayer !== undefined) {
-        console.log('Setting isVatPayer:', result.isVatPayer);
-        updatedCompanyInfo.isVatPayer = result.isVatPayer;
-        fieldsToUpdate.add('isVatPayer');
-      }
-
-      if (result.court) {
-        console.log('Setting court:', result.court);
-        updatedCompanyInfo.court = result.court;
-        fieldsToUpdate.add('court');
-      }
-
-      if (result.section) {
-        console.log('Setting section:', result.section);
-        updatedCompanyInfo.section = result.section;
-        fieldsToUpdate.add('section');
-      }
-
-      if (result.insertNumber) {
-        console.log('Setting insertNumber:', result.insertNumber);
-        updatedCompanyInfo.insertNumber = result.insertNumber;
-        fieldsToUpdate.add('insertNumber');
-      }
-
-      // Handle address as a complete object
-      if (result.address) {
-        console.log('Setting complete address:', result.address);
-        updatedCompanyInfo.address = {
-          street: result.address.street || '',
-          city: result.address.city || '',
-          zipCode: result.address.zipCode || ''
-        };
-        fieldsToUpdate.add('address.street');
-        fieldsToUpdate.add('address.city');
-        fieldsToUpdate.add('address.zipCode');
-      }
-
-      console.log('=== APPLYING COMPLETE BATCH UPDATE ===');
-      console.log('Complete updated company info:', updatedCompanyInfo);
-      
-      // Apply all updates in one batch operation
-      updateCompanyInfo('batchUpdate', updatedCompanyInfo);
-      
-      // Set auto-filled fields after successful update
-      console.log('Setting auto-filled fields:', Array.from(fieldsToUpdate));
-      setAutoFilledFields(fieldsToUpdate);
-      
-      // Show success toast
-      toast({
-        title: "Údaje spoločnosti aktualizované",
-        description: `Automaticky vyplnené údaje pre ${result.companyName}`,
-      });
-      
-      console.log('=== BATCH UPDATE COMPLETED SUCCESSFULLY ===');
-      
-    } catch (error) {
-      console.error('Error in handleCompanySelect batch update:', error);
-      toast({
-        title: "Chyba pri aktualizácii",
-        description: "Nepodarilo sa aktualizovať údaje spoločnosti",
-        variant: "destructive",
-      });
-    } finally {
-      setIsAutoFilling(false);
+  useEffect(() => {
+    if (data.companyInfo.companyName && !autoFilledFields.has('companyName')) {
+      setAutoFilledFields(prev => new Set(prev).add('companyName'));
     }
-  }, [data.companyInfo, updateCompanyInfo, setAutoFilledFields, toast]);
-
-  const getFieldClassName = useCallback((fieldName: string) => {
-    return autoFilledFields.has(fieldName) ? 'bg-green-50 border-green-200' : '';
-  }, [autoFilledFields]);
-
-  const getFieldIndicator = useCallback((fieldName: string) => {
-    const isAutoFilled = autoFilledFields.has(fieldName);
-    let hasValue = false;
-
-    // Check if the field actually has a value
-    switch (fieldName) {
-      case 'companyName':
-        hasValue = !!data.companyInfo.companyName?.trim();
-        break;
-      case 'ico':
-        hasValue = !!data.companyInfo.ico?.trim();
-        break;
-      case 'dic':
-        hasValue = !!data.companyInfo.dic?.trim();
-        break;
-      case 'court':
-        hasValue = !!data.companyInfo.court?.trim();
-        break;
-      case 'section':
-        hasValue = !!data.companyInfo.section?.trim();
-        break;
-      case 'insertNumber':
-        hasValue = !!data.companyInfo.insertNumber?.trim();
-        break;
-      case 'registryType':
-        hasValue = !!data.companyInfo.registryType?.trim();
-        break;
-      case 'isVatPayer':
-        hasValue = data.companyInfo.isVatPayer !== undefined;
-        break;
-      case 'address.street':
-        hasValue = !!data.companyInfo.address?.street?.trim();
-        break;
-      case 'address.city':
-        hasValue = !!data.companyInfo.address?.city?.trim();
-        break;
-      case 'address.zipCode':
-        hasValue = !!data.companyInfo.address?.zipCode?.trim();
-        break;
-      default:
-        hasValue = false;
+    if (data.companyInfo.ico && !autoFilledFields.has('ico')) {
+      setAutoFilledFields(prev => new Set(prev).add('ico'));
     }
-
-    if (isAutoFilled && hasValue) {
-      return (
-        <div className="flex items-center gap-1 text-xs text-green-600 mt-1 animate-fade-in">
-          <CheckCircle className="h-3 w-3" />
-          <span>Automaticky vyplnené</span>
-        </div>
-      );
+    if (data.companyInfo.dic && !autoFilledFields.has('dic')) {
+      setAutoFilledFields(prev => new Set(prev).add('dic'));
     }
-    return null;
-  }, [autoFilledFields, data.companyInfo]);
-
-  const handleOpenSearchModal = useCallback(() => {
-    console.log('=== ENHANCED CARD: Opening search modal ===');
-    console.log('Current company name for search:', data.companyInfo.companyName);
-    setIsSearchModalOpen(true);
-  }, [data.companyInfo.companyName]);
-
-  const handleCompanyNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    // Prevent changes during auto-filling process
-    if (isAutoFilling) {
-      console.log('Ignoring manual change during auto-fill process');
-      return;
+    if (data.companyInfo.court && !autoFilledFields.has('court')) {
+      setAutoFilledFields(prev => new Set(prev).add('court'));
     }
-
-    const newValue = e.target.value;
-    console.log('=== ENHANCED CARD: Manual company name change ===');
-    console.log('From:', data.companyInfo.companyName);
-    console.log('To:', newValue);
-    
-    // If user manually changes the name, remove it from auto-filled fields
-    if (autoFilledFields.has('companyName')) {
-      const newAutoFilledFields = new Set(autoFilledFields);
-      newAutoFilledFields.delete('companyName');
-      setAutoFilledFields(newAutoFilledFields);
-      console.log('Removed companyName from auto-filled fields');
+    if (data.companyInfo.section && !autoFilledFields.has('section')) {
+      setAutoFilledFields(prev => new Set(prev).add('section'));
     }
-    
-    updateCompanyInfo('companyName', newValue);
-  }, [isAutoFilling, data.companyInfo.companyName, autoFilledFields, setAutoFilledFields, updateCompanyInfo]);
-
-  const handleVatChange = useCallback((checked: boolean) => {
-    updateCompanyInfo('isVatPayer', checked);
-  }, [updateCompanyInfo]);
-
-  const handleIcoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateCompanyInfo('ico', e.target.value);
-  }, [updateCompanyInfo]);
-
-  const handleDicChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateCompanyInfo('dic', e.target.value);
-  }, [updateCompanyInfo]);
-
-  const handleVatNumberChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateCompanyInfo('vatNumber', e.target.value);
-  }, [updateCompanyInfo]);
-
-  const handleCourtChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateCompanyInfo('court', e.target.value);
-  }, [updateCompanyInfo]);
-
-  const handleSectionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateCompanyInfo('section', e.target.value);
-  }, [updateCompanyInfo]);
-
-  const handleInsertNumberChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateCompanyInfo('insertNumber', e.target.value);
-  }, [updateCompanyInfo]);
-
-  // Memoized registry display section
-  const registryDisplaySection = useMemo(() => {
-    if (!(data.companyInfo.section || data.companyInfo.insertNumber)) {
-      return null;
+    if (data.companyInfo.insertNumber && !autoFilledFields.has('insertNumber')) {
+      setAutoFilledFields(prev => new Set(prev).add('insertNumber'));
     }
+  }, [data.companyInfo, setAutoFilledFields, autoFilledFields]);
 
-    return (
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700">
-          Údaje z obchodného registra
-        </label>
-        <div className={`p-3 border rounded-md bg-slate-50 text-sm transition-all duration-300 ${getFieldClassName('registryType')}`}>
-          <div className="space-y-1">
-            {data.companyInfo.section && data.companyInfo.insertNumber && (
-              <div>
-                <span className="font-medium">Oddiel:</span> {data.companyInfo.section} | 
-                <span className="font-medium"> Vložka číslo:</span> {data.companyInfo.insertNumber}
-              </div>
-            )}
-            {data.companyInfo.companyName && (
-              <div>
-                <span className="font-medium">Obchodné meno:</span> {data.companyInfo.companyName}
-              </div>
-            )}
-            {data.companyInfo.registryType && (
-              <div>
-                <span className="font-medium">Právna forma:</span> {data.companyInfo.registryType}
-              </div>
-            )}
-          </div>
-        </div>
-        {getFieldIndicator('section')}
-      </div>
-    );
-  }, [data.companyInfo.section, data.companyInfo.insertNumber, data.companyInfo.companyName, data.companyInfo.registryType, getFieldClassName, getFieldIndicator]);
+  const registryTypeOptions = [
+    { value: "obchodny_register", label: "Obchodný register" },
+    { value: "zivnostensky_register", label: "Živnostenský register" },
+    { value: "iny", label: "Iný" }
+  ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-4">
-        <Building2 className="h-5 w-5 text-blue-600" />
-        <h3 className="text-lg font-medium text-slate-900">Základné údaje o spoločnosti</h3>
-        {isAutoFilling && (
-          <div className="flex items-center gap-2 text-sm text-blue-600">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Vyplňujem údaje...</span>
+        <Building className="h-5 w-5 text-green-600" />
+        <h3 className="text-lg font-medium text-slate-900">{t('steps.companyInfo.basicInfo.title')}</h3>
+      </div>
+
+      {/* Company Search */}
+      <div className="relative">
+        <div className="flex gap-2">
+          <OnboardingInput
+            label={t('steps.companyInfo.searchCompany')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('steps.companyInfo.searchPlaceholder')}
+            className="flex-1"
+          />
+          <Button
+            onClick={handleSearch}
+            disabled={isSearching || !searchQuery.trim()}
+            className="mt-6 bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {isSearching ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+
+        {/* Search Results */}
+        {searchResults.length > 0 && (
+          <div className="mt-3 border border-slate-200 rounded-lg bg-white shadow-sm max-h-60 overflow-y-auto">
+            {searchResults.map((company, index) => (
+              <div
+                key={index}
+                onClick={() => handleCompanySelect(company)}
+                className="p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-b-0"
+              >
+                <div className="font-medium text-slate-900">{company.name}</div>
+                <div className="text-sm text-slate-600">IČO: {company.ico}</div>
+                <div className="text-xs text-slate-500">{company.address}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {hasSearched && searchResults.length === 0 && !isSearching && (
+          <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <p className="text-sm text-amber-800">Žiadne výsledky. Vyplňte údaje manuálne.</p>
           </div>
         )}
       </div>
 
-      {/* Company Name - with search button and wider field */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700">
-          Obchodné meno spoločnosti *
-        </label>
-        <div className="flex gap-2">
-          <OnboardingInput
-            value={data.companyInfo.companyName}
-            onChange={handleCompanyNameChange}
-            placeholder="Zadajte obchodné meno spoločnosti"
-            className={`flex-1 min-w-0 text-sm transition-all duration-300 ${getFieldClassName('companyName')}`}
-            icon={<Building2 className="h-4 w-4" />}
-            disabled={isAutoFilling}
-          />
-          <CompanySearchButton 
-            onClick={handleOpenSearchModal}
-            disabled={isAutoFilling}
-          />
-        </div>
-        {getFieldIndicator('companyName')}
-      </div>
-
-      {/* Registry Info Template - Slovak format display */}
-      {registryDisplaySection}
-
-      {/* IČO and DIČ */}
+      {/* Company Information Form */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <OnboardingInput
-            label="IČO *"
-            value={data.companyInfo.ico}
-            onChange={handleIcoChange}
-            placeholder="12345678"
-            className={`transition-all duration-300 ${getFieldClassName('ico')}`}
-            icon={<Building2 className="h-4 w-4" />}
-            disabled={isAutoFilling}
-          />
-          {getFieldIndicator('ico')}
-        </div>
-        
-        <div className="space-y-2">
-          <OnboardingInput
-            label="DIČ *"
-            value={data.companyInfo.dic}
-            onChange={handleDicChange}
-            placeholder="2012345678"
-            className={`transition-all duration-300 ${getFieldClassName('dic')}`}
-            disabled={isAutoFilling}
-          />
-          {getFieldIndicator('dic')}
-        </div>
+        <OnboardingInput
+          label={t('steps.companyInfo.basicInfo.ico')}
+          value={data.companyInfo.ico || ''}
+          onChange={(e) => updateCompanyInfo('ico', e.target.value)}
+          placeholder={t('steps.companyInfo.placeholders.ico')}
+          className={autoFilledFields.has('ico') ? 'bg-green-50 border-green-200' : ''}
+          suffix={autoFilledFields.has('ico') ? <CheckCircle className="h-4 w-4 text-green-600" /> : undefined}
+        />
+
+        <OnboardingInput
+          label={t('steps.companyInfo.basicInfo.dic')}
+          value={data.companyInfo.dic || ''}
+          onChange={(e) => updateCompanyInfo('dic', e.target.value)}
+          placeholder="SK1234567890"
+          className={autoFilledFields.has('dic') ? 'bg-green-50 border-green-200' : ''}
+          suffix={autoFilledFields.has('dic') ? <CheckCircle className="h-4 w-4 text-green-600" /> : undefined}
+        />
       </div>
 
-      {/* VAT Payer Section */}
+      <OnboardingInput
+        label={t('steps.companyInfo.basicInfo.companyName')}
+        value={data.companyInfo.companyName || ''}
+        onChange={(e) => updateCompanyInfo('companyName', e.target.value)}
+        placeholder={t('steps.companyInfo.placeholders.companyName')}
+        className={autoFilledFields.has('companyName') ? 'bg-green-50 border-green-200' : ''}
+        suffix={autoFilledFields.has('companyName') ? <CheckCircle className="h-4 w-4 text-green-600" /> : undefined}
+      />
+
+      <OnboardingSelect
+        label={t('steps.companyInfo.basicInfo.registryType')}
+        value={data.companyInfo.registryType || ''}
+        onValueChange={(value) => updateCompanyInfo('registryType', value)}
+        options={registryTypeOptions}
+        placeholder="Vyberte typ registra"
+      />
+
+      {/* VAT Information */}
       <div className="space-y-4">
         <div className="flex items-center space-x-2">
           <Checkbox
             id="isVatPayer"
-            checked={data.companyInfo.isVatPayer}
-            onCheckedChange={handleVatChange}
-            disabled={isAutoFilling}
+            checked={data.companyInfo.isVatPayer || false}
+            onCheckedChange={(checked) => updateCompanyInfo('isVatPayer', checked)}
           />
           <label htmlFor="isVatPayer" className="text-sm font-medium text-slate-700">
-            Je platcom DPH
+            {t('steps.companyInfo.basicInfo.isVatPayer')}
           </label>
-          {getFieldIndicator('isVatPayer')}
         </div>
 
         {data.companyInfo.isVatPayer && (
           <OnboardingInput
-            label="IČ DPH *"
-            value={data.companyInfo.vatNumber}
-            onChange={handleVatNumberChange}
-            placeholder="SK2012345678"
-            disabled={isAutoFilling}
+            label={t('steps.companyInfo.basicInfo.vatNumber')}
+            value={data.companyInfo.vatNumber || ''}
+            onChange={(e) => updateCompanyInfo('vatNumber', e.target.value)}
+            placeholder="SK1234567890"
           />
         )}
       </div>
 
-      {/* Court Registry Information - editable fields */}
-      <div className="space-y-4 pt-4 border-t border-slate-200">
-        <h4 className="text-md font-medium text-slate-900">Údaje v obchodnom registri</h4>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="space-y-2">
-            <OnboardingInput
-              label="Súd"
-              value={data.companyInfo.court}
-              onChange={handleCourtChange}
-              placeholder="Okresný súd"
-              className={`transition-all duration-300 ${getFieldClassName('court')}`}
-              disabled={isAutoFilling}
-            />
-            {getFieldIndicator('court')}
-          </div>
-          
-          <div className="space-y-2">
-            <OnboardingInput
-              label="Oddiel"
-              value={data.companyInfo.section}
-              onChange={handleSectionChange}
-              placeholder="Sro"
-              className={`transition-all duration-300 ${getFieldClassName('section')}`}
-              disabled={isAutoFilling}
-            />
-            {getFieldIndicator('section')}
-          </div>
-          
-          <div className="space-y-2">
-            <OnboardingInput
-              label="Vložka"
-              value={data.companyInfo.insertNumber}
-              onChange={handleInsertNumberChange}
-              placeholder="12345/B"
-              className={`transition-all duration-300 ${getFieldClassName('insertNumber')}`}
-              disabled={isAutoFilling}
-            />
-            {getFieldIndicator('insertNumber')}
-          </div>
+      {/* Commercial Register Information */}
+      <div className="border-t border-slate-200 pt-4 space-y-4">
+        <div className="grid md:grid-cols-3 gap-4">
+          <OnboardingInput
+            label={t('steps.companyInfo.basicInfo.court')}
+            value={data.companyInfo.court || ''}
+            onChange={(e) => updateCompanyInfo('court', e.target.value)}
+            placeholder="Okresný súd Bratislava I"
+            className={autoFilledFields.has('court') ? 'bg-green-50 border-green-200' : ''}
+            suffix={autoFilledFields.has('court') ? <CheckCircle className="h-4 w-4 text-green-600" /> : undefined}
+          />
+
+          <OnboardingInput
+            label={t('steps.companyInfo.basicInfo.section')}
+            value={data.companyInfo.section || ''}
+            onChange={(e) => updateCompanyInfo('section', e.target.value)}
+            placeholder="Sro"
+            className={autoFilledFields.has('section') ? 'bg-green-50 border-green-200' : ''}
+            suffix={autoFilledFields.has('section') ? <CheckCircle className="h-4 w-4 text-green-600" /> : undefined}
+          />
+
+          <OnboardingInput
+            label={t('steps.companyInfo.basicInfo.insertNumber')}
+            value={data.companyInfo.insertNumber || ''}
+            onChange={(e) => updateCompanyInfo('insertNumber', e.target.value)}
+            placeholder="12345/B"
+            className={autoFilledFields.has('insertNumber') ? 'bg-green-50 border-green-200' : ''}
+            suffix={autoFilledFields.has('insertNumber') ? <CheckCircle className="h-4 w-4 text-green-600" /> : undefined}
+          />
         </div>
       </div>
-
-      {/* Company Search Modal */}
-      <CompanySearchModal
-        open={isSearchModalOpen}
-        onOpenChange={setIsSearchModalOpen}
-        onCompanySelect={handleCompanySelect}
-        initialQuery={data.companyInfo.companyName}
-      />
     </div>
   );
 };

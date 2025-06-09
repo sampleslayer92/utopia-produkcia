@@ -50,6 +50,9 @@
       "saved": "Uložené",
       "lastSaved": "Naposledy uložené: {{time}}",
       "error": "Chyba pri ukladaní"
+    },
+    "infoTooltip": {
+      "features": "Funkcie"
     }
   },
   "steps": {
@@ -86,6 +89,14 @@
     },
     "companyInfo": {
       "title": "Údaje o spoločnosti",
+      "description": "Začnite zadaním obchodného mena. Systém automaticky rozpozná spoločnosť a doplní všetky potrebné údaje vrátane sídla.",
+      "features": [
+        "Rozpoznanie spoločnosti",
+        "Automatické doplnenie IČO/DIČ",
+        "Údaje z obchodného registra", 
+        "Sídlo spoločnosti",
+        "DPH status predikcia"
+      ],
       "searchCompany": "Vyhľadať",
       "searchPlaceholder": "Zadajte IČO alebo názov spoločnosti",
       "basicInfo": {
@@ -120,10 +131,24 @@
         "street": "Obchodná ulica 456",
         "city": "Bratislava",
         "zipCode": "01001"
+      },
+      "sidebar": {
+        "title": "Údaje o spoločnosti",
+        "description": "Začnite zadaním obchodného mena. Systém automaticky rozpozná spoločnosť a doplní všetky potrebné údaje vrátane sídla.",
+        "intelligentFill": "Inteligentné vyplnenie",
+        "syncActive": "✓ Synchronizácia aktívna",
+        "syncDescription": "Adresa sídla sa automaticky kopíruje do prvej prevádzky."
       }
     },
     "businessLocation": {
       "title": "Prevádzkové miesta",
+      "description": "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
+      "features": [
+        "Správa viacerých bankových účtov",
+        "Detailné MCC kódy a predmet podnikania", 
+        "Interaktívne otváracie hodiny s rýchlymi akciami",
+        "Podpora rôznych mien (EUR, CZK, USD)"
+      ],
       "empty": {
         "title": "Zatiaľ žiadne prevádzky",
         "description": "Pridajte svoju prvú prevádzkovou lokalitu",
@@ -154,10 +179,24 @@
         "website": "https://vasastranka.sk",
         "description": "Popis hlavnej činnosti prevádzky...",
         "iban": "SK89 0000 0000 0000 0000 0000"
+      },
+      "sidebar": {
+        "title": "Údaje o prevádzke",
+        "description": "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
+        "newFeatures": "Nové funkcie v tejto verzii",
+        "autoFillTitle": "Automatické predvyplnenie",
+        "autoFillDescription": "Vaše kontaktné údaje sa automaticky predvyplnia pre nové prevádzky na základe vašej roly \"{{userRole}}\"."
       }
     },
     "deviceSelection": {
       "title": "Výber zariadení a služieb",
+      "description": "Vyberte si zariadenia a služby, ktoré potrebujete pre váš biznis.",
+      "features": [
+        "Široký výber platobných terminálów",
+        "Online platobné brány",
+        "Doplnkové služby a riešenia",
+        "Kalkulácia mesačných nákladov"
+      ],
       "solutions": "Riešenia",
       "devices": "Zariadenia", 
       "services": "Služby",
@@ -170,6 +209,13 @@
     },
     "fees": {
       "title": "Poplatky a kalkulácia",
+      "description": "Kalkulácia vašich potenciálnych príjmov na základe vybraných služieb a očakávaného obratu.",
+      "features": [
+        "Real-time kalkulácia zisku",
+        "Porovnanie rôznych scenárov",
+        "Transparentné poplatky",
+        "Očakávané mesačné príjmy"
+      ],
       "calculator": "Kalkulačka zisku",
       "monthlyRevenue": "Mesačné tržby",
       "transactionFee": "Transakčný poplatok",
@@ -177,25 +223,243 @@
     },
     "authorizedPersons": {
       "title": "Oprávnené osoby",
+      "description": "Oprávnené osoby sú štatutári alebo splnomocnené osoby, ktoré môžu konať v mene spoločnosti.",
+      "features": [
+        "Správa štatutárov a splnomocnených osôb",
+        "Upload dokladov totožnosti",
+        "Kontrola politicky exponovaných osôb",
+        "Údaje v súlade s oficiálnymi dokumentmi"
+      ],
       "addPerson": "Pridať osobu",
       "edit": "Upraviť",
-      "delete": "Odstrániť"
+      "delete": "Odstrániť",
+      "empty": {
+        "title": "Zatiaľ žiadne oprávnené osoby",
+        "description": "Pridajte aspoň jedného štatutára alebo oprávnenú osobu"
+      },
+      "sidebar": {
+        "title": "Oprávnené osoby",
+        "description": "Oprávnené osoby sú štatutári alebo splnomocnené osoby, ktoré môžu konať v mene spoločnosti.",
+        "importantInfo": "Dôležité informácie",
+        "requirements": [
+          "Údaje musia byť v súlade s oficiálnymi dokumentami",
+          "Pre každú oprávnenú osobu je potrebný platný doklad totožnosti",
+          "Minimálne jedna oprávnená osoba musí byť uvedená"
+        ]
+      },
+      "basicData": "Základné údaje",
+      "personalData": "Osobné údaje",
+      "documents": "Dokumenty",
+      "additionalInfo": "Ďalšie informácie",
+      "fields": {
+        "firstName": "Meno *",
+        "lastName": "Priezvisko *",
+        "email": "E-mail *",
+        "phone": "Telefón *",
+        "maidenName": "Rodné priezvisko",
+        "birthDate": "Dátum narodenia *",
+        "birthPlace": "Miesto narodenia *",
+        "birthNumber": "Rodné číslo *",
+        "permanentAddress": "Trvalé bydlisko *",
+        "position": "Funkcia *",
+        "documentType": "Typ dokumentu *",
+        "documentNumber": "Číslo dokumentu *",
+        "documentValidity": "Platnosť do *",
+        "documentIssuer": "Vydal *",
+        "documentCountry": "Krajina vydania *",
+        "citizenship": "Občianstvo *",
+        "isPoliticallyExposed": "Politicky exponovaná osoba",
+        "isUSCitizen": "Občan USA"
+      },
+      "placeholders": {
+        "firstName": "Zadajte meno",
+        "lastName": "Zadajte priezvisko",
+        "email": "jan.novak@example.com",
+        "phone": "+421 901 234 567",
+        "birthPlace": "Bratislava",
+        "birthNumber": "123456/7890",
+        "permanentAddress": "Hlavná 123, 010 01 Bratislava",
+        "position": "Konateľ",
+        "documentNumber": "AB123456",
+        "documentIssuer": "OÚ Bratislava"
+      }
     },
     "actualOwners": {
       "title": "Skutoční majitelia",
+      "description": "Skutoční majitelia sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
+      "features": [
+        "Identifikácia konečných užívateľov výhod",
+        "Compliance s AML požiadavkami",
+        "Transparentnosť vlastníckych štruktúr",
+        "Kontrola politicky exponovaných osôb"
+      ],
       "addOwner": "Pridať majiteľa",
       "edit": "Upraviť", 
-      "delete": "Odstrániť"
+      "delete": "Odstrániť",
+      "empty": {
+        "title": "Zatiaľ žiadni skutoční majitelia",
+        "description": "Pridajte aspoň jedného konečného užívateľa výhod"
+      },
+      "sidebar": {
+        "title": "Skutoční majitelia",
+        "description": "Skutoční majitelia sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
+        "whoIsOwner": "Kto je skutočný majiteľ?",
+        "ownerDefinition": [
+          "Osoba, ktorá má priamy alebo nepriamy podiel najmenej 25%",
+          "Osoba, ktorá má právo vymenovať alebo odvolať štatutárny orgán",
+          "Osoba, ktorá iným spôsobom kontroluje spoločnosť"
+        ]
+      },
+      "basicData": "Základné údaje",
+      "personalData": "Osobné údaje",
+      "additionalInfo": "Ďalšie informácie",
+      "fields": {
+        "firstName": "Meno *",
+        "lastName": "Priezvisko *",
+        "maidenName": "Rodné priezvisko",
+        "birthDate": "Dátum narodenia *",
+        "birthPlace": "Miesto narodenia *",
+        "birthNumber": "Rodné číslo *",
+        "permanentAddress": "Trvalé bydlisko *",
+        "citizenship": "Občianstvo *",
+        "isPoliticallyExposed": "Politicky exponovaná osoba"
+      },
+      "placeholders": {
+        "firstName": "Zadajte meno",
+        "lastName": "Zadajte priezvisko",
+        "birthPlace": "Bratislava",
+        "birthNumber": "123456/7890",
+        "permanentAddress": "Hlavná 123, 010 01 Bratislava",
+        "citizenship": "Slovensko"
+      },
+      "pepDescription": "Politicky exponovanou osobou je osoba vo významnej verejnej funkcii."
     },
     "consents": {
       "title": "Súhlasy a podpis",
+      "description": "Finálny krok onboardingu - potvrdenie súhlasov a elektronický podpis zmluvy.",
+      "features": [
+        "Súhlasy s podmienkami a GDPR",
+        "Elektronický podpis",
+        "Finálne dokončenie registrácie"
+      ],
       "dataProcessing": "Súhlas so spracovaním osobných údajov",
       "gdpr": "Súhlas s GDPR",
       "terms": "Súhlas s obchodnými podmienkami",
       "signature": "Elektronický podpis",
       "signHere": "Podpíšte sa tu",
       "clear": "Vymazať",
-      "required": "Všetky súhlasy sú povinné"
+      "required": "Všetky súhlasy sú povinné",
+      "sidebar": {
+        "title": "Súhlasy a podpis",
+        "description": "Finálny krok onboardingu - potvrdenie súhlasov a elektronický podpis zmluvy.",
+        "whatIncludes": "Čo obsahuje tento krok"
+      },
+      "signatureInfo": {
+        "title": "Údaje o podpise",
+        "signatureDate": "Dátum podpisu *",
+        "signingPerson": "Podpisujúca osoba *",
+        "selectPerson": "Vyberte podpisujúcu osobu"
+      },
+      "nextSteps": {
+        "title": "Ďalšie kroky",
+        "steps": [
+          "Po dokončení registrácie bude vygenerovaná zmluva na základe zadaných údajov.",
+          "Zmluva bude odoslaná na váš email na elektronické podpísanie.",
+          "Po podpísaní zmluvy bude váš účet aktivovaný a môžete začať používať služby.",
+          "Zariadenia budú doručené na adresu prevádzky do 5 pracovných dní."
+        ]
+      },
+      "gdprConsent": {
+        "title": "Súhlas so spracovaním osobných údajov (GDPR) *",
+        "description": "Súhlasím so spracovaním osobných údajov v súlade s nariadením GDPR pre účely uzatvorenia a plnenia zmluvy o poskytovaní platobných služieb.",
+        "showFull": "Zobraziť úplné znenie súhlasu"
+      },
+      "termsConsent": {
+        "title": "Súhlas s obchodnými podmienkami *",
+        "description": "Súhlasím s obchodnými podmienkami poskytovania platobných služieb a s cenníkom poplatkov za poskytované služby.",
+        "showTerms": "Zobraziť obchodné podmienky"
+      },
+      "electronicCommunication": {
+        "title": "Súhlas s elektronickou komunikáciou",
+        "description": "Súhlasím s doručovaním dokumentov a komunikáciou v elektronickej forme na uvedenú emailovú adresu.",
+        "showOptions": "Zobraziť možnosti komunikácie"
+      },
+      "readyToComplete": "Všetko je pripravené na dokončenie",
+      "readyDescription": "Registráciu môžete dokončiť",
+      "completeSteps": "Dokončite povinné kroky",
+      "completeDescription": "Udeľte súhlasy a podpíšte zmluvu",
+      "selectPersonFirst": "Najprv vyberte podpisujúcu osobu, potom môžete vytvoriť elektronický podpis.",
+      "important": "Dôležité:",
+      "importantNote": "Všetky povinné polia musia byť vyplnené, súhlasy udelené a elektronický podpis vytvorený pred dokončením registrácie."
+    }
+  },
+  "ui": {
+    "autoFill": {
+      "suggestions": "Návrhy na automatické vyplnenie",
+      "contactPerson": "Kontaktná osoba",
+      "useAsContactPerson": "Použiť ako kontaktnú osobu",
+      "useAsAuthorizedPerson": "Použiť ako oprávnenú osobu",
+      "useAsActualOwner": "Použiť ako skutočného majiteľa",
+      "applied": "Použité!"
+    },
+    "documentUpload": {
+      "frontSide": "Predná strana",
+      "backSide": "Zadná strana",
+      "uploadDocument": "Nahrať dokument",
+      "dragDrop": "Presuňte súbor sem alebo kliknite na nahranie",
+      "supportedFormats": "Podporované formáty: JPG, PNG, PDF (max 5MB)"
+    },
+    "phoneNumber": {
+      "phoneNumber": "Telefónne číslo"
+    },
+    "signaturePad": {
+      "signature": "Elektronický podpis *",
+      "signHere": "Podpíšte sa tu",
+      "clear": "Vymazať",
+      "required": "Elektronický podpis je povinný",
+      "disabled": "Najprv vyberte podpisujúcu osobu"
+    },
+    "openingHours": {
+      "title": "Otváracie hodiny",
+      "set": "Nastaviť",
+      "edit": "Upraviť",
+      "closed": "Zatvorené",
+      "closedAllDays": "Zatvorené všetky dni",
+      "quickActions": "Rýchle akcie",
+      "workdays": "Pracovné dni",
+      "weekend": "Víkend",
+      "wholeWeek": "Celý týždeň",
+      "apply": "Použiť",
+      "save": "Uložiť",
+      "cancel": "Zrušiť",
+      "days": {
+        "Po": "Pondelok",
+        "Ut": "Utorok",
+        "St": "Streda",
+        "Št": "Štvrtok",
+        "Pi": "Piatok",
+        "So": "Sobota",
+        "Ne": "Nedeľa"
+      }
+    },
+    "businessDetails": {
+      "title": "Údaje o podnikaní",
+      "businessSubject": "Predmet podnikania *",
+      "businessSubjectPlaceholder": "Opíšte hlavné aktivity vašej prevádzky...",
+      "mccCode": "MCC kód *",
+      "mccCodePlaceholder": "Vyberte kategóriu podnikania",
+      "monthlyTurnover": "Odhadovaný obrat (mesačne v EUR) *",
+      "monthlyTurnoverPlaceholder": "napr. 5000, 12500, 1000000"
+    },
+    "bankAccounts": {
+      "title": "Bankové účty",
+      "addAccount": "Pridať účet",
+      "accountFormat": "Formát účtu",
+      "iban": "IBAN",
+      "accountNumber": "Číslo účtu",
+      "bank": "Banka",
+      "currency": "Mena",
+      "remove": "Odstrániť účet"
     }
   },
   "common": {
@@ -211,7 +475,11 @@
     "error": "Chyba",
     "success": "Úspech",
     "currency": "€",
-    "percentage": "%"
+    "percentage": "%",
+    "open": "Otvoriť",
+    "closed": "Zatvorené",
+    "yes": "Áno",
+    "no": "Nie"
   },
   "validation": {
     "required": "Toto pole je povinné",
