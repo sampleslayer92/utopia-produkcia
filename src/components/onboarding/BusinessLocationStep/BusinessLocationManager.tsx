@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { OnboardingData, BusinessLocation, BankAccount, OpeningHours } from "@/types/onboarding";
 
@@ -24,7 +23,7 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
     // Default bank account
     const defaultBankAccount: BankAccount = {
       id: Date.now().toString(),
-      format: 'IBAN',
+      typ: 'IBAN',
       iban: '',
       mena: 'EUR'
     };
@@ -199,7 +198,7 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
         if (!migrated.bankAccounts) {
           migrated.bankAccounts = [{
             id: Date.now().toString(),
-            format: 'IBAN' as const,
+            typ: 'IBAN' as const,
             iban: location.iban || '',
             mena: 'EUR' as const
           }];

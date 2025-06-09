@@ -7,12 +7,14 @@ interface OnboardingSelectProps {
   label?: string;
   value: string;
   onValueChange: (value: string) => void;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; extra?: string }[];
   placeholder?: string;
   isCompleted?: boolean;
   error?: string;
-  disabled?: boolean; // Add disabled prop
+  disabled?: boolean;
   hideLabel?: boolean;
+  compact?: boolean;
+  showTooltip?: boolean;
 }
 
 const OnboardingSelect = ({
@@ -23,8 +25,10 @@ const OnboardingSelect = ({
   placeholder,
   isCompleted,
   error,
-  disabled = false, // Default to false
-  hideLabel
+  disabled = false,
+  hideLabel,
+  compact = false,
+  showTooltip = false
 }: OnboardingSelectProps) => {
   return (
     <div className="space-y-2">
@@ -36,7 +40,7 @@ const OnboardingSelect = ({
       <div className="relative">
         <Select value={value} onValueChange={onValueChange} disabled={disabled}>
           <SelectTrigger 
-            className={`h-12 border-2 transition-all duration-200 ${
+            className={`${compact ? 'h-10' : 'h-12'} border-2 transition-all duration-200 ${
               error
                 ? 'border-red-300 bg-red-50'
                 : 'border-slate-200 bg-white/80 hover:border-slate-300 focus:border-blue-500 focus:shadow-md focus:shadow-blue-500/20'
@@ -48,6 +52,9 @@ const OnboardingSelect = ({
             {options.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
+                {option.extra && showTooltip && (
+                  <span className="text-xs text-slate-500 ml-1">({option.extra})</span>
+                )}
               </SelectItem>
             ))}
           </SelectContent>

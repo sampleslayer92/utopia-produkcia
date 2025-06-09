@@ -128,7 +128,7 @@ export const useOnboardingData = () => {
             if (!migratedLocation.bankAccounts) {
               const defaultBankAccount: BankAccount = {
                 id: Date.now().toString(),
-                format: 'IBAN',
+                typ: 'IBAN',
                 iban: location.iban || '',
                 mena: 'EUR'
               };

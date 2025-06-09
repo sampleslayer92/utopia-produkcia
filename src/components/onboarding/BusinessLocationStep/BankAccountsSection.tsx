@@ -8,16 +8,12 @@ import { BankAccount } from "@/types/onboarding";
 
 interface BankAccountsSectionProps {
   bankAccounts: BankAccount[];
-  onUpdateBankAccount: (index: number, field: keyof BankAccount, value: string) => void;
-  onAddBankAccount: () => void;
-  onRemoveBankAccount: (index: number) => void;
+  onUpdateBankAccounts: (accounts: BankAccount[]) => void;
 }
 
 const BankAccountsSection = ({
   bankAccounts,
-  onUpdateBankAccount,
-  onAddBankAccount,
-  onRemoveBankAccount
+  onUpdateBankAccounts
 }: BankAccountsSectionProps) => {
   const { t } = useTranslation();
 
@@ -25,6 +21,31 @@ const BankAccountsSection = ({
     { value: "IBAN", label: t('businessLocation.bankAccounts.types.iban') },
     { value: "CisloUctuKodBanky", label: t('businessLocation.bankAccounts.types.accountNumber') }
   ];
+
+  const onUpdateBankAccount = (index: number, field: keyof BankAccount, value: string) => {
+    const updatedAccounts = bankAccounts.map((account, i) => {
+      if (i === index) {
+        return { ...account, [field]: value };
+      }
+      return account;
+    });
+    onUpdateBankAccounts(updatedAccounts);
+  };
+
+  const onAddBankAccount = () => {
+    const newAccount: BankAccount = {
+      id: Date.now().toString(),
+      typ: 'IBAN',
+      iban: '',
+      mena: 'EUR'
+    };
+    onUpdateBankAccounts([...bankAccounts, newAccount]);
+  };
+
+  const onRemoveBankAccount = (index: number) => {
+    const updatedAccounts = bankAccounts.filter((_, i) => i !== index);
+    onUpdateBankAccounts(updatedAccounts);
+  };
 
   return (
     <div className="space-y-4">
