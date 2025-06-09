@@ -131,6 +131,36 @@
       "syncActive": "✓ Synchronizácia aktívna",
       "syncDescription": "Adresa sídla sa automaticky kopíruje do prvej prevádzky.",
       "autoFilledField": "Automaticky vyplnené"
+    },
+    "basicInfoCard": {
+      "title": "Základné údaje o spoločnosti",
+      "autoFilling": "Vyplňujem údaje...",
+      "companyNameLabel": "Obchodné meno spoločnosti *",
+      "companyNamePlaceholder": "Zadajte obchodné meno spoločnosti",
+      "autoFilledIndicator": "Automaticky vyplnené",
+      "registryInfoTitle": "Údaje z obchodného registra",
+      "vatPayerLabel": "Je platcom DPH",
+      "registryDataTitle": "Údaje v obchodnom registri"
+    },
+    "search": {
+      "buttonText": "Vyhľadať",
+      "modalTitle": "Vyhľadávanie spoločnosti",
+      "searchPlaceholder": "Zadajte názov spoločnosti...",
+      "searchingText": "Hľadám...",
+      "searchButtonText": "Hľadať",
+      "resultsTitle": "Výsledky vyhľadávania:",
+      "vatPayerBadge": "DPH platca",
+      "registrationLabel": "Registrácia:",
+      "selectedCompanyTitle": "Vybratá spoločnosť:",
+      "selectedCompanyDescription": "Automaticky sa vyplnia všetky dostupné údaje vrátane adresy.",
+      "cancelButton": "Zrušiť",
+      "selectButton": "Vybrať spoločnosť"
+    },
+    "notifications": {
+      "companyDataUpdated": "Údaje spoločnosti aktualizované",
+      "companyDataUpdatedDescription": "Automaticky vyplnené údaje pre {companyName}",
+      "updateError": "Chyba pri aktualizácii",
+      "updateErrorDescription": "Nepodarilo sa aktualizovať údaje spoločnosti"
     }
   },
   "address": {

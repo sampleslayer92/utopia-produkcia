@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Building2, MapPin, Users } from "lucide-react";
+import { Search, Building2, MapPin } from "lucide-react";
 import { searchCompanySuggestions, CompanyRecognitionResult } from "../services/mockCompanyRecognition";
+import { useTranslation } from "react-i18next";
 
 interface CompanySearchModalProps {
   open: boolean;
@@ -22,6 +24,7 @@ const CompanySearchModal = ({
   const [results, setResults] = useState<CompanyRecognitionResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<CompanyRecognitionResult | null>(null);
+  const { t } = useTranslation('forms');
 
   // Synchronize query with initialQuery and auto-search when modal opens
   useEffect(() => {
@@ -86,7 +89,7 @@ const CompanySearchModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Search className="h-5 w-5" />
-            Vyhľadávanie spoločnosti
+            {t('companyInfo.search.modalTitle')}
           </DialogTitle>
         </DialogHeader>
 
@@ -94,7 +97,7 @@ const CompanySearchModal = ({
           {/* Search Input */}
           <div className="flex gap-2">
             <Input
-              placeholder="Zadajte názov spoločnosti..."
+              placeholder={t('companyInfo.search.searchPlaceholder')}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -104,14 +107,14 @@ const CompanySearchModal = ({
               onClick={handleSearch} 
               disabled={!query.trim() || isSearching}
             >
-              {isSearching ? "Hľadám..." : "Hľadať"}
+              {isSearching ? t('companyInfo.search.searchingText') : t('companyInfo.search.searchButtonText')}
             </Button>
           </div>
 
           {/* Search Results */}
           {results.length > 0 && (
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              <h4 className="font-medium text-slate-900">Výsledky vyhľadávania:</h4>
+              <h4 className="font-medium text-slate-900">{t('companyInfo.search.resultsTitle')}</h4>
               {results.map((company, index) => (
                 <div
                   key={`${company.ico}-${index}`}
@@ -134,17 +137,17 @@ const CompanySearchModal = ({
                       </div>
                       {company.isVatPayer && (
                         <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
-                          DPH platca
+                          {t('companyInfo.search.vatPayerBadge')}
                         </span>
                       )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
                       <div>
-                        <span className="font-medium">IČO:</span> {company.ico}
+                        <span className="font-medium">{t('companyInfo.ico')}:</span> {company.ico}
                       </div>
                       <div>
-                        <span className="font-medium">DIČ:</span> {company.dic}
+                        <span className="font-medium">{t('companyInfo.dic')}:</span> {company.dic}
                       </div>
                     </div>
 
@@ -159,10 +162,10 @@ const CompanySearchModal = ({
 
                     {(company.section || company.insertNumber) && (
                       <div className="text-sm text-slate-600">
-                        <span className="font-medium">Registrácia:</span>{" "}
-                        {company.section && `Oddiel ${company.section}`}
+                        <span className="font-medium">{t('companyInfo.search.registrationLabel')}</span>{" "}
+                        {company.section && `${t('companyInfo.labels.sectionLabel')} ${company.section}`}
                         {company.section && company.insertNumber && " | "}
-                        {company.insertNumber && `Vložka ${company.insertNumber}`}
+                        {company.insertNumber && `${t('companyInfo.labels.insertNumberLabel')} ${company.insertNumber}`}
                       </div>
                     )}
                   </div>
@@ -174,11 +177,11 @@ const CompanySearchModal = ({
           {/* Selected Company Preview */}
           {selectedCompany && (
             <div className="border-t pt-4">
-              <h4 className="font-medium text-slate-900 mb-2">Vybratá spoločnosť:</h4>
+              <h4 className="font-medium text-slate-900 mb-2">{t('companyInfo.search.selectedCompanyTitle')}</h4>
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="font-medium text-blue-900">{selectedCompany.companyName}</p>
                 <p className="text-sm text-blue-700">
-                  Automaticky sa vyplnia všetky dostupné údaje vrátane adresy.
+                  {t('companyInfo.search.selectedCompanyDescription')}
                 </p>
               </div>
             </div>
@@ -187,13 +190,13 @@ const CompanySearchModal = ({
           {/* Action Buttons */}
           <div className="flex justify-end gap-2 pt-4 border-t">
             <Button variant="outline" onClick={handleCancel}>
-              Zrušiť
+              {t('companyInfo.search.cancelButton')}
             </Button>
             <Button 
               onClick={handleConfirmSelection} 
               disabled={!selectedCompany}
             >
-              Vybrať spoločnosť
+              {t('companyInfo.search.selectButton')}
             </Button>
           </div>
         </div>

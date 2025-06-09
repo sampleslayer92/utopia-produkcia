@@ -131,6 +131,36 @@
       "syncActive": "✓ Synchronization active",
       "syncDescription": "The registered address is automatically copied to the first business location.",
       "autoFilledField": "Automatically filled"
+    },
+    "basicInfoCard": {
+      "title": "Basic Company Information",
+      "autoFilling": "Filling in data...",
+      "companyNameLabel": "Company Name *",
+      "companyNamePlaceholder": "Enter company name",
+      "autoFilledIndicator": "Automatically filled",
+      "registryInfoTitle": "Business registry information",
+      "vatPayerLabel": "Is VAT payer",
+      "registryDataTitle": "Business registry data"
+    },
+    "search": {
+      "buttonText": "Search",
+      "modalTitle": "Company Search",
+      "searchPlaceholder": "Enter company name...",
+      "searchingText": "Searching...",
+      "searchButtonText": "Search",
+      "resultsTitle": "Search results:",
+      "vatPayerBadge": "VAT payer",
+      "registrationLabel": "Registration:",
+      "selectedCompanyTitle": "Selected company:",
+      "selectedCompanyDescription": "All available data including address will be automatically filled.",
+      "cancelButton": "Cancel",
+      "selectButton": "Select company"
+    },
+    "notifications": {
+      "companyDataUpdated": "Company data updated",
+      "companyDataUpdatedDescription": "Automatically filled data for {companyName}",
+      "updateError": "Update error",
+      "updateErrorDescription": "Failed to update company data"
     }
   },
   "address": {
