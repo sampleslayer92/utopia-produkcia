@@ -30,6 +30,8 @@ export interface DeviceCard {
   image?: string;
   addons?: AddonCard[];
   catalogId?: string;
+  specifications?: string[];
+  simCards?: number;
 }
 
 export interface ServiceCard {
@@ -46,13 +48,26 @@ export interface ServiceCard {
   catalogId?: string;
 }
 
+// Device selection types
+export interface DeviceSelection {
+  selectedSolutions: string[];
+  dynamicCards: Array<DeviceCard | ServiceCard>;
+  note?: string;
+}
+
+// Alias types for backward compatibility
+export type DynamicCard = DeviceCard | ServiceCard;
+
 // Main onboarding data interface
 export interface OnboardingData {
   contractId?: string;
   contractNumber?: string;
+  currentStep: number;
+  visitedSteps: number[];
   contactInfo: ContactInfo;
   companyInfo: CompanyInfo;
   businessLocations: BusinessLocation[];
+  deviceSelection: DeviceSelection;
   devices: DeviceCard[];
   services: ServiceCard[];
   fees: Fees;

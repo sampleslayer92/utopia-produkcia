@@ -22,6 +22,8 @@ export interface DeviceCard {
   image?: string;
   addons?: AddonCard[];
   catalogId?: string;
+  specifications?: string[];
+  simCards?: number;
 }
 
 export interface ServiceCard {
@@ -37,3 +39,12 @@ export interface ServiceCard {
   addons?: AddonCard[];
   catalogId?: string;
 }
+
+export interface DeviceSelection {
+  selectedSolutions: string[];
+  dynamicCards: Array<DeviceCard | ServiceCard>;
+  note?: string;
+}
+
+// Alias types for backward compatibility
+export type DynamicCard = DeviceCard | ServiceCard;
