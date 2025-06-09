@@ -8,14 +8,37 @@ export const useCompanyInfoLogic = (
 ) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
 
+  // Default company info structure
+  const getDefaultCompanyInfo = () => ({
+    ico: '',
+    dic: '',
+    companyName: '',
+    registryType: 'Živnosť' as const,
+    isVatPayer: false,
+    address: {
+      street: '',
+      city: '',
+      zipCode: ''
+    },
+    contactAddressSameAsMain: true,
+    headOfficeEqualsOperatingAddress: true,
+    contactPerson: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      isTechnicalPerson: false
+    }
+  });
+
   const updateCompanyInfo = useCallback((field: string, value: any) => {
     const fieldPath = field.split('.');
+    const currentCompanyInfo = data.companyInfo || getDefaultCompanyInfo();
     
     if (fieldPath.length > 1) {
       // Handle nested fields like "address.street"
       const [section, subField] = fieldPath;
-      const currentCompanyInfo = data.companyInfo || {};
-      const currentSection = currentCompanyInfo[section as keyof typeof currentCompanyInfo] || {};
+      const currentSection = (currentCompanyInfo as any)[section] || {};
       
       updateData({
         companyInfo: {
@@ -30,7 +53,7 @@ export const useCompanyInfoLogic = (
       // Handle direct fields
       updateData({
         companyInfo: {
-          ...(data.companyInfo || {}),
+          ...currentCompanyInfo,
           [field]: value
         }
       });
