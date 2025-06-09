@@ -38,11 +38,18 @@
     "search": "Hľadať",
     "select": "Vybrať",
     "upload": "Nahrať",
-    "download": "Stiahnuť"
+    "download": "Stiahnuť",
+    "expand": "Rozbaliť",
+    "collapse": "Zbaliť",
+    "quantity": "Počet",
+    "specifications": "Špecifikácie",
+    "price": "Cena",
+    "total": "Celkom",
+    "close": "Zavrieť"
   },
   "header": {
     "contractNumber": "Zmluva č.",
-    "deleteContract": "Vymazať zmluva",
+    "deleteContract": "Vymazať zmluvu",
     "deleteContractConfirm": "Naozaj chcete vymazať zmluvu č. {contractNumber}? Táto akcia sa nedá vrátiť späť a všetky údaje budú trvalo odstránené.",
     "deleteContractTitle": "Vymazať zmluvu",
     "creating": "Vytvára sa zmluva...",
@@ -118,7 +125,19 @@
       "contractInfo": "Informácie o zmluve",
       "contractNumber": "Číslo zmluvy",
       "contractId": "ID zmluvy",
-      "creating": "Vytvára sa..."
+      "creating": "Vytvára sa...",
+      "autoFillComplete": "Automatické vyplnenie dokončené",
+      "autoFillStatusMessage": "Vaše údaje boli automaticky použité v príslušných sekciách podľa vašej pozície. Môžete ich neskôr upraviť v príslušných krokoch.",
+      "requiredInfo": "Potrebné údaje",
+      "requiredInfoMessage": "Vyplňte pozíciu, meno, priezvisko, email a telefónne číslo pre automatické vyplnenie ostatných sekcií.",
+      "autoFillItems": {
+        "contactPerson": "Kontaktná osoba",
+        "firstLocation": "Prvá prevádzka",
+        "authorizedPerson": "Oprávnená osoba (iba Konateľ)",
+        "actualOwner": "Skutočný majiteľ (Majiteľ a Konateľ)"
+      },
+      "salesNote": "Chcete nám niečo odkázať?",
+      "salesNotePlaceholder": "Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie..."
     },
     "companyInfo": {
       "basicInfo": "Základné údaje o spoločnosti",
@@ -183,6 +202,13 @@
       "emptyState": {
         "title": "Žiadne prevádzky",
         "description": "Pridajte svoju prvú prevádzku pre pokračovanie v registrácii"
+      },
+      "infoDescription": "Spravujte svoje prevádzkové lokality s detailnými údajmi o bankových účtoch, podnikaní a otváracích hodinách.",
+      "infoFeatures": {
+        "bankAccounts": "Správa viacerých bankových účtov",
+        "mccCodes": "Detailné MCC kódy a predmet podnikania",
+        "openingHours": "Interaktívne otváracie hodiny s rýchlymi akciami",
+        "currencies": "Podpora rôznych mien (EUR, CZK, USD)"
       }
     },
     "deviceSelection": {
@@ -212,7 +238,10 @@
       "totalCost": "Celkové náklady",
       "margin": "Marža",
       "emptySelection": "Žiadne vybrané položky",
-      "addFirstItem": "Pridajte svoju prvú položku z katalógu"
+      "addFirstItem": "Pridajte svoju prvú položku z katalógu",
+      "selectedItems": "vybrané položky",
+      "backToSolutions": "Späť k riešeniam",
+      "proceedWithSelection": "Pokračovať s výberom"
     },
     "fees": {
       "title": "Nastavenie poplatkov",
@@ -231,14 +260,54 @@
       "idNumber": "Číslo OP",
       "authorizations": "Oprávnenia",
       "signature": "Podpis",
-      "sameAsContact": "Rovnaké ako kontaktná osoba"
+      "sameAsContact": "Rovnaké ako kontaktná osoba",
+      "emptyState": {
+        "title": "Zatiaľ žiadne oprávnené osoby",
+        "description": "Pridajte prvú osobu oprávnenú konať v mene spoločnosti"
+      },
+      "person": "Oprávnená osoba"
     },
     "actualOwners": {
       "title": "Skutoční majitelia",
       "addOwner": "Pridať majiteľa",
       "removeOwner": "Odstrániť majiteľa", 
       "ownershipPercentage": "Podiel vlastníctva",
-      "beneficiary": "Skutočný užívateľ výhod"
+      "beneficiary": "Skutočný užívateľ výhod",
+      "emptyState": {
+        "title": "Zatiaľ žiadni skutoční majitelia",
+        "description": "Pridajte aspoň jedného konečného užívateľa výhod"
+      },
+      "owner": "Skutočný majiteľ",
+      "addOwnerButton": "Pridať skutočného majiteľa",
+      "addAnotherOwner": "Pridať ďalšieho skutočného majiteľa",
+      "infoTitle": "Skutoční majitelia",
+      "infoDescription": "Skutoční majitelia sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
+      "whoIsOwner": "Kto je skutočný majiteľ?",
+      "ownershipCriteria": {
+        "shareOwnership": "Osoba, ktorá má priamy alebo nepriamy podiel najmenej 25%",
+        "appointmentRights": "Osoba, ktorá má právo vymenovať alebo odvolať štatutárny orgán",
+        "control": "Osoba, ktorá iným spôsobom kontroluje spoločnosť"
+      },
+      "basicInfo": "Základné údaje",
+      "personalInfo": "Osobné údaje",
+      "additionalInfo": "Ďalšie informácie",
+      "firstName": "Meno",
+      "lastName": "Priezvisko",
+      "maidenName": "Rodné priezvisko",
+      "birthNumber": "Rodné číslo",
+      "permanentAddress": "Trvalé bydlisko",
+      "citizenship": "Občianstvo",
+      "isPoliticallyExposed": "Politicky exponovaná osoba",
+      "politicallyExposedNote": "Politicky exponovanou osobou je osoba vo významnej verejnej funkcii.",
+      "placeholders": {
+        "firstName": "Zadajte meno",
+        "lastName": "Zadajte priezvisko",
+        "maidenName": "Rodné priezvisko",
+        "birthPlace": "Bratislava",
+        "birthNumber": "123456/7890",
+        "permanentAddress": "Hlavná 123, 010 01 Bratislava",
+        "citizenship": "Slovensko"
+      }
     },
     "consents": {
       "title": "Súhlasy a podpis",
@@ -268,7 +337,9 @@
       "registrationCompleted": "Registrácia bola úspešne dokončená",
       "autoSaving": "Automaticky sa ukladá...",
       "autoSaved": "Automaticky uložené",
-      "autoSaveError": "Chyba pri automatickom ukladaní"
+      "autoSaveError": "Chyba pri automatickom ukladaní",
+      "contractCreationSuccess": "Zmluva bola vytvorená",
+      "contractCreationError": "Nepodarilo sa vytvoriť zmluvu"
     }
   }
 }

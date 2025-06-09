@@ -2,6 +2,7 @@
 import { Progress } from "@/components/ui/progress";
 import { Check, AlertCircle, Clock, CircleDot } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { useProgressTracking } from "../hooks/useProgressTracking";
 import { OnboardingData } from "@/types/onboarding";
 
@@ -22,6 +23,7 @@ const OnboardingSidebar = ({
   onStepClick,
   onboardingData 
 }: OnboardingSidebarProps) => {
+  const { t } = useTranslation();
   const { stepProgress, overallProgress } = useProgressTracking(onboardingData, currentStep);
 
   const handleStepClick = (stepNumber: number) => {
@@ -37,13 +39,13 @@ const OnboardingSidebar = ({
   return (
     <div className="w-64 bg-white/60 backdrop-blur-sm border-r border-slate-200/60 p-4 sticky top-[77px] h-[calc(100vh-77px)] overflow-y-auto">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-3">Registračný proces</h2>
+        <h2 className="text-lg font-semibold text-slate-900 mb-3">{t('onboarding.title')}</h2>
         <Progress value={overallProgress.overallPercentage} className="h-2" />
         <div className="text-xs text-slate-600 mt-2 text-center">
           {overallProgress.overallPercentage}% dokončené
         </div>
         <div className="text-xs text-slate-500 text-center">
-          {overallProgress.completedSteps}/{overallProgress.totalSteps} krokov
+          {overallProgress.completedSteps}/{overallProgress.totalSteps} {t('onboarding.navigation.stepsCompleted')}
         </div>
       </div>
 
@@ -99,7 +101,7 @@ const OnboardingSidebar = ({
               
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-slate-900 mb-1">
-                  {step.title}
+                  {t(step.title)}
                 </div>
 
                 {/* Progress bar for current and incomplete steps */}

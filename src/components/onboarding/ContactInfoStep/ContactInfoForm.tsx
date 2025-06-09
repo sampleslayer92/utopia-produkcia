@@ -34,10 +34,10 @@ const ContactInfoForm = ({
 
         {/* Optional Note Section */}
         <OnboardingTextarea
-          label={t('Chcete nám niečo odkázať?')}
+          label={t('onboarding.contactInfo.salesNote')}
           value={data.contactInfo.salesNote || ''}
           onChange={(e) => onContactInfoUpdate('salesNote', e.target.value)}
-          placeholder={t('Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie...')}
+          placeholder={t('onboarding.contactInfo.salesNotePlaceholder')}
           rows={4}
         />
       </OnboardingSection>

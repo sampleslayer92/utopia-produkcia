@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Check, Loader2, Save } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface OnboardingNavigationProps {
   currentStep: number;
@@ -23,6 +24,7 @@ const OnboardingNavigation = ({
   onSaveSignature,
   isSubmitting = false
 }: OnboardingNavigationProps) => {
+  const { t } = useTranslation();
   const isConsentsStep = currentStep === totalSteps - 1;
   
   return (
@@ -35,7 +37,7 @@ const OnboardingNavigation = ({
           className="flex items-center gap-2 hover:bg-slate-50"
         >
           <ChevronLeft className="h-4 w-4" />
-          Späť
+          {t('common.back')}
         </Button>
         
         <div className="flex space-x-3">
@@ -45,7 +47,7 @@ const OnboardingNavigation = ({
             disabled={isSubmitting}
             className="hover:bg-slate-50"
           >
-            Uložiť a ukončiť
+            {t('onboarding.navigation.saveAndExit')}
           </Button>
           
           {isConsentsStep && onSaveSignature && (
@@ -56,7 +58,7 @@ const OnboardingNavigation = ({
               className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
             >
               <Save className="mr-2 h-4 w-4" />
-              Uložiť podpis
+              {t('onboarding.navigation.saveSignature')}
             </Button>
           )}
           
@@ -69,11 +71,11 @@ const OnboardingNavigation = ({
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Odosiela sa...
+                  {t('onboarding.navigation.submitting')}
                 </>
               ) : (
                 <>
-                  Dokončiť registráciu
+                  {t('onboarding.navigation.completeRegistration')}
                   <Check className="ml-2 h-4 w-4" />
                 </>
               )}
@@ -84,7 +86,7 @@ const OnboardingNavigation = ({
               disabled={isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
             >
-              Ďalej
+              {t('common.next')}
               <ChevronRight className="h-4 w-4" />
             </Button>
           )}

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { OnboardingData, DeviceCard, ServiceCard } from "@/types/onboarding";
 import SolutionSelectionSection from "./device-selection/SolutionSelectionSection";
 import DeviceCatalogPanel from "./device-selection/DeviceCatalogPanel";
@@ -19,6 +20,7 @@ interface DeviceSelectionStepProps {
 }
 
 const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelectionStepProps) => {
+  const { t } = useTranslation();
   const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
 
   const toggleSolution = (solutionId: string) => {
@@ -105,6 +107,17 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
     return data.deviceSelection.selectedSolutions.length > 0;
   };
 
+  const getSolutionName = (solution: string) => {
+    const solutionMap: { [key: string]: string } = {
+      'terminal': t('onboarding.deviceSelection.solutions.terminal'),
+      'pos': t('onboarding.deviceSelection.solutions.pos'),
+      'gateway': t('onboarding.deviceSelection.solutions.gateway'),
+      'softpos': t('onboarding.deviceSelection.solutions.softpos'),
+      'charging': t('onboarding.deviceSelection.solutions.charging')
+    };
+    return solutionMap[solution] || solution;
+  };
+
   // Show solution selection if no solutions are selected
   if (data.deviceSelection.selectedSolutions.length === 0) {
     return (
@@ -122,7 +135,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Späť
+            {t('common.back')}
           </Button>
         </div>
       </div>
@@ -136,22 +149,18 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-slate-900 flex items-center gap-3">
-              <span>Výber zariadení a služieb</span>
+              <span>{t('onboarding.steps.deviceSelection.title')}</span>
               <div className="flex items-center gap-2">
                 {data.deviceSelection.selectedSolutions.map((solution) => (
                   <Badge key={solution} variant="secondary" className="text-xs">
-                    {solution === 'terminal' && 'Terminály'}
-                    {solution === 'pos' && 'POS'}
-                    {solution === 'gateway' && 'Brána'}
-                    {solution === 'softpos' && 'SoftPOS'}
-                    {solution === 'charging' && 'Nabíjanie'}
+                    {getSolutionName(solution)}
                   </Badge>
                 ))}
               </div>
             </CardTitle>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="text-blue-600">
-                {data.deviceSelection.dynamicCards.length} položiek
+                {data.deviceSelection.dynamicCards.length} {t('onboarding.deviceSelection.selectedItems')}
               </Badge>
             </div>
           </div>
@@ -200,7 +209,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
           className="flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Späť
+          {t('common.back')}
         </Button>
 
         <div className="flex items-center gap-3">
@@ -216,7 +225,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
             }}
             className="text-slate-600"
           >
-            Zmeniť riešenie
+            {t('onboarding.deviceSelection.changeSelection')}
           </Button>
           
           <Button
@@ -227,11 +236,11 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
             {data.deviceSelection.dynamicCards.length > 0 ? (
               <>
                 <CheckCircle className="h-4 w-4" />
-                Pokračovať
+                {t('onboarding.navigation.continue')}
               </>
             ) : (
               <>
-                Ďalej
+                {t('common.next')}
                 <ArrowRight className="h-4 w-4" />
               </>
             )}
