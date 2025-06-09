@@ -1,61 +1,60 @@
 
 import { User, Building2, MapPin, CreditCard, Euro, Users, Shield, CheckCircle } from "lucide-react";
-import { i18n } from "@/lib/i18n";
 
 export const onboardingSteps = [
   {
     id: 'contactInfo',
-    title: () => i18n.t('steps.contactInfo.title'),
-    description: () => i18n.t('steps.contactInfo.description'),
+    title: 'Kontaktné informácie',
+    description: 'Zadajte vaše základné kontaktné údaje pre vytvorenie zmluvy',
     icon: User,
     component: 'ContactInfoStep'
   },
   {
     id: 'companyInfo',
-    title: () => i18n.t('steps.companyInfo.title'),
-    description: () => i18n.t('steps.companyInfo.description'),
+    title: 'Údaje o spoločnosti',
+    description: 'Zadajte základné informácie o vašej spoločnosti',
     icon: Building2,
     component: 'CompanyInfoStep'
   },
   {
     id: 'businessLocation',
-    title: () => i18n.t('steps.businessLocation.title'),
-    description: () => i18n.t('steps.businessLocation.description'),
+    title: 'Miesta podnikania',
+    description: 'Definujte miesta kde budete vykonávať podnikateľskú činnosť',
     icon: MapPin,
     component: 'BusinessLocationStep'
   },
   {
     id: 'deviceSelection',
-    title: () => i18n.t('steps.deviceSelection.title'),
-    description: () => i18n.t('steps.deviceSelection.description'),
+    title: 'Výber zariadení',
+    description: 'Vyberte potrebné zariadenia a služby',
     icon: CreditCard,
     component: 'DeviceSelectionStep'
   },
   {
     id: 'fees',
-    title: () => i18n.t('steps.fees.title'),
-    description: () => i18n.t('steps.fees.description'),
+    title: 'Poplatky',
+    description: 'Nastavte poplatky a podmienky',
     icon: Euro,
     component: 'FeesStep'
   },
   {
     id: 'authorizedPersons',
-    title: () => i18n.t('steps.authorizedPersons.title'),
-    description: () => i18n.t('steps.authorizedPersons.description'),
+    title: 'Oprávnené osoby',
+    description: 'Zadajte osoby oprávnené konať za spoločnosť',
     icon: Users,
     component: 'AuthorizedPersonsStep'
   },
   {
     id: 'actualOwners',
-    title: () => i18n.t('steps.actualOwners.title'),
-    description: () => i18n.t('steps.actualOwners.description'),
+    title: 'Skutoční majitelia',
+    description: 'Identifikujte skutočných majiteľov spoločnosti',
     icon: Shield,
     component: 'ActualOwnersStep'
   },
   {
     id: 'consents',
-    title: () => i18n.t('steps.consents.title'),
-    description: () => i18n.t('steps.consents.description'),
+    title: 'Súhlasy',
+    description: 'Potvrďte súhlasy a dokončite registráciu',
     icon: CheckCircle,
     component: 'ConsentsStep'
   }

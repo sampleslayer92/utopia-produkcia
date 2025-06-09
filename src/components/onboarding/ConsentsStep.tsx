@@ -12,6 +12,8 @@ interface ConsentsStepProps {
   updateData: (data: Partial<OnboardingData>) => void;
   onNext: () => void;
   onPrev: () => void;
+  onComplete?: () => void;
+  onSaveSignature?: () => void;
 }
 
 const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
