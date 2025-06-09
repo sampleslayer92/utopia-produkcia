@@ -1,9 +1,11 @@
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export const useContractCreation = () => {
+  const { t } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
 
   const createContract = async () => {
@@ -28,8 +30,8 @@ export const useContractCreation = () => {
 
       console.log('Contract created successfully:', contract);
       
-      toast.success('Zmluva vytvorená!', {
-        description: `Číslo zmluvy: ${contract.contract_number}`
+      toast.success(t('notifications.contractCreated'), {
+        description: t('onboarding.header.contractNumber', { number: contract.contract_number })
       });
 
       return {
@@ -41,8 +43,8 @@ export const useContractCreation = () => {
     } catch (error) {
       console.error('Contract creation error:', error);
       
-      toast.error('Chyba pri vytváraní zmluvy', {
-        description: 'Skúste to prosím znova'
+      toast.error(t('notifications.contractCreationFailed'), {
+        description: t('common.error')
       });
 
       return {

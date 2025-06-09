@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next";
 import { OnboardingData } from "@/types/onboarding";
 import RealTimeProfitCalculator from "./fees/RealTimeProfitCalculator";
 
@@ -10,6 +11,8 @@ interface FeesStepProps {
 }
 
 const FeesStep = ({ data, updateData }: FeesStepProps) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="space-y-6">
       {/* Real-time Profit Calculator with two-column layout */}

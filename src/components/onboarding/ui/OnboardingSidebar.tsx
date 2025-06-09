@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next";
 import { Progress } from "@/components/ui/progress";
 import { Check, AlertCircle, Clock, CircleDot } from "lucide-react";
 import { toast } from "sonner";
@@ -22,14 +23,15 @@ const OnboardingSidebar = ({
   onStepClick,
   onboardingData 
 }: OnboardingSidebarProps) => {
+  const { t } = useTranslation();
   const { stepProgress, overallProgress } = useProgressTracking(onboardingData, currentStep);
 
   const handleStepClick = (stepNumber: number) => {
     if (stepNumber <= currentStep + 1) {
       onStepClick(stepNumber);
     } else {
-      toast.warning("Najprv dokončite aktuálny krok", {
-        description: "Nemôžete preskočiť viacero krokov naraz"
+      toast.warning(t('notifications.stepNotAccessible'), {
+        description: t('notifications.stepNotAccessibleDescription')
       });
     }
   };
@@ -37,13 +39,16 @@ const OnboardingSidebar = ({
   return (
     <div className="w-64 bg-white/60 backdrop-blur-sm border-r border-slate-200/60 p-4 sticky top-[77px] h-[calc(100vh-77px)] overflow-y-auto">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-3">Registračný proces</h2>
+        <h2 className="text-lg font-semibold text-slate-900 mb-3">{t('onboarding.header.title')}</h2>
         <Progress value={overallProgress.overallPercentage} className="h-2" />
         <div className="text-xs text-slate-600 mt-2 text-center">
-          {overallProgress.overallPercentage}% dokončené
+          {t('onboarding.header.progress', { percentage: overallProgress.overallPercentage })}
         </div>
         <div className="text-xs text-slate-500 text-center">
-          {overallProgress.completedSteps}/{overallProgress.totalSteps} krokov
+          {t('onboarding.header.stepsCompleted', { 
+            completed: overallProgress.completedSteps, 
+            total: overallProgress.totalSteps 
+          })}
         </div>
       </div>
 
@@ -110,7 +115,7 @@ const OnboardingSidebar = ({
                       className="h-1"
                     />
                     <div className="text-xs text-slate-500 mt-1">
-                      {progress.completionPercentage}% dokončené
+                      {progress.completionPercentage}% {t('onboarding.header.progress', { percentage: '' }).replace('%', '').trim()}
                     </div>
                   </div>
                 )}
@@ -119,28 +124,28 @@ const OnboardingSidebar = ({
                 {isNext && !isPartiallyComplete && (
                   <div className="flex items-center mt-1 text-xs text-indigo-600">
                     <AlertCircle className="h-3 w-3 mr-1" />
-                    <span>Nasledujúci</span>
+                    <span>{t('onboarding.stepper.next')}</span>
                   </div>
                 )}
 
                 {isCurrentStep && progress && progress.completionPercentage > 0 && !isCompleted && (
                   <div className="flex items-center mt-1 text-xs text-blue-600">
                     <Clock className="h-3 w-3 mr-1" />
-                    <span>Prebieha</span>
+                    <span>{t('onboarding.stepper.inProgress')}</span>
                   </div>
                 )}
 
                 {isPartiallyComplete && !isCurrentStep && (
                   <div className="flex items-center mt-1 text-xs text-amber-600">
                     <CircleDot className="h-3 w-3 mr-1" />
-                    <span>Čiastočne vyplnené</span>
+                    <span>{t('onboarding.stepper.partiallyComplete')}</span>
                   </div>
                 )}
 
                 {isCompleted && (
                   <div className="flex items-center mt-1 text-xs text-green-600">
                     <Check className="h-3 w-3 mr-1" />
-                    <span>Dokončené</span>
+                    <span>{t('onboarding.stepper.completed')}</span>
                   </div>
                 )}
               </div>
@@ -150,9 +155,9 @@ const OnboardingSidebar = ({
       </div>
       
       <div className="mt-8 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-        <h3 className="font-medium text-blue-800 text-sm mb-2">Potrebujete pomoc?</h3>
+        <h3 className="font-medium text-blue-800 text-sm mb-2">{t('onboarding.help.title')}</h3>
         <p className="text-xs text-blue-700">
-          V prípade otázok nás kontaktujte na čísle +421 911 123 456 alebo na info@utopia.sk
+          {t('onboarding.help.description')}
         </p>
       </div>
     </div>

@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next";
 import { OnboardingData } from "@/types/onboarding";
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from "lucide-react";
@@ -16,6 +17,7 @@ interface ContactInfoStepProps {
 }
 
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
   const {
     completedFields,
@@ -36,19 +38,14 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   };
 
   const infoTooltipData = {
-    description: "Vyplňte vaše základné kontaktné údaje. Tieto informácie sa použijú pre automatické predvyplnenie ostatných krokov registrácie.",
-    features: [
-      "Automatické predvyplnenie kontaktných osôb",
-      "Synchronizácia údajov medzi krokmi",
-      "Overenie emailovej adresy", 
-      "Formátovanie telefónneho čísla"
-    ]
+    description: t('steps.contactInfo.description'),
+    features: t('steps.contactInfo.features', { returnObjects: true }) as string[]
   };
 
   if (isMobile) {
     return (
       <MobileOptimizedCard
-        title="Kontaktné údaje"
+        title={t('steps.contactInfo.title')}
         icon={<User className="h-4 w-4 text-blue-600" />}
         infoTooltip={infoTooltipData}
       >
