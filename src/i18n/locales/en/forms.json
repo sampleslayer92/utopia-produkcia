@@ -1,4 +1,3 @@
-
 {
   "contactInfo": {
     "title": "Contact Information",
@@ -448,6 +447,59 @@
       "continue": "Continue",
       "next": "Next",
       "itemsSelected": "{count} items"
+    }
+  },
+  "fees": {
+    "title": "Fees and Profitability",
+    "description": "Set up fees and track profitability of your solutions in real-time",
+    "calculator": {
+      "title": "Profit Calculator",
+      "subtitle": "Track your profitability in real-time",
+      "inputs": {
+        "title": "Input Data",
+        "monthlyTurnover": {
+          "label": "Estimated Monthly Turnover (EUR)",
+          "description": "Pre-filled from business location data",
+          "breakdown": "Breakdown:",
+          "noTurnoverWarning": "⚠️ No turnover entered in business locations (Step 3)"
+        },
+        "regulatedCards": {
+          "label": "MIF++ Regulated Cards (%)",
+          "placeholder": "0.90",
+          "effectiveRate": "→ Effective rate: {rate}"
+        },
+        "unregulatedCards": {
+          "label": "MIF++ Unregulated Cards (%)",
+          "placeholder": "1.50",
+          "effectiveRate": "→ Effective rate: {rate}"
+        }
+      },
+      "results": {
+        "title": "Calculation Results",
+        "transactionRevenue": {
+          "title": "Transaction Revenue",
+          "regulatedCards": "Regulated cards:",
+          "unregulatedCards": "Unregulated cards:",
+          "totalRevenue": "Total revenue:"
+        },
+        "serviceMargin": {
+          "customerPayments": "💼 Customer payments:",
+          "companyCosts": "🔧 Your costs:",
+          "serviceMargin": "Service margin:"
+        },
+        "totalProfit": {
+          "title": "Total Monthly Profit:",
+          "breakdown": {
+            "transactionRevenue": "Transaction revenue:",
+            "serviceMargin": "+ Service margin:"
+          }
+        }
+      },
+      "explanations": {
+        "mifDescription": "MIF++ rates include interchange fees and our margins",
+        "effectiveRateNote": "Effective rate is reduced by 0.2% (interchange fee)",
+        "realTimeNote": "Results are recalculated in real-time when data changes"
+      }
     }
   }
 }

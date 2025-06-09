@@ -7,6 +7,7 @@ import { Calculator, TrendingUp, TrendingDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { OnboardingData, ItemBreakdown } from "@/types/onboarding";
 import { formatCurrency, formatCurrencyWithColor, formatPercentage } from "../utils/currencyUtils";
+import { useTranslation } from "react-i18next";
 
 interface RealTimeProfitCalculatorProps {
   data: OnboardingData;
@@ -14,6 +15,8 @@ interface RealTimeProfitCalculatorProps {
 }
 
 const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculatorProps) => {
+  const { t } = useTranslation('forms');
+  
   // Local state for inputs with debounced updates
   const [localRegulatedRate, setLocalRegulatedRate] = useState(data.fees.regulatedCards);
   const [localUnregulatedRate, setLocalUnregulatedRate] = useState(data.fees.unregulatedCards);
@@ -161,28 +164,32 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
   // Show turnover breakdown for transparency
   const turnoverBreakdown = useMemo(() => {
     return data.businessLocations.map(location => ({
-      name: location.name || 'Nepomenovaná prevádzka',
+      name: location.name || t('fees.calculator.inputs.monthlyTurnover.breakdown'),
       turnover: location.monthlyTurnover || location.estimatedTurnover || 0
     })).filter(item => item.turnover > 0);
-  }, [data.businessLocations]);
+  }, [data.businessLocations, t]);
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="text-slate-900 flex items-center gap-2">
           <Calculator className="h-5 w-5 text-green-600" />
-          Výnosová kalkulačka
+          {t('fees.calculator.title')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - Inputs */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Vstupné údaje</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">
+              {t('fees.calculator.inputs.title')}
+            </h3>
             
             {/* Monthly Turnover - Read Only with breakdown */}
             <div className="space-y-2">
-              <Label className="text-slate-700">Odhadovaný mesačný obrat (EUR)</Label>
+              <Label className="text-slate-700">
+                {t('fees.calculator.inputs.monthlyTurnover.label')}
+              </Label>
               <Input
                 type="text"
                 value={formatCurrency(monthlyTurnover)}
@@ -190,10 +197,10 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
                 className="bg-slate-50 border-slate-300 text-slate-600"
               />
               <div className="text-xs text-slate-500">
-                <p>Predvyplnené z údajov prevádzkární</p>
+                <p>{t('fees.calculator.inputs.monthlyTurnover.description')}</p>
                 {turnoverBreakdown.length > 0 && (
                   <div className="mt-2 space-y-1">
-                    <p className="font-medium">Rozklad:</p>
+                    <p className="font-medium">{t('fees.calculator.inputs.monthlyTurnover.breakdown')}</p>
                     {turnoverBreakdown.map((item, index) => (
                       <p key={index} className="ml-2">
                         • {item.name}: {formatCurrency(item.turnover)}
@@ -203,7 +210,7 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
                 )}
                 {turnoverBreakdown.length === 0 && monthlyTurnover === 0 && (
                   <p className="text-amber-600 font-medium mt-1">
-                    ⚠️ Žiadny obrat nie je zadaný v prevádzkach (Krok 3)
+                    {t('fees.calculator.inputs.monthlyTurnover.noTurnoverWarning')}
                   </p>
                 )}
               </div>
@@ -211,7 +218,9 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
 
             {/* Regulated Cards Rate */}
             <div className="space-y-2">
-              <Label htmlFor="regulatedCards">MIF++ regulované karty (%)</Label>
+              <Label htmlFor="regulatedCards">
+                {t('fees.calculator.inputs.regulatedCards.label')}
+              </Label>
               <Input
                 id="regulatedCards"
                 type="number"
@@ -221,16 +230,20 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
                 value={localRegulatedRate}
                 onChange={(e) => handleRegulatedRateChange(e.target.value)}
                 className="border-slate-300 focus:border-green-500"
-                placeholder="0.90"
+                placeholder={t('fees.calculator.inputs.regulatedCards.placeholder')}
               />
               <p className="text-sm text-green-600">
-                → Efektívna provízia: {formatPercentage(calculations.effectiveRegulated)}
+                {t('fees.calculator.inputs.regulatedCards.effectiveRate', { 
+                  rate: formatPercentage(calculations.effectiveRegulated) 
+                })}
               </p>
             </div>
 
             {/* Unregulated Cards Rate */}
             <div className="space-y-2">
-              <Label htmlFor="unregulatedCards">MIF++ neregulované karty (%)</Label>
+              <Label htmlFor="unregulatedCards">
+                {t('fees.calculator.inputs.unregulatedCards.label')}
+              </Label>
               <Input
                 id="unregulatedCards"
                 type="number"
@@ -240,40 +253,46 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
                 value={localUnregulatedRate}
                 onChange={(e) => handleUnregulatedRateChange(e.target.value)}
                 className="border-slate-300 focus:border-green-500"
-                placeholder="1.50"
+                placeholder={t('fees.calculator.inputs.unregulatedCards.placeholder')}
               />
               <p className="text-sm text-green-600">
-                → Efektívna provízia: {formatPercentage(calculations.effectiveUnregulated)}
+                {t('fees.calculator.inputs.unregulatedCards.effectiveRate', { 
+                  rate: formatPercentage(calculations.effectiveUnregulated) 
+                })}
               </p>
             </div>
           </div>
 
           {/* Right Column - Live Results */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Výsledky kalkulácie</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">
+              {t('fees.calculator.results.title')}
+            </h3>
             
             {/* Revenue from Transactions */}
             <Card className="bg-blue-50 border-blue-200">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="h-4 w-4 text-blue-600" />
-                  <span className="font-medium text-blue-900">Výnos z transakcií</span>
+                  <span className="font-medium text-blue-900">
+                    {t('fees.calculator.results.transactionRevenue.title')}
+                  </span>
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>Regulované karty:</span>
+                    <span>{t('fees.calculator.results.transactionRevenue.regulatedCards')}</span>
                     <span className={`font-medium ${formatCurrencyWithColor(calculations.regulatedFee).className}`}>
                       {formatCurrencyWithColor(calculations.regulatedFee).value}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Neregulované karty:</span>
+                    <span>{t('fees.calculator.results.transactionRevenue.unregulatedCards')}</span>
                     <span className={`font-medium ${formatCurrencyWithColor(calculations.unregulatedFee).className}`}>
                       {formatCurrencyWithColor(calculations.unregulatedFee).value}
                     </span>
                   </div>
                   <div className="flex justify-between font-medium pt-2 border-t border-blue-300">
-                    <span>Spolu tržba:</span>
+                    <span>{t('fees.calculator.results.transactionRevenue.totalRevenue')}</span>
                     <span className={`${formatCurrencyWithColor(calculations.transactionMargin).className}`}>
                       {formatCurrencyWithColor(calculations.transactionMargin).value}
                     </span>
@@ -287,19 +306,19 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
               <CardContent className="pt-4">
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span>💼 Platby od klienta:</span>
+                    <span>{t('fees.calculator.results.serviceMargin.customerPayments')}</span>
                     <span className="font-medium text-green-600">
                       {formatCurrency(totalCustomerPayments)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>🔧 Vaše náklady:</span>
+                    <span>{t('fees.calculator.results.serviceMargin.companyCosts')}</span>
                     <span className="font-medium text-red-600">
                       {formatCurrency(totalCompanyCosts)}
                     </span>
                   </div>
                   <div className="flex justify-between font-medium pt-2 border-t border-slate-300">
-                    <span>Marža zo služieb:</span>
+                    <span>{t('fees.calculator.results.serviceMargin.serviceMargin')}</span>
                     <span className={`${formatCurrencyWithColor(calculations.serviceMargin).className}`}>
                       {formatCurrencyWithColor(calculations.serviceMargin).value}
                     </span>
@@ -318,7 +337,9 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
                     ) : (
                       <TrendingDown className="h-5 w-5 text-red-600" />
                     )}
-                    <span className="font-semibold text-slate-900">Celkový mesačný zisk:</span>
+                    <span className="font-semibold text-slate-900">
+                      {t('fees.calculator.results.totalProfit.title')}
+                    </span>
                   </div>
                   <Badge 
                     variant={calculations.totalMonthlyProfit >= 0 ? "default" : "destructive"}
@@ -329,11 +350,11 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
                 </div>
                 <div className="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-600">
                   <div className="flex justify-between">
-                    <span>Tržba z transakcií:</span>
+                    <span>{t('fees.calculator.results.totalProfit.breakdown.transactionRevenue')}</span>
                     <span>{formatCurrency(calculations.transactionMargin)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>+ Marža zo služieb:</span>
+                    <span>{t('fees.calculator.results.totalProfit.breakdown.serviceMargin')}</span>
                     <span>{formatCurrency(calculations.serviceMargin)}</span>
                   </div>
                 </div>

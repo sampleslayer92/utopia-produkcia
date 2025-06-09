@@ -1,4 +1,3 @@
-
 {
   "contactInfo": {
     "title": "Kontaktné údaje",
@@ -448,6 +447,59 @@
       "continue": "Pokračovať",
       "next": "Ďalej",
       "itemsSelected": "{count} položiek"
+    }
+  },
+  "fees": {
+    "title": "Poplatky a výnosnosť",
+    "description": "Nastavte poplatky a sledujte výnosnosť vašich riešení v reálnom čase",
+    "calculator": {
+      "title": "Výnosová kalkulačka",
+      "subtitle": "Sledujte svoju ziskovosť v reálnom čase",
+      "inputs": {
+        "title": "Vstupné údaje",
+        "monthlyTurnover": {
+          "label": "Odhadovaný mesačný obrat (EUR)",
+          "description": "Predvyplnené z údajov prevádzkární",
+          "breakdown": "Rozklad:",
+          "noTurnoverWarning": "⚠️ Žiadny obrat nie je zadaný v prevádzkach (Krok 3)"
+        },
+        "regulatedCards": {
+          "label": "MIF++ regulované karty (%)",
+          "placeholder": "0.90",
+          "effectiveRate": "→ Efektívna provízia: {rate}"
+        },
+        "unregulatedCards": {
+          "label": "MIF++ neregulované karty (%)",
+          "placeholder": "1.50",
+          "effectiveRate": "→ Efektívna provízia: {rate}"
+        }
+      },
+      "results": {
+        "title": "Výsledky kalkulácie",
+        "transactionRevenue": {
+          "title": "Výnos z transakcií",
+          "regulatedCards": "Regulované karty:",
+          "unregulatedCards": "Neregulované karty:",
+          "totalRevenue": "Spolu tržba:"
+        },
+        "serviceMargin": {
+          "customerPayments": "💼 Platby od klienta:",
+          "companyCosts": "🔧 Vaše náklady:",
+          "serviceMargin": "Marža zo služieb:"
+        },
+        "totalProfit": {
+          "title": "Celkový mesačný zisk:",
+          "breakdown": {
+            "transactionRevenue": "Tržba z transakcií:",
+            "serviceMargin": "+ Marža zo služieb:"
+          }
+        }
+      },
+      "explanations": {
+        "mifDescription": "MIF++ sadzby zahŕňajú interchange fee a naše marže",
+        "effectiveRateNote": "Efektívna provízia je znížená o 0.2% (interchange fee)",
+        "realTimeNote": "Výsledky sa prepočítavajú v reálnom čase pri zmene údajov"
+      }
     }
   }
 }
