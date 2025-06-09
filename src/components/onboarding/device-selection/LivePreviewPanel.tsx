@@ -92,10 +92,10 @@ const LivePreviewPanel = ({
                 <p className="text-xs text-slate-600 mt-1 line-clamp-2">{card.description}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <Badge variant="secondary" className="text-xs">
-                    {t('deviceSelection.cards.count', { count: card.count })}
+                    {card.count} ks
                   </Badge>
                   <Badge variant="outline" className="text-xs text-blue-600 border-blue-300">
-                    {t('deviceSelection.cards.monthlyFee', { amount: (card.count * card.monthlyFee).toFixed(2) })}
+                    {(card.count * card.monthlyFee).toFixed(2)} €/mes
                   </Badge>
                 </div>
               </div>
@@ -142,10 +142,10 @@ const LivePreviewPanel = ({
                 )}
                 <div className="flex items-center gap-2 mt-2">
                   <Badge variant="secondary" className="text-xs">
-                    {t('deviceSelection.cards.count', { count: card.count })}
+                    {card.count} ks
                   </Badge>
                   <Badge variant="outline" className="text-xs text-green-600 border-green-300">
-                    {t('deviceSelection.cards.monthlyFee', { amount: (card.count * card.monthlyFee).toFixed(2) })}
+                    {(card.count * card.monthlyFee).toFixed(2)} €/mes
                   </Badge>
                 </div>
               </div>
@@ -221,10 +221,10 @@ const LivePreviewPanel = ({
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold text-emerald-600">
-                  {t('deviceSelection.preview.costSummary.monthly', { amount: totalMonthlyFee.toFixed(2) })}
+                  {totalMonthlyFee.toFixed(2)} €/mes
                 </div>
                 <div className="text-sm text-emerald-700">
-                  {t('deviceSelection.preview.costSummary.yearly', { amount: totalYearlyFee.toFixed(2) })}
+                  {totalYearlyFee.toFixed(2)} € ročne
                 </div>
               </div>
             </div>
@@ -244,7 +244,7 @@ const LivePreviewPanel = ({
                   <h4 className="font-semibold text-slate-900">{t('deviceSelection.preview.sections.devices')}</h4>
                   <Badge variant="secondary">{deviceCards.length} {t('deviceSelection.preview.types')}</Badge>
                   <Badge variant="outline" className="text-blue-600 border-blue-300 ml-auto">
-                    {deviceCards.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €{t('deviceSelection.cards.perMonth')}
+                    {deviceCards.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €/mes
                   </Badge>
                 </div>
               </AccordionTrigger>
@@ -267,7 +267,7 @@ const LivePreviewPanel = ({
                   </h4>
                   <Badge variant="secondary">{services.length} {t('deviceSelection.preview.types')}</Badge>
                   <Badge variant="outline" className="text-green-600 border-green-300 ml-auto">
-                    {services.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €{t('deviceSelection.cards.perMonth')}
+                    {services.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €/mes
                   </Badge>
                 </div>
               </AccordionTrigger>

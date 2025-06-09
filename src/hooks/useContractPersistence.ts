@@ -17,11 +17,12 @@ export const useContractPersistence = () => {
       for (const card of onboardingData.deviceSelection.dynamicCards) {
         console.log('Saving contract item:', card);
         
+        // Use card.id as string directly for item_id since it's already a text field in the database
         const { error: itemError } = await supabase
           .from('contract_items')
           .upsert({
             contract_id: contractId,
-            item_id: card.id,
+            item_id: card.id, // This is a string like "pax-a920-pro-1749497763514"
             item_type: card.type,
             category: card.category,
             name: card.name,
@@ -55,7 +56,7 @@ export const useContractPersistence = () => {
                 .from('contract_item_addons')
                 .upsert({
                   contract_item_id: contractItem.id,
-                  addon_id: addon.id,
+                  addon_id: addon.id, // This is also a string
                   category: addon.category,
                   name: addon.name,
                   description: addon.description,

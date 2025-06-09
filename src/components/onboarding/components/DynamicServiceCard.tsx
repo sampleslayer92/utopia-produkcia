@@ -8,6 +8,7 @@ import { X, Edit2 } from "lucide-react";
 import { ServiceCard, AddonCard } from "@/types/onboarding";
 import { getAddonIcon } from "../config/addonCatalog";
 import { formatCurrencyWithColor } from "../utils/currencyUtils";
+import { useTranslation } from "react-i18next";
 
 interface DynamicServiceCardProps {
   service: ServiceCard;
@@ -17,6 +18,8 @@ interface DynamicServiceCardProps {
 }
 
 const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServiceCardProps) => {
+  const { t } = useTranslation('forms');
+
   const updateField = (field: keyof ServiceCard, value: any) => {
     onUpdate({ ...service, [field]: value });
   };
@@ -80,11 +83,11 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
                 {service.category}
               </Badge>
               <Badge variant="outline" className="text-xs">
-                {service.count} ks
+                {t('deviceSelection.cards.count', { count: service.count })}
               </Badge>
               {(service.addons?.length || 0) > 0 && (
                 <Badge variant="outline" className="text-xs text-green-600">
-                  +{service.addons?.length} doplnkov
+                  {t('deviceSelection.cards.addonsCount', { count: service.addons?.length })}
                 </Badge>
               )}
             </div>
@@ -95,7 +98,7 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
       <CardContent className="pt-0 space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor={`count-${service.id}`}>Počet ks</Label>
+            <Label htmlFor={`count-${service.id}`}>{t('deviceSelection.cards.quantityLabel')}</Label>
             <Input
               id={`count-${service.id}`}
               type="number"
@@ -106,7 +109,7 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`fee-${service.id}`}>Mesačný poplatok (EUR)</Label>
+            <Label htmlFor={`fee-${service.id}`}>{t('deviceSelection.cards.monthlyFeeLabel')}</Label>
             <Input
               id={`fee-${service.id}`}
               type="number"
@@ -118,7 +121,7 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`company-cost-${service.id}`}>Náklad firmy (EUR)</Label>
+            <Label htmlFor={`company-cost-${service.id}`}>{t('deviceSelection.cards.companyCostLabel')}</Label>
             <Input
               id={`company-cost-${service.id}`}
               type="number"
@@ -131,14 +134,14 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
           </div>
           {service.name === 'Iný' && (
             <div className="space-y-2">
-              <Label htmlFor={`custom-${service.id}`}>Špecifikácia</Label>
+              <Label htmlFor={`custom-${service.id}`}>{t('deviceSelection.cards.specifications')}</Label>
               <Input
                 id={`custom-${service.id}`}
                 type="text"
                 value={service.customValue || ''}
                 onChange={(e) => updateField('customValue', e.target.value)}
                 className="border-slate-300 focus:border-blue-500"
-                placeholder="Opíšte službu"
+                placeholder={t('deviceSelection.modal.customSpecificationPlaceholder')}
               />
             </div>
           )}
@@ -148,7 +151,7 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
         {service.addons && service.addons.length > 0 && (
           <div className="border-t pt-4">
             <h5 className="font-medium text-slate-900 mb-3 flex items-center gap-2">
-              🔧 Doplnky ({service.addons.length})
+              🔧 {t('deviceSelection.cards.addonsTitle')} ({service.addons.length})
             </h5>
             <div className="space-y-2">
               {service.addons.map((addon: AddonCard) => {
@@ -164,9 +167,11 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
                         <div>
                           <p className="text-sm font-medium text-slate-900">{addon.name}</p>
                           <p className="text-xs text-slate-600">
-                            {quantity} ks x {addon.monthlyFee.toFixed(2)} €
+                            {t('deviceSelection.cards.count', { count: quantity })} x {addon.monthlyFee.toFixed(2)} €
                             {addon.isPerDevice && (
-                              <span className="text-blue-600 ml-1">(automaticky)</span>
+                              <span className="text-blue-600 ml-1">
+                                {t('deviceSelection.cards.automatic')}
+                              </span>
                             )}
                           </p>
                         </div>
@@ -186,23 +191,23 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
         <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-3 border border-blue-200">
           <div className="space-y-2 text-sm">
             <div className="flex justify-between items-center">
-              <span className="text-slate-700">Hlavná položka:</span>
+              <span className="text-slate-700">{t('deviceSelection.cards.mainItem')}</span>
               <span className={`font-medium ${mainSubtotalFormatted.className}`}>
                 {mainSubtotalFormatted.value}
               </span>
             </div>
             {addonsSubtotal > 0 && (
               <div className="flex justify-between items-center">
-                <span className="text-slate-700">Doplnky:</span>
+                <span className="text-slate-700">{t('deviceSelection.cards.addons')}</span>
                 <span className={`font-medium ${addonsSubtotalFormatted.className}`}>
                   {addonsSubtotalFormatted.value}
                 </span>
               </div>
             )}
             <div className="flex justify-between items-center border-t pt-2">
-              <span className="font-bold text-slate-900">Celkom:</span>
+              <span className="font-bold text-slate-900">{t('deviceSelection.cards.total')}</span>
               <span className={`font-bold text-xl ${totalSubtotalFormatted.className || 'text-green-600'}`}>
-                {totalSubtotalFormatted.value}/mes
+                {totalSubtotalFormatted.value}{t('deviceSelection.cards.perMonth')}
               </span>
             </div>
           </div>
