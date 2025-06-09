@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContractData } from "@/hooks/useContractData";
 import { useContractUpdate } from "@/hooks/useContractUpdate";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import ContractHeader from "./contract-detail/ContractHeader";
 import EnhancedClientOperationsSection from "./contract-detail/EnhancedClientOperationsSection";
 import DevicesServicesSection from "./contract-detail/DevicesServicesSection";
@@ -18,7 +17,6 @@ import { OnboardingData } from "@/types/onboarding";
 const ContractDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [isEditMode, setIsEditMode] = useState(false);
   const [editData, setEditData] = useState<OnboardingData | null>(null);
   
@@ -75,16 +73,13 @@ const ContractDetail = () => {
         data: updatedData
       });
 
-      toast({
-        title: "Zmluva uložená",
+      toast.success("Zmluva uložená", {
         description: "Zmeny boli úspešne uložené.",
       });
     } catch (error) {
       console.error('Error saving contract section:', error);
-      toast({
-        title: "Chyba",
+      toast.error("Chyba", {
         description: "Nepodarilo sa uložiť zmeny.",
-        variant: "destructive",
       });
     }
   };
