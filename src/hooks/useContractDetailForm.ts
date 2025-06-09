@@ -17,6 +17,9 @@ export const useContractDetailForm = (initialData: OnboardingData) => {
       // Navigate to the parent object
       for (let i = 0; i < pathParts.length - 1; i++) {
         const part = pathParts[i];
+        if (!current[part]) {
+          current[part] = {};
+        }
         current[part] = { ...current[part] };
         current = current[part];
       }

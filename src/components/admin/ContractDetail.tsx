@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContractData } from "@/hooks/useContractData";
 import { useContractUpdate } from "@/hooks/useContractUpdate";
@@ -25,15 +25,18 @@ const ContractDetail = () => {
   const contractDataResult = useContractData(id!);
   const updateContract = useContractUpdate(id!);
 
-  // Initialize form management
+  // Initialize form management with empty data first
   const { formData, isDirty, updateField, resetForm, markClean } = useContractDetailForm(
-    contractDataResult.data?.onboardingData || {} as OnboardingData
+    {} as OnboardingData
   );
 
-  // Reset form when data changes
-  if (contractDataResult.data?.onboardingData && !isEditMode) {
-    resetForm(contractDataResult.data.onboardingData);
-  }
+  // Handle data loading and form initialization
+  useEffect(() => {
+    if (contractDataResult.data?.onboardingData && !isEditMode) {
+      console.log('Initializing form data from contract:', contractDataResult.data.onboardingData);
+      resetForm(contractDataResult.data.onboardingData);
+    }
+  }, [contractDataResult.data?.onboardingData, isEditMode, resetForm]);
 
   if (contractDataResult.isLoading) {
     return (
@@ -98,19 +101,21 @@ const ContractDetail = () => {
           handleSave();
         } else {
           // Reset form to original data
+          console.log('Resetting form to original data');
           resetForm(onboardingData);
         }
       }
       setIsEditMode(false);
     } else {
       // Entering edit mode - initialize form with current data
+      console.log('Entering edit mode, initializing form');
       resetForm(onboardingData);
       setIsEditMode(true);
     }
   };
 
-  // Use form data if in edit mode and have changes, otherwise use original data
-  const currentData = isEditMode ? formData : onboardingData;
+  // Use form data if in edit mode, otherwise use original data
+  const currentData = isEditMode && Object.keys(formData).length > 0 ? formData : onboardingData;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
