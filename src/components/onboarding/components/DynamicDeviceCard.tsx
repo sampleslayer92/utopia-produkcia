@@ -18,7 +18,13 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
   const { mainSubtotal, addonsSubtotal, totalSubtotal } = useCardCalculations(device);
 
   const updateField = (field: keyof DeviceCard, value: any) => {
-    onUpdate({ ...device, [field]: value });
+    try {
+      console.log(`Updating device field ${field} with value:`, value);
+      const updatedDevice = { ...device, [field]: value };
+      onUpdate(updatedDevice);
+    } catch (error) {
+      console.error('Error updating device field:', error);
+    }
   };
 
   return (

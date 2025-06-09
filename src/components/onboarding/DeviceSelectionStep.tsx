@@ -1,16 +1,18 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
 import { OnboardingData, DeviceCard, ServiceCard } from "@/types/onboarding";
 import SolutionSelectionSection from "./device-selection/SolutionSelectionSection";
 import DeviceCatalogPanel from "./device-selection/DeviceCatalogPanel";
 import LivePreviewPanel from "./device-selection/LivePreviewPanel";
 import ProductDetailModal from "./components/ProductDetailModal";
 import { useProductModal } from "./hooks/useProductModal";
+import { useContractPersistence } from "@/hooks/useContractPersistence";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 interface DeviceSelectionStepProps {
   data: OnboardingData;
@@ -22,6 +24,39 @@ interface DeviceSelectionStepProps {
 const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelectionStepProps) => {
   const { t } = useTranslation('forms');
   const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
+  const { saveContractData, isLoading: isSaving } = useContractPersistence();
+  const [lastSaveTime, setLastSaveTime] = useState<Date | null>(null);
+
+  // Auto-save function with improved error handling
+  const autoSaveProducts = useCallback(async (updatedData: OnboardingData) => {
+    if (!updatedData.contractId) {
+      console.warn('No contract ID available for auto-save');
+      return;
+    }
+
+    try {
+      console.log('Auto-saving products...', updatedData.deviceSelection.dynamicCards);
+      const result = await saveContractData(updatedData.contractId, updatedData);
+      
+      if (result.success) {
+        setLastSaveTime(new Date());
+        console.log('Products auto-saved successfully');
+        toast.success('Produkty automaticky uložené', {
+          description: 'Vaše zmeny boli úspešne uložené'
+        });
+      } else {
+        console.error('Auto-save failed:', result.error);
+        toast.error('Chyba pri automatickom ukladaní', {
+          description: 'Skúste uložiť zmeny manuálne'
+        });
+      }
+    } catch (error) {
+      console.error('Auto-save error:', error);
+      toast.error('Chyba pri automatickom ukladaní', {
+        description: 'Skúste uložiť zmeny manuálne'
+      });
+    }
+  }, [saveContractData]);
 
   const toggleSolution = (solutionId: string) => {
     const newSelection = data.deviceSelection.selectedSolutions.includes(solutionId)
@@ -47,60 +82,94 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
     openAddModal(serviceWithCategory, 'service');
   };
 
-  const handleSaveProduct = (card: DeviceCard | ServiceCard) => {
+  const handleSaveProduct = async (card: DeviceCard | ServiceCard) => {
     console.log('Saving product:', card);
+    
+    let updatedData: OnboardingData;
+    
     if (modalState.mode === 'add') {
-      updateData({
+      updatedData = {
+        ...data,
         deviceSelection: {
           ...data.deviceSelection,
           dynamicCards: [...data.deviceSelection.dynamicCards, card]
         }
-      });
+      };
     } else if (modalState.mode === 'edit' && modalState.editingCard) {
       const updatedCards = data.deviceSelection.dynamicCards.map(existingCard =>
         existingCard.id === modalState.editingCard!.id ? card : existingCard
       );
       
-      updateData({
+      updatedData = {
+        ...data,
         deviceSelection: {
           ...data.deviceSelection,
           dynamicCards: updatedCards
         }
-      });
+      };
+    } else {
+      return; // Invalid state
     }
+
+    // Update local state first
+    updateData(updatedData);
+    
+    // Then auto-save to database
+    await autoSaveProducts(updatedData);
   };
 
-  const updateCard = (cardId: string, updatedCard: DeviceCard | ServiceCard) => {
+  const updateCard = async (cardId: string, updatedCard: DeviceCard | ServiceCard) => {
     const updatedCards = data.deviceSelection.dynamicCards.map(card =>
       card.id === cardId ? updatedCard : card
     );
     
-    updateData({
+    const updatedData = {
+      ...data,
       deviceSelection: {
         ...data.deviceSelection,
         dynamicCards: updatedCards
       }
-    });
+    };
+    
+    // Update local state first
+    updateData(updatedData);
+    
+    // Then auto-save to database
+    await autoSaveProducts(updatedData);
   };
 
-  const removeCard = (cardId: string) => {
+  const removeCard = async (cardId: string) => {
     const updatedCards = data.deviceSelection.dynamicCards.filter(card => card.id !== cardId);
     
-    updateData({
+    const updatedData = {
+      ...data,
       deviceSelection: {
         ...data.deviceSelection,
         dynamicCards: updatedCards
       }
-    });
+    };
+    
+    // Update local state first
+    updateData(updatedData);
+    
+    // Then auto-save to database
+    await autoSaveProducts(updatedData);
   };
 
-  const clearAllCards = () => {
-    updateData({
+  const clearAllCards = async () => {
+    const updatedData = {
+      ...data,
       deviceSelection: {
         ...data.deviceSelection,
         dynamicCards: []
       }
-    });
+    };
+    
+    // Update local state first
+    updateData(updatedData);
+    
+    // Then auto-save to database
+    await autoSaveProducts(updatedData);
   };
 
   const canProceedToNext = () => {
@@ -141,7 +210,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
 
   return (
     <div className="space-y-6">
-      {/* Header with Progress */}
+      {/* Header with Progress and Save Status */}
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -159,6 +228,17 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
               <Badge variant="outline" className="text-blue-600">
                 {t('deviceSelection.navigation.itemsSelected', { count: data.deviceSelection.dynamicCards.length })}
               </Badge>
+              {isSaving && (
+                <Badge variant="outline" className="text-orange-600 flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Ukladá sa...
+                </Badge>
+              )}
+              {lastSaveTime && !isSaving && (
+                <Badge variant="outline" className="text-green-600">
+                  Uložené {lastSaveTime.toLocaleTimeString()}
+                </Badge>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -204,6 +284,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
           variant="outline"
           onClick={onPrev}
           className="flex items-center gap-2"
+          disabled={isSaving}
         >
           <ArrowLeft className="h-4 w-4" />
           {t('deviceSelection.navigation.back')}
@@ -221,16 +302,22 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
               });
             }}
             className="text-slate-600"
+            disabled={isSaving}
           >
             {t('deviceSelection.navigation.changeSolution')}
           </Button>
           
           <Button
             onClick={onNext}
-            disabled={!canProceedToNext()}
+            disabled={!canProceedToNext() || isSaving}
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
           >
-            {data.deviceSelection.dynamicCards.length > 0 ? (
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Ukladá sa...
+              </>
+            ) : data.deviceSelection.dynamicCards.length > 0 ? (
               <>
                 <CheckCircle className="h-4 w-4" />
                 {t('deviceSelection.navigation.continue')}

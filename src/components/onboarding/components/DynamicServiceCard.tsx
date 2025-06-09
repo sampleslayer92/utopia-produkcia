@@ -18,7 +18,13 @@ const DynamicServiceCard = ({ service, onUpdate, onRemove, onEdit }: DynamicServ
   const { mainSubtotal, addonsSubtotal, totalSubtotal } = useCardCalculations(service);
 
   const updateField = (field: keyof ServiceCard, value: any) => {
-    onUpdate({ ...service, [field]: value });
+    try {
+      console.log(`Updating service field ${field} with value:`, value);
+      const updatedService = { ...service, [field]: value };
+      onUpdate(updatedService);
+    } catch (error) {
+      console.error('Error updating service field:', error);
+    }
   };
 
   return (
