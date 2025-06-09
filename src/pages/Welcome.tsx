@@ -1,11 +1,14 @@
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Building2, User, ArrowRight, UserCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 const Welcome = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showRoleSelection, setShowRoleSelection] = useState(false);
 
@@ -35,12 +38,15 @@ const Welcome = () => {
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="text-center mb-8">
-            <img 
-              src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
-              alt="Utopia Logo" 
-              className="h-16 w-auto mx-auto mb-4"
-            />
-            <p className="text-slate-600 mt-2">Vyberte svoju rolu</p>
+            <div className="flex justify-between items-start mb-4">
+              <img 
+                src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+                alt="Utopia Logo" 
+                className="h-16 w-auto mx-auto"
+              />
+              <LanguageSwitcher />
+            </div>
+            <p className="text-slate-600 mt-2">{t('welcome.selectRole')}</p>
           </div>
 
           {/* Role Selection */}
@@ -55,8 +61,8 @@ const Welcome = () => {
                     <Building2 className="h-6 w-6 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900">Admin (ISO organizácia)</h3>
-                    <p className="text-sm text-slate-600">Plný prístup k systému</p>
+                    <h3 className="font-semibold text-slate-900">{t('roles.admin')}</h3>
+                    <p className="text-sm text-slate-600">{t('roles.adminDescription')}</p>
                   </div>
                   <ArrowRight className="h-5 w-5 text-slate-400" />
                 </div>
@@ -73,8 +79,8 @@ const Welcome = () => {
                     <Users className="h-6 w-6 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900">Obchodný partner</h3>
-                    <p className="text-sm text-slate-600">Správa vlastných klientov</p>
+                    <h3 className="font-semibold text-slate-900">{t('roles.partner')}</h3>
+                    <p className="text-sm text-slate-600">{t('roles.partnerDescription')}</p>
                   </div>
                   <ArrowRight className="h-5 w-5 text-slate-400" />
                 </div>
@@ -91,8 +97,8 @@ const Welcome = () => {
                     <User className="h-6 w-6 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900">Klient (merchant)</h3>
-                    <p className="text-sm text-slate-600">Zobrazenie vlastných dát</p>
+                    <h3 className="font-semibold text-slate-900">{t('roles.merchant')}</h3>
+                    <p className="text-sm text-slate-600">{t('roles.merchantDescription')}</p>
                   </div>
                   <ArrowRight className="h-5 w-5 text-slate-400" />
                 </div>
@@ -107,7 +113,7 @@ const Welcome = () => {
               onClick={() => setShowRoleSelection(false)}
               className="text-slate-600 border-slate-300"
             >
-              Späť
+              {t('welcome.back')}
             </Button>
           </div>
         </div>
@@ -120,17 +126,24 @@ const Welcome = () => {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-12">
-          <img 
-            src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
-            alt="Utopia Logo" 
-            className="h-20 w-auto mx-auto mb-8 animate-fade-in"
-          />
+          <div className="flex justify-between items-start mb-8">
+            <div className="flex-1 flex justify-center">
+              <img 
+                src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+                alt="Utopia Logo" 
+                className="h-20 w-auto animate-fade-in"
+              />
+            </div>
+            <div className="absolute top-6 right-6">
+              <LanguageSwitcher />
+            </div>
+          </div>
           <div className="space-y-3">
             <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent leading-tight animate-fade-in">
-              Registrácia bez stresu.
+              {t('welcome.title')}
             </h1>
             <p className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-slate-600 to-slate-800 bg-clip-text text-transparent animate-fade-in">
-              Vitaj v onboardingu budúcnosti.
+              {t('welcome.subtitle')}
             </p>
           </div>
         </div>
@@ -148,10 +161,10 @@ const Welcome = () => {
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold text-slate-900 mb-1">
-                    Prihlásiť sa
+                    {t('welcome.login')}
                   </h2>
                   <p className="text-slate-600">
-                    Vyberte svoju rolu a pokračujte do systému
+                    {t('welcome.loginDescription')}
                   </p>
                 </div>
                 <ArrowRight className="h-6 w-6 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300" />
@@ -174,10 +187,10 @@ const Welcome = () => {
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold text-slate-900 mb-1">
-                    Začať onboarding
+                    {t('welcome.startOnboarding')}
                   </h2>
                   <p className="text-slate-600">
-                    Registrácia novej spoločnosti do systému
+                    {t('welcome.onboardingDescription')}
                   </p>
                 </div>
                 <ArrowRight className="h-6 w-6 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all duration-300" />
@@ -190,7 +203,7 @@ const Welcome = () => {
         <div className="mt-12 text-center">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100">
             <span className="text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Utopia Research Lab 2025
+              {t('welcome.footer')}
             </span>
           </div>
         </div>

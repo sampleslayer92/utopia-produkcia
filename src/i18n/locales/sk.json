@@ -1,0 +1,34 @@
+
+{
+  "welcome": {
+    "title": "Registrácia bez stresu.",
+    "subtitle": "Vitaj v onboardingu budúcnosti.",
+    "login": "Prihlásiť sa",
+    "loginDescription": "Vyberte svoju rolu a pokračujte do systému",
+    "startOnboarding": "Začať onboarding",
+    "onboardingDescription": "Registrácia novej spoločnosti do systému",
+    "footer": "Utopia Research Lab 2025",
+    "selectRole": "Vyberte svoju rolu",
+    "back": "Späť"
+  },
+  "roles": {
+    "admin": "Admin (ISO organizácia)",
+    "adminDescription": "Plný prístup k systému",
+    "partner": "Obchodný partner",
+    "partnerDescription": "Správa vlastných klientov",
+    "merchant": "Klient (merchant)",
+    "merchantDescription": "Zobrazenie vlastných dát"
+  },
+  "common": {
+    "next": "Ďalej",
+    "back": "Späť",
+    "save": "Uložiť",
+    "cancel": "Zrušiť",
+    "edit": "Editovať",
+    "delete": "Vymazať",
+    "confirm": "Potvrdiť",
+    "loading": "Načítavam...",
+    "error": "Chyba",
+    "success": "Úspech"
+  }
+}
