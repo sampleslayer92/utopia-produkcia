@@ -20,7 +20,8 @@
       "partiallyComplete": "Čiastočne dokončené",
       "next": "Ďalší",
       "inProgress": "Prebieha",
-      "completed": "Dokončené"
+      "completed": "Dokončené",
+      "step": "Krok {current}/{total}"
     },
     "deleteConfirmation": "Naozaj chcete odstrániť túto zmluvu? Táto akcia sa nedá vrátiť späť.",
     "autoSave": {
@@ -29,6 +30,10 @@
       "error": "Chyba pri ukladaní",
       "lastSaved": "Naposledy uložené: {time}",
       "idle": "Automatické ukladanie"
+    },
+    "help": {
+      "title": "Potrebujete pomoc?",
+      "description": "Kontaktujte nás ak máte otázky ohľadom registrácie."
     }
   },
   "common": {
@@ -45,7 +50,9 @@
   },
   "notifications": {
     "contractCreated": "Zmluva bola úspešne vytvorená",
-    "contractCreationFailed": "Nepodarilo sa vytvoriť zmluvu"
+    "contractCreationFailed": "Nepodarilo sa vytvoriť zmluvu",
+    "stepNotAccessible": "Krok nie je dostupný",
+    "stepNotAccessibleDescription": "Najprv dokončite predchádzajúce kroky"
   },
   "steps": {
     "contactInfo": {
@@ -68,6 +75,24 @@
         "firstName": "Ján",
         "lastName": "Novák",
         "email": "jan.novak@email.sk"
+      },
+      "sidebar": {
+        "title": "Kontaktné údaje",
+        "description": "Vyberte svoju pozíciu v spoločnosti a zadajte kontaktné údaje. Tieto informácie sa automaticky použijú vo všetkých potrebných sekciách.",
+        "contractCreated": "Zmluva vytvorená",
+        "contractNumber": "Číslo: {number}",
+        "autoFillTitle": "Automatické vyplnenie",
+        "autoFillDescription": "Po vyplnení pozície a kontaktných údajov sa automaticky vytvorí:",
+        "autoFillItems": {
+          "companyContact": "Kontaktná osoba spoločnosti",
+          "firstLocation": "Prvá prevádzka",
+          "authorizedPerson": "Oprávnená osoba (iba Konateľ)",
+          "actualOwner": "Skutočný majiteľ (Majiteľ a Konateľ)"
+        },
+        "autoFillCompleted": "Automatické vyplnenie dokončené",
+        "autoFillCompletedDescription": "Vaše údaje boli automaticky použité v príslušných sekciách podľa vašej pozície. Môžete ich neskôr upraviť v príslušných krokoch.",
+        "requiredDataTitle": "Potrebné údaje",
+        "requiredDataDescription": "Vyplňte pozíciu, meno, priezvisko, email a telefónne číslo pre automatické vyplnenie ostatných sekcií."
       }
     },
     "companyInfo": {
@@ -227,6 +252,24 @@
       "closedAllDays": "Zatvorené všetky dni",
       "edit": "Upraviť",
       "closed": "Zatvorené"
+    },
+    "personalInfo": {
+      "title": "Osobné údaje",
+      "required": "Osobné údaje *",
+      "salutation": "Oslovenie",
+      "salutationRequired": "Oslovenie *",
+      "selectSalutation": "Vyberte oslovenie",
+      "firstNameRequired": "Meno *",
+      "lastNameRequired": "Priezvisko *",
+      "firstNamePlaceholder": "Vaše meno",
+      "lastNamePlaceholder": "Vaše priezvisko",
+      "emailRequired": "Email *",
+      "emailPlaceholder": "vas@email.sk",
+      "phoneRequired": "Telefónne číslo *",
+      "options": {
+        "mr": "Pan",
+        "mrs": "Pani"
+      }
     }
   }
 }

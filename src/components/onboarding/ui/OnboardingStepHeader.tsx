@@ -2,6 +2,7 @@
 import { User, Building, Store, Monitor, Users, UserCheck, FileCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useTranslation } from "react-i18next";
 
 interface OnboardingStepHeaderProps {
   currentStep: number;
@@ -46,6 +47,7 @@ const OnboardingStepHeader = ({
   title, 
   description 
 }: OnboardingStepHeaderProps) => {
+  const { t } = useTranslation();
   const IconComponent = stepIcons[currentStep as keyof typeof stepIcons] || User;
   const gradientClass = stepGradients[currentStep as keyof typeof stepGradients] || "from-blue-50 to-indigo-50";
   const iconColorClass = stepIconColors[currentStep as keyof typeof stepIconColors] || "text-blue-600";
@@ -65,7 +67,10 @@ const OnboardingStepHeader = ({
                 {title}
               </h1>
               <div className="text-sm text-slate-500 font-medium">
-                Krok {currentStep + 1}/{totalSteps}
+                {t('onboarding.stepper.step', { 
+                  current: currentStep + 1, 
+                  total: totalSteps 
+                })}
               </div>
             </div>
             
