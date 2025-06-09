@@ -305,5 +305,123 @@
         "reset": "Reset"
       }
     }
+  },
+  "deviceSelection": {
+    "title": "Device and Service Selection",
+    "description": "Select and configure devices and services for your business",
+    "solutionSelection": {
+      "title": "Solution Selection",
+      "description": "Select the types of solutions you want to use in your business",
+      "stepProgress": "Step 1 of 4",
+      "selectedSolutions": "Selected solutions: {count}",
+      "continueMessage": "Continue to device and service configuration",
+      "nextButton": "Next step - Device and service selection",
+      "solutions": {
+        "terminal": {
+          "title": "Payment Terminal",
+          "description": "Classic payment terminals for card acceptance"
+        },
+        "pos": {
+          "title": "POS Solution",
+          "description": "Complete POS systems with tablets"
+        },
+        "gateway": {
+          "title": "Payment Gateway",
+          "description": "Online payments for e-commerce"
+        },
+        "softpos": {
+          "title": "Mobile Terminal (SoftPOS)",
+          "description": "Mobile payment applications"
+        },
+        "charging": {
+          "title": "Charging Station",
+          "description": "Electric vehicle solutions"
+        }
+      },
+      "solutionBadges": {
+        "terminal": "Terminals",
+        "pos": "POS",
+        "gateway": "Gateway",
+        "softpos": "SoftPOS",
+        "charging": "Charging"
+      }
+    },
+    "catalog": {
+      "title": "Device and Service Catalog",
+      "deviceGroups": {
+        "terminals": "Payment Terminals",
+        "pos": "POS Tablets"
+      },
+      "serviceGroups": {
+        "software": "Software Solutions",
+        "technical": "Technical Services",
+        "accessories": "Accessories"
+      },
+      "deviceCount": "{count} devices",
+      "serviceCount": "{count} services",
+      "addDevice": "Add Device",
+      "addService": "Add Service"
+    },
+    "preview": {
+      "title": "Your Order",
+      "emptyTitle": "No items",
+      "emptyDescription": "Start by adding devices and services from the catalog on the left",
+      "clearAll": "Clear All",
+      "stats": {
+        "devices": "Devices",
+        "services": "Services",
+        "totalItems": "Total Items"
+      },
+      "costSummary": {
+        "title": "Total Costs",
+        "monthly": "€{amount}/month",
+        "yearly": "€{amount} annually"
+      },
+      "sections": {
+        "devices": "Devices",
+        "software": "Software Solutions",
+        "technical": "Technical Services",
+        "accessories": "Accessories"
+      },
+      "categoryNames": {
+        "software": "Software Solutions",
+        "technical": "Technical Services",
+        "accessories": "Accessories"
+      }
+    },
+    "modal": {
+      "addTitle": "Add - {name}",
+      "editTitle": "Edit - {name}",
+      "quantity": "Quantity",
+      "pricingMode": "Payment Method",
+      "rental": "Rental",
+      "purchase": "Purchase",
+      "monthlyFeeDevice": "Monthly fee per unit (€)",
+      "purchasePriceDevice": "One-time price per unit (€)",
+      "monthlyFeeService": "Monthly fee per unit (€)",
+      "companyCost": "Monthly company cost per unit (€)",
+      "customSpecification": "Service Specification",
+      "customSpecificationPlaceholder": "Describe the service...",
+      "addToCart": "Add to Cart",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel"
+    },
+    "cards": {
+      "count": "{count} pcs",
+      "monthlyFee": "€{amount}/month",
+      "mainItem": "Main item:",
+      "addons": "Add-ons:",
+      "total": "Total:",
+      "addonsCount": "+{count} add-ons",
+      "specifications": "Specifications",
+      "automatic": "(automatic)"
+    },
+    "navigation": {
+      "back": "Back",
+      "changeSolution": "Change Solution",
+      "continue": "Continue",
+      "next": "Next",
+      "itemsSelected": "{count} items"
+    }
   }
 }

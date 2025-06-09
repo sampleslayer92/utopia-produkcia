@@ -8,6 +8,7 @@ import { X, Edit2 } from "lucide-react";
 import { DeviceCard, AddonCard } from "@/types/onboarding";
 import { getAddonIcon } from "../config/addonCatalog";
 import { formatCurrencyWithColor } from "../utils/currencyUtils";
+import { useTranslation } from "react-i18next";
 
 interface DynamicDeviceCardProps {
   device: DeviceCard;
@@ -17,6 +18,8 @@ interface DynamicDeviceCardProps {
 }
 
 const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDeviceCardProps) => {
+  const { t } = useTranslation('forms');
+
   const updateField = (field: keyof DeviceCard, value: any) => {
     onUpdate({ ...device, [field]: value });
   };
@@ -94,11 +97,11 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
                 {device.category}
               </Badge>
               <Badge variant="outline" className="text-xs">
-                {device.count} ks
+                {t('deviceSelection.cards.count', { count: device.count })}
               </Badge>
               {(device.addons?.length || 0) > 0 && (
                 <Badge variant="outline" className="text-xs text-green-600">
-                  +{device.addons?.length} doplnkov
+                  {t('deviceSelection.cards.addonsCount', { count: device.addons?.length })}
                 </Badge>
               )}
             </div>
@@ -168,7 +171,9 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
                           <p className="text-xs text-slate-600">
                             {quantity} ks x {addon.monthlyFee.toFixed(2)} €
                             {addon.isPerDevice && (
-                              <span className="text-blue-600 ml-1">(automaticky)</span>
+                              <span className="text-blue-600 ml-1">
+                                {t('deviceSelection.cards.automatic')}
+                              </span>
                             )}
                           </p>
                         </div>
@@ -188,21 +193,21 @@ const DynamicDeviceCard = ({ device, onUpdate, onRemove, onEdit }: DynamicDevice
         <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-3 border border-blue-200">
           <div className="space-y-2 text-sm">
             <div className="flex justify-between items-center">
-              <span className="text-slate-700">Hlavná položka:</span>
+              <span className="text-slate-700">{t('deviceSelection.cards.mainItem')}</span>
               <span className={`font-medium ${mainSubtotalFormatted.className}`}>
                 {mainSubtotalFormatted.value}
               </span>
             </div>
             {addonsSubtotal > 0 && (
               <div className="flex justify-between items-center">
-                <span className="text-slate-700">Doplnky:</span>
+                <span className="text-slate-700">{t('deviceSelection.cards.addons')}</span>
                 <span className={`font-medium ${addonsSubtotalFormatted.className}`}>
                   {addonsSubtotalFormatted.value}
                 </span>
               </div>
             )}
             <div className="flex justify-between items-center border-t pt-2">
-              <span className="font-bold text-slate-900">Celkom:</span>
+              <span className="font-bold text-slate-900">{t('deviceSelection.cards.total')}</span>
               <span className={`font-bold text-xl ${totalSubtotalFormatted.className || 'text-green-600'}`}>
                 {totalSubtotalFormatted.value}/mes
               </span>

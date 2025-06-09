@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Zap, CreditCard, Monitor, Globe, Smartphone } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import MinimalDeviceCatalogCard from "../components/MinimalDeviceCatalogCard";
 import MinimalServiceCatalogGroup from "../components/MinimalServiceCatalogGroup";
+import { useTranslation } from "react-i18next";
 
 interface DeviceCatalogPanelProps {
   selectedSolutions: string[];
@@ -17,6 +17,7 @@ const DeviceCatalogPanel = ({
   onAddDevice, 
   onAddService 
 }: DeviceCatalogPanelProps) => {
+  const { t } = useTranslation('forms');
   const [openGroups, setOpenGroups] = useState<string[]>(['terminals', 'pos', 'software']);
 
   const solutionIcons = {
@@ -25,6 +26,14 @@ const DeviceCatalogPanel = ({
     gateway: <Globe className="h-4 w-4" />,
     softpos: <Smartphone className="h-4 w-4" />,
     charging: <Zap className="h-4 w-4" />
+  };
+
+  const solutionBadgeNames = {
+    terminal: t('deviceSelection.solutionSelection.solutionBadges.terminal'),
+    pos: t('deviceSelection.solutionSelection.solutionBadges.pos'),
+    gateway: t('deviceSelection.solutionSelection.solutionBadges.gateway'),
+    softpos: t('deviceSelection.solutionSelection.solutionBadges.softpos'),
+    charging: t('deviceSelection.solutionSelection.solutionBadges.charging')
   };
 
   const availableDevices = {
@@ -113,7 +122,7 @@ const DeviceCatalogPanel = ({
 
   const serviceGroups = {
     software: {
-      title: 'Softvérové riešenia',
+      title: t('deviceSelection.catalog.serviceGroups.software'),
       icon: <Monitor className="h-5 w-5 text-green-600" />,
       items: [
         { id: 'pos-software', name: 'POS Software', description: 'Komplexný pokladničný systém' },
@@ -122,7 +131,7 @@ const DeviceCatalogPanel = ({
       ]
     },
     technical: {
-      title: 'Technické služby',
+      title: t('deviceSelection.catalog.serviceGroups.technical'),
       icon: <Zap className="h-5 w-5 text-orange-600" />,
       items: [
         { id: 'installation', name: 'Inštalácia a nastavenie', description: 'Profesionálna inštalácia' },
@@ -131,7 +140,7 @@ const DeviceCatalogPanel = ({
       ]
     },
     accessories: {
-      title: 'Príslušenstvo',
+      title: t('deviceSelection.catalog.serviceGroups.accessories'),
       icon: <CreditCard className="h-5 w-5 text-purple-600" />,
       items: [
         { id: 'receipt-printer', name: 'Tlačiareň účteniek', description: 'Termálna tlačiareň 80mm' },
@@ -145,16 +154,14 @@ const DeviceCatalogPanel = ({
     <div className="h-full flex flex-col">
       {/* Sticky Header */}
       <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b p-4">
-        <h3 className="text-lg font-semibold text-slate-900 mb-3">Katalóg zariadení a služieb</h3>
+        <h3 className="text-lg font-semibold text-slate-900 mb-3">
+          {t('deviceSelection.catalog.title')}
+        </h3>
         <div className="flex flex-wrap gap-2">
           {selectedSolutions.map((solution) => (
             <Badge key={solution} variant="secondary" className="flex items-center gap-1">
               {solutionIcons[solution as keyof typeof solutionIcons]}
-              {solution === 'terminal' && 'Platobné terminály'}
-              {solution === 'pos' && 'POS systémy'}
-              {solution === 'gateway' && 'Platobná brána'}
-              {solution === 'softpos' && 'SoftPOS'}
-              {solution === 'charging' && 'Nabíjanie'}
+              {solutionBadgeNames[solution as keyof typeof solutionBadgeNames]}
             </Badge>
           ))}
         </div>
@@ -174,9 +181,9 @@ const DeviceCatalogPanel = ({
               <AccordionTrigger className="px-4 py-3 hover:no-underline">
                 <div className="flex items-center gap-3">
                   <CreditCard className="h-5 w-5 text-blue-600" />
-                  <span className="font-semibold">Platobné terminály</span>
+                  <span className="font-semibold">{t('deviceSelection.catalog.deviceGroups.terminals')}</span>
                   <Badge variant="outline" className="ml-auto">
-                    {availableDevices.terminal.length} zariadení
+                    {t('deviceSelection.catalog.deviceCount', { count: availableDevices.terminal.length })}
                   </Badge>
                 </div>
               </AccordionTrigger>
@@ -199,9 +206,9 @@ const DeviceCatalogPanel = ({
               <AccordionTrigger className="px-4 py-3 hover:no-underline">
                 <div className="flex items-center gap-3">
                   <Monitor className="h-5 w-5 text-green-600" />
-                  <span className="font-semibold">POS Tablety</span>
+                  <span className="font-semibold">{t('deviceSelection.catalog.deviceGroups.pos')}</span>
                   <Badge variant="outline" className="ml-auto">
-                    {availableDevices.pos.length} zariadení
+                    {t('deviceSelection.catalog.deviceCount', { count: availableDevices.pos.length })}
                   </Badge>
                 </div>
               </AccordionTrigger>
@@ -227,7 +234,7 @@ const DeviceCatalogPanel = ({
                   {group.icon}
                   <span className="font-semibold">{group.title}</span>
                   <Badge variant="outline" className="ml-auto">
-                    {group.items.length} služieb
+                    {t('deviceSelection.catalog.serviceCount', { count: group.items.length })}
                   </Badge>
                 </div>
               </AccordionTrigger>

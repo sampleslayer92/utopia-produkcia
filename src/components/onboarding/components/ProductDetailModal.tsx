@@ -12,6 +12,7 @@ import QuantityStepper from "./QuantityStepper";
 import ProductSpecifications from "./ProductSpecifications";
 import EnhancedAddonManager from "./EnhancedAddonManager";
 import CostBreakdownSummary from "./CostBreakdownSummary";
+import { useTranslation } from "react-i18next";
 
 interface ProductDetailModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ const ProductDetailModal = ({
   editingCard,
   onSave
 }: ProductDetailModalProps) => {
+  const { t } = useTranslation('forms');
   const [formData, setFormData] = useState<any>(null);
   const [pricingMode, setPricingMode] = useState<'rental' | 'purchase'>('rental');
 
@@ -127,7 +129,10 @@ const ProductDetailModal = ({
             ) : (
               <Settings className="h-5 w-5 text-green-600" />
             )}
-            {mode === 'add' ? 'Pridať' : 'Upraviť'} - {formData.name}
+            {mode === 'add' 
+              ? t('deviceSelection.modal.addTitle', { name: formData.name })
+              : t('deviceSelection.modal.editTitle', { name: formData.name })
+            }
           </DialogTitle>
         </DialogHeader>
 
@@ -179,7 +184,7 @@ const ProductDetailModal = ({
           <div className="space-y-6">
             {/* Quantity */}
             <div className="space-y-3">
-              <Label className="text-base font-medium">Počet kusov</Label>
+              <Label className="text-base font-medium">{t('deviceSelection.modal.quantity')}</Label>
               <QuantityStepper
                 value={formData.count}
                 onChange={(value) => updateField('count', value)}
@@ -192,21 +197,21 @@ const ProductDetailModal = ({
             {/* Device specific options */}
             {productType === 'device' && (
               <div className="space-y-3">
-                <Label className="text-base font-medium">Spôsob platby</Label>
+                <Label className="text-base font-medium">{t('deviceSelection.modal.pricingMode')}</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant={pricingMode === 'rental' ? 'default' : 'outline'}
                     onClick={() => handlePricingModeChange('rental')}
                     className="text-sm"
                   >
-                    Prenájom
+                    {t('deviceSelection.modal.rental')}
                   </Button>
                   <Button
                     variant={pricingMode === 'purchase' ? 'default' : 'outline'}
                     onClick={() => handlePricingModeChange('purchase')}
                     className="text-sm"
                   >
-                    Kúpa
+                    {t('deviceSelection.modal.purchase')}
                   </Button>
                 </div>
               </div>
@@ -217,8 +222,10 @@ const ProductDetailModal = ({
               <div className="space-y-2">
                 <Label htmlFor="monthly-fee" className="text-base font-medium">
                   {productType === 'device' 
-                    ? (pricingMode === 'rental' ? 'Mesačný poplatok za 1 kus (€)' : 'Jednorázová cena za 1 kus (€)')
-                    : 'Mesačný poplatok za 1 kus (€)'
+                    ? (pricingMode === 'rental' 
+                       ? t('deviceSelection.modal.monthlyFeeDevice')
+                       : t('deviceSelection.modal.purchasePriceDevice'))
+                    : t('deviceSelection.modal.monthlyFeeService')
                   }
                 </Label>
                 <Input
@@ -234,7 +241,7 @@ const ProductDetailModal = ({
 
               <div className="space-y-2">
                 <Label htmlFor="company-cost" className="text-base font-medium">
-                  Mesačný náklad pre firmu za 1 kus (€)
+                  {t('deviceSelection.modal.companyCost')}
                 </Label>
                 <Input
                   id="company-cost"
@@ -252,13 +259,15 @@ const ProductDetailModal = ({
             {/* Custom value for services */}
             {productType === 'service' && formData.name === 'Iný' && (
               <div className="space-y-2">
-                <Label htmlFor="custom-value" className="text-base font-medium">Špecifikácia služby</Label>
+                <Label htmlFor="custom-value" className="text-base font-medium">
+                  {t('deviceSelection.modal.customSpecification')}
+                </Label>
                 <Textarea
                   id="custom-value"
                   value={formData.customValue || ''}
                   onChange={(e) => updateField('customValue', e.target.value)}
                   className="text-base"
-                  placeholder="Opíšte službu..."
+                  placeholder={t('deviceSelection.modal.customSpecificationPlaceholder')}
                   rows={3}
                 />
               </div>
@@ -292,10 +301,10 @@ const ProductDetailModal = ({
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-6 border-t">
           <Button variant="outline" onClick={onClose}>
-            Zrušiť
+            {t('deviceSelection.modal.cancel')}
           </Button>
           <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
-            {mode === 'add' ? 'Pridať do košíka' : 'Uložiť zmeny'}
+            {mode === 'add' ? t('deviceSelection.modal.addToCart') : t('deviceSelection.modal.saveChanges')}
           </Button>
         </div>
       </DialogContent>

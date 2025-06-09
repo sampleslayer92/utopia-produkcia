@@ -305,5 +305,123 @@
         "reset": "Resetovať"
       }
     }
+  },
+  "deviceSelection": {
+    "title": "Výber zariadení a služieb",
+    "description": "Vyberte a nakonfigurujte zariadenia a služby pre vašu prevádzku",
+    "solutionSelection": {
+      "title": "Výber riešenia",
+      "description": "Vyberte typy riešení, ktoré chcete používať vo vašom podnikaní",
+      "stepProgress": "Krok 1 z 4",
+      "selectedSolutions": "Vybrané riešenia: {count}",
+      "continueMessage": "Pokračujte na konfiguráciu zariadení a služieb",
+      "nextButton": "Ďalší krok - Výber zariadení a služieb",
+      "solutions": {
+        "terminal": {
+          "title": "Platobný terminál",
+          "description": "Klasické platobné terminály pre prijímanie kariet"
+        },
+        "pos": {
+          "title": "Pokladničné riešenie",
+          "description": "Komplexné POS systémy s tabletmi"
+        },
+        "gateway": {
+          "title": "Platobná brána",
+          "description": "Online platby pre e-commerce"
+        },
+        "softpos": {
+          "title": "Terminál v mobile (SoftPOS)",
+          "description": "Mobilné aplikácie pre platby"
+        },
+        "charging": {
+          "title": "Nabíjacia stanica",
+          "description": "Riešenia pre elektromobily"
+        }
+      },
+      "solutionBadges": {
+        "terminal": "Terminály",
+        "pos": "POS",
+        "gateway": "Brána",
+        "softpos": "SoftPOS",
+        "charging": "Nabíjanie"
+      }
+    },
+    "catalog": {
+      "title": "Katalóg zariadení a služieb",
+      "deviceGroups": {
+        "terminals": "Platobné terminály",
+        "pos": "POS Tablety"
+      },
+      "serviceGroups": {
+        "software": "Softvérové riešenia",
+        "technical": "Technické služby",
+        "accessories": "Príslušenstvo"
+      },
+      "deviceCount": "{count} zariadení",
+      "serviceCount": "{count} služieb",
+      "addDevice": "Pridať zariadenie",
+      "addService": "Pridať službu"
+    },
+    "preview": {
+      "title": "Vaša objednávka",
+      "emptyTitle": "Žiadne položky",
+      "emptyDescription": "Začnite pridávaním zariadení a služieb z katalógu na ľavej strane",
+      "clearAll": "Vymazať všetko",
+      "stats": {
+        "devices": "Zariadení",
+        "services": "Služieb",
+        "totalItems": "Celkom položiek"
+      },
+      "costSummary": {
+        "title": "Celkové náklady",
+        "monthly": "{amount} €/mes",
+        "yearly": "{amount} € ročne"
+      },
+      "sections": {
+        "devices": "Zariadenia",
+        "software": "Softvérové riešenia",
+        "technical": "Technické služby",
+        "accessories": "Príslušenstvo"
+      },
+      "categoryNames": {
+        "software": "Softvérové riešenia",
+        "technical": "Technické služby",
+        "accessories": "Príslušenstvo"
+      }
+    },
+    "modal": {
+      "addTitle": "Pridať - {name}",
+      "editTitle": "Upraviť - {name}",
+      "quantity": "Počet kusov",
+      "pricingMode": "Spôsob platby",
+      "rental": "Prenájom",
+      "purchase": "Kúpa",
+      "monthlyFeeDevice": "Mesačný poplatok za 1 kus (€)",
+      "purchasePriceDevice": "Jednorázová cena za 1 kus (€)",
+      "monthlyFeeService": "Mesačný poplatok za 1 kus (€)",
+      "companyCost": "Mesačný náklad pre firmu za 1 kus (€)",
+      "customSpecification": "Špecifikácia služby",
+      "customSpecificationPlaceholder": "Opíšte službu...",
+      "addToCart": "Pridať do košíka",
+      "saveChanges": "Uložiť zmeny",
+      "cancel": "Zrušiť"
+    },
+    "cards": {
+      "count": "{count} ks",
+      "monthlyFee": "{amount} €/mes",
+      "mainItem": "Hlavná položka:",
+      "addons": "Doplnky:",
+      "total": "Celkom:",
+      "addonsCount": "+{count} doplnkov",
+      "specifications": "Špecifikácie",
+      "automatic": "(automaticky)"
+    },
+    "navigation": {
+      "back": "Späť",
+      "changeSolution": "Zmeniť riešenie",
+      "continue": "Pokračovať",
+      "next": "Ďalej",
+      "itemsSelected": "{count} položiek"
+    }
   }
 }

@@ -10,6 +10,7 @@ import DeviceCatalogPanel from "./device-selection/DeviceCatalogPanel";
 import LivePreviewPanel from "./device-selection/LivePreviewPanel";
 import ProductDetailModal from "./components/ProductDetailModal";
 import { useProductModal } from "./hooks/useProductModal";
+import { useTranslation } from "react-i18next";
 
 interface DeviceSelectionStepProps {
   data: OnboardingData;
@@ -19,6 +20,7 @@ interface DeviceSelectionStepProps {
 }
 
 const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelectionStepProps) => {
+  const { t } = useTranslation('forms');
   const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
 
   const toggleSolution = (solutionId: string) => {
@@ -122,12 +124,20 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Späť
+            {t('deviceSelection.navigation.back')}
           </Button>
         </div>
       </div>
     );
   }
+
+  const solutionBadgeNames = {
+    terminal: t('deviceSelection.solutionSelection.solutionBadges.terminal'),
+    pos: t('deviceSelection.solutionSelection.solutionBadges.pos'),
+    gateway: t('deviceSelection.solutionSelection.solutionBadges.gateway'),
+    softpos: t('deviceSelection.solutionSelection.solutionBadges.softpos'),
+    charging: t('deviceSelection.solutionSelection.solutionBadges.charging')
+  };
 
   return (
     <div className="space-y-6">
@@ -136,22 +146,18 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-slate-900 flex items-center gap-3">
-              <span>Výber zariadení a služieb</span>
+              <span>{t('deviceSelection.title')}</span>
               <div className="flex items-center gap-2">
                 {data.deviceSelection.selectedSolutions.map((solution) => (
                   <Badge key={solution} variant="secondary" className="text-xs">
-                    {solution === 'terminal' && 'Terminály'}
-                    {solution === 'pos' && 'POS'}
-                    {solution === 'gateway' && 'Brána'}
-                    {solution === 'softpos' && 'SoftPOS'}
-                    {solution === 'charging' && 'Nabíjanie'}
+                    {solutionBadgeNames[solution as keyof typeof solutionBadgeNames]}
                   </Badge>
                 ))}
               </div>
             </CardTitle>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="text-blue-600">
-                {data.deviceSelection.dynamicCards.length} položiek
+                {t('deviceSelection.navigation.itemsSelected', { count: data.deviceSelection.dynamicCards.length })}
               </Badge>
             </div>
           </div>
@@ -200,7 +206,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
           className="flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Späť
+          {t('deviceSelection.navigation.back')}
         </Button>
 
         <div className="flex items-center gap-3">
@@ -216,7 +222,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
             }}
             className="text-slate-600"
           >
-            Zmeniť riešenie
+            {t('deviceSelection.navigation.changeSolution')}
           </Button>
           
           <Button
@@ -227,11 +233,11 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
             {data.deviceSelection.dynamicCards.length > 0 ? (
               <>
                 <CheckCircle className="h-4 w-4" />
-                Pokračovať
+                {t('deviceSelection.navigation.continue')}
               </>
             ) : (
               <>
-                Ďalej
+                {t('deviceSelection.navigation.next')}
                 <ArrowRight className="h-4 w-4" />
               </>
             )}

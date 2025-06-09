@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Calculator, ShoppingCart, Package, Wrench, Edit } from "lucide-react";
 import { DeviceCard, ServiceCard } from "@/types/onboarding";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useTranslation } from "react-i18next";
 
 interface LivePreviewPanelProps {
   dynamicCards: Array<DeviceCard | ServiceCard>;
@@ -21,6 +22,7 @@ const LivePreviewPanel = ({
   onClearAll,
   onEditCard
 }: LivePreviewPanelProps) => {
+  const { t } = useTranslation('forms');
   const deviceCards = dynamicCards.filter(card => card.type === 'device') as DeviceCard[];
   const serviceCards = dynamicCards.filter(card => card.type === 'service') as ServiceCard[];
   
@@ -44,10 +46,11 @@ const LivePreviewPanel = ({
     accessories: <ShoppingCart className="h-4 w-4" />
   };
 
-  const categoryNames = {
-    software: 'Softvérové riešenia',
-    technical: 'Technické služby',
-    accessories: 'Príslušenstvo'
+  const formatCurrencyWithColor = (amount: number) => {
+    const formatted = `${amount.toFixed(2)} €`;
+    if (amount === 0) return { value: formatted, className: 'text-slate-500' };
+    if (amount > 0) return { value: formatted, className: 'text-green-600' };
+    return { value: formatted, className: 'text-red-600' };
   };
 
   if (dynamicCards.length === 0) {
@@ -55,9 +58,11 @@ const LivePreviewPanel = ({
       <div className="h-full flex items-center justify-center">
         <div className="text-center max-w-sm">
           <ShoppingCart className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-600 mb-2">Žiadne položky</h3>
+          <h3 className="text-lg font-medium text-slate-600 mb-2">
+            {t('deviceSelection.preview.emptyTitle')}
+          </h3>
           <p className="text-slate-500 text-sm">
-            Začnite pridávaním zariadení a služieb z katalógu na ľavej strane
+            {t('deviceSelection.preview.emptyDescription')}
           </p>
         </div>
       </div>
@@ -86,9 +91,11 @@ const LivePreviewPanel = ({
                 <h4 className="font-medium text-slate-900 text-sm">{card.name}</h4>
                 <p className="text-xs text-slate-600 mt-1 line-clamp-2">{card.description}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="secondary" className="text-xs">{card.count} ks</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {t('deviceSelection.cards.count', { count: card.count })}
+                  </Badge>
                   <Badge variant="outline" className="text-xs text-blue-600 border-blue-300">
-                    {(card.count * card.monthlyFee).toFixed(2)} €/mes
+                    {t('deviceSelection.cards.monthlyFee', { amount: (card.count * card.monthlyFee).toFixed(2) })}
                   </Badge>
                 </div>
               </div>
@@ -134,9 +141,11 @@ const LivePreviewPanel = ({
                   <p className="text-xs text-slate-500 mt-1 italic">"{card.customValue}"</p>
                 )}
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="secondary" className="text-xs">{card.count} ks</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {t('deviceSelection.cards.count', { count: card.count })}
+                  </Badge>
                   <Badge variant="outline" className="text-xs text-green-600 border-green-300">
-                    {(card.count * card.monthlyFee).toFixed(2)} €/mes
+                    {t('deviceSelection.cards.monthlyFee', { amount: (card.count * card.monthlyFee).toFixed(2) })}
                   </Badge>
                 </div>
               </div>
@@ -170,7 +179,9 @@ const LivePreviewPanel = ({
       {/* Sticky Header with Summary */}
       <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-slate-900">Vaša objednávka</h3>
+          <h3 className="text-lg font-semibold text-slate-900">
+            {t('deviceSelection.preview.title')}
+          </h3>
           <Button
             variant="outline"
             size="sm"
@@ -178,7 +189,7 @@ const LivePreviewPanel = ({
             className="text-red-600 hover:text-red-700 hover:bg-red-50"
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            Vymazať všetko
+            {t('deviceSelection.preview.clearAll')}
           </Button>
         </div>
         
@@ -186,15 +197,15 @@ const LivePreviewPanel = ({
         <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">{totalDevices}</div>
-            <div className="text-xs text-slate-500">Zariadení</div>
+            <div className="text-xs text-slate-500">{t('deviceSelection.preview.stats.devices')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">{totalServices}</div>
-            <div className="text-xs text-slate-500">Služieb</div>
+            <div className="text-xs text-slate-500">{t('deviceSelection.preview.stats.services')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-emerald-600">{dynamicCards.length}</div>
-            <div className="text-xs text-slate-500">Celkom položiek</div>
+            <div className="text-xs text-slate-500">{t('deviceSelection.preview.stats.totalItems')}</div>
           </div>
         </div>
 
@@ -204,11 +215,17 @@ const LivePreviewPanel = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-emerald-600" />
-                <span className="font-medium text-emerald-800">Celkové náklady</span>
+                <span className="font-medium text-emerald-800">
+                  {t('deviceSelection.preview.costSummary.title')}
+                </span>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-emerald-600">{totalMonthlyFee.toFixed(2)} €/mes</div>
-                <div className="text-sm text-emerald-700">{totalYearlyFee.toFixed(2)} € ročne</div>
+                <div className="text-2xl font-bold text-emerald-600">
+                  {t('deviceSelection.preview.costSummary.monthly', { amount: totalMonthlyFee.toFixed(2) })}
+                </div>
+                <div className="text-sm text-emerald-700">
+                  {t('deviceSelection.preview.costSummary.yearly', { amount: totalYearlyFee.toFixed(2) })}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -224,7 +241,7 @@ const LivePreviewPanel = ({
               <AccordionTrigger className="px-4 py-3 hover:no-underline">
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4" />
-                  <h4 className="font-semibold text-slate-900">Zariadenia</h4>
+                  <h4 className="font-semibold text-slate-900">{t('deviceSelection.preview.sections.devices')}</h4>
                   <Badge variant="secondary">{deviceCards.length} typov</Badge>
                   <Badge variant="outline" className="text-blue-600 border-blue-300 ml-auto">
                     {deviceCards.reduce((sum, card) => sum + (card.count * card.monthlyFee), 0).toFixed(2)} €/mes
@@ -246,7 +263,7 @@ const LivePreviewPanel = ({
                 <div className="flex items-center gap-2">
                   {categoryIcons[category as keyof typeof categoryIcons]}
                   <h4 className="font-semibold text-slate-900">
-                    {categoryNames[category as keyof typeof categoryNames]}
+                    {t(`deviceSelection.preview.categoryNames.${category}`)}
                   </h4>
                   <Badge variant="secondary">{services.length} typov</Badge>
                   <Badge variant="outline" className="text-green-600 border-green-300 ml-auto">
