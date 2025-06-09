@@ -49,8 +49,8 @@ const CompanyAddressCard = ({ data, updateCompanyInfo }: CompanyAddressCardProps
         <div className="flex items-center space-x-2">
           <Checkbox
             id="contactAddressSame"
-            checked={data.companyInfo.contactAddressSame}
-            onCheckedChange={(checked) => updateCompanyInfo('contactAddressSame', checked)}
+            checked={data.companyInfo.contactAddressSameAsMain}
+            onCheckedChange={(checked) => updateCompanyInfo('contactAddressSameAsMain', checked)}
           />
           <label htmlFor="contactAddressSame" className="text-sm text-slate-700">
             {t('onboarding.companyInfo.contactAddressSame')}

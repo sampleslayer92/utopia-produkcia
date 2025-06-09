@@ -34,12 +34,13 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
         }
       });
     } else if (keys.length === 2) {
+      const [parentKey, childKey] = keys;
       updateData({
         companyInfo: {
           ...data.companyInfo,
-          [keys[0]]: {
-            ...data.companyInfo[keys[0] as keyof typeof data.companyInfo],
-            [keys[1]]: value
+          [parentKey]: {
+            ...(data.companyInfo[parentKey as keyof typeof data.companyInfo] as any),
+            [childKey]: value
           }
         }
       });
@@ -94,7 +95,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
             updateCompanyInfo={updateCompanyInfo}
           />
           
-          {!data.companyInfo.contactAddressSame && (
+          {!data.companyInfo.contactAddressSameAsMain && (
             <CompanyContactAddressCard 
               data={data} 
               updateCompanyInfo={updateCompanyInfo}
@@ -141,7 +142,7 @@ const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
             updateCompanyInfo={updateCompanyInfo}
           />
           
-          {!data.companyInfo.contactAddressSame && (
+          {!data.companyInfo.contactAddressSameAsMain && (
             <CompanyContactAddressCard 
               data={data} 
               updateCompanyInfo={updateCompanyInfo}

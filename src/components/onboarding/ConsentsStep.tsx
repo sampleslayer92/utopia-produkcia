@@ -27,7 +27,7 @@ const ConsentsStep = ({
 }: ConsentsStepProps) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const [signature, setSignature] = useState(data.consents?.signature || '');
+  const [signature, setSignature] = useState(data.consents?.signature || data.consents?.signatureUrl || '');
 
   const updateConsents = (field: string, value: any) => {
     updateData({
@@ -41,11 +41,13 @@ const ConsentsStep = ({
   const handleSignatureChange = (signatureData: string) => {
     setSignature(signatureData);
     updateConsents('signature', signatureData);
+    updateConsents('signatureUrl', signatureData);
   };
 
   const clearSignature = () => {
     setSignature('');
     updateConsents('signature', '');
+    updateConsents('signatureUrl', '');
   };
 
   const saveSignature = () => {
@@ -57,7 +59,7 @@ const ConsentsStep = ({
   const isFormValid = () => {
     const consents = data.consents || {};
     return (
-      consents.dataProcessing &&
+      (consents.dataProcessing || consents.gdpr) &&
       consents.terms &&
       signature.trim() !== ''
     );
@@ -110,7 +112,7 @@ const ConsentsStep = ({
               <div key={item.key} className="flex items-start space-x-3">
                 <Checkbox
                   id={item.key}
-                  checked={data.consents?.[item.key] || false}
+                  checked={data.consents?.[item.key as keyof typeof data.consents] || false}
                   onCheckedChange={(checked) => updateConsents(item.key, checked)}
                   className="mt-1"
                 />
@@ -152,11 +154,17 @@ const ConsentsStep = ({
               )}
             </div>
             
-            <SignaturePad
-              signature={signature}
-              onSignatureChange={handleSignatureChange}
-              placeholder={t('onboarding.consents.signatureCanvas')}
-            />
+            <div className="border border-gray-300 rounded-lg p-4 bg-white">
+              <canvas 
+                width={300} 
+                height={150} 
+                className="border border-gray-200 w-full"
+                style={{ touchAction: 'none' }}
+              />
+              <p className="text-sm text-gray-500 mt-2">
+                {t('onboarding.consents.signatureCanvas')}
+              </p>
+            </div>
             
             {!signature && (
               <p className="text-sm text-red-600">
@@ -207,7 +215,7 @@ const ConsentsStep = ({
               <div key={item.key} className="flex items-start space-x-3 p-4 bg-slate-50 rounded-lg">
                 <Checkbox
                   id={item.key}
-                  checked={data.consents?.[item.key] || false}
+                  checked={data.consents?.[item.key as keyof typeof data.consents] || false}
                   onCheckedChange={(checked) => updateConsents(item.key, checked)}
                   className="mt-1"
                 />
@@ -249,11 +257,17 @@ const ConsentsStep = ({
               )}
             </div>
             
-            <SignaturePad
-              signature={signature}
-              onSignatureChange={handleSignatureChange}
-              placeholder={t('onboarding.consents.signatureCanvas')}
-            />
+            <div className="border border-gray-300 rounded-lg p-4 bg-white">
+              <canvas 
+                width={400} 
+                height={200} 
+                className="border border-gray-200 w-full"
+                style={{ touchAction: 'none' }}
+              />
+              <p className="text-sm text-gray-500 mt-2">
+                {t('onboarding.consents.signatureCanvas')}
+              </p>
+            </div>
             
             {!signature && (
               <p className="text-sm text-red-600">

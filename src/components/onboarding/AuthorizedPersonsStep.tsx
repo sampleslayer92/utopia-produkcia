@@ -9,7 +9,6 @@ import OnboardingInput from "./ui/OnboardingInput";
 import PhoneNumberInput from "./ui/PhoneNumberInput";
 import { Badge } from "@/components/ui/badge";
 import DocumentUpload from "./ui/DocumentUpload";
-import AddressForm from "./ui/AddressForm";
 import MobileOptimizedCard from "./ui/MobileOptimizedCard";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -29,7 +28,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
 
   const addPerson = () => {
     const newPerson = {
-      id: Date.now(),
+      id: Date.now().toString(),
       firstName: '',
       lastName: '',
       email: '',
@@ -63,14 +62,12 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
     });
     
     setExpandedPersons(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(index);
-      const adjustedSet = new Set();
-      newSet.forEach(i => {
-        if (i < index) adjustedSet.add(i);
-        else if (i > index) adjustedSet.add(i - 1);
+      const newSet = new Set<number>();
+      prev.forEach(i => {
+        if (i < index) newSet.add(i);
+        else if (i > index) newSet.add(i - 1);
       });
-      return adjustedSet;
+      return newSet;
     });
   };
 
@@ -84,11 +81,12 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
         [field]: value
       };
     } else if (keys.length === 2) {
+      const [parentKey, childKey] = keys;
       updatedPersons[index] = {
         ...updatedPersons[index],
-        [keys[0]]: {
-          ...updatedPersons[index][keys[0] as keyof typeof updatedPersons[index]],
-          [keys[1]]: value
+        [parentKey]: {
+          ...(updatedPersons[index][parentKey as keyof typeof updatedPersons[0]] as any),
+          [childKey]: value
         }
       };
     }
@@ -355,7 +353,7 @@ const AuthorizedPersonCard = ({
 
               <OnboardingInput
                 label={t('onboarding.authorizedPersons.idNumber')}
-                value={person.idNumber}
+                value={person.idNumber || ''}
                 onChange={(e) => onUpdate(index, 'idNumber', e.target.value)}
                 placeholder="123456789"
               />
@@ -367,10 +365,32 @@ const AuthorizedPersonCard = ({
                 <MapPin className="h-4 w-4" />
                 {t('onboarding.authorizedPersons.address')}
               </h4>
-              <AddressForm
-                address={person.address}
-                onAddressChange={(field, value) => onUpdate(index, `address.${field}`, value)}
-              />
+              <div className="space-y-4">
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="md:col-span-2">
+                    <OnboardingInput
+                      label={`${t('onboarding.companyInfo.street')} *`}
+                      value={person.address?.street || ''}
+                      onChange={(e) => onUpdate(index, 'address.street', e.target.value)}
+                      placeholder={t('onboarding.companyInfo.street')}
+                    />
+                  </div>
+                  
+                  <OnboardingInput
+                    label={`${t('onboarding.companyInfo.zipCode')} *`}
+                    value={person.address?.zipCode || ''}
+                    onChange={(e) => onUpdate(index, 'address.zipCode', e.target.value)}
+                    placeholder="01001"
+                  />
+                </div>
+                
+                <OnboardingInput
+                  label={`${t('onboarding.companyInfo.city')} *`}
+                  value={person.address?.city || ''}
+                  onChange={(e) => onUpdate(index, 'address.city', e.target.value)}
+                  placeholder={t('onboarding.companyInfo.city')}
+                />
+              </div>
             </div>
 
             {/* Document Upload */}
@@ -379,12 +399,22 @@ const AuthorizedPersonCard = ({
                 <FileText className="h-4 w-4" />
                 {t('onboarding.validation.required')}
               </h4>
-              <DocumentUpload
-                documents={person.documents || []}
-                onDocumentsChange={(docs) => onUpdate(index, 'documents', docs)}
-                acceptedTypes={['.jpg', '.jpeg', '.png', '.pdf']}
-                maxFiles={3}
-              />
+              <div className="grid md:grid-cols-2 gap-4">
+                <DocumentUpload
+                  label={t('onboarding.authorizedPersons.documentFront')}
+                  value={person.documentFrontUrl}
+                  onChange={(url) => onUpdate(index, 'documentFrontUrl', url)}
+                  personId={person.id}
+                  documentSide="front"
+                />
+                <DocumentUpload
+                  label={t('onboarding.authorizedPersons.documentBack')}
+                  value={person.documentBackUrl}
+                  onChange={(url) => onUpdate(index, 'documentBackUrl', url)}
+                  personId={person.id}
+                  documentSide="back"
+                />
+              </div>
             </div>
           </div>
         )}

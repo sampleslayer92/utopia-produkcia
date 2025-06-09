@@ -1,3 +1,4 @@
+
 export interface ContactInfo {
   salutation?: 'Pan' | 'Pani';
   firstName: string;
@@ -36,6 +37,7 @@ export interface CompanyInfo {
   insertNumber?: string;
   address: CompanyAddress;
   contactAddressSameAsMain: boolean;
+  contactAddressSame: boolean; // Keep both for backward compatibility
   contactAddress?: CompanyAddress;
   headOfficeEqualsOperatingAddress: boolean; // New field for operating address sync
   contactPerson: ContactPerson;
@@ -156,19 +158,25 @@ export interface AuthorizedPerson {
   maidenName?: string;
   birthDate: string;
   birthPlace: string;
-  birthNumber: string;
-  permanentAddress: string;
-  position: string;
-  documentType: 'OP' | 'Pas';
-  documentNumber: string;
-  documentValidity: string;
-  documentIssuer: string;
-  documentCountry: string;
-  citizenship: string;
-  isPoliticallyExposed: boolean;
-  isUSCitizen: boolean;
+  birthNumber?: string; // Make optional for backward compatibility
+  idNumber?: string; // Add this field for backward compatibility
+  permanentAddress?: string; // Make optional for backward compatibility
+  address?: CompanyAddress; // Add this field for the new structure
+  position?: string; // Make optional for backward compatibility
+  documentType?: 'OP' | 'Pas'; // Make optional for backward compatibility
+  documentNumber?: string; // Make optional for backward compatibility
+  documentValidity?: string; // Make optional for backward compatibility
+  documentIssuer?: string; // Make optional for backward compatibility
+  documentCountry?: string; // Make optional for backward compatibility
+  citizenship?: string; // Make optional for backward compatibility
+  isPoliticallyExposed?: boolean; // Make optional for backward compatibility
+  isUSCitizen?: boolean; // Make optional for backward compatibility
   documentFrontUrl?: string;
   documentBackUrl?: string;
+  authorizations?: any[]; // Add this field
+  documents?: any[]; // Add this field
+  signature?: string; // Add this field
+  isSameAsContact?: boolean; // Add this field
 }
 
 export interface ActualOwner {
@@ -185,12 +193,15 @@ export interface ActualOwner {
 }
 
 export interface Consents {
-  gdpr: boolean;
+  gdpr?: boolean; // Make optional for backward compatibility
+  dataProcessing?: boolean; // Add this field
   terms: boolean;
-  electronicCommunication: boolean;
+  marketing?: boolean; // Add this field
+  electronicCommunication?: boolean; // Make optional for backward compatibility
   signatureDate?: string;
   signingPersonId?: string;
   signatureUrl?: string;
+  signature?: string; // Add this field for backward compatibility
 }
 
 // Export ItemBreakdown interface for fee calculations
