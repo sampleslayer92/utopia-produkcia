@@ -1,6 +1,8 @@
 
 {
   "contactInfo": {
+    "title": "Kontaktné údaje",
+    "description": "Vyplňte vaše základné kontaktné údaje. Tieto informácie sa použijú pre automatické predvyplnenie ostatných krokov registrácie.",
     "salutation": "Oslovenie",
     "firstName": "Meno",
     "lastName": "Priezvisko", 
@@ -8,15 +10,56 @@
     "phone": "Telefón",
     "phonePrefix": "Predvoľba",
     "companyType": "Typ spoločnosti",
-    "salesNote": "Obchodná poznámka",
+    "salesNote": "Chcete nám niečo odkázať?",
     "userRole": "Pozícia vo firme",
+    "personalData": "Osobné údaje",
+    "salutationOptions": {
+      "pan": "Pan",
+      "pani": "Pani"
+    },
+    "companyTypeOptions": {
+      "zivnost": "Živnosť",
+      "sro": "S.r.o.",
+      "neziskova": "Nezisková organizácia",
+      "as": "Akciová spoločnosť"
+    },
     "placeholders": {
-      "firstName": "Zadajte meno",
-      "lastName": "Zadajte priezvisko",
+      "firstName": "Vaše meno",
+      "lastName": "Vaše priezvisko",
       "email": "vas@email.sk",
       "phone": "912 345 678",
-      "salesNote": "Poznámky pre obchodný tím..."
-    }
+      "salesNote": "Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie...",
+      "selectSalutation": "Vyberte oslovenie",
+      "selectCompanyType": "Vyberte typ spoločnosti"
+    },
+    "sidebar": {
+      "title": "Kontaktné údaje",
+      "description": "Vyberte svoju pozíciu v spoločnosti a zadajte kontaktné údaje. Tieto informácie sa automaticky použijú vo všetkých potrebných sekciách.",
+      "contractCreated": "Zmluva vytvorená",
+      "contractNumber": "Číslo",
+      "autoFill": {
+        "title": "Automatické vyplnenie",
+        "description": "Po vyplnení pozície a kontaktných údajov sa automaticky vytvorí:",
+        "completed": "Automatické vyplnenie dokončené",
+        "completedDescription": "Vaše údaje boli automaticky použité v príslušných sekciách podľa vašej pozície. Môžete ich neskôr upraviť v príslušných krokoch.",
+        "items": {
+          "companyContact": "Kontaktná osoba spoločnosti",
+          "firstLocation": "Prvá prevádzka",
+          "authorizedPerson": "Oprávnená osoba (iba Konateľ)",
+          "actualOwner": "Skutočný majiteľ (Majiteľ a Konateľ)"
+        }
+      },
+      "requiredData": {
+        "title": "Potrebné údaje",
+        "description": "Vyplňte pozíciu, meno, priezvisko, email a telefónne číslo pre automatické vyplnenie ostatných sekcií."
+      }
+    },
+    "features": [
+      "Automatické predvyplnenie kontaktných osôb",
+      "Synchronizácia údajov medzi krokmi",
+      "Overenie emailovej adresy", 
+      "Formátovanie telefónneho čísla"
+    ]
   },
   "companyInfo": {
     "ico": "IČO",

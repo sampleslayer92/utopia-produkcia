@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from "react-i18next";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -44,20 +45,25 @@ const countries: CountryOption[] = [
 ];
 
 const PhoneNumberInput = ({
-  label = "Telefónne číslo",
+  label,
   phoneValue,
   prefixValue,
   onPhoneChange,
   onPrefixChange,
-  placeholder = "123 456 789",
+  placeholder,
   isCompleted,
   error,
   className = "",
   required = false
 }: PhoneNumberInputProps) => {
+  const { t } = useTranslation('forms');
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   
   const selectedCountry = countries.find(country => country.prefix === prefixValue) || countries[0];
+
+  // Use translation for label fallback
+  const displayLabel = label || t('contactInfo.phone');
+  const displayPlaceholder = placeholder || t('contactInfo.placeholders.phone');
 
   const handleImageError = (countryCode: string) => {
     setImageErrors(prev => new Set(prev).add(countryCode));
@@ -75,11 +81,11 @@ const PhoneNumberInput = ({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      {label && (
+      {displayLabel && (
         <div className="flex items-center gap-2 text-slate-700">
           <Phone className="h-4 w-4 text-blue-500" />
           <Label className="text-sm font-medium">
-            {label} {required && "*"}
+            {displayLabel} {required && "*"}
           </Label>
         </div>
       )}
@@ -136,7 +142,7 @@ const PhoneNumberInput = ({
             type="tel"
             value={phoneValue}
             onChange={handlePhoneInputChange}
-            placeholder={placeholder}
+            placeholder={displayPlaceholder}
             className={`h-12 border-2 transition-all duration-200 ${
               error
                 ? 'border-red-300 bg-red-50'

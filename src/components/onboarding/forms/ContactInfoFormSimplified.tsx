@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
@@ -13,6 +14,7 @@ interface ContactInfoFormSimplifiedProps {
 }
 
 const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactInfoFormSimplifiedProps) => {
+  const { t } = useTranslation('forms');
   const { errors, completedFields, updateField } = useValidatedForm(
     contactInfoSchema,
     data,
@@ -20,8 +22,8 @@ const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactIn
   );
 
   const salutationOptions = [
-    { value: 'Pan', label: 'Pan' },
-    { value: 'Pani', label: 'Pani' }
+    { value: 'Pan', label: t('contactInfo.salutationOptions.pan') },
+    { value: 'Pani', label: t('contactInfo.salutationOptions.pani') }
   ];
 
   const phonePrefixOptions = [
@@ -32,10 +34,10 @@ const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactIn
   ];
 
   const companyTypeOptions = [
-    { value: 'Živnosť', label: 'Živnosť' },
-    { value: 'S.r.o.', label: 'S.r.o.' },
-    { value: 'Nezisková organizácia', label: 'Nezisková organizácia' },
-    { value: 'Akciová spoločnosť', label: 'Akciová spoločnosť' }
+    { value: 'Živnosť', label: t('contactInfo.companyTypeOptions.zivnost') },
+    { value: 'S.r.o.', label: t('contactInfo.companyTypeOptions.sro') },
+    { value: 'Nezisková organizácia', label: t('contactInfo.companyTypeOptions.neziskova') },
+    { value: 'Akciová spoločnosť', label: t('contactInfo.companyTypeOptions.as') }
   ];
 
   return (
@@ -44,13 +46,13 @@ const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactIn
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-slate-900 flex items-center gap-2">
           <User className="h-5 w-5 text-blue-500" />
-          Osobné údaje
+          {t('contactInfo.personalData')}
         </h3>
 
         <div className="grid md:grid-cols-3 gap-4">
           <OnboardingSelect
-            label="Oslovenie"
-            placeholder="Vyberte oslovenie"
+            label={t('contactInfo.salutation')}
+            placeholder={t('contactInfo.placeholders.selectSalutation')}
             value={data.salutation || ''}
             onValueChange={(value) => updateField('salutation', value)}
             options={salutationOptions}
@@ -59,39 +61,39 @@ const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactIn
           />
 
           <OnboardingInput
-            label="Meno *"
+            label={`${t('contactInfo.firstName')} *`}
             icon={<User className="h-4 w-4" />}
             value={data.firstName}
             onChange={(e) => updateField('firstName', e.target.value)}
-            placeholder="Ján"
+            placeholder={t('contactInfo.placeholders.firstName')}
             isCompleted={completedFields.has('firstName')}
             error={errors.firstName}
           />
 
           <OnboardingInput
-            label="Priezvisko *"
+            label={`${t('contactInfo.lastName')} *`}
             value={data.lastName}
             onChange={(e) => updateField('lastName', e.target.value)}
-            placeholder="Novák"
+            placeholder={t('contactInfo.placeholders.lastName')}
             isCompleted={completedFields.has('lastName')}
             error={errors.lastName}
           />
         </div>
 
         <OnboardingInput
-          label="Email *"
+          label={`${t('contactInfo.email')} *`}
           icon={<Mail className="h-4 w-4" />}
           type="email"
           value={data.email}
           onChange={(e) => updateField('email', e.target.value)}
-          placeholder="jan.novak@firma.sk"
+          placeholder={t('contactInfo.placeholders.email')}
           isCompleted={completedFields.has('email')}
           error={errors.email}
         />
 
         <div className="grid md:grid-cols-4 gap-4">
           <OnboardingSelect
-            label="Predvoľba *"
+            label={`${t('contactInfo.phonePrefix')} *`}
             value={data.phonePrefix}
             onValueChange={(value) => updateField('phonePrefix', value)}
             options={phonePrefixOptions}
@@ -103,11 +105,11 @@ const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactIn
 
           <div className="md:col-span-3">
             <OnboardingInput
-              label="Telefón *"
+              label={`${t('contactInfo.phone')} *`}
               icon={<Phone className="h-4 w-4" />}
               value={data.phone}
               onChange={(e) => updateField('phone', e.target.value)}
-              placeholder="123 456 789"
+              placeholder={t('contactInfo.placeholders.phone')}
               isCompleted={completedFields.has('phone')}
               error={errors.phone}
             />
@@ -119,10 +121,10 @@ const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactIn
       <div className="space-y-4">
         <div className="flex items-center gap-2 text-slate-700">
           <Building className="h-5 w-5 text-blue-500" />
-          <span className="text-lg font-medium">Typ spoločnosti *</span>
+          <span className="text-lg font-medium">{t('contactInfo.companyType')} *</span>
         </div>
         <OnboardingSelect
-          placeholder="Vyberte typ spoločnosti"
+          placeholder={t('contactInfo.placeholders.selectCompanyType')}
           value={data.companyType || ''}
           onValueChange={(value) => updateField('companyType', value)}
           options={companyTypeOptions}
@@ -133,10 +135,10 @@ const ContactInfoFormSimplified = ({ data, onUpdate, className = "" }: ContactIn
 
       {/* Optional Note */}
       <OnboardingTextarea
-        label="Chcete nám niečo odkázať?"
+        label={t('contactInfo.salesNote')}
         value={data.salesNote || ''}
         onChange={(e) => updateField('salesNote', e.target.value)}
-        placeholder="Napríklad: Najlepší čas na kontakt, preferovaný spôsob komunikácie..."
+        placeholder={t('contactInfo.placeholders.salesNote')}
         rows={4}
       />
     </div>

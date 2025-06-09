@@ -1,6 +1,8 @@
 
 {
   "contactInfo": {
+    "title": "Contact Information",
+    "description": "Fill in your basic contact details. This information will be used to automatically pre-fill other registration steps.",
     "salutation": "Salutation",
     "firstName": "First Name",
     "lastName": "Last Name",
@@ -8,25 +10,66 @@
     "phone": "Phone",
     "phonePrefix": "Prefix",
     "companyType": "Company Type",
-    "salesNote": "Sales Note",
+    "salesNote": "Would you like to tell us something?",
     "userRole": "Position in Company",
+    "personalData": "Personal Information",
+    "salutationOptions": {
+      "pan": "Mr.",
+      "pani": "Ms."
+    },
+    "companyTypeOptions": {
+      "zivnost": "Sole Proprietorship",
+      "sro": "Limited Liability Company",
+      "neziskova": "Non-profit Organization",
+      "as": "Joint Stock Company"
+    },
     "placeholders": {
-      "firstName": "Enter first name",
-      "lastName": "Enter last name",
+      "firstName": "Your first name",
+      "lastName": "Your last name",
       "email": "your@email.com",
       "phone": "912 345 678",
-      "salesNote": "Notes for sales team..."
-    }
+      "salesNote": "For example: Best time to contact, preferred communication method...",
+      "selectSalutation": "Select salutation",
+      "selectCompanyType": "Select company type"
+    },
+    "sidebar": {
+      "title": "Contact Information",
+      "description": "Select your position in the company and enter contact details. This information will be automatically used in all necessary sections.",
+      "contractCreated": "Contract Created",
+      "contractNumber": "Number",
+      "autoFill": {
+        "title": "Auto-fill",
+        "description": "After filling in your position and contact details, the following will be automatically created:",
+        "completed": "Auto-fill Completed",
+        "completedDescription": "Your information has been automatically used in the relevant sections according to your position. You can edit them later in the respective steps.",
+        "items": {
+          "companyContact": "Company contact person",
+          "firstLocation": "First business location",
+          "authorizedPerson": "Authorized person (Manager only)",
+          "actualOwner": "Actual owner (Owner and Manager)"
+        }
+      },
+      "requiredData": {
+        "title": "Required Information",
+        "description": "Fill in position, first name, last name, email and phone number for automatic filling of other sections."
+      }
+    },
+    "features": [
+      "Automatic pre-filling of contact persons",
+      "Data synchronization between steps",
+      "Email address verification", 
+      "Phone number formatting"
+    ]
   },
   "companyInfo": {
     "ico": "ICO",
-    "dic": "DIC",
+    "dic": "DIC", 
     "companyName": "Company Name",
     "registryType": "Registry Type",
     "isVatPayer": "VAT Payer",
     "vatNumber": "VAT Number",
     "court": "Court",
-    "section": "Section", 
+    "section": "Section",
     "insertNumber": "Insert No.",
     "address": "Registered Address",
     "contactAddress": "Correspondence Address",
@@ -53,9 +96,9 @@
     "hasPos": "Has POS Terminal",
     "address": "Location Address",
     "contactPerson": "Contact Person",
-    "businessSector": "Business Sector",
+    "businessSector": "Business Sector", 
     "estimatedTurnover": "Estimated Turnover",
-    "averageTransaction": "Average Transaction", 
+    "averageTransaction": "Average Transaction",
     "openingHours": "Opening Hours",
     "seasonality": "Seasonality",
     "bankAccounts": "Bank Accounts"

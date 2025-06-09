@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import PhoneNumberInput from "../ui/PhoneNumberInput";
@@ -25,10 +26,11 @@ interface ContactPersonFormProps {
 const ContactPersonForm = ({ 
   data, 
   onUpdate, 
-  title = "Kontaktná osoba",
+  title,
   showTechnicalPersonOption = false,
   className = "" 
 }: ContactPersonFormProps) => {
+  const { t } = useTranslation('forms');
   const { errors, completedFields, updateField } = useValidatedForm(
     contactPersonSchema,
     data,
@@ -36,21 +38,23 @@ const ContactPersonForm = ({
   );
 
   const salutationOptions = [
-    { value: 'Pan', label: 'Pan' },
-    { value: 'Pani', label: 'Pani' }
+    { value: 'Pan', label: t('contactInfo.salutationOptions.pan') },
+    { value: 'Pani', label: t('contactInfo.salutationOptions.pani') }
   ];
+
+  const displayTitle = title || t('forms:companyInfo.contactPerson');
 
   return (
     <div className={`space-y-4 ${className}`}>
       <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2">
         <User className="h-4 w-4" />
-        {title}
+        {displayTitle}
       </h4>
 
       <div className="grid md:grid-cols-3 gap-4">
         <OnboardingSelect
-          label="Oslovenie"
-          placeholder="Vyberte oslovenie"
+          label={t('contactInfo.salutation')}
+          placeholder={t('contactInfo.placeholders.selectSalutation')}
           value={data.salutation || ''}
           onValueChange={(value) => updateField('salutation', value)}
           options={salutationOptions}
@@ -59,20 +63,20 @@ const ContactPersonForm = ({
         />
 
         <OnboardingInput
-          label="Meno *"
+          label={`${t('contactInfo.firstName')} *`}
           icon={<User className="h-4 w-4" />}
           value={data.firstName}
           onChange={(e) => updateField('firstName', e.target.value)}
-          placeholder="Ján"
+          placeholder={t('contactInfo.placeholders.firstName')}
           isCompleted={completedFields.has('firstName')}
           error={errors.firstName}
         />
 
         <OnboardingInput
-          label="Priezvisko *"
+          label={`${t('contactInfo.lastName')} *`}
           value={data.lastName}
           onChange={(e) => updateField('lastName', e.target.value)}
-          placeholder="Novák"
+          placeholder={t('contactInfo.placeholders.lastName')}
           isCompleted={completedFields.has('lastName')}
           error={errors.lastName}
         />
@@ -80,22 +84,24 @@ const ContactPersonForm = ({
 
       <div className="grid md:grid-cols-2 gap-4">
         <OnboardingInput
-          label="Email *"
+          label={`${t('contactInfo.email')} *`}
           icon={<Mail className="h-4 w-4" />}
           type="email"
           value={data.email}
           onChange={(e) => updateField('email', e.target.value)}
-          placeholder="jan.novak@firma.sk"
+          placeholder={t('contactInfo.placeholders.email')}
           isCompleted={completedFields.has('email')}
           error={errors.email}
         />
 
         <PhoneNumberInput
+          label={`${t('contactInfo.phone')} *`}
           phoneValue={data.phone}
           prefixValue={data.phonePrefix || '+421'}
           onPhoneChange={(value) => updateField('phone', value)}
           onPrefixChange={(value) => updateField('phonePrefix', value)}
           isCompleted={completedFields.has('phone')}
+          placeholder={t('contactInfo.placeholders.phone')}
           error={errors.phone}
           required={true}
         />
