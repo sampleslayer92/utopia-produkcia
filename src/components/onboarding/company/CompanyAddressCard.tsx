@@ -2,93 +2,69 @@
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
 import { Checkbox } from "@/components/ui/checkbox";
-import { MapPin, CheckCircle } from "lucide-react";
+import { MapPin } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface CompanyAddressCardProps {
   data: OnboardingData;
   updateCompanyInfo: (field: string, value: any) => void;
-  autoFilledFields?: Set<string>;
 }
 
-const CompanyAddressCard = ({ data, updateCompanyInfo, autoFilledFields = new Set() }: CompanyAddressCardProps) => {
-  const getFieldClassName = (fieldName: string) => {
-    return autoFilledFields.has(fieldName) ? 'bg-green-50 border-green-200' : '';
-  };
-
-  const getFieldIndicator = (fieldName: string) => {
-    if (autoFilledFields.has(fieldName)) {
-      return (
-        <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
-          <CheckCircle className="h-3 w-3" />
-          <span>Automaticky vyplnené</span>
-        </div>
-      );
-    }
-    return null;
-  };
-
+const CompanyAddressCard = ({ data, updateCompanyInfo }: CompanyAddressCardProps) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-4">
-        <MapPin className="h-5 w-5 text-blue-600" />
-        <h3 className="text-lg font-medium text-slate-900">Sídlo spoločnosti</h3>
+        <MapPin className="h-5 w-5 text-green-600" />
+        <h3 className="text-lg font-medium text-slate-900">{t('onboarding.companyInfo.address')}</h3>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-2">
+        <div className="md:col-span-2">
           <OnboardingInput
-            label="Ulica a číslo *"
-            value={data.companyInfo.address.street}
+            label={`${t('onboarding.companyInfo.street')} *`}
+            value={data.companyInfo.address?.street || ''}
             onChange={(e) => updateCompanyInfo('address.street', e.target.value)}
-            placeholder="Hlavná ulica 123"
-            className={getFieldClassName('address.street')}
+            placeholder={t('onboarding.companyInfo.street')}
           />
-          {getFieldIndicator('address.street')}
         </div>
         
-        <div className="space-y-2">
-          <OnboardingInput
-            label="PSČ *"
-            value={data.companyInfo.address.zipCode}
-            onChange={(e) => updateCompanyInfo('address.zipCode', e.target.value)}
-            placeholder="01001"
-            className={getFieldClassName('address.zipCode')}
-          />
-          {getFieldIndicator('address.zipCode')}
-        </div>
+        <OnboardingInput
+          label={`${t('onboarding.companyInfo.zipCode')} *`}
+          value={data.companyInfo.address?.zipCode || ''}
+          onChange={(e) => updateCompanyInfo('address.zipCode', e.target.value)}
+          placeholder="01001"
+        />
       </div>
       
-      <div className="space-y-2">
-        <OnboardingInput
-          label="Mesto *"
-          value={data.companyInfo.address.city}
-          onChange={(e) => updateCompanyInfo('address.city', e.target.value)}
-          placeholder="Bratislava"
-          className={getFieldClassName('address.city')}
-        />
-        {getFieldIndicator('address.city')}
-      </div>
+      <OnboardingInput
+        label={`${t('onboarding.companyInfo.city')} *`}
+        value={data.companyInfo.address?.city || ''}
+        onChange={(e) => updateCompanyInfo('address.city', e.target.value)}
+        placeholder={t('onboarding.companyInfo.city')}
+      />
 
-      <div className="space-y-3 pt-4 border-t border-slate-200">
+      <div className="space-y-4">
         <div className="flex items-center space-x-2">
           <Checkbox
-            id="contactAddressSameAsMain"
-            checked={data.companyInfo.contactAddressSameAsMain}
-            onCheckedChange={(checked) => updateCompanyInfo('contactAddressSameAsMain', checked)}
+            id="contactAddressSame"
+            checked={data.companyInfo.contactAddressSame}
+            onCheckedChange={(checked) => updateCompanyInfo('contactAddressSame', checked)}
           />
-          <label htmlFor="contactAddressSameAsMain" className="text-sm text-slate-700">
-            Sídlo spoločnosti je rovnaké ako kontaktná adresa spoločnosti
+          <label htmlFor="contactAddressSame" className="text-sm text-slate-700">
+            {t('onboarding.companyInfo.contactAddressSame')}
           </label>
         </div>
 
         <div className="flex items-center space-x-2">
           <Checkbox
-            id="headOfficeEqualsOperatingAddress"
+            id="headOfficeEqualsOperating"
             checked={data.companyInfo.headOfficeEqualsOperatingAddress}
             onCheckedChange={(checked) => updateCompanyInfo('headOfficeEqualsOperatingAddress', checked)}
           />
-          <label htmlFor="headOfficeEqualsOperatingAddress" className="text-sm text-slate-700">
-            Sídlo spoločnosti je rovnaké ako adresa prevádzky
+          <label htmlFor="headOfficeEqualsOperating" className="text-sm text-slate-700">
+            {t('onboarding.companyInfo.headOfficeEqualsOperating')}
           </label>
         </div>
       </div>
