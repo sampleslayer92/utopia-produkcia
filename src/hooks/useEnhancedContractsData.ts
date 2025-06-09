@@ -285,7 +285,7 @@ export const useContractTypeOptions = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from('contract_items')
-        .select('name, count')
+        .select('contract_id, name, count')
         .eq('item_type', 'device');
 
       const types = new Set<string>();
