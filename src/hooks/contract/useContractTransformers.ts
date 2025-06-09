@@ -221,6 +221,7 @@ export const transformContractData = (
         zipCode: companyInfo.contact_address_zip_code || companyInfo.address_zip_code || ''
       },
       contactAddressSameAsMain: companyInfo.contact_address_same_as_main ?? true,
+      contactAddressSame: companyInfo.contact_address_same_as_main ?? true, // Add the missing field
       headOfficeEqualsOperatingAddress: false,
       contactPerson: {
         firstName: companyInfo.contact_person_first_name || '',
@@ -234,6 +235,7 @@ export const transformContractData = (
       address: { street: '', city: '', zipCode: '' },
       contactAddress: { street: '', city: '', zipCode: '' },
       contactAddressSameAsMain: true,
+      contactAddressSame: true, // Add the missing field
       headOfficeEqualsOperatingAddress: false,
       contactPerson: { firstName: '', lastName: '', email: '', phone: '', isTechnicalPerson: false }
     },

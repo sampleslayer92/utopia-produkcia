@@ -35,6 +35,7 @@ const initialData: OnboardingData = {
       zipCode: ''
     },
     contactAddressSameAsMain: true,
+    contactAddressSame: true, // Add the missing field
     headOfficeEqualsOperatingAddress: false,
     contactPerson: {
       firstName: '',

@@ -59,8 +59,8 @@ const ConsentsStep = ({
   const isFormValid = () => {
     const consents = data.consents || {};
     return (
-      (consents.dataProcessing || consents.gdpr) &&
-      consents.terms &&
+      (consents.dataProcessing === true || consents.gdpr === true) &&
+      consents.terms === true &&
       signature.trim() !== ''
     );
   };
@@ -112,7 +112,7 @@ const ConsentsStep = ({
               <div key={item.key} className="flex items-start space-x-3">
                 <Checkbox
                   id={item.key}
-                  checked={data.consents?.[item.key as keyof typeof data.consents] || false}
+                  checked={Boolean(data.consents?.[item.key as keyof typeof data.consents])}
                   onCheckedChange={(checked) => updateConsents(item.key, checked)}
                   className="mt-1"
                 />
@@ -215,7 +215,7 @@ const ConsentsStep = ({
               <div key={item.key} className="flex items-start space-x-3 p-4 bg-slate-50 rounded-lg">
                 <Checkbox
                   id={item.key}
-                  checked={data.consents?.[item.key as keyof typeof data.consents] || false}
+                  checked={Boolean(data.consents?.[item.key as keyof typeof data.consents])}
                   onCheckedChange={(checked) => updateConsents(item.key, checked)}
                   className="mt-1"
                 />
