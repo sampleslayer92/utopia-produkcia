@@ -1,3 +1,4 @@
+
 {
   "onboarding": {
     "header": {
@@ -21,7 +22,14 @@
       "inProgress": "In Progress",
       "completed": "Completed"
     },
-    "deleteConfirmation": "Are you sure you want to delete this contract? This action cannot be undone."
+    "deleteConfirmation": "Are you sure you want to delete this contract? This action cannot be undone.",
+    "autoSave": {
+      "saving": "Saving...",
+      "saved": "Saved",
+      "error": "Save error",
+      "lastSaved": "Last saved: {time}",
+      "idle": "Auto-save"
+    }
   },
   "common": {
     "loading": "Loading...",
@@ -67,7 +75,8 @@
       "searchCompany": "Search Company",
       "searchPlaceholder": "Enter company name or ID",
       "contactAddress": {
-        "title": "Correspondence Address"
+        "title": "Correspondence Address",
+        "sameAsMain": "Correspondence address is the same as registered address"
       },
       "placeholders": {
         "street": "Main Street 123",
@@ -102,7 +111,8 @@
         "lastName": "Last Name",
         "email": "Email",
         "phone": "Phone",
-        "isTechnicalPerson": "Is also a technical person"
+        "isTechnicalPerson": "Is also a technical person",
+        "headOfficeEquals": "Head office = operating location"
       }
     },
     "businessLocation": {

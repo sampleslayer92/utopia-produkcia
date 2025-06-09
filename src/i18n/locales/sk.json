@@ -1,3 +1,4 @@
+
 {
   "onboarding": {
     "header": {
@@ -21,7 +22,14 @@
       "inProgress": "Prebieha",
       "completed": "Dokončené"
     },
-    "deleteConfirmation": "Naozaj chcete odstrániť túto zmluvu? Táto akcia sa nedá vrátiť späť."
+    "deleteConfirmation": "Naozaj chcete odstrániť túto zmluvu? Táto akcia sa nedá vrátiť späť.",
+    "autoSave": {
+      "saving": "Ukladá sa...",
+      "saved": "Uložené",
+      "error": "Chyba pri ukladaní",
+      "lastSaved": "Naposledy uložené: {time}",
+      "idle": "Automatické ukladanie"
+    }
   },
   "common": {
     "loading": "Načítava sa...",
@@ -67,7 +75,8 @@
       "searchCompany": "Vyhľadať spoločnosť",
       "searchPlaceholder": "Zadajte názov alebo IČO",
       "contactAddress": {
-        "title": "Korešpondenčná adresa"
+        "title": "Korešpondenčná adresa",
+        "sameAsMain": "Korešpondenčná adresa je rovnaká ako adresa sídla"
       },
       "placeholders": {
         "street": "Hlavná ulica 123",
@@ -102,7 +111,8 @@
         "lastName": "Priezvisko",
         "email": "Email",
         "phone": "Telefón",
-        "isTechnicalPerson": "Je zároveň technická osoba"
+        "isTechnicalPerson": "Je zároveň technická osoba",
+        "headOfficeEquals": "Sídlo spoločnosti = prevádzkové miesto"
       }
     },
     "businessLocation": {
