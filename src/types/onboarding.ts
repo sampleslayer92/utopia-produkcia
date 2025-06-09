@@ -1,3 +1,4 @@
+
 export interface ContactInfo {
   salutation?: 'Pan' | 'Pani';
   firstName: string;
@@ -111,6 +112,7 @@ export interface DeviceCard {
   specifications?: string[];
   simCards?: number;
   customValue?: string;
+  catalogId?: string; // Add catalogId property
 }
 
 // Export ServiceCard as alias for DeviceCard for backward compatibility

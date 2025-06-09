@@ -96,7 +96,7 @@ const ProductDetailModal = ({
           type: 'device',
           category: product?.category || editingCard?.category || 'terminal',
           image: product?.image || (editingCard as DeviceCard)?.image,
-          catalogId: product?.id || (editingCard as DeviceCard)?.catalogId // Keep reference to original catalog item
+          catalogId: product?.id || editingCard?.catalogId // Keep reference to original catalog item
         } as DeviceCard;
       } else {
         savedCard = {
@@ -105,7 +105,7 @@ const ProductDetailModal = ({
           type: 'service',
           category: product?.category || editingCard?.category || 'software',
           customValue: formData.customValue,
-          catalogId: product?.id || (editingCard as ServiceCard)?.catalogId // Keep reference to original catalog item
+          catalogId: product?.id || editingCard?.catalogId // Keep reference to original catalog item
         } as ServiceCard;
       }
 
@@ -120,6 +120,20 @@ const ProductDetailModal = ({
 
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddAddon = (addon: AddonCard) => {
+    setSelectedAddons(prev => [...prev, addon]);
+  };
+
+  const handleRemoveAddon = (addonId: string) => {
+    setSelectedAddons(prev => prev.filter(addon => addon.id !== addonId));
+  };
+
+  const handleUpdateAddon = (addonId: string, updatedAddon: AddonCard) => {
+    setSelectedAddons(prev => 
+      prev.map(addon => addon.id === addonId ? updatedAddon : addon)
+    );
   };
 
   return (
@@ -182,8 +196,9 @@ const ProductDetailModal = ({
           {/* Addons Section */}
           <EnhancedAddonManager
             selectedAddons={selectedAddons}
-            onAddonsChange={setSelectedAddons}
-            deviceCount={formData.count}
+            onAddAddon={handleAddAddon}
+            onRemoveAddon={handleRemoveAddon}
+            onUpdateAddon={handleUpdateAddon}
           />
 
           {/* Actions */}
