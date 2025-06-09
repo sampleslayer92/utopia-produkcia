@@ -5,71 +5,55 @@ import { Check } from "lucide-react";
 
 interface OnboardingSelectProps {
   label?: string;
+  value: string;
+  onValueChange: (value: string) => void;
+  options: { value: string; label: string }[];
   placeholder?: string;
-  value?: string;
-  onValueChange?: (value: string) => void;
-  options: { value: string; label: string; extra?: string }[];
   isCompleted?: boolean;
   error?: string;
-  className?: string;
-  compact?: boolean;
-  showTooltip?: boolean;
+  disabled?: boolean; // Add disabled prop
+  hideLabel?: boolean;
 }
 
 const OnboardingSelect = ({
   label,
-  placeholder,
   value,
   onValueChange,
   options,
+  placeholder,
   isCompleted,
   error,
-  className,
-  compact = false,
-  showTooltip = false
+  disabled = false, // Default to false
+  hideLabel
 }: OnboardingSelectProps) => {
-  const selectedOption = options.find(option => option.value === value);
-
   return (
     <div className="space-y-2">
-      {label && (
+      {label && !hideLabel && (
         <Label className="text-sm font-medium text-slate-700">
           {label}
         </Label>
       )}
       <div className="relative">
-        <Select value={value} onValueChange={onValueChange}>
+        <Select value={value} onValueChange={onValueChange} disabled={disabled}>
           <SelectTrigger 
             className={`h-12 border-2 transition-all duration-200 ${
               error
                 ? 'border-red-300 bg-red-50'
                 : 'border-slate-200 bg-white/80 hover:border-slate-300 focus:border-blue-500 focus:shadow-md focus:shadow-blue-500/20'
-            } ${compact ? 'text-center justify-center' : ''} ${className}`}
-            title={showTooltip && selectedOption?.extra ? selectedOption.extra : undefined}
+            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            <SelectValue 
-              placeholder={placeholder} 
-              className={compact ? 'text-center' : ''}
-            />
+            <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-          <SelectContent className="bg-white border-slate-200 shadow-xl z-50">
+          <SelectContent>
             {options.map((option) => (
               <SelectItem key={option.value} value={option.value}>
-                <span className="flex items-center gap-2">
-                  <span className={compact ? 'text-lg' : ''}>{option.label}</span>
-                  {option.extra && !compact && (
-                    <span className="text-sm text-slate-500">{option.extra}</span>
-                  )}
-                  {option.extra && compact && (
-                    <span className="text-sm text-slate-600">{option.extra}</span>
-                  )}
-                </span>
+                {option.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         {isCompleted && (
-          <div className="absolute right-10 top-1/2 -translate-y-1/2">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
             <Check className="h-4 w-4 text-green-500" />
           </div>
         )}

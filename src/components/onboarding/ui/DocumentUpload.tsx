@@ -1,3 +1,4 @@
+
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -8,9 +9,11 @@ interface DocumentUploadProps {
   value?: string;
   onChange: (url: string) => void;
   side?: 'front' | 'back';
+  personId?: string; // Add personId prop
+  documentSide?: string; // Add documentSide prop
 }
 
-const DocumentUpload = ({ label, value, onChange, side }: DocumentUploadProps) => {
+const DocumentUpload = ({ label, value, onChange, side, personId, documentSide }: DocumentUploadProps) => {
   const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
 
@@ -56,6 +59,8 @@ const DocumentUpload = ({ label, value, onChange, side }: DocumentUploadProps) =
   };
 
   const sideLabel = side === 'front' ? t('ui.documentUpload.frontSide') : side === 'back' ? t('ui.documentUpload.backSide') : '';
+  // Create unique ID using personId and documentSide if available
+  const inputId = `file-${label}-${personId || ''}-${documentSide || side || ''}`;
 
   return (
     <div className="space-y-2">
@@ -85,12 +90,12 @@ const DocumentUpload = ({ label, value, onChange, side }: DocumentUploadProps) =
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => document.getElementById(`file-${label}-${side}`)?.click()}
+            onClick={() => document.getElementById(inputId)?.click()}
           >
             {t('ui.documentUpload.uploadDocument')}
           </Button>
           <input
-            id={`file-${label}-${side}`}
+            id={inputId}
             type="file"
             accept="image/*,.pdf"
             onChange={handleFileSelect}
@@ -101,7 +106,7 @@ const DocumentUpload = ({ label, value, onChange, side }: DocumentUploadProps) =
         <div className="border border-slate-200 rounded-lg p-4 flex items-center justify-between bg-green-50">
           <div className="flex items-center gap-3">
             <FileText className="h-5 w-5 text-green-600" />
-            <span className="text-sm text-green-800">Dokument nahraný</span>
+            <span className="text-sm text-green-800">{t('ui.documentUpload.uploaded')}</span>
           </div>
           <Button
             type="button"

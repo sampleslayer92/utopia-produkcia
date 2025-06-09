@@ -1,3 +1,4 @@
+
 import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -19,24 +20,34 @@ const SignaturePad = ({ value, onSignatureChange, disabled = false }: SignatureP
     setHasSignature(!!value);
   }, [value]);
 
-  const startDrawing = (e: MouseEvent) => {
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (disabled) return;
     setIsDrawing(true);
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
     ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
+    ctx.moveTo(x, y);
   };
 
-  const draw = (e: MouseEvent) => {
+  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing || disabled) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.lineTo(e.offsetX, e.offsetY);
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    ctx.lineTo(x, y);
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 2;
     ctx.stroke();
@@ -47,7 +58,7 @@ const SignaturePad = ({ value, onSignatureChange, disabled = false }: SignatureP
     saveSignature();
   };
 
-  const handleTouchStart = (e: TouchEvent) => {
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     if (disabled) return;
     e.preventDefault();
     setIsDrawing(true);
@@ -65,7 +76,7 @@ const SignaturePad = ({ value, onSignatureChange, disabled = false }: SignatureP
     ctx.moveTo(x, y);
   };
 
-  const handleTouchMove = (e: TouchEvent) => {
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing || disabled) return;
     e.preventDefault();
     const canvas = canvasRef.current;

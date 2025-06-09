@@ -1,3 +1,4 @@
+
 export interface ContactInfo {
   salutation?: 'Pan' | 'Pani';
   firstName: string;
@@ -43,7 +44,7 @@ export interface CompanyInfo {
 
 export interface BankAccount {
   id: string;
-  format: 'IBAN' | 'CisloUctuKodBanky';
+  typ: 'IBAN' | 'CisloUctuKodBanky'; // Changed from 'format' to 'typ' to match usage
   iban?: string;
   cisloUctu?: string;
   kodBanky?: string;

@@ -1,504 +1,126 @@
 
 {
-  "welcome": {
-    "title": "Stress-free registration.",
-    "subtitle": "Welcome to the onboarding of the future.",
-    "login": "Sign In",
-    "loginDescription": "Select your role and proceed to the system",
-    "startOnboarding": "Start Onboarding",
-    "startOnboardingDescription": "Register a new company in the system",
-    "selectRole": "Select your role",
-    "back": "Back",
-    "roles": {
-      "admin": "Admin (ISO organization)",
-      "adminDescription": "Full system access",
-      "partner": "Business Partner",
-      "partnerDescription": "Manage your own clients",
-      "merchant": "Client (merchant)",
-      "merchantDescription": "View your own data"
-    },
-    "footer": "Utopia Research Lab 2025"
-  },
-  "onboarding": {
-    "header": {
-      "title": "Registration Process",
-      "progress": "{{percentage}}% completed",
-      "stepsCompleted": "{{completed}}/{{total}} steps",
-      "contractNumber": "Contract number: {{number}}",
-      "creatingContract": "Creating contract..."
-    },
-    "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "saveAndExit": "Save and Exit",
-      "saveSignature": "Save Signature",
-      "completeRegistration": "Complete Registration",
-      "submitting": "Submitting..."
-    },
-    "stepper": {
-      "next": "Next",
-      "inProgress": "In Progress",
-      "partiallyComplete": "Partially Complete",
-      "completed": "Completed"
-    },
-    "help": {
-      "title": "Need help?",
-      "description": "For questions, contact us at +421 911 123 456 or info@utopia.sk"
-    },
-    "autoSave": {
-      "saving": "Saving...",
-      "saved": "Saved",
-      "lastSaved": "Last saved: {{time}}",
-      "error": "Save error"
-    },
-    "infoTooltip": {
-      "features": "Features"
-    }
-  },
   "steps": {
-    "contactInfo": {
-      "title": "Contact Information",
-      "description": "Fill in your basic contact details. This information will be used for automatic pre-filling of other registration steps.",
-      "features": [
-        "Automatic contact person pre-filling",
-        "Data synchronization between steps",
-        "Email address verification",
-        "Phone number formatting"
-      ],
-      "fields": {
-        "firstName": "First Name *",
-        "lastName": "Last Name *",
-        "email": "Email *",
-        "phone": "Phone *",
-        "salesNote": "Would you like to tell us something?",
-        "salesNotePlaceholder": "For example: Best time to contact, preferred communication method..."
-      },
-      "placeholders": {
-        "firstName": "John",
-        "lastName": "Doe",
-        "email": "john.doe@example.com",
-        "phone": "+421 901 234 567"
-      },
-      "sidebar": {
-        "autoFillTitle": "Auto-fill",
-        "autoFillDescription": "Your contact details will be automatically used in the following steps",
-        "contractInfo": "Contract Information",
-        "basicInfoComplete": "Basic information is complete",
-        "basicInfoIncomplete": "Complete basic information"
-      }
-    },
     "companyInfo": {
       "title": "Company Information",
-      "description": "Start by entering the company name. The system will automatically recognize the company and fill in all necessary data including the registered address.",
-      "features": [
-        "Company recognition",
-        "Automatic IČO/DIČ completion",
-        "Commercial register data", 
-        "Company address",
-        "VAT status prediction"
-      ],
-      "searchCompany": "Search",
-      "searchPlaceholder": "Enter company ID or company name",
+      "searchCompany": "Search Company",
+      "searchPlaceholder": "Enter company name or ID",
       "basicInfo": {
-        "title": "Basic Information",
-        "ico": "Company ID *",
+        "title": "Basic Company Information",
+        "companyName": "Company Name",
+        "ico": "Company ID",
         "dic": "Tax ID",
-        "companyName": "Company Name *",
-        "registryType": "Registry Type *",
-        "isVatPayer": "I am a VAT payer",
-        "vatNumber": "VAT Number",
-        "court": "Court",
-        "section": "Section",
-        "insertNumber": "Insert Number"
+        "vatPayer": "VAT Payer",
+        "vatNumber": "VAT Number"
       },
       "address": {
-        "title": "Registered Address",
-        "street": "Street and Number *",
-        "city": "City *",
-        "zipCode": "ZIP Code *"
-      },
-      "contactAddress": {
-        "title": "Correspondence Address",
-        "sameAsMain": "Same as registered address"
+        "title": "Company Address",
+        "street": "Street and Number",
+        "city": "City",
+        "zipCode": "ZIP Code",
+        "contactAddressSame": "Correspondence address is the same as registered address"
       },
       "contactPerson": {
         "title": "Contact Person",
-        "headOfficeEquals": "Head office = operating location"
-      },
-      "placeholders": {
-        "ico": "12345678",
-        "companyName": "Business Company Ltd.",
-        "street": "Business Street 456",
-        "city": "Bratislava",
-        "zipCode": "01001"
-      },
-      "sidebar": {
-        "title": "Company Information",
-        "description": "Start by entering the company name. The system will automatically recognize the company and fill in all necessary data including the registered address.",
-        "intelligentFill": "Intelligent Completion",
-        "syncActive": "✓ Synchronization active",
-        "syncDescription": "Registered address is automatically copied to the first business location."
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "phone": "Phone",
+        "isTechnicalPerson": "Is also a technical person"
       }
     },
     "businessLocation": {
       "title": "Business Locations",
-      "description": "Manage your business locations with detailed information about bank accounts, business activities and opening hours.",
+      "addLocation": "Add Business Location",
       "features": [
-        "Multiple bank account management",
-        "Detailed MCC codes and business subjects", 
-        "Interactive opening hours with quick actions",
-        "Support for different currencies (EUR, CZK, USD)"
+        "Detailed operating hours settings",
+        "Bank account management for each location",
+        "Assignment of authorized persons",
+        "Turnover and transaction tracking"
       ],
-      "empty": {
-        "title": "No locations yet",
-        "description": "Add your first business location",
-        "addButton": "Add Location"
+      "sidebar": {
+        "title": "Business Locations",
+        "description": "Set up all locations where you will accept card payments.",
+        "newFeatures": "New features:",
+        "autoFillTitle": "Auto-fill",
+        "autoFillDescription": "Data will be automatically filled based on your role: {userRole}"
       },
-      "addLocation": "Add New Location",
-      "edit": "Edit",
-      "delete": "Delete",
-      "businessDetails": {
-        "title": "Business Details",
-        "name": "Location Name *",
-        "mccCode": "MCC Code *",
-        "monthlyTurnover": "Monthly Turnover *",
-        "openingHours": "Opening Hours",
-        "setHours": "Set Hours",
-        "website": "Website",
-        "description": "Business Description"
+      "details": {
+        "title": "Basic Information",
+        "name": "Business Location Name",
+        "address": "Address",
+        "street": "Street and Number",
+        "city": "City",
+        "zipCode": "ZIP Code",
+        "contactPerson": "Contact Person",
+        "phone": "Phone",
+        "email": "Email",
+        "business": {
+          "title": "Business Data",
+          "sector": "Business Sector",
+          "subject": "Business Subject",
+          "mccCode": "MCC Code",
+          "turnover": "Estimated Annual Turnover (€)",
+          "monthlyTurnover": "Monthly Turnover (€)",
+          "averageTransaction": "Average Transaction (€)"
+        },
+        "hours": {
+          "title": "Operating Hours",
+          "summary": "Operating Hours",
+          "detailed": "Detailed Hours",
+          "seasonality": "Seasonality",
+          "yearRound": "Year-round",
+          "seasonal": "Seasonal",
+          "seasonalWeeks": "Number of weeks per year"
+        }
       },
       "bankAccounts": {
         "title": "Bank Accounts",
-        "addAccount": "Add Account",
-        "iban": "IBAN *",
-        "bank": "Bank *",
-        "currency": "Currency *"
+        "add": "Add Account",
+        "account": "Account",
+        "type": "Account Type",
+        "selectType": "Select account type",
+        "iban": "IBAN",
+        "accountNumber": "Account Number",
+        "bankCode": "Bank Code",
+        "currency": "Currency",
+        "empty": "No bank accounts have been added",
+        "types": {
+          "iban": "IBAN",
+          "accountNumber": "Account Number + Bank Code"
+        }
       },
-      "placeholders": {
-        "name": "Main Branch",
-        "website": "https://yourwebsite.com",
-        "description": "Description of main business activity...",
-        "iban": "SK89 0000 0000 0000 0000 0000"
-      },
-      "sidebar": {
-        "title": "Business Information",
-        "description": "Manage your business locations with detailed information about bank accounts, business activities and opening hours.",
-        "newFeatures": "New features in this version",
-        "autoFillTitle": "Auto-fill",
-        "autoFillDescription": "Your contact details will be automatically pre-filled for new locations based on your role \"{{userRole}}\"."
+      "emptyState": {
+        "title": "No business locations yet",
+        "description": "Add at least one business location where you will accept card payments.",
+        "addButton": "Add Business Location"
       }
-    },
-    "deviceSelection": {
-      "title": "Device and Service Selection",
-      "description": "Select the devices and services you need for your business.",
-      "features": [
-        "Wide selection of payment terminals",
-        "Online payment gateways",
-        "Additional services and solutions",
-        "Monthly cost calculation"
-      ],
-      "solutions": "Solutions",
-      "devices": "Devices", 
-      "services": "Services",
-      "selectedItems": "Selected Items",
-      "addDevice": "Add Device",
-      "addService": "Add Service",
-      "quantity": "Quantity",
-      "totalCost": "Total Cost",
-      "monthlyCost": "Monthly Cost"
-    },
-    "fees": {
-      "title": "Fees and Calculation",
-      "description": "Calculate your potential revenue based on selected services and expected turnover.",
-      "features": [
-        "Real-time profit calculation",
-        "Comparison of different scenarios",
-        "Transparent fees",
-        "Expected monthly revenue"
-      ],
-      "calculator": "Profit Calculator",
-      "monthlyRevenue": "Monthly Revenue",
-      "transactionFee": "Transaction Fee",
-      "expectedProfit": "Expected Profit"
-    },
-    "authorizedPersons": {
-      "title": "Authorized Persons",
-      "description": "Authorized persons are statutory representatives or authorized persons who can act on behalf of the company.",
-      "features": [
-        "Management of statutory and authorized persons",
-        "Identity document upload",
-        "Politically exposed person check",
-        "Data in accordance with official documents"
-      ],
-      "addPerson": "Add Person",
-      "edit": "Edit",
-      "delete": "Delete",
-      "empty": {
-        "title": "No authorized persons yet",
-        "description": "Add at least one statutory representative or authorized person"
-      },
-      "sidebar": {
-        "title": "Authorized Persons",
-        "description": "Authorized persons are statutory representatives or authorized persons who can act on behalf of the company.",
-        "importantInfo": "Important Information",
-        "requirements": [
-          "Data must comply with official documents",
-          "Valid identity document required for each authorized person",
-          "At least one authorized person must be specified"
-        ]
-      },
-      "basicData": "Basic Data",
-      "personalData": "Personal Data",
-      "documents": "Documents",
-      "additionalInfo": "Additional Information",
-      "fields": {
-        "firstName": "First Name *",
-        "lastName": "Last Name *",
-        "email": "Email *",
-        "phone": "Phone *",
-        "maidenName": "Maiden Name",
-        "birthDate": "Date of Birth *",
-        "birthPlace": "Place of Birth *",
-        "birthNumber": "Birth Number *",
-        "permanentAddress": "Permanent Address *",
-        "position": "Position *",
-        "documentType": "Document Type *",
-        "documentNumber": "Document Number *",
-        "documentValidity": "Valid Until *",
-        "documentIssuer": "Issued By *",
-        "documentCountry": "Issuing Country *",
-        "citizenship": "Citizenship *",
-        "isPoliticallyExposed": "Politically Exposed Person",
-        "isUSCitizen": "US Citizen"
-      },
-      "placeholders": {
-        "firstName": "Enter first name",
-        "lastName": "Enter last name",
-        "email": "john.doe@example.com",
-        "phone": "+421 901 234 567",
-        "birthPlace": "Bratislava",
-        "birthNumber": "123456/7890",
-        "permanentAddress": "Main 123, 010 01 Bratislava",
-        "position": "Managing Director",
-        "documentNumber": "AB123456",
-        "documentIssuer": "District Office Bratislava"
-      }
-    },
-    "actualOwners": {
-      "title": "Beneficial Owners",
-      "description": "Beneficial owners are natural persons who actually own or control the company.",
-      "features": [
-        "Identification of ultimate beneficial owners",
-        "AML compliance requirements",
-        "Ownership structure transparency",
-        "Politically exposed person check"
-      ],
-      "addOwner": "Add Owner",
-      "edit": "Edit", 
-      "delete": "Delete",
-      "empty": {
-        "title": "No beneficial owners yet",
-        "description": "Add at least one ultimate beneficial owner"
-      },
-      "sidebar": {
-        "title": "Beneficial Owners",
-        "description": "Beneficial owners are natural persons who actually own or control the company.",
-        "whoIsOwner": "Who is a beneficial owner?",
-        "ownerDefinition": [
-          "Person who has direct or indirect ownership of at least 25%",
-          "Person who has the right to appoint or dismiss the statutory body",
-          "Person who otherwise controls the company"
-        ]
-      },
-      "basicData": "Basic Data",
-      "personalData": "Personal Data",
-      "additionalInfo": "Additional Information",
-      "fields": {
-        "firstName": "First Name *",
-        "lastName": "Last Name *",
-        "maidenName": "Maiden Name",
-        "birthDate": "Date of Birth *",
-        "birthPlace": "Place of Birth *",
-        "birthNumber": "Birth Number *",
-        "permanentAddress": "Permanent Address *",
-        "citizenship": "Citizenship *",
-        "isPoliticallyExposed": "Politically Exposed Person"
-      },
-      "placeholders": {
-        "firstName": "Enter first name",
-        "lastName": "Enter last name",
-        "birthPlace": "Bratislava",
-        "birthNumber": "123456/7890",
-        "permanentAddress": "Main 123, 010 01 Bratislava",
-        "citizenship": "Slovakia"
-      },
-      "pepDescription": "A politically exposed person is a person in a significant public function."
-    },
-    "consents": {
-      "title": "Consents and Signature",
-      "description": "Final step of onboarding - confirmation of consents and electronic signature of the contract.",
-      "features": [
-        "Consents to terms and GDPR",
-        "Electronic signature",
-        "Final completion of registration"
-      ],
-      "dataProcessing": "Consent to personal data processing",
-      "gdpr": "GDPR consent",
-      "terms": "Terms and conditions consent",
-      "signature": "Electronic signature",
-      "signHere": "Sign here",
-      "clear": "Clear",
-      "required": "All consents are required",
-      "sidebar": {
-        "title": "Consents and Signature",
-        "description": "Final step of onboarding - confirmation of consents and electronic signature of the contract.",
-        "whatIncludes": "What this step includes"
-      },
-      "signatureInfo": {
-        "title": "Signature Information",
-        "signatureDate": "Signature Date *",
-        "signingPerson": "Signing Person *",
-        "selectPerson": "Select signing person"
-      },
-      "nextSteps": {
-        "title": "Next Steps",
-        "steps": [
-          "After completing registration, a contract will be generated based on the entered data.",
-          "The contract will be sent to your email for electronic signing.",
-          "After signing the contract, your account will be activated and you can start using the services.",
-          "Devices will be delivered to the business address within 5 working days."
-        ]
-      },
-      "gdprConsent": {
-        "title": "Consent to personal data processing (GDPR) *",
-        "description": "I consent to the processing of personal data in accordance with GDPR for the purpose of concluding and fulfilling the payment services contract.",
-        "showFull": "Show full consent text"
-      },
-      "termsConsent": {
-        "title": "Consent to terms and conditions *",
-        "description": "I agree to the terms and conditions of payment services provision and the fee schedule for provided services.",
-        "showTerms": "Show terms and conditions"
-      },
-      "electronicCommunication": {
-        "title": "Consent to electronic communication",
-        "description": "I consent to the delivery of documents and communication in electronic form to the specified email address.",
-        "showOptions": "Show communication options"
-      },
-      "readyToComplete": "Everything is ready for completion",
-      "readyDescription": "You can complete the registration",
-      "completeSteps": "Complete required steps",
-      "completeDescription": "Grant consents and sign the contract",
-      "selectPersonFirst": "First select the signing person, then you can create an electronic signature.",
-      "important": "Important:",
-      "importantNote": "All required fields must be completed, consents granted and electronic signature created before completing registration."
     }
   },
   "ui": {
-    "autoFill": {
-      "suggestions": "Auto-fill suggestions",
-      "contactPerson": "Contact person",
-      "useAsContactPerson": "Use as contact person",
-      "useAsAuthorizedPerson": "Use as authorized person",
-      "useAsActualOwner": "Use as beneficial owner",
-      "applied": "Applied!"
+    "phoneNumber": {
+      "phoneNumber": "Phone Number"
     },
     "documentUpload": {
-      "frontSide": "Front side",
-      "backSide": "Back side",
-      "uploadDocument": "Upload document",
-      "dragDrop": "Drag file here or click to upload",
-      "supportedFormats": "Supported formats: JPG, PNG, PDF (max 5MB)"
-    },
-    "phoneNumber": {
-      "phoneNumber": "Phone number"
+      "frontSide": "Front Side",
+      "backSide": "Back Side",
+      "dragDrop": "Drag file here or click the button",
+      "supportedFormats": "Supported formats: JPG, PNG, PDF (max. 10MB)",
+      "uploadDocument": "Upload Document",
+      "uploaded": "Document uploaded"
     },
     "signaturePad": {
-      "signature": "Electronic signature *",
-      "signHere": "Sign here",
+      "signature": "Signature",
       "clear": "Clear",
-      "required": "Electronic signature is required",
-      "disabled": "First select the signing person"
+      "disabled": "Signature is disabled",
+      "signHere": "Sign here",
+      "required": "Signature is required"
     },
-    "openingHours": {
-      "title": "Opening hours",
-      "set": "Set",
-      "edit": "Edit",
-      "closed": "Closed",
-      "closedAllDays": "Closed all days",
-      "quickActions": "Quick actions",
-      "workdays": "Workdays",
-      "weekend": "Weekend",
-      "wholeWeek": "Whole week",
+    "autoFill": {
+      "title": "Auto-fill",
+      "suggestion": "Auto-fill suggestion",
       "apply": "Apply",
-      "save": "Save",
-      "cancel": "Cancel",
-      "days": {
-        "Po": "Monday",
-        "Ut": "Tuesday",
-        "St": "Wednesday",
-        "Št": "Thursday",
-        "Pi": "Friday",
-        "So": "Saturday",
-        "Ne": "Sunday"
-      }
-    },
-    "businessDetails": {
-      "title": "Business Information",
-      "businessSubject": "Business subject *",
-      "businessSubjectPlaceholder": "Describe the main activities of your business...",
-      "mccCode": "MCC code *",
-      "mccCodePlaceholder": "Select business category",
-      "monthlyTurnover": "Estimated turnover (monthly in EUR) *",
-      "monthlyTurnoverPlaceholder": "e.g. 5000, 12500, 1000000"
-    },
-    "bankAccounts": {
-      "title": "Bank accounts",
-      "addAccount": "Add account",
-      "accountFormat": "Account format",
-      "iban": "IBAN",
-      "accountNumber": "Account number",
-      "bank": "Bank",
-      "currency": "Currency",
-      "remove": "Remove account"
+      "applied": "Applied"
     }
-  },
-  "common": {
-    "required": "Required field",
-    "save": "Save",
-    "cancel": "Cancel",
-    "edit": "Edit",
-    "delete": "Delete",
-    "add": "Add",
-    "close": "Close",
-    "confirm": "Confirm",
-    "loading": "Loading...",
-    "error": "Error",
-    "success": "Success",
-    "currency": "€",
-    "percentage": "%",
-    "open": "Open",
-    "closed": "Closed",
-    "yes": "Yes",
-    "no": "No"
-  },
-  "validation": {
-    "required": "This field is required",
-    "email": "Invalid email format",
-    "phone": "Invalid phone format",
-    "minLength": "Minimum {{min}} characters",
-    "maxLength": "Maximum {{max}} characters"
-  },
-  "notifications": {
-    "contractCreated": "Contract has been created",
-    "contractCreationFailed": "Failed to create contract",
-    "dataSaved": "Data has been saved",
-    "dataLoadFailed": "Failed to load data",
-    "registrationComplete": "Registration completed!",
-    "signatureSaved": "Signature saved",
-    "signatureDescription": "Electronic signature has been successfully saved",
-    "onboardingDataSaved": "Onboarding data saved",
-    "onboardingDescription": "You can continue later from the same place",
-    "stepNotAccessible": "Complete the current step first",
-    "stepNotAccessibleDescription": "You cannot skip multiple steps at once"
   }
 }
