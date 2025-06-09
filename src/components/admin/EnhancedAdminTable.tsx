@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Download, Filter, Plus, Search, Users } from "lucide-react";
+import { CalendarIcon, Download, Filter, Plus, Search, Users, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useEnhancedContractsData, useContractTypeOptions, useSalesPersonOptions } from "@/hooks/useEnhancedContractsData";
@@ -113,7 +114,8 @@ const EnhancedAdminTable = () => {
     }));
   };
 
-  const handleSelectContract = (contractId: string) => {
+  const handleSelectContract = (contractId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent row click when clicking checkbox
     setSelectedContracts(prev => 
       prev.includes(contractId) 
         ? prev.filter(id => id !== contractId)
@@ -127,6 +129,10 @@ const EnhancedAdminTable = () => {
     } else {
       setSelectedContracts(filteredContracts?.map(c => c.id) || []);
     }
+  };
+
+  const handleRowClick = (contractId: string) => {
+    navigate(`/admin/contract/${contractId}/view`);
   };
 
   const handleBulkUpdate = (field: string, value: string) => {
@@ -195,6 +201,11 @@ const EnhancedAdminTable = () => {
               <CardTitle className="text-slate-900">Rozšírená správa zmlúv</CardTitle>
               <CardDescription className="text-slate-600">
                 Pokročilé filtrovanie a správa zmlúv ({filteredContracts?.length || 0} z {contracts?.length || 0})
+                <br />
+                <span className="inline-flex items-center text-sm text-slate-500 mt-1">
+                  <Eye className="h-3 w-3 mr-1" />
+                  Kliknite na riadok pre zobrazenie detailov zmluvy
+                </span>
               </CardDescription>
             </div>
             <div className="flex space-x-2">
@@ -352,13 +363,14 @@ const EnhancedAdminTable = () => {
                   {filteredContracts?.map((contract) => (
                     <TableRow 
                       key={contract.id} 
-                      className="hover:bg-slate-50/50 transition-colors"
+                      className="hover:bg-slate-50/80 transition-colors cursor-pointer"
+                      onClick={() => handleRowClick(contract.id)}
                     >
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
                           checked={selectedContracts.includes(contract.id)}
-                          onChange={() => handleSelectContract(contract.id)}
+                          onChange={(e) => handleSelectContract(contract.id, e)}
                           className="rounded border-slate-300"
                         />
                       </TableCell>
