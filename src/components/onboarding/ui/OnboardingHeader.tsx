@@ -2,6 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileText, Trash2, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useOnboardingContractDelete } from "@/hooks/useOnboardingContractDelete";
 import { useNavigate } from "react-router-dom";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 interface OnboardingHeaderProps {
   contractNumber?: string;
@@ -29,6 +31,7 @@ const OnboardingHeader = ({
   onContractDeleted,
   isCreatingContract = false 
 }: OnboardingHeaderProps) => {
+  const { t } = useTranslation();
   const { deleteContract, isDeleting } = useOnboardingContractDelete();
   const navigate = useNavigate();
 
@@ -66,7 +69,7 @@ const OnboardingHeader = ({
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 flex items-center gap-2">
                   <Loader2 className="h-3 w-3 animate-spin" />
-                  <span className="text-xs">Vytvára sa zmluva...</span>
+                  <span className="text-xs">{t('header.creating')}</span>
                 </Badge>
               </div>
             )}
@@ -74,7 +77,7 @@ const OnboardingHeader = ({
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="border-green-200 text-green-700 bg-green-50 flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  Zmluva č. {contractNumber}
+                  {t('header.contractNumber')} {contractNumber}
                 </Badge>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -93,25 +96,26 @@ const OnboardingHeader = ({
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Vymazať zmluvu</AlertDialogTitle>
+                      <AlertDialogTitle>{t('header.deleteContractTitle')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Naozaj chcete vymazať zmluvu č. {contractNumber}? Táto akcia sa nedá vrátiť späť a všetky údaje budú trvalo odstránené.
+                        {t('header.deleteContractConfirm', { contractNumber })}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Zrušiť</AlertDialogCancel>
+                      <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDeleteContract}
                         className="bg-red-600 hover:bg-red-700"
                         disabled={isDeleting}
                       >
-                        {isDeleting ? 'Vymazávam...' : 'Vymazať zmluvu'}
+                        {isDeleting ? t('header.deleting') : t('header.deleteContract')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
               </div>
             )}
+            <LanguageSwitcher />
           </div>
         </div>
       </div>

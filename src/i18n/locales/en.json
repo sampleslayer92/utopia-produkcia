@@ -29,6 +29,246 @@
     "confirm": "Confirm",
     "loading": "Loading...",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "add": "Add",
+    "remove": "Remove",
+    "clear": "Clear",
+    "required": "Required field",
+    "optional": "Optional",
+    "search": "Search",
+    "select": "Select",
+    "upload": "Upload",
+    "download": "Download"
+  },
+  "header": {
+    "contractNumber": "Contract No.",
+    "deleteContract": "Delete Contract",
+    "deleteContractConfirm": "Are you sure you want to delete contract No. {contractNumber}? This action cannot be undone and all data will be permanently removed.",
+    "deleteContractTitle": "Delete Contract",
+    "creating": "Creating contract...",
+    "deleting": "Deleting..."
+  },
+  "onboarding": {
+    "title": "Company Registration",
+    "subtitle": "Complete registration process for your company",
+    "steps": {
+      "contactInfo": {
+        "title": "Contact Information",
+        "description": "Basic contact information",
+        "subtitle": "Fill in your basic contact details"
+      },
+      "companyInfo": {
+        "title": "Company Information",
+        "description": "Legal entity information",
+        "subtitle": "Basic information about your company"
+      },
+      "businessLocation": {
+        "title": "Business Locations",
+        "description": "Operating locations and data",
+        "subtitle": "Information about your business locations"
+      },
+      "deviceSelection": {
+        "title": "Devices and Services",
+        "description": "Technical equipment selection",
+        "subtitle": "Selection of devices and services"
+      },
+      "fees": {
+        "title": "Fees",
+        "description": "Fee and commission settings",
+        "subtitle": "Fee configuration"
+      },
+      "authorizedPersons": {
+        "title": "Authorized Persons",
+        "description": "Persons authorized to act",
+        "subtitle": "Management of authorized persons"
+      },
+      "actualOwners": {
+        "title": "Actual Owners",
+        "description": "Ultimate beneficial owners",
+        "subtitle": "Information about actual owners"
+      },
+      "consents": {
+        "title": "Consents and Signature",
+        "description": "Confirmation and contract signature",
+        "subtitle": "Final confirmation and signature"
+      }
+    },
+    "navigation": {
+      "saveAndExit": "Save and Exit",
+      "saveSignature": "Save Signature",
+      "completeRegistration": "Complete Registration",
+      "changeSelection": "Change Selection",
+      "continue": "Continue",
+      "submitting": "Submitting...",
+      "overallProgress": "Overall Progress",
+      "stepsCompleted": "steps completed",
+      "contractCreated": "Contract has been created",
+      "contractCreationFailed": "Failed to create contract"
+    },
+    "contactInfo": {
+      "personalDetails": "Personal Details",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "userRole": "Position in Company",
+      "autoFillInfo": "Auto-fill Information",
+      "autoFillDescription": "This data will be automatically used to pre-fill contact persons in subsequent steps",
+      "autoFillStatus": "Auto-fill Status",
+      "contractInfo": "Contract Information",
+      "contractNumber": "Contract Number",
+      "contractId": "Contract ID",
+      "creating": "Creating..."
+    },
+    "companyInfo": {
+      "basicInfo": "Basic Company Information",
+      "ico": "Company ID",
+      "dic": "Tax ID",
+      "vatNumber": "VAT Number",
+      "isVatPayer": "Is VAT Payer",
+      "companyName": "Company Name",
+      "registryType": "Registry Entry",
+      "registryOptions": {
+        "public": "Public Registry",
+        "business": "Business Registry",
+        "other": "Other"
+      },
+      "address": "Company Address",
+      "contactAddress": "Contact Address",
+      "contactAddressSame": "Company address is the same as contact address",
+      "headOfficeEqualsOperating": "Head office address is the same as operating address",
+      "street": "Street and Number",
+      "city": "City",
+      "zipCode": "ZIP Code",
+      "contactPerson": "Contact Person",
+      "isTechnicalPerson": "Is also technical person",
+      "orsrSearch": "ORSR Search",
+      "orsrFound": "Data found in ORSR",
+      "autoFilled": "Auto-filled"
+    },
+    "businessLocation": {
+      "title": "Business Location Information",
+      "addLocation": "Add Location",
+      "removeLocation": "Remove Location",
+      "expandLocation": "Expand Location",
+      "collapseLocation": "Collapse Location",
+      "locationName": "Location Name",
+      "businessName": "Business Name",
+      "mccCode": "MCC Code",
+      "businessSubject": "Business Subject",
+      "currency": "Currency",
+      "bankAccounts": "Bank Accounts",
+      "addBankAccount": "Add Bank Account",
+      "bankName": "Bank Name",
+      "accountNumber": "Account Number",
+      "iban": "IBAN",
+      "swift": "SWIFT/BIC",
+      "openingHours": "Opening Hours",
+      "editOpeningHours": "Edit Opening Hours",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
+      "timeActions": {
+        "closed": "Closed",
+        "allDay": "24/7",
+        "morning": "Morning",
+        "afternoon": "Afternoon"
+      },
+      "emptyState": {
+        "title": "No Locations",
+        "description": "Add your first business location to continue with registration"
+      }
+    },
+    "deviceSelection": {
+      "solutionSelection": "Solution Selection",
+      "selectSolutions": "Select the solutions you need",
+      "solutions": {
+        "terminal": "Payment Terminals",
+        "pos": "POS Systems",
+        "gateway": "Payment Gateway",
+        "softpos": "SoftPOS Solutions",
+        "charging": "Charging Stations"
+      },
+      "catalog": "Product Catalog",
+      "livePreview": "Selection Preview",
+      "addToSelection": "Add to Selection",
+      "specifications": "Specifications",
+      "monthlyFee": "Monthly Fee",
+      "purchasePrice": "Purchase Price",
+      "rentalPrice": "Rental Price",
+      "quantity": "Quantity",
+      "companyCost": "Company Cost",
+      "customSpecification": "Specification",
+      "addons": "Add-ons",
+      "costSummary": "Cost Summary",
+      "mainItem": "Main Item",
+      "subtotalCustomer": "Customer Subtotal",
+      "totalCost": "Total Cost",
+      "margin": "Margin",
+      "emptySelection": "No Selected Items",
+      "addFirstItem": "Add your first item from the catalog"
+    },
+    "fees": {
+      "title": "Fee Configuration",
+      "profitCalculator": "Profit Calculator",
+      "transactionFees": "Transaction Fees",
+      "monthlyFees": "Monthly Fees"
+    },
+    "authorizedPersons": {
+      "title": "Authorized Persons",
+      "addPerson": "Add Person",
+      "removePerson": "Remove Person",
+      "personalData": "Personal Data",
+      "address": "Address",
+      "birthDate": "Date of Birth",
+      "birthPlace": "Place of Birth",
+      "idNumber": "ID Number",
+      "authorizations": "Authorizations",
+      "signature": "Signature",
+      "sameAsContact": "Same as contact person"
+    },
+    "actualOwners": {
+      "title": "Actual Owners",
+      "addOwner": "Add Owner",
+      "removeOwner": "Remove Owner",
+      "ownershipPercentage": "Ownership Percentage",
+      "beneficiary": "Beneficial Owner"
+    },
+    "consents": {
+      "title": "Consents and Signature",
+      "dataProcessing": "Consent to personal data processing",
+      "terms": "Consent to terms and conditions",
+      "marketing": "Consent to marketing communication",
+      "signature": "Electronic Signature",
+      "signatureCanvas": "Sign here",
+      "clearSignature": "Clear Signature",
+      "signatureRequired": "Signature is required"
+    },
+    "validation": {
+      "required": "This field is required",
+      "emailInvalid": "Invalid email",
+      "phoneInvalid": "Invalid phone number",
+      "icoInvalid": "Invalid Company ID",
+      "dicInvalid": "Invalid Tax ID",
+      "vatNumberInvalid": "Invalid VAT Number",
+      "minLength": "Minimum {min} characters",
+      "maxLength": "Maximum {max} characters"
+    },
+    "messages": {
+      "dataAutoFilled": "Data has been auto-filled from ORSR",
+      "contractCreated": "Contract has been successfully created",
+      "dataSaved": "Data has been saved",
+      "signatureSaved": "Signature has been saved",
+      "registrationCompleted": "Registration has been successfully completed",
+      "autoSaving": "Auto-saving...",
+      "autoSaved": "Auto-saved",
+      "autoSaveError": "Auto-save error"
+    }
   }
 }
