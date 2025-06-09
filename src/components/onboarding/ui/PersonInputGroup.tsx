@@ -1,8 +1,7 @@
 
+import { Mail, Phone, User } from "lucide-react";
 import OnboardingInput from "./OnboardingInput";
 import OnboardingSelect from "./OnboardingSelect";
-import PhoneNumberInput from "./PhoneNumberInput";
-import { User, Mail } from "lucide-react";
 
 interface PersonData {
   salutation?: string;
@@ -15,82 +14,163 @@ interface PersonData {
 
 interface PersonInputGroupProps {
   data: PersonData;
-  onUpdate: (field: string, value: string) => void;
-  completedFields: Set<string>;
-  forceShowPhonePrefix?: boolean;
+  onUpdate: (field: keyof PersonData, value: string) => void;
   showSalutation?: boolean;
+  showPhonePrefix?: boolean;
+  forceShowPhonePrefix?: boolean;
+  completedFields?: Set<string>;
+  emailValidation?: boolean;
+  isAutoFilled?: boolean;
+  autoFilledFrom?: string;
+  allowReset?: boolean;
+  onReset?: () => void;
 }
 
-const PersonInputGroup = ({ 
-  data, 
-  onUpdate, 
-  completedFields, 
+const PersonInputGroup = ({
+  data,
+  onUpdate,
+  showSalutation = true,
+  showPhonePrefix = true,
   forceShowPhonePrefix = false,
-  showSalutation = true 
+  completedFields = new Set(),
+  emailValidation = true,
+  isAutoFilled = false,
+  autoFilledFrom,
+  allowReset = false,
+  onReset
 }: PersonInputGroupProps) => {
+  const phonePrefixes = [
+    { value: '+421', label: '+421', extra: '🇸🇰 Slovensko' },
+    { value: '+420', label: '+420', extra: '🇨🇿 Česko' },
+    { value: '+43', label: '+43', extra: '🇦🇹 Rakúsko' },
+    { value: '+36', label: '+36', extra: '🇭🇺 Maďarsko' },
+    { value: '+48', label: '+48', extra: '🇵🇱 Poľsko' },
+    { value: '+49', label: '+49', extra: '🇩🇪 Nemecko' },
+    { value: '+44', label: '+44', extra: '🇬🇧 Británia' }
+  ];
+
   const salutationOptions = [
     { value: 'Pan', label: 'Pan' },
     { value: 'Pani', label: 'Pani' }
   ];
 
+  const formatPhoneNumber = (value: string, prefix: string = '+421') => {
+    const cleaned = value.replace(/\D/g, '');
+    
+    if (prefix === '+421' || prefix === '+420') {
+      return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3').slice(0, 11);
+    }
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3,4})/, '$1 $2 $3').slice(0, 13);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    const formatted = formatPhoneNumber(value, data.phonePrefix || '+421');
+    onUpdate('phone', formatted);
+  };
+
+  const isEmailValid = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  // Force show phone prefix if explicitly requested or if showPhonePrefix is true
+  const shouldShowPhonePrefix = forceShowPhonePrefix || showPhonePrefix;
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 text-slate-700 mb-4">
-        <User className="h-5 w-5 text-blue-500" />
-        <span className="text-sm font-medium">Osobné údaje *</span>
-      </div>
-
-      {showSalutation && (
-        <OnboardingSelect
-          label="Oslovenie *"
-          placeholder="Vyberte oslovenie"
-          value={data.salutation || ''}
-          onValueChange={(value) => onUpdate('salutation', value)}
-          options={salutationOptions}
-          isCompleted={completedFields.has('salutation')}
-        />
+      {isAutoFilled && autoFilledFrom && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              <span className="font-medium">Automaticky predvyplnené z: {autoFilledFrom}</span>
+            </div>
+            {allowReset && onReset && (
+              <button
+                type="button"
+                onClick={onReset}
+                className="text-xs text-blue-600 hover:text-blue-800 underline"
+              >
+                Resetovať
+              </button>
+            )}
+          </div>
+        </div>
       )}
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <OnboardingInput
-          label="Meno *"
-          value={data.firstName}
-          onChange={(e) => onUpdate('firstName', e.target.value)}
-          placeholder="Vaše meno"
-          isCompleted={completedFields.has('firstName')}
-        />
+      {/* Name Section */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        {showSalutation && (
+          <div className="sm:w-32">
+            <OnboardingSelect
+              label="Oslovenie"
+              placeholder="Vyberte"
+              value={data.salutation || ''}
+              onValueChange={(value) => onUpdate('salutation', value)}
+              options={salutationOptions}
+              isCompleted={completedFields.has('salutation')}
+            />
+          </div>
+        )}
 
-        <OnboardingInput
-          label="Priezvisko *"
-          value={data.lastName}
-          onChange={(e) => onUpdate('lastName', e.target.value)}
-          placeholder="Vaše priezvisko"
-          isCompleted={completedFields.has('lastName')}
-        />
+        <div className="flex-1">
+          <OnboardingInput
+            label="Meno *"
+            value={data.firstName}
+            onChange={(e) => onUpdate('firstName', e.target.value)}
+            placeholder="Vaše meno"
+            isCompleted={completedFields.has('firstName')}
+          />
+        </div>
+
+        <div className="flex-1">
+          <OnboardingInput
+            label="Priezvisko *"
+            value={data.lastName}
+            onChange={(e) => onUpdate('lastName', e.target.value)}
+            placeholder="Vaše priezvisko"
+            isCompleted={completedFields.has('lastName')}
+          />
+        </div>
       </div>
 
+      {/* Email Section */}
+      <OnboardingInput
+        type="email"
+        label="Email *"
+        value={data.email}
+        onChange={(e) => onUpdate('email', e.target.value)}
+        placeholder="vas.email@priklad.sk"
+        icon={<Mail className="h-5 w-5" />}
+        isCompleted={completedFields.has('email')}
+        error={emailValidation && data.email && !isEmailValid(data.email) ? 'Zadajte platnú emailovú adresu' : undefined}
+      />
+
+      {/* Phone Section */}
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-slate-700">
-          <Mail className="h-4 w-4 text-blue-500" />
-          <span className="text-sm font-medium">Email *</span>
+          <Phone className="h-5 w-5 text-blue-500" />
+          <span className="text-sm font-medium">Telefónne číslo *</span>
         </div>
-        <OnboardingInput
-          type="email"
-          value={data.email}
-          onChange={(e) => onUpdate('email', e.target.value)}
-          placeholder="vas@email.sk"
-          isCompleted={completedFields.has('email')}
-        />
+        <div className="flex gap-3">
+          {shouldShowPhonePrefix && (
+            <OnboardingSelect
+              value={data.phonePrefix || '+421'}
+              onValueChange={(value) => onUpdate('phonePrefix', value)}
+              options={phonePrefixes}
+              className="w-44"
+            />
+          )}
+          <div className="flex-1">
+            <OnboardingInput
+              value={data.phone}
+              onChange={(e) => handlePhoneChange(e.target.value)}
+              placeholder="123 456 789"
+              className="font-mono"
+              isCompleted={completedFields.has('phone')}
+            />
+          </div>
+        </div>
       </div>
-
-      <PhoneNumberInput
-        phoneValue={data.phone}
-        prefixValue={data.phonePrefix || '+421'}
-        onPhoneChange={(value) => onUpdate('phone', value)}
-        onPrefixChange={(value) => onUpdate('phonePrefix', value)}
-        isCompleted={completedFields.has('phone')}
-        required={true}
-      />
     </div>
   );
 };

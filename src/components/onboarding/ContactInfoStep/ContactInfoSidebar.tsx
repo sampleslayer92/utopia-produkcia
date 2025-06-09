@@ -1,6 +1,5 @@
 
 import { User, CheckCircle, Clock, AlertCircle, FileText } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 interface ContactInfoSidebarProps {
   hasAutoFilled: boolean;
@@ -23,8 +22,6 @@ const ContactInfoSidebar = ({
   contractId,
   contractNumber
 }: ContactInfoSidebarProps) => {
-  const { t } = useTranslation();
-  
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8">
       <div className="space-y-6">
@@ -32,27 +29,27 @@ const ContactInfoSidebar = ({
           <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
             <User className="h-5 w-5 text-blue-600" />
           </div>
-          <h3 className="font-medium text-blue-900">{t('onboarding.steps.contactInfo.title')}</h3>
+          <h3 className="font-medium text-blue-900">Kontaktné údaje</h3>
         </div>
         
         <p className="text-sm text-blue-800">
-          {t('onboarding.contactInfo.autoFillDescription')}
+          Zadajte svoje kontaktné údaje. Tieto informácie sa automaticky použijú vo všetkých potrebných sekciách onboarding procesu.
         </p>
 
         {contractId && contractNumber && (
           <div className="bg-green-100/50 border border-green-200 rounded-lg p-3 text-xs text-green-800">
             <div className="flex items-center gap-2 mb-1">
               <FileText className="h-3 w-3" />
-              <span className="font-medium">{t('onboarding.navigation.contractCreated')}</span>
+              <span className="font-medium">Zmluva vytvorená</span>
             </div>
-            <p>{t('onboarding.contactInfo.contractNumber')}: {contractNumber}</p>
+            <p>Číslo: {contractNumber}</p>
           </div>
         )}
         
         <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-          <p className="font-medium mb-2">{t('onboarding.contactInfo.autoFillInfo')}</p>
+          <p className="font-medium mb-2">Automatické vyplnenie</p>
           <p className="mb-3">
-            Po vyplnení pozície a kontaktných údajov sa automaticky vytvorí:
+            Po vyplnení kontaktných údajov sa automaticky vytvorí:
           </p>
           <ul className="space-y-2">
             <li className="flex items-center gap-2">
@@ -60,28 +57,28 @@ const ContactInfoSidebar = ({
                 <CheckCircle className="h-3 w-3 text-green-600" /> : 
                 <Clock className="h-3 w-3 text-blue-500" />
               }
-              <span>{t('onboarding.contactInfo.autoFillItems.contactPerson')}</span>
+              <span>Kontaktná osoba spoločnosti</span>
             </li>
             <li className="flex items-center gap-2">
               {autoFillStatus.businessLocations ? 
                 <CheckCircle className="h-3 w-3 text-green-600" /> : 
                 <Clock className="h-3 w-3 text-blue-500" />
               }
-              <span>{t('onboarding.contactInfo.autoFillItems.firstLocation')}</span>
+              <span>Prvá prevádzka</span>
             </li>
             <li className="flex items-center gap-2">
               {autoFillStatus.authorizedPersons ? 
                 <CheckCircle className="h-3 w-3 text-green-600" /> : 
                 <Clock className="h-3 w-3 text-blue-500" />
               }
-              <span>{t('onboarding.contactInfo.autoFillItems.authorizedPerson')}</span>
+              <span>Oprávnená osoba</span>
             </li>
             <li className="flex items-center gap-2">
               {autoFillStatus.actualOwners ? 
                 <CheckCircle className="h-3 w-3 text-green-600" /> : 
                 <Clock className="h-3 w-3 text-blue-500" />
               }
-              <span>{t('onboarding.contactInfo.autoFillItems.actualOwner')}</span>
+              <span>Skutočný majiteľ</span>
             </li>
           </ul>
         </div>
@@ -90,10 +87,11 @@ const ContactInfoSidebar = ({
           <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800">
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
-              <span className="font-medium">{t('onboarding.contactInfo.autoFillComplete')}</span>
+              <span className="font-medium">Automatické vyplnenie dokončené</span>
             </div>
             <p>
-              {t('onboarding.contactInfo.autoFillStatusMessage')}
+              Vaše údaje boli automaticky použité vo všetkých potrebných sekciách. 
+              Môžete ich neskôr upraviť v príslušných krokoch.
             </p>
           </div>
         )}
@@ -102,10 +100,10 @@ const ContactInfoSidebar = ({
           <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
             <div className="flex items-center gap-2 mb-2">
               <AlertCircle className="h-4 w-4 text-blue-600" />
-              <span className="font-medium">{t('onboarding.contactInfo.requiredInfo')}</span>
+              <span className="font-medium">Potrebné údaje</span>
             </div>
             <p>
-              {t('onboarding.contactInfo.requiredInfoMessage')}
+              Vyplňte meno, priezvisko, email a telefónne číslo pre automatické vyplnenie ostatných sekcií.
             </p>
           </div>
         )}

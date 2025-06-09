@@ -1,13 +1,9 @@
 
 import { OnboardingData } from "@/types/onboarding";
 import { Card, CardContent } from "@/components/ui/card";
-import { User } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import ContactInfoSidebar from "./ContactInfoStep/ContactInfoSidebar";
 import ContactInfoForm from "./ContactInfoStep/ContactInfoForm";
-import MobileOptimizedCard from "./ui/MobileOptimizedCard";
 import { useSimplifiedContactInfoLogic } from "./ContactInfoStep/hooks/useSimplifiedContactInfoLogic";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -17,8 +13,6 @@ interface ContactInfoStepProps {
 }
 
 const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
-  const { t } = useTranslation();
-  const isMobile = useIsMobile();
   const {
     completedFields,
     hasAutoFilled,
@@ -27,42 +21,13 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
     isBasicInfoComplete
   } = useSimplifiedContactInfoLogic(data, updateData);
 
-  // Auto-fill status based only on basic info completion
-  const basicInfoComplete = Boolean(isBasicInfoComplete());
-  
+  // Auto-fill status shows all sections as auto-filled when basic info is complete
   const autoFillStatus = {
-    actualOwners: basicInfoComplete,
-    authorizedPersons: basicInfoComplete,
-    businessLocations: basicInfoComplete,
-    companyInfo: basicInfoComplete
+    actualOwners: Boolean(isBasicInfoComplete()),
+    authorizedPersons: Boolean(isBasicInfoComplete()),
+    businessLocations: Boolean(isBasicInfoComplete()),
+    companyInfo: Boolean(isBasicInfoComplete())
   };
-
-  const infoTooltipData = {
-    description: t('onboarding.contactInfo.autoFillDescription'),
-    features: [
-      "Automatické predvyplnenie kontaktných osôb",
-      "Synchronizácia údajov medzi krokmi",
-      "Overenie emailovej adresy", 
-      "Formátovanie telefónneho čísla"
-    ]
-  };
-
-  if (isMobile) {
-    return (
-      <MobileOptimizedCard
-        title={t('onboarding.steps.contactInfo.title')}
-        icon={<User className="h-4 w-4 text-blue-600" />}
-        infoTooltip={infoTooltipData}
-      >
-        <ContactInfoForm
-          data={data}
-          completedFields={completedFields}
-          onPersonDataUpdate={handlePersonDataUpdate}
-          onContactInfoUpdate={updateContactInfo}
-        />
-      </MobileOptimizedCard>
-    );
-  }
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
@@ -70,11 +35,11 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
         <div className="grid grid-cols-1 md:grid-cols-3">
           <ContactInfoSidebar
             hasAutoFilled={hasAutoFilled}
-            userRoles={[]} // No longer using roles array
+            userRoles={[]} // No longer using roles
             autoFillStatus={autoFillStatus}
-            isBasicInfoComplete={basicInfoComplete}
-            contractId={data.contractId || ''}
-            contractNumber={data.contractNumber || ''}
+            isBasicInfoComplete={Boolean(isBasicInfoComplete())}
+            contractId={data.contractId}
+            contractNumber={data.contractNumber}
           />
           
           <ContactInfoForm

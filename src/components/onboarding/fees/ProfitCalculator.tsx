@@ -17,9 +17,9 @@ interface ProfitCalculatorProps {
 const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
   const [showResults, setShowResults] = useState(false);
 
-  // Calculate monthly turnover from all business locations using ONLY monthlyTurnover field
+  // Calculate monthly turnover from all business locations
   const monthlyTurnover = data.businessLocations.reduce(
-    (sum, location) => sum + (location.monthlyTurnover || 0), 
+    (sum, location) => sum + (location.estimatedTurnover || 0), 
     0
   );
 
@@ -85,13 +85,11 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
   const effectiveRegulated = Math.max(0, data.fees.regulatedCards - 0.2);
   const effectiveUnregulated = Math.max(0, data.fees.unregulatedCards - 0.2);
 
-  // Synchronized update function for MIF++ fields
-  const updateFeesSync = (value: number) => {
+  const updateFees = (field: keyof typeof data.fees, value: number) => {
     updateData({
       fees: {
         ...data.fees,
-        regulatedCards: value,
-        unregulatedCards: value
+        [field]: value
       }
     });
     setShowResults(false);
@@ -246,7 +244,7 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
           <p className="text-xs text-slate-500">Reálne náklady na poskytovanie služieb</p>
         </div>
 
-        {/* Synchronized Fee inputs with effective rates */}
+        {/* Fee inputs with effective rates */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="regulatedCards">MIF++ regulované karty (%)</Label>
@@ -257,7 +255,7 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
               max="100"
               step="0.01"
               value={data.fees.regulatedCards}
-              onChange={(e) => updateFeesSync(parseFloat(e.target.value) || 0)}
+              onChange={(e) => updateFees('regulatedCards', parseFloat(e.target.value) || 0)}
               className="border-slate-300 focus:border-green-500"
               placeholder="0.90"
             />
@@ -275,7 +273,7 @@ const ProfitCalculator = ({ data, updateData }: ProfitCalculatorProps) => {
               max="100"
               step="0.01"
               value={data.fees.unregulatedCards}
-              onChange={(e) => updateFeesSync(parseFloat(e.target.value) || 0)}
+              onChange={(e) => updateFees('unregulatedCards', parseFloat(e.target.value) || 0)}
               className="border-slate-300 focus:border-green-500"
               placeholder="1.50"
             />

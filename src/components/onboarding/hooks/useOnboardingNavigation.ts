@@ -9,20 +9,19 @@ export const useOnboardingNavigation = (
   currentStep: number,
   setCurrentStep: (step: number) => void,
   onboardingData: OnboardingData,
-  clearData: () => void,
-  markStepAsVisited: (stepNumber: number) => void
+  clearData: () => void
 ) => {
   const navigate = useNavigate();
   const totalSteps = onboardingSteps.length;
   const { submitContract, isSubmitting } = useContractSubmission();
 
   const nextStep = () => {
-    // Mark current step as visited before moving to next
-    markStepAsVisited(currentStep);
-    
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
+      toast.success("Krok uložený", {
+        description: `Postupujete na krok: ${onboardingSteps[currentStep + 1].title}`
+      });
     }
   };
 
@@ -34,9 +33,6 @@ export const useOnboardingNavigation = (
   };
 
   const handleComplete = async () => {
-    // Mark final step as visited
-    markStepAsVisited(currentStep);
-    
     console.log('Onboarding dokončený:', onboardingData);
     
     // Submit contract to Supabase
@@ -53,16 +49,16 @@ export const useOnboardingNavigation = (
       };
       
       localStorage.setItem('contract_data', JSON.stringify(contractData));
-      localStorage.setItem('utopia_user_role', 'admin');
+      localStorage.setItem('utopia_user_role', 'merchant');
       
       // Clear onboarding data
       clearData();
       
-      // Navigate to admin dashboard instead of merchant
-      navigate('/admin');
+      // Navigate to merchant dashboard
+      navigate('/merchant');
       
       toast.success('Registrácia dokončená!', {
-        description: `Číslo zmluvy: ${result.contractNumber}. Presmerováva sa na admin dashboard...`
+        description: `Číslo zmluvy: ${result.contractNumber}. Presmerováva sa na dashboard...`
       });
     }
   };
@@ -79,14 +75,6 @@ export const useOnboardingNavigation = (
     navigate('/');
   };
 
-  const handleSaveSignature = () => {
-    // Mark step 7 (Consents) as visited when signature is saved
-    markStepAsVisited(7);
-    toast.success('Podpis uložený', {
-      description: 'Elektronický podpis bol úspešne uložený'
-    });
-  };
-
   return {
     totalSteps,
     nextStep,
@@ -94,7 +82,6 @@ export const useOnboardingNavigation = (
     handleComplete,
     handleStepClick,
     handleSaveAndExit,
-    handleSaveSignature,
     isSubmitting
   };
 };

@@ -1,8 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, Trash2, Loader2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { CreditCard, FileText, Trash2, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +15,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useOnboardingContractDelete } from "@/hooks/useOnboardingContractDelete";
 import { useNavigate } from "react-router-dom";
-import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 interface OnboardingHeaderProps {
   contractNumber?: string;
@@ -31,7 +29,6 @@ const OnboardingHeader = ({
   onContractDeleted,
   isCreatingContract = false 
 }: OnboardingHeaderProps) => {
-  const { t } = useTranslation();
   const { deleteContract, isDeleting } = useOnboardingContractDelete();
   const navigate = useNavigate();
 
@@ -58,26 +55,27 @@ const OnboardingHeader = ({
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <img 
-              src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
-              alt="Utopia Logo" 
-              className="h-10 w-auto"
-            />
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+              <CreditCard className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+              Utopia
+            </span>
           </div>
           <div className="flex items-center gap-3">
             {isCreatingContract && (
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 flex items-center gap-2">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  <span className="text-xs">{t('header.creating')}</span>
+                <Badge variant="outline" className="border-yellow-200 text-yellow-700 flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Vytvára sa zmluva...
                 </Badge>
               </div>
             )}
             {contractNumber && contractId && (
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="border-green-200 text-green-700 bg-green-50 flex items-center gap-2">
+                <Badge variant="outline" className="border-blue-200 text-blue-700 flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  {t('header.contractNumber')} {contractNumber}
+                  Zmluva č. {contractNumber}
                 </Badge>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -96,26 +94,28 @@ const OnboardingHeader = ({
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>{t('header.deleteContractTitle')}</AlertDialogTitle>
+                      <AlertDialogTitle>Vymazať zmluvu</AlertDialogTitle>
                       <AlertDialogDescription>
-                        {t('header.deleteContractConfirm', { contractNumber })}
+                        Naozaj chcete vymazať zmluvu č. {contractNumber}? Táto akcia sa nedá vrátiť späť a všetky údaje budú trvalo odstránené.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                      <AlertDialogCancel>Zrušiť</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDeleteContract}
                         className="bg-red-600 hover:bg-red-700"
                         disabled={isDeleting}
                       >
-                        {isDeleting ? t('header.deleting') : t('header.deleteContract')}
+                        {isDeleting ? 'Vymazávam...' : 'Vymazať zmluvu'}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
               </div>
             )}
-            <LanguageSwitcher />
+            <Badge variant="outline" className="border-blue-200 text-blue-700">
+              Registrácia obchodníka
+            </Badge>
           </div>
         </div>
       </div>

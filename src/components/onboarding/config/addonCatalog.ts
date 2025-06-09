@@ -1,7 +1,9 @@
+
 import { AddonCard } from "@/types/onboarding";
 
 export const ADDON_CATALOG: Omit<AddonCard, 'id'>[] = [
   {
+    type: 'addon',
     category: 'sim',
     name: 'SIM karta',
     description: 'Mobilná SIM karta pre terminál',
@@ -10,6 +12,7 @@ export const ADDON_CATALOG: Omit<AddonCard, 'id'>[] = [
     isPerDevice: true
   },
   {
+    type: 'addon',
     category: 'docking',
     name: 'Dokovacia stanica',
     description: 'Nabíjacia dokovacia stanica',
@@ -19,6 +22,7 @@ export const ADDON_CATALOG: Omit<AddonCard, 'id'>[] = [
     customQuantity: 1
   },
   {
+    type: 'addon',
     category: 'case',
     name: 'Obal na terminál',
     description: 'Ochranný obal pre terminál',
@@ -27,6 +31,7 @@ export const ADDON_CATALOG: Omit<AddonCard, 'id'>[] = [
     isPerDevice: true
   },
   {
+    type: 'addon',
     category: 'backup',
     name: 'CHDÚ',
     description: 'Centrálna hlasovania a dátová jednotka',
@@ -36,6 +41,7 @@ export const ADDON_CATALOG: Omit<AddonCard, 'id'>[] = [
     customQuantity: 1
   },
   {
+    type: 'addon',
     category: 'printer',
     name: 'Tlačiareň',
     description: 'Bonovacia tlačiareň',
@@ -45,6 +51,7 @@ export const ADDON_CATALOG: Omit<AddonCard, 'id'>[] = [
     customQuantity: 1
   },
   {
+    type: 'addon',
     category: 'drawer',
     name: 'Zásuvka',
     description: 'Peňažná zásuvka',

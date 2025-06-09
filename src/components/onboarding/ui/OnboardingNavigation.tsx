@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Check, Loader2, Save } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { ChevronLeft, ChevronRight, Check, Loader2 } from "lucide-react";
 
 interface OnboardingNavigationProps {
   currentStep: number;
@@ -10,7 +9,6 @@ interface OnboardingNavigationProps {
   onNextStep: () => void;
   onComplete: () => void;
   onSaveAndExit: () => void;
-  onSaveSignature?: () => void;
   isSubmitting?: boolean;
 }
 
@@ -21,15 +19,11 @@ const OnboardingNavigation = ({
   onNextStep,
   onComplete,
   onSaveAndExit,
-  onSaveSignature,
   isSubmitting = false
 }: OnboardingNavigationProps) => {
-  const { t } = useTranslation();
-  const isConsentsStep = currentStep === totalSteps - 1;
-  
   return (
     <div className="border-t border-slate-200 bg-white/80 backdrop-blur-sm p-6 sticky bottom-0">
-      <div className="max-w-5xl mx-auto flex justify-between">
+      <div className="max-w-4xl mx-auto flex justify-between">
         <Button
           variant="outline"
           onClick={onPrevStep}
@@ -37,7 +31,7 @@ const OnboardingNavigation = ({
           className="flex items-center gap-2 hover:bg-slate-50"
         >
           <ChevronLeft className="h-4 w-4" />
-          {t('common.back')}
+          Späť
         </Button>
         
         <div className="flex space-x-3">
@@ -47,22 +41,10 @@ const OnboardingNavigation = ({
             disabled={isSubmitting}
             className="hover:bg-slate-50"
           >
-            {t('onboarding.navigation.saveAndExit')}
+            Uložiť a ukončiť
           </Button>
           
-          {isConsentsStep && onSaveSignature && (
-            <Button
-              onClick={onSaveSignature}
-              disabled={isSubmitting}
-              variant="outline"
-              className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
-            >
-              <Save className="mr-2 h-4 w-4" />
-              {t('onboarding.navigation.saveSignature')}
-            </Button>
-          )}
-          
-          {isConsentsStep ? (
+          {currentStep === totalSteps - 1 ? (
             <Button
               onClick={onComplete}
               disabled={isSubmitting}
@@ -71,11 +53,11 @@ const OnboardingNavigation = ({
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('onboarding.navigation.submitting')}
+                  Odosiela sa...
                 </>
               ) : (
                 <>
-                  {t('onboarding.navigation.completeRegistration')}
+                  Dokončiť registráciu
                   <Check className="ml-2 h-4 w-4" />
                 </>
               )}
@@ -86,7 +68,7 @@ const OnboardingNavigation = ({
               disabled={isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
             >
-              {t('common.next')}
+              Ďalej
               <ChevronRight className="h-4 w-4" />
             </Button>
           )}

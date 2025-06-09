@@ -1,7 +1,6 @@
 
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
-import PhoneNumberInput from "../ui/PhoneNumberInput";
 import { Checkbox } from "@/components/ui/checkbox";
 import { User } from "lucide-react";
 
@@ -42,12 +41,11 @@ const CompanyContactPerson = ({ data, updateCompanyInfo }: CompanyContactPersonP
           placeholder="jan.novak@firma.sk"
         />
         
-        <PhoneNumberInput
-          phoneValue={data.companyInfo.contactPerson.phone}
-          prefixValue="+421"
-          onPhoneChange={(value) => updateCompanyInfo('contactPerson.phone', value)}
-          onPrefixChange={() => {}} // Contact person phone doesn't need prefix changes for now
-          required={true}
+        <OnboardingInput
+          label="Telefón *"
+          value={data.companyInfo.contactPerson.phone}
+          onChange={(e) => updateCompanyInfo('contactPerson.phone', e.target.value)}
+          placeholder="+421 123 456 789"
         />
       </div>
       

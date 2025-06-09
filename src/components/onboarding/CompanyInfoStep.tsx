@@ -1,16 +1,14 @@
 
-import { useState } from "react";
-import { OnboardingData } from "@/types/onboarding";
 import { Card, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { OnboardingData } from "@/types/onboarding";
 import { Building2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import CompanyBasicInfoCard from "./company/CompanyBasicInfoCard";
+import CompanyRegistryInfo from "./company/CompanyRegistryInfo";
 import CompanyAddressCard from "./company/CompanyAddressCard";
 import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
 import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
-import MobileOptimizedCard from "./ui/MobileOptimizedCard";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useEffect } from "react";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -20,139 +18,179 @@ interface CompanyInfoStepProps {
 }
 
 const CompanyInfoStep = ({ data, updateData }: CompanyInfoStepProps) => {
-  const { t } = useTranslation();
-  const isMobile = useIsMobile();
-  const [autoFilledFromORSR, setAutoFilledFromORSR] = useState(false);
-
   const updateCompanyInfo = (field: string, value: any) => {
-    const keys = field.split('.');
-    if (keys.length === 1) {
+    if (field.includes('.')) {
+      const [parent, child] = field.split('.');
+      updateData({
+        companyInfo: {
+          ...data.companyInfo,
+          [parent]: {
+            ...(data.companyInfo[parent as keyof typeof data.companyInfo] as any),
+            [child]: value
+          }
+        }
+      });
+    } else {
       updateData({
         companyInfo: {
           ...data.companyInfo,
           [field]: value
         }
       });
-    } else if (keys.length === 2) {
-      const [parentKey, childKey] = keys;
+    }
+  };
+
+  // Synchronize contact address with main address when checkbox is checked
+  useEffect(() => {
+    if (data.companyInfo.contactAddressSameAsMain) {
       updateData({
         companyInfo: {
           ...data.companyInfo,
-          [parentKey]: {
-            ...(data.companyInfo[parentKey as keyof typeof data.companyInfo] as any),
-            [childKey]: value
+          contactAddress: {
+            street: data.companyInfo.address.street,
+            city: data.companyInfo.address.city,
+            zipCode: data.companyInfo.address.zipCode
           }
         }
       });
     }
-  };
+  }, [
+    data.companyInfo.contactAddressSameAsMain,
+    data.companyInfo.address.street,
+    data.companyInfo.address.city,
+    data.companyInfo.address.zipCode
+  ]);
 
   const handleORSRData = (orsrData: any) => {
-    console.log('ORSR data received:', orsrData);
-    
     updateData({
       companyInfo: {
         ...data.companyInfo,
-        companyName: orsrData.obchodne_meno || data.companyInfo.companyName,
-        address: {
-          street: orsrData.sidlo?.ulica || data.companyInfo.address?.street || '',
-          city: orsrData.sidlo?.obec || data.companyInfo.address?.city || '',
-          zipCode: orsrData.sidlo?.psc || data.companyInfo.address?.zipCode || ''
-        }
+        companyName: orsrData.companyName,
+        dic: orsrData.dic,
+        court: orsrData.court,
+        section: orsrData.section,
+        insertNumber: orsrData.insertNumber,
+        address: orsrData.address,
+        // Ensure registry_type is set to valid value
+        registryType: orsrData.registryType || 'business'
       }
     });
-    
-    setAutoFilledFromORSR(true);
-    toast.success(t('onboarding.messages.dataAutoFilled'));
   };
 
-  const infoTooltipData = {
-    description: t('onboarding.companyInfo.basicInfo'),
-    features: [
-      t('onboarding.companyInfo.orsrSearch'),
-      t('onboarding.companyInfo.autoFilled'),
-      t('onboarding.validation.required'),
-      t('onboarding.companyInfo.contactPerson')
-    ]
-  };
-
-  if (isMobile) {
-    return (
-      <MobileOptimizedCard
-        title={t('onboarding.steps.companyInfo.title')}
-        icon={<Building2 className="h-4 w-4 text-blue-600" />}
-        infoTooltip={infoTooltipData}
-      >
-        <div className="space-y-8">
-          <CompanyBasicInfoCard 
-            data={data} 
-            updateCompanyInfo={updateCompanyInfo}
-            handleORSRData={handleORSRData}
-          />
-          
-          <CompanyAddressCard 
-            data={data} 
-            updateCompanyInfo={updateCompanyInfo}
-          />
-          
-          {!data.companyInfo.contactAddressSameAsMain && (
-            <CompanyContactAddressCard 
-              data={data} 
-              updateCompanyInfo={updateCompanyInfo}
-            />
-          )}
-          
-          <CompanyContactPersonCard 
-            data={data} 
-            updateCompanyInfo={updateCompanyInfo}
-          />
-        </div>
-      </MobileOptimizedCard>
-    );
+  // Ensure registry_type has a valid default value
+  if (!data.companyInfo.registryType || !['public', 'business', 'other'].includes(data.companyInfo.registryType)) {
+    updateCompanyInfo('registryType', 'business');
   }
 
+  // Determine default accordion values based on whether contact address should be shown
+  const defaultAccordionValues = data.companyInfo.contactAddressSameAsMain 
+    ? ["basic-info", "address", "contact-person"]
+    : ["basic-info", "address", "contact-address", "contact-person"];
+
   return (
-    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
-      <CardContent className="p-8">
-        <div className="flex items-center gap-3 mb-8">
-          <Building2 className="h-6 w-6 text-blue-600" />
-          <div>
-            <h2 className="text-2xl font-semibold text-slate-900">{t('onboarding.steps.companyInfo.title')}</h2>
-            <p className="text-slate-600 mt-1">{t('onboarding.steps.companyInfo.subtitle')}</p>
+    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
+      <CardContent className="p-0">
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          {/* Left sidebar with info */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Building2 className="h-5 w-5 text-blue-600" />
+                </div>
+                <h3 className="font-medium text-blue-900">Údaje o spoločnosti</h3>
+              </div>
+              
+              <p className="text-sm text-blue-800">
+                Zadajte základné informácie o vašej spoločnosti pre správne vedenie zmluvy a platobných služieb.
+              </p>
+              
+              <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
+                <p className="font-medium mb-2">Prečo potrebujeme tieto údaje?</p>
+                <ul className="space-y-2 list-disc list-inside">
+                  <li>Pre vystavenie faktúr</li>
+                  <li>Pre právne dokumenty a zmluvy</li>
+                  <li>Pre zriadenie platobného terminálu</li>
+                  <li>Pre DPH evidenciu ak ste platcom</li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
+          
+          {/* Main form content with accordion */}
+          <div className="col-span-1 md:col-span-2 p-6 md:p-8">
+            <Accordion type="multiple" defaultValue={defaultAccordionValues} className="space-y-4">
+              
+              {/* Basic Company Info */}
+              <AccordionItem value="basic-info" className="border border-slate-200 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <span className="font-medium text-slate-900">Základné údaje o spoločnosti</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <CompanyBasicInfoCard
+                    data={data}
+                    updateCompanyInfo={updateCompanyInfo}
+                    handleORSRData={handleORSRData}
+                  />
+                </AccordionContent>
+              </AccordionItem>
 
-        {autoFilledFromORSR && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-sm text-green-800 font-medium">
-              {t('onboarding.companyInfo.orsrFound')} ✓
-            </p>
+              {/* Registry Info */}
+              <AccordionItem value="registry-info" className="border border-slate-200 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <span className="font-medium text-slate-900">Údaje z obchodného registra</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <CompanyRegistryInfo
+                    data={data}
+                    updateCompanyInfo={updateCompanyInfo}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Company Address */}
+              <AccordionItem value="address" className="border border-slate-200 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <span className="font-medium text-slate-900">Sídlo spoločnosti</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <CompanyAddressCard
+                    data={data}
+                    updateCompanyInfo={updateCompanyInfo}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Contact Address - only show if not same as main */}
+              {!data.companyInfo.contactAddressSameAsMain && (
+                <AccordionItem value="contact-address" className="border border-slate-200 rounded-lg">
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                    <span className="font-medium text-slate-900">Kontaktná adresa</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <CompanyContactAddressCard
+                      data={data}
+                      updateCompanyInfo={updateCompanyInfo}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+
+              {/* Contact Person */}
+              <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <span className="font-medium text-slate-900">Kontaktná osoba</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <CompanyContactPersonCard
+                    data={data}
+                    updateCompanyInfo={updateCompanyInfo}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+
+            </Accordion>
           </div>
-        )}
-
-        <div className="space-y-8">
-          <CompanyBasicInfoCard 
-            data={data} 
-            updateCompanyInfo={updateCompanyInfo}
-            handleORSRData={handleORSRData}
-          />
-          
-          <CompanyAddressCard 
-            data={data} 
-            updateCompanyInfo={updateCompanyInfo}
-          />
-          
-          {!data.companyInfo.contactAddressSameAsMain && (
-            <CompanyContactAddressCard 
-              data={data} 
-              updateCompanyInfo={updateCompanyInfo}
-            />
-          )}
-          
-          <CompanyContactPersonCard 
-            data={data} 
-            updateCompanyInfo={updateCompanyInfo}
-          />
         </div>
       </CardContent>
     </Card>

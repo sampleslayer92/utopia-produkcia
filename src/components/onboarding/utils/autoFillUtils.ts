@@ -1,4 +1,3 @@
-
 import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
 import { v4 as uuidv4 } from "uuid";
 
@@ -17,7 +16,6 @@ export const createAuthorizedPersonFromContactInfo = (contactInfo: OnboardingDat
   lastName: contactInfo.lastName,
   email: contactInfo.email,
   phone: contactInfo.phone,
-  phonePrefix: contactInfo.phonePrefix || '+421', // Add phonePrefix field
   maidenName: '',
   birthDate: '',
   birthPlace: '',
@@ -76,20 +74,20 @@ export const createDefaultBusinessLocation = (contactInfo: OnboardingData['conta
       city: '', 
       zipCode: '' 
     },
-    iban: '',
+    iban: '', // Keep for backward compatibility
     bankAccounts: [defaultBankAccount],
     contactPerson: {
       name: `${contactInfo.firstName} ${contactInfo.lastName}`,
       email: contactInfo.email,
       phone: contactInfo.phone
     },
-    businessSector: '',
+    businessSector: '', // Keep for backward compatibility
     businessSubject: '',
     mccCode: '',
-    estimatedTurnover: 0,
+    estimatedTurnover: 0, // Keep for backward compatibility
     monthlyTurnover: 0,
     averageTransaction: 0,
-    openingHours: '',
+    openingHours: '', // Keep for backward compatibility
     openingHoursDetailed: defaultOpeningHours,
     seasonality: 'year-round' as const,
     assignedPersons: []
@@ -104,7 +102,7 @@ export const shouldAutoFillBasedOnContactInfo = (contactInfo: OnboardingData['co
          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
 };
 
-// Simplified auto-fill function that doesn't depend on company type
+// New simplified auto-fill function that doesn't require roles
 export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
   if (!shouldAutoFillBasedOnContactInfo(contactInfo)) {
     return {};
@@ -148,7 +146,8 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
 
   // Always update company contact person
   console.log('Updating company contact person');
-  const companyUpdates: any = {
+  updates.companyInfo = {
+    ...currentData.companyInfo,
     contactPerson: {
       ...currentData.companyInfo.contactPerson,
       firstName: contactInfo.firstName,
@@ -157,11 +156,6 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
       phone: contactInfo.phone,
       isTechnicalPerson: true
     }
-  };
-
-  updates.companyInfo = {
-    ...currentData.companyInfo,
-    ...companyUpdates
   };
 
   // Always create/update business location
@@ -203,37 +197,7 @@ export const getAutoFillUpdatesSimplified = (contactInfo: OnboardingData['contac
   return updates;
 };
 
-// Helper function to check if contact info has changed significantly
-export const hasContactInfoChanged = (
-  prev: OnboardingData['contactInfo'], 
-  current: OnboardingData['contactInfo']
-) => {
-  return prev.firstName !== current.firstName ||
-         prev.lastName !== current.lastName ||
-         prev.email !== current.email ||
-         prev.phone !== current.phone ||
-         prev.phonePrefix !== current.phonePrefix ||
-         prev.userRole !== current.userRole;
-};
-
-// Helper function to format phone number consistently
-export const formatPhoneForDisplay = (phone: string, prefix: string = '+421') => {
-  if (!phone) return '';
-  
-  // Remove any existing formatting
-  const cleaned = phone.replace(/\D/g, '');
-  
-  // Format based on prefix
-  if (prefix === '+421' || prefix === '+420') {
-    return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3').slice(0, 11);
-  }
-  return cleaned.replace(/(\d{3})(\d{3})(\d{3,4})/, '$1 $2 $3').slice(0, 13);
-};
-
-// Legacy function for backward compatibility
-export const getAutoFillUpdates = getAutoFillUpdatesSimplified;
-
-// Keep existing helper functions for backward compatibility
+// Legacy functions for backward compatibility
 export const updateBusinessLocationsContactPerson = (
   businessLocations: OnboardingData['businessLocations'], 
   contactInfo: OnboardingData['contactInfo'],
@@ -276,15 +240,129 @@ export const shouldAutoFillBasedOnRoles = (roles: string[], contactInfo: Onboard
          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
 };
 
-// Legacy helper functions no longer used but kept for backward compatibility
+export const getAutoFillUpdates = (roles: string[], contactInfo: OnboardingData['contactInfo'], currentData: OnboardingData) => {
+  if (!shouldAutoFillBasedOnRoles(roles, contactInfo)) {
+    return {};
+  }
+
+  console.log('Auto-fill triggered with roles:', roles, 'and contact info:', contactInfo);
+
+  const updates: Partial<OnboardingData> = {};
+
+  // Check for existing records to avoid duplicates
+  const existingAuthorized = currentData.authorizedPersons.find(p => 
+    p.firstName === contactInfo.firstName && 
+    p.lastName === contactInfo.lastName && 
+    p.email === contactInfo.email
+  );
+
+  const existingOwner = currentData.actualOwners.find(p => 
+    p.firstName === contactInfo.firstName && 
+    p.lastName === contactInfo.lastName
+  );
+
+  // Handle Majiteľ role - create actual owner record
+  if (roles.includes('Majiteľ') && !existingOwner) {
+    console.log('Creating actual owner record for Majiteľ role');
+    const actualOwner = createActualOwnerFromContactInfo(contactInfo);
+    updates.actualOwners = [...currentData.actualOwners, actualOwner];
+  }
+
+  // Handle Konateľ role - create authorized person record
+  if (roles.includes('Konateľ') && !existingAuthorized) {
+    console.log('Creating authorized person record for Konateľ role');
+    const authorizedPerson = createAuthorizedPersonFromContactInfo(contactInfo);
+    updates.authorizedPersons = [...currentData.authorizedPersons, authorizedPerson];
+    
+    // Set as signing person
+    updates.consents = {
+      ...currentData.consents,
+      signingPersonId: authorizedPerson.id
+    };
+  }
+
+  // Handle Kontaktná osoba pre technické záležitosti
+  if (roles.includes('Kontaktná osoba pre technické záležitosti')) {
+    console.log('Updating technical contact person');
+    updates.companyInfo = {
+      ...currentData.companyInfo,
+      contactPerson: {
+        ...currentData.companyInfo.contactPerson,
+        firstName: contactInfo.firstName,
+        lastName: contactInfo.lastName,
+        email: contactInfo.email,
+        phone: contactInfo.phone,
+        isTechnicalPerson: true
+      }
+    };
+  }
+
+  // Handle business location creation and updates
+  const hasBusinessContactRole = roles.includes('Kontaktná osoba na prevádzku') || roles.includes('Majiteľ');
+  
+  if (hasBusinessContactRole) {
+    let updatedBusinessLocations = currentData.businessLocations;
+    
+    // Create first business location if none exists
+    if (updatedBusinessLocations.length === 0) {
+      console.log('Creating default business location for business contact role');
+      const defaultLocation = createDefaultBusinessLocation(contactInfo);
+      updatedBusinessLocations = [defaultLocation];
+    } else {
+      // Update existing business locations
+      updatedBusinessLocations = updateBusinessLocationsContactPerson(
+        updatedBusinessLocations, 
+        contactInfo, 
+        roles
+      );
+    }
+    
+    if (updatedBusinessLocations !== currentData.businessLocations) {
+      updates.businessLocations = updatedBusinessLocations;
+    }
+  }
+
+  console.log('Auto-fill updates generated:', Object.keys(updates));
+  return updates;
+};
+
+// Helper function to check if contact info has changed significantly
+export const hasContactInfoChanged = (
+  prev: OnboardingData['contactInfo'], 
+  current: OnboardingData['contactInfo']
+) => {
+  return prev.firstName !== current.firstName ||
+         prev.lastName !== current.lastName ||
+         prev.email !== current.email ||
+         prev.phone !== current.phone ||
+         prev.phonePrefix !== current.phonePrefix;
+};
+
+// Helper function to format phone number consistently
+export const formatPhoneForDisplay = (phone: string, prefix: string = '+421') => {
+  if (!phone) return '';
+  
+  // Remove any existing formatting
+  const cleaned = phone.replace(/\D/g, '');
+  
+  // Format based on prefix
+  if (prefix === '+421' || prefix === '+420') {
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3').slice(0, 11);
+  }
+  return cleaned.replace(/(\d{3})(\d{3})(\d{3,4})/, '$1 $2 $3').slice(0, 13);
+};
+
+// Helper function to check if roles have business location requirements
 export const requiresBusinessLocation = (roles: string[]) => {
   return roles.includes('Kontaktná osoba na prevádzku') || roles.includes('Majiteľ');
 };
 
+// Helper function to check if roles require actual owner record
 export const requiresActualOwner = (roles: string[]) => {
   return roles.includes('Majiteľ');
 };
 
+// Helper function to check if roles require authorized person record
 export const requiresAuthorizedPerson = (roles: string[]) => {
   return roles.includes('Konateľ');
 };

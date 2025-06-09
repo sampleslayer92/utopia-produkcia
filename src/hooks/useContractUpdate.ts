@@ -7,26 +7,6 @@ import { Database } from '@/integrations/supabase/types';
 
 type ContractStatus = Database['public']['Enums']['contract_status'];
 
-// Helper function to convert frontend salutation to database format
-const convertSalutationToDb = (salutation?: 'Pan' | 'Pani'): 'Pan' | 'Pani' | null => {
-  return salutation || null;
-};
-
-// Helper function to convert frontend registry type to database format
-const convertRegistryTypeToDb = (registryType: string): Database['public']['Enums']['registry_type'] => {
-  switch (registryType) {
-    case 'Nezisková organizácia':
-      return 'public';
-    case 'S.r.o.':
-      return 'business';
-    case 'Akciová spoločnosť':
-      return 'business';
-    case 'Živnosť':
-    default:
-      return 'other';
-  }
-};
-
 export const useContractUpdate = (contractId: string) => {
   const queryClient = useQueryClient();
 
@@ -58,7 +38,7 @@ export const useContractUpdate = (contractId: string) => {
           const { error: contactError } = await supabase
             .from('contact_info')
             .update({
-              salutation: convertSalutationToDb(data.contactInfo.salutation),
+              salutation: data.contactInfo.salutation || null,
               first_name: data.contactInfo.firstName,
               last_name: data.contactInfo.lastName,
               email: data.contactInfo.email,
@@ -77,7 +57,7 @@ export const useContractUpdate = (contractId: string) => {
             .from('contact_info')
             .insert({
               contract_id: contractId,
-              salutation: convertSalutationToDb(data.contactInfo.salutation),
+              salutation: data.contactInfo.salutation || null,
               first_name: data.contactInfo.firstName,
               last_name: data.contactInfo.lastName,
               email: data.contactInfo.email,
@@ -105,7 +85,7 @@ export const useContractUpdate = (contractId: string) => {
           ico: data.companyInfo.ico,
           dic: data.companyInfo.dic,
           company_name: data.companyInfo.companyName,
-          registry_type: convertRegistryTypeToDb(data.companyInfo.registryType),
+          registry_type: (data.companyInfo.registryType || 'other') as Database['public']['Enums']['registry_type'],
           is_vat_payer: data.companyInfo.isVatPayer,
           vat_number: data.companyInfo.vatNumber || null,
           court: data.companyInfo.court,

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Clock, Calendar, Zap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -10,11 +11,11 @@ import { OpeningHours } from "@/types/onboarding";
 interface OpeningHoursModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialHours: OpeningHours[];
+  openingHours: OpeningHours[];
   onSave: (hours: OpeningHours[]) => void;
 }
 
-const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHoursModalProps) => {
+const OpeningHoursModal = ({ isOpen, onClose, openingHours, onSave }: OpeningHoursModalProps) => {
   const daysOfWeek: Array<{ key: OpeningHours['day'], label: string, shortLabel: string }> = [
     { key: "Po", label: "Pondelok", shortLabel: "Po" },
     { key: "Ut", label: "Utorok", shortLabel: "Ut" },
@@ -35,21 +36,21 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
   useEffect(() => {
     if (isOpen) {
       // Initialize with existing hours or defaults
-      const initialHoursData = initialHours.length > 0 ? initialHours : daysOfWeek.map(day => ({
+      const initialHours = openingHours.length > 0 ? openingHours : daysOfWeek.map(day => ({
         day: day.key,
         open: "09:00",
         close: "17:00",
         otvorene: day.key !== "So" && day.key !== "Ne"
       }));
       
-      setLocalHours(initialHoursData);
+      setLocalHours(initialHours);
       
       // Set selected days (those that are open)
-      const openDays = new Set(initialHoursData.filter(h => h.otvorene).map(h => h.day));
+      const openDays = new Set(initialHours.filter(h => h.otvorene).map(h => h.day));
       setSelectedDays(openDays);
       
       // Check if all open days have same time
-      const openHours = initialHoursData.filter(h => h.otvorene);
+      const openHours = initialHours.filter(h => h.otvorene);
       if (openHours.length > 0) {
         const firstOpen = openHours[0];
         const allSameTime = openHours.every(h => h.open === firstOpen.open && h.close === firstOpen.close);
@@ -60,7 +61,7 @@ const OpeningHoursModal = ({ isOpen, onClose, initialHours, onSave }: OpeningHou
         }
       }
     }
-  }, [isOpen, initialHours]);
+  }, [isOpen, openingHours]);
 
   const toggleDay = (day: OpeningHours['day']) => {
     const newSelectedDays = new Set(selectedDays);

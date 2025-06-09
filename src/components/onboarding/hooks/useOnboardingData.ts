@@ -4,13 +4,14 @@ import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
 
 const initialData: OnboardingData = {
   contactInfo: {
-    salutation: undefined,
+    salutation: '',
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
     phonePrefix: '+421',
     salesNote: '',
+    companyType: '',
     userRoles: [],
     userRole: '' // Keep for backward compatibility
   },
@@ -18,7 +19,7 @@ const initialData: OnboardingData = {
     ico: '',
     dic: '',
     companyName: '',
-    registryType: 'Živnosť',
+    registryType: '',
     isVatPayer: false,
     vatNumber: '',
     court: '',
@@ -35,8 +36,6 @@ const initialData: OnboardingData = {
       zipCode: ''
     },
     contactAddressSameAsMain: true,
-    contactAddressSame: true, // Add the missing field
-    headOfficeEqualsOperatingAddress: false,
     contactPerson: {
       firstName: '',
       lastName: '',
@@ -64,7 +63,6 @@ const initialData: OnboardingData = {
     signatureDate: '',
     signingPersonId: ''
   },
-  visitedSteps: [], // New field to track visited steps
   currentStep: 0,
   contractId: undefined,
   contractNumber: undefined
@@ -110,14 +108,11 @@ export const useOnboardingData = () => {
         }
         
         // Ensure new fields are present
+        if (!parsedData.contactInfo.companyType) {
+          parsedData.contactInfo.companyType = '';
+        }
         if (!parsedData.contactInfo.userRoles) {
           parsedData.contactInfo.userRoles = [];
-        }
-
-        // Initialize visitedSteps if not present
-        if (!parsedData.visitedSteps) {
-          // For backward compatibility, assume steps 0-3 are visited if they have current step > 3
-          parsedData.visitedSteps = parsedData.currentStep > 3 ? [0, 1, 2, 3] : [];
         }
 
         // Migrate business locations to new structure
@@ -182,18 +177,6 @@ export const useOnboardingData = () => {
     });
   };
 
-  const markStepAsVisited = (stepNumber: number) => {
-    setOnboardingData(prev => {
-      const visitedSteps = [...prev.visitedSteps];
-      if (!visitedSteps.includes(stepNumber)) {
-        visitedSteps.push(stepNumber);
-      }
-      const updated = { ...prev, visitedSteps };
-      localStorage.setItem('onboarding_data', JSON.stringify(updated));
-      return updated;
-    });
-  };
-
   const clearData = () => {
     localStorage.removeItem('onboarding_data');
     setOnboardingData(initialData);
@@ -202,7 +185,6 @@ export const useOnboardingData = () => {
   return {
     onboardingData,
     updateData,
-    markStepAsVisited,
     clearData
   };
 };
