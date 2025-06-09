@@ -29,8 +29,22 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       lastName: '',
       email: '',
       phone: '',
+      phonePrefix: '+421',
+      maidenName: '',
+      birthDate: '',
+      birthPlace: '',
+      birthNumber: '',
+      permanentAddress: '',
       position: '',
-      authorizationScope: ''
+      authorizationScope: '',
+      documentType: 'OP',
+      documentNumber: '',
+      documentValidity: '',
+      documentIssuer: '',
+      documentCountry: 'SK',
+      citizenship: 'SK',
+      isPoliticallyExposed: false,
+      isUSCitizen: false
     };
     
     updateData({

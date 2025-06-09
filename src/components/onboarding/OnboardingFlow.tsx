@@ -150,6 +150,13 @@ const OnboardingFlow = () => {
 
   const currentStepData = onboardingSteps[currentStep];
 
+  // Transform steps for sidebar
+  const sidebarSteps = onboardingSteps.map((step, index) => ({
+    number: index,
+    title: step.title,
+    description: step.description
+  }));
+
   return (
     <OnboardingErrorBoundary onReset={handleErrorReset}>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -177,7 +184,7 @@ const OnboardingFlow = () => {
           {!isMobile && (
             <OnboardingSidebar
               currentStep={currentStep}
-              steps={onboardingSteps}
+              steps={sidebarSteps}
               onStepClick={handleStepClick}
               onboardingData={onboardingData}
             />

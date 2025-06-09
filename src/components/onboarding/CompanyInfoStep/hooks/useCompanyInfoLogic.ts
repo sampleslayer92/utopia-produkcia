@@ -14,11 +14,14 @@ export const useCompanyInfoLogic = (
     if (fieldPath.length > 1) {
       // Handle nested fields like "address.street"
       const [section, subField] = fieldPath;
+      const currentCompanyInfo = data.companyInfo || {};
+      const currentSection = currentCompanyInfo[section as keyof typeof currentCompanyInfo] || {};
+      
       updateData({
         companyInfo: {
-          ...data.companyInfo,
+          ...currentCompanyInfo,
           [section]: {
-            ...data.companyInfo[section as keyof typeof data.companyInfo],
+            ...currentSection,
             [subField]: value
           }
         }
@@ -27,7 +30,7 @@ export const useCompanyInfoLogic = (
       // Handle direct fields
       updateData({
         companyInfo: {
-          ...data.companyInfo,
+          ...(data.companyInfo || {}),
           [field]: value
         }
       });
