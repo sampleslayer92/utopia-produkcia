@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export interface EnhancedContractData {
   id: string;
-  contract_number: number;
+  contract_number: string; // Changed from number to string
   status: string;
   created_at: string;
   submitted_at: string | null;
@@ -95,7 +95,7 @@ const extractSingleRecord = (data: any) => {
   return Array.isArray(data) ? null : data;
 };
 
-// Define valid database status types
+// Define valid database status types - updated to match actual database enum
 type DatabaseStatus = 'draft' | 'submitted' | 'in_review' | 'approved' | 'rejected' | 'completed' | 'signed';
 
 // Map UI filter values to database enum values
@@ -106,7 +106,9 @@ const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
     'opened': 'submitted', // Map 'opened' to existing status
     'viewed': 'in_review', // Map 'viewed' to existing status
     'approved': 'approved',
-    'rejected': 'rejected'
+    'rejected': 'rejected',
+    'completed': 'completed',
+    'signed': 'signed'
   };
   return statusMap[uiStatus] || null;
 };
@@ -202,7 +204,7 @@ export const useEnhancedContractsData = (filters?: {
 
         return {
           id: contract.id,
-          contract_number: contract.contract_number,
+          contract_number: contract.contract_number, // Already a string
           status: contract.status,
           created_at: contract.created_at,
           submitted_at: contract.submitted_at,

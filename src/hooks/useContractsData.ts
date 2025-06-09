@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export interface ContractWithInfo {
   id: string;
-  contract_number: number;
+  contract_number: string; // Changed from number to string to match database
   status: string;
   created_at: string;
   submitted_at: string | null;
@@ -53,7 +53,7 @@ export const useContractsData = () => {
       // Transform the data to match our interface
       const transformedData: ContractWithInfo[] = data?.map(contract => ({
         id: contract.id,
-        contract_number: contract.contract_number,
+        contract_number: contract.contract_number, // Already a string from database
         status: contract.status,
         created_at: contract.created_at,
         submitted_at: contract.submitted_at,

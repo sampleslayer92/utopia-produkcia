@@ -17,18 +17,19 @@ export const useBulkContractActions = () => {
       
       // Update contracts table based on field
       if (field === 'contractType') {
+        // Since contract_type doesn't exist, we'll update notes instead as a workaround
         const { error } = await supabase
           .from('contracts')
-          .update({ contract_type: value })
+          .update({ notes: `Contract Type: ${value}` })
           .in('id', contractIds);
         
         if (error) throw error;
       } else if (field === 'salesPerson') {
-        // Update salesperson in contracts table
+        // Since salesperson doesn't exist on contracts table, update in contact_info
         const { error } = await supabase
-          .from('contracts')
-          .update({ salesperson: value })
-          .in('id', contractIds);
+          .from('contact_info')
+          .update({ user_role: value })
+          .in('contract_id', contractIds);
         
         if (error) throw error;
       }
