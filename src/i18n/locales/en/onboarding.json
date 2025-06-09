@@ -1,0 +1,39 @@
+
+{
+  "onboarding": {
+    "header": {
+      "title": "Merchant Registration",
+      "progress": "Progress: {percentage}%",
+      "stepsCompleted": "{completed} of {total} steps completed",
+      "contractNumber": "Contract No. {number}",
+      "creatingContract": "Creating contract..."
+    },
+    "navigation": {
+      "back": "Back",
+      "next": "Next",
+      "saveAndExit": "Save and Exit",
+      "saveSignature": "Save Signature",
+      "completeRegistration": "Complete Registration",
+      "submitting": "Submitting..."
+    },
+    "stepper": {
+      "partiallyComplete": "Partially Complete",
+      "next": "Next",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "step": "Step {current}/{total}"
+    },
+    "deleteConfirmation": "Are you sure you want to delete this contract? This action cannot be undone.",
+    "autoSave": {
+      "saving": "Saving...",
+      "saved": "Saved",
+      "error": "Save error",
+      "lastSaved": "Last saved: {time}",
+      "idle": "Auto-save"
+    },
+    "help": {
+      "title": "Need help?",
+      "description": "Contact us if you have questions about registration."
+    }
+  }
+}

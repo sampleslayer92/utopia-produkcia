@@ -1,0 +1,67 @@
+
+{
+  "ui": {
+    "phoneNumber": {
+      "phoneNumber": "Phone Number"
+    },
+    "documentUpload": {
+      "frontSide": "Front Side",
+      "backSide": "Back Side",
+      "dragDrop": "Drag file here or click the button",
+      "supportedFormats": "Supported formats: JPG, PNG, PDF (max. 10MB)",
+      "uploadDocument": "Upload Document",
+      "uploaded": "Document uploaded"
+    },
+    "signaturePad": {
+      "signature": "Signature",
+      "clear": "Clear",
+      "disabled": "Signature is disabled",
+      "signHere": "Sign here",
+      "required": "Signature is required"
+    },
+    "autoFill": {
+      "title": "Auto-fill",
+      "suggestion": "Auto-fill suggestion",
+      "apply": "Apply",
+      "applied": "Applied",
+      "suggestions": "Suggestions",
+      "contactPerson": "Contact Person",
+      "useAsAuthorizedPerson": "Use as authorized person",
+      "useAsActualOwner": "Use as actual owner"
+    },
+    "businessDetails": {
+      "title": "Business Data",
+      "businessSubject": "Business Subject",
+      "businessSubjectPlaceholder": "Describe your business subject...",
+      "mccCode": "MCC Code",
+      "mccCodePlaceholder": "Select MCC code",
+      "monthlyTurnover": "Monthly Turnover (€)",
+      "monthlyTurnoverPlaceholder": "Enter monthly turnover"
+    },
+    "openingHours": {
+      "title": "Operating Hours",
+      "set": "Set",
+      "closedAllDays": "Closed all days",
+      "edit": "Edit",
+      "closed": "Closed"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "required": "Personal Information *",
+      "salutation": "Salutation",
+      "salutationRequired": "Salutation *",
+      "selectSalutation": "Select salutation",
+      "firstNameRequired": "First Name *",
+      "lastNameRequired": "Last Name *",
+      "firstNamePlaceholder": "Your first name",
+      "lastNamePlaceholder": "Your last name",
+      "emailRequired": "Email *",
+      "emailPlaceholder": "your@email.com",
+      "phoneRequired": "Phone Number *",
+      "options": {
+        "mr": "Mr",
+        "mrs": "Mrs"
+      }
+    }
+  }
+}

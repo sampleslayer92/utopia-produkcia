@@ -1,0 +1,9 @@
+
+{
+  "notifications": {
+    "contractCreated": "Contract created successfully",
+    "contractCreationFailed": "Failed to create contract",
+    "stepNotAccessible": "Step not accessible",
+    "stepNotAccessibleDescription": "Please complete previous steps first"
+  }
+}
