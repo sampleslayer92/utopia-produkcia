@@ -309,10 +309,6 @@
   "deviceSelection": {
     "title": "Výber zariadení a služieb",
     "description": "Vyberte a nakonfigurujte zariadenia a služby pre vaše podnikanie",
-    "loading": {
-      "saving": "Ukladá sa...",
-      "saved": "Uložené"
-    },
     "solutionSelection": {
       "title": "Výber riešení",
       "description": "Vyberte typy riešení, ktoré chcete používať vo vašom podnikaní",
@@ -410,6 +406,46 @@
         "items": "položiek",
         "pieces": "ks"
       }
+    },
+    "modal": {
+      "addTitle": "Pridať - {name}",
+      "editTitle": "Upraviť - {name}",
+      "quantity": "Množstvo",
+      "pricingMode": "Spôsob platby",
+      "rental": "Prenájom",
+      "purchase": "Kúpa",
+      "monthlyFeeDevice": "Mesačný poplatok za kus (€)",
+      "purchasePriceDevice": "Jednorazová cena za kus (€)",
+      "monthlyFeeService": "Mesačný poplatok za kus (€)",
+      "companyCost": "Mesačné náklady spoločnosti za kus (€)",
+      "customSpecification": "Špecifikácia služby",
+      "customSpecificationPlaceholder": "Opíšte službu...",
+      "addToCart": "Pridať do košíka",
+      "saveChanges": "Uložiť zmeny",
+      "cancel": "Zrušiť",
+      "add": "Pridať",
+      "save": "Uložiť"
+    },
+    "cards": {
+      "count": "{count} ks",
+      "countPieces": "ks",
+      "items": "položiek",
+      "monthlyFee": "€{amount}/mesiac",
+      "mainItem": "Hlavná položka:",
+      "addons": "Doplnky:",
+      "total": "Celkom:",
+      "addonsCount": "+{count} doplnkov",
+      "specifications": "Špecifikácie",
+      "automatic": "(automaticky)",
+      "quantityLabel": "Množstvo",
+      "monthlyFeeLabel": "Mesačný poplatok (EUR)",
+      "companyCostLabel": "Náklady spoločnosti (EUR)",
+      "addonsTitle": "Doplnky",
+      "perMonth": "/mesiac"
+    },
+    "loading": {
+      "saving": "Ukladá sa...",
+      "saved": "Uložené"
     },
     "navigation": {
       "back": "Späť",

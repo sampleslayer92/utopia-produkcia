@@ -1,0 +1,57 @@
+
+{
+  "fees": {
+    "title": "Fees and Profitability",
+    "description": "Set up fees and track profitability of your solutions in real-time",
+    "calculator": {
+      "title": "Profit Calculator",
+      "subtitle": "Track your profitability in real-time",
+      "inputs": {
+        "title": "Input Data",
+        "monthlyTurnover": {
+          "label": "Estimated Monthly Turnover (EUR)",
+          "description": "Pre-filled from business location data",
+          "breakdown": "Breakdown:",
+          "noTurnoverWarning": "⚠️ No turnover entered in business locations (Step 3)"
+        },
+        "mifRate": {
+          "label": "MIF++ Rate (%)",
+          "placeholder": "0.90",
+          "effectiveRate": "→ Effective rate: {rate}",
+          "description": "Unified rate for both regulated and unregulated cards (0.2% automatically deducted)"
+        },
+        "turnoverDistribution": {
+          "title": "Turnover Distribution",
+          "regulated": "Regulated cards ({percentage}): {amount}",
+          "unregulated": "Unregulated cards ({percentage}): {amount}"
+        }
+      },
+      "results": {
+        "title": "Calculation Results",
+        "transactionRevenue": {
+          "title": "Transaction Revenue",
+          "regulatedCards": "Regulated cards:",
+          "unregulatedCards": "Unregulated cards:",
+          "totalRevenue": "Total revenue:"
+        },
+        "serviceMargin": {
+          "customerPayments": "💼 Customer payments:",
+          "companyCosts": "🔧 Your costs:",
+          "serviceMargin": "Service margin:"
+        },
+        "totalProfit": {
+          "title": "Total Monthly Profit:",
+          "breakdown": {
+            "transactionRevenue": "Transaction revenue:",
+            "serviceMargin": "+ Service margin:"
+          }
+        }
+      },
+      "explanations": {
+        "mifDescription": "MIF++ rates include interchange fees and our margins",
+        "effectiveRateNote": "Effective rate is reduced by 0.2% (interchange fee)",
+        "realTimeNote": "Results are recalculated in real-time when data changes"
+      }
+    }
+  }
+}

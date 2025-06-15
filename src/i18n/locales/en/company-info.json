@@ -1,0 +1,105 @@
+
+{
+  "companyInfo": {
+    "title": "Company Information",
+    "description": "Start by entering the company name. The system will automatically recognize the company and fill in all necessary data including the registered address.",
+    "basicInfo": "Basic Company Information",
+    "registryInfo": "Registry Information",
+    "addressSection": "Registered Address",
+    "contactAddressSection": "Contact Address",
+    "contactPersonSection": "Contact Person",
+    "ico": "Company ID",
+    "dic": "Tax ID", 
+    "companyName": "Company Name",
+    "registryType": "Registry Type",
+    "isVatPayer": "VAT Payer",
+    "vatNumber": "VAT Number",
+    "court": "Court",
+    "section": "Section",
+    "insertNumber": "Insert No.",
+    "address": "Registered Address",
+    "contactAddress": "Correspondence Address",
+    "contactPerson": "Contact Person",
+    "registryTypeOptions": {
+      "public": "Public Register",
+      "business": "Business Register",
+      "other": "Other"
+    },
+    "placeholders": {
+      "ico": "12345678",
+      "dic": "1234567890",
+      "companyName": "ABC Ltd.",
+      "vatNumber": "SK1234567890",
+      "selectRegistryType": "Select registry type",
+      "court": "District Court",
+      "section": "Ltd",
+      "insertNumber": "12345/B",
+      "firstName": "John",
+      "lastName": "Smith",
+      "email": "john.smith@company.com"
+    },
+    "labels": {
+      "icoRequired": "Company ID *",
+      "dicRequired": "Tax ID *",
+      "companyNameRequired": "Company Name *",
+      "registryTypeRequired": "Registry Entry *",
+      "vatNumberRequired": "VAT Number *",
+      "courtLabel": "Court",
+      "sectionLabel": "Section",
+      "insertNumberLabel": "Insert",
+      "firstNameRequired": "First Name *",
+      "lastNameRequired": "Last Name *",
+      "emailRequired": "Email *"
+    },
+    "checkboxes": {
+      "isVatPayer": "Is VAT payer",
+      "isTechnicalPerson": "Is also technical person",
+      "contactAddressSameAsMain": "Registered address is the same as contact address",
+      "headOfficeEqualsOperatingAddress": "Registered address is the same as business location address"
+    },
+    "smartFeatures": {
+      "title": "Smart Auto-fill",
+      "recognition": "Company recognition",
+      "autoFillIco": "Automatic ID/Tax ID completion",
+      "registryData": "Business registry data",
+      "headOffice": "Registered address",
+      "vatPrediction": "VAT status prediction"
+    },
+    "messages": {
+      "contactAddressDifferent": "You are entering a contact address that differs from the registered address.",
+      "syncActive": "✓ Synchronization active",
+      "syncDescription": "The registered address is automatically copied to the first business location.",
+      "autoFilledField": "Automatically filled"
+    },
+    "basicInfoCard": {
+      "title": "Basic Company Information",
+      "autoFilling": "Filling in data...",
+      "companyNameLabel": "Company Name *",
+      "companyNamePlaceholder": "Enter company name",
+      "autoFilledIndicator": "Automatically filled",
+      "registryInfoTitle": "Business registry information",
+      "vatPayerLabel": "Is VAT payer",
+      "registryDataTitle": "Business registry data"
+    },
+    "search": {
+      "buttonText": "Search",
+      "modalTitle": "Company Search",
+      "searchPlaceholder": "Enter company name...",
+      "searchingText": "Searching...",
+      "searchButtonText": "Search",
+      "resultsTitle": "Search results:",
+      "vatPayerBadge": "VAT payer",
+      "registrationLabel": "Registration:",
+      "selectedCompanyTitle": "Selected company:",
+      "selectedCompanyDescription": "All available data including address will be automatically filled.",
+      "cancelButton": "Cancel",
+      "selectButton": "Select company"
+    },
+    "notifications": {
+      "companyDataUpdated": "Company data updated",
+      "companyDataUpdatedDescription": "Automatically filled data for {companyName}",
+      "updateError": "Update error",
+      "updateErrorDescription": "Failed to update company data"
+    }
+  }
+}
