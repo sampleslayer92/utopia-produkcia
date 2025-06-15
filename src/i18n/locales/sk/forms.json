@@ -1,4 +1,3 @@
-
 {
   "contactInfo": {
     "title": "Kontaktné údaje",
@@ -656,6 +655,71 @@
     "buttons": {
       "addOwner": "Pridať ďalšieho skutočného majiteľa",
       "remove": "Odstrániť"
+    }
+  },
+  "consents": {
+    "title": "Súhlasy a podpis",
+    "description": "Finálny krok onboardingu - potvrdenie súhlasov a elektronický podpis zmluvy.",
+    "sidebar": {
+      "title": "Súhlasy a podpis",
+      "description": "Finálny krok onboardingu - potvrdenie súhlasov a elektronický podpis zmluvy.",
+      "contents": {
+        "title": "Čo obsahuje tento krok",
+        "items": [
+          "Súhlasy s podmienkami a GDPR",
+          "Elektronický podpis",
+          "Finálne dokončenie registrácie"
+        ]
+      },
+      "status": {
+        "ready": {
+          "title": "Všetko je pripravené na dokončenie",
+          "description": "Registráciu môžete dokončiť"
+        },
+        "incomplete": {
+          "title": "Dokončite povinné kroky",
+          "description": "Udeľte súhlasy a podpíšte zmluvu"
+        }
+      }
+    },
+    "agreements": {
+      "gdpr": {
+        "title": "Súhlas so spracovaním osobných údajov (GDPR) *",
+        "description": "Súhlasím so spracovaním osobných údajov v súlade s nariadením GDPR pre účely uzatvorenia a plnenia zmluvy o poskytovaní platobných služieb.",
+        "viewFull": "Zobraziť úplné znenie súhlasu"
+      },
+      "terms": {
+        "title": "Súhlas s obchodnými podmienkami *",
+        "description": "Súhlasím s obchodnými podmienkami poskytovania platobných služieb a s cenníkom poplatkov za poskytované služby.",
+        "viewFull": "Zobraziť obchodné podmienky"
+      },
+      "electronicCommunication": {
+        "title": "Súhlas s elektronickou komunikáciou",
+        "description": "Súhlasím s doručovaním dokumentov a komunikáciou v elektronickej forme na uvedenú emailovú adresu.",
+        "viewFull": "Zobraziť možnosti komunikácie"
+      }
+    },
+    "signature": {
+      "title": "Údaje o podpise",
+      "date": "Dátum podpisu *",
+      "person": "Podpisujúca osoba *",
+      "personPlaceholder": "Vyberte podpisujúcu osobu",
+      "dateError": "Dátum podpisu je povinný údaj",
+      "personError": "Podpisujúca osoba je povinný údaj",
+      "selectPersonFirst": "Najprv vyberte podpisujúcu osobu, potom môžete vytvoriť elektronický podpis."
+    },
+    "nextSteps": {
+      "title": "Ďalšie kroky",
+      "steps": [
+        "Po dokončení registrácie bude vygenerovaná zmluva na základe zadaných údajov.",
+        "Zmluva bude odoslaná na váš email na elektronické podpísanie.",
+        "Po podpísaní zmluvy bude váš účet aktivovaný a môžete začať používať služby.",
+        "Zariadenia budú doručené na adresu prevádzky do 5 pracovných dní."
+      ]
+    },
+    "important": {
+      "title": "Dôležité:",
+      "description": "Všetky povinné polia musia byť vyplnené, súhlasy udelené a elektronický podpis vytvorený pred dokončením registrácie."
     }
   }
 }
