@@ -2,26 +2,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Building, MapPin, Plus, Trash2 } from "lucide-react";
+import { Building, MapPin } from "lucide-react";
 import EditableSection from "./EditableSection";
 
 interface EnhancedClientOperationsSectionProps {
   onboardingData: any;
   isEditMode: boolean;
   onUpdate: (path: string, value: any) => void;
-  onUpdateBusinessLocation: (index: number, updates: any) => void;
-  onAddBusinessLocation: (newLocation: any) => void;
-  onRemoveBusinessLocation: (index: number) => void;
 }
 
 const EnhancedClientOperationsSection = ({ 
   onboardingData, 
   isEditMode, 
-  onUpdate,
-  onUpdateBusinessLocation,
-  onAddBusinessLocation,
-  onRemoveBusinessLocation
+  onUpdate 
 }: EnhancedClientOperationsSectionProps) => {
   const companyInfo = onboardingData.companyInfo || {};
   const contactInfo = onboardingData.contactInfo || {};
@@ -37,27 +30,6 @@ const EnhancedClientOperationsSection = ({
   const handleContactFieldChange = (field: string, value: string) => {
     console.log(`Updating contact field ${field} with value:`, value);
     onUpdate(`contactInfo.${field}`, value);
-  };
-
-  const handleAddNewLocation = () => {
-    const newLocation = {
-      id: crypto.randomUUID(),
-      name: 'Nová prevádzka',
-      address: {
-        street: '',
-        city: '',
-        zipCode: ''
-      },
-      iban: '',
-      businessSector: '',
-      contactPerson: {
-        name: '',
-        email: '',
-        phone: ''
-      }
-    };
-    
-    onAddBusinessLocation(newLocation);
   };
 
   return (
@@ -250,40 +222,19 @@ const EnhancedClientOperationsSection = ({
               <MapPin className="h-5 w-5 mr-2 text-emerald-600" />
               Prevádzky
             </div>
-            {isEditMode && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleAddNewLocation}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Pridať prevádzku
-              </Button>
-            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {businessLocations && businessLocations.length > 0 ? (
             businessLocations.map((location: any, index: number) => (
               <EditableSection key={location.id || index} isEditMode={isEditMode} label={`Prevádzka ${index + 1}`}>
-                <div className="p-4 bg-slate-50/50 rounded-lg space-y-3 relative">
-                  {isEditMode && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute top-2 right-2 text-red-600 hover:text-red-700"
-                      onClick={() => onRemoveBusinessLocation(index)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                  
+                <div className="p-4 bg-slate-50/50 rounded-lg space-y-3">
                   <div>
                     <Label className="text-sm font-medium text-slate-600">Názov prevádzky</Label>
                     {isEditMode ? (
                       <Input 
                         value={location.name || ''} 
-                        onChange={(e) => onUpdateBusinessLocation(index, { name: e.target.value })}
+                        onChange={(e) => onUpdate(`businessLocations.${index}.name`, e.target.value)}
                         className="mt-1"
                         placeholder="Názov prevádzky"
                       />
@@ -298,24 +249,18 @@ const EnhancedClientOperationsSection = ({
                       <div className="space-y-2 mt-1">
                         <Input 
                           value={location.address?.street || ''} 
-                          onChange={(e) => onUpdateBusinessLocation(index, { 
-                            address: { ...location.address, street: e.target.value }
-                          })}
+                          onChange={(e) => onUpdate(`businessLocations.${index}.address.street`, e.target.value)}
                           placeholder="Ulica a číslo"
                         />
                         <div className="grid grid-cols-2 gap-2">
                           <Input 
                             value={location.address?.city || ''} 
-                            onChange={(e) => onUpdateBusinessLocation(index, { 
-                              address: { ...location.address, city: e.target.value }
-                            })}
+                            onChange={(e) => onUpdate(`businessLocations.${index}.address.city`, e.target.value)}
                             placeholder="Mesto"
                           />
                           <Input 
                             value={location.address?.zipCode || ''} 
-                            onChange={(e) => onUpdateBusinessLocation(index, { 
-                              address: { ...location.address, zipCode: e.target.value }
-                            })}
+                            onChange={(e) => onUpdate(`businessLocations.${index}.address.zipCode`, e.target.value)}
                             placeholder="PSČ"
                           />
                         </div>
@@ -333,7 +278,7 @@ const EnhancedClientOperationsSection = ({
                       {isEditMode ? (
                         <Input 
                           value={location.iban || ''} 
-                          onChange={(e) => onUpdateBusinessLocation(index, { iban: e.target.value })}
+                          onChange={(e) => onUpdate(`businessLocations.${index}.iban`, e.target.value)}
                           className="mt-1"
                           placeholder="IBAN"
                         />
@@ -347,7 +292,7 @@ const EnhancedClientOperationsSection = ({
                       {isEditMode ? (
                         <Input 
                           value={location.businessSector || ''} 
-                          onChange={(e) => onUpdateBusinessLocation(index, { businessSector: e.target.value })}
+                          onChange={(e) => onUpdate(`businessLocations.${index}.businessSector`, e.target.value)}
                           className="mt-1"
                           placeholder="MCC sektor"
                         />
@@ -361,16 +306,7 @@ const EnhancedClientOperationsSection = ({
             ))
           ) : (
             <div className="text-center py-8">
-              <p className="text-slate-600 mb-4">Žiadne prevádzky neboli zadané</p>
-              {isEditMode && (
-                <Button 
-                  variant="outline"
-                  onClick={handleAddNewLocation}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Pridať prvú prevádzku
-                </Button>
-              )}
+              <p className="text-slate-600">Žiadne prevádzky neboli zadané</p>
             </div>
           )}
         </CardContent>

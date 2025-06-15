@@ -26,17 +26,9 @@ const ContractDetail = () => {
   const updateContract = useContractUpdate(id!);
 
   // Initialize form management with empty data first
-  const { 
-    formData, 
-    isDirty, 
-    isInitialized,
-    updateField, 
-    updateBusinessLocation,
-    addBusinessLocation,
-    removeBusinessLocation,
-    resetForm, 
-    markClean 
-  } = useContractDetailForm({} as OnboardingData);
+  const { formData, isDirty, updateField, resetForm, markClean } = useContractDetailForm(
+    {} as OnboardingData
+  );
 
   // Handle data loading and form initialization
   useEffect(() => {
@@ -45,14 +37,6 @@ const ContractDetail = () => {
       resetForm(contractDataResult.data.onboardingData);
     }
   }, [contractDataResult.data?.onboardingData, isEditMode, resetForm]);
-
-  // Reset form when entering edit mode
-  useEffect(() => {
-    if (isEditMode && contractDataResult.data?.onboardingData) {
-      console.log('Entering edit mode, resetting form with fresh data');
-      resetForm(contractDataResult.data.onboardingData);
-    }
-  }, [isEditMode, contractDataResult.data?.onboardingData, resetForm]);
 
   if (contractDataResult.isLoading) {
     return (
@@ -80,8 +64,8 @@ const ContractDetail = () => {
   const { contract, onboardingData } = contractDataResult.data;
 
   const handleSave = async () => {
-    if (!isDirty || !isInitialized) {
-      console.log('No changes to save or form not initialized');
+    if (!isDirty) {
+      console.log('No changes to save');
       return;
     }
 
@@ -130,24 +114,8 @@ const ContractDetail = () => {
     }
   };
 
-  const handleDataUpdate = (data: Partial<OnboardingData>) => {
-    console.log('Handling bulk data update:', data);
-    
-    // Update form data with bulk changes
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === 'businessLocations' && Array.isArray(value)) {
-        // Handle business locations specially
-        value.forEach((location, index) => {
-          updateBusinessLocation(index, location);
-        });
-      } else {
-        updateField(key, value);
-      }
-    });
-  };
-
-  // Use form data if in edit mode and initialized, otherwise use original data
-  const currentData = isEditMode && isInitialized && Object.keys(formData).length > 0 ? formData : onboardingData;
+  // Use form data if in edit mode, otherwise use original data
+  const currentData = isEditMode && Object.keys(formData).length > 0 ? formData : onboardingData;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -169,15 +137,12 @@ const ContractDetail = () => {
               onboardingData={currentData}
               isEditMode={isEditMode}
               onUpdate={updateField}
-              onUpdateBusinessLocation={updateBusinessLocation}
-              onAddBusinessLocation={addBusinessLocation}
-              onRemoveBusinessLocation={removeBusinessLocation}
             />
 
             <DevicesServicesSection
               onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={handleDataUpdate}
+              onSave={isEditMode ? (data) => console.log('Device section update:', data) : handleSave}
             />
 
             <CalculationFeesSection
@@ -188,26 +153,26 @@ const ContractDetail = () => {
             <AuthorizedPersonsSection
               onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={handleDataUpdate}
+              onSave={isEditMode ? (data) => console.log('Auth persons update:', data) : handleSave}
             />
 
             <ActualOwnersSection
               onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={handleDataUpdate}
+              onSave={isEditMode ? (data) => console.log('Actual owners update:', data) : handleSave}
             />
 
             <ContractNotesSection
               contract={contract}
               onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={handleDataUpdate}
+              onSave={isEditMode ? (data) => console.log('Notes update:', data) : handleSave}
             />
 
             <SignatureSection
               contract={contract}
               onboardingData={currentData}
-              onSave={handleDataUpdate}
+              onSave={isEditMode ? (data) => console.log('Signature update:', data) : handleSave}
             />
           </div>
 
