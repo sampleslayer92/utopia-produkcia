@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -83,8 +82,16 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
     { value: "Pas", label: t('forms.authorizedPersons.sections.document.documentTypeOptions.Pas') }
   ];
 
-  // Get the items array properly
-  const importantInfoItems = t('forms.authorizedPersons.sidebar.importantInfo.items', { returnObjects: true }) as string[] || [];
+  // Get the items array with proper fallback
+  const importantInfoItems = (() => {
+    try {
+      const items = t('forms.authorizedPersons.sidebar.importantInfo.items', { returnObjects: true });
+      return Array.isArray(items) ? items : [];
+    } catch (error) {
+      console.error('Translation error for importantInfo items:', error);
+      return [];
+    }
+  })();
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
