@@ -377,6 +377,7 @@
       "emptyTitle": "No items",
       "emptyDescription": "Start by adding devices and services from the catalog on the left",
       "clearAll": "Clear All",
+      "types": "types",
       "stats": {
         "devices": "Devices",
         "services": "Services",
