@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import DocumentUpload from "./ui/DocumentUpload";
 import AutoFillSuggestions from "./ui/AutoFillSuggestions";
 import PhoneNumberInput from "./ui/PhoneNumberInput";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface AuthorizedPersonsStepProps {
   data: OnboardingData;
@@ -19,6 +21,7 @@ interface AuthorizedPersonsStepProps {
 }
 
 const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps) => {
+  const { t } = useTranslation();
   const [expandedPersonId, setExpandedPersonId] = useState<string | null>(null);
 
   const addAuthorizedPerson = () => {
@@ -28,7 +31,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       lastName: '',
       email: '',
       phone: '',
-      phonePrefix: '+421', // Set default prefix
+      phonePrefix: '+421',
       maidenName: '',
       birthDate: '',
       birthPlace: '',
@@ -39,8 +42,8 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       documentNumber: '',
       documentValidity: '',
       documentIssuer: '',
-      documentCountry: 'Slovensko',
-      citizenship: 'Slovensko',
+      documentCountry: t('forms.authorizedPersons.sections.document.placeholders.documentCountry'),
+      citizenship: t('forms.authorizedPersons.sections.additionalInfo.placeholders.citizenship'),
       isPoliticallyExposed: false,
       isUSCitizen: false,
       documentFrontUrl: '',
@@ -76,8 +79,8 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
   };
 
   const documentTypeOptions = [
-    { value: "OP", label: "Občiansky preukaz" },
-    { value: "Pas", label: "Cestovný pas" }
+    { value: "OP", label: t('forms.authorizedPersons.sections.document.documentTypeOptions.OP') },
+    { value: "Pas", label: t('forms.authorizedPersons.sections.document.documentTypeOptions.Pas') }
   ];
 
   return (
@@ -91,19 +94,19 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                 <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                   <Users className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="font-medium text-blue-900">Oprávnené osoby</h3>
+                <h3 className="font-medium text-blue-900">{t('forms.authorizedPersons.sidebar.title')}</h3>
               </div>
               
               <p className="text-sm text-blue-800">
-                Oprávnené osoby sú štatutári alebo splnomocnené osoby, ktoré môžu konať v mene spoločnosti.
+                {t('forms.authorizedPersons.sidebar.description')}
               </p>
               
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-                <p className="font-medium mb-2">Dôležité informácie</p>
+                <p className="font-medium mb-2">{t('forms.authorizedPersons.sidebar.importantInfo.title')}</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  <li>Údaje musia byť v súlade s oficiálnymi dokumentami</li>
-                  <li>Pre každú oprávnenú osobu je potrebný platný doklad totožnosti</li>
-                  <li>Minimálne jedna oprávnená osoba musí byť uvedená</li>
+                  {t('forms.authorizedPersons.sidebar.importantInfo.items', { returnObjects: true }).map((item: string, index: number) => (
+                    <li key={index}>{item}</li>
+                  ))}
                 </ul>
               </div>
               
@@ -114,7 +117,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   className="w-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700 flex items-center justify-center gap-2"
                 >
                   <UserPlus className="h-4 w-4" />
-                  Pridať osobu
+                  {t('forms.authorizedPersons.sidebar.addButton')}
                 </Button>
               </div>
             </div>
@@ -133,15 +136,15 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
               {data.authorizedPersons.length === 0 && (
                 <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
                   <Users className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-slate-700 mb-2">Zatiaľ žiadne oprávnené osoby</h3>
-                  <p className="text-sm text-slate-500 mb-6">Pridajte aspoň jedného štatutára alebo oprávnenú osobu</p>
+                  <h3 className="text-lg font-medium text-slate-700 mb-2">{t('forms.authorizedPersons.emptyState.title')}</h3>
+                  <p className="text-sm text-slate-500 mb-6">{t('forms.authorizedPersons.emptyState.description')}</p>
                   <Button 
                     onClick={addAuthorizedPerson}
                     variant="outline" 
                     className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
-                    Pridať oprávnenú osobu
+                    {t('forms.authorizedPersons.emptyState.addButton')}
                   </Button>
                 </div>
               )}
@@ -168,7 +171,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <h3 className="font-medium text-slate-900">
                           {person.firstName && person.lastName 
                             ? `${person.firstName} ${person.lastName}`
-                            : `Oprávnená osoba ${index + 1}`}
+                            : t('forms.authorizedPersons.personTitle', { index: index + 1 })}
                         </h3>
                         {person.position && (
                           <p className="text-xs text-slate-500">{person.position}</p>
@@ -197,50 +200,50 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <div>
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <UserCheck className="h-4 w-4" />
-                            Základné údaje
+                            {t('forms.authorizedPersons.sections.basicInfo.title')}
                           </h4>
                           
                           <div className="grid md:grid-cols-2 gap-4">
                             <OnboardingInput
-                              label="Meno *"
+                              label={t('forms.authorizedPersons.sections.basicInfo.firstName')}
                               value={person.firstName}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'firstName', e.target.value)}
-                              placeholder="Zadajte meno"
+                              placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.firstName')}
                             />
 
                             <OnboardingInput
-                              label="Priezvisko *"
+                              label={t('forms.authorizedPersons.sections.basicInfo.lastName')}
                               value={person.lastName}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'lastName', e.target.value)}
-                              placeholder="Zadajte priezvisko"
+                              placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.lastName')}
                             />
                           </div>
 
                           <div className="grid md:grid-cols-2 gap-4 mt-4">
                             <OnboardingInput
-                              label="Email *"
+                              label={t('forms.authorizedPersons.sections.basicInfo.email')}
                               type="email"
                               value={person.email}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'email', e.target.value)}
-                              placeholder="email@priklad.sk"
+                              placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.email')}
                             />
 
                             <PhoneNumberInput
-                              label="Telefón *"
+                              label={t('forms.authorizedPersons.sections.basicInfo.phone')}
                               phoneValue={person.phone}
                               prefixValue={person.phonePrefix || '+421'}
                               onPhoneChange={(value) => updateAuthorizedPerson(person.id, 'phone', value)}
                               onPrefixChange={(value) => updateAuthorizedPerson(person.id, 'phonePrefix', value)}
-                              placeholder="123 456 789"
+                              placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.phone')}
                               required
                             />
                           </div>
 
                           <OnboardingInput
-                            label="Rodné priezvisko"
+                            label={t('forms.authorizedPersons.sections.basicInfo.maidenName')}
                             value={person.maidenName}
                             onChange={(e) => updateAuthorizedPerson(person.id, 'maidenName', e.target.value)}
-                            placeholder="Rodné priezvisko"
+                            placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.maidenName')}
                             className="mt-4"
                           />
                         </div>
@@ -248,46 +251,46 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Fingerprint className="h-4 w-4" />
-                            Osobné údaje
+                            {t('forms.authorizedPersons.sections.personalData.title')}
                           </h4>
 
                           <div className="grid md:grid-cols-2 gap-4">
                             <OnboardingInput
-                              label="Dátum narodenia *"
+                              label={t('forms.authorizedPersons.sections.personalData.birthDate')}
                               type="date"
                               value={person.birthDate}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'birthDate', e.target.value)}
                             />
 
                             <OnboardingInput
-                              label="Miesto narodenia *"
+                              label={t('forms.authorizedPersons.sections.personalData.birthPlace')}
                               value={person.birthPlace}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'birthPlace', e.target.value)}
-                              placeholder="Bratislava"
+                              placeholder={t('forms.authorizedPersons.sections.personalData.placeholders.birthPlace')}
                             />
                           </div>
 
                           <div className="grid md:grid-cols-2 gap-4 mt-4">
                             <OnboardingInput
-                              label="Rodné číslo *"
+                              label={t('forms.authorizedPersons.sections.personalData.birthNumber')}
                               value={person.birthNumber}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'birthNumber', e.target.value)}
-                              placeholder="123456/7890"
+                              placeholder={t('forms.authorizedPersons.sections.personalData.placeholders.birthNumber')}
                             />
 
                             <OnboardingInput
-                              label="Funkcia *"
+                              label={t('forms.authorizedPersons.sections.personalData.position')}
                               value={person.position}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'position', e.target.value)}
-                              placeholder="Konateľ"
+                              placeholder={t('forms.authorizedPersons.sections.personalData.placeholders.position')}
                             />
                           </div>
 
                           <OnboardingInput
-                            label="Trvalé bydlisko *"
+                            label={t('forms.authorizedPersons.sections.personalData.permanentAddress')}
                             value={person.permanentAddress}
                             onChange={(e) => updateAuthorizedPerson(person.id, 'permanentAddress', e.target.value)}
-                            placeholder="Hlavná 123, 010 01 Bratislava"
+                            placeholder={t('forms.authorizedPersons.sections.personalData.placeholders.permanentAddress')}
                             className="mt-4"
                           />
                         </div>
@@ -295,51 +298,51 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <FileText className="h-4 w-4" />
-                            Doklad totožnosti
+                            {t('forms.authorizedPersons.sections.document.title')}
                           </h4>
                           
                           <div className="grid md:grid-cols-2 gap-4">
                             <OnboardingSelect
-                              label="Typ dokladu *"
+                              label={t('forms.authorizedPersons.sections.document.documentType')}
                               value={person.documentType}
                               onValueChange={(value) => updateAuthorizedPerson(person.id, 'documentType', value)}
                               options={documentTypeOptions}
                             />
 
                             <OnboardingInput
-                              label="Číslo dokladu *"
+                              label={t('forms.authorizedPersons.sections.document.documentNumber')}
                               value={person.documentNumber}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'documentNumber', e.target.value)}
-                              placeholder="AB123456"
+                              placeholder={t('forms.authorizedPersons.sections.document.placeholders.documentNumber')}
                             />
                           </div>
 
                           <div className="grid md:grid-cols-3 gap-4 mt-4">
                             <OnboardingInput
-                              label="Platnosť do *"
+                              label={t('forms.authorizedPersons.sections.document.documentValidity')}
                               type="date"
                               value={person.documentValidity}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'documentValidity', e.target.value)}
                             />
 
                             <OnboardingInput
-                              label="Vydal *"
+                              label={t('forms.authorizedPersons.sections.document.documentIssuer')}
                               value={person.documentIssuer}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'documentIssuer', e.target.value)}
-                              placeholder="Obvodný úrad Bratislava"
+                              placeholder={t('forms.authorizedPersons.sections.document.placeholders.documentIssuer')}
                             />
 
                             <OnboardingInput
-                              label="Štát vydania *"
+                              label={t('forms.authorizedPersons.sections.document.documentCountry')}
                               value={person.documentCountry}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'documentCountry', e.target.value)}
-                              placeholder="Slovensko"
+                              placeholder={t('forms.authorizedPersons.sections.document.placeholders.documentCountry')}
                             />
                           </div>
 
                           <div className="grid md:grid-cols-2 gap-6 mt-6">
                             <DocumentUpload
-                              label="Predná strana dokladu *"
+                              label={t('forms.authorizedPersons.sections.document.documentFront')}
                               value={person.documentFrontUrl}
                               onChange={(url) => updateAuthorizedPerson(person.id, 'documentFrontUrl', url)}
                               personId={person.id}
@@ -347,7 +350,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                             />
 
                             <DocumentUpload
-                              label="Zadná strana dokladu *"
+                              label={t('forms.authorizedPersons.sections.document.documentBack')}
                               value={person.documentBackUrl}
                               onChange={(url) => updateAuthorizedPerson(person.id, 'documentBackUrl', url)}
                               personId={person.id}
@@ -359,14 +362,14 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Flag className="h-4 w-4" />
-                            Ďalšie informácie
+                            {t('forms.authorizedPersons.sections.additionalInfo.title')}
                           </h4>
 
                           <OnboardingInput
-                            label="Občianstvo *"
+                            label={t('forms.authorizedPersons.sections.additionalInfo.citizenship')}
                             value={person.citizenship}
                             onChange={(e) => updateAuthorizedPerson(person.id, 'citizenship', e.target.value)}
-                            placeholder="Slovensko"
+                            placeholder={t('forms.authorizedPersons.sections.additionalInfo.placeholders.citizenship')}
                           />
 
                           <div className="mt-4 space-y-4">
@@ -378,12 +381,12 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                               />
                               <div>
                                 <label htmlFor={`isPoliticallyExposed-${person.id}`} className="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                  Politicky exponovaná osoba
+                                  {t('forms.authorizedPersons.sections.additionalInfo.isPoliticallyExposed')}
                                   {person.isPoliticallyExposed && <AlertTriangle className="h-3 w-3 text-amber-500" />}
                                 </label>
                                 {person.isPoliticallyExposed && (
                                   <p className="text-xs text-slate-500 mt-1">
-                                    Politicky exponovanou osobou je osoba vo významnej verejnej funkcii.
+                                    {t('forms.authorizedPersons.sections.additionalInfo.descriptions.isPoliticallyExposed')}
                                   </p>
                                 )}
                               </div>
@@ -397,12 +400,12 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                               />
                               <div>
                                 <label htmlFor={`isUSCitizen-${person.id}`} className="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                  Štátny občan USA
+                                  {t('forms.authorizedPersons.sections.additionalInfo.isUSCitizen')}
                                   {person.isUSCitizen && <AlertTriangle className="h-3 w-3 text-amber-500" />}
                                 </label>
                                 {person.isUSCitizen && (
                                   <p className="text-xs text-slate-500 mt-1">
-                                    Osoby s občianstvom USA podliehajú špeciálnym reportovacím povinnostiam.
+                                    {t('forms.authorizedPersons.sections.additionalInfo.descriptions.isUSCitizen')}
                                   </p>
                                 )}
                               </div>
@@ -422,7 +425,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Pridať ďalšiu oprávnenú osobu
+                  {t('forms.authorizedPersons.buttons.addPerson')}
                 </Button>
               )}
             </OnboardingSection>

@@ -503,5 +503,159 @@
         "realTimeNote": "Výsledky sa prepočítavajú v reálnom čase pri zmene údajov"
       }
     }
+  },
+  "authorizedPersons": {
+    "title": "Oprávnené osoby",
+    "description": "Oprávnené osoby sú štatutári alebo splnomocnené osoby, ktoré môžu konať v mene spoločnosti.",
+    "sidebar": {
+      "title": "Oprávnené osoby",
+      "description": "Oprávnené osoby sú štatutári alebo splnomocnené osoby, ktoré môžu konať v mene spoločnosti.",
+      "importantInfo": {
+        "title": "Dôležité informácie",
+        "items": [
+          "Údaje musia byť v súlade s oficiálnymi dokumentmi",
+          "Pre každú oprávnenú osobu je potrebný platný doklad totožnosti",
+          "Minimálne jedna oprávnená osoba musí byť uvedená"
+        ]
+      },
+      "addButton": "Pridať osobu"
+    },
+    "emptyState": {
+      "title": "Zatiaľ žiadne oprávnené osoby",
+      "description": "Pridajte aspoň jedného štatutára alebo oprávnenú osobu",
+      "addButton": "Pridať oprávnenú osobu"
+    },
+    "personTitle": "Oprávnená osoba {index}",
+    "sections": {
+      "basicInfo": {
+        "title": "Základné údaje",
+        "firstName": "Meno *",
+        "lastName": "Priezvisko *",
+        "email": "Email *",
+        "phone": "Telefón *",
+        "maidenName": "Rodné priezvisko",
+        "placeholders": {
+          "firstName": "Zadajte meno",
+          "lastName": "Zadajte priezvisko",
+          "email": "email@priklad.sk",
+          "phone": "123 456 789",
+          "maidenName": "Rodné priezvisko"
+        }
+      },
+      "personalData": {
+        "title": "Osobné údaje",
+        "birthDate": "Dátum narodenia *",
+        "birthPlace": "Miesto narodenia *",
+        "birthNumber": "Rodné číslo *",
+        "position": "Funkcia *",
+        "permanentAddress": "Trvalé bydlisko *",
+        "placeholders": {
+          "birthPlace": "Bratislava",
+          "birthNumber": "123456/7890",
+          "position": "Konateľ",
+          "permanentAddress": "Hlavná 123, 010 01 Bratislava"
+        }
+      },
+      "document": {
+        "title": "Doklad totožnosti",
+        "documentType": "Typ dokladu *",
+        "documentNumber": "Číslo dokladu *",
+        "documentValidity": "Platnosť do *",
+        "documentIssuer": "Vydal *",
+        "documentCountry": "Štát vydania *",
+        "documentFront": "Predná strana dokladu *",
+        "documentBack": "Zadná strana dokladu *",
+        "documentTypeOptions": {
+          "OP": "Občiansky preukaz",
+          "Pas": "Cestovný pas"
+        },
+        "placeholders": {
+          "documentNumber": "AB123456",
+          "documentIssuer": "Obvodný úrad Bratislava",
+          "documentCountry": "Slovensko"
+        }
+      },
+      "additionalInfo": {
+        "title": "Ďalšie informácie",
+        "citizenship": "Občianstvo *",
+        "isPoliticallyExposed": "Politicky exponovaná osoba",
+        "isUSCitizen": "Štátny občan USA",
+        "placeholders": {
+          "citizenship": "Slovensko"
+        },
+        "descriptions": {
+          "isPoliticallyExposed": "Politicky exponovanou osobou je osoba vo významnej verejnej funkcii.",
+          "isUSCitizen": "Osoby s občianstvom USA podliehajú špeciálnym reportovacím povinnostiam."
+        }
+      }
+    },
+    "buttons": {
+      "addPerson": "Pridať ďalšiu oprávnenú osobu",
+      "remove": "Odstrániť"
+    }
+  },
+  "actualOwners": {
+    "title": "Skutoční majitelia",
+    "description": "Skutoční majitelia sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
+    "sidebar": {
+      "title": "Skutoční majitelia",
+      "description": "Skutoční majitelia sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
+      "whoIsOwner": {
+        "title": "Kto je skutočný majiteľ?",
+        "items": [
+          "Osoba, ktorá má priamy alebo nepriamy podiel najmenej 25%",
+          "Osoba, ktorá má právo vymenovať alebo odvolať štatutárny orgán",
+          "Osoba, ktorá iným spôsobom kontroluje spoločnosť"
+        ]
+      },
+      "addButton": "Pridať majiteľa"
+    },
+    "emptyState": {
+      "title": "Zatiaľ žiadni skutoční majitelia",
+      "description": "Pridajte aspoň jedného konečného užívateľa výhod",
+      "addButton": "Pridať skutočného majiteľa"
+    },
+    "ownerTitle": "Skutočný majiteľ {index}",
+    "bornLabel": "Narodený/á: {date}",
+    "sections": {
+      "basicInfo": {
+        "title": "Základné údaje",
+        "firstName": "Meno *",
+        "lastName": "Priezvisko *",
+        "maidenName": "Rodné priezvisko",
+        "placeholders": {
+          "firstName": "Zadajte meno",
+          "lastName": "Zadajte priezvisko",
+          "maidenName": "Rodné priezvisko"
+        }
+      },
+      "personalData": {
+        "title": "Osobné údaje",
+        "birthDate": "Dátum narodenia *",
+        "birthPlace": "Miesto narodenia *",
+        "birthNumber": "Rodné číslo *",
+        "permanentAddress": "Trvalé bydlisko *",
+        "placeholders": {
+          "birthPlace": "Bratislava",
+          "birthNumber": "123456/7890",
+          "permanentAddress": "Hlavná 123, 010 01 Bratislava"
+        }
+      },
+      "additionalInfo": {
+        "title": "Ďalšie informácie",
+        "citizenship": "Občianstvo *",
+        "isPoliticallyExposed": "Politicky exponovaná osoba",
+        "placeholders": {
+          "citizenship": "Slovensko"
+        },
+        "descriptions": {
+          "isPoliticallyExposed": "Politicky exponovanou osobou je osoba vo významnej verejnej funkcii."
+        }
+      }
+    },
+    "buttons": {
+      "addOwner": "Pridať ďalšieho skutočného majiteľa",
+      "remove": "Odstrániť"
+    }
   }
 }
