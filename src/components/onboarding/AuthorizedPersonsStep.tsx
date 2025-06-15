@@ -20,7 +20,7 @@ interface AuthorizedPersonsStepProps {
 }
 
 const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('forms');
   const [expandedPersonId, setExpandedPersonId] = useState<string | null>(null);
 
   const addAuthorizedPerson = () => {
@@ -41,8 +41,8 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       documentNumber: '',
       documentValidity: '',
       documentIssuer: '',
-      documentCountry: t('forms.authorizedPersons.sections.document.placeholders.documentCountry'),
-      citizenship: t('forms.authorizedPersons.sections.additionalInfo.placeholders.citizenship'),
+      documentCountry: t('authorizedPersons.sections.document.placeholders.documentCountry'),
+      citizenship: t('authorizedPersons.sections.additionalInfo.placeholders.citizenship'),
       isPoliticallyExposed: false,
       isUSCitizen: false,
       documentFrontUrl: '',
@@ -78,14 +78,14 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
   };
 
   const documentTypeOptions = [
-    { value: "OP", label: t('forms.authorizedPersons.sections.document.documentTypeOptions.OP') },
-    { value: "Pas", label: t('forms.authorizedPersons.sections.document.documentTypeOptions.Pas') }
+    { value: "OP", label: t('authorizedPersons.sections.document.documentTypeOptions.OP') },
+    { value: "Pas", label: t('authorizedPersons.sections.document.documentTypeOptions.Pas') }
   ];
 
   // Get the items array with proper fallback
   const importantInfoItems = (() => {
     try {
-      const items = t('forms.authorizedPersons.sidebar.importantInfo.items', { returnObjects: true });
+      const items = t('authorizedPersons.sidebar.importantInfo.items', { returnObjects: true });
       return Array.isArray(items) ? items : [];
     } catch (error) {
       console.error('Translation error for importantInfo items:', error);
@@ -104,15 +104,15 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                 <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                   <Users className="h-5 w-5 text-blue-600" />
                 </div>
-                <h3 className="font-medium text-blue-900">{t('forms.authorizedPersons.sidebar.title')}</h3>
+                <h3 className="font-medium text-blue-900">{t('authorizedPersons.sidebar.title')}</h3>
               </div>
               
               <p className="text-sm text-blue-800">
-                {t('forms.authorizedPersons.sidebar.description')}
+                {t('authorizedPersons.sidebar.description')}
               </p>
               
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-                <p className="font-medium mb-2">{t('forms.authorizedPersons.sidebar.importantInfo.title')}</p>
+                <p className="font-medium mb-2">{t('authorizedPersons.sidebar.importantInfo.title')}</p>
                 <ul className="space-y-2 list-disc list-inside">
                   {importantInfoItems.map((item: string, index: number) => (
                     <li key={index}>{item}</li>
@@ -127,7 +127,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   className="w-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700 flex items-center justify-center gap-2"
                 >
                   <UserPlus className="h-4 w-4" />
-                  {t('forms.authorizedPersons.sidebar.addButton')}
+                  {t('authorizedPersons.sidebar.addButton')}
                 </Button>
               </div>
             </div>
@@ -146,15 +146,15 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
               {data.authorizedPersons.length === 0 && (
                 <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
                   <Users className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-slate-700 mb-2">{t('forms.authorizedPersons.emptyState.title')}</h3>
-                  <p className="text-sm text-slate-500 mb-6">{t('forms.authorizedPersons.emptyState.description')}</p>
+                  <h3 className="text-lg font-medium text-slate-700 mb-2">{t('authorizedPersons.emptyState.title')}</h3>
+                  <p className="text-sm text-slate-500 mb-6">{t('authorizedPersons.emptyState.description')}</p>
                   <Button 
                     onClick={addAuthorizedPerson}
                     variant="outline" 
                     className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
-                    {t('forms.authorizedPersons.emptyState.addButton')}
+                    {t('authorizedPersons.emptyState.addButton')}
                   </Button>
                 </div>
               )}
@@ -181,7 +181,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <h3 className="font-medium text-slate-900">
                           {person.firstName && person.lastName 
                             ? `${person.firstName} ${person.lastName}`
-                            : t('forms.authorizedPersons.personTitle', { index: index + 1 })}
+                            : t('authorizedPersons.personTitle', { index: index + 1 })}
                         </h3>
                         {person.position && (
                           <p className="text-xs text-slate-500">{person.position}</p>
@@ -210,50 +210,50 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <div>
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <UserCheck className="h-4 w-4" />
-                            {t('forms.authorizedPersons.sections.basicInfo.title')}
+                            {t('authorizedPersons.sections.basicInfo.title')}
                           </h4>
                           
                           <div className="grid md:grid-cols-2 gap-4">
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.basicInfo.firstName')}
+                              label={t('authorizedPersons.sections.basicInfo.firstName')}
                               value={person.firstName}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'firstName', e.target.value)}
-                              placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.firstName')}
+                              placeholder={t('authorizedPersons.sections.basicInfo.placeholders.firstName')}
                             />
 
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.basicInfo.lastName')}
+                              label={t('authorizedPersons.sections.basicInfo.lastName')}
                               value={person.lastName}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'lastName', e.target.value)}
-                              placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.lastName')}
+                              placeholder={t('authorizedPersons.sections.basicInfo.placeholders.lastName')}
                             />
                           </div>
 
                           <div className="grid md:grid-cols-2 gap-4 mt-4">
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.basicInfo.email')}
+                              label={t('authorizedPersons.sections.basicInfo.email')}
                               type="email"
                               value={person.email}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'email', e.target.value)}
-                              placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.email')}
+                              placeholder={t('authorizedPersons.sections.basicInfo.placeholders.email')}
                             />
 
                             <PhoneNumberInput
-                              label={t('forms.authorizedPersons.sections.basicInfo.phone')}
+                              label={t('authorizedPersons.sections.basicInfo.phone')}
                               phoneValue={person.phone}
                               prefixValue={person.phonePrefix || '+421'}
                               onPhoneChange={(value) => updateAuthorizedPerson(person.id, 'phone', value)}
                               onPrefixChange={(value) => updateAuthorizedPerson(person.id, 'phonePrefix', value)}
-                              placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.phone')}
+                              placeholder={t('authorizedPersons.sections.basicInfo.placeholders.phone')}
                               required
                             />
                           </div>
 
                           <OnboardingInput
-                            label={t('forms.authorizedPersons.sections.basicInfo.maidenName')}
+                            label={t('authorizedPersons.sections.basicInfo.maidenName')}
                             value={person.maidenName}
                             onChange={(e) => updateAuthorizedPerson(person.id, 'maidenName', e.target.value)}
-                            placeholder={t('forms.authorizedPersons.sections.basicInfo.placeholders.maidenName')}
+                            placeholder={t('authorizedPersons.sections.basicInfo.placeholders.maidenName')}
                             className="mt-4"
                           />
                         </div>
@@ -261,46 +261,46 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Fingerprint className="h-4 w-4" />
-                            {t('forms.authorizedPersons.sections.personalData.title')}
+                            {t('authorizedPersons.sections.personalData.title')}
                           </h4>
 
                           <div className="grid md:grid-cols-2 gap-4">
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.personalData.birthDate')}
+                              label={t('authorizedPersons.sections.personalData.birthDate')}
                               type="date"
                               value={person.birthDate}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'birthDate', e.target.value)}
                             />
 
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.personalData.birthPlace')}
+                              label={t('authorizedPersons.sections.personalData.birthPlace')}
                               value={person.birthPlace}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'birthPlace', e.target.value)}
-                              placeholder={t('forms.authorizedPersons.sections.personalData.placeholders.birthPlace')}
+                              placeholder={t('authorizedPersons.sections.personalData.placeholders.birthPlace')}
                             />
                           </div>
 
                           <div className="grid md:grid-cols-2 gap-4 mt-4">
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.personalData.birthNumber')}
+                              label={t('authorizedPersons.sections.personalData.birthNumber')}
                               value={person.birthNumber}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'birthNumber', e.target.value)}
-                              placeholder={t('forms.authorizedPersons.sections.personalData.placeholders.birthNumber')}
+                              placeholder={t('authorizedPersons.sections.personalData.placeholders.birthNumber')}
                             />
 
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.personalData.position')}
+                              label={t('authorizedPersons.sections.personalData.position')}
                               value={person.position}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'position', e.target.value)}
-                              placeholder={t('forms.authorizedPersons.sections.personalData.placeholders.position')}
+                              placeholder={t('authorizedPersons.sections.personalData.placeholders.position')}
                             />
                           </div>
 
                           <OnboardingInput
-                            label={t('forms.authorizedPersons.sections.personalData.permanentAddress')}
+                            label={t('authorizedPersons.sections.personalData.permanentAddress')}
                             value={person.permanentAddress}
                             onChange={(e) => updateAuthorizedPerson(person.id, 'permanentAddress', e.target.value)}
-                            placeholder={t('forms.authorizedPersons.sections.personalData.placeholders.permanentAddress')}
+                            placeholder={t('authorizedPersons.sections.personalData.placeholders.permanentAddress')}
                             className="mt-4"
                           />
                         </div>
@@ -308,51 +308,51 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <FileText className="h-4 w-4" />
-                            {t('forms.authorizedPersons.sections.document.title')}
+                            {t('authorizedPersons.sections.document.title')}
                           </h4>
                           
                           <div className="grid md:grid-cols-2 gap-4">
                             <OnboardingSelect
-                              label={t('forms.authorizedPersons.sections.document.documentType')}
+                              label={t('authorizedPersons.sections.document.documentType')}
                               value={person.documentType}
                               onValueChange={(value) => updateAuthorizedPerson(person.id, 'documentType', value)}
                               options={documentTypeOptions}
                             />
 
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.document.documentNumber')}
+                              label={t('authorizedPersons.sections.document.documentNumber')}
                               value={person.documentNumber}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'documentNumber', e.target.value)}
-                              placeholder={t('forms.authorizedPersons.sections.document.placeholders.documentNumber')}
+                              placeholder={t('authorizedPersons.sections.document.placeholders.documentNumber')}
                             />
                           </div>
 
                           <div className="grid md:grid-cols-3 gap-4 mt-4">
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.document.documentValidity')}
+                              label={t('authorizedPersons.sections.document.documentValidity')}
                               type="date"
                               value={person.documentValidity}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'documentValidity', e.target.value)}
                             />
 
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.document.documentIssuer')}
+                              label={t('authorizedPersons.sections.document.documentIssuer')}
                               value={person.documentIssuer}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'documentIssuer', e.target.value)}
-                              placeholder={t('forms.authorizedPersons.sections.document.placeholders.documentIssuer')}
+                              placeholder={t('authorizedPersons.sections.document.placeholders.documentIssuer')}
                             />
 
                             <OnboardingInput
-                              label={t('forms.authorizedPersons.sections.document.documentCountry')}
+                              label={t('authorizedPersons.sections.document.documentCountry')}
                               value={person.documentCountry}
                               onChange={(e) => updateAuthorizedPerson(person.id, 'documentCountry', e.target.value)}
-                              placeholder={t('forms.authorizedPersons.sections.document.placeholders.documentCountry')}
+                              placeholder={t('authorizedPersons.sections.document.placeholders.documentCountry')}
                             />
                           </div>
 
                           <div className="grid md:grid-cols-2 gap-6 mt-6">
                             <DocumentUpload
-                              label={t('forms.authorizedPersons.sections.document.documentFront')}
+                              label={t('authorizedPersons.sections.document.documentFront')}
                               value={person.documentFrontUrl}
                               onChange={(url) => updateAuthorizedPerson(person.id, 'documentFrontUrl', url)}
                               personId={person.id}
@@ -360,7 +360,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                             />
 
                             <DocumentUpload
-                              label={t('forms.authorizedPersons.sections.document.documentBack')}
+                              label={t('authorizedPersons.sections.document.documentBack')}
                               value={person.documentBackUrl}
                               onChange={(url) => updateAuthorizedPerson(person.id, 'documentBackUrl', url)}
                               personId={person.id}
@@ -372,14 +372,14 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Flag className="h-4 w-4" />
-                            {t('forms.authorizedPersons.sections.additionalInfo.title')}
+                            {t('authorizedPersons.sections.additionalInfo.title')}
                           </h4>
 
                           <OnboardingInput
-                            label={t('forms.authorizedPersons.sections.additionalInfo.citizenship')}
+                            label={t('authorizedPersons.sections.additionalInfo.citizenship')}
                             value={person.citizenship}
                             onChange={(e) => updateAuthorizedPerson(person.id, 'citizenship', e.target.value)}
-                            placeholder={t('forms.authorizedPersons.sections.additionalInfo.placeholders.citizenship')}
+                            placeholder={t('authorizedPersons.sections.additionalInfo.placeholders.citizenship')}
                           />
 
                           <div className="mt-4 space-y-4">
@@ -391,12 +391,12 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                               />
                               <div>
                                 <label htmlFor={`isPoliticallyExposed-${person.id}`} className="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                  {t('forms.authorizedPersons.sections.additionalInfo.isPoliticallyExposed')}
+                                  {t('authorizedPersons.sections.additionalInfo.isPoliticallyExposed')}
                                   {person.isPoliticallyExposed && <AlertTriangle className="h-3 w-3 text-amber-500" />}
                                 </label>
                                 {person.isPoliticallyExposed && (
                                   <p className="text-xs text-slate-500 mt-1">
-                                    {t('forms.authorizedPersons.sections.additionalInfo.descriptions.isPoliticallyExposed')}
+                                    {t('authorizedPersons.sections.additionalInfo.descriptions.isPoliticallyExposed')}
                                   </p>
                                 )}
                               </div>
@@ -410,12 +410,12 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                               />
                               <div>
                                 <label htmlFor={`isUSCitizen-${person.id}`} className="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                  {t('forms.authorizedPersons.sections.additionalInfo.isUSCitizen')}
+                                  {t('authorizedPersons.sections.additionalInfo.isUSCitizen')}
                                   {person.isUSCitizen && <AlertTriangle className="h-3 w-3 text-amber-500" />}
                                 </label>
                                 {person.isUSCitizen && (
                                   <p className="text-xs text-slate-500 mt-1">
-                                    {t('forms.authorizedPersons.sections.additionalInfo.descriptions.isUSCitizen')}
+                                    {t('authorizedPersons.sections.additionalInfo.descriptions.isUSCitizen')}
                                   </p>
                                 )}
                               </div>
@@ -435,7 +435,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  {t('forms.authorizedPersons.buttons.addPerson')}
+                  {t('authorizedPersons.buttons.addPerson')}
                 </Button>
               )}
             </OnboardingSection>
