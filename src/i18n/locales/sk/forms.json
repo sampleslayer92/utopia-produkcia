@@ -1,3 +1,4 @@
+
 {
   "contactInfo": {
     "title": "Kontaktné údaje",
@@ -308,6 +309,10 @@
   "deviceSelection": {
     "title": "Výber zariadení a služieb",
     "description": "Vyberte a nakonfigurujte zariadenia a služby pre vaše podnikanie",
+    "loading": {
+      "saving": "Ukladá sa...",
+      "saved": "Uložené"
+    },
     "solutionSelection": {
       "title": "Výber riešení",
       "description": "Vyberte typy riešení, ktoré chcete používať vo vašom podnikaní",
