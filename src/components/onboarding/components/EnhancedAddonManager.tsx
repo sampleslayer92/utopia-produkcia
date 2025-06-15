@@ -1,165 +1,188 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { AddonCard } from '@/types/onboarding';
-import { v4 as uuidv4 } from 'uuid';
+import { Plus, X } from "lucide-react";
+import { AddonCard } from "@/types/onboarding";
+import { ADDON_CATALOG, getAddonIcon } from "../config/addonCatalog";
+import QuantityStepper from "./QuantityStepper";
+import { formatCurrency } from "../utils/currencyUtils";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface EnhancedAddonManagerProps {
   selectedAddons: AddonCard[];
   onAddAddon: (addon: AddonCard) => void;
-  onRemoveAddon: (id: string) => void;
-  onUpdateAddon: (id: string, addon: AddonCard) => void;
+  onRemoveAddon: (addonId: string) => void;
+  onUpdateAddon: (addonId: string, updatedAddon: AddonCard) => void;
 }
 
-const availableAddons = [
-  { id: 'receipt-printer', name: 'Tlačiareň účteniek', basePrice: 15, baseCost: 10, category: 'hardware', description: 'Tlačiareň pre účtenky' },
-  { id: 'cash-drawer', name: 'Pokladničná zásuvka', basePrice: 20, baseCost: 15, category: 'hardware', description: 'Elektronická pokladničná zásuvka' },
-  { id: 'barcode-scanner', name: 'Čítačka čiarových kódov', basePrice: 25, baseCost: 18, category: 'hardware', description: 'Ručná čítačka čiarových kódov' },
-  { id: 'installation', name: 'Inštalácia a nastavenie', basePrice: 50, baseCost: 30, category: 'service', description: 'Profesionálna inštalácia zariadenia' },
-  { id: 'training', name: 'Školenie personálu', basePrice: 100, baseCost: 60, category: 'service', description: 'Školenie pre používanie systému' }
-];
-
-const EnhancedAddonManager = ({
-  selectedAddons,
-  onAddAddon,
+const EnhancedAddonManager = ({ 
+  selectedAddons, 
+  onAddAddon, 
   onRemoveAddon,
-  onUpdateAddon
+  onUpdateAddon 
 }: EnhancedAddonManagerProps) => {
-  const { t } = useTranslation('forms');
+  const [isAddingAddon, setIsAddingAddon] = useState(false);
 
-  const handleAddAddon = (addonTemplate: typeof availableAddons[0]) => {
+  const availableAddons = ADDON_CATALOG.filter(
+    addon => !selectedAddons.some(selected => selected.category === addon.category)
+  );
+
+  const handleAddAddon = (addonTemplate: typeof ADDON_CATALOG[0]) => {
     const newAddon: AddonCard = {
-      id: `${addonTemplate.id}-${uuidv4()}`,
-      name: addonTemplate.name,
-      description: addonTemplate.description,
-      category: addonTemplate.category,
-      monthlyFee: addonTemplate.basePrice,
-      companyCost: addonTemplate.baseCost,
-      isPerDevice: true,
-      customQuantity: 1
+      ...addonTemplate,
+      id: `addon-${addonTemplate.category}-${Date.now()}`,
+      customQuantity: 1,
+      isPerDevice: false // Remove auto-binding behavior
     };
     onAddAddon(newAddon);
+    setIsAddingAddon(false);
   };
 
-  const handleUpdateAddon = (id: string, field: string, value: number) => {
-    const addon = selectedAddons.find(a => a.id === id);
+  const updateAddonField = (addonId: string, field: keyof AddonCard, value: any) => {
+    const addon = selectedAddons.find(a => a.id === addonId);
     if (addon) {
-      onUpdateAddon(id, { ...addon, [field]: value });
+      onUpdateAddon(addonId, { ...addon, [field]: value });
     }
   };
 
-  const totalSubtotal = selectedAddons.reduce((total, addon) => 
-    total + (addon.monthlyFee * (addon.customQuantity || 1)), 0
-  );
-
-  const availableToAdd = availableAddons.filter(template => 
-    !selectedAddons.some(selected => selected.name === template.name)
-  );
+  const calculateAddonSubtotal = (addon: AddonCard) => {
+    const quantity = addon.customQuantity || 1;
+    return quantity * addon.monthlyFee;
+  };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          {t('deviceSelection.addons.title')}
-          <Badge variant="outline">
-            {selectedAddons.length} {t('deviceSelection.addons.itemsCount')}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Selected Add-ons */}
-        {selectedAddons.map((addon) => (
-          <div key={addon.id} className="border rounded-lg p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="font-medium">{addon.name}</h4>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onRemoveAddon(addon.id)}
-                className="text-red-600 hover:text-red-700"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            <div className="grid grid-cols-3 gap-3">
-              <div className="space-y-2">
-                <Label className="text-xs">{t('deviceSelection.addons.quantity')}</Label>
-                <Input
-                  type="number"
-                  min="1"
-                  value={addon.customQuantity || 1}
-                  onChange={(e) => handleUpdateAddon(addon.id, 'customQuantity', parseInt(e.target.value) || 1)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs">{t('deviceSelection.addons.pricePerUnit')}</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={addon.monthlyFee}
-                  onChange={(e) => handleUpdateAddon(addon.id, 'monthlyFee', parseFloat(e.target.value) || 0)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs">{t('deviceSelection.addons.companyCostPerUnit')}</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={addon.companyCost}
-                  onChange={(e) => handleUpdateAddon(addon.id, 'companyCost', parseFloat(e.target.value) || 0)}
-                />
-              </div>
-            </div>
-            
-            <div className="text-sm text-gray-600 text-right">
-              {t('deviceSelection.addons.subtotal')}: €{(addon.monthlyFee * (addon.customQuantity || 1)).toFixed(2)} {t('deviceSelection.addons.perUnit')}
-            </div>
-          </div>
-        ))}
-
-        {/* Add New Add-on */}
-        {availableToAdd.length > 0 ? (
-          <div className="border-2 border-dashed border-gray-200 rounded-lg p-4">
-            <div className="text-sm text-gray-600 mb-3">{t('deviceSelection.addons.addAddon')}:</div>
-            <div className="flex flex-wrap gap-2">
-              {availableToAdd.map((addon) => (
-                <Button
-                  key={addon.id}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleAddAddon(addon)}
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-3 w-3" />
-                  {addon.name}
-                </Button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="text-sm text-gray-500 text-center py-4">
-            {t('deviceSelection.addons.allAddonsAdded')}
-          </div>
-        )}
-
-        {/* Total */}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h4 className="font-medium text-slate-900">Doplnky a príslušenstvo</h4>
         {selectedAddons.length > 0 && (
-          <div className="border-t pt-3">
-            <div className="text-right font-semibold">
-              {t('deviceSelection.addons.subtotal')}: €{totalSubtotal.toFixed(2)}/mesiac
-            </div>
-          </div>
+          <span className="text-sm text-slate-600">
+            {selectedAddons.length} položiek
+          </span>
         )}
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Selected addons */}
+      <div className="space-y-3">
+        {selectedAddons.map((addon) => {
+          const subtotal = calculateAddonSubtotal(addon);
+          
+          return (
+            <Card key={addon.id} className="border-slate-200">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{getAddonIcon(addon.category)}</span>
+                    <div>
+                      <h5 className="font-medium text-slate-900">{addon.name}</h5>
+                      <p className="text-sm text-slate-600">{addon.description}</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => onRemoveAddon(addon.id)}
+                    className="h-8 w-8 hover:bg-red-50 hover:border-red-300 flex-shrink-0"
+                  >
+                    <X className="h-4 w-4 text-red-500" />
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-slate-600">Počet ks</Label>
+                    <QuantityStepper
+                      value={addon.customQuantity || 1}
+                      onChange={(value) => updateAddonField(addon.id, 'customQuantity', value)}
+                      min={1}
+                      max={50}
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <Label className="text-xs text-slate-600">Cena za kus (€)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={addon.monthlyFee}
+                      onChange={(e) => updateAddonField(addon.id, 'monthlyFee', parseFloat(e.target.value) || 0)}
+                      className="text-sm h-9"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs text-slate-600">Firemný náklad za kus (€)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={addon.companyCost}
+                      onChange={(e) => updateAddonField(addon.id, 'companyCost', parseFloat(e.target.value) || 0)}
+                      className="text-sm h-9"
+                    />
+                  </div>
+
+                  <div className="text-right">
+                    <div className="text-xs text-slate-600 mb-1">Subtotal</div>
+                    <div className="font-medium text-green-600">
+                      {formatCurrency(subtotal)}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Add addon section */}
+      <Collapsible open={isAddingAddon} onOpenChange={setIsAddingAddon}>
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="outline"
+            className="w-full border-dashed border-blue-300 text-blue-600 hover:bg-blue-50"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Pridať doplnok
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="space-y-2 mt-3">
+          {availableAddons.map((addon) => (
+            <Card 
+              key={addon.category}
+              className="border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors"
+              onClick={() => handleAddAddon(addon)}
+            >
+              <CardContent className="p-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">{getAddonIcon(addon.category)}</span>
+                  <div className="flex-1">
+                    <h6 className="font-medium text-slate-900">{addon.name}</h6>
+                    <p className="text-xs text-slate-600">{addon.description}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium text-green-600">{formatCurrency(addon.monthlyFee)}</p>
+                    <p className="text-xs text-slate-500">za kus</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          {availableAddons.length === 0 && (
+            <p className="text-center text-slate-500 py-4 text-sm">
+              Všetky dostupné doplnky už boli pridané
+            </p>
+          )}
+        </CollapsibleContent>
+      </Collapsible>
+    </div>
   );
 };
 

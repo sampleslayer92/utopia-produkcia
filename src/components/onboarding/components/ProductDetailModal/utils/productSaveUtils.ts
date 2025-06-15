@@ -1,6 +1,5 @@
 
-import { DeviceCard, ServiceCard, AddonCard } from '@/types/onboarding';
-import { v4 as uuidv4 } from 'uuid';
+import { DeviceCard, ServiceCard, AddonCard } from "@/types/onboarding";
 
 interface ProductFormData {
   name: string;
@@ -11,7 +10,7 @@ interface ProductFormData {
   customValue: string;
 }
 
-interface CreateProductCardProps {
+interface SaveProductParams {
   formData: ProductFormData;
   selectedAddons: AddonCard[];
   productType: 'device' | 'service';
@@ -20,6 +19,10 @@ interface CreateProductCardProps {
   editingCard?: DeviceCard | ServiceCard;
 }
 
+const generateUUID = () => {
+  return crypto.randomUUID();
+};
+
 export const createProductCard = ({
   formData,
   selectedAddons,
@@ -27,29 +30,35 @@ export const createProductCard = ({
   mode,
   product,
   editingCard
-}: CreateProductCardProps): DeviceCard | ServiceCard => {
+}: SaveProductParams): DeviceCard | ServiceCard => {
+  console.log('Saving product with data:', formData);
+  
   const baseCard = {
-    id: mode === 'edit' && editingCard ? editingCard.id : uuidv4(),
     name: formData.name,
-    description: formData.name === 'Iný' ? formData.customValue : formData.description,
+    description: formData.description,
     count: formData.count,
     monthlyFee: formData.monthlyFee,
     companyCost: formData.companyCost,
-    addons: selectedAddons,
-    type: productType as 'device' | 'service'
+    addons: selectedAddons
   };
 
   if (productType === 'device') {
     return {
       ...baseCard,
+      id: mode === 'edit' ? editingCard!.id : generateUUID(),
       type: 'device',
-      category: product?.category || 'terminals'
+      category: product?.category || editingCard?.category || 'terminal',
+      image: product?.image || (editingCard as DeviceCard)?.image,
+      catalogId: product?.id || editingCard?.catalogId
     } as DeviceCard;
   } else {
     return {
       ...baseCard,
+      id: mode === 'edit' ? editingCard!.id : generateUUID(),
       type: 'service',
-      category: product?.category || 'software'
+      category: product?.category || editingCard?.category || 'software',
+      customValue: formData.customValue,
+      catalogId: product?.id || editingCard?.catalogId
     } as ServiceCard;
   }
 };

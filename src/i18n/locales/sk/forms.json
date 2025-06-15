@@ -411,29 +411,6 @@
         "pieces": "ks"
       }
     },
-    "modal": {
-      "addTitle": "Pridať",
-      "editTitle": "Upraviť",
-      "quantity": "Množstvo",
-      "monthlyFee": "Mesačný poplatok za kus (€)",
-      "companyCost": "Mesačný náklad spoločnosti za kus (€)",
-      "customSpecification": "Špecifikácia služby",
-      "customSpecificationPlaceholder": "Opíšte službu...",
-      "cancel": "Zrušiť",
-      "add": "Pridať",
-      "save": "Uložiť"
-    },
-    "addons": {
-      "title": "Doplnky a príslušenstvo",
-      "itemsCount": "položiek",
-      "quantity": "Počet ks",
-      "pricePerUnit": "Cena za kus (€)",
-      "companyCostPerUnit": "Firemný náklad za kus (€)",
-      "subtotal": "Medzisúčet",
-      "addAddon": "Pridať doplnok",
-      "perUnit": "za kus",
-      "allAddonsAdded": "Všetky dostupné doplnky už boli pridané"
-    },
     "navigation": {
       "back": "Späť",
       "changeSolution": "Zmeniť riešenie",

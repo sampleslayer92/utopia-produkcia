@@ -286,6 +286,127 @@
       }
     },
     "modal": {
+      "title": "Opening Hours",
+      "quickActions": "Quick Actions",
+      "daySelection": "Day Selection",
+      "daySelectionDescription": "Click on the days when the location should be open",
+      "sameTimeLabel": "Same time for all selected days",
+      "openingLabel": "Opening",
+      "closingLabel": "Closing",
+      "selectDaysMessage": "Select the days when the location should be open",
+      "cancelButton": "Cancel",
+      "saveButton": "Save Changes",
+      "quickActionButtons": {
+        "workWeek": "Work Week",
+        "fullWeek": "Full Week", 
+        "weekends": "Weekends",
+        "closed": "Closed",
+        "reset": "Reset"
+      }
+    }
+  },
+  "deviceSelection": {
+    "title": "Device and Service Selection",
+    "description": "Select and configure devices and services for your business",
+    "solutionSelection": {
+      "title": "Solution Selection",
+      "description": "Select the types of solutions you want to use in your business",
+      "stepProgress": "Step 1 of 4",
+      "selectedSolutions": "Selected solutions: {count}",
+      "continueMessage": "Continue to device and service configuration",
+      "nextButton": "Next step - Device and service selection",
+      "solutions": {
+        "terminal": {
+          "title": "Payment Terminal",
+          "description": "Classic payment terminals for card acceptance"
+        },
+        "pos": {
+          "title": "POS Solution",
+          "description": "Complete POS systems with tablets"
+        },
+        "gateway": {
+          "title": "Payment Gateway",
+          "description": "Online payments for e-commerce"
+        },
+        "softpos": {
+          "title": "Mobile Terminal (SoftPOS)",
+          "description": "Mobile payment applications"
+        },
+        "charging": {
+          "title": "Charging Station",
+          "description": "Electric vehicle solutions"
+        }
+      },
+      "solutionBadges": {
+        "terminal": "Terminals",
+        "pos": "POS",
+        "gateway": "Gateway",
+        "softpos": "SoftPOS",
+        "charging": "Charging"
+      }
+    },
+    "catalog": {
+      "title": "Device and Service Catalog",
+      "deviceGroups": {
+        "terminals": "Payment Terminals",
+        "pos": "POS Tablets"
+      },
+      "serviceGroups": {
+        "software": "Software Solutions",
+        "technical": "Technical Services",
+        "accessories": "Accessories"
+      },
+      "deviceCount": "devices",
+      "serviceCount": "services",
+      "addDevice": "Add Device",
+      "addService": "Add Service",
+      "products": {
+        "posService": "POS Software",
+        "inventory": "Inventory Management",
+        "reporting": "Reporting and Analytics",
+        "installation": "Installation and Setup",
+        "training": "Staff Training",
+        "support": "24/7 Technical Support",
+        "receiptPrinter": "Receipt Printer",
+        "cashDrawer": "Cash Drawer",
+        "barcodeScanner": "Barcode Scanner"
+      }
+    },
+    "preview": {
+      "title": "Your Order",
+      "emptyTitle": "No items",
+      "emptyDescription": "Start by adding devices and services from the catalog on the left",
+      "clearAll": "Clear All",
+      "types": "types",
+      "stats": {
+        "devices": "Devices",
+        "services": "Services",
+        "totalItems": "Total Items"
+      },
+      "costSummary": {
+        "title": "Total Costs",
+        "monthly": "€{amount}/month",
+        "yearly": "€{amount} annually"
+      },
+      "sections": {
+        "devices": "Devices",
+        "software": "Software Solutions",
+        "technical": "Technical Services",
+        "accessories": "Accessories"
+      },
+      "categoryNames": {
+        "software": "Software Solutions",
+        "technical": "Technical Services",
+        "accessories": "Accessories"
+      },
+      "count": {
+        "devices": "devices",
+        "services": "services",
+        "items": "items",
+        "pieces": "pcs"
+      }
+    },
+    "modal": {
       "addTitle": "Add - {name}",
       "editTitle": "Edit - {name}",
       "quantity": "Quantity",

@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from 'react';
-import { DeviceCard, ServiceCard, AddonCard } from '@/types/onboarding';
+import { useState, useEffect } from "react";
+import { DeviceCard, ServiceCard, AddonCard } from "@/types/onboarding";
 
 interface ProductFormData {
   name: string;
@@ -27,54 +27,48 @@ export const useProductForm = ({ mode, product, editingCard, isOpen }: UseProduc
     companyCost: 0,
     customValue: ''
   });
-
+  
   const [selectedAddons, setSelectedAddons] = useState<AddonCard[]>([]);
 
-  // Initialize form data when modal opens
   useEffect(() => {
-    if (isOpen) {
-      if (mode === 'edit' && editingCard) {
-        setFormData({
-          name: editingCard.name,
-          description: editingCard.description || '',
-          count: editingCard.count,
-          monthlyFee: editingCard.monthlyFee,
-          companyCost: editingCard.companyCost,
-          customValue: editingCard.name === 'Iný' ? editingCard.description || '' : ''
-        });
-        setSelectedAddons(editingCard.addons || []);
-      } else if (mode === 'add' && product) {
-        setFormData({
-          name: product.name,
-          description: product.description || '',
-          count: 1,
-          monthlyFee: product.monthlyFee || 0,
-          companyCost: product.companyCost || 0,
-          customValue: ''
-        });
-        setSelectedAddons([]);
-      }
+    if (mode === 'add' && product) {
+      setFormData({
+        name: product.name || '',
+        description: product.description || '',
+        count: 1,
+        monthlyFee: product.monthlyFee || 0,
+        companyCost: product.companyCost || 0,
+        customValue: ''
+      });
+      setSelectedAddons([]);
+    } else if (mode === 'edit' && editingCard) {
+      setFormData({
+        name: editingCard.name,
+        description: editingCard.description,
+        count: editingCard.count,
+        monthlyFee: editingCard.monthlyFee,
+        companyCost: editingCard.companyCost,
+        customValue: (editingCard as ServiceCard).customValue || ''
+      });
+      setSelectedAddons(editingCard.addons || []);
     }
   }, [mode, product, editingCard, isOpen]);
 
   const updateField = (field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleAddAddon = (addon: AddonCard) => {
     setSelectedAddons(prev => [...prev, addon]);
   };
 
-  const handleRemoveAddon = (id: string) => {
-    setSelectedAddons(prev => prev.filter(addon => addon.id !== id));
+  const handleRemoveAddon = (addonId: string) => {
+    setSelectedAddons(prev => prev.filter(addon => addon.id !== addonId));
   };
 
-  const handleUpdateAddon = (id: string, updatedAddon: AddonCard) => {
+  const handleUpdateAddon = (addonId: string, updatedAddon: AddonCard) => {
     setSelectedAddons(prev => 
-      prev.map(addon => addon.id === id ? updatedAddon : addon)
+      prev.map(addon => addon.id === addonId ? updatedAddon : addon)
     );
   };
 
