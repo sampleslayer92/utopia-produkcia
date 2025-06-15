@@ -81,7 +81,7 @@ const ConsentsStep = ({ data, updateData, onSaveSignature }: ConsentsStepProps) 
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
                 <p className="font-medium mb-2">{t('consents.sidebar.contents.title')}</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  {t('consents.sidebar.contents.items', { returnObjects: true }).map((item: string, index: number) => (
+                  {(t('consents.sidebar.contents.items', { returnObjects: true }) as string[]).map((item: string, index: number) => (
                     <li key={index}>{item}</li>
                   ))}
                 </ul>
@@ -247,7 +247,7 @@ const ConsentsStep = ({ data, updateData, onSaveSignature }: ConsentsStepProps) 
                     <div>
                       <h4 className="font-medium text-blue-900 mb-2">{t('consents.nextSteps.title')}</h4>
                       <ol className="space-y-3 text-sm text-blue-800">
-                        {t('consents.nextSteps.steps', { returnObjects: true }).map((step: string, index: number) => (
+                        {(t('consents.nextSteps.steps', { returnObjects: true }) as string[]).map((step: string, index: number) => (
                           <li key={index} className="flex items-baseline gap-2">
                             <span className="bg-blue-200 text-blue-800 rounded-full h-5 w-5 flex items-center justify-center text-xs flex-shrink-0 font-medium">{index + 1}</span>
                             <span>{step}</span>
