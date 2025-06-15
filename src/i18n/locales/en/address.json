@@ -1,0 +1,18 @@
+
+{
+  "address": {
+    "street": "Street and Number",
+    "city": "City",
+    "zipCode": "ZIP Code",
+    "placeholders": {
+      "street": "Business Street 456",
+      "city": "Bratislava",
+      "zipCode": "01001"
+    },
+    "labels": {
+      "streetRequired": "Street and Number *",
+      "cityRequired": "City *",
+      "zipCodeRequired": "ZIP Code *"
+    }
+  }
+}
