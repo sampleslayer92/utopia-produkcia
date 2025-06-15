@@ -1,3 +1,4 @@
+
 {
   "contactInfo": {
     "title": "Contact Information",
@@ -441,6 +442,10 @@
       "companyCostLabel": "Company cost (EUR)",
       "addonsTitle": "Add-ons",
       "perMonth": "/month"
+    },
+    "loading": {
+      "saving": "Saving...",
+      "saved": "Saved"
     },
     "navigation": {
       "back": "Back",
