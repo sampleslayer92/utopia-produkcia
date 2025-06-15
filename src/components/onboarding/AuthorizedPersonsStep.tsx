@@ -83,6 +83,9 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
     { value: "Pas", label: t('forms.authorizedPersons.sections.document.documentTypeOptions.Pas') }
   ];
 
+  // Get the items array properly
+  const importantInfoItems = t('forms.authorizedPersons.sidebar.importantInfo.items', { returnObjects: true }) as string[] || [];
+
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
       <CardContent className="p-0">
@@ -104,7 +107,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
                 <p className="font-medium mb-2">{t('forms.authorizedPersons.sidebar.importantInfo.title')}</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  {t('forms.authorizedPersons.sidebar.importantInfo.items', { returnObjects: true }).map((item: string, index: number) => (
+                  {importantInfoItems.map((item: string, index: number) => (
                     <li key={index}>{item}</li>
                   ))}
                 </ul>

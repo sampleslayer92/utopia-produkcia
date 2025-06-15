@@ -63,6 +63,9 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
     setExpandedOwnerId(expandedOwnerId === id ? null : id);
   };
 
+  // Get the items array properly
+  const whoIsOwnerItems = t('forms.actualOwners.sidebar.whoIsOwner.items', { returnObjects: true }) as string[] || [];
+
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
       <CardContent className="p-0">
@@ -84,7 +87,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
               <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
                 <p className="font-medium mb-2">{t('forms.actualOwners.sidebar.whoIsOwner.title')}</p>
                 <ul className="space-y-2 list-disc list-inside">
-                  {t('forms.actualOwners.sidebar.whoIsOwner.items', { returnObjects: true }).map((item: string, index: number) => (
+                  {whoIsOwnerItems.map((item: string, index: number) => (
                     <li key={index}>{item}</li>
                   ))}
                 </ul>
