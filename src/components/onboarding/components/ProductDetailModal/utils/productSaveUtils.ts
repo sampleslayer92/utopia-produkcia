@@ -1,5 +1,6 @@
 
-import { DeviceCard, ServiceCard, AddonCard } from "@/types/onboarding";
+import { DeviceCard, ServiceCard } from '@/types/onboarding';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ProductFormData {
   name: string;
@@ -10,18 +11,22 @@ interface ProductFormData {
   customValue: string;
 }
 
-interface SaveProductParams {
+interface Addon {
+  id: string;
+  name: string;
+  count: number;
+  monthlyFee: number;
+  companyCost: number;
+}
+
+interface CreateProductCardProps {
   formData: ProductFormData;
-  selectedAddons: AddonCard[];
+  selectedAddons: Addon[];
   productType: 'device' | 'service';
   mode: 'add' | 'edit';
   product?: any;
   editingCard?: DeviceCard | ServiceCard;
 }
-
-const generateUUID = () => {
-  return crypto.randomUUID();
-};
 
 export const createProductCard = ({
   formData,
@@ -30,35 +35,29 @@ export const createProductCard = ({
   mode,
   product,
   editingCard
-}: SaveProductParams): DeviceCard | ServiceCard => {
-  console.log('Saving product with data:', formData);
-  
+}: CreateProductCardProps): DeviceCard | ServiceCard => {
   const baseCard = {
+    id: mode === 'edit' && editingCard ? editingCard.id : uuidv4(),
     name: formData.name,
-    description: formData.description,
+    description: formData.name === 'Iný' ? formData.customValue : formData.description,
     count: formData.count,
     monthlyFee: formData.monthlyFee,
     companyCost: formData.companyCost,
-    addons: selectedAddons
+    addons: selectedAddons,
+    type: productType as 'device' | 'service'
   };
 
   if (productType === 'device') {
     return {
       ...baseCard,
-      id: mode === 'edit' ? editingCard!.id : generateUUID(),
       type: 'device',
-      category: product?.category || editingCard?.category || 'terminal',
-      image: product?.image || (editingCard as DeviceCard)?.image,
-      catalogId: product?.id || editingCard?.catalogId
+      category: product?.category || 'terminals'
     } as DeviceCard;
   } else {
     return {
       ...baseCard,
-      id: mode === 'edit' ? editingCard!.id : generateUUID(),
       type: 'service',
-      category: product?.category || editingCard?.category || 'software',
-      customValue: formData.customValue,
-      catalogId: product?.id || editingCard?.catalogId
+      category: product?.category || 'software'
     } as ServiceCard;
   }
 };
