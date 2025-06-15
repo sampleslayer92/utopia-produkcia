@@ -6,22 +6,28 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { AddonCard } from '@/types/onboarding';
-import { v4 as uuidv4 } from 'uuid';
+
+interface Addon {
+  id: string;
+  name: string;
+  count: number;
+  monthlyFee: number;
+  companyCost: number;
+}
 
 interface EnhancedAddonManagerProps {
-  selectedAddons: AddonCard[];
-  onAddAddon: (addon: AddonCard) => void;
+  selectedAddons: Addon[];
+  onAddAddon: (addon: Addon) => void;
   onRemoveAddon: (id: string) => void;
-  onUpdateAddon: (id: string, addon: AddonCard) => void;
+  onUpdateAddon: (id: string, addon: Addon) => void;
 }
 
 const availableAddons = [
-  { id: 'receipt-printer', name: 'Tlačiareň účteniek', basePrice: 15, baseCost: 10, category: 'hardware', description: 'Tlačiareň pre účtenky' },
-  { id: 'cash-drawer', name: 'Pokladničná zásuvka', basePrice: 20, baseCost: 15, category: 'hardware', description: 'Elektronická pokladničná zásuvka' },
-  { id: 'barcode-scanner', name: 'Čítačka čiarových kódov', basePrice: 25, baseCost: 18, category: 'hardware', description: 'Ručná čítačka čiarových kódov' },
-  { id: 'installation', name: 'Inštalácia a nastavenie', basePrice: 50, baseCost: 30, category: 'service', description: 'Profesionálna inštalácia zariadenia' },
-  { id: 'training', name: 'Školenie personálu', basePrice: 100, baseCost: 60, category: 'service', description: 'Školenie pre používanie systému' }
+  { id: 'receipt-printer', name: 'Tlačiareň účteniek', basePrice: 15, baseCost: 10 },
+  { id: 'cash-drawer', name: 'Pokladničná zásuvka', basePrice: 20, baseCost: 15 },
+  { id: 'barcode-scanner', name: 'Čítačka čiarových kódov', basePrice: 25, baseCost: 18 },
+  { id: 'installation', name: 'Inštalácia a nastavenie', basePrice: 50, baseCost: 30 },
+  { id: 'training', name: 'Školenie personálu', basePrice: 100, baseCost: 60 }
 ];
 
 const EnhancedAddonManager = ({
@@ -33,15 +39,12 @@ const EnhancedAddonManager = ({
   const { t } = useTranslation('forms');
 
   const handleAddAddon = (addonTemplate: typeof availableAddons[0]) => {
-    const newAddon: AddonCard = {
-      id: `${addonTemplate.id}-${uuidv4()}`,
+    const newAddon: Addon = {
+      id: `${addonTemplate.id}-${Date.now()}`,
       name: addonTemplate.name,
-      description: addonTemplate.description,
-      category: addonTemplate.category,
+      count: 1,
       monthlyFee: addonTemplate.basePrice,
-      companyCost: addonTemplate.baseCost,
-      isPerDevice: true,
-      customQuantity: 1
+      companyCost: addonTemplate.baseCost
     };
     onAddAddon(newAddon);
   };
@@ -54,7 +57,7 @@ const EnhancedAddonManager = ({
   };
 
   const totalSubtotal = selectedAddons.reduce((total, addon) => 
-    total + (addon.monthlyFee * (addon.customQuantity || 1)), 0
+    total + (addon.monthlyFee * addon.count), 0
   );
 
   const availableToAdd = availableAddons.filter(template => 
@@ -93,8 +96,8 @@ const EnhancedAddonManager = ({
                 <Input
                   type="number"
                   min="1"
-                  value={addon.customQuantity || 1}
-                  onChange={(e) => handleUpdateAddon(addon.id, 'customQuantity', parseInt(e.target.value) || 1)}
+                  value={addon.count}
+                  onChange={(e) => handleUpdateAddon(addon.id, 'count', parseInt(e.target.value) || 1)}
                 />
               </div>
               <div className="space-y-2">
@@ -120,7 +123,7 @@ const EnhancedAddonManager = ({
             </div>
             
             <div className="text-sm text-gray-600 text-right">
-              {t('deviceSelection.addons.subtotal')}: €{(addon.monthlyFee * (addon.customQuantity || 1)).toFixed(2)} {t('deviceSelection.addons.perUnit')}
+              {t('deviceSelection.addons.subtotal')}: €{(addon.monthlyFee * addon.count).toFixed(2)} {t('deviceSelection.addons.perUnit')}
             </div>
           </div>
         ))}
