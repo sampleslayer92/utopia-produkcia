@@ -11,6 +11,8 @@ import LivePreviewPanel from "./device-selection/LivePreviewPanel";
 import ProductDetailModal from "./components/ProductDetailModal";
 import { useProductModal } from "./hooks/useProductModal";
 import { useContractPersistence } from "@/hooks/useContractPersistence";
+import { useEnhancedAutoSave } from "./hooks/useEnhancedAutoSave";
+import { useStepValidation } from "./hooks/useStepValidation";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -24,39 +26,33 @@ interface DeviceSelectionStepProps {
 const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelectionStepProps) => {
   const { t } = useTranslation('forms');
   const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
-  const { saveContractData, isLoading: isSaving } = useContractPersistence();
-  const [lastSaveTime, setLastSaveTime] = useState<Date | null>(null);
+  const { saveContractData } = useContractPersistence();
+  const stepValidation = useStepValidation(3, data);
 
-  // Auto-save function with improved error handling
-  const autoSaveProducts = useCallback(async (updatedData: OnboardingData) => {
+  // Enhanced auto-save with better error handling
+  const handleAutoSave = useCallback(async (updatedData: OnboardingData) => {
     if (!updatedData.contractId) {
       console.warn('No contract ID available for auto-save');
       return;
     }
 
-    try {
-      console.log('Auto-saving products...', updatedData.deviceSelection.dynamicCards);
-      const result = await saveContractData(updatedData.contractId, updatedData);
-      
-      if (result.success) {
-        setLastSaveTime(new Date());
-        console.log('Products auto-saved successfully');
-        toast.success('Produkty automaticky uložené', {
-          description: 'Vaše zmeny boli úspešne uložené'
-        });
-      } else {
-        console.error('Auto-save failed:', result.error);
-        toast.error('Chyba pri automatickom ukladaní', {
-          description: 'Skúste uložiť zmeny manuálne'
-        });
-      }
-    } catch (error) {
-      console.error('Auto-save error:', error);
-      toast.error('Chyba pri automatickom ukladaní', {
-        description: 'Skúste uložiť zmeny manuálne'
-      });
+    console.log('Auto-saving products...', updatedData.deviceSelection.dynamicCards);
+    const result = await saveContractData(updatedData.contractId, updatedData);
+    
+    if (!result.success) {
+      console.error('Auto-save failed:', result.error);
+      throw new Error(result.error || 'Auto-save failed');
     }
+    
+    console.log('Products auto-saved successfully');
   }, [saveContractData]);
+
+  const { isSaving, lastSaved, saveStatus, forceSave } = useEnhancedAutoSave(data, {
+    enabled: Boolean(data.contractId),
+    onSave: handleAutoSave,
+    showToasts: false,
+    delay: 2000
+  });
 
   const toggleSolution = (solutionId: string) => {
     const newSelection = data.deviceSelection.selectedSolutions.includes(solutionId)
@@ -108,14 +104,23 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
         }
       };
     } else {
-      return; // Invalid state
+      return;
     }
 
     // Update local state first
     updateData(updatedData);
     
-    // Then auto-save to database
-    await autoSaveProducts(updatedData);
+    // Force immediate save for important changes
+    try {
+      await forceSave();
+      toast.success('Produkt uložený', {
+        description: 'Zmeny boli úspešne uložené'
+      });
+    } catch (error) {
+      toast.error('Chyba pri ukladaní', {
+        description: 'Skúste to znova'
+      });
+    }
   };
 
   const updateCard = async (cardId: string, updatedCard: DeviceCard | ServiceCard) => {
@@ -123,57 +128,36 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
       card.id === cardId ? updatedCard : card
     );
     
-    const updatedData = {
-      ...data,
+    updateData({
       deviceSelection: {
         ...data.deviceSelection,
         dynamicCards: updatedCards
       }
-    };
-    
-    // Update local state first
-    updateData(updatedData);
-    
-    // Then auto-save to database
-    await autoSaveProducts(updatedData);
+    });
   };
 
   const removeCard = async (cardId: string) => {
     const updatedCards = data.deviceSelection.dynamicCards.filter(card => card.id !== cardId);
     
-    const updatedData = {
-      ...data,
+    updateData({
       deviceSelection: {
         ...data.deviceSelection,
         dynamicCards: updatedCards
       }
-    };
-    
-    // Update local state first
-    updateData(updatedData);
-    
-    // Then auto-save to database
-    await autoSaveProducts(updatedData);
+    });
   };
 
   const clearAllCards = async () => {
-    const updatedData = {
-      ...data,
+    updateData({
       deviceSelection: {
         ...data.deviceSelection,
         dynamicCards: []
       }
-    };
-    
-    // Update local state first
-    updateData(updatedData);
-    
-    // Then auto-save to database
-    await autoSaveProducts(updatedData);
+    });
   };
 
   const canProceedToNext = () => {
-    return data.deviceSelection.selectedSolutions.length > 0;
+    return stepValidation.isValid;
   };
 
   // Show solution selection if no solutions are selected
@@ -183,7 +167,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
         <SolutionSelectionSection
           selectedSolutions={data.deviceSelection.selectedSolutions}
           onToggleSolution={toggleSolution}
-          onNext={() => {}} // This will be handled by the selection itself
+          onNext={() => {}}
         />
         
         <div className="flex justify-between items-center">
@@ -213,10 +197,10 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
       {/* Header with Progress and Save Status */}
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-slate-900 flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <CardTitle className="text-slate-900 flex items-center gap-3 flex-wrap">
               <span>{t('deviceSelection.title')}</span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 {data.deviceSelection.selectedSolutions.map((solution) => (
                   <Badge key={solution} variant="secondary" className="text-xs">
                     {solutionBadgeNames[solution as keyof typeof solutionBadgeNames]}
@@ -224,9 +208,12 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
                 ))}
               </div>
             </CardTitle>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="outline" className="text-blue-600">
                 {t('deviceSelection.navigation.itemsSelected', { count: data.deviceSelection.dynamicCards.length })}
+              </Badge>
+              <Badge variant="outline" className="text-green-600">
+                {stepValidation.completionPercentage}% dokončené
               </Badge>
               {isSaving && (
                 <Badge variant="outline" className="text-orange-600 flex items-center gap-1">
@@ -234,9 +221,14 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
                   {t('deviceSelection.loading.saving')}
                 </Badge>
               )}
-              {lastSaveTime && !isSaving && (
+              {lastSaved && !isSaving && saveStatus === 'saved' && (
                 <Badge variant="outline" className="text-green-600">
-                  {t('deviceSelection.loading.saved')} {lastSaveTime.toLocaleTimeString()}
+                  {t('deviceSelection.loading.saved')} {lastSaved.toLocaleTimeString()}
+                </Badge>
+              )}
+              {saveStatus === 'error' && (
+                <Badge variant="outline" className="text-red-600">
+                  Chyba ukladania
                 </Badge>
               )}
             </div>
@@ -244,7 +236,23 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
         </CardHeader>
       </Card>
 
-      {/* Main Content Area - Two Column Layout */}
+      {/* Validation Errors */}
+      {stepValidation.errors.length > 0 && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="pt-6">
+            <div className="text-red-800">
+              <div className="font-medium mb-2">Opravte nasledujúce chyby:</div>
+              <ul className="text-sm space-y-1">
+                {stepValidation.errors.map((error, index) => (
+                  <li key={index}>• {error.message}</li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Main Content Area - Responsive Layout */}
       <div className="grid lg:grid-cols-2 gap-6 min-h-[600px]">
         {/* Left Panel - Catalog */}
         <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
@@ -279,18 +287,18 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
       />
 
       {/* Navigation */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <Button
           variant="outline"
           onClick={onPrev}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 w-full sm:w-auto"
           disabled={isSaving}
         >
           <ArrowLeft className="h-4 w-4" />
           {t('deviceSelection.navigation.back')}
         </Button>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
           <Button
             variant="outline"
             onClick={() => {
@@ -301,7 +309,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
                 }
               });
             }}
-            className="text-slate-600"
+            className="text-slate-600 w-full sm:w-auto"
             disabled={isSaving}
           >
             {t('deviceSelection.navigation.changeSolution')}
@@ -310,7 +318,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
           <Button
             onClick={onNext}
             disabled={!canProceedToNext() || isSaving}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2 w-full sm:w-auto"
           >
             {isSaving ? (
               <>

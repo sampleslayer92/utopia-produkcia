@@ -1,12 +1,14 @@
+
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTranslation } from 'react-i18next';
 import { useOnboardingData } from "./hooks/useOnboardingData";
 import { useOnboardingNavigation } from "./hooks/useOnboardingNavigation";
 import { useAutoSave } from "./hooks/useAutoSave";
 import { useProgressTracking } from "./hooks/useProgressTracking";
+import { useStepValidation } from "./hooks/useStepValidation";
 import { useOnboardingSteps } from "./config/onboardingSteps";
 import OnboardingSidebar from "./ui/OnboardingSidebar";
-import OnboardingNavigation from "./ui/OnboardingNavigation";
+import MobileOptimizedNavigation from "./ui/MobileOptimizedNavigation";
 import OnboardingHeader from "./ui/OnboardingHeader";
 import OnboardingStepRenderer from "./components/OnboardingStepRenderer";
 import { OnboardingErrorBoundary } from "./components/OnboardingErrorBoundary";
@@ -28,6 +30,7 @@ const OnboardingFlow = () => {
   const { createContract, isCreating } = useContractCreation();
   const { saveContractData } = useContractPersistence();
   const { overallProgress } = useProgressTracking(onboardingData, currentStep);
+  const stepValidation = useStepValidation(currentStep, onboardingData);
   const isMobile = useIsMobile();
   const onboardingSteps = useOnboardingSteps();
 
@@ -154,7 +157,7 @@ const OnboardingFlow = () => {
             currentStep={currentStep}
             totalSteps={totalSteps}
             stepTitle={currentStepData?.title || t('common:navigation.step')}
-            progress={overallProgress.overallPercentage}
+            progress={stepValidation.completionPercentage}
             onBack={prevStep}
             showBackButton={currentStep > 0}
           />
@@ -201,7 +204,7 @@ const OnboardingFlow = () => {
           </div>
         </div>
         
-        <OnboardingNavigation
+        <MobileOptimizedNavigation
           currentStep={currentStep}
           totalSteps={totalSteps}
           onPrevStep={prevStep}
@@ -210,6 +213,7 @@ const OnboardingFlow = () => {
           onSaveAndExit={handleSaveAndExit}
           onSaveSignature={handleSaveSignature}
           isSubmitting={isSubmitting || isSaving}
+          stepValidation={stepValidation}
         />
       </div>
     </OnboardingErrorBoundary>
