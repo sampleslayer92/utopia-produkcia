@@ -231,12 +231,12 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
               {isSaving && (
                 <Badge variant="outline" className="text-orange-600 flex items-center gap-1">
                   <Loader2 className="h-3 w-3 animate-spin" />
-                  {t('deviceSelection.loading.saving')}
+                  Ukladá sa...
                 </Badge>
               )}
               {lastSaveTime && !isSaving && (
                 <Badge variant="outline" className="text-green-600">
-                  {t('deviceSelection.loading.saved')} {lastSaveTime.toLocaleTimeString()}
+                  Uložené {lastSaveTime.toLocaleTimeString()}
                 </Badge>
               )}
             </div>
@@ -315,7 +315,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
             {isSaving ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                {t('deviceSelection.loading.saving')}
+                Ukladá sa...
               </>
             ) : data.deviceSelection.dynamicCards.length > 0 ? (
               <>
