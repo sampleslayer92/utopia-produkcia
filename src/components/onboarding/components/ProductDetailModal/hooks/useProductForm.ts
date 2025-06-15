@@ -1,14 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { DeviceCard, ServiceCard } from '@/types/onboarding';
-
-interface Addon {
-  id: string;
-  name: string;
-  count: number;
-  monthlyFee: number;
-  companyCost: number;
-}
+import { DeviceCard, ServiceCard, AddonCard } from '@/types/onboarding';
 
 interface ProductFormData {
   name: string;
@@ -36,7 +28,7 @@ export const useProductForm = ({ mode, product, editingCard, isOpen }: UseProduc
     customValue: ''
   });
 
-  const [selectedAddons, setSelectedAddons] = useState<Addon[]>([]);
+  const [selectedAddons, setSelectedAddons] = useState<AddonCard[]>([]);
 
   // Initialize form data when modal opens
   useEffect(() => {
@@ -72,7 +64,7 @@ export const useProductForm = ({ mode, product, editingCard, isOpen }: UseProduc
     }));
   };
 
-  const handleAddAddon = (addon: Addon) => {
+  const handleAddAddon = (addon: AddonCard) => {
     setSelectedAddons(prev => [...prev, addon]);
   };
 
@@ -80,7 +72,7 @@ export const useProductForm = ({ mode, product, editingCard, isOpen }: UseProduc
     setSelectedAddons(prev => prev.filter(addon => addon.id !== id));
   };
 
-  const handleUpdateAddon = (id: string, updatedAddon: Addon) => {
+  const handleUpdateAddon = (id: string, updatedAddon: AddonCard) => {
     setSelectedAddons(prev => 
       prev.map(addon => addon.id === id ? updatedAddon : addon)
     );

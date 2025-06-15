@@ -1,5 +1,5 @@
 
-import { DeviceCard, ServiceCard } from '@/types/onboarding';
+import { DeviceCard, ServiceCard, AddonCard } from '@/types/onboarding';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ProductFormData {
@@ -11,17 +11,9 @@ interface ProductFormData {
   customValue: string;
 }
 
-interface Addon {
-  id: string;
-  name: string;
-  count: number;
-  monthlyFee: number;
-  companyCost: number;
-}
-
 interface CreateProductCardProps {
   formData: ProductFormData;
-  selectedAddons: Addon[];
+  selectedAddons: AddonCard[];
   productType: 'device' | 'service';
   mode: 'add' | 'edit';
   product?: any;
