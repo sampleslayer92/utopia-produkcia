@@ -1,8 +1,7 @@
 
-import { ArrowLeft, Edit, Save, X, FileText, Clock, CheckCircle } from "lucide-react";
+import { ArrowLeft, Edit, Save, X, FileText, Clock, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
 
 interface ContractHeaderProps {
@@ -13,6 +12,7 @@ interface ContractHeaderProps {
   onBack: () => void;
   onSave: () => void;
   isDirty?: boolean;
+  isSaving?: boolean;
 }
 
 const ContractHeader = ({ 
@@ -22,7 +22,8 @@ const ContractHeader = ({
   onToggleEdit, 
   onBack, 
   onSave,
-  isDirty = false
+  isDirty = false,
+  isSaving = false
 }: ContractHeaderProps) => {
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -62,6 +63,7 @@ const ContractHeader = ({
               size="sm" 
               onClick={onBack}
               className="hover:bg-slate-100"
+              disabled={isSaving}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Späť na zoznam
@@ -78,6 +80,12 @@ const ContractHeader = ({
                 {isDirty && (
                   <Badge variant="outline" className="text-orange-600 border-orange-300">
                     Neuložené zmeny
+                  </Badge>
+                )}
+                {isSaving && (
+                  <Badge variant="outline" className="text-blue-600 border-blue-300">
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                    Ukladám...
                   </Badge>
                 )}
               </div>
@@ -109,9 +117,19 @@ const ContractHeader = ({
                 onClick={onSave}
                 size="sm"
                 className="bg-emerald-600 hover:bg-emerald-700"
+                disabled={isSaving}
               >
-                <Save className="h-4 w-4 mr-2" />
-                Uložiť zmeny
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Ukladám...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Uložiť zmeny
+                  </>
+                )}
               </Button>
             )}
             
@@ -120,6 +138,7 @@ const ContractHeader = ({
               size="sm"
               onClick={onToggleEdit}
               className={isEditMode ? "hover:bg-red-700" : "hover:bg-slate-50"}
+              disabled={isSaving}
             >
               {isEditMode ? (
                 <>

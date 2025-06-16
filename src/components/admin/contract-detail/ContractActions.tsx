@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -8,27 +9,34 @@ import {
   Copy,
   History,
   Download,
-  Eye
+  Eye,
+  Loader2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency } from "@/components/onboarding/utils/currencyUtils";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ContractPreviewModal from "./ContractPreviewModal";
 import { generateContractPDF } from "@/utils/pdfGenerator";
 
 interface ContractActionsProps {
   contract: any;
   onboardingData: any;
+  onDelete?: () => void;
+  isDeleting?: boolean;
 }
 
-const ContractActions = ({ contract, onboardingData }: ContractActionsProps) => {
+const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = false }: ContractActionsProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const contractNumber = `CON-2024-${String(contract.contract_number).padStart(3, '0')}`;
 
   const handleExportPDF = async () => {
     try {
+      setIsExporting(true);
       toast({
         title: "PDF Export",
         description: "Generujem PDF súbor zmluvy...",
@@ -53,6 +61,8 @@ const ContractActions = ({ contract, onboardingData }: ContractActionsProps) => 
             variant: "destructive",
           });
           setIsPreviewOpen(false);
+        } finally {
+          setIsExporting(false);
         }
       }, 500);
     } catch (error) {
@@ -61,6 +71,7 @@ const ContractActions = ({ contract, onboardingData }: ContractActionsProps) => 
         description: "Nepodarilo sa inicializovať export PDF.",
         variant: "destructive",
       });
+      setIsExporting(false);
     }
   };
 
@@ -71,7 +82,7 @@ const ContractActions = ({ contract, onboardingData }: ContractActionsProps) => 
   const handleSendEmail = () => {
     toast({
       title: "Email",
-      description: "Odosielam zmluvu e-mailom...",
+      description: "Funkcia bude implementovaná neskôr.",
     });
     // TODO: Implement email sending
   };
@@ -79,28 +90,34 @@ const ContractActions = ({ contract, onboardingData }: ContractActionsProps) => 
   const handleMarkSigned = () => {
     toast({
       title: "Podpis",
-      description: "Zmluva bola označená ako podpísaná.",
+      description: "Funkcia bude implementovaná neskôr.",
     });
     // TODO: Implement status update
   };
 
   const handleDeleteContract = () => {
-    if (confirm('Naozaj chcete vymazať túto zmluvu? Táto akcia sa nedá vrátiť späť.')) {
-      toast({
-        title: "Zmluva vymazaná",
-        description: "Zmluva bola úspešne vymazaná.",
-        variant: "destructive",
-      });
-      // TODO: Implement contract deletion
+    if (onDelete) {
+      onDelete();
     }
   };
 
   const handleDuplicateContract = () => {
+    // Navigate to onboarding with current contract data pre-filled
+    const contractData = {
+      ...onboardingData,
+      contractId: undefined, // Clear ID for new contract
+      contractNumber: undefined
+    };
+    
+    // Store data in localStorage for the onboarding flow
+    localStorage.setItem('duplicate_contract_data', JSON.stringify(contractData));
+    
     toast({
       title: "Duplikácia",
-      description: "Vytváram kópiu zmluvy...",
+      description: "Presmerováva na vytvorenie novej zmluvy s prepísanými údajmi...",
     });
-    // TODO: Implement contract duplication
+    
+    navigate('/onboarding');
   };
 
   // Calculate contract summary
@@ -157,9 +174,19 @@ const ContractActions = ({ contract, onboardingData }: ContractActionsProps) => 
             <Button 
               onClick={handleExportPDF}
               className="w-full justify-start bg-emerald-600 hover:bg-emerald-700"
+              disabled={isExporting}
             >
-              <FileDown className="h-4 w-4 mr-2" />
-              Exportovať PDF
+              {isExporting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Generujem PDF...
+                </>
+              ) : (
+                <>
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Exportovať PDF
+                </>
+              )}
             </Button>
             
             <Button 
@@ -222,9 +249,19 @@ const ContractActions = ({ contract, onboardingData }: ContractActionsProps) => 
                 onClick={handleDeleteContract}
                 variant="outline" 
                 className="w-full justify-start border-red-300 text-red-600 hover:bg-red-50"
+                disabled={isDeleting}
               >
-              <Trash2 className="h-4 w-4 mr-2" />
-                Vymazať zmluvu
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Mazanie...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Vymazať zmluvu
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>

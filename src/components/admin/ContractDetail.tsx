@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContractData } from "@/hooks/useContractData";
 import { useContractUpdate } from "@/hooks/useContractUpdate";
+import { useContractDelete } from "@/hooks/useContractDelete";
 import { useToast } from "@/hooks/use-toast";
 import { useContractDetailForm } from "@/hooks/useContractDetailForm";
 import ContractHeader from "./contract-detail/ContractHeader";
@@ -24,19 +25,18 @@ const ContractDetail = () => {
   
   const contractDataResult = useContractData(id!);
   const updateContract = useContractUpdate(id!);
+  const deleteContract = useContractDelete();
 
-  // Initialize form management with empty data first
-  const { formData, isDirty, updateField, resetForm, markClean } = useContractDetailForm(
-    {} as OnboardingData
-  );
+  // Initialize form management
+  const { formData, isDirty, updateField, updateSection, resetForm, markClean, markDirty } = useContractDetailForm();
 
   // Handle data loading and form initialization
   useEffect(() => {
-    if (contractDataResult.data?.onboardingData && !isEditMode) {
+    if (contractDataResult.data?.onboardingData) {
       console.log('Initializing form data from contract:', contractDataResult.data.onboardingData);
       resetForm(contractDataResult.data.onboardingData);
     }
-  }, [contractDataResult.data?.onboardingData, isEditMode, resetForm]);
+  }, [contractDataResult.data?.onboardingData, resetForm]);
 
   if (contractDataResult.isLoading) {
     return (
@@ -66,6 +66,20 @@ const ContractDetail = () => {
   const handleSave = async () => {
     if (!isDirty) {
       console.log('No changes to save');
+      toast({
+        title: "Informácia",
+        description: "Nie su žiadne zmeny na uloženie.",
+      });
+      return;
+    }
+
+    if (!formData || Object.keys(formData).length === 0) {
+      console.error('No form data to save');
+      toast({
+        title: "Chyba",
+        description: "Nie sú dostupné žiadne dáta na uloženie.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -114,8 +128,37 @@ const ContractDetail = () => {
     }
   };
 
-  // Use form data if in edit mode, otherwise use original data
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      `Naozaj chcete zmazať zmluvu ${contract.contract_number}? Táto akcia sa nedá vrátiť späť.`
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      await deleteContract.mutateAsync(id!);
+      toast({
+        title: "Zmluva zmazaná",
+        description: "Zmluva bola úspešne zmazaná.",
+      });
+      navigate('/admin');
+    } catch (error) {
+      console.error('Error deleting contract:', error);
+      toast({
+        title: "Chyba pri mazaní",
+        description: "Nepodarilo sa zmazať zmluvu. Skúste to znovu.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Use form data if in edit mode and has data, otherwise use original data
   const currentData = isEditMode && Object.keys(formData).length > 0 ? formData : onboardingData;
+
+  const handleSectionUpdate = (sectionPath: string, sectionData: any) => {
+    console.log(`Section ${sectionPath} updated:`, sectionData);
+    updateSection(sectionPath, sectionData);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -127,6 +170,7 @@ const ContractDetail = () => {
         onBack={() => navigate('/admin')}
         onSave={handleSave}
         isDirty={isDirty}
+        isSaving={updateContract.isPending}
       />
 
       <div className="container mx-auto px-6 py-8">
@@ -137,12 +181,13 @@ const ContractDetail = () => {
               onboardingData={currentData}
               isEditMode={isEditMode}
               onUpdate={updateField}
+              onSectionUpdate={(data) => handleSectionUpdate('contactInfo', data)}
             />
 
             <DevicesServicesSection
               onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={isEditMode ? (data) => console.log('Device section update:', data) : handleSave}
+              onSave={(data) => handleSectionUpdate('deviceSelection', data)}
             />
 
             <CalculationFeesSection
@@ -153,26 +198,26 @@ const ContractDetail = () => {
             <AuthorizedPersonsSection
               onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={isEditMode ? (data) => console.log('Auth persons update:', data) : handleSave}
+              onSave={(data) => handleSectionUpdate('authorizedPersons', data)}
             />
 
             <ActualOwnersSection
               onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={isEditMode ? (data) => console.log('Actual owners update:', data) : handleSave}
+              onSave={(data) => handleSectionUpdate('actualOwners', data)}
             />
 
             <ContractNotesSection
               contract={contract}
               onboardingData={currentData}
               isEditMode={isEditMode}
-              onSave={isEditMode ? (data) => console.log('Notes update:', data) : handleSave}
+              onSave={(notes) => handleSectionUpdate('contract', { notes })}
             />
 
             <SignatureSection
               contract={contract}
               onboardingData={currentData}
-              onSave={isEditMode ? (data) => console.log('Signature update:', data) : handleSave}
+              onSave={(data) => handleSectionUpdate('consents', data)}
             />
           </div>
 
@@ -181,6 +226,8 @@ const ContractDetail = () => {
             <ContractActions
               contract={contract}
               onboardingData={currentData}
+              onDelete={handleDelete}
+              isDeleting={deleteContract.isPending}
             />
           </div>
         </div>

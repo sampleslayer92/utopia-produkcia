@@ -68,109 +68,124 @@ export const useContractUpdate = (contractId: string) => {
             console.error('Error updating contract status:', contractError);
             throw new Error(`Chyba pri aktualizácii stavu zmluvy: ${contractError.message}`);
           }
-        }
-
-        // Update contact info
-        console.log('Updating contact info...');
-        const { data: existingContact } = await supabase
-          .from('contact_info')
-          .select('id')
-          .eq('contract_id', contractId)
-          .maybeSingle();
-
-        const contactData = {
-          salutation: convertSalutationToDb(data.contactInfo.salutation),
-          first_name: data.contactInfo.firstName,
-          last_name: data.contactInfo.lastName,
-          email: data.contactInfo.email,
-          phone: data.contactInfo.phone || '',
-          phone_prefix: data.contactInfo.phonePrefix || '+421',
-          sales_note: data.contactInfo.salesNote || null
-        };
-
-        if (existingContact) {
-          const { error: contactError } = await supabase
-            .from('contact_info')
-            .update(contactData)
-            .eq('contract_id', contractId);
-
-          if (contactError) {
-            console.error('Error updating contact info:', contactError);
-            throw new Error(`Chyba pri aktualizácii kontaktných údajov: ${contactError.message}`);
-          }
         } else {
-          const { error: contactError } = await supabase
-            .from('contact_info')
-            .insert({
-              contract_id: contractId,
-              ...contactData
-            });
-
-          if (contactError) {
-            console.error('Error inserting contact info:', contactError);
-            throw new Error(`Chyba pri vytváraní kontaktných údajov: ${contactError.message}`);
+          // Update the updated_at timestamp
+          const { error: contractError } = await supabase
+            .from('contracts')
+            .update({ updated_at: new Date().toISOString() })
+            .eq('id', contractId);
+          
+          if (contractError) {
+            console.error('Error updating contract timestamp:', contractError);
+            throw new Error(`Chyba pri aktualizácii zmluvy: ${contractError.message}`);
           }
         }
 
-        // Update company info
-        console.log('Updating company info...');
-        const { data: existingCompany } = await supabase
-          .from('company_info')
-          .select('id')
-          .eq('contract_id', contractId)
-          .maybeSingle();
+        // Update contact info if provided
+        if (data.contactInfo) {
+          console.log('Updating contact info...');
+          const { data: existingContact } = await supabase
+            .from('contact_info')
+            .select('id')
+            .eq('contract_id', contractId)
+            .maybeSingle();
 
-        // Combine first and last name for legacy field
-        const contactPersonName = `${data.companyInfo.contactPerson?.firstName || ''} ${data.companyInfo.contactPerson?.lastName || ''}`.trim();
+          const contactData = {
+            salutation: convertSalutationToDb(data.contactInfo.salutation),
+            first_name: data.contactInfo.firstName,
+            last_name: data.contactInfo.lastName,
+            email: data.contactInfo.email,
+            phone: data.contactInfo.phone || '',
+            phone_prefix: data.contactInfo.phonePrefix || '+421',
+            sales_note: data.contactInfo.salesNote || null
+          };
 
-        const companyData = {
-          ico: data.companyInfo.ico || '',
-          dic: data.companyInfo.dic || '',
-          company_name: data.companyInfo.companyName,
-          registry_type: convertRegistryTypeToDb(data.companyInfo.registryType || 'Živnosť'),
-          is_vat_payer: data.companyInfo.isVatPayer || false,
-          vat_number: data.companyInfo.vatNumber || null,
-          court: data.companyInfo.court || '',
-          section: data.companyInfo.section || '',
-          insert_number: data.companyInfo.insertNumber || '',
-          address_street: data.companyInfo.address?.street || '',
-          address_city: data.companyInfo.address?.city || '',
-          address_zip_code: data.companyInfo.address?.zipCode || '',
-          contact_address_street: data.companyInfo.contactAddress?.street || null,
-          contact_address_city: data.companyInfo.contactAddress?.city || null,
-          contact_address_zip_code: data.companyInfo.contactAddress?.zipCode || null,
-          contact_address_same_as_main: data.companyInfo.contactAddressSameAsMain ?? true,
-          // Legacy field - combine first and last name
-          contact_person_name: contactPersonName || '',
-          // New separate fields
-          contact_person_first_name: data.companyInfo.contactPerson?.firstName || '',
-          contact_person_last_name: data.companyInfo.contactPerson?.lastName || '',
-          contact_person_email: data.companyInfo.contactPerson?.email || '',
-          contact_person_phone: data.companyInfo.contactPerson?.phone || '',
-          contact_person_is_technical: data.companyInfo.contactPerson?.isTechnicalPerson || false
-        };
+          if (existingContact) {
+            const { error: contactError } = await supabase
+              .from('contact_info')
+              .update(contactData)
+              .eq('contract_id', contractId);
 
-        if (existingCompany) {
-          const { error: companyError } = await supabase
-            .from('company_info')
-            .update(companyData)
-            .eq('contract_id', contractId);
+            if (contactError) {
+              console.error('Error updating contact info:', contactError);
+              throw new Error(`Chyba pri aktualizácii kontaktných údajov: ${contactError.message}`);
+            }
+          } else {
+            const { error: contactError } = await supabase
+              .from('contact_info')
+              .insert({
+                contract_id: contractId,
+                ...contactData
+              });
 
-          if (companyError) {
-            console.error('Error updating company info:', companyError);
-            throw new Error(`Chyba pri aktualizácii údajov spoločnosti: ${companyError.message}`);
+            if (contactError) {
+              console.error('Error inserting contact info:', contactError);
+              throw new Error(`Chyba pri vytváraní kontaktných údajov: ${contactError.message}`);
+            }
           }
-        } else {
-          const { error: companyError } = await supabase
-            .from('company_info')
-            .insert({
-              contract_id: contractId,
-              ...companyData
-            });
+        }
 
-          if (companyError) {
-            console.error('Error inserting company info:', companyError);
-            throw new Error(`Chyba pri vytváraní údajov spoločnosti: ${companyError.message}`);
+        // Update company info if provided
+        if (data.companyInfo) {
+          console.log('Updating company info...');
+          const { data: existingCompany } = await supabase
+            .from('company_info')
+            .select('id')
+            .eq('contract_id', contractId)
+            .maybeSingle();
+
+          // Combine first and last name for legacy field
+          const contactPersonName = `${data.companyInfo.contactPerson?.firstName || ''} ${data.companyInfo.contactPerson?.lastName || ''}`.trim();
+
+          const companyData = {
+            ico: data.companyInfo.ico || '',
+            dic: data.companyInfo.dic || '',
+            company_name: data.companyInfo.companyName,
+            registry_type: convertRegistryTypeToDb(data.companyInfo.registryType || 'Živnosť'),
+            is_vat_payer: data.companyInfo.isVatPayer || false,
+            vat_number: data.companyInfo.vatNumber || null,
+            court: data.companyInfo.court || '',
+            section: data.companyInfo.section || '',
+            insert_number: data.companyInfo.insertNumber || '',
+            address_street: data.companyInfo.address?.street || '',
+            address_city: data.companyInfo.address?.city || '',
+            address_zip_code: data.companyInfo.address?.zipCode || '',
+            contact_address_street: data.companyInfo.contactAddress?.street || null,
+            contact_address_city: data.companyInfo.contactAddress?.city || null,
+            contact_address_zip_code: data.companyInfo.contactAddress?.zipCode || null,
+            contact_address_same_as_main: data.companyInfo.contactAddressSameAsMain ?? true,
+            // Legacy field - combine first and last name
+            contact_person_name: contactPersonName || '',
+            // New separate fields
+            contact_person_first_name: data.companyInfo.contactPerson?.firstName || '',
+            contact_person_last_name: data.companyInfo.contactPerson?.lastName || '',
+            contact_person_email: data.companyInfo.contactPerson?.email || '',
+            contact_person_phone: data.companyInfo.contactPerson?.phone || '',
+            contact_person_is_technical: data.companyInfo.contactPerson?.isTechnicalPerson || false
+          };
+
+          if (existingCompany) {
+            const { error: companyError } = await supabase
+              .from('company_info')
+              .update(companyData)
+              .eq('contract_id', contractId);
+
+            if (companyError) {
+              console.error('Error updating company info:', companyError);
+              throw new Error(`Chyba pri aktualizácii údajov spoločnosti: ${companyError.message}`);
+            }
+          } else {
+            const { error: companyError } = await supabase
+              .from('company_info')
+              .insert({
+                contract_id: contractId,
+                ...companyData
+              });
+
+            if (companyError) {
+              console.error('Error inserting company info:', companyError);
+              throw new Error(`Chyba pri vytváraní údajov spoločnosti: ${companyError.message}`);
+            }
           }
         }
 
