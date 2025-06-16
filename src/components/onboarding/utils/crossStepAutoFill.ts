@@ -34,6 +34,37 @@ export const createAuthorizedPersonFromCompanyContact = (companyInfo: Onboarding
   };
 };
 
+// Enhanced function to create authorized person directly from contact info
+export const createAuthorizedPersonFromContactInfo = (contactInfo: OnboardingData['contactInfo']): AuthorizedPerson => {
+  const personId = contactInfo.personId || uuidv4();
+  
+  return {
+    id: personId,
+    firstName: contactInfo.firstName,
+    lastName: contactInfo.lastName,
+    email: contactInfo.email,
+    phone: contactInfo.phone,
+    phonePrefix: contactInfo.phonePrefix || '+421',
+    maidenName: '',
+    birthDate: '',
+    birthPlace: '',
+    birthNumber: '',
+    permanentAddress: '',
+    position: 'Konateľ', // Default position
+    documentType: 'OP',
+    documentNumber: '',
+    documentValidity: '',
+    documentIssuer: '',
+    documentCountry: 'Slovensko',
+    citizenship: 'Slovensko',
+    isPoliticallyExposed: false,
+    isUSCitizen: false,
+    documentFrontUrl: '',
+    documentBackUrl: '',
+    createdFromContact: true
+  };
+};
+
 export const createActualOwnerFromCompanyContact = (companyInfo: OnboardingData['companyInfo'], contactInfo?: OnboardingData['contactInfo']): ActualOwner => {
   // Always use contactInfo personId if available, otherwise generate new one
   const personId = contactInfo?.personId || uuidv4();
@@ -51,6 +82,69 @@ export const createActualOwnerFromCompanyContact = (companyInfo: OnboardingData[
     isPoliticallyExposed: false,
     createdFromContact: true
   };
+};
+
+// Enhanced function to create actual owner directly from contact info
+export const createActualOwnerFromContactInfo = (contactInfo: OnboardingData['contactInfo']): ActualOwner => {
+  const personId = contactInfo.personId || uuidv4();
+  
+  return {
+    id: personId,
+    firstName: contactInfo.firstName,
+    lastName: contactInfo.lastName,
+    maidenName: '',
+    birthDate: '',
+    birthPlace: '',
+    birthNumber: '',
+    citizenship: 'Slovensko',
+    permanentAddress: '',
+    isPoliticallyExposed: false,
+    createdFromContact: true
+  };
+};
+
+// Check if contact info has sufficient data for auto-fill
+export const canAutoFillFromContactInfo = (contactInfo: OnboardingData['contactInfo']): boolean => {
+  return Boolean(
+    contactInfo.firstName && 
+    contactInfo.lastName && 
+    contactInfo.email && 
+    contactInfo.phone &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email)
+  );
+};
+
+// Check if contact person already exists in authorized persons
+export const findContactInAuthorizedPersons = (
+  contactInfo: OnboardingData['contactInfo'],
+  authorizedPersons: AuthorizedPerson[]
+): AuthorizedPerson | undefined => {
+  if (contactInfo.personId) {
+    const byPersonId = authorizedPersons.find(person => person.id === contactInfo.personId);
+    if (byPersonId) return byPersonId;
+  }
+  
+  return authorizedPersons.find(person => 
+    person.firstName === contactInfo.firstName &&
+    person.lastName === contactInfo.lastName &&
+    person.email === contactInfo.email
+  );
+};
+
+// Check if contact person already exists in actual owners
+export const findContactInActualOwners = (
+  contactInfo: OnboardingData['contactInfo'],
+  actualOwners: ActualOwner[]
+): ActualOwner | undefined => {
+  if (contactInfo.personId) {
+    const byPersonId = actualOwners.find(owner => owner.id === contactInfo.personId);
+    if (byPersonId) return byPersonId;
+  }
+  
+  return actualOwners.find(owner => 
+    owner.firstName === contactInfo.firstName &&
+    owner.lastName === contactInfo.lastName
+  );
 };
 
 // Enhanced function to update existing authorized person with proper personId handling

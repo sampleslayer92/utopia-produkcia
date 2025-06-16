@@ -1,18 +1,16 @@
-
-import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Users2, UserPlus, Fingerprint, Flag, AlertTriangle } from "lucide-react";
+import React, { useState, useEffect } from 'react';
 import { OnboardingData, ActualOwner } from "@/types/onboarding";
-import OnboardingInput from "./ui/OnboardingInput";
-import OnboardingSection from "./ui/OnboardingSection";
-import LinkedPersonIndicator from "./ui/LinkedPersonIndicator";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useActualOwnersCrud } from "@/hooks/useActualOwnersCrud";
-import { useActualOwnersAutoSave } from "@/hooks/useActualOwnersAutoSave";
-import { usePersonDataSync } from "./hooks/usePersonDataSync";
 import { v4 as uuidv4 } from 'uuid';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Plus, Trash, Crown } from "lucide-react";
+import OnboardingStepHeader from "./ui/OnboardingStepHeader";
+import OnboardingSection from "./ui/OnboardingSection";
+import { useToast } from "@/hooks/use-toast";
+import { useContactAutoFill } from "./hooks/useContactAutoFill";
+import AutoFillFromContactButton from "./ui/AutoFillFromContactButton";
 
 interface ActualOwnersStepProps {
   data: OnboardingData;
@@ -21,377 +19,222 @@ interface ActualOwnersStepProps {
   onPrev: () => void;
 }
 
-const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
-  const { t } = useTranslation('forms');
-  const [expandedOwnerId, setExpandedOwnerId] = useState<string | null>(null);
-  
-  const contractId = data.contractId || '';
-  const { addOwner, deleteOwner } = useActualOwnersCrud(contractId);
-  
-  // Initialize person data sync with onNavigate mode
-  const { syncActualOwnerToContact, linkPersonToContact, unlinkPersonFromContact } = usePersonDataSync({
-    data,
-    updateData,
-    enableSync: true,
-    triggerMode: 'onNavigate'
-  });
-  
-  // Enable auto-save for actual owners
-  useActualOwnersAutoSave({
-    contractId,
-    actualOwners: data.actualOwners,
-    delay: 2000
-  });
+const ActualOwnersStep = ({ data, updateData, onNext, onPrev }: ActualOwnersStepProps) => {
+  const { t } = useTranslation(['steps', 'forms', 'common']);
+  const { toast } = useToast();
 
-  const addActualOwner = async () => {
-    // Use stable UUID instead of timestamp
-    const newOwnerId = uuidv4();
-    
-    const newOwner: ActualOwner = {
-      id: newOwnerId,
+  const [actualOwners, setActualOwners] = useState<ActualOwner[]>(data.actualOwners);
+
+  useEffect(() => {
+    setActualOwners(data.actualOwners);
+  }, [data.actualOwners]);
+
+  const handleAddActualOwner = () => {
+    const newActualOwner: ActualOwner = {
+      id: uuidv4(),
       firstName: '',
       lastName: '',
       maidenName: '',
       birthDate: '',
       birthPlace: '',
       birthNumber: '',
-      citizenship: t('actualOwners.sections.additionalInfo.placeholders.citizenship'),
+      citizenship: 'Slovensko',
       permanentAddress: '',
-      isPoliticallyExposed: false
+      isPoliticallyExposed: false,
+      createdFromContact: false
     };
-
-    // Update local state immediately
-    updateData({
-      actualOwners: [...data.actualOwners, newOwner]
-    });
-    
-    setExpandedOwnerId(newOwner.id);
-
-    // Add to database if we have a contract ID
-    if (contractId) {
-      try {
-        await addOwner.mutateAsync({
-          owner_id: newOwner.id,
-          first_name: '',
-          last_name: '',
-          maiden_name: null,
-          birth_date: '1900-01-01',
-          birth_place: '',
-          birth_number: '',
-          citizenship: 'SK',
-          permanent_address: '',
-          is_politically_exposed: false
-        });
-      } catch (error) {
-        console.error('Failed to add actual owner to database:', error);
-      }
-    }
+    setActualOwners([...actualOwners, newActualOwner]);
   };
 
-  const removeActualOwner = async (id: string) => {
-    // Update local state immediately
-    updateData({
-      actualOwners: data.actualOwners.filter(owner => owner.id !== id)
-    });
-    
-    if (expandedOwnerId === id) {
-      setExpandedOwnerId(null);
-    }
-
-    // Remove from database if we have a contract ID
-    if (contractId) {
-      try {
-        await deleteOwner.mutateAsync(id);
-      } catch (error) {
-        console.error('Failed to delete actual owner from database:', error);
-      }
-    }
+  const handleRemoveActualOwner = (id: string) => {
+    const updatedActualOwners = actualOwners.filter(owner => owner.id !== id);
+    setActualOwners(updatedActualOwners);
   };
 
-  const updateActualOwner = (id: string, field: string, value: any) => {
-    const updatedOwners = data.actualOwners.map(owner =>
+  const handleUpdateActualOwner = (id: string, field: string, value: any) => {
+    const updatedActualOwners = actualOwners.map(owner =>
       owner.id === id ? { ...owner, [field]: value } : owner
     );
-    
-    updateData({ actualOwners: updatedOwners });
-
-    // Trigger sync if this owner is linked to contact
-    const updatedOwner = updatedOwners.find(owner => owner.id === id);
-    if (updatedOwner && updatedOwner.createdFromContact) {
-      syncActualOwnerToContact(updatedOwner);
-    }
+    setActualOwners(updatedActualOwners);
   };
 
-  const toggleOwner = (id: string) => {
-    setExpandedOwnerId(expandedOwnerId === id ? null : id);
-  };
+  useEffect(() => {
+    updateData({ actualOwners: actualOwners });
+  }, [actualOwners, updateData]);
 
-  const handleToggleLink = (ownerId: string) => {
-    const owner = data.actualOwners.find(o => o.id === ownerId);
-    if (owner?.createdFromContact) {
-      unlinkPersonFromContact(ownerId, 'actual');
-    } else {
-      linkPersonToContact(ownerId, 'actual');
+  const handleNextStep = () => {
+    if (actualOwners.length === 0) {
+      toast({
+        title: t('common:error'),
+        description: t('steps:actualOwners.validation.noOwners'),
+        variant: "destructive",
+      });
+      return;
     }
-  };
 
-  // Get the items array with proper fallback
-  const whoIsOwnerItems = (() => {
-    try {
-      const items = t('actualOwners.sidebar.whoIsOwner.items', { returnObjects: true });
-      return Array.isArray(items) ? items : [];
-    } catch (error) {
-      console.error('Translation error for whoIsOwner items:', error);
-      return [];
+    // Check if all required fields are filled for each owner
+    for (const owner of actualOwners) {
+      if (!owner.firstName || !owner.lastName || !owner.birthDate || !owner.birthPlace || !owner.birthNumber || !owner.citizenship || !owner.permanentAddress) {
+        toast({
+          title: t('common:error'),
+          description: t('steps:actualOwners.validation.missingFields'),
+          variant: "destructive",
+        });
+        return;
+      }
     }
-  })();
+
+    updateData({ actualOwners: actualOwners });
+    onNext();
+  };
+  
+  const { 
+    autoFillActualOwner,
+    canAutoFill,
+    contactExistsInActualOwners
+  } = useContactAutoFill({ data, updateData });
+
+  const contactName = `${data.contactInfo.firstName} ${data.contactInfo.lastName}`.trim();
 
   return (
-    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
-      <CardContent className="p-0">
-        <div className="grid grid-cols-1 md:grid-cols-3">
-          {/* Left sidebar */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8">
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <Users2 className="h-5 w-5 text-blue-600" />
+    <div className="space-y-6">
+      <OnboardingStepHeader
+        title={t('steps:actualOwners.title')}
+        description={t('steps:actualOwners.description')}
+        icon={<Crown className="h-6 w-6" />}
+      />
+
+      {/* Auto-fill suggestion */}
+      {contactName && (
+        <AutoFillFromContactButton
+          contactName={contactName}
+          contactEmail={data.contactInfo.email}
+          onAutoFill={autoFillActualOwner}
+          canAutoFill={canAutoFill}
+          alreadyExists={contactExistsInActualOwners}
+          stepType="actual-owner"
+          className="mb-6"
+        />
+      )}
+
+      <OnboardingSection>
+        <div className="space-y-4">
+          {actualOwners.map((owner) => (
+            <div key={owner.id} className="border rounded-md p-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor={`firstName-${owner.id}`}>{t('forms:actualOwners.firstName')}</Label>
+                  <Input
+                    type="text"
+                    id={`firstName-${owner.id}`}
+                    value={owner.firstName}
+                    onChange={(e) => handleUpdateActualOwner(owner.id, 'firstName', e.target.value)}
+                  />
                 </div>
-                <h3 className="font-medium text-blue-900">{t('actualOwners.sidebar.title')}</h3>
+                <div>
+                  <Label htmlFor={`lastName-${owner.id}`}>{t('forms:actualOwners.lastName')}</Label>
+                  <Input
+                    type="text"
+                    id={`lastName-${owner.id}`}
+                    value={owner.lastName}
+                    onChange={(e) => handleUpdateActualOwner(owner.id, 'lastName', e.target.value)}
+                  />
+                </div>
               </div>
-              
-              <p className="text-sm text-blue-800">
-                {t('actualOwners.sidebar.description')}
-              </p>
-              
-              <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-                <p className="font-medium mb-2">{t('actualOwners.sidebar.whoIsOwner.title')}</p>
-                <ul className="space-y-2 list-disc list-inside">
-                  {whoIsOwnerItems.map((item: string, index: number) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
+
+              <div className="grid md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <Label htmlFor={`birthDate-${owner.id}`}>{t('forms:actualOwners.birthDate')}</Label>
+                  <Input
+                    type="date"
+                    id={`birthDate-${owner.id}`}
+                    value={owner.birthDate}
+                    onChange={(e) => handleUpdateActualOwner(owner.id, 'birthDate', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`birthPlace-${owner.id}`}>{t('forms:actualOwners.birthPlace')}</Label>
+                  <Input
+                    type="text"
+                    id={`birthPlace-${owner.id}`}
+                    value={owner.birthPlace}
+                    onChange={(e) => handleUpdateActualOwner(owner.id, 'birthPlace', e.target.value)}
+                  />
+                </div>
               </div>
-              
+
+              <div className="grid md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <Label htmlFor={`birthNumber-${owner.id}`}>{t('forms:actualOwners.birthNumber')}</Label>
+                  <Input
+                    type="text"
+                    id={`birthNumber-${owner.id}`}
+                    value={owner.birthNumber}
+                    onChange={(e) => handleUpdateActualOwner(owner.id, 'birthNumber', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`citizenship-${owner.id}`}>{t('forms:actualOwners.citizenship')}</Label>
+                  <Input
+                    type="text"
+                    id={`citizenship-${owner.id}`}
+                    value={owner.citizenship}
+                    onChange={(e) => handleUpdateActualOwner(owner.id, 'citizenship', e.target.value)}
+                  />
+                </div>
+              </div>
+
               <div className="mt-4">
-                <Button
-                  onClick={addActualOwner}
-                  variant="outline"
-                  className="w-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700 flex items-center justify-center gap-2"
-                  disabled={addOwner.isPending}
-                >
-                  <UserPlus className="h-4 w-4" />
-                  {t('actualOwners.sidebar.addButton')}
-                </Button>
+                <Label htmlFor={`permanentAddress-${owner.id}`}>{t('forms:actualOwners.permanentAddress')}</Label>
+                <Input
+                  type="text"
+                  id={`permanentAddress-${owner.id}`}
+                  value={owner.permanentAddress}
+                  onChange={(e) => handleUpdateActualOwner(owner.id, 'permanentAddress', e.target.value)}
+                />
               </div>
-            </div>
-          </div>
-          
-          {/* Main content */}
-          <div className="col-span-1 md:col-span-2 p-6 md:p-8">
-            <OnboardingSection>
-              {data.actualOwners.length === 0 && (
-                <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
-                  <Users2 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-slate-700 mb-2">{t('actualOwners.emptyState.title')}</h3>
-                  <p className="text-sm text-slate-500 mb-6">{t('actualOwners.emptyState.description')}</p>
-                  <Button 
-                    onClick={addActualOwner}
-                    variant="outline" 
-                    className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
-                    disabled={addOwner.isPending}
-                  >
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    {t('actualOwners.emptyState.addButton')}
-                  </Button>
-                </div>
-              )}
 
-              {data.actualOwners.map((owner, index) => (
-                <div key={owner.id} className="mb-6 overflow-hidden border border-slate-200 rounded-lg shadow-sm bg-white">
-                  <div 
-                    onClick={() => toggleOwner(owner.id)}
-                    className={`flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 ${
-                      expandedOwnerId === owner.id ? 'bg-slate-50 border-b border-slate-200' : ''
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                        owner.firstName && owner.lastName ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'
-                      }`}>
-                        <Users2 className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-medium text-slate-900">
-                            {owner.firstName && owner.lastName 
-                              ? `${owner.firstName} ${owner.lastName}`
-                              : t('actualOwners.ownerTitle', { index: index + 1 })}
-                          </h3>
-                          <LinkedPersonIndicator
-                            isLinked={owner.createdFromContact || false}
-                            onToggleLink={() => handleToggleLink(owner.id)}
-                            compact={true}
-                          />
-                        </div>
-                        {owner.birthDate && (
-                          <p className="text-xs text-slate-500">{t('actualOwners.bornLabel', { date: owner.birthDate })}</p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeActualOwner(owner.id);
-                        }}
-                        className="p-2 hover:bg-red-50 text-red-600 rounded-full transition-colors mr-2"
-                        disabled={deleteOwner.isPending}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                      <div className="w-6 text-slate-400 transition-transform duration-200 transform">
-                        {expandedOwnerId === owner.id ? '▲' : '▼'}
-                      </div>
-                    </div>
-                  </div>
-
-                  {expandedOwnerId === owner.id && (
-                    <div className="p-4 animate-fade-in">
-                      <div className="space-y-6">
-                        {/* Link indicator */}
-                        <LinkedPersonIndicator
-                          isLinked={owner.createdFromContact || false}
-                          onToggleLink={() => handleToggleLink(owner.id)}
-                        />
-
-                        {/* Basic info section */}
-                        <div>
-                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
-                            <Users2 className="h-4 w-4" />
-                            {t('actualOwners.sections.basicInfo.title')}
-                          </h4>
-                          
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <OnboardingInput
-                              label={t('actualOwners.sections.basicInfo.firstName')}
-                              value={owner.firstName}
-                              onChange={(e) => updateActualOwner(owner.id, 'firstName', e.target.value)}
-                              placeholder={t('actualOwners.sections.basicInfo.placeholders.firstName')}
-                            />
-
-                            <OnboardingInput
-                              label={t('actualOwners.sections.basicInfo.lastName')}
-                              value={owner.lastName}
-                              onChange={(e) => updateActualOwner(owner.id, 'lastName', e.target.value)}
-                              placeholder={t('actualOwners.sections.basicInfo.placeholders.lastName')}
-                            />
-                          </div>
-
-                          <OnboardingInput
-                            label={t('actualOwners.sections.basicInfo.maidenName')}
-                            value={owner.maidenName}
-                            onChange={(e) => updateActualOwner(owner.id, 'maidenName', e.target.value)}
-                            placeholder={t('actualOwners.sections.basicInfo.placeholders.maidenName')}
-                            className="mt-4"
-                          />
-                        </div>
-
-                        {/* Personal data section */}
-                        <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
-                            <Fingerprint className="h-4 w-4" />
-                            {t('actualOwners.sections.personalData.title')}
-                          </h4>
-
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <OnboardingInput
-                              label={t('actualOwners.sections.personalData.birthDate')}
-                              type="date"
-                              value={owner.birthDate}
-                              onChange={(e) => updateActualOwner(owner.id, 'birthDate', e.target.value)}
-                            />
-
-                            <OnboardingInput
-                              label={t('actualOwners.sections.personalData.birthPlace')}
-                              value={owner.birthPlace}
-                              onChange={(e) => updateActualOwner(owner.id, 'birthPlace', e.target.value)}
-                              placeholder={t('actualOwners.sections.personalData.placeholders.birthPlace')}
-                            />
-                          </div>
-
-                          <OnboardingInput
-                            label={t('actualOwners.sections.personalData.birthNumber')}
-                            value={owner.birthNumber}
-                            onChange={(e) => updateActualOwner(owner.id, 'birthNumber', e.target.value)}
-                            placeholder={t('actualOwners.sections.personalData.placeholders.birthNumber')}
-                            className="mt-4"
-                          />
-
-                          <OnboardingInput
-                            label={t('actualOwners.sections.personalData.permanentAddress')}
-                            value={owner.permanentAddress}
-                            onChange={(e) => updateActualOwner(owner.id, 'permanentAddress', e.target.value)}
-                            placeholder={t('actualOwners.sections.personalData.placeholders.permanentAddress')}
-                            className="mt-4"
-                          />
-                        </div>
-
-                        {/* Additional info section */}
-                        <div className="border-t border-slate-100 pt-4">
-                          <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
-                            <Flag className="h-4 w-4" />
-                            {t('actualOwners.sections.additionalInfo.title')}
-                          </h4>
-
-                          <OnboardingInput
-                            label={t('actualOwners.sections.additionalInfo.citizenship')}
-                            value={owner.citizenship}
-                            onChange={(e) => updateActualOwner(owner.id, 'citizenship', e.target.value)}
-                            placeholder={t('actualOwners.sections.additionalInfo.placeholders.citizenship')}
-                          />
-
-                          <div className="flex items-center space-x-2 mt-4">
-                            <Checkbox
-                              id={`isPoliticallyExposed-${owner.id}`}
-                              checked={owner.isPoliticallyExposed}
-                              onCheckedChange={(checked) => updateActualOwner(owner.id, 'isPoliticallyExposed', checked)}
-                            />
-                            <div>
-                              <label htmlFor={`isPoliticallyExposed-${owner.id}`} className="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                {t('actualOwners.sections.additionalInfo.isPoliticallyExposed')}
-                                {owner.isPoliticallyExposed && <AlertTriangle className="h-3 w-3 text-blue-500" />}
-                              </label>
-                              {owner.isPoliticallyExposed && (
-                                <p className="text-xs text-slate-500 mt-1">
-                                  {t('actualOwners.sections.additionalInfo.descriptions.isPoliticallyExposed')}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              {data.actualOwners.length > 0 && (
-                <Button
-                  onClick={addActualOwner}
-                  variant="outline"
-                  className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
-                  disabled={addOwner.isPending}
+              <div className="mt-4">
+                <Label htmlFor={`isPoliticallyExposed-${owner.id}`}>{t('forms:actualOwners.isPoliticallyExposed')}</Label>
+                <select
+                  id={`isPoliticallyExposed-${owner.id}`}
+                  value={owner.isPoliticallyExposed.toString()}
+                  onChange={(e) => handleUpdateActualOwner(owner.id, 'isPoliticallyExposed', e.target.value === 'true')}
+                  className="w-full mt-1 p-2 border rounded-md"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t('actualOwners.buttons.addOwner')}
-                </Button>
-              )}
-            </OnboardingSection>
-          </div>
+                  <option value="false">{t('common:no')}</option>
+                  <option value="true">{t('common:yes')}</option>
+                </select>
+              </div>
+
+              <Button
+                variant="destructive"
+                size="sm"
+                className="mt-4"
+                onClick={() => handleRemoveActualOwner(owner.id)}
+              >
+                <Trash className="h-4 w-4 mr-2" />
+                {t('common:remove')}
+              </Button>
+            </div>
+          ))}
         </div>
-      </CardContent>
-    </Card>
+
+        <Button variant="outline" onClick={handleAddActualOwner} className="mt-4">
+          <Plus className="h-4 w-4 mr-2" />
+          {t('steps:actualOwners.addOwnerButton')}
+        </Button>
+      </OnboardingSection>
+
+      <div className="flex justify-between">
+        <Button variant="secondary" onClick={onPrev}>
+          {t('common:previous')}
+        </Button>
+        <Button onClick={handleNextStep}>
+          {t('common:next')}
+        </Button>
+      </div>
+    </div>
   );
 };
 
