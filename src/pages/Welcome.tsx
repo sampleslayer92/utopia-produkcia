@@ -133,7 +133,7 @@ const Welcome = () => {
                   <h2 className="text-xl font-semibold text-slate-900 mb-1">
                     Začať onboarding
                   </h2>
-                  <p className="text-slate-600">Registrácia novej spoločnosti do systému naskjnkjasdnakjdsn</p>
+                  <p className="text-slate-600">Registrácia novej spoločnosti do systému</p>
                 </div>
                 <ArrowRight className="h-6 w-6 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all duration-300" />
               </div>
