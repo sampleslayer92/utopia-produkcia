@@ -18,6 +18,7 @@ const EnhancedClientOperationsSection = ({
   onUpdate,
   onSectionUpdate 
 }: EnhancedClientOperationsSectionProps) => {
+  // Safely access nested data with fallbacks
   const companyInfo = onboardingData?.companyInfo || {};
   const contactInfo = onboardingData?.contactInfo || {};
   const businessLocations = onboardingData?.businessLocations || [];
@@ -25,18 +26,55 @@ const EnhancedClientOperationsSection = ({
   console.log('EnhancedClientOperationsSection render:', { 
     companyInfo, 
     contactInfo, 
+    businessLocations,
     isEditMode,
-    onboardingDataKeys: onboardingData ? Object.keys(onboardingData) : []
+    onboardingDataKeys: onboardingData ? Object.keys(onboardingData) : [],
+    hasOnUpdate: typeof onUpdate === 'function'
   });
 
   const handleCompanyFieldChange = (field: string, value: string) => {
     console.log(`Updating company field ${field} with value:`, value);
-    onUpdate(`companyInfo.${field}`, value);
+    if (typeof onUpdate === 'function') {
+      onUpdate(`companyInfo.${field}`, value);
+    } else {
+      console.error('onUpdate function is not available');
+    }
   };
 
   const handleContactFieldChange = (field: string, value: string) => {
     console.log(`Updating contact field ${field} with value:`, value);
-    onUpdate(`contactInfo.${field}`, value);
+    if (typeof onUpdate === 'function') {
+      onUpdate(`contactInfo.${field}`, value);
+    } else {
+      console.error('onUpdate function is not available');
+    }
+  };
+
+  const handleAddressFieldChange = (addressType: 'address' | 'contactAddress', field: string, value: string) => {
+    console.log(`Updating ${addressType}.${field} with value:`, value);
+    if (typeof onUpdate === 'function') {
+      onUpdate(`companyInfo.${addressType}.${field}`, value);
+    } else {
+      console.error('onUpdate function is not available');
+    }
+  };
+
+  const handleBusinessLocationChange = (index: number, field: string, value: string) => {
+    console.log(`Updating business location ${index}.${field} with value:`, value);
+    if (typeof onUpdate === 'function') {
+      onUpdate(`businessLocations.${index}.${field}`, value);
+    } else {
+      console.error('onUpdate function is not available');
+    }
+  };
+
+  const handleBusinessLocationAddressChange = (index: number, field: string, value: string) => {
+    console.log(`Updating business location ${index}.address.${field} with value:`, value);
+    if (typeof onUpdate === 'function') {
+      onUpdate(`businessLocations.${index}.address.${field}`, value);
+    } else {
+      console.error('onUpdate function is not available');
+    }
   };
 
   return (
@@ -56,13 +94,13 @@ const EnhancedClientOperationsSection = ({
                 <Label className="text-sm font-medium text-slate-600">Názov spoločnosti</Label>
                 {isEditMode ? (
                   <Input 
-                    value={companyInfo.companyName || ''} 
+                    value={companyInfo?.companyName || ''} 
                     onChange={(e) => handleCompanyFieldChange('companyName', e.target.value)}
                     className="mt-1"
                     placeholder="Názov spoločnosti"
                   />
                 ) : (
-                  <p className="text-slate-900 mt-1">{companyInfo.companyName || 'Neuvedené'}</p>
+                  <p className="text-slate-900 mt-1">{companyInfo?.companyName || 'Neuvedené'}</p>
                 )}
               </div>
               
@@ -70,13 +108,13 @@ const EnhancedClientOperationsSection = ({
                 <Label className="text-sm font-medium text-slate-600">IČO</Label>
                 {isEditMode ? (
                   <Input 
-                    value={companyInfo.ico || ''} 
+                    value={companyInfo?.ico || ''} 
                     onChange={(e) => handleCompanyFieldChange('ico', e.target.value)}
                     className="mt-1"
                     placeholder="IČO"
                   />
                 ) : (
-                  <p className="text-slate-900 mt-1">{companyInfo.ico || 'Neuvedené'}</p>
+                  <p className="text-slate-900 mt-1">{companyInfo?.ico || 'Neuvedené'}</p>
                 )}
               </div>
             </div>
@@ -86,13 +124,13 @@ const EnhancedClientOperationsSection = ({
                 <Label className="text-sm font-medium text-slate-600">DIČ</Label>
                 {isEditMode ? (
                   <Input 
-                    value={companyInfo.dic || ''} 
+                    value={companyInfo?.dic || ''} 
                     onChange={(e) => handleCompanyFieldChange('dic', e.target.value)}
                     className="mt-1"
                     placeholder="DIČ"
                   />
                 ) : (
-                  <p className="text-slate-900 mt-1">{companyInfo.dic || 'Neuvedené'}</p>
+                  <p className="text-slate-900 mt-1">{companyInfo?.dic || 'Neuvedené'}</p>
                 )}
               </div>
               
@@ -100,13 +138,13 @@ const EnhancedClientOperationsSection = ({
                 <Label className="text-sm font-medium text-slate-600">IČ DPH</Label>
                 {isEditMode ? (
                   <Input 
-                    value={companyInfo.vatNumber || ''} 
+                    value={companyInfo?.vatNumber || ''} 
                     onChange={(e) => handleCompanyFieldChange('vatNumber', e.target.value)}
                     className="mt-1"
                     placeholder="IČ DPH"
                   />
                 ) : (
-                  <p className="text-slate-900 mt-1">{companyInfo.vatNumber || 'Nie je platca DPH'}</p>
+                  <p className="text-slate-900 mt-1">{companyInfo?.vatNumber || 'Nie je platca DPH'}</p>
                 )}
               </div>
             </div>
@@ -116,26 +154,29 @@ const EnhancedClientOperationsSection = ({
               {isEditMode ? (
                 <div className="space-y-2 mt-1">
                   <Input 
-                    value={companyInfo.address?.street || ''} 
-                    onChange={(e) => onUpdate('companyInfo.address.street', e.target.value)}
+                    value={companyInfo?.address?.street || ''} 
+                    onChange={(e) => handleAddressFieldChange('address', 'street', e.target.value)}
                     placeholder="Ulica a číslo"
                   />
                   <div className="grid grid-cols-2 gap-2">
                     <Input 
-                      value={companyInfo.address?.city || ''} 
-                      onChange={(e) => onUpdate('companyInfo.address.city', e.target.value)}
+                      value={companyInfo?.address?.city || ''} 
+                      onChange={(e) => handleAddressFieldChange('address', 'city', e.target.value)}
                       placeholder="Mesto"
                     />
                     <Input 
-                      value={companyInfo.address?.zipCode || ''} 
-                      onChange={(e) => onUpdate('companyInfo.address.zipCode', e.target.value)}
+                      value={companyInfo?.address?.zipCode || ''} 
+                      onChange={(e) => handleAddressFieldChange('address', 'zipCode', e.target.value)}
                       placeholder="PSČ"
                     />
                   </div>
                 </div>
               ) : (
                 <p className="text-slate-900 mt-1">
-                  {companyInfo.address?.street}, {companyInfo.address?.city} {companyInfo.address?.zipCode}
+                  {companyInfo?.address?.street && companyInfo?.address?.city ? 
+                    `${companyInfo.address.street}, ${companyInfo.address.city} ${companyInfo.address.zipCode || ''}` :
+                    'Neuvedené'
+                  }
                 </p>
               )}
             </div>
@@ -150,13 +191,13 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">Meno</Label>
                     {isEditMode ? (
                       <Input 
-                        value={contactInfo.firstName || ''} 
+                        value={contactInfo?.firstName || ''} 
                         onChange={(e) => handleContactFieldChange('firstName', e.target.value)}
                         className="mt-1"
                         placeholder="Meno"
                       />
                     ) : (
-                      <p className="text-slate-900 mt-1">{contactInfo.firstName || 'Neuvedené'}</p>
+                      <p className="text-slate-900 mt-1">{contactInfo?.firstName || 'Neuvedené'}</p>
                     )}
                   </div>
                   
@@ -164,13 +205,13 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">Priezvisko</Label>
                     {isEditMode ? (
                       <Input 
-                        value={contactInfo.lastName || ''} 
+                        value={contactInfo?.lastName || ''} 
                         onChange={(e) => handleContactFieldChange('lastName', e.target.value)}
                         className="mt-1"
                         placeholder="Priezvisko"
                       />
                     ) : (
-                      <p className="text-slate-900 mt-1">{contactInfo.lastName || 'Neuvedené'}</p>
+                      <p className="text-slate-900 mt-1">{contactInfo?.lastName || 'Neuvedené'}</p>
                     )}
                   </div>
                 </div>
@@ -180,14 +221,14 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">Email</Label>
                     {isEditMode ? (
                       <Input 
-                        value={contactInfo.email || ''} 
+                        value={contactInfo?.email || ''} 
                         onChange={(e) => handleContactFieldChange('email', e.target.value)}
                         type="email"
                         className="mt-1"
                         placeholder="email@example.com"
                       />
                     ) : (
-                      <p className="text-slate-900 mt-1">{contactInfo.email || 'Neuvedené'}</p>
+                      <p className="text-slate-900 mt-1">{contactInfo?.email || 'Neuvedené'}</p>
                     )}
                   </div>
                   
@@ -196,13 +237,13 @@ const EnhancedClientOperationsSection = ({
                     {isEditMode ? (
                       <div className="flex mt-1">
                         <Input 
-                          value={contactInfo.phonePrefix || '+421'} 
+                          value={contactInfo?.phonePrefix || '+421'} 
                           onChange={(e) => handleContactFieldChange('phonePrefix', e.target.value)}
                           className="w-20 mr-2"
                           placeholder="+421"
                         />
                         <Input 
-                          value={contactInfo.phone || ''} 
+                          value={contactInfo?.phone || ''} 
                           onChange={(e) => handleContactFieldChange('phone', e.target.value)}
                           className="flex-1"
                           placeholder="Telefónne číslo"
@@ -210,7 +251,10 @@ const EnhancedClientOperationsSection = ({
                       </div>
                     ) : (
                       <p className="text-slate-900 mt-1">
-                        {contactInfo.phonePrefix} {contactInfo.phone}
+                        {contactInfo?.phonePrefix && contactInfo?.phone ? 
+                          `${contactInfo.phonePrefix} ${contactInfo.phone}` :
+                          'Neuvedené'
+                        }
                       </p>
                     )}
                   </div>
@@ -234,19 +278,19 @@ const EnhancedClientOperationsSection = ({
         <CardContent className="space-y-4">
           {businessLocations && businessLocations.length > 0 ? (
             businessLocations.map((location: any, index: number) => (
-              <EditableSection key={location.id || index} isEditMode={isEditMode} label={`Prevádzka ${index + 1}`}>
+              <EditableSection key={location?.id || index} isEditMode={isEditMode} label={`Prevádzka ${index + 1}`}>
                 <div className="p-4 bg-slate-50/50 rounded-lg space-y-3">
                   <div>
                     <Label className="text-sm font-medium text-slate-600">Názov prevádzky</Label>
                     {isEditMode ? (
                       <Input 
-                        value={location.name || ''} 
-                        onChange={(e) => onUpdate(`businessLocations.${index}.name`, e.target.value)}
+                        value={location?.name || ''} 
+                        onChange={(e) => handleBusinessLocationChange(index, 'name', e.target.value)}
                         className="mt-1"
                         placeholder="Názov prevádzky"
                       />
                     ) : (
-                      <p className="text-slate-900 mt-1 font-medium">{location.name}</p>
+                      <p className="text-slate-900 mt-1 font-medium">{location?.name || 'Neuvedené'}</p>
                     )}
                   </div>
                   
@@ -255,26 +299,29 @@ const EnhancedClientOperationsSection = ({
                     {isEditMode ? (
                       <div className="space-y-2 mt-1">
                         <Input 
-                          value={location.address?.street || ''} 
-                          onChange={(e) => onUpdate(`businessLocations.${index}.address.street`, e.target.value)}
+                          value={location?.address?.street || ''} 
+                          onChange={(e) => handleBusinessLocationAddressChange(index, 'street', e.target.value)}
                           placeholder="Ulica a číslo"
                         />
                         <div className="grid grid-cols-2 gap-2">
                           <Input 
-                            value={location.address?.city || ''} 
-                            onChange={(e) => onUpdate(`businessLocations.${index}.address.city`, e.target.value)}
+                            value={location?.address?.city || ''} 
+                            onChange={(e) => handleBusinessLocationAddressChange(index, 'city', e.target.value)}
                             placeholder="Mesto"
                           />
                           <Input 
-                            value={location.address?.zipCode || ''} 
-                            onChange={(e) => onUpdate(`businessLocations.${index}.address.zipCode`, e.target.value)}
+                            value={location?.address?.zipCode || ''} 
+                            onChange={(e) => handleBusinessLocationAddressChange(index, 'zipCode', e.target.value)}
                             placeholder="PSČ"
                           />
                         </div>
                       </div>
                     ) : (
                       <p className="text-slate-900 mt-1">
-                        {location.address?.street}, {location.address?.city} {location.address?.zipCode}
+                        {location?.address?.street && location?.address?.city ? 
+                          `${location.address.street}, ${location.address.city} ${location.address.zipCode || ''}` :
+                          'Neuvedené'
+                        }
                       </p>
                     )}
                   </div>
@@ -284,13 +331,13 @@ const EnhancedClientOperationsSection = ({
                       <Label className="text-sm font-medium text-slate-600">IBAN</Label>
                       {isEditMode ? (
                         <Input 
-                          value={location.iban || ''} 
-                          onChange={(e) => onUpdate(`businessLocations.${index}.iban`, e.target.value)}
+                          value={location?.iban || ''} 
+                          onChange={(e) => handleBusinessLocationChange(index, 'iban', e.target.value)}
                           className="mt-1"
                           placeholder="IBAN"
                         />
                       ) : (
-                        <p className="text-slate-900 mt-1 font-mono text-sm">{location.iban}</p>
+                        <p className="text-slate-900 mt-1 font-mono text-sm">{location?.iban || 'Neuvedené'}</p>
                       )}
                     </div>
                     
@@ -298,13 +345,13 @@ const EnhancedClientOperationsSection = ({
                       <Label className="text-sm font-medium text-slate-600">MCC sektor</Label>
                       {isEditMode ? (
                         <Input 
-                          value={location.businessSector || ''} 
-                          onChange={(e) => onUpdate(`businessLocations.${index}.businessSector`, e.target.value)}
+                          value={location?.businessSector || ''} 
+                          onChange={(e) => handleBusinessLocationChange(index, 'businessSector', e.target.value)}
                           className="mt-1"
                           placeholder="MCC sektor"
                         />
                       ) : (
-                        <p className="text-slate-900 mt-1">{location.businessSector}</p>
+                        <p className="text-slate-900 mt-1">{location?.businessSector || 'Neuvedené'}</p>
                       )}
                     </div>
                   </div>

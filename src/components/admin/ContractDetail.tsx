@@ -27,18 +27,16 @@ const ContractDetail = () => {
   const updateContract = useContractUpdate(id!);
   const deleteContract = useContractDelete();
 
-  // Initialize form management - pass onboarding data as initial data
-  const { formData, isDirty, updateField, updateSection, resetForm, markClean } = useContractDetailForm(
-    contractDataResult.data?.onboardingData
-  );
+  // Initialize form management
+  const { formData, isDirty, updateField, updateSection, resetForm, markClean, forceInitialize } = useContractDetailForm();
 
   // Handle data loading and form initialization
   useEffect(() => {
     if (contractDataResult.data?.onboardingData) {
-      console.log('Contract data loaded, resetting form with:', contractDataResult.data.onboardingData);
-      resetForm(contractDataResult.data.onboardingData);
+      console.log('Contract data loaded, initializing form with:', contractDataResult.data.onboardingData);
+      forceInitialize(contractDataResult.data.onboardingData);
     }
-  }, [contractDataResult.data?.onboardingData, resetForm]);
+  }, [contractDataResult.data?.onboardingData, forceInitialize]);
 
   if (contractDataResult.isLoading) {
     return (
@@ -75,8 +73,11 @@ const ContractDetail = () => {
       return;
     }
 
-    if (!formData) {
-      console.error('No form data to save');
+    // Use formData if available, otherwise fall back to onboardingData
+    const dataToSave = formData || onboardingData;
+    
+    if (!dataToSave) {
+      console.error('No data available to save');
       toast({
         title: "Chyba",
         description: "Nie sú dostupné žiadne dáta na uloženie.",
@@ -86,10 +87,10 @@ const ContractDetail = () => {
     }
 
     try {
-      console.log('Saving contract changes:', formData);
+      console.log('Saving contract changes:', dataToSave);
       
       await updateContract.mutateAsync({
-        data: formData
+        data: dataToSave
       });
 
       markClean();
@@ -109,40 +110,51 @@ const ContractDetail = () => {
   };
 
   const handleToggleEdit = () => {
+    console.log('Toggling edit mode. Current state:', { isEditMode, hasFormData: !!formData, isDirty });
+    
     if (isEditMode) {
-      // Leaving edit mode - check if there are unsaved changes
+      // Leaving edit mode
       if (isDirty) {
         const shouldSave = window.confirm('Máte neuložené zmeny. Chcete ich uložiť pred ukončením editácie?');
         if (shouldSave) {
           handleSave();
         } else {
           // Reset form to original data
-          console.log('Resetting form to original data');
-          resetForm(onboardingData);
+          console.log('Resetting form to original data due to user cancellation');
+          forceInitialize(onboardingData);
         }
       }
       setIsEditMode(false);
     } else {
       // Entering edit mode - ensure form has the latest data
       console.log('Entering edit mode, ensuring form has current data');
-      resetForm(onboardingData);
+      forceInitialize(onboardingData);
       setIsEditMode(true);
     }
   };
 
   const handleDelete = async () => {
+    console.log('Delete button clicked for contract:', id);
+    
     const confirmed = window.confirm(
       `Naozaj chcete zmazať zmluvu ${contract.contract_number}? Táto akcia sa nedá vrátiť späť.`
     );
     
-    if (!confirmed) return;
+    if (!confirmed) {
+      console.log('Delete cancelled by user');
+      return;
+    }
 
     try {
+      console.log('Attempting to delete contract:', id);
       await deleteContract.mutateAsync(id!);
+      
       toast({
         title: "Zmluva zmazaná",
         description: "Zmluva bola úspešne zmazaná.",
       });
+      
+      console.log('Contract deleted successfully, navigating to admin');
       navigate('/admin');
     } catch (error) {
       console.error('Error deleting contract:', error);
@@ -154,21 +166,22 @@ const ContractDetail = () => {
     }
   };
 
-  // Use form data in edit mode if available, otherwise use original data
+  // Determine which data to use - in edit mode use formData if available, otherwise use original data
   const currentData = (isEditMode && formData) ? formData : onboardingData;
 
-  console.log('ContractDetail render:', {
+  console.log('ContractDetail render state:', {
     isEditMode,
     hasFormData: !!formData,
     hasOnboardingData: !!onboardingData,
     formDataKeys: formData ? Object.keys(formData) : [],
     onboardingDataKeys: onboardingData ? Object.keys(onboardingData) : [],
     isDirty,
-    currentDataSource: (isEditMode && formData) ? 'formData' : 'onboardingData'
+    currentDataSource: (isEditMode && formData) ? 'formData' : 'onboardingData',
+    contractId: id
   });
 
   const handleSectionUpdate = (sectionPath: string, sectionData: any) => {
-    console.log(`Section ${sectionPath} updated:`, sectionData);
+    console.log(`Section ${sectionPath} updated with data:`, sectionData);
     updateSection(sectionPath, sectionData);
   };
 

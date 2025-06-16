@@ -6,11 +6,22 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
   const [formData, setFormData] = useState<OnboardingData | null>(null);
   const [isDirty, setIsDirty] = useState(false);
 
-  // Initialize form data when initial data is provided
+  // Initialize form data when initial data is provided or changes
   useEffect(() => {
+    console.log('useContractDetailForm effect triggered with:', { 
+      hasInitialData: !!initialData, 
+      initialDataKeys: initialData ? Object.keys(initialData) : [],
+      currentFormData: !!formData
+    });
+    
     if (initialData && Object.keys(initialData).length > 0) {
-      console.log('Initializing form data with initial data:', initialData);
-      setFormData(initialData);
+      console.log('Setting form data from initial data:', initialData);
+      setFormData({ ...initialData });
+      setIsDirty(false);
+    } else if (!initialData && formData) {
+      // If initialData becomes null/undefined, clear form data
+      console.log('Clearing form data because initialData is null/undefined');
+      setFormData(null);
       setIsDirty(false);
     }
   }, [initialData]);
@@ -20,8 +31,23 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
     
     setFormData(prev => {
       if (!prev) {
-        console.warn('Cannot update field: formData is null');
-        return prev;
+        console.warn('Cannot update field: formData is null. Creating new form data.');
+        // If formData is null, create a minimal structure
+        const newData: any = {};
+        const pathParts = path.split('.');
+        let current = newData;
+        
+        for (let i = 0; i < pathParts.length - 1; i++) {
+          const part = pathParts[i];
+          current[part] = {};
+          current = current[part];
+        }
+        
+        const finalKey = pathParts[pathParts.length - 1];
+        current[finalKey] = value;
+        
+        console.log('Created new form data structure:', newData);
+        return newData as OnboardingData;
       }
       
       const pathParts = path.split('.');
@@ -54,8 +80,23 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
     
     setFormData(prev => {
       if (!prev) {
-        console.warn('Cannot update section: formData is null');
-        return prev;
+        console.warn('Cannot update section: formData is null. Creating new form data.');
+        // If formData is null, create a minimal structure
+        const newData: any = {};
+        const pathParts = sectionPath.split('.');
+        let current = newData;
+        
+        for (let i = 0; i < pathParts.length - 1; i++) {
+          const part = pathParts[i];
+          current[part] = {};
+          current = current[part];
+        }
+        
+        const finalKey = pathParts[pathParts.length - 1];
+        current[finalKey] = { ...sectionData };
+        
+        console.log('Created new form data structure for section:', newData);
+        return newData as OnboardingData;
       }
       
       const newData = { ...prev };
@@ -85,16 +126,25 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
 
   const resetForm = useCallback((newData: OnboardingData) => {
     console.log('Resetting form with new data:', newData);
-    setFormData(newData);
+    setFormData(newData ? { ...newData } : null);
     setIsDirty(false);
   }, []);
 
   const markClean = useCallback(() => {
+    console.log('Marking form as clean');
     setIsDirty(false);
   }, []);
 
   const markDirty = useCallback(() => {
+    console.log('Marking form as dirty');
     setIsDirty(true);
+  }, []);
+
+  // Force initialize with provided data immediately if available
+  const forceInitialize = useCallback((data: OnboardingData) => {
+    console.log('Force initializing form with data:', data);
+    setFormData({ ...data });
+    setIsDirty(false);
   }, []);
 
   return {
@@ -104,6 +154,7 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
     updateSection,
     resetForm,
     markClean,
-    markDirty
+    markDirty,
+    forceInitialize
   };
 };
