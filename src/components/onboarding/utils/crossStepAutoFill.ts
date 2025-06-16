@@ -26,7 +26,8 @@ export const createAuthorizedPersonFromCompanyContact = (companyInfo: Onboarding
     isPoliticallyExposed: false,
     isUSCitizen: false,
     documentFrontUrl: '',
-    documentBackUrl: ''
+    documentBackUrl: '',
+    createdFromContact: true // Mark as created from contact data
   };
 };
 
@@ -41,7 +42,8 @@ export const createActualOwnerFromCompanyContact = (companyInfo: OnboardingData[
     birthNumber: '',
     citizenship: getDefaultCountryByICO(companyInfo.ico),
     permanentAddress: '',
-    isPoliticallyExposed: false
+    isPoliticallyExposed: false,
+    createdFromContact: true // Mark as created from contact data
   };
 };
 
@@ -88,7 +90,8 @@ export const createBusinessLocationFromCompanyInfo = (companyInfo: OnboardingDat
     openingHours: 'Po-Pi: 09:00-17:00',
     openingHoursDetailed: defaultOpeningHours,
     seasonality: 'year-round',
-    assignedPersons: []
+    assignedPersons: [],
+    createdFromContact: true // Mark as created from contact data
   };
 };
 

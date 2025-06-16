@@ -42,6 +42,7 @@ export interface AuthorizedPerson {
   isUSCitizen: boolean;
   documentFrontUrl?: string;
   documentBackUrl?: string;
+  createdFromContact?: boolean; // Flag to track if created from contact data
 }
 
 export interface ActualOwner {
@@ -55,4 +56,5 @@ export interface ActualOwner {
   citizenship: string;
   permanentAddress: string;
   isPoliticallyExposed: boolean;
+  createdFromContact?: boolean; // Flag to track if created from contact data
 }
