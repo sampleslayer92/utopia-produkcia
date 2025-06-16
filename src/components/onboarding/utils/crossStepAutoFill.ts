@@ -1,3 +1,4 @@
+
 import { OnboardingData, AuthorizedPerson, ActualOwner, BusinessLocation, BankAccount, OpeningHours } from "@/types/onboarding";
 import { v4 as uuidv4 } from "uuid";
 
@@ -317,7 +318,8 @@ export const getDataConsistencyIssues = (data: OnboardingData) => {
   const issues: Array<{ type: string; message: string; action: string }> = [];
 
   // Check if contact person is missing from authorized persons
-  if (!shouldCreateOrUpdateAuthorizedPersonFromContact(data.companyInfo, data.contactInfo, data.authorizedPersons).action !== 'create' &&
+  const shouldCreateResult = shouldCreateOrUpdateAuthorizedPersonFromContact(data.companyInfo, data.contactInfo, data.authorizedPersons);
+  if (shouldCreateResult.action === 'create' &&
       !data.authorizedPersons.some(person =>
         person.firstName === data.companyInfo.contactPerson.firstName &&
         person.lastName === data.companyInfo.contactPerson.lastName
