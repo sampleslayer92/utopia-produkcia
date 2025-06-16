@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +25,7 @@ import { CalendarIcon, Download, Filter, Plus, Search, Users, Eye } from "lucide
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useEnhancedContractsData, useContractTypeOptions, useSalesPersonOptions } from "@/hooks/useEnhancedContractsData";
+import { useBulkContractActions } from "@/hooks/useBulkContractActions";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import BulkActionsPanel from "./table/BulkActionsPanel";
@@ -70,6 +72,7 @@ const EnhancedAdminTable = () => {
   const { data: contracts, isLoading, error } = useEnhancedContractsData(filters);
   const { data: contractTypes } = useContractTypeOptions();
   const { data: salesPersons } = useSalesPersonOptions();
+  const { bulkUpdate, bulkDelete, isUpdating, isDeleting } = useBulkContractActions();
 
   // Apply client-side filtering
   const filteredContracts = contracts?.filter(contract => {
@@ -135,14 +138,50 @@ const EnhancedAdminTable = () => {
 
   const handleBulkUpdate = (field: string, value: string) => {
     console.log(`Bulk update: ${field} = ${value} on contracts:`, selectedContracts);
-    toast.success(`Pole "${field}" aktualizované na "${value}" pre ${selectedContracts.length} zmlúv`);
-    setSelectedContracts([]);
+    
+    if (selectedContracts.length === 0) {
+      toast.error("Nie sú označené žiadne zmluvy na aktualizáciu");
+      return;
+    }
+
+    bulkUpdate(
+      { contractIds: selectedContracts, field, value },
+      {
+        onSuccess: () => {
+          setSelectedContracts([]);
+        },
+        onError: (error) => {
+          console.error('Bulk update failed:', error);
+        }
+      }
+    );
   };
 
   const handleBulkDelete = () => {
     console.log('Bulk delete contracts:', selectedContracts);
-    toast.success(`Vymazaných ${selectedContracts.length} zmlúv`);
-    setSelectedContracts([]);
+    
+    if (selectedContracts.length === 0) {
+      toast.error("Nie sú označené žiadne zmluvy na vymazanie");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Naozaj chcete vymazať ${selectedContracts.length} ${selectedContracts.length === 1 ? 'označenú zmluvu' : selectedContracts.length < 5 ? 'označené zmluvy' : 'označených zmlúv'}? Táto akcia je nevratná.`
+    );
+
+    if (!confirmed) {
+      console.log('Bulk delete cancelled by user');
+      return;
+    }
+
+    bulkDelete(selectedContracts, {
+      onSuccess: () => {
+        setSelectedContracts([]);
+      },
+      onError: (error) => {
+        console.error('Bulk delete failed:', error);
+      }
+    });
   };
 
   const handleExportData = () => {
@@ -189,6 +228,7 @@ const EnhancedAdminTable = () => {
           onClearSelection={() => setSelectedContracts([])}
           onBulkUpdate={handleBulkUpdate}
           onBulkDelete={handleBulkDelete}
+          isLoading={isUpdating || isDeleting}
         />
       )}
       
