@@ -10,15 +10,48 @@ export const useOnboardingNavigation = (
   setCurrentStep: (step: number) => void,
   onboardingData: OnboardingData,
   clearData: () => void,
-  markStepAsVisited: (stepNumber: number) => void
+  markStepAsVisited: (stepNumber: number) => void,
+  createContract: () => Promise<any>,
+  updateData: (data: Partial<OnboardingData>) => void,
+  isBasicInfoComplete: boolean
 ) => {
   const navigate = useNavigate();
   const totalSteps = onboardingSteps.length;
   const { submitContract, isSubmitting } = useContractSubmission();
 
-  const nextStep = () => {
+  const nextStep = async () => {
     // Mark current step as visited before moving to next
     markStepAsVisited(currentStep);
+    
+    // If moving from step 0 to step 1 and no contract exists yet, create it
+    if (currentStep === 0 && !onboardingData.contractId && isBasicInfoComplete) {
+      console.log('Creating contract before moving to step 1...');
+      
+      try {
+        const result = await createContract();
+        
+        if (result.success) {
+          updateData({
+            contractId: result.contractId,
+            contractNumber: result.contractNumber?.toString()
+          });
+          toast.success('Zmluva vytvorená!', {
+            description: `Číslo zmluvy: ${result.contractNumber}`
+          });
+        } else {
+          toast.error('Chyba pri vytváraní zmluvy', {
+            description: 'Skúste to prosím znova'
+          });
+          return; // Don't proceed to next step if contract creation failed
+        }
+      } catch (error) {
+        console.error('Failed to create contract:', error);
+        toast.error('Chyba pri vytváraní zmluvy', {
+          description: 'Skúste to prosím znova'
+        });
+        return; // Don't proceed to next step if contract creation failed
+      }
+    }
     
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);

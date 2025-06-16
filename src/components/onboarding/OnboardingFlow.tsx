@@ -17,7 +17,6 @@ import MobileStepper from "./ui/MobileStepper";
 import { useContractCreation } from "@/hooks/useContractCreation";
 import { useContractPersistence } from "@/hooks/useContractPersistence";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { toast } from "sonner";
 
 const OnboardingFlow = () => {
   const { t } = useTranslation(['common', 'notifications']);
@@ -25,7 +24,6 @@ const OnboardingFlow = () => {
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date>();
-  const [contractCreationAttempted, setContractCreationAttempted] = useState(false);
   
   const { createContract, isCreating } = useContractCreation();
   const { saveContractData } = useContractPersistence();
@@ -33,17 +31,6 @@ const OnboardingFlow = () => {
   const stepValidation = useStepValidation(currentStep, onboardingData);
   const isMobile = useIsMobile();
   const onboardingSteps = useOnboardingSteps();
-
-  const {
-    totalSteps,
-    nextStep,
-    prevStep,
-    handleComplete,
-    handleStepClick,
-    handleSaveAndExit,
-    handleSaveSignature,
-    isSubmitting
-  } = useOnboardingNavigation(currentStep, setCurrentStep, onboardingData, clearData, markStepAsVisited);
 
   const isBasicInfoComplete = useMemo(() => {
     const { contactInfo } = onboardingData;
@@ -62,6 +49,26 @@ const OnboardingFlow = () => {
     onboardingData.contactInfo.email,
     onboardingData.contactInfo.phone
   ]);
+
+  const {
+    totalSteps,
+    nextStep,
+    prevStep,
+    handleComplete,
+    handleStepClick,
+    handleSaveAndExit,
+    handleSaveSignature,
+    isSubmitting
+  } = useOnboardingNavigation(
+    currentStep, 
+    setCurrentStep, 
+    onboardingData, 
+    clearData, 
+    markStepAsVisited,
+    createContract,
+    updateData,
+    isBasicInfoComplete
+  );
 
   const handleAutoSave = useCallback(async (data: typeof onboardingData) => {
     if (!data.contractId) return;
@@ -84,44 +91,6 @@ const OnboardingFlow = () => {
     onError: () => setAutoSaveStatus('error')
   });
 
-  useEffect(() => {
-    if (!isBasicInfoComplete || onboardingData.contractId || isCreating || contractCreationAttempted) {
-      return;
-    }
-
-    const createContractWithDelay = async () => {
-      console.log('Basic contact info complete, creating contract...');
-      setContractCreationAttempted(true);
-      
-      try {
-        const result = await createContract();
-        
-        if (result.success) {
-          updateData({
-            contractId: result.contractId,
-            contractNumber: result.contractNumber?.toString()
-          });
-          toast.success(t('notifications:success.contractCreated'));
-        }
-      } catch (error) {
-        console.error('Failed to create contract:', error);
-        toast.error(t('notifications:error.contractCreationFailed'));
-        setContractCreationAttempted(false);
-      }
-    };
-
-    const timeoutId = setTimeout(createContractWithDelay, 500);
-    return () => clearTimeout(timeoutId);
-  }, [
-    isBasicInfoComplete,
-    onboardingData.contractId,
-    isCreating,
-    contractCreationAttempted,
-    createContract,
-    updateData,
-    t
-  ]);
-
   const handleUpdateData = useCallback((data: any) => {
     updateData({ ...data, currentStep });
   }, [updateData, currentStep]);
@@ -131,12 +100,10 @@ const OnboardingFlow = () => {
     setCurrentStep(0);
     setAutoSaveStatus('idle');
     setLastSaved(undefined);
-    setContractCreationAttempted(false);
   }, [clearData]);
 
   const handleErrorReset = useCallback(() => {
     setAutoSaveStatus('idle');
-    setContractCreationAttempted(false);
   }, []);
 
   const currentStepData = onboardingSteps[currentStep];

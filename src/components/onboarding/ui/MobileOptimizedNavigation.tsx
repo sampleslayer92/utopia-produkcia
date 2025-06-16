@@ -1,10 +1,15 @@
 
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Check, Loader2, Save, Menu } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ChevronLeft, ChevronRight, Check, Loader2, Save } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+interface StepValidation {
+  isValid: boolean;
+  completionPercentage: number;
+  requiredFields: string[];
+  missingFields: string[];
+}
 
 interface MobileOptimizedNavigationProps {
   currentStep: number;
@@ -15,12 +20,7 @@ interface MobileOptimizedNavigationProps {
   onSaveAndExit: () => void;
   onSaveSignature?: () => void;
   isSubmitting?: boolean;
-  stepValidation?: {
-    isValid: boolean;
-    errors: any[];
-    warnings: any[];
-    completionPercentage: number;
-  };
+  stepValidation: StepValidation;
 }
 
 const MobileOptimizedNavigation = ({
@@ -38,186 +38,76 @@ const MobileOptimizedNavigation = ({
   const isMobile = useIsMobile();
   const isConsentsStep = currentStep === totalSteps - 1;
   
-  if (!isMobile) {
-    // Desktop navigation (existing design)
-    return (
-      <div className="border-t border-slate-200 bg-white/80 backdrop-blur-sm p-6 sticky bottom-0">
-        <div className="max-w-5xl mx-auto flex justify-between items-center">
-          <Button
-            variant="outline"
-            onClick={onPrevStep}
-            disabled={currentStep === 0 || isSubmitting}
-            className="flex items-center gap-2 hover:bg-slate-50"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            {t('common:buttons.back')}
-          </Button>
-          
-          <div className="flex items-center gap-3">
-            {stepValidation && (
-              <Badge variant="outline" className="text-blue-600">
-                {stepValidation.completionPercentage}% dokončené
-              </Badge>
-            )}
-            
-            <Button
-              variant="outline"
-              onClick={onSaveAndExit}
-              disabled={isSubmitting}
-              className="hover:bg-slate-50"
-            >
-              {t('common:buttons.saveAndExit')}
-            </Button>
-            
-            {isConsentsStep && onSaveSignature && (
-              <Button
-                onClick={onSaveSignature}
-                disabled={isSubmitting}
-                variant="outline"
-                className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
-              >
-                <Save className="mr-2 h-4 w-4" />
-                {t('common:buttons.saveSignature')}
-              </Button>
-            )}
-            
-            {isConsentsStep ? (
-              <Button
-                onClick={onComplete}
-                disabled={isSubmitting || (stepValidation && !stepValidation.isValid)}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('common:status.submitting')}
-                  </>
-                ) : (
-                  <>
-                    {t('common:buttons.complete')}
-                    <Check className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            ) : (
-              <Button
-                onClick={onNextStep}
-                disabled={isSubmitting || (stepValidation && stepValidation.errors.length > 0)}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
-              >
-                {t('common:buttons.next')}
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (!isMobile) return null;
 
-  // Mobile navigation
   return (
-    <div className="border-t border-slate-200 bg-white/95 backdrop-blur-sm p-4 sticky bottom-0 z-50">
-      <div className="flex items-center justify-between gap-2">
+    <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 backdrop-blur-sm p-4 z-50">
+      <div className="flex justify-between items-center gap-3">
         <Button
           variant="outline"
-          size="sm"
           onClick={onPrevStep}
           disabled={currentStep === 0 || isSubmitting}
-          className="flex items-center gap-1"
+          className="flex items-center gap-2 hover:bg-slate-50 flex-shrink-0"
+          size="sm"
         >
           <ChevronLeft className="h-4 w-4" />
-          Späť
+          {t('common:buttons.back')}
         </Button>
-
-        <div className="flex items-center gap-2">
-          {stepValidation && (
-            <Badge variant="outline" className="text-xs">
-              {stepValidation.completionPercentage}%
-            </Badge>
+        
+        <div className="flex space-x-2 flex-shrink-0">
+          {isConsentsStep && onSaveSignature && (
+            <Button
+              onClick={onSaveSignature}
+              disabled={isSubmitting}
+              variant="outline"
+              size="sm"
+              className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+            >
+              <Save className="mr-1 h-3 w-3" />
+              {t('common:buttons.saveSignature')}
+            </Button>
           )}
           
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Menu className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-auto">
-              <SheetHeader>
-                <SheetTitle>Možnosti</SheetTitle>
-              </SheetHeader>
-              <div className="grid gap-3 py-4">
-                <Button
-                  variant="outline"
-                  onClick={onSaveAndExit}
-                  disabled={isSubmitting}
-                  className="justify-start"
-                >
-                  <Save className="mr-2 h-4 w-4" />
-                  {t('common:buttons.saveAndExit')}
-                </Button>
-                
-                {isConsentsStep && onSaveSignature && (
-                  <Button
-                    onClick={onSaveSignature}
-                    disabled={isSubmitting}
-                    variant="outline"
-                    className="justify-start"
-                  >
-                    <Save className="mr-2 h-4 w-4" />
-                    {t('common:buttons.saveSignature')}
-                  </Button>
-                )}
-                
-                {stepValidation && stepValidation.errors.length > 0 && (
-                  <div className="text-sm text-red-600 p-3 bg-red-50 rounded-md">
-                    <div className="font-medium mb-1">Opravte chyby:</div>
-                    <ul className="text-xs space-y-1">
-                      {stepValidation.errors.slice(0, 3).map((error, index) => (
-                        <li key={index}>• {error.message}</li>
-                      ))}
-                      {stepValidation.errors.length > 3 && (
-                        <li>• a ďalšie {stepValidation.errors.length - 3} chýb...</li>
-                      )}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
+          {isConsentsStep ? (
+            <Button
+              onClick={onComplete}
+              disabled={isSubmitting}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+              size="sm"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  {t('common:status.submitting')}
+                </>
+              ) : (
+                <>
+                  {t('common:buttons.complete')}
+                  <Check className="ml-1 h-3 w-3" />
+                </>
+              )}
+            </Button>
+          ) : (
+            <Button
+              onClick={onNextStep}
+              disabled={isSubmitting || !stepValidation.isValid}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
+              size="sm"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  {currentStep === 0 ? 'Vytvára sa zmluva...' : t('common:status.saving')}
+                </>
+              ) : (
+                <>
+                  {t('common:buttons.next')}
+                  <ChevronRight className="h-3 w-3" />
+                </>
+              )}
+            </Button>
+          )}
         </div>
-
-        {isConsentsStep ? (
-          <Button
-            onClick={onComplete}
-            disabled={isSubmitting || (stepValidation && !stepValidation.isValid)}
-            size="sm"
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                Odosielam
-              </>
-            ) : (
-              <>
-                Dokončiť
-                <Check className="ml-1 h-3 w-3" />
-              </>
-            )}
-          </Button>
-        ) : (
-          <Button
-            onClick={onNextStep}
-            disabled={isSubmitting || (stepValidation && stepValidation.errors.length > 0)}
-            size="sm"
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-          >
-            Ďalej
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        )}
       </div>
     </div>
   );
