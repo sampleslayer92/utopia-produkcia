@@ -7,7 +7,7 @@ import ContactInfoSidebar from "./ContactInfoStep/ContactInfoSidebar";
 import ContactInfoForm from "./ContactInfoStep/ContactInfoForm";
 import MobileOptimizedCard from "./ui/MobileOptimizedCard";
 import { useSimplifiedContactInfoLogic } from "./ContactInfoStep/hooks/useSimplifiedContactInfoLogic";
-import { useContactDataSync } from "./hooks/useContactDataSync";
+import { useContactInfoSync } from "./ContactInfoStep/hooks/useContactInfoSync";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ContactInfoStepProps {
@@ -21,13 +21,12 @@ const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
   const { t } = useTranslation(['forms', 'help']);
   const isMobile = useIsMobile();
   
-  // Use contact data sync to prevent duplicates when contact info changes
-  useContactDataSync({ onboardingData: data, updateData });
+  // Use contact info sync for cross-step synchronization
+  const { updateContactInfo } = useContactInfoSync({ data, updateData });
   
   const {
     completedFields,
     hasAutoFilled,
-    updateContactInfo,
     handlePersonDataUpdate,
     isBasicInfoComplete
   } = useSimplifiedContactInfoLogic(data, updateData);

@@ -5,10 +5,12 @@ import { Plus, Trash2, Users2, UserPlus, Fingerprint, Flag, AlertTriangle } from
 import { OnboardingData, ActualOwner } from "@/types/onboarding";
 import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSection from "./ui/OnboardingSection";
+import LinkedPersonIndicator from "./ui/LinkedPersonIndicator";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useActualOwnersCrud } from "@/hooks/useActualOwnersCrud";
 import { useActualOwnersAutoSave } from "@/hooks/useActualOwnersAutoSave";
+import { usePersonDataSync } from "./hooks/usePersonDataSync";
 
 interface ActualOwnersStepProps {
   data: OnboardingData;
@@ -23,6 +25,13 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
   
   const contractId = data.contractId || '';
   const { addOwner, deleteOwner } = useActualOwnersCrud(contractId);
+  
+  // Initialize person data sync
+  const { syncActualOwnerToContact, linkPersonToContact, unlinkPersonFromContact } = usePersonDataSync({
+    data,
+    updateData,
+    enableSync: true
+  });
   
   // Enable auto-save for actual owners
   useActualOwnersAutoSave({
@@ -94,15 +103,30 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
   };
 
   const updateActualOwner = (id: string, field: string, value: any) => {
-    updateData({
-      actualOwners: data.actualOwners.map(owner =>
-        owner.id === id ? { ...owner, [field]: value } : owner
-      )
-    });
+    const updatedOwners = data.actualOwners.map(owner =>
+      owner.id === id ? { ...owner, [field]: value } : owner
+    );
+    
+    updateData({ actualOwners: updatedOwners });
+
+    // Trigger sync if this owner is linked to contact
+    const updatedOwner = updatedOwners.find(owner => owner.id === id);
+    if (updatedOwner && updatedOwner.createdFromContact) {
+      syncActualOwnerToContact(updatedOwner);
+    }
   };
 
   const toggleOwner = (id: string) => {
     setExpandedOwnerId(expandedOwnerId === id ? null : id);
+  };
+
+  const handleToggleLink = (ownerId: string) => {
+    const owner = data.actualOwners.find(o => o.id === ownerId);
+    if (owner?.createdFromContact) {
+      unlinkPersonFromContact(ownerId, 'actual');
+    } else {
+      linkPersonToContact(ownerId, 'actual');
+    }
   };
 
   // Get the items array with proper fallback
@@ -192,11 +216,18 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                         <Users2 className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-slate-900">
-                          {owner.firstName && owner.lastName 
-                            ? `${owner.firstName} ${owner.lastName}`
-                            : t('actualOwners.ownerTitle', { index: index + 1 })}
-                        </h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-medium text-slate-900">
+                            {owner.firstName && owner.lastName 
+                              ? `${owner.firstName} ${owner.lastName}`
+                              : t('actualOwners.ownerTitle', { index: index + 1 })}
+                          </h3>
+                          <LinkedPersonIndicator
+                            isLinked={owner.createdFromContact || false}
+                            onToggleLink={() => handleToggleLink(owner.id)}
+                            compact={true}
+                          />
+                        </div>
                         {owner.birthDate && (
                           <p className="text-xs text-slate-500">{t('actualOwners.bornLabel', { date: owner.birthDate })}</p>
                         )}
@@ -222,6 +253,13 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                   {expandedOwnerId === owner.id && (
                     <div className="p-4 animate-fade-in">
                       <div className="space-y-6">
+                        {/* Link indicator */}
+                        <LinkedPersonIndicator
+                          isLinked={owner.createdFromContact || false}
+                          onToggleLink={() => handleToggleLink(owner.id)}
+                        />
+
+                        {/* Basic info section */}
                         <div>
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Users2 className="h-4 w-4" />
@@ -253,6 +291,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                           />
                         </div>
 
+                        {/* Personal data section */}
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Fingerprint className="h-4 w-4" />
@@ -292,6 +331,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                           />
                         </div>
 
+                        {/* Additional info section */}
                         <div className="border-t border-slate-100 pt-4">
                           <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                             <Flag className="h-4 w-4" />
