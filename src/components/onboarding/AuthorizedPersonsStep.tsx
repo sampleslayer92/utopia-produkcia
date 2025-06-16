@@ -78,9 +78,10 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
+        currentStep={5}
+        totalSteps={8}
         title={t('steps:authorizedPersons.title')}
         description={t('steps:authorizedPersons.description')}
-        icon={<UserCheck className="h-6 w-6" />}
       />
 
       {/* Auto-fill suggestion */}

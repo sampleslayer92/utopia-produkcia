@@ -99,9 +99,10 @@ const ActualOwnersStep = ({ data, updateData, onNext, onPrev }: ActualOwnersStep
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
+        currentStep={6}
+        totalSteps={8}
         title={t('steps:actualOwners.title')}
         description={t('steps:actualOwners.description')}
-        icon={<Crown className="h-6 w-6" />}
       />
 
       {/* Auto-fill suggestion */}
