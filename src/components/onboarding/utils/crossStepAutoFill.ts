@@ -237,21 +237,8 @@ export const findDuplicatePersons = (data: OnboardingData) => {
     }
   }
 
-  // Check for duplicate persons between authorized and actual owners
-  data.authorizedPersons.forEach(authPerson => {
-    const duplicateOwner = data.actualOwners.find(owner =>
-      owner.firstName === authPerson.firstName && 
-      owner.lastName === authPerson.lastName
-    );
-    
-    if (duplicateOwner) {
-      duplicates.push({
-        type: 'duplicate-person',
-        message: `${authPerson.firstName} ${authPerson.lastName} je v oprávnených osobách aj skutočných majiteľoch`,
-        action: 'merge-person-data'
-      });
-    }
-  });
+  // Removed the duplicate person check between authorized persons and actual owners
+  // It's normal for the same person to be in both sections
 
   return duplicates;
 };
