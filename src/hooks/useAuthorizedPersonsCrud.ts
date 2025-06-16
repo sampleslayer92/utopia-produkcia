@@ -9,12 +9,24 @@ export const useAuthorizedPersonsCrud = (contractId: string) => {
 
   const addPerson = useMutation({
     mutationFn: async (personData: any) => {
+      // Check if person already exists to prevent duplicates
+      const { data: existingPerson } = await supabase
+        .from('authorized_persons')
+        .select('id, person_id')
+        .eq('contract_id', contractId)
+        .eq('person_id', personData.person_id)
+        .single();
+
+      if (existingPerson) {
+        console.log('Person already exists, skipping insert:', personData.person_id);
+        return existingPerson;
+      }
+
       const { data, error } = await supabase
         .from('authorized_persons')
         .insert([{ 
           ...personData, 
-          contract_id: contractId,
-          person_id: `person_${Date.now()}`
+          contract_id: contractId
         }])
         .select()
         .single();
@@ -80,26 +92,53 @@ export const useAuthorizedPersonsCrud = (contractId: string) => {
     mutationFn: async ({ personId, personData }: { personId: string; personData: any }) => {
       console.log('Upserting person with person_id:', personId, 'data:', personData);
       
-      const { data, error } = await supabase
+      // First, check if the person already exists
+      const { data: existingPerson } = await supabase
         .from('authorized_persons')
-        .upsert([{ 
-          ...personData,
-          contract_id: contractId,
-          person_id: personId
-        }], { 
-          onConflict: 'contract_id,person_id',
-          ignoreDuplicates: false 
-        })
-        .select()
-        .single();
+        .select('id, person_id')
+        .eq('contract_id', contractId)
+        .eq('person_id', personId)
+        .maybeSingle();
 
-      if (error) {
-        console.error('Upsert person error:', error);
-        throw error;
+      if (existingPerson) {
+        // Update existing person
+        console.log('Updating existing person:', personId);
+        const { data, error } = await supabase
+          .from('authorized_persons')
+          .update(personData)
+          .eq('person_id', personId)
+          .eq('contract_id', contractId)
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Update existing person error:', error);
+          throw error;
+        }
+        
+        console.log('Person updated successfully:', data);
+        return data;
+      } else {
+        // Insert new person
+        console.log('Inserting new person:', personId);
+        const { data, error } = await supabase
+          .from('authorized_persons')
+          .insert([{ 
+            ...personData,
+            contract_id: contractId,
+            person_id: personId
+          }])
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Insert new person error:', error);
+          throw error;
+        }
+        
+        console.log('Person inserted successfully:', data);
+        return data;
       }
-      
-      console.log('Person upserted successfully:', data);
-      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });

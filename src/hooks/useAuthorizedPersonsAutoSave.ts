@@ -36,15 +36,18 @@ export const useAuthorizedPersonsAutoSave = ({
       try {
         // Find persons that have changed and need saving
         const personsToSave = authorizedPersons.filter(person => {
-          // Only save if person has basic required fields
-          return person.firstName && person.lastName && person.email && person.id;
+          // Only save if person has basic required fields and valid ID
+          return person.firstName && person.lastName && person.email && person.id && 
+                 typeof person.id === 'string' && person.id.length > 10; // Ensure valid UUID-like format
         });
 
         // Upsert each person that needs saving
         for (const person of personsToSave) {
           console.log('Auto-saving authorized person:', person.id);
+          
+          // Use the person's ID directly instead of regenerating
           await upsertPerson.mutateAsync({
-            personId: person.id,
+            personId: person.id, // Use the existing stable ID
             personData: {
               first_name: person.firstName,
               last_name: person.lastName,

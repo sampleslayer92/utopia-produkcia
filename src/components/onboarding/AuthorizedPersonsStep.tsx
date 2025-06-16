@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,24 @@ interface AuthorizedPersonsStepProps {
   onPrev: () => void;
 }
 
+// Helper function to generate a stable UUID based on contract ID and index
+const generateStablePersonId = (contractId: string, index: number): string => {
+  // Create a deterministic UUID based on contract ID and person index
+  const crypto = window.crypto || (window as any).msCrypto;
+  const encoder = new TextEncoder();
+  const data = encoder.encode(`${contractId}-person-${index}`);
+  
+  // Simple hash to create a UUID-like string
+  let hash = 0;
+  for (let i = 0; i < data.length; i++) {
+    hash = ((hash << 5) - hash + data[i]) & 0xffffffff;
+  }
+  
+  // Convert to UUID format
+  const hashStr = Math.abs(hash).toString(16).padStart(8, '0');
+  return `${hashStr.substring(0, 8)}-${hashStr.substring(8, 12) || '0000'}-4${hashStr.substring(12, 15) || '000'}-8${hashStr.substring(15, 18) || '000'}-${hashStr.substring(18, 30) || '000000000000'}`.substring(0, 36);
+};
+
 const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps) => {
   const { t } = useTranslation('forms');
   const [expandedPersonId, setExpandedPersonId] = useState<string | null>(null);
@@ -36,8 +55,12 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
   });
 
   const addAuthorizedPerson = async () => {
+    // Generate a stable person ID based on contract ID and current count
+    const personIndex = data.authorizedPersons.length;
+    const stablePersonId = generateStablePersonId(contractId, personIndex);
+    
     const newPerson: AuthorizedPerson = {
-      id: Date.now().toString(),
+      id: stablePersonId, // Use stable ID instead of timestamp
       firstName: '',
       lastName: '',
       email: '',
@@ -72,7 +95,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
     if (contractId) {
       try {
         await addPerson.mutateAsync({
-          person_id: newPerson.id,
+          person_id: stablePersonId, // Use the same stable ID
           first_name: '',
           last_name: '',
           email: '',
