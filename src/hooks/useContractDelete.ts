@@ -9,7 +9,7 @@ export const useContractDelete = () => {
     mutationFn: async (contractId: string) => {
       console.log('Deleting contract:', contractId);
 
-      // S CASCADE DELETE constraints stačí zmazať iba contract
+      // Vďaka CASCADE DELETE constraints stačí zmazať iba contract
       // Všetky súvisiace dáta sa zmažú automaticky
       const { error: contractError } = await supabase
         .from('contracts')

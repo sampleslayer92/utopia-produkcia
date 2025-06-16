@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContractData } from "@/hooks/useContractData";
@@ -133,6 +134,11 @@ const ContractDetail = () => {
   };
 
   const handleDelete = async () => {
+    if (!id) {
+      console.error('No contract ID available for deletion');
+      return;
+    }
+
     console.log('Delete button clicked for contract:', id);
     
     const confirmed = window.confirm(
@@ -146,7 +152,7 @@ const ContractDetail = () => {
 
     try {
       console.log('Attempting to delete contract:', id);
-      await deleteContract.mutateAsync(id!);
+      await deleteContract.mutateAsync(id);
       
       toast({
         title: "Zmluva zmazaná",
