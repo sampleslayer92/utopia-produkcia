@@ -20,6 +20,24 @@
     "actualOwners": "Koneční beneficienti",
     "consents": "Potvrdenie a podpis zmluvy"
   },
+  "authorizedPersons": {
+    "title": "Splnomocnené osoby",
+    "description": "Splnomocnené osoby sú štatutárni zástupcovia alebo splnomocnené osoby, ktoré môžu konať za spoločnosť.",
+    "addPersonButton": "Pridať splnomocnenú osobu",
+    "validation": {
+      "noPeople": "Musí byť pridaná aspoň jedna splnomocnená osoba.",
+      "missingFields": "Všetky povinné polia musia byť vyplnené pre každú splnomocnenú osobu."
+    }
+  },
+  "actualOwners": {
+    "title": "Skutoční vlastníci",
+    "description": "Skutoční vlastníci sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
+    "addOwnerButton": "Pridať skutočného vlastníka",
+    "validation": {
+      "noOwners": "Musí byť pridaný aspoň jeden skutočný vlastník.",
+      "missingFields": "Všetky povinné polia musia byť vyplnené pre každého skutočného vlastníka."
+    }
+  },
   "sidebar": {
     "title": "Registračný proces",
     "help": {

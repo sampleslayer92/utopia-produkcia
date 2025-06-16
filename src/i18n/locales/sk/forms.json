@@ -507,32 +507,13 @@
     "description": "Splnomocnené osoby sú štatutárni zástupcovia alebo splnomocnené osoby, ktoré môžu konať za spoločnosť.",
     "addPerson": "Pridať splnomocnenú osobu",
     "fromContact": "Z kontaktov",
-    "sidebar": {
-      "title": "Splnomocnené osoby",
-      "description": "Splnomocnené osoby sú štatutárni zástupcovia alebo splnomocnené osoby, ktoré môžu konať za spoločnosť.",
-      "importantInfo": {
-        "title": "Dôležité informácie",
-        "items": [
-          "Údaje musia byť v súlade s oficiálnymi dokumentmi",
-          "Pre každú splnomocnenú osobu je potrebný platný doklad totožnosti",
-          "Musí byť uvedená aspoň jedna splnomocnená osoba"
-        ]
-      },
-      "addButton": "Pridať osobu"
-    },
-    "emptyState": {
-      "title": "Žiadne splnomocnené osoby",
-      "description": "Pridajte aspoň jedného štatutárneho zástupcu alebo splnomocnenú osobu",
-      "addButton": "Pridať splnomocnenú osobu"
-    },
-    "personTitle": "Splnomocnená osoba {index}",
     "sections": {
       "basicInfo": {
         "title": "Základné informácie",
-        "firstName": "Meno *",
-        "lastName": "Priezvisko *",
-        "email": "Email *",
-        "phone": "Telefón *",
+        "firstName": "Meno",
+        "lastName": "Priezvisko",
+        "email": "Email",
+        "phone": "Telefón",
         "maidenName": "Dievčenské priezvisko",
         "placeholders": {
           "firstName": "Zadajte meno",
@@ -544,11 +525,11 @@
       },
       "personalData": {
         "title": "Osobné údaje",
-        "birthDate": "Dátum narodenia *",
-        "birthPlace": "Miesto narodenia *",
-        "birthNumber": "Rodné číslo *",
-        "position": "Pozícia *",
-        "permanentAddress": "Trvalý pobyt *",
+        "birthDate": "Dátum narodenia",
+        "birthPlace": "Miesto narodenia",
+        "birthNumber": "Rodné číslo",
+        "position": "Pozícia",
+        "permanentAddress": "Trvalý pobyt",
         "placeholders": {
           "birthPlace": "Bratislava",
           "birthNumber": "123456/7890",
@@ -558,13 +539,11 @@
       },
       "document": {
         "title": "Doklad totožnosti",
-        "documentType": "Typ dokladu *",
-        "documentNumber": "Číslo dokladu *",
-        "documentValidity": "Platnosť do *",
-        "documentIssuer": "Vydal *",
-        "documentCountry": "Krajina vydania *",
-        "documentFront": "Predná strana dokladu *",
-        "documentBack": "Zadná strana dokladu *",
+        "documentType": "Typ dokladu",
+        "documentNumber": "Číslo dokladu",
+        "documentValidity": "Platnosť do",
+        "documentIssuer": "Vydal",
+        "documentCountry": "Krajina vydania",
         "documentTypeOptions": {
           "OP": "Občiansky preukaz",
           "Pas": "Cestovný pas"
@@ -577,7 +556,7 @@
       },
       "additionalInfo": {
         "title": "Doplnkové informácie",
-        "citizenship": "Štátna príslušnosť *",
+        "citizenship": "Štátna príslušnosť",
         "isPoliticallyExposed": "Politicky exponovaná osoba",
         "isUSCitizen": "Občan USA",
         "placeholders": {
@@ -588,10 +567,6 @@
           "isUSCitizen": "Osoby s občianstvom USA podliehajú špeciálnym oznamovacím povinnostiam."
         }
       }
-    },
-    "buttons": {
-      "addPerson": "Pridať ďalšiu splnomocnenú osobu",
-      "remove": "Odstrániť"
     }
   },
   "actualOwners": {
@@ -599,30 +574,11 @@
     "description": "Skutoční vlastníci sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
     "fromContact": "Z kontaktov",
     "bornLabel": "Narodený: {date}",
-    "sidebar": {
-      "title": "Skutoční vlastníci",
-      "description": "Skutoční vlastníci sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
-      "whoIsOwner": {
-        "title": "Kto je skutočný vlastník?",
-        "items": [
-          "Osoba s priamym alebo nepriamym podielom aspoň 25%",
-          "Osoba s právom vymenovať alebo odvolať štatutárny orgán",
-          "Osoba, ktorá inak kontroluje spoločnosť"
-        ]
-      },
-      "addButton": "Pridať vlastníka"
-    },
-    "emptyState": {
-      "title": "Žiadni skutoční vlastníci",
-      "description": "Pridajte aspoň jedného skutočného vlastníka",
-      "addButton": "Pridať skutočného vlastníka"
-    },
-    "ownerTitle": "Skutočný vlastník {index}",
     "sections": {
       "basicInfo": {
         "title": "Základné informácie",
-        "firstName": "Meno *",
-        "lastName": "Priezvisko *",
+        "firstName": "Meno",
+        "lastName": "Priezvisko",
         "maidenName": "Dievčenské priezvisko",
         "placeholders": {
           "firstName": "Zadajte meno",
@@ -632,10 +588,10 @@
       },
       "personalData": {
         "title": "Osobné údaje",
-        "birthDate": "Dátum narodenia *",
-        "birthPlace": "Miesto narodenia *",
-        "birthNumber": "Rodné číslo *",
-        "permanentAddress": "Trvalý pobyt *",
+        "birthDate": "Dátum narodenia",
+        "birthPlace": "Miesto narodenia",
+        "birthNumber": "Rodné číslo",
+        "permanentAddress": "Trvalý pobyt",
         "placeholders": {
           "birthPlace": "Bratislava",
           "birthNumber": "123456/7890",
@@ -644,7 +600,7 @@
       },
       "additionalInfo": {
         "title": "Doplnkové informácie",
-        "citizenship": "Štátna príslušnosť *",
+        "citizenship": "Štátna príslušnosť",
         "isPoliticallyExposed": "Politicky exponovaná osoba",
         "placeholders": {
           "citizenship": "Slovensko"
@@ -653,10 +609,6 @@
           "isPoliticallyExposed": "Politicky exponovaná osoba je osoba vo významnej verejnej funkcii."
         }
       }
-    },
-    "buttons": {
-      "addOwner": "Pridať ďalšieho vlastníka",
-      "remove": "Odstrániť"
     }
   },
   "consents": {
