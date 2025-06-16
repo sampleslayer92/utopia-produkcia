@@ -27,13 +27,15 @@ const ContractDetail = () => {
   const updateContract = useContractUpdate(id!);
   const deleteContract = useContractDelete();
 
-  // Initialize form management
-  const { formData, isDirty, updateField, updateSection, resetForm, markClean, markDirty } = useContractDetailForm();
+  // Initialize form management - pass onboarding data as initial data
+  const { formData, isDirty, updateField, updateSection, resetForm, markClean } = useContractDetailForm(
+    contractDataResult.data?.onboardingData
+  );
 
   // Handle data loading and form initialization
   useEffect(() => {
     if (contractDataResult.data?.onboardingData) {
-      console.log('Initializing form data from contract:', contractDataResult.data.onboardingData);
+      console.log('Contract data loaded, resetting form with:', contractDataResult.data.onboardingData);
       resetForm(contractDataResult.data.onboardingData);
     }
   }, [contractDataResult.data?.onboardingData, resetForm]);
@@ -73,7 +75,7 @@ const ContractDetail = () => {
       return;
     }
 
-    if (!formData || Object.keys(formData).length === 0) {
+    if (!formData) {
       console.error('No form data to save');
       toast({
         title: "Chyba",
@@ -121,11 +123,9 @@ const ContractDetail = () => {
       }
       setIsEditMode(false);
     } else {
-      // Entering edit mode - ensure form has current data
+      // Entering edit mode - ensure form has the latest data
       console.log('Entering edit mode, ensuring form has current data');
-      if (!formData) {
-        resetForm(onboardingData);
-      }
+      resetForm(onboardingData);
       setIsEditMode(true);
     }
   };
@@ -154,14 +154,17 @@ const ContractDetail = () => {
     }
   };
 
-  // Use form data if available and in edit mode, otherwise use original data
+  // Use form data in edit mode if available, otherwise use original data
   const currentData = (isEditMode && formData) ? formData : onboardingData;
 
   console.log('ContractDetail render:', {
     isEditMode,
     hasFormData: !!formData,
+    hasOnboardingData: !!onboardingData,
     formDataKeys: formData ? Object.keys(formData) : [],
-    isDirty
+    onboardingDataKeys: onboardingData ? Object.keys(onboardingData) : [],
+    isDirty,
+    currentDataSource: (isEditMode && formData) ? 'formData' : 'onboardingData'
   });
 
   const handleSectionUpdate = (sectionPath: string, sectionData: any) => {

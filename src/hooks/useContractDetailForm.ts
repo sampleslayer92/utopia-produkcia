@@ -6,10 +6,10 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
   const [formData, setFormData] = useState<OnboardingData | null>(null);
   const [isDirty, setIsDirty] = useState(false);
 
-  // Update form data when initial data changes
+  // Initialize form data when initial data is provided
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
-      console.log('Updating form data from initial data:', initialData);
+      console.log('Initializing form data with initial data:', initialData);
       setFormData(initialData);
       setIsDirty(false);
     }
@@ -19,7 +19,10 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
     console.log(`Updating field ${path} with value:`, value);
     
     setFormData(prev => {
-      if (!prev) return prev;
+      if (!prev) {
+        console.warn('Cannot update field: formData is null');
+        return prev;
+      }
       
       const pathParts = path.split('.');
       const newData = { ...prev };
@@ -50,7 +53,10 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
     console.log(`Updating section ${sectionPath} with data:`, sectionData);
     
     setFormData(prev => {
-      if (!prev) return prev;
+      if (!prev) {
+        console.warn('Cannot update section: formData is null');
+        return prev;
+      }
       
       const newData = { ...prev };
       const pathParts = sectionPath.split('.');
