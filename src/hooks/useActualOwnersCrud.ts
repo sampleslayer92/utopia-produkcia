@@ -30,6 +30,7 @@ export const useActualOwnersCrud = (contractId: string) => {
       });
     },
     onError: (error) => {
+      console.error('Add owner error:', error);
       toast({
         title: "Chyba",
         description: "Nepodarilo sa pridať skutočného vlastníka.",
@@ -40,14 +41,22 @@ export const useActualOwnersCrud = (contractId: string) => {
 
   const updateOwner = useMutation({
     mutationFn: async ({ ownerId, updates }: { ownerId: string; updates: any }) => {
+      console.log('Updating owner with owner_id:', ownerId, 'updates:', updates);
+      
       const { data, error } = await supabase
         .from('actual_owners')
         .update(updates)
-        .eq('id', ownerId)
+        .eq('owner_id', ownerId)
+        .eq('contract_id', contractId)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Update owner error:', error);
+        throw error;
+      }
+      
+      console.log('Owner updated successfully:', data);
       return data;
     },
     onSuccess: () => {
@@ -58,6 +67,7 @@ export const useActualOwnersCrud = (contractId: string) => {
       });
     },
     onError: (error) => {
+      console.error('Update owner mutation error:', error);
       toast({
         title: "Chyba",
         description: "Nepodarilo sa aktualizovať skutočného vlastníka.",
@@ -66,12 +76,46 @@ export const useActualOwnersCrud = (contractId: string) => {
     },
   });
 
+  const upsertOwner = useMutation({
+    mutationFn: async ({ ownerId, ownerData }: { ownerId: string; ownerData: any }) => {
+      console.log('Upserting owner with owner_id:', ownerId, 'data:', ownerData);
+      
+      const { data, error } = await supabase
+        .from('actual_owners')
+        .upsert([{ 
+          ...ownerData,
+          contract_id: contractId,
+          owner_id: ownerId
+        }], { 
+          onConflict: 'contract_id,owner_id',
+          ignoreDuplicates: false 
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Upsert owner error:', error);
+        throw error;
+      }
+      
+      console.log('Owner upserted successfully:', data);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+    },
+    onError: (error) => {
+      console.error('Upsert owner mutation error:', error);
+    },
+  });
+
   const deleteOwner = useMutation({
     mutationFn: async (ownerId: string) => {
       const { error } = await supabase
         .from('actual_owners')
         .delete()
-        .eq('id', ownerId);
+        .eq('owner_id', ownerId)
+        .eq('contract_id', contractId);
 
       if (error) throw error;
     },
@@ -94,9 +138,11 @@ export const useActualOwnersCrud = (contractId: string) => {
   return {
     addOwner,
     updateOwner,
+    upsertOwner,
     deleteOwner,
     isAdding: addOwner.isPending,
     isUpdating: updateOwner.isPending,
+    isUpserting: upsertOwner.isPending,
     isDeleting: deleteOwner.isPending,
   };
 };

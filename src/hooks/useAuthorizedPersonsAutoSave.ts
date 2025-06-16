@@ -14,7 +14,7 @@ export const useAuthorizedPersonsAutoSave = ({
   authorizedPersons,
   delay = 2000
 }: UseAuthorizedPersonsAutoSaveOptions) => {
-  const { updatePerson } = useAuthorizedPersonsCrud(contractId);
+  const { upsertPerson } = useAuthorizedPersonsCrud(contractId);
   const timeoutRef = useRef<NodeJS.Timeout>();
   const previousDataRef = useRef<string>('');
 
@@ -34,40 +34,38 @@ export const useAuthorizedPersonsAutoSave = ({
     // Set new timeout for auto-save
     timeoutRef.current = setTimeout(async () => {
       try {
-        // Find persons that have changed and need updating
-        const personsToUpdate = authorizedPersons.filter(person => {
-          // Only update if person has basic required fields and looks like it needs saving
-          return person.firstName && person.lastName && person.email;
+        // Find persons that have changed and need saving
+        const personsToSave = authorizedPersons.filter(person => {
+          // Only save if person has basic required fields
+          return person.firstName && person.lastName && person.email && person.id;
         });
 
-        // Update each person that needs saving
-        for (const person of personsToUpdate) {
-          if (person.id) {
-            console.log('Auto-saving authorized person:', person.id);
-            await updatePerson.mutateAsync({
-              personId: person.id,
-              updates: {
-                first_name: person.firstName,
-                last_name: person.lastName,
-                email: person.email,
-                phone: person.phone || '',
-                maiden_name: person.maidenName || null,
-                birth_date: person.birthDate || '1900-01-01',
-                birth_place: person.birthPlace || '',
-                birth_number: person.birthNumber || '',
-                permanent_address: person.permanentAddress || '',
-                position: person.position || '',
-                document_type: person.documentType || 'OP',
-                document_number: person.documentNumber || '',
-                document_validity: person.documentValidity || '2099-12-31',
-                document_issuer: person.documentIssuer || '',
-                document_country: person.documentCountry || 'SK',
-                citizenship: person.citizenship || 'SK',
-                is_politically_exposed: person.isPoliticallyExposed || false,
-                is_us_citizen: person.isUSCitizen || false
-              }
-            });
-          }
+        // Upsert each person that needs saving
+        for (const person of personsToSave) {
+          console.log('Auto-saving authorized person:', person.id);
+          await upsertPerson.mutateAsync({
+            personId: person.id,
+            personData: {
+              first_name: person.firstName,
+              last_name: person.lastName,
+              email: person.email,
+              phone: person.phone || '',
+              maiden_name: person.maidenName || null,
+              birth_date: person.birthDate || '1900-01-01',
+              birth_place: person.birthPlace || '',
+              birth_number: person.birthNumber || '',
+              permanent_address: person.permanentAddress || '',
+              position: person.position || '',
+              document_type: person.documentType || 'OP',
+              document_number: person.documentNumber || '',
+              document_validity: person.documentValidity || '2099-12-31',
+              document_issuer: person.documentIssuer || '',
+              document_country: person.documentCountry || 'SK',
+              citizenship: person.citizenship || 'SK',
+              is_politically_exposed: person.isPoliticallyExposed || false,
+              is_us_citizen: person.isUSCitizen || false
+            }
+          });
         }
         
         previousDataRef.current = currentDataString;
@@ -82,7 +80,7 @@ export const useAuthorizedPersonsAutoSave = ({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [authorizedPersons, contractId, delay, updatePerson]);
+  }, [authorizedPersons, contractId, delay, upsertPerson]);
 
   // Cleanup on unmount
   useEffect(() => {

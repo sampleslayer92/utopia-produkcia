@@ -14,7 +14,7 @@ export const useActualOwnersAutoSave = ({
   actualOwners,
   delay = 2000
 }: UseActualOwnersAutoSaveOptions) => {
-  const { updateOwner } = useActualOwnersCrud(contractId);
+  const { upsertOwner } = useActualOwnersCrud(contractId);
   const timeoutRef = useRef<NodeJS.Timeout>();
   const previousDataRef = useRef<string>('');
 
@@ -34,31 +34,29 @@ export const useActualOwnersAutoSave = ({
     // Set new timeout for auto-save
     timeoutRef.current = setTimeout(async () => {
       try {
-        // Find owners that have changed and need updating
-        const ownersToUpdate = actualOwners.filter(owner => {
-          // Only update if owner has basic required fields and looks like it needs saving
-          return owner.firstName && owner.lastName;
+        // Find owners that have changed and need saving
+        const ownersToSave = actualOwners.filter(owner => {
+          // Only save if owner has basic required fields
+          return owner.firstName && owner.lastName && owner.id;
         });
 
-        // Update each owner that needs saving
-        for (const owner of ownersToUpdate) {
-          if (owner.id) {
-            console.log('Auto-saving actual owner:', owner.id);
-            await updateOwner.mutateAsync({
-              ownerId: owner.id,
-              updates: {
-                first_name: owner.firstName,
-                last_name: owner.lastName,
-                maiden_name: owner.maidenName || null,
-                birth_date: owner.birthDate || '1900-01-01',
-                birth_place: owner.birthPlace || '',
-                birth_number: owner.birthNumber || '',
-                citizenship: owner.citizenship || 'SK',
-                permanent_address: owner.permanentAddress || '',
-                is_politically_exposed: owner.isPoliticallyExposed || false
-              }
-            });
-          }
+        // Upsert each owner that needs saving
+        for (const owner of ownersToSave) {
+          console.log('Auto-saving actual owner:', owner.id);
+          await upsertOwner.mutateAsync({
+            ownerId: owner.id,
+            ownerData: {
+              first_name: owner.firstName,
+              last_name: owner.lastName,
+              maiden_name: owner.maidenName || null,
+              birth_date: owner.birthDate || '1900-01-01',
+              birth_place: owner.birthPlace || '',
+              birth_number: owner.birthNumber || '',
+              citizenship: owner.citizenship || 'SK',
+              permanent_address: owner.permanentAddress || '',
+              is_politically_exposed: owner.isPoliticallyExposed || false
+            }
+          });
         }
         
         previousDataRef.current = currentDataString;
@@ -73,7 +71,7 @@ export const useActualOwnersAutoSave = ({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [actualOwners, contractId, delay, updateOwner]);
+  }, [actualOwners, contractId, delay, upsertOwner]);
 
   // Cleanup on unmount
   useEffect(() => {

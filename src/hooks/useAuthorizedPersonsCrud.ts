@@ -30,6 +30,7 @@ export const useAuthorizedPersonsCrud = (contractId: string) => {
       });
     },
     onError: (error) => {
+      console.error('Add person error:', error);
       toast({
         title: "Chyba",
         description: "Nepodarilo sa pridať oprávnenú osobu.",
@@ -40,14 +41,22 @@ export const useAuthorizedPersonsCrud = (contractId: string) => {
 
   const updatePerson = useMutation({
     mutationFn: async ({ personId, updates }: { personId: string; updates: any }) => {
+      console.log('Updating person with person_id:', personId, 'updates:', updates);
+      
       const { data, error } = await supabase
         .from('authorized_persons')
         .update(updates)
-        .eq('id', personId)
+        .eq('person_id', personId)
+        .eq('contract_id', contractId)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Update person error:', error);
+        throw error;
+      }
+      
+      console.log('Person updated successfully:', data);
       return data;
     },
     onSuccess: () => {
@@ -58,6 +67,7 @@ export const useAuthorizedPersonsCrud = (contractId: string) => {
       });
     },
     onError: (error) => {
+      console.error('Update person mutation error:', error);
       toast({
         title: "Chyba",
         description: "Nepodarilo sa aktualizovať oprávnenú osobu.",
@@ -66,12 +76,46 @@ export const useAuthorizedPersonsCrud = (contractId: string) => {
     },
   });
 
+  const upsertPerson = useMutation({
+    mutationFn: async ({ personId, personData }: { personId: string; personData: any }) => {
+      console.log('Upserting person with person_id:', personId, 'data:', personData);
+      
+      const { data, error } = await supabase
+        .from('authorized_persons')
+        .upsert([{ 
+          ...personData,
+          contract_id: contractId,
+          person_id: personId
+        }], { 
+          onConflict: 'contract_id,person_id',
+          ignoreDuplicates: false 
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Upsert person error:', error);
+        throw error;
+      }
+      
+      console.log('Person upserted successfully:', data);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+    },
+    onError: (error) => {
+      console.error('Upsert person mutation error:', error);
+    },
+  });
+
   const deletePerson = useMutation({
     mutationFn: async (personId: string) => {
       const { error } = await supabase
         .from('authorized_persons')
         .delete()
-        .eq('id', personId);
+        .eq('person_id', personId)
+        .eq('contract_id', contractId);
 
       if (error) throw error;
     },
@@ -94,9 +138,11 @@ export const useAuthorizedPersonsCrud = (contractId: string) => {
   return {
     addPerson,
     updatePerson,
+    upsertPerson,
     deletePerson,
     isAdding: addPerson.isPending,
     isUpdating: updatePerson.isPending,
+    isUpserting: upsertPerson.isPending,
     isDeleting: deletePerson.isPending,
   };
 };
