@@ -13,6 +13,8 @@ interface StepValidationResult {
   errors: ValidationError[];
   warnings: ValidationError[];
   completionPercentage: number;
+  requiredFields: string[];
+  missingFields: string[];
 }
 
 export const useStepValidation = (
@@ -24,6 +26,20 @@ export const useStepValidation = (
 } => {
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [warnings, setWarnings] = useState<ValidationError[]>([]);
+
+  const getRequiredFields = useCallback((stepNumber: number): string[] => {
+    switch (stepNumber) {
+      case 0: return ['firstName', 'lastName', 'email', 'phone'];
+      case 1: return ['ico', 'companyName', 'address', 'contactPerson'];
+      case 2: return ['businessLocations'];
+      case 3: return ['selectedSolutions', 'dynamicCards'];
+      case 4: return []; // fees - optional
+      case 5: return ['authorizedPersons'];
+      case 6: return ['actualOwners'];
+      case 7: return ['consents.gdpr', 'consents.terms'];
+      default: return [];
+    }
+  }, []);
 
   const validateContactInfo = useCallback((): ValidationError[] => {
     const validationErrors: ValidationError[] = [];
@@ -148,6 +164,13 @@ export const useStepValidation = (
     return Math.max(0, Math.round(((total - errorCount) / total) * 100));
   }, [validateStep, data]);
 
+  const getMissingFields = useCallback((stepNumber: number): string[] => {
+    const validationErrors = validateStep(stepNumber);
+    return validationErrors
+      .filter(e => e.severity === 'error')
+      .map(e => e.field);
+  }, [validateStep]);
+
   useEffect(() => {
     const validationResults = validateStep(step);
     setErrors(validationResults.filter(e => e.severity === 'error'));
@@ -170,11 +193,16 @@ export const useStepValidation = (
     setWarnings(prev => prev.filter(e => e.field !== field));
   }, []);
 
+  const requiredFields = getRequiredFields(step);
+  const missingFields = getMissingFields(step);
+
   return {
     isValid: errors.length === 0,
     errors,
     warnings,
     completionPercentage: calculateCompletionPercentage(step),
+    requiredFields,
+    missingFields,
     validateField,
     clearFieldError
   };
