@@ -1,5 +1,5 @@
 
-import { Link, LinkOff } from 'lucide-react';
+import { Link, Link2Off } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 
@@ -22,7 +22,7 @@ const LinkedPersonIndicator = ({ isLinked, onToggleLink, compact = false }: Link
         className={`p-1 h-auto ${isLinked ? 'text-blue-600 hover:text-blue-700' : 'text-slate-400 hover:text-slate-600'}`}
         title={isLinked ? 'Odpojená osoba od kontaktných údajov' : 'Prepojiť osobu s kontaktnými údajmi'}
       >
-        {isLinked ? <Link className="h-4 w-4" /> : <LinkOff className="h-4 w-4" />}
+        {isLinked ? <Link className="h-4 w-4" /> : <Link2Off className="h-4 w-4" />}
       </Button>
     );
   }
@@ -53,7 +53,7 @@ const LinkedPersonIndicator = ({ isLinked, onToggleLink, compact = false }: Link
           onClick={onToggleLink}
           className="h-auto p-1 text-slate-500 hover:text-blue-600 flex items-center gap-1"
         >
-          <LinkOff className="h-3 w-3" />
+          <Link2Off className="h-3 w-3" />
           Prepojiť s kontaktom
         </Button>
       )}
