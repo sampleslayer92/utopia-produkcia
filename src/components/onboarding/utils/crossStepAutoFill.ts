@@ -4,13 +4,16 @@ import { v4 as uuidv4 } from "uuid";
 export const createAuthorizedPersonFromCompanyContact = (companyInfo: OnboardingData['companyInfo'], contactInfo?: OnboardingData['contactInfo']): AuthorizedPerson => {
   const position = getDefaultPositionByRegistryType(companyInfo.registryType);
   
+  // Use contactInfo personId if available, otherwise generate new one
+  const personId = contactInfo?.personId || uuidv4();
+  
   return {
-    id: uuidv4(),
+    id: personId, // Use stable person ID
     firstName: companyInfo.contactPerson.firstName,
     lastName: companyInfo.contactPerson.lastName,
     email: companyInfo.contactPerson.email,
     phone: companyInfo.contactPerson.phone,
-    phonePrefix: contactInfo?.phonePrefix || '+421', // Use contact prefix or default
+    phonePrefix: contactInfo?.phonePrefix || '+421',
     maidenName: '',
     birthDate: '',
     birthPlace: '',
@@ -27,13 +30,16 @@ export const createAuthorizedPersonFromCompanyContact = (companyInfo: Onboarding
     isUSCitizen: false,
     documentFrontUrl: '',
     documentBackUrl: '',
-    createdFromContact: true // Mark as created from contact data
+    createdFromContact: true
   };
 };
 
-export const createActualOwnerFromCompanyContact = (companyInfo: OnboardingData['companyInfo']): ActualOwner => {
+export const createActualOwnerFromCompanyContact = (companyInfo: OnboardingData['companyInfo'], contactInfo?: OnboardingData['contactInfo']): ActualOwner => {
+  // Use contactInfo personId if available, otherwise generate new one
+  const personId = contactInfo?.personId || uuidv4();
+  
   return {
-    id: uuidv4(),
+    id: personId, // Use stable person ID
     firstName: companyInfo.contactPerson.firstName,
     lastName: companyInfo.contactPerson.lastName,
     maidenName: '',
@@ -43,7 +49,37 @@ export const createActualOwnerFromCompanyContact = (companyInfo: OnboardingData[
     citizenship: getDefaultCountryByICO(companyInfo.ico),
     permanentAddress: '',
     isPoliticallyExposed: false,
-    createdFromContact: true // Mark as created from contact data
+    createdFromContact: true
+  };
+};
+
+// New function to update existing authorized person instead of creating new one
+export const updateExistingAuthorizedPerson = (
+  existingPerson: AuthorizedPerson,
+  companyInfo: OnboardingData['companyInfo'],
+  contactInfo?: OnboardingData['contactInfo']
+): AuthorizedPerson => {
+  return {
+    ...existingPerson,
+    firstName: companyInfo.contactPerson.firstName,
+    lastName: companyInfo.contactPerson.lastName,
+    email: companyInfo.contactPerson.email,
+    phone: companyInfo.contactPerson.phone,
+    phonePrefix: contactInfo?.phonePrefix || existingPerson.phonePrefix || '+421',
+    createdFromContact: true
+  };
+};
+
+// New function to update existing actual owner instead of creating new one
+export const updateExistingActualOwner = (
+  existingOwner: ActualOwner,
+  companyInfo: OnboardingData['companyInfo']
+): ActualOwner => {
+  return {
+    ...existingOwner,
+    firstName: companyInfo.contactPerson.firstName,
+    lastName: companyInfo.contactPerson.lastName,
+    createdFromContact: true
   };
 };
 
@@ -91,7 +127,7 @@ export const createBusinessLocationFromCompanyInfo = (companyInfo: OnboardingDat
     openingHoursDetailed: defaultOpeningHours,
     seasonality: 'year-round',
     assignedPersons: [],
-    createdFromContact: true // Mark as created from contact data
+    createdFromContact: true
   };
 };
 
@@ -146,47 +182,73 @@ export const getDefaultBusinessSectorByRegistryType = (registryType: string): st
   }
 };
 
-export const shouldCreateAuthorizedPersonFromContact = (
-  companyInfo: OnboardingData['companyInfo'], 
+export const shouldCreateOrUpdateAuthorizedPersonFromContact = (
+  companyInfo: OnboardingData['companyInfo'],
+  contactInfo: OnboardingData['contactInfo'], 
   authorizedPersons: AuthorizedPerson[]
-): boolean => {
+): { action: 'create' | 'update' | 'none'; existingPerson?: AuthorizedPerson } => {
   if (!companyInfo.contactPerson.firstName || !companyInfo.contactPerson.lastName) {
-    return false;
+    return { action: 'none' };
   }
 
-  // Check if contact person already exists in authorized persons
-  const exists = authorizedPersons.some(person => 
+  // First check by personId if available
+  if (contactInfo.personId) {
+    const existingByPersonId = authorizedPersons.find(person => person.id === contactInfo.personId);
+    if (existingByPersonId) {
+      return { action: 'update', existingPerson: existingByPersonId };
+    }
+  }
+
+  // Check if contact person already exists by name and email
+  const existingByContact = authorizedPersons.find(person => 
     person.firstName === companyInfo.contactPerson.firstName &&
     person.lastName === companyInfo.contactPerson.lastName &&
     person.email === companyInfo.contactPerson.email
   );
 
-  return !exists;
+  if (existingByContact) {
+    return { action: 'update', existingPerson: existingByContact };
+  }
+
+  return { action: 'create' };
 };
 
-export const shouldCreateActualOwnerFromContact = (
+export const shouldCreateOrUpdateActualOwnerFromContact = (
   contactInfo: OnboardingData['contactInfo'],
   companyInfo: OnboardingData['companyInfo'], 
   actualOwners: ActualOwner[]
-): boolean => {
+): { action: 'create' | 'update' | 'none'; existingOwner?: ActualOwner } => {
   // Only auto-create if contact person has "Majiteľ" role
   const hasOwnerRole = contactInfo.userRoles?.includes('Majiteľ') || contactInfo.userRole === 'Majiteľ';
   
   if (!hasOwnerRole || !companyInfo.contactPerson.firstName || !companyInfo.contactPerson.lastName) {
-    return false;
+    return { action: 'none' };
   }
 
-  // Check if contact person already exists in actual owners
-  const exists = actualOwners.some(owner => 
+  // First check by personId if available
+  if (contactInfo.personId) {
+    const existingByPersonId = actualOwners.find(owner => owner.id === contactInfo.personId);
+    if (existingByPersonId) {
+      return { action: 'update', existingOwner: existingByPersonId };
+    }
+  }
+
+  // Check if contact person already exists by name
+  const existingByContact = actualOwners.find(owner => 
     owner.firstName === companyInfo.contactPerson.firstName &&
     owner.lastName === companyInfo.contactPerson.lastName
   );
 
-  return !exists;
+  if (existingByContact) {
+    return { action: 'update', existingOwner: existingByContact };
+  }
+
+  return { action: 'create' };
 };
 
 export const updateSigningPersonFromContact = (
   companyInfo: OnboardingData['companyInfo'],
+  contactInfo: OnboardingData['contactInfo'],
   authorizedPersons: AuthorizedPerson[],
   currentSigningPersonId?: string
 ): string | undefined => {
@@ -195,12 +257,20 @@ export const updateSigningPersonFromContact = (
     return currentSigningPersonId;
   }
 
-  // Find the contact person in authorized persons
-  const contactAsAuthorized = authorizedPersons.find(person =>
-    person.firstName === companyInfo.contactPerson.firstName &&
-    person.lastName === companyInfo.contactPerson.lastName &&
-    person.email === companyInfo.contactPerson.email
-  );
+  // Find the contact person in authorized persons by personId first, then by contact details
+  let contactAsAuthorized: AuthorizedPerson | undefined;
+  
+  if (contactInfo.personId) {
+    contactAsAuthorized = authorizedPersons.find(person => person.id === contactInfo.personId);
+  }
+  
+  if (!contactAsAuthorized) {
+    contactAsAuthorized = authorizedPersons.find(person =>
+      person.firstName === companyInfo.contactPerson.firstName &&
+      person.lastName === companyInfo.contactPerson.lastName &&
+      person.email === companyInfo.contactPerson.email
+    );
+  }
 
   return contactAsAuthorized?.id;
 };
@@ -247,7 +317,7 @@ export const getDataConsistencyIssues = (data: OnboardingData) => {
   const issues: Array<{ type: string; message: string; action: string }> = [];
 
   // Check if contact person is missing from authorized persons
-  if (!shouldCreateAuthorizedPersonFromContact(data.companyInfo, data.authorizedPersons) &&
+  if (!shouldCreateOrUpdateAuthorizedPersonFromContact(data.companyInfo, data.contactInfo, data.authorizedPersons).action !== 'create' &&
       !data.authorizedPersons.some(person =>
         person.firstName === data.companyInfo.contactPerson.firstName &&
         person.lastName === data.companyInfo.contactPerson.lastName
@@ -283,11 +353,11 @@ export const getAutoFillSuggestions = (data: OnboardingData) => {
   const suggestions: string[] = [];
 
   // Check for potential auto-fills
-  if (shouldCreateAuthorizedPersonFromContact(data.companyInfo, data.authorizedPersons)) {
+  if (shouldCreateOrUpdateAuthorizedPersonFromContact(data.companyInfo, data.contactInfo, data.authorizedPersons).action === 'create') {
     suggestions.push('Pridať kontaktnú osobu spoločnosti do oprávnených osôb');
   }
 
-  if (shouldCreateActualOwnerFromContact(data.contactInfo, data.companyInfo, data.actualOwners)) {
+  if (shouldCreateOrUpdateActualOwnerFromContact(data.contactInfo, data.companyInfo, data.actualOwners).action === 'create') {
     suggestions.push('Pridať kontaktnú osobu ako skutočného majiteľa');
   }
 

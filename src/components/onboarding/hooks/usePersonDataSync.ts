@@ -23,13 +23,15 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
     phonePrefix: contactInfo.phonePrefix || '+421'
   });
 
-  // Helper to find linked persons (those created from contact or marked as linked)
+  // Helper to find linked persons using stable person ID
   const findLinkedPersons = () => {
+    const personId = data.contactInfo.personId;
+    
     const linkedAuthorizedPersons = data.authorizedPersons.filter(
-      person => person.createdFromContact || person.email === data.contactInfo.email
+      person => person.id === personId || person.createdFromContact || person.email === data.contactInfo.email
     );
     const linkedActualOwners = data.actualOwners.filter(
-      owner => owner.createdFromContact || 
+      owner => owner.id === personId || owner.createdFromContact || 
       (owner.firstName === data.contactInfo.firstName && owner.lastName === data.contactInfo.lastName)
     );
     
@@ -52,14 +54,16 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
     }
 
     const basicFields = getBasicPersonFields(data.contactInfo);
+    const personId = data.contactInfo.personId;
     let hasChanges = false;
 
     // Update linked authorized persons
     const updatedAuthorizedPersons = data.authorizedPersons.map(person => {
-      if (person.createdFromContact || person.email === data.contactInfo.email) {
+      if (person.id === personId || person.createdFromContact || person.email === data.contactInfo.email) {
         hasChanges = true;
         return {
           ...person,
+          id: personId || person.id, // Ensure stable ID
           firstName: basicFields.firstName,
           lastName: basicFields.lastName,
           email: basicFields.email,
@@ -73,11 +77,12 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
 
     // Update linked actual owners
     const updatedActualOwners = data.actualOwners.map(owner => {
-      if (owner.createdFromContact || 
-          (owner.firstName === previousContactRef.current && owner.lastName === previousContactRef.current)) {
+      if (owner.id === personId || owner.createdFromContact || 
+          (owner.firstName === data.contactInfo.firstName && owner.lastName === data.contactInfo.lastName)) {
         hasChanges = true;
         return {
           ...owner,
+          id: personId || owner.id, // Ensure stable ID
           firstName: basicFields.firstName,
           lastName: basicFields.lastName,
           createdFromContact: true
@@ -111,7 +116,8 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
   const syncAuthorizedPersonToContact = (updatedPerson: AuthorizedPerson) => {
     if (!enableSync || isUpdatingRef.current) return;
 
-    if (updatedPerson.createdFromContact || updatedPerson.email === data.contactInfo.email) {
+    const personId = data.contactInfo.personId;
+    if (updatedPerson.id === personId || updatedPerson.createdFromContact || updatedPerson.email === data.contactInfo.email) {
       isUpdatingRef.current = true;
 
       updateData({
@@ -140,7 +146,8 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
   const syncActualOwnerToContact = (updatedOwner: ActualOwner) => {
     if (!enableSync || isUpdatingRef.current) return;
 
-    if (updatedOwner.createdFromContact) {
+    const personId = data.contactInfo.personId;
+    if (updatedOwner.id === personId || updatedOwner.createdFromContact) {
       isUpdatingRef.current = true;
 
       updateData({
@@ -163,30 +170,40 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
   };
 
   // Helper to mark person as linked to contact
-  const linkPersonToContact = (personId: string, personType: 'authorized' | 'actual') => {
+  const linkPersonToContact = (targetPersonId: string, personType: 'authorized' | 'actual') => {
+    const personId = data.contactInfo.personId;
+    
     if (personType === 'authorized') {
       const updatedPersons = data.authorizedPersons.map(person =>
-        person.id === personId ? { ...person, createdFromContact: true } : person
+        person.id === targetPersonId ? { 
+          ...person, 
+          id: personId || person.id, // Use contact personId if available
+          createdFromContact: true 
+        } : person
       );
       updateData({ authorizedPersons: updatedPersons });
     } else {
       const updatedOwners = data.actualOwners.map(owner =>
-        owner.id === personId ? { ...owner, createdFromContact: true } : owner
+        owner.id === targetPersonId ? { 
+          ...owner, 
+          id: personId || owner.id, // Use contact personId if available
+          createdFromContact: true 
+        } : owner
       );
       updateData({ actualOwners: updatedOwners });
     }
   };
 
   // Helper to unlink person from contact
-  const unlinkPersonFromContact = (personId: string, personType: 'authorized' | 'actual') => {
+  const unlinkPersonFromContact = (targetPersonId: string, personType: 'authorized' | 'actual') => {
     if (personType === 'authorized') {
       const updatedPersons = data.authorizedPersons.map(person =>
-        person.id === personId ? { ...person, createdFromContact: false } : person
+        person.id === targetPersonId ? { ...person, createdFromContact: false } : person
       );
       updateData({ authorizedPersons: updatedPersons });
     } else {
       const updatedOwners = data.actualOwners.map(owner =>
-        owner.id === personId ? { ...owner, createdFromContact: false } : owner
+        owner.id === targetPersonId ? { ...owner, createdFromContact: false } : owner
       );
       updateData({ actualOwners: updatedOwners });
     }

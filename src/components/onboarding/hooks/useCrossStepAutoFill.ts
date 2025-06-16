@@ -1,12 +1,13 @@
-
 import { useCallback, useEffect } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import {
   createAuthorizedPersonFromCompanyContact,
   createActualOwnerFromCompanyContact,
   createBusinessLocationFromCompanyInfo,
-  shouldCreateAuthorizedPersonFromContact,
-  shouldCreateActualOwnerFromContact,
+  shouldCreateOrUpdateAuthorizedPersonFromContact,
+  shouldCreateOrUpdateActualOwnerFromContact,
+  updateExistingAuthorizedPerson,
+  updateExistingActualOwner,
   updateSigningPersonFromContact,
   syncContactPersonData,
   syncBusinessLocationAddresses
@@ -24,8 +25,14 @@ export const useCrossStepAutoFill = ({ data, updateData, currentStep }: UseCross
 
   // Auto-fill authorized person when moving to step 5 (Authorized Persons)
   const autoFillAuthorizedPerson = useCallback(() => {
-    if (shouldCreateAuthorizedPersonFromContact(data.companyInfo, data.authorizedPersons)) {
-      const newAuthorizedPerson = createAuthorizedPersonFromCompanyContact(data.companyInfo);
+    const { action, existingPerson } = shouldCreateOrUpdateAuthorizedPersonFromContact(
+      data.companyInfo, 
+      data.contactInfo,
+      data.authorizedPersons
+    );
+    
+    if (action === 'create') {
+      const newAuthorizedPerson = createAuthorizedPersonFromCompanyContact(data.companyInfo, data.contactInfo);
       
       updateData({
         authorizedPersons: [...data.authorizedPersons, newAuthorizedPerson]
@@ -37,14 +44,36 @@ export const useCrossStepAutoFill = ({ data, updateData, currentStep }: UseCross
       });
 
       return newAuthorizedPerson.id;
+    } else if (action === 'update' && existingPerson) {
+      const updatedPerson = updateExistingAuthorizedPerson(existingPerson, data.companyInfo, data.contactInfo);
+      
+      updateData({
+        authorizedPersons: data.authorizedPersons.map(person => 
+          person.id === existingPerson.id ? updatedPerson : person
+        )
+      });
+
+      toast({
+        title: "Automatická aktualizácia",
+        description: "Údaje oprávnenej osoby boli aktualizované podľa kontaktných údajov",
+      });
+
+      return updatedPerson.id;
     }
+    
     return null;
-  }, [data.companyInfo, data.authorizedPersons, updateData, toast]);
+  }, [data.companyInfo, data.contactInfo, data.authorizedPersons, updateData, toast]);
 
   // Auto-fill actual owner when moving to step 6 (Actual Owners)
   const autoFillActualOwner = useCallback(() => {
-    if (shouldCreateActualOwnerFromContact(data.contactInfo, data.companyInfo, data.actualOwners)) {
-      const newActualOwner = createActualOwnerFromCompanyContact(data.companyInfo);
+    const { action, existingOwner } = shouldCreateOrUpdateActualOwnerFromContact(
+      data.contactInfo,
+      data.companyInfo, 
+      data.actualOwners
+    );
+    
+    if (action === 'create') {
+      const newActualOwner = createActualOwnerFromCompanyContact(data.companyInfo, data.contactInfo);
       
       updateData({
         actualOwners: [...data.actualOwners, newActualOwner]
@@ -53,6 +82,19 @@ export const useCrossStepAutoFill = ({ data, updateData, currentStep }: UseCross
       toast({
         title: "Automatické vyplnenie",
         description: "Kontaktná osoba bola pridaná ako skutočný majiteľ",
+      });
+    } else if (action === 'update' && existingOwner) {
+      const updatedOwner = updateExistingActualOwner(existingOwner, data.companyInfo);
+      
+      updateData({
+        actualOwners: data.actualOwners.map(owner => 
+          owner.id === existingOwner.id ? updatedOwner : owner
+        )
+      });
+
+      toast({
+        title: "Automatická aktualizácia",
+        description: "Údaje skutočného majiteľa boli aktualizované podľa kontaktných údajov",
       });
     }
   }, [data.contactInfo, data.companyInfo, data.actualOwners, updateData, toast]);
@@ -77,6 +119,7 @@ export const useCrossStepAutoFill = ({ data, updateData, currentStep }: UseCross
   const autoFillSigningPerson = useCallback(() => {
     const signingPersonId = updateSigningPersonFromContact(
       data.companyInfo,
+      data.contactInfo,
       data.authorizedPersons,
       data.consents.signingPersonId
     );
@@ -94,7 +137,7 @@ export const useCrossStepAutoFill = ({ data, updateData, currentStep }: UseCross
         description: "Kontaktná osoba bola nastavená ako podpisujúca osoba",
       });
     }
-  }, [data.companyInfo, data.authorizedPersons, data.consents, updateData, toast]);
+  }, [data.companyInfo, data.contactInfo, data.authorizedPersons, data.consents, updateData, toast]);
 
   // Sync contact person data across steps
   const syncContactData = useCallback(() => {
@@ -120,12 +163,14 @@ export const useCrossStepAutoFill = ({ data, updateData, currentStep }: UseCross
   const applyAllSuggestions = useCallback(() => {
     let applied = 0;
 
-    if (shouldCreateAuthorizedPersonFromContact(data.companyInfo, data.authorizedPersons)) {
+    const authorizedPersonResult = shouldCreateOrUpdateAuthorizedPersonFromContact(data.companyInfo, data.contactInfo, data.authorizedPersons);
+    if (authorizedPersonResult.action === 'create' || authorizedPersonResult.action === 'update') {
       autoFillAuthorizedPerson();
       applied++;
     }
 
-    if (shouldCreateActualOwnerFromContact(data.contactInfo, data.companyInfo, data.actualOwners)) {
+    const actualOwnerResult = shouldCreateOrUpdateActualOwnerFromContact(data.contactInfo, data.companyInfo, data.actualOwners);
+    if (actualOwnerResult.action === 'create' || actualOwnerResult.action === 'update') {
       autoFillActualOwner();
       applied++;
     }

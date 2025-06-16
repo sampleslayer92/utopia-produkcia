@@ -1,5 +1,6 @@
 
 export interface ContactInfo {
+  personId?: string; // Add stable person ID
   salutation?: 'Pan' | 'Pani';
   firstName: string;
   lastName: string;
