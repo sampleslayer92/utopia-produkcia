@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,8 @@ import OnboardingInput from "./ui/OnboardingInput";
 import OnboardingSection from "./ui/OnboardingSection";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useActualOwnersCrud } from "@/hooks/useActualOwnersCrud";
+import { useActualOwnersAutoSave } from "@/hooks/useActualOwnersAutoSave";
 
 interface ActualOwnersStepProps {
   data: OnboardingData;
@@ -19,8 +20,18 @@ interface ActualOwnersStepProps {
 const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
   const { t } = useTranslation('forms');
   const [expandedOwnerId, setExpandedOwnerId] = useState<string | null>(null);
+  
+  const contractId = data.contractId || '';
+  const { addOwner, deleteOwner } = useActualOwnersCrud(contractId);
+  
+  // Enable auto-save for actual owners
+  useActualOwnersAutoSave({
+    contractId,
+    actualOwners: data.actualOwners,
+    delay: 2000
+  });
 
-  const addActualOwner = () => {
+  const addActualOwner = async () => {
     const newOwner: ActualOwner = {
       id: Date.now().toString(),
       firstName: '',
@@ -34,20 +45,51 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
       isPoliticallyExposed: false
     };
 
+    // Update local state immediately
     updateData({
       actualOwners: [...data.actualOwners, newOwner]
     });
     
-    // Automatically expand the new owner
     setExpandedOwnerId(newOwner.id);
+
+    // Add to database if we have a contract ID
+    if (contractId) {
+      try {
+        await addOwner.mutateAsync({
+          owner_id: newOwner.id,
+          first_name: '',
+          last_name: '',
+          maiden_name: null,
+          birth_date: '1900-01-01',
+          birth_place: '',
+          birth_number: '',
+          citizenship: 'SK',
+          permanent_address: '',
+          is_politically_exposed: false
+        });
+      } catch (error) {
+        console.error('Failed to add actual owner to database:', error);
+      }
+    }
   };
 
-  const removeActualOwner = (id: string) => {
+  const removeActualOwner = async (id: string) => {
+    // Update local state immediately
     updateData({
       actualOwners: data.actualOwners.filter(owner => owner.id !== id)
     });
+    
     if (expandedOwnerId === id) {
       setExpandedOwnerId(null);
+    }
+
+    // Remove from database if we have a contract ID
+    if (contractId) {
+      try {
+        await deleteOwner.mutateAsync(id);
+      } catch (error) {
+        console.error('Failed to delete actual owner from database:', error);
+      }
     }
   };
 
@@ -106,6 +148,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                   onClick={addActualOwner}
                   variant="outline"
                   className="w-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700 flex items-center justify-center gap-2"
+                  disabled={addOwner.isPending}
                 >
                   <UserPlus className="h-4 w-4" />
                   {t('actualOwners.sidebar.addButton')}
@@ -126,6 +169,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                     onClick={addActualOwner}
                     variant="outline" 
                     className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
+                    disabled={addOwner.isPending}
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     {t('actualOwners.emptyState.addButton')}
@@ -165,6 +209,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                           removeActualOwner(owner.id);
                         }}
                         className="p-2 hover:bg-red-50 text-red-600 rounded-full transition-colors mr-2"
+                        disabled={deleteOwner.isPending}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -290,6 +335,7 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
                   onClick={addActualOwner}
                   variant="outline"
                   className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
+                  disabled={addOwner.isPending}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   {t('actualOwners.buttons.addOwner')}

@@ -11,6 +11,8 @@ import AutoFillSuggestions from "./ui/AutoFillSuggestions";
 import PhoneNumberInput from "./ui/PhoneNumberInput";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useAuthorizedPersonsCrud } from "@/hooks/useAuthorizedPersonsCrud";
+import { useAuthorizedPersonsAutoSave } from "@/hooks/useAuthorizedPersonsAutoSave";
 
 interface AuthorizedPersonsStepProps {
   data: OnboardingData;
@@ -22,8 +24,18 @@ interface AuthorizedPersonsStepProps {
 const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps) => {
   const { t } = useTranslation('forms');
   const [expandedPersonId, setExpandedPersonId] = useState<string | null>(null);
+  
+  const contractId = data.contractId || '';
+  const { addPerson, deletePerson } = useAuthorizedPersonsCrud(contractId);
+  
+  // Enable auto-save for authorized persons
+  useAuthorizedPersonsAutoSave({
+    contractId,
+    authorizedPersons: data.authorizedPersons,
+    delay: 2000
+  });
 
-  const addAuthorizedPerson = () => {
+  const addAuthorizedPerson = async () => {
     const newPerson: AuthorizedPerson = {
       id: Date.now().toString(),
       firstName: '',
@@ -49,19 +61,60 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
       documentBackUrl: ''
     };
 
+    // Update local state immediately
     updateData({
       authorizedPersons: [...data.authorizedPersons, newPerson]
     });
     
     setExpandedPersonId(newPerson.id);
+
+    // Add to database if we have a contract ID
+    if (contractId) {
+      try {
+        await addPerson.mutateAsync({
+          person_id: newPerson.id,
+          first_name: '',
+          last_name: '',
+          email: '',
+          phone: '',
+          maiden_name: null,
+          birth_date: '1900-01-01',
+          birth_place: '',
+          birth_number: '',
+          permanent_address: '',
+          position: '',
+          document_type: 'OP',
+          document_number: '',
+          document_validity: '2099-12-31',
+          document_issuer: '',
+          document_country: 'SK',
+          citizenship: 'SK',
+          is_politically_exposed: false,
+          is_us_citizen: false
+        });
+      } catch (error) {
+        console.error('Failed to add authorized person to database:', error);
+      }
+    }
   };
 
-  const removeAuthorizedPerson = (id: string) => {
+  const removeAuthorizedPerson = async (id: string) => {
+    // Update local state immediately
     updateData({
       authorizedPersons: data.authorizedPersons.filter(person => person.id !== id)
     });
+    
     if (expandedPersonId === id) {
       setExpandedPersonId(null);
+    }
+
+    // Remove from database if we have a contract ID
+    if (contractId) {
+      try {
+        await deletePerson.mutateAsync(id);
+      } catch (error) {
+        console.error('Failed to delete authorized person from database:', error);
+      }
     }
   };
 
@@ -125,6 +178,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   onClick={addAuthorizedPerson}
                   variant="outline"
                   className="w-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700 flex items-center justify-center gap-2"
+                  disabled={addPerson.isPending}
                 >
                   <UserPlus className="h-4 w-4" />
                   {t('authorizedPersons.sidebar.addButton')}
@@ -152,6 +206,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                     onClick={addAuthorizedPerson}
                     variant="outline" 
                     className="border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-blue-700"
+                    disabled={addPerson.isPending}
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     {t('authorizedPersons.emptyState.addButton')}
@@ -195,6 +250,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                           removeAuthorizedPerson(person.id);
                         }}
                         className="p-2 hover:bg-red-50 text-red-600 rounded-full transition-colors mr-2"
+                        disabled={deletePerson.isPending}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -433,6 +489,7 @@ const AuthorizedPersonsStep = ({ data, updateData }: AuthorizedPersonsStepProps)
                   onClick={addAuthorizedPerson}
                   variant="outline"
                   className="w-full border-dashed border-2 border-slate-300 hover:border-blue-500 hover:bg-blue-50 mt-4"
+                  disabled={addPerson.isPending}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   {t('authorizedPersons.buttons.addPerson')}

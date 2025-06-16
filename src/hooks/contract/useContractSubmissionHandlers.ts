@@ -213,10 +213,10 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
 };
 
 export const insertAuthorizedPersons = async (contractId: string, authorizedPersons: AuthorizedPerson[]) => {
-  console.log('Inserting authorized persons for contract:', contractId, authorizedPersons);
+  console.log('Upserting authorized persons for contract:', contractId, authorizedPersons);
   
   if (authorizedPersons.length === 0) {
-    console.log('No authorized persons to insert');
+    console.log('No authorized persons to upsert');
     return;
   }
 
@@ -243,21 +243,25 @@ export const insertAuthorizedPersons = async (contractId: string, authorizedPers
     is_us_citizen: person.isUSCitizen || false
   }));
 
+  // Use UPSERT to prevent duplicates
   const { error } = await supabase
     .from('authorized_persons')
-    .insert(personsData);
+    .upsert(personsData, { 
+      onConflict: 'person_id,contract_id',
+      ignoreDuplicates: false 
+    });
 
   if (error) {
-    console.error('Authorized persons insertion error:', error);
+    console.error('Authorized persons upsert error:', error);
     throw new Error(`Chyba pri ukladaní oprávnených osôb: ${error.message}`);
   }
 };
 
 export const insertActualOwners = async (contractId: string, actualOwners: ActualOwner[]) => {
-  console.log('Inserting actual owners for contract:', contractId, actualOwners);
+  console.log('Upserting actual owners for contract:', contractId, actualOwners);
   
   if (actualOwners.length === 0) {
-    console.log('No actual owners to insert');
+    console.log('No actual owners to upsert');
     return;
   }
 
@@ -275,12 +279,16 @@ export const insertActualOwners = async (contractId: string, actualOwners: Actua
     is_politically_exposed: owner.isPoliticallyExposed || false
   }));
 
+  // Use UPSERT to prevent duplicates
   const { error } = await supabase
     .from('actual_owners')
-    .insert(ownersData);
+    .upsert(ownersData, { 
+      onConflict: 'owner_id,contract_id',
+      ignoreDuplicates: false 
+    });
 
   if (error) {
-    console.error('Actual owners insertion error:', error);
+    console.error('Actual owners upsert error:', error);
     throw new Error(`Chyba pri ukladaní skutočných vlastníkov: ${error.message}`);
   }
 };
