@@ -14,7 +14,7 @@ export const useContactInfoSync = ({ data, updateData }: ContactInfoSyncOptions)
     data, 
     updateData, 
     enableSync: true,
-    triggerMode: 'onNavigate' // Only sync when navigating, not on every keystroke
+    triggerMode: 'onNavigate' // Consistent with ActualOwnersStep
   });
 
   // Generate stable person ID only once when both first and last name are available

@@ -1,11 +1,10 @@
-
 import { OnboardingData, AuthorizedPerson, ActualOwner, BusinessLocation, BankAccount, OpeningHours } from "@/types/onboarding";
 import { v4 as uuidv4 } from "uuid";
 
 export const createAuthorizedPersonFromCompanyContact = (companyInfo: OnboardingData['companyInfo'], contactInfo?: OnboardingData['contactInfo']): AuthorizedPerson => {
   const position = getDefaultPositionByRegistryType(companyInfo.registryType);
   
-  // Use contactInfo personId if available, otherwise generate new one
+  // Always use contactInfo personId if available, otherwise generate new one
   const personId = contactInfo?.personId || uuidv4();
   
   return {
@@ -36,7 +35,7 @@ export const createAuthorizedPersonFromCompanyContact = (companyInfo: Onboarding
 };
 
 export const createActualOwnerFromCompanyContact = (companyInfo: OnboardingData['companyInfo'], contactInfo?: OnboardingData['contactInfo']): ActualOwner => {
-  // Use contactInfo personId if available, otherwise generate new one
+  // Always use contactInfo personId if available, otherwise generate new one
   const personId = contactInfo?.personId || uuidv4();
   
   return {
@@ -54,7 +53,7 @@ export const createActualOwnerFromCompanyContact = (companyInfo: OnboardingData[
   };
 };
 
-// New function to update existing authorized person instead of creating new one
+// Enhanced function to update existing authorized person with proper personId handling
 export const updateExistingAuthorizedPerson = (
   existingPerson: AuthorizedPerson,
   companyInfo: OnboardingData['companyInfo'],
@@ -62,6 +61,7 @@ export const updateExistingAuthorizedPerson = (
 ): AuthorizedPerson => {
   return {
     ...existingPerson,
+    id: contactInfo?.personId || existingPerson.id, // Ensure consistent personId
     firstName: companyInfo.contactPerson.firstName,
     lastName: companyInfo.contactPerson.lastName,
     email: companyInfo.contactPerson.email,
@@ -71,13 +71,15 @@ export const updateExistingAuthorizedPerson = (
   };
 };
 
-// New function to update existing actual owner instead of creating new one
+// Enhanced function to update existing actual owner with proper personId handling
 export const updateExistingActualOwner = (
   existingOwner: ActualOwner,
-  companyInfo: OnboardingData['companyInfo']
+  companyInfo: OnboardingData['companyInfo'],
+  contactInfo?: OnboardingData['contactInfo']
 ): ActualOwner => {
   return {
     ...existingOwner,
+    id: contactInfo?.personId || existingOwner.id, // Ensure consistent personId
     firstName: companyInfo.contactPerson.firstName,
     lastName: companyInfo.contactPerson.lastName,
     createdFromContact: true
@@ -183,6 +185,7 @@ export const getDefaultBusinessSectorByRegistryType = (registryType: string): st
   }
 };
 
+// Enhanced function with proper personId checking
 export const shouldCreateOrUpdateAuthorizedPersonFromContact = (
   companyInfo: OnboardingData['companyInfo'],
   contactInfo: OnboardingData['contactInfo'], 
@@ -192,7 +195,7 @@ export const shouldCreateOrUpdateAuthorizedPersonFromContact = (
     return { action: 'none' };
   }
 
-  // First check by personId if available
+  // First priority: check by personId if available
   if (contactInfo.personId) {
     const existingByPersonId = authorizedPersons.find(person => person.id === contactInfo.personId);
     if (existingByPersonId) {
@@ -200,7 +203,7 @@ export const shouldCreateOrUpdateAuthorizedPersonFromContact = (
     }
   }
 
-  // Check if contact person already exists by name and email
+  // Second priority: check if contact person already exists by name and email
   const existingByContact = authorizedPersons.find(person => 
     person.firstName === companyInfo.contactPerson.firstName &&
     person.lastName === companyInfo.contactPerson.lastName &&
@@ -214,6 +217,7 @@ export const shouldCreateOrUpdateAuthorizedPersonFromContact = (
   return { action: 'create' };
 };
 
+// Enhanced function with proper personId checking
 export const shouldCreateOrUpdateActualOwnerFromContact = (
   contactInfo: OnboardingData['contactInfo'],
   companyInfo: OnboardingData['companyInfo'], 
@@ -226,7 +230,7 @@ export const shouldCreateOrUpdateActualOwnerFromContact = (
     return { action: 'none' };
   }
 
-  // First check by personId if available
+  // First priority: check by personId if available
   if (contactInfo.personId) {
     const existingByPersonId = actualOwners.find(owner => owner.id === contactInfo.personId);
     if (existingByPersonId) {
@@ -234,7 +238,7 @@ export const shouldCreateOrUpdateActualOwnerFromContact = (
     }
   }
 
-  // Check if contact person already exists by name
+  // Second priority: check if contact person already exists by name
   const existingByContact = actualOwners.find(owner => 
     owner.firstName === companyInfo.contactPerson.firstName &&
     owner.lastName === companyInfo.contactPerson.lastName
@@ -307,9 +311,6 @@ export const findDuplicatePersons = (data: OnboardingData) => {
       });
     }
   }
-
-  // Removed the duplicate person check between authorized persons and actual owners
-  // It's normal for the same person to be in both sections
 
   return duplicates;
 };

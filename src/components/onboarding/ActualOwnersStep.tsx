@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { useActualOwnersCrud } from "@/hooks/useActualOwnersCrud";
 import { useActualOwnersAutoSave } from "@/hooks/useActualOwnersAutoSave";
 import { usePersonDataSync } from "./hooks/usePersonDataSync";
+import { v4 as uuidv4 } from 'uuid';
 
 interface ActualOwnersStepProps {
   data: OnboardingData;
@@ -26,11 +28,12 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
   const contractId = data.contractId || '';
   const { addOwner, deleteOwner } = useActualOwnersCrud(contractId);
   
-  // Initialize person data sync
+  // Initialize person data sync with onNavigate mode
   const { syncActualOwnerToContact, linkPersonToContact, unlinkPersonFromContact } = usePersonDataSync({
     data,
     updateData,
-    enableSync: true
+    enableSync: true,
+    triggerMode: 'onNavigate'
   });
   
   // Enable auto-save for actual owners
@@ -41,8 +44,11 @@ const ActualOwnersStep = ({ data, updateData }: ActualOwnersStepProps) => {
   });
 
   const addActualOwner = async () => {
+    // Use stable UUID instead of timestamp
+    const newOwnerId = uuidv4();
+    
     const newOwner: ActualOwner = {
-      id: Date.now().toString(),
+      id: newOwnerId,
       firstName: '',
       lastName: '',
       maidenName: '',

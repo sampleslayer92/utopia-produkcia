@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from 'react';
 import { OnboardingData, AuthorizedPerson, ActualOwner } from '@/types/onboarding';
 import { useToast } from '@/hooks/use-toast';
@@ -13,7 +14,7 @@ export const usePersonDataSync = ({
   data, 
   updateData, 
   enableSync = true, 
-  triggerMode = 'immediate' 
+  triggerMode = 'onNavigate' 
 }: PersonSyncOptions) => {
   const { toast } = useToast();
   const previousContactRef = useRef<string>('');
@@ -30,7 +31,7 @@ export const usePersonDataSync = ({
     phonePrefix: contactInfo.phonePrefix || '+421'
   });
 
-  // Helper to get common fields between authorized person and actual owner
+  // Helper to get ALL common fields between authorized person and actual owner
   const getCommonPersonFields = (person: AuthorizedPerson | ActualOwner) => ({
     firstName: person.firstName,
     lastName: person.lastName,
@@ -39,10 +40,12 @@ export const usePersonDataSync = ({
     birthNumber: 'birthNumber' in person ? person.birthNumber : '',
     citizenship: person.citizenship,
     permanentAddress: person.permanentAddress,
-    isPoliticallyExposed: person.isPoliticallyExposed
+    isPoliticallyExposed: person.isPoliticallyExposed,
+    // Include maiden name if available
+    maidenName: 'maidenName' in person ? person.maidenName : ''
   });
 
-  // Helper to find linked persons using stable person ID
+  // Helper to find linked persons using stable person ID and other criteria
   const findLinkedPersons = () => {
     const personId = data.contactInfo.personId;
     
@@ -71,7 +74,7 @@ export const usePersonDataSync = ({
     const personId = data.contactInfo.personId;
     let hasChanges = false;
 
-    // Update linked authorized persons
+    // Update linked authorized persons with ALL common fields
     const updatedAuthorizedPersons = data.authorizedPersons.map(person => {
       if (person.id === personId || person.createdFromContact || person.email === data.contactInfo.email) {
         hasChanges = true;
@@ -89,7 +92,7 @@ export const usePersonDataSync = ({
       return person;
     });
 
-    // Update linked actual owners
+    // Update linked actual owners with ALL common fields
     const updatedActualOwners = data.actualOwners.map(owner => {
       if (owner.id === personId || owner.createdFromContact || 
           (owner.firstName === data.contactInfo.firstName && owner.lastName === data.contactInfo.lastName)) {
@@ -124,81 +127,7 @@ export const usePersonDataSync = ({
     }
   };
 
-  // Sync contact info changes to linked persons (only for immediate mode)
-  useEffect(() => {
-    if (!enableSync || isUpdatingRef.current || triggerMode !== 'immediate') return;
-
-    const currentContactString = JSON.stringify(getBasicPersonFields(data.contactInfo));
-    
-    if (currentContactString === previousContactRef.current) return;
-    
-    const { linkedAuthorizedPersons, linkedActualOwners } = findLinkedPersons();
-    
-    if (linkedAuthorizedPersons.length === 0 && linkedActualOwners.length === 0) {
-      previousContactRef.current = currentContactString;
-      return;
-    }
-
-    const basicFields = getBasicPersonFields(data.contactInfo);
-    const personId = data.contactInfo.personId;
-    let hasChanges = false;
-
-    // Update linked authorized persons
-    const updatedAuthorizedPersons = data.authorizedPersons.map(person => {
-      if (person.id === personId || person.createdFromContact || person.email === data.contactInfo.email) {
-        hasChanges = true;
-        return {
-          ...person,
-          id: personId || person.id,
-          firstName: basicFields.firstName,
-          lastName: basicFields.lastName,
-          email: basicFields.email,
-          phone: basicFields.phone,
-          phonePrefix: basicFields.phonePrefix,
-          createdFromContact: true
-        };
-      }
-      return person;
-    });
-
-    // Update linked actual owners
-    const updatedActualOwners = data.actualOwners.map(owner => {
-      if (owner.id === personId || owner.createdFromContact || 
-          (owner.firstName === data.contactInfo.firstName && owner.lastName === data.contactInfo.lastName)) {
-        hasChanges = true;
-        return {
-          ...owner,
-          id: personId || owner.id,
-          firstName: basicFields.firstName,
-          lastName: basicFields.lastName,
-          createdFromContact: true
-        };
-      }
-      return owner;
-    });
-
-    if (hasChanges) {
-      isUpdatingRef.current = true;
-      
-      updateData({
-        authorizedPersons: updatedAuthorizedPersons,
-        actualOwners: updatedActualOwners
-      });
-
-      toast({
-        title: "Údaje synchronizované",
-        description: "Zmeny v kontaktných údajoch boli automaticky aplikované na prepojené osoby.",
-      });
-
-      setTimeout(() => {
-        isUpdatingRef.current = false;
-      }, 100);
-    }
-
-    previousContactRef.current = currentContactString;
-  }, triggerMode === 'immediate' ? [data.contactInfo, data.authorizedPersons, data.actualOwners, updateData, enableSync, toast] : []);
-
-  // Sync authorized person changes to actual owners and back to contact info (only for immediate mode)
+  // Enhanced sync for authorized person changes to actual owners (bidirectional)
   useEffect(() => {
     if (!enableSync || isUpdatingRef.current || triggerMode !== 'immediate') return;
 
@@ -210,7 +139,7 @@ export const usePersonDataSync = ({
     const updatedActualOwners = [...data.actualOwners];
     const updatedContactInfo = { ...data.contactInfo };
 
-    // Check each authorized person for updates
+    // Enhanced synchronization of ALL common fields
     data.authorizedPersons.forEach(authorizedPerson => {
       if (!authorizedPerson.createdFromContact && !authorizedPerson.id) return;
 
@@ -225,7 +154,7 @@ export const usePersonDataSync = ({
         const authorizedFields = getCommonPersonFields(authorizedPerson);
         const ownerFields = getCommonPersonFields(existingOwner);
 
-        // Check if fields are different
+        // Check if ANY common fields are different
         if (JSON.stringify(authorizedFields) !== JSON.stringify(ownerFields)) {
           updatedActualOwners[actualOwnerIndex] = {
             ...existingOwner,
@@ -237,6 +166,7 @@ export const usePersonDataSync = ({
             citizenship: authorizedPerson.citizenship,
             permanentAddress: authorizedPerson.permanentAddress,
             isPoliticallyExposed: authorizedPerson.isPoliticallyExposed,
+            maidenName: authorizedPerson.maidenName || existingOwner.maidenName,
             id: authorizedPerson.id,
             createdFromContact: true
           };
@@ -277,7 +207,7 @@ export const usePersonDataSync = ({
     previousAuthorizedRef.current = currentAuthorizedString;
   }, triggerMode === 'immediate' ? [data.authorizedPersons, data.actualOwners, data.contactInfo, updateData, enableSync, toast] : []);
 
-  // Sync actual owner changes to authorized persons and back to contact info (only for immediate mode)
+  // Enhanced sync for actual owner changes to authorized persons (bidirectional)
   useEffect(() => {
     if (!enableSync || isUpdatingRef.current || triggerMode !== 'immediate') return;
 
@@ -289,7 +219,7 @@ export const usePersonDataSync = ({
     const updatedAuthorizedPersons = [...data.authorizedPersons];
     const updatedContactInfo = { ...data.contactInfo };
 
-    // Check each actual owner for updates
+    // Enhanced synchronization of ALL common fields
     data.actualOwners.forEach(actualOwner => {
       if (!actualOwner.createdFromContact && !actualOwner.id) return;
 
@@ -304,7 +234,7 @@ export const usePersonDataSync = ({
         const ownerFields = getCommonPersonFields(actualOwner);
         const personFields = getCommonPersonFields(existingPerson);
 
-        // Check if fields are different
+        // Check if ANY common fields are different
         if (JSON.stringify(ownerFields) !== JSON.stringify(personFields)) {
           updatedAuthorizedPersons[authorizedPersonIndex] = {
             ...existingPerson,
@@ -316,6 +246,7 @@ export const usePersonDataSync = ({
             citizenship: actualOwner.citizenship,
             permanentAddress: actualOwner.permanentAddress,
             isPoliticallyExposed: actualOwner.isPoliticallyExposed,
+            maidenName: actualOwner.maidenName || existingPerson.maidenName,
             id: actualOwner.id,
             createdFromContact: true
           };
@@ -398,7 +329,7 @@ export const usePersonDataSync = ({
     }
   };
 
-  // Helper to mark person as linked to contact
+  // Helper to mark person as linked to contact with proper personId
   const linkPersonToContact = (targetPersonId: string, personType: 'authorized' | 'actual') => {
     const personId = data.contactInfo.personId;
     
