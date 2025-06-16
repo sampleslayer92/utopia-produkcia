@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { OnboardingData } from "@/types/onboarding";
-import { getAutoFillUpdatesSimplified, hasContactInfoChanged } from "../../utils/autoFillUtils";
+import { getAutoFillUpdatesSimplified } from "../../utils/autoFillUtils";
 
 export const useSimplifiedContactInfoLogic = (
   data: OnboardingData,
@@ -9,7 +9,7 @@ export const useSimplifiedContactInfoLogic = (
 ) => {
   const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
   const [hasAutoFilled, setHasAutoFilled] = useState(false);
-  const prevContactInfoRef = useRef(data.contactInfo);
+  const hasTriggeredAutoFillRef = useRef(false);
 
   const updateContactInfo = (field: string, value: string | boolean) => {
     updateData({
@@ -37,40 +37,18 @@ export const useSimplifiedContactInfoLogic = (
            data.contactInfo.phone;
   };
 
-  // Auto-fill when basic info is complete using our simplified logic
-  useEffect(() => {
-    if (isBasicInfoComplete()) {
+  // Manual auto-fill function that can be triggered on navigation
+  const triggerAutoFill = () => {
+    if (isBasicInfoComplete() && !hasTriggeredAutoFillRef.current) {
       const autoFillUpdates = getAutoFillUpdatesSimplified(data.contactInfo, data);
       if (Object.keys(autoFillUpdates).length > 0) {
-        console.log('Auto-filling with simplified logic:', autoFillUpdates);
+        console.log('Auto-filling with simplified logic on navigation:', autoFillUpdates);
         updateData(autoFillUpdates);
         setHasAutoFilled(true);
+        hasTriggeredAutoFillRef.current = true;
       }
     }
-  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix]);
-
-  // Watch for changes in contact info and propagate to other sections
-  useEffect(() => {
-    const currentContactInfo = data.contactInfo;
-    const prevContactInfo = prevContactInfoRef.current;
-
-    // Only proceed if contact info has actually changed
-    if (hasContactInfoChanged(prevContactInfo, currentContactInfo) && isBasicInfoComplete()) {
-      console.log('Contact info changed, updating related sections...', {
-        prev: prevContactInfo,
-        current: currentContactInfo
-      });
-
-      const autoFillUpdates = getAutoFillUpdatesSimplified(currentContactInfo, data);
-      if (Object.keys(autoFillUpdates).length > 0) {
-        updateData(autoFillUpdates);
-        setHasAutoFilled(true);
-      }
-    }
-
-    // Update ref for next comparison
-    prevContactInfoRef.current = currentContactInfo;
-  }, [data.contactInfo.firstName, data.contactInfo.lastName, data.contactInfo.email, data.contactInfo.phone, data.contactInfo.phonePrefix]);
+  };
 
   // Track completed fields for visual feedback
   useEffect(() => {
@@ -88,6 +66,7 @@ export const useSimplifiedContactInfoLogic = (
     hasAutoFilled,
     updateContactInfo,
     handlePersonDataUpdate,
-    isBasicInfoComplete
+    isBasicInfoComplete,
+    triggerAutoFill
   };
 };

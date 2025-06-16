@@ -10,11 +10,20 @@ interface ContactInfoSyncOptions {
 }
 
 export const useContactInfoSync = ({ data, updateData }: ContactInfoSyncOptions) => {
-  const personSync = usePersonDataSync({ data, updateData, enableSync: true });
+  const personSync = usePersonDataSync({ 
+    data, 
+    updateData, 
+    enableSync: true,
+    triggerMode: 'onNavigate' // Only sync when navigating, not on every keystroke
+  });
 
-  // Generate stable person ID if not exists
+  // Generate stable person ID only once when both first and last name are available
   useEffect(() => {
-    if (!data.contactInfo.personId && data.contactInfo.firstName && data.contactInfo.lastName) {
+    if (!data.contactInfo.personId && 
+        data.contactInfo.firstName && 
+        data.contactInfo.lastName && 
+        data.contactInfo.firstName.trim() !== '' && 
+        data.contactInfo.lastName.trim() !== '') {
       const personId = uuidv4();
       updateData({
         contactInfo: {
@@ -34,8 +43,13 @@ export const useContactInfoSync = ({ data, updateData }: ContactInfoSyncOptions)
     });
   };
 
+  const triggerSync = () => {
+    personSync.performManualSync();
+  };
+
   return {
     updateContactInfo,
+    triggerSync,
     ...personSync
   };
 };

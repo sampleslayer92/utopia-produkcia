@@ -29,8 +29,13 @@ const OnboardingStepRenderer = ({
   onComplete,
   onSaveSignature
 }: OnboardingStepRendererProps) => {
-  // Initialize cross-step auto-fill logic
-  useCrossStepAutoFill({ data, updateData, currentStep });
+  // Initialize cross-step auto-fill logic (disabled for step 0)
+  useCrossStepAutoFill({ 
+    data, 
+    updateData, 
+    currentStep,
+    enabled: currentStep !== 0 // Disable auto-fill for contact info step
+  });
 
   const commonProps = {
     data,

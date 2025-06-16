@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react';
 import { OnboardingData, AuthorizedPerson, ActualOwner } from '@/types/onboarding';
 import { useToast } from '@/hooks/use-toast';
@@ -7,9 +6,15 @@ interface PersonSyncOptions {
   data: OnboardingData;
   updateData: (data: Partial<OnboardingData>) => void;
   enableSync?: boolean;
+  triggerMode?: 'immediate' | 'manual' | 'onNavigate';
 }
 
-export const usePersonDataSync = ({ data, updateData, enableSync = true }: PersonSyncOptions) => {
+export const usePersonDataSync = ({ 
+  data, 
+  updateData, 
+  enableSync = true, 
+  triggerMode = 'immediate' 
+}: PersonSyncOptions) => {
   const { toast } = useToast();
   const previousContactRef = useRef<string>('');
   const previousAuthorizedRef = useRef<string>('');
@@ -52,9 +57,76 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
     return { linkedAuthorizedPersons, linkedActualOwners };
   };
 
-  // Sync contact info changes to linked persons
-  useEffect(() => {
+  // Manual sync function for onNavigate mode
+  const performManualSync = () => {
     if (!enableSync || isUpdatingRef.current) return;
+
+    const { linkedAuthorizedPersons, linkedActualOwners } = findLinkedPersons();
+    
+    if (linkedAuthorizedPersons.length === 0 && linkedActualOwners.length === 0) {
+      return;
+    }
+
+    const basicFields = getBasicPersonFields(data.contactInfo);
+    const personId = data.contactInfo.personId;
+    let hasChanges = false;
+
+    // Update linked authorized persons
+    const updatedAuthorizedPersons = data.authorizedPersons.map(person => {
+      if (person.id === personId || person.createdFromContact || person.email === data.contactInfo.email) {
+        hasChanges = true;
+        return {
+          ...person,
+          id: personId || person.id,
+          firstName: basicFields.firstName,
+          lastName: basicFields.lastName,
+          email: basicFields.email,
+          phone: basicFields.phone,
+          phonePrefix: basicFields.phonePrefix,
+          createdFromContact: true
+        };
+      }
+      return person;
+    });
+
+    // Update linked actual owners
+    const updatedActualOwners = data.actualOwners.map(owner => {
+      if (owner.id === personId || owner.createdFromContact || 
+          (owner.firstName === data.contactInfo.firstName && owner.lastName === data.contactInfo.lastName)) {
+        hasChanges = true;
+        return {
+          ...owner,
+          id: personId || owner.id,
+          firstName: basicFields.firstName,
+          lastName: basicFields.lastName,
+          createdFromContact: true
+        };
+      }
+      return owner;
+    });
+
+    if (hasChanges) {
+      isUpdatingRef.current = true;
+      
+      updateData({
+        authorizedPersons: updatedAuthorizedPersons,
+        actualOwners: updatedActualOwners
+      });
+
+      toast({
+        title: "Údaje synchronizované",
+        description: "Zmeny v kontaktných údajoch boli automaticky aplikované na prepojené osoby.",
+      });
+
+      setTimeout(() => {
+        isUpdatingRef.current = false;
+      }, 100);
+    }
+  };
+
+  // Sync contact info changes to linked persons (only for immediate mode)
+  useEffect(() => {
+    if (!enableSync || isUpdatingRef.current || triggerMode !== 'immediate') return;
 
     const currentContactString = JSON.stringify(getBasicPersonFields(data.contactInfo));
     
@@ -124,11 +196,11 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
     }
 
     previousContactRef.current = currentContactString;
-  }, [data.contactInfo, data.authorizedPersons, data.actualOwners, updateData, enableSync, toast]);
+  }, triggerMode === 'immediate' ? [data.contactInfo, data.authorizedPersons, data.actualOwners, updateData, enableSync, toast] : []);
 
-  // Sync authorized person changes to actual owners and back to contact info
+  // Sync authorized person changes to actual owners and back to contact info (only for immediate mode)
   useEffect(() => {
-    if (!enableSync || isUpdatingRef.current) return;
+    if (!enableSync || isUpdatingRef.current || triggerMode !== 'immediate') return;
 
     const currentAuthorizedString = JSON.stringify(data.authorizedPersons.map(p => getCommonPersonFields(p)));
     
@@ -165,7 +237,7 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
             citizenship: authorizedPerson.citizenship,
             permanentAddress: authorizedPerson.permanentAddress,
             isPoliticallyExposed: authorizedPerson.isPoliticallyExposed,
-            id: authorizedPerson.id, // Ensure same ID
+            id: authorizedPerson.id,
             createdFromContact: true
           };
           hasChanges = true;
@@ -203,11 +275,11 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
     }
 
     previousAuthorizedRef.current = currentAuthorizedString;
-  }, [data.authorizedPersons, data.actualOwners, data.contactInfo, updateData, enableSync, toast]);
+  }, triggerMode === 'immediate' ? [data.authorizedPersons, data.actualOwners, data.contactInfo, updateData, enableSync, toast] : []);
 
-  // Sync actual owner changes to authorized persons and back to contact info
+  // Sync actual owner changes to authorized persons and back to contact info (only for immediate mode)
   useEffect(() => {
-    if (!enableSync || isUpdatingRef.current) return;
+    if (!enableSync || isUpdatingRef.current || triggerMode !== 'immediate') return;
 
     const currentActualOwnersString = JSON.stringify(data.actualOwners.map(o => getCommonPersonFields(o)));
     
@@ -244,7 +316,7 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
             citizenship: actualOwner.citizenship,
             permanentAddress: actualOwner.permanentAddress,
             isPoliticallyExposed: actualOwner.isPoliticallyExposed,
-            id: actualOwner.id, // Ensure same ID
+            id: actualOwner.id,
             createdFromContact: true
           };
           hasChanges = true;
@@ -279,9 +351,8 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
     }
 
     previousActualOwnersRef.current = currentActualOwnersString;
-  }, [data.actualOwners, data.authorizedPersons, data.contactInfo, updateData, enableSync, toast]);
+  }, triggerMode === 'immediate' ? [data.actualOwners, data.authorizedPersons, data.contactInfo, updateData, enableSync, toast] : []);
 
-  // Legacy sync functions (kept for backward compatibility)
   const syncAuthorizedPersonToContact = (updatedPerson: AuthorizedPerson) => {
     if (!enableSync || isUpdatingRef.current) return;
 
@@ -373,6 +444,7 @@ export const usePersonDataSync = ({ data, updateData, enableSync = true }: Perso
     linkPersonToContact,
     unlinkPersonFromContact,
     findLinkedPersons,
+    performManualSync,
     isUpdating: isUpdatingRef.current
   };
 };

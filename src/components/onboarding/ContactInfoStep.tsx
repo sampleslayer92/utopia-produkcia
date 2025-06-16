@@ -17,19 +17,32 @@ interface ContactInfoStepProps {
   onPrev: () => void;
 }
 
-const ContactInfoStep = ({ data, updateData }: ContactInfoStepProps) => {
+const ContactInfoStep = ({ data, updateData, onNext }: ContactInfoStepProps) => {
   const { t } = useTranslation(['forms', 'help']);
   const isMobile = useIsMobile();
   
   // Use contact info sync for cross-step synchronization
-  const { updateContactInfo } = useContactInfoSync({ data, updateData });
+  const { updateContactInfo, triggerSync } = useContactInfoSync({ data, updateData });
   
   const {
     completedFields,
     hasAutoFilled,
     handlePersonDataUpdate,
-    isBasicInfoComplete
+    isBasicInfoComplete,
+    triggerAutoFill
   } = useSimplifiedContactInfoLogic(data, updateData);
+
+  // Enhanced onNext function that triggers sync and auto-fill
+  const handleNext = () => {
+    // Trigger auto-fill if basic info is complete
+    triggerAutoFill();
+    
+    // Trigger synchronization
+    triggerSync();
+    
+    // Proceed to next step
+    onNext();
+  };
 
   // Auto-fill status based only on basic info completion
   const basicInfoComplete = Boolean(isBasicInfoComplete());

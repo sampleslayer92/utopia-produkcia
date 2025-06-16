@@ -13,13 +13,19 @@ export const useOnboardingNavigation = (
   markStepAsVisited: (stepNumber: number) => void,
   createContract: () => Promise<any>,
   updateData: (data: Partial<OnboardingData>) => void,
-  isBasicInfoComplete: boolean
+  isBasicInfoComplete: boolean,
+  onStepNavigate?: (fromStep: number, toStep: number) => void // New callback for step navigation
 ) => {
   const navigate = useNavigate();
   const totalSteps = onboardingSteps.length;
   const { submitContract, isSubmitting } = useContractSubmission();
 
   const nextStep = async () => {
+    // Call the step navigation callback if provided (for triggering sync/auto-fill)
+    if (onStepNavigate) {
+      onStepNavigate(currentStep, currentStep + 1);
+    }
+    
     // Mark current step as visited before moving to next
     markStepAsVisited(currentStep);
     
