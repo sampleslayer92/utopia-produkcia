@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContractData } from "@/hooks/useContractData";
@@ -151,16 +150,20 @@ const ContractDetail = () => {
       
       toast({
         title: "Zmluva zmazaná",
-        description: "Zmluva bola úspešne zmazaná.",
+        description: "Zmluva a všetky súvisiace údaje boli úspešne zmazané.",
       });
       
       console.log('Contract deleted successfully, navigating to admin');
       navigate('/admin');
     } catch (error) {
       console.error('Error deleting contract:', error);
+      
+      // Zobrazíme podrobnejšiu chybovú správu
+      const errorMessage = error instanceof Error ? error.message : 'Neočakávaná chyba pri mazaní zmluvy';
+      
       toast({
         title: "Chyba pri mazaní",
-        description: "Nepodarilo sa zmazať zmluvu. Skúste to znovu.",
+        description: errorMessage,
         variant: "destructive",
       });
     }

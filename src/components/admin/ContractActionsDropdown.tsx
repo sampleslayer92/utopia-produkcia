@@ -40,11 +40,13 @@ const ContractActionsDropdown = ({ contractId, contractNumber }: ContractActions
     if (!confirmed) return;
 
     try {
+      console.log('Deleting contract from dropdown:', contractId);
       await contractDeleteMutation.mutateAsync(contractId);
       toast.success("Zmluva bola úspešne zmazaná");
     } catch (error) {
       console.error('Error deleting contract:', error);
-      toast.error("Chyba pri mazaní zmluvy");
+      const errorMessage = error instanceof Error ? error.message : 'Neočakávaná chyba pri mazaní zmluvy';
+      toast.error(`Chyba pri mazaní zmluvy: ${errorMessage}`);
     }
     setIsOpen(false);
   };
