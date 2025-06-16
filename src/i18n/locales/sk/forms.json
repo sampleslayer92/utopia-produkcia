@@ -505,6 +505,8 @@
   "authorizedPersons": {
     "title": "Splnomocnené osoby",
     "description": "Splnomocnené osoby sú štatutárni zástupcovia alebo splnomocnené osoby, ktoré môžu konať za spoločnosť.",
+    "addPerson": "Pridať splnomocnenú osobu",
+    "fromContact": "Z kontaktov",
     "sidebar": {
       "title": "Splnomocnené osoby",
       "description": "Splnomocnené osoby sú štatutárni zástupcovia alebo splnomocnené osoby, ktoré môžu konať za spoločnosť.",
@@ -595,6 +597,8 @@
   "actualOwners": {
     "title": "Skutoční vlastníci",
     "description": "Skutoční vlastníci sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
+    "fromContact": "Z kontaktov",
+    "bornLabel": "Narodený: {date}",
     "sidebar": {
       "title": "Skutoční vlastníci",
       "description": "Skutoční vlastníci sú fyzické osoby, ktoré skutočne vlastnia alebo kontrolujú spoločnosť.",
@@ -614,7 +618,6 @@
       "addButton": "Pridať skutočného vlastníka"
     },
     "ownerTitle": "Skutočný vlastník {index}",
-    "bornLabel": "Narodený: {date}",
     "sections": {
       "basicInfo": {
         "title": "Základné informácie",
@@ -720,5 +723,20 @@
       "title": "Dôležité:",
       "description": "Všetky povinné polia musia byť vyplnené, súhlasy udelené a elektronický podpis vytvorený pred dokončením registrácie."
     }
+  },
+  "common": {
+    "save": "Uložiť",
+    "cancel": "Zrušiť",
+    "back": "Späť",
+    "continue": "Pokračovať",
+    "next": "Ďalej",
+    "previous": "Späť",
+    "edit": "Upraviť",
+    "delete": "Vymazať",
+    "remove": "Odstrániť",
+    "add": "Pridať",
+    "yes": "Áno",
+    "no": "Nie",
+    "error": "Chyba"
   }
 }

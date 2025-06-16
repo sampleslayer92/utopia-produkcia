@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { OnboardingData, ActualOwner } from "@/types/onboarding";
 import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from 'uuid';
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash, Crown } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Plus } from "lucide-react";
 import OnboardingStepHeader from "./ui/OnboardingStepHeader";
 import OnboardingSection from "./ui/OnboardingSection";
 import { useToast } from "@/hooks/use-toast";
 import { useContactAutoFill } from "./hooks/useContactAutoFill";
 import AutoFillFromContactButton from "./ui/AutoFillFromContactButton";
+import ActualOwnerCard from "./cards/ActualOwnerCard";
+import ActualOwnerForm from "./forms/ActualOwnerForm";
 
 interface ActualOwnersStepProps {
   data: OnboardingData;
@@ -24,37 +25,50 @@ const ActualOwnersStep = ({ data, updateData, onNext, onPrev }: ActualOwnersStep
   const { toast } = useToast();
 
   const [actualOwners, setActualOwners] = useState<ActualOwner[]>(data.actualOwners);
+  const [isAdding, setIsAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
     setActualOwners(data.actualOwners);
   }, [data.actualOwners]);
 
   const handleAddActualOwner = () => {
-    const newActualOwner: ActualOwner = {
-      id: uuidv4(),
-      firstName: '',
-      lastName: '',
-      maidenName: '',
-      birthDate: '',
-      birthPlace: '',
-      birthNumber: '',
-      citizenship: 'Slovensko',
-      permanentAddress: '',
-      isPoliticallyExposed: false,
-      createdFromContact: false
-    };
-    setActualOwners([...actualOwners, newActualOwner]);
+    setIsAdding(true);
+    setEditingId(null);
+  };
+
+  const handleCancelAdd = () => {
+    setIsAdding(false);
+    setEditingId(null);
+  };
+
+  const handleSaveOwner = (owner: any) => {
+    if (editingId) {
+      // Update existing owner
+      const updatedOwners = actualOwners.map(o => 
+        o.id === editingId ? { ...owner, id: editingId } : o
+      );
+      setActualOwners(updatedOwners);
+      setEditingId(null);
+    } else {
+      // Add new owner
+      const newOwner = {
+        ...owner,
+        id: uuidv4()
+      };
+      setActualOwners([...actualOwners, newOwner]);
+    }
+    
+    setIsAdding(false);
+  };
+
+  const handleEditOwner = (id: string) => {
+    setEditingId(id);
+    setIsAdding(true);
   };
 
   const handleRemoveActualOwner = (id: string) => {
     const updatedActualOwners = actualOwners.filter(owner => owner.id !== id);
-    setActualOwners(updatedActualOwners);
-  };
-
-  const handleUpdateActualOwner = (id: string, field: string, value: any) => {
-    const updatedActualOwners = actualOwners.map(owner =>
-      owner.id === id ? { ...owner, [field]: value } : owner
-    );
     setActualOwners(updatedActualOwners);
   };
 
@@ -118,114 +132,39 @@ const ActualOwnersStep = ({ data, updateData, onNext, onPrev }: ActualOwnersStep
         />
       )}
 
-      <OnboardingSection>
-        <div className="space-y-4">
-          {actualOwners.map((owner) => (
-            <div key={owner.id} className="border rounded-md p-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`firstName-${owner.id}`}>{t('forms:actualOwners.firstName')}</Label>
-                  <Input
-                    type="text"
-                    id={`firstName-${owner.id}`}
-                    value={owner.firstName}
-                    onChange={(e) => handleUpdateActualOwner(owner.id, 'firstName', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`lastName-${owner.id}`}>{t('forms:actualOwners.lastName')}</Label>
-                  <Input
-                    type="text"
-                    id={`lastName-${owner.id}`}
-                    value={owner.lastName}
-                    onChange={(e) => handleUpdateActualOwner(owner.id, 'lastName', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <Label htmlFor={`birthDate-${owner.id}`}>{t('forms:actualOwners.birthDate')}</Label>
-                  <Input
-                    type="date"
-                    id={`birthDate-${owner.id}`}
-                    value={owner.birthDate}
-                    onChange={(e) => handleUpdateActualOwner(owner.id, 'birthDate', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`birthPlace-${owner.id}`}>{t('forms:actualOwners.birthPlace')}</Label>
-                  <Input
-                    type="text"
-                    id={`birthPlace-${owner.id}`}
-                    value={owner.birthPlace}
-                    onChange={(e) => handleUpdateActualOwner(owner.id, 'birthPlace', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <Label htmlFor={`birthNumber-${owner.id}`}>{t('forms:actualOwners.birthNumber')}</Label>
-                  <Input
-                    type="text"
-                    id={`birthNumber-${owner.id}`}
-                    value={owner.birthNumber}
-                    onChange={(e) => handleUpdateActualOwner(owner.id, 'birthNumber', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`citizenship-${owner.id}`}>{t('forms:actualOwners.citizenship')}</Label>
-                  <Input
-                    type="text"
-                    id={`citizenship-${owner.id}`}
-                    value={owner.citizenship}
-                    onChange={(e) => handleUpdateActualOwner(owner.id, 'citizenship', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <Label htmlFor={`permanentAddress-${owner.id}`}>{t('forms:actualOwners.permanentAddress')}</Label>
-                <Input
-                  type="text"
-                  id={`permanentAddress-${owner.id}`}
-                  value={owner.permanentAddress}
-                  onChange={(e) => handleUpdateActualOwner(owner.id, 'permanentAddress', e.target.value)}
-                />
-              </div>
-
-              <div className="mt-4">
-                <Label htmlFor={`isPoliticallyExposed-${owner.id}`}>{t('forms:actualOwners.isPoliticallyExposed')}</Label>
-                <select
-                  id={`isPoliticallyExposed-${owner.id}`}
-                  value={owner.isPoliticallyExposed.toString()}
-                  onChange={(e) => handleUpdateActualOwner(owner.id, 'isPoliticallyExposed', e.target.value === 'true')}
-                  className="w-full mt-1 p-2 border rounded-md"
-                >
-                  <option value="false">{t('common:no')}</option>
-                  <option value="true">{t('common:yes')}</option>
-                </select>
-              </div>
-
-              <Button
-                variant="destructive"
-                size="sm"
-                className="mt-4"
-                onClick={() => handleRemoveActualOwner(owner.id)}
-              >
-                <Trash className="h-4 w-4 mr-2" />
-                {t('common:remove')}
-              </Button>
-            </div>
-          ))}
-        </div>
-
-        <Button variant="outline" onClick={handleAddActualOwner} className="mt-4">
-          <Plus className="h-4 w-4 mr-2" />
-          {t('steps:actualOwners.addOwnerButton')}
-        </Button>
-      </OnboardingSection>
+      {isAdding ? (
+        <Card>
+          <CardContent className="p-6">
+            <ActualOwnerForm 
+              initialData={editingId ? actualOwners.find(o => o.id === editingId) || {} : {}}
+              onSave={handleSaveOwner}
+              onCancel={handleCancelAdd}
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        <OnboardingSection>
+          <div className="space-y-4">
+            {actualOwners.map((owner) => (
+              <ActualOwnerCard
+                key={owner.id}
+                owner={owner}
+                onEdit={() => handleEditOwner(owner.id)}
+                onDelete={() => handleRemoveActualOwner(owner.id)}
+              />
+            ))}
+            
+            <Button 
+              variant="outline" 
+              onClick={handleAddActualOwner}
+              className="w-full py-8 border-dashed border-slate-300 bg-slate-50/50"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {t('steps:actualOwners.addOwnerButton')}
+            </Button>
+          </div>
+        </OnboardingSection>
+      )}
 
       <div className="flex justify-between">
         <Button variant="secondary" onClick={onPrev}>
