@@ -57,27 +57,18 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
     }, 0);
   }, [data.deviceSelection.dynamicCards]);
 
-  // Real-time calculations with unified MIF++ rate
+  // Unified calculation - no split between regulated/unregulated
   const calculations = useMemo(() => {
     const effectiveMifRate = Math.max(0, localMifRate - 0.2);
     
-    // Split turnover between regulated and unregulated cards (60/40 ratio)
-    const regulatedTurnover = monthlyTurnover * 0.6;
-    const unregulatedTurnover = monthlyTurnover * 0.4;
-    
-    const regulatedFee = regulatedTurnover * (effectiveMifRate / 100);
-    const unregulatedFee = unregulatedTurnover * (effectiveMifRate / 100);
-    const transactionMargin = regulatedFee + unregulatedFee;
+    // Single transaction fee calculation for all cards
+    const transactionMargin = monthlyTurnover * (effectiveMifRate / 100);
     const serviceMargin = totalCustomerPayments - totalCompanyCosts;
     const totalMonthlyProfit = transactionMargin + serviceMargin;
 
-    console.log('Calculations updated:', {
+    console.log('Unified calculations updated:', {
       monthlyTurnover,
       effectiveMifRate,
-      regulatedTurnover,
-      unregulatedTurnover,
-      regulatedFee,
-      unregulatedFee,
       transactionMargin,
       serviceMargin,
       totalMonthlyProfit
@@ -87,15 +78,10 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
       monthlyTurnover,
       totalCustomerPayments,
       totalCompanyCosts,
-      effectiveRegulated: effectiveMifRate,
-      effectiveUnregulated: effectiveMifRate,
-      regulatedFee,
-      unregulatedFee,
+      effectiveRate: effectiveMifRate,
       transactionMargin,
       serviceMargin,
-      totalMonthlyProfit,
-      regulatedTurnover,
-      unregulatedTurnover
+      totalMonthlyProfit
     };
   }, [monthlyTurnover, totalCustomerPayments, totalCompanyCosts, localMifRate]);
 
@@ -105,7 +91,7 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
     console.log('Current business locations:', data.businessLocations);
   }, [data.businessLocations]);
 
-  // Debounced update to global state (both regulated and unregulated get the same rate)
+  // Debounced update to global state (unified rate for both regulated and unregulated)
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       // Create detailed breakdowns for compatibility
@@ -143,9 +129,18 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
         fees: {
           ...data.fees,
           regulatedCards: localMifRate,
-          unregulatedCards: localMifRate, // Both use the same rate now
+          unregulatedCards: localMifRate, // Keep both for compatibility but use same value
           calculatorResults: {
-            ...calculations,
+            monthlyTurnover: calculations.monthlyTurnover,
+            totalCustomerPayments: calculations.totalCustomerPayments,
+            totalCompanyCosts: calculations.totalCompanyCosts,
+            effectiveRegulated: calculations.effectiveRate,
+            effectiveUnregulated: calculations.effectiveRate,
+            regulatedFee: calculations.transactionMargin, // For compatibility
+            unregulatedFee: 0, // Not used anymore
+            transactionMargin: calculations.transactionMargin,
+            serviceMargin: calculations.serviceMargin,
+            totalMonthlyProfit: calculations.totalMonthlyProfit,
             customerPaymentBreakdown,
             companyCostBreakdown
           }
@@ -236,7 +231,7 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
               <div className="space-y-1 text-sm">
                 <p className="text-green-600">
                   {t('fees.calculator.inputs.mifRate.effectiveRate', { 
-                    rate: formatPercentage(calculations.effectiveRegulated) 
+                    rate: formatPercentage(calculations.effectiveRate) 
                   })}
                 </p>
                 <p className="text-xs text-slate-500">
@@ -245,20 +240,15 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
               </div>
             </div>
 
-            {/* Turnover Distribution Info */}
+            {/* Simplified calculation info */}
             <div className="bg-blue-50 p-3 rounded-lg">
               <h4 className="text-sm font-medium text-blue-900 mb-2">
-                {t('fees.calculator.inputs.turnoverDistribution.title')}
+                Výpočet poplatkov
               </h4>
               <div className="text-xs text-blue-700 space-y-1">
-                <p>• {t('fees.calculator.inputs.turnoverDistribution.regulated', { 
-                  amount: formatCurrency(calculations.regulatedTurnover),
-                  percentage: '60%'
-                })}</p>
-                <p>• {t('fees.calculator.inputs.turnoverDistribution.unregulated', { 
-                  amount: formatCurrency(calculations.unregulatedTurnover),
-                  percentage: '40%'
-                })}</p>
+                <p>• Celý obrat: {formatCurrency(calculations.monthlyTurnover)}</p>
+                <p>• Efektívna sadzba: {formatPercentage(calculations.effectiveRate)}</p>
+                <p>• Transakčný poplatok: {formatCurrency(calculations.transactionMargin)}</p>
               </div>
             </div>
           </div>
@@ -269,30 +259,26 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
               {t('fees.calculator.results.title')}
             </h3>
             
-            {/* Revenue from Transactions */}
+            {/* Revenue from Transactions - Simplified */}
             <Card className="bg-blue-50 border-blue-200">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="h-4 w-4 text-blue-600" />
                   <span className="font-medium text-blue-900">
-                    {t('fees.calculator.results.transactionRevenue.title')}
+                    Príjem z transakcií
                   </span>
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>{t('fees.calculator.results.transactionRevenue.regulatedCards')}</span>
-                    <span className={`font-medium ${formatCurrencyWithColor(calculations.regulatedFee).className}`}>
-                      {formatCurrencyWithColor(calculations.regulatedFee).value}
-                    </span>
+                    <span>Celkový obrat:</span>
+                    <span className="text-slate-600">{formatCurrency(calculations.monthlyTurnover)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>{t('fees.calculator.results.transactionRevenue.unregulatedCards')}</span>
-                    <span className={`font-medium ${formatCurrencyWithColor(calculations.unregulatedFee).className}`}>
-                      {formatCurrencyWithColor(calculations.unregulatedFee).value}
-                    </span>
+                    <span>Efektívna sadzba:</span>
+                    <span className="text-slate-600">{formatPercentage(calculations.effectiveRate)}</span>
                   </div>
                   <div className="flex justify-between font-medium pt-2 border-t border-blue-300">
-                    <span>{t('fees.calculator.results.transactionRevenue.totalRevenue')}</span>
+                    <span>Transakčný príjem:</span>
                     <span className={`${formatCurrencyWithColor(calculations.transactionMargin).className}`}>
                       {formatCurrencyWithColor(calculations.transactionMargin).value}
                     </span>
