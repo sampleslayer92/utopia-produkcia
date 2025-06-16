@@ -423,7 +423,6 @@
       "cancel": "Cancel"
     },
     "cards": {
-      "count": "{count} pcs",
       "countPieces": "pcs",
       "items": "items",
       "monthlyFee": "€{amount}/month",

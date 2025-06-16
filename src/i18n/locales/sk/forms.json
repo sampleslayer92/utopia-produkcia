@@ -1,4 +1,3 @@
-
 {
   "contactInfo": {
     "title": "Kontaktné údaje",
@@ -424,7 +423,6 @@
       "cancel": "Zrušiť"
     },
     "cards": {
-      "count": "{count} ks",
       "countPieces": "ks",
       "items": "položiek",
       "monthlyFee": "€{amount}/mesiac",

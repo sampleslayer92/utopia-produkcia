@@ -194,7 +194,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
 
   return (
     <div className="space-y-6">
-      {/* Header with Progress and Save Status */}
+      {/* Header with Selected Solutions */}
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -212,25 +212,6 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
               <Badge variant="outline" className="text-blue-600">
                 {t('deviceSelection.navigation.itemsSelected', { count: data.deviceSelection.dynamicCards.length })}
               </Badge>
-              <Badge variant="outline" className="text-green-600">
-                {stepValidation.completionPercentage}% dokončené
-              </Badge>
-              {isSaving && (
-                <Badge variant="outline" className="text-orange-600 flex items-center gap-1">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  {t('deviceSelection.loading.saving')}
-                </Badge>
-              )}
-              {lastSaved && !isSaving && saveStatus === 'saved' && (
-                <Badge variant="outline" className="text-green-600">
-                  {t('deviceSelection.loading.saved')} {lastSaved.toLocaleTimeString()}
-                </Badge>
-              )}
-              {saveStatus === 'error' && (
-                <Badge variant="outline" className="text-red-600">
-                  Chyba ukladania
-                </Badge>
-              )}
             </div>
           </div>
         </CardHeader>
