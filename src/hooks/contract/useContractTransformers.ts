@@ -67,6 +67,7 @@ export const transformContractData = (
       zipCode: companyInfo.contact_address_zip_code || ''
     },
     contactAddressSameAsMain: companyInfo.contact_address_same_as_main !== false,
+    headOfficeEqualsOperatingAddress: true, // Default value for missing field
     contactPerson: {
       firstName: companyInfo.contact_person_first_name || '',
       lastName: companyInfo.contact_person_last_name || '',
@@ -87,6 +88,7 @@ export const transformContractData = (
     address: { street: '', city: '', zipCode: '' },
     contactAddress: null,
     contactAddressSameAsMain: true,
+    headOfficeEqualsOperatingAddress: true,
     contactPerson: {
       firstName: '',
       lastName: '',
@@ -100,6 +102,7 @@ export const transformContractData = (
   const transformedBusinessLocations = businessLocations?.map(location => ({
     id: location.location_id,
     name: location.name || '',
+    hasPOS: location.has_pos || false, // Fix property name
     address: {
       street: location.address_street || '',
       city: location.address_city || '',
@@ -116,13 +119,13 @@ export const transformContractData = (
       phone: location.contact_person_phone || ''
     },
     iban: location.iban || '',
-    hasPos: location.has_pos || false,
     openingHours: location.opening_hours || ''
   })) || [];
 
   // Transform device selection with dynamic cards from contract items
   const deviceCards = contractItems?.filter(item => item.item_type === 'device')?.map(item => ({
     id: item.item_id,
+    type: 'device' as const,
     name: item.name,
     category: item.category,
     description: item.description || '',
@@ -134,6 +137,7 @@ export const transformContractData = (
 
   const serviceCards = contractItems?.filter(item => item.item_type === 'service')?.map(item => ({
     id: item.item_id,
+    type: 'service' as const,
     name: item.name,
     category: item.category,
     description: item.description || '',
@@ -144,16 +148,14 @@ export const transformContractData = (
   })) || [];
 
   const transformedDeviceSelection = {
-    dynamicCards: deviceCards,
-    serviceCards: serviceCards,
-    transactionTypes: deviceSelection?.transaction_types || [],
-    mifRegulatedCards: Number(deviceSelection?.mif_regulated_cards) || 0,
-    mifUnregulatedCards: Number(deviceSelection?.mif_unregulated_cards) || 0,
+    selectedSolutions: [], // Add required field
+    dynamicCards: [...deviceCards, ...serviceCards],
     note: deviceSelection?.note || ''
   };
 
   // Transform authorized persons
   const transformedAuthorizedPersons = authorizedPersons?.map(person => ({
+    id: person.person_id, // Add required id field
     personId: person.person_id,
     firstName: person.first_name || '',
     lastName: person.last_name || '',
@@ -165,6 +167,7 @@ export const transformContractData = (
     permanentAddress: person.permanent_address || '',
     email: person.email || '',
     phone: person.phone || '',
+    phonePrefix: '+421', // Add required field
     position: person.position || '',
     documentType: person.document_type || 'OP',
     documentNumber: person.document_number || '',
@@ -172,11 +175,12 @@ export const transformContractData = (
     documentValidity: person.document_validity || '',
     documentCountry: person.document_country || 'SK',
     isPoliticallyExposed: person.is_politically_exposed || false,
-    isUsCitizen: person.is_us_citizen || false
+    isUSCitizen: person.is_us_citizen || false // Fix property name
   })) || [];
 
   // Transform actual owners
   const transformedActualOwners = actualOwners?.map(owner => ({
+    id: owner.owner_id, // Add required id field
     ownerId: owner.owner_id,
     firstName: owner.first_name || '',
     lastName: owner.last_name || '',
@@ -191,20 +195,28 @@ export const transformContractData = (
 
   // Transform consents
   const transformedConsents = {
-    gdprConsent: consents?.gdpr_consent || false,
-    termsConsent: consents?.terms_consent || false,
-    electronicCommunicationConsent: consents?.electronic_communication_consent || false,
-    signatureDate: consents?.signature_date || null,
-    signingPersonId: consents?.signing_person_id || null
+    gdpr: consents?.gdpr_consent || false, // Fix property names
+    terms: consents?.terms_consent || false,
+    electronicCommunication: consents?.electronic_communication_consent || false,
+    signatureDate: consents?.signature_date || undefined,
+    signingPersonId: consents?.signing_person_id || undefined
   };
 
   const onboardingData: OnboardingData = {
     contractId: contract?.id || '',
     contractNumber: contract?.contract_number || '',
+    currentStep: 0,
+    visitedSteps: [],
     contactInfo: transformedContactInfo,
     companyInfo: transformedCompanyInfo,
     businessLocations: transformedBusinessLocations,
     deviceSelection: transformedDeviceSelection,
+    devices: deviceCards,
+    services: serviceCards,
+    fees: {
+      regulatedCards: Number(deviceSelection?.mif_regulated_cards) || 0,
+      unregulatedCards: Number(deviceSelection?.mif_unregulated_cards) || 0
+    },
     authorizedPersons: transformedAuthorizedPersons,
     actualOwners: transformedActualOwners,
     consents: transformedConsents

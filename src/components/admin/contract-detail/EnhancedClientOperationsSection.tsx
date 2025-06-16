@@ -9,12 +9,14 @@ interface EnhancedClientOperationsSectionProps {
   onboardingData: any;
   isEditMode: boolean;
   onUpdate: (path: string, value: any) => void;
+  onSectionUpdate: (data: any) => void;
 }
 
 const EnhancedClientOperationsSection = ({ 
   onboardingData, 
   isEditMode, 
-  onUpdate 
+  onUpdate,
+  onSectionUpdate 
 }: EnhancedClientOperationsSectionProps) => {
   const companyInfo = onboardingData.companyInfo || {};
   const contactInfo = onboardingData.contactInfo || {};
