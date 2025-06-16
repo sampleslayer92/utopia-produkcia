@@ -3,9 +3,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { OnboardingData } from '@/types/onboarding';
 
 export const useContractDetailForm = (initialData?: OnboardingData) => {
-  const [formData, setFormData] = useState<OnboardingData>(() => {
-    return initialData || {} as OnboardingData;
-  });
+  const [formData, setFormData] = useState<OnboardingData | null>(null);
   const [isDirty, setIsDirty] = useState(false);
 
   // Update form data when initial data changes
@@ -21,6 +19,8 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
     console.log(`Updating field ${path} with value:`, value);
     
     setFormData(prev => {
+      if (!prev) return prev;
+      
       const pathParts = path.split('.');
       const newData = { ...prev };
       let current: any = newData;
@@ -50,6 +50,8 @@ export const useContractDetailForm = (initialData?: OnboardingData) => {
     console.log(`Updating section ${sectionPath} with data:`, sectionData);
     
     setFormData(prev => {
+      if (!prev) return prev;
+      
       const newData = { ...prev };
       const pathParts = sectionPath.split('.');
       let current: any = newData;

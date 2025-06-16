@@ -18,11 +18,16 @@ const EnhancedClientOperationsSection = ({
   onUpdate,
   onSectionUpdate 
 }: EnhancedClientOperationsSectionProps) => {
-  const companyInfo = onboardingData.companyInfo || {};
-  const contactInfo = onboardingData.contactInfo || {};
-  const businessLocations = onboardingData.businessLocations || [];
+  const companyInfo = onboardingData?.companyInfo || {};
+  const contactInfo = onboardingData?.contactInfo || {};
+  const businessLocations = onboardingData?.businessLocations || [];
 
-  console.log('EnhancedClientOperationsSection render:', { companyInfo, contactInfo, isEditMode });
+  console.log('EnhancedClientOperationsSection render:', { 
+    companyInfo, 
+    contactInfo, 
+    isEditMode,
+    onboardingDataKeys: onboardingData ? Object.keys(onboardingData) : []
+  });
 
   const handleCompanyFieldChange = (field: string, value: string) => {
     console.log(`Updating company field ${field} with value:`, value);

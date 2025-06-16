@@ -121,9 +121,11 @@ const ContractDetail = () => {
       }
       setIsEditMode(false);
     } else {
-      // Entering edit mode - initialize form with current data
-      console.log('Entering edit mode, initializing form');
-      resetForm(onboardingData);
+      // Entering edit mode - ensure form has current data
+      console.log('Entering edit mode, ensuring form has current data');
+      if (!formData) {
+        resetForm(onboardingData);
+      }
       setIsEditMode(true);
     }
   };
@@ -152,8 +154,15 @@ const ContractDetail = () => {
     }
   };
 
-  // Use form data if in edit mode and has data, otherwise use original data
-  const currentData = isEditMode && Object.keys(formData).length > 0 ? formData : onboardingData;
+  // Use form data if available and in edit mode, otherwise use original data
+  const currentData = (isEditMode && formData) ? formData : onboardingData;
+
+  console.log('ContractDetail render:', {
+    isEditMode,
+    hasFormData: !!formData,
+    formDataKeys: formData ? Object.keys(formData) : [],
+    isDirty
+  });
 
   const handleSectionUpdate = (sectionPath: string, sectionData: any) => {
     console.log(`Section ${sectionPath} updated:`, sectionData);
