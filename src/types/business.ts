@@ -40,4 +40,5 @@ export interface BusinessLocation {
   seasonality: 'year-round' | 'seasonal';
   seasonalWeeks?: number;
   assignedPersons?: string[];
+  createdFromContact?: boolean; // Flag to track if created from contact data
 }
