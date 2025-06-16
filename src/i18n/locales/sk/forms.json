@@ -411,6 +411,48 @@
         "pieces": "ks"
       }
     },
+    "modal": {
+      "addTitle": "Pridať",
+      "editTitle": "Upraviť",
+      "quantity": "Počet",
+      "monthlyFee": "Mesačný poplatok",
+      "companyCost": "Firemný náklad",
+      "customSpecification": "Špecifikácia služby",
+      "customSpecificationPlaceholder": "Opíšte službu...",
+      "add": "Pridať",
+      "save": "Uložiť",
+      "cancel": "Zrušiť"
+    },
+    "cards": {
+      "count": "{count} ks",
+      "countPieces": "ks",
+      "items": "položiek",
+      "monthlyFee": "€{amount}/mesiac",
+      "mainItem": "Hlavná položka:",
+      "addons": "Doplnky:",
+      "total": "Celkom:",
+      "addonsCount": "+{count} doplnkov",
+      "specifications": "Špecifikácie",
+      "automatic": "(automaticky)",
+      "quantityLabel": "Počet",
+      "monthlyFeeLabel": "Mesačný poplatok (EUR)",
+      "companyCostLabel": "Firemný náklad (EUR)",
+      "addonsTitle": "Doplnky",
+      "perMonth": "/mesiac"
+    },
+    "addons": {
+      "title": "Doplnky a príslušenstvo",
+      "selectedTitle": "Vybrané doplnky",
+      "addAddonTitle": "Pridať doplnok",
+      "noSelectedAddons": "Žiadne vybrané doplnky",
+      "allAddonsAdded": "Všetky dostupné doplnky už boli pridané",
+      "quantityLabel": "Počet ks",
+      "monthlyFeeLabel": "Cena za kus (€)",
+      "companyCostLabel": "Firemný náklad za kus (€)",
+      "removeButton": "Odstrániť",
+      "addButton": "Pridať doplnok",
+      "subtotal": "Subtotal"
+    },
     "navigation": {
       "back": "Späť",
       "changeSolution": "Zmeniť riešenie",

@@ -9,6 +9,7 @@ import { AddonCard } from "@/types/onboarding";
 import { ADDON_CATALOG, getAddonIcon } from "../config/addonCatalog";
 import QuantityStepper from "./QuantityStepper";
 import { formatCurrency } from "../utils/currencyUtils";
+import { useTranslation } from "react-i18next";
 import {
   Collapsible,
   CollapsibleContent,
@@ -28,6 +29,7 @@ const EnhancedAddonManager = ({
   onRemoveAddon,
   onUpdateAddon 
 }: EnhancedAddonManagerProps) => {
+  const { t } = useTranslation('forms');
   const [isAddingAddon, setIsAddingAddon] = useState(false);
 
   const availableAddons = ADDON_CATALOG.filter(
@@ -60,10 +62,10 @@ const EnhancedAddonManager = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="font-medium text-slate-900">Doplnky a príslušenstvo</h4>
+        <h4 className="font-medium text-slate-900">{t('deviceSelection.addons.title')}</h4>
         {selectedAddons.length > 0 && (
           <span className="text-sm text-slate-600">
-            {selectedAddons.length} položiek
+            {selectedAddons.length} {t('deviceSelection.preview.count.items')}
           </span>
         )}
       </div>
@@ -96,7 +98,7 @@ const EnhancedAddonManager = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-600">Počet ks</Label>
+                    <Label className="text-xs text-slate-600">{t('deviceSelection.addons.quantityLabel')}</Label>
                     <QuantityStepper
                       value={addon.customQuantity || 1}
                       onChange={(value) => updateAddonField(addon.id, 'customQuantity', value)}
@@ -106,7 +108,7 @@ const EnhancedAddonManager = ({
                   </div>
                   
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-600">Cena za kus (€)</Label>
+                    <Label className="text-xs text-slate-600">{t('deviceSelection.addons.monthlyFeeLabel')}</Label>
                     <Input
                       type="number"
                       min="0"
@@ -118,7 +120,7 @@ const EnhancedAddonManager = ({
                   </div>
 
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-600">Firemný náklad za kus (€)</Label>
+                    <Label className="text-xs text-slate-600">{t('deviceSelection.addons.companyCostLabel')}</Label>
                     <Input
                       type="number"
                       min="0"
@@ -130,7 +132,7 @@ const EnhancedAddonManager = ({
                   </div>
 
                   <div className="text-right">
-                    <div className="text-xs text-slate-600 mb-1">Subtotal</div>
+                    <div className="text-xs text-slate-600 mb-1">{t('deviceSelection.addons.subtotal')}</div>
                     <div className="font-medium text-green-600">
                       {formatCurrency(subtotal)}
                     </div>
@@ -150,7 +152,7 @@ const EnhancedAddonManager = ({
             className="w-full border-dashed border-blue-300 text-blue-600 hover:bg-blue-50"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Pridať doplnok
+            {t('deviceSelection.addons.addButton')}
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="space-y-2 mt-3">
@@ -177,7 +179,7 @@ const EnhancedAddonManager = ({
           ))}
           {availableAddons.length === 0 && (
             <p className="text-center text-slate-500 py-4 text-sm">
-              Všetky dostupné doplnky už boli pridané
+              {t('deviceSelection.addons.allAddonsAdded')}
             </p>
           )}
         </CollapsibleContent>

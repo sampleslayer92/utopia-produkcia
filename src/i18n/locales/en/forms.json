@@ -308,6 +308,10 @@
   "deviceSelection": {
     "title": "Device and Service Selection",
     "description": "Select and configure devices and services for your business",
+    "loading": {
+      "saving": "Saving...",
+      "saved": "Saved"
+    },
     "solutionSelection": {
       "title": "Solution Selection",
       "description": "Select the types of solutions you want to use in your business",
@@ -407,23 +411,16 @@
       }
     },
     "modal": {
-      "addTitle": "Add - {name}",
-      "editTitle": "Edit - {name}",
+      "addTitle": "Add",
+      "editTitle": "Edit",
       "quantity": "Quantity",
-      "pricingMode": "Payment Method",
-      "rental": "Rental",
-      "purchase": "Purchase",
-      "monthlyFeeDevice": "Monthly fee per unit (€)",
-      "purchasePriceDevice": "One-time price per unit (€)",
-      "monthlyFeeService": "Monthly fee per unit (€)",
-      "companyCost": "Monthly company cost per unit (€)",
+      "monthlyFee": "Monthly Fee",
+      "companyCost": "Company Cost",
       "customSpecification": "Service Specification",
       "customSpecificationPlaceholder": "Describe the service...",
-      "addToCart": "Add to Cart",
-      "saveChanges": "Save Changes",
-      "cancel": "Cancel",
       "add": "Add",
-      "save": "Save"
+      "save": "Save",
+      "cancel": "Cancel"
     },
     "cards": {
       "count": "{count} pcs",
@@ -441,6 +438,19 @@
       "companyCostLabel": "Company cost (EUR)",
       "addonsTitle": "Add-ons",
       "perMonth": "/month"
+    },
+    "addons": {
+      "title": "Add-ons and Accessories",
+      "selectedTitle": "Selected Add-ons",
+      "addAddonTitle": "Add Add-on",
+      "noSelectedAddons": "No selected add-ons",
+      "allAddonsAdded": "All available add-ons have been added",
+      "quantityLabel": "Quantity pcs",
+      "monthlyFeeLabel": "Price per piece (€)",
+      "companyCostLabel": "Company cost per piece (€)",
+      "removeButton": "Remove",
+      "addButton": "Add Add-on",
+      "subtotal": "Subtotal"
     },
     "navigation": {
       "back": "Back",
