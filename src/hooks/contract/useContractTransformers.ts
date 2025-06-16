@@ -67,7 +67,7 @@ export const transformContractData = (
       zipCode: companyInfo.contact_address_zip_code || ''
     },
     contactAddressSameAsMain: companyInfo.contact_address_same_as_main !== false,
-    headOfficeEqualsOperatingAddress: true, // Default value for missing field
+    headOfficeEqualsOperatingAddress: true,
     contactPerson: {
       firstName: companyInfo.contact_person_first_name || '',
       lastName: companyInfo.contact_person_last_name || '',
@@ -79,7 +79,7 @@ export const transformContractData = (
     ico: '',
     dic: '',
     companyName: '',
-    registryType: 'Živnosť',
+    registryType: 'Živnosť' as const,
     isVatPayer: false,
     vatNumber: '',
     court: '',
@@ -102,7 +102,7 @@ export const transformContractData = (
   const transformedBusinessLocations = businessLocations?.map(location => ({
     id: location.location_id,
     name: location.name || '',
-    hasPOS: location.has_pos || false, // Fix property name
+    hasPOS: location.has_pos || false,
     address: {
       street: location.address_street || '',
       city: location.address_city || '',
@@ -148,14 +148,14 @@ export const transformContractData = (
   })) || [];
 
   const transformedDeviceSelection = {
-    selectedSolutions: [], // Add required field
+    selectedSolutions: [],
     dynamicCards: [...deviceCards, ...serviceCards],
     note: deviceSelection?.note || ''
   };
 
   // Transform authorized persons
   const transformedAuthorizedPersons = authorizedPersons?.map(person => ({
-    id: person.person_id, // Add required id field
+    id: person.person_id,
     personId: person.person_id,
     firstName: person.first_name || '',
     lastName: person.last_name || '',
@@ -167,7 +167,7 @@ export const transformContractData = (
     permanentAddress: person.permanent_address || '',
     email: person.email || '',
     phone: person.phone || '',
-    phonePrefix: '+421', // Add required field
+    phonePrefix: '+421',
     position: person.position || '',
     documentType: person.document_type || 'OP',
     documentNumber: person.document_number || '',
@@ -175,12 +175,12 @@ export const transformContractData = (
     documentValidity: person.document_validity || '',
     documentCountry: person.document_country || 'SK',
     isPoliticallyExposed: person.is_politically_exposed || false,
-    isUSCitizen: person.is_us_citizen || false // Fix property name
+    isUSCitizen: person.is_us_citizen || false
   })) || [];
 
   // Transform actual owners
   const transformedActualOwners = actualOwners?.map(owner => ({
-    id: owner.owner_id, // Add required id field
+    id: owner.owner_id,
     ownerId: owner.owner_id,
     firstName: owner.first_name || '',
     lastName: owner.last_name || '',
@@ -195,7 +195,7 @@ export const transformContractData = (
 
   // Transform consents
   const transformedConsents = {
-    gdpr: consents?.gdpr_consent || false, // Fix property names
+    gdpr: consents?.gdpr_consent || false,
     terms: consents?.terms_consent || false,
     electronicCommunication: consents?.electronic_communication_consent || false,
     signatureDate: consents?.signature_date || undefined,
@@ -227,7 +227,7 @@ export const transformContractData = (
 };
 
 // Helper function to map registry type from database to frontend
-const mapRegistryTypeFromDb = (dbType: string): string => {
+const mapRegistryTypeFromDb = (dbType: string): 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' => {
   switch (dbType) {
     case 'public':
       return 'Nezisková organizácia';
