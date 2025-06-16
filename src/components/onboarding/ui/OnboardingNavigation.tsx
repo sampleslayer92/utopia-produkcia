@@ -3,6 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Check, Loader2, Save } from "lucide-react";
 
+interface StepValidation {
+  isValid: boolean;
+  completionPercentage: number;
+  requiredFields: string[];
+  missingFields: string[];
+}
+
 interface OnboardingNavigationProps {
   currentStep: number;
   totalSteps: number;
@@ -12,6 +19,7 @@ interface OnboardingNavigationProps {
   onSaveAndExit: () => void;
   onSaveSignature?: () => void;
   isSubmitting?: boolean;
+  stepValidation: StepValidation;
 }
 
 const OnboardingNavigation = ({
@@ -22,7 +30,8 @@ const OnboardingNavigation = ({
   onComplete,
   onSaveAndExit,
   onSaveSignature,
-  isSubmitting = false
+  isSubmitting = false,
+  stepValidation
 }: OnboardingNavigationProps) => {
   const { t } = useTranslation(['common', 'notifications']);
   const isConsentsStep = currentStep === totalSteps - 1;
@@ -83,11 +92,20 @@ const OnboardingNavigation = ({
           ) : (
             <Button
               onClick={onNextStep}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !stepValidation.isValid}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
             >
-              {t('common:buttons.next')}
-              <ChevronRight className="h-4 w-4" />
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {currentStep === 0 ? 'Vytvára sa zmluva...' : t('common:status.saving')}
+                </>
+              ) : (
+                <>
+                  {t('common:buttons.next')}
+                  <ChevronRight className="h-4 w-4" />
+                </>
+              )}
             </Button>
           )}
         </div>

@@ -8,6 +8,7 @@ import { useProgressTracking } from "./hooks/useProgressTracking";
 import { useStepValidation } from "./hooks/useStepValidation";
 import { useOnboardingSteps } from "./config/onboardingSteps";
 import OnboardingSidebar from "./ui/OnboardingSidebar";
+import OnboardingNavigation from "./ui/OnboardingNavigation";
 import MobileOptimizedNavigation from "./ui/MobileOptimizedNavigation";
 import OnboardingHeader from "./ui/OnboardingHeader";
 import OnboardingStepRenderer from "./components/OnboardingStepRenderer";
@@ -171,6 +172,22 @@ const OnboardingFlow = () => {
           </div>
         </div>
         
+        {/* Desktop Navigation */}
+        {!isMobile && (
+          <OnboardingNavigation
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            onPrevStep={prevStep}
+            onNextStep={nextStep}
+            onComplete={handleComplete}
+            onSaveAndExit={handleSaveAndExit}
+            onSaveSignature={handleSaveSignature}
+            isSubmitting={isSubmitting || isSaving}
+            stepValidation={stepValidation}
+          />
+        )}
+        
+        {/* Mobile Navigation */}
         <MobileOptimizedNavigation
           currentStep={currentStep}
           totalSteps={totalSteps}
