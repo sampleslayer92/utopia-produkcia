@@ -32,15 +32,23 @@ const ContactInfoStep = ({ data, updateData, onNext }: ContactInfoStepProps) => 
     triggerAutoFill
   } = useSimplifiedContactInfoLogic(data, updateData);
 
-  // Enhanced onNext function that triggers sync and auto-fill
+  // Enhanced onNext function that triggers auto-fill and sync
   const handleNext = () => {
+    console.log('=== ContactInfoStep handleNext ===', {
+      isBasicInfoComplete: isBasicInfoComplete(),
+      contactInfo: data.contactInfo
+    });
+    
     // Trigger auto-fill if basic info is complete
-    triggerAutoFill();
+    if (isBasicInfoComplete()) {
+      console.log('Triggering auto-fill from ContactInfoStep');
+      triggerAutoFill();
+    }
     
     // Trigger synchronization
     triggerSync();
     
-    // Proceed to next step
+    // Proceed to next step (this will trigger the auto-fill in OnboardingStepRenderer)
     onNext();
   };
 

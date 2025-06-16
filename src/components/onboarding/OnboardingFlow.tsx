@@ -51,6 +51,14 @@ const OnboardingFlow = () => {
     onboardingData.contactInfo.phone
   ]);
 
+  // Enhanced step navigation callback for auto-fill
+  const handleStepNavigation = useCallback((fromStep: number, toStep: number) => {
+    console.log('Step navigation triggered:', { fromStep, toStep });
+    
+    // This callback will be passed to useOnboardingNavigation
+    // and will trigger auto-fill in OnboardingStepRenderer
+  }, []);
+
   const {
     totalSteps,
     nextStep,
@@ -68,7 +76,8 @@ const OnboardingFlow = () => {
     markStepAsVisited,
     createContract,
     updateData,
-    isBasicInfoComplete
+    isBasicInfoComplete,
+    handleStepNavigation // Pass the callback
   );
 
   const handleAutoSave = useCallback(async (data: typeof onboardingData) => {
@@ -167,6 +176,7 @@ const OnboardingFlow = () => {
                 onPrev={prevStep}
                 onComplete={handleComplete}
                 onSaveSignature={handleSaveSignature}
+                onStepNavigate={handleStepNavigation}
               />
             </div>
           </div>

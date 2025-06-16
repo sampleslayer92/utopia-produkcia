@@ -21,9 +21,11 @@ export const useOnboardingNavigation = (
   const { submitContract, isSubmitting } = useContractSubmission();
 
   const nextStep = async () => {
-    // Call the step navigation callback if provided (for triggering sync/auto-fill)
+    const nextStepNumber = currentStep + 1;
+    
+    // Call the step navigation callback if provided (for triggering auto-fill)
     if (onStepNavigate) {
-      onStepNavigate(currentStep, currentStep + 1);
+      onStepNavigate(currentStep, nextStepNumber);
     }
     
     // Mark current step as visited before moving to next
@@ -60,7 +62,7 @@ export const useOnboardingNavigation = (
     }
     
     if (currentStep < totalSteps - 1) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep(nextStepNumber);
       window.scrollTo(0, 0);
     }
   };

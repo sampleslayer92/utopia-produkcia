@@ -223,10 +223,14 @@ export const shouldCreateOrUpdateActualOwnerFromContact = (
   companyInfo: OnboardingData['companyInfo'], 
   actualOwners: ActualOwner[]
 ): { action: 'create' | 'update' | 'none'; existingOwner?: ActualOwner } => {
-  // Only auto-create if contact person has "Majiteľ" role
+  // Auto-create if contact person has relevant role OR if it's a small business (simplified logic)
   const hasOwnerRole = contactInfo.userRoles?.includes('Majiteľ') || contactInfo.userRole === 'Majiteľ';
+  const isSmallBusiness = companyInfo.registryType === 'Živnosť' || companyInfo.registryType === 'S.r.o.';
   
-  if (!hasOwnerRole || !companyInfo.contactPerson.firstName || !companyInfo.contactPerson.lastName) {
+  // Create actual owner if they have owner role OR if it's a small business and they have basic contact info
+  const shouldCreate = hasOwnerRole || (isSmallBusiness && contactInfo.firstName && contactInfo.lastName);
+  
+  if (!shouldCreate || !companyInfo.contactPerson.firstName || !companyInfo.contactPerson.lastName) {
     return { action: 'none' };
   }
 
