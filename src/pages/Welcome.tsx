@@ -113,7 +113,7 @@ const Welcome = () => {
                   <UserCheck className="h-7 w-7 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-slate-900 mb-1">Prihlásiť sa ahoj</h2>
+                  <h2 className="text-xl font-semibold text-slate-900 mb-1">Prihlásiť sa</h2>
                   <p className="text-slate-600">
                     Vyberte svoju rolu a pokračujte do systému
                   </p>
