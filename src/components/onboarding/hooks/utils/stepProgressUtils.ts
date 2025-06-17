@@ -22,7 +22,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['contactInfo.firstName', 'contactInfo.lastName', 'contactInfo.email', 'contactInfo.phone'],
       completedFields: [],
-      isVisited: true
+      isVisited: true // Always visited as it's the starting step
     },
     // Step 1: Company Info
     {
@@ -37,7 +37,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
         'companyInfo.contactPerson.email', 'companyInfo.contactPerson.phone'
       ],
       completedFields: [],
-      isVisited: true
+      isVisited: data.visitedSteps?.includes(1) || data.currentStep >= 1
     },
     // Step 2: Business Locations
     {
@@ -47,7 +47,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['businessLocations'],
       completedFields: [],
-      isVisited: true
+      isVisited: data.visitedSteps?.includes(2) || data.currentStep >= 2
     },
     // Step 3: Device Selection
     {
@@ -57,7 +57,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['deviceSelection.dynamicCards'],
       completedFields: [],
-      isVisited: true
+      isVisited: data.visitedSteps?.includes(3) || data.currentStep >= 3
     },
     // Step 4: Fees
     {
@@ -67,7 +67,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['fees.regulatedCards', 'fees.unregulatedCards'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(4) || false
+      isVisited: data.visitedSteps?.includes(4) || data.currentStep >= 4
     },
     // Step 5: Authorized Persons
     {
@@ -77,7 +77,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['authorizedPersons'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(5) || false
+      isVisited: data.visitedSteps?.includes(5) || data.currentStep >= 5
     },
     // Step 6: Actual Owners
     {
@@ -87,7 +87,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['actualOwners'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(6) || false
+      isVisited: data.visitedSteps?.includes(6) || data.currentStep >= 6
     },
     // Step 7: Consents
     {
@@ -97,7 +97,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['consents.gdpr', 'consents.terms'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(7) || false
+      isVisited: data.visitedSteps?.includes(7) || data.currentStep >= 7
     }
   ];
 };
@@ -117,17 +117,10 @@ export const calculateStepCompletion = (step: StepProgress, data: OnboardingData
   const hasAnyCompletedFields = completedFields.length > 0;
   const allFieldsCompleted = completedFields.length === step.requiredFields.length;
   
-  // For steps 4-7: Only mark as complete if visited AND all fields are valid
-  if (step.stepNumber >= 4) {
-    updatedStep.isComplete = step.isVisited && allFieldsCompleted;
-    updatedStep.completionPercentage = step.isVisited && hasAnyCompletedFields ? 
-      (allFieldsCompleted ? 100 : 50) : 0;
-  } else {
-    // For steps 0-3: Use standard validation
-    updatedStep.isComplete = allFieldsCompleted;
-    updatedStep.completionPercentage = hasAnyCompletedFields ? 
-      (allFieldsCompleted ? 100 : 50) : 0;
-  }
+  // Standard validation for all steps
+  updatedStep.isComplete = allFieldsCompleted;
+  updatedStep.completionPercentage = hasAnyCompletedFields ? 
+    (allFieldsCompleted ? 100 : Math.round((completedFields.length / step.requiredFields.length) * 100)) : 0;
 
   return updatedStep;
 };

@@ -18,7 +18,7 @@ const initialData: OnboardingData = {
     ico: '',
     dic: '',
     companyName: '',
-    registryType: 'Živnosť',
+    registryType: '', // Changed from 'Živnosť' to empty string
     isVatPayer: false,
     vatNumber: '',
     court: '',
@@ -96,6 +96,11 @@ export const useOnboardingData = () => {
           parsedData.companyInfo.vatNumber = '';
         }
         
+        // Clean up registry type if it has the old default value
+        if (parsedData.companyInfo.registryType === 'Živnosť') {
+          parsedData.companyInfo.registryType = '';
+        }
+        
         // Migrate existing dynamic cards to include companyCost and addons fields
         if (parsedData.deviceSelection.dynamicCards) {
           parsedData.deviceSelection.dynamicCards = parsedData.deviceSelection.dynamicCards.map((card: any) => ({
@@ -115,10 +120,9 @@ export const useOnboardingData = () => {
           parsedData.contactInfo.userRoles = [];
         }
 
-        // Initialize visitedSteps if not present
+        // Initialize visitedSteps if not present - only mark step 0 as visited by default
         if (!parsedData.visitedSteps) {
-          // For backward compatibility, assume steps 0-3 are visited if they have current step > 3
-          parsedData.visitedSteps = parsedData.currentStep > 3 ? [0, 1, 2, 3] : [];
+          parsedData.visitedSteps = [];
         }
 
         // Migrate business locations to new structure

@@ -29,6 +29,11 @@ export const isFieldComplete = (value: any, fieldPath: string): boolean => {
       return trimmed !== '' && trimmed.length >= 6; // Minimum length for ICO/DIC
     }
     
+    // Special validation for registry type - must be selected, not empty
+    if (fieldPath.includes('registryType')) {
+      return trimmed !== '';
+    }
+    
     return trimmed !== '';
   }
   

@@ -29,6 +29,8 @@ const OnboardingSelect = ({
   showTooltip = false
 }: OnboardingSelectProps) => {
   const selectedOption = options.find(option => option.value === value);
+  // Only show as having a value if there's actually a non-empty value
+  const hasValue = value && value.trim() !== '';
 
   return (
     <div className="space-y-2">
@@ -38,7 +40,7 @@ const OnboardingSelect = ({
         </Label>
       )}
       <div className="relative">
-        <Select value={value} onValueChange={onValueChange}>
+        <Select value={hasValue ? value : undefined} onValueChange={onValueChange}>
           <SelectTrigger 
             className={`h-12 border-2 transition-all duration-200 ${
               error
@@ -68,7 +70,7 @@ const OnboardingSelect = ({
             ))}
           </SelectContent>
         </Select>
-        {isCompleted && (
+        {isCompleted && hasValue && (
           <div className="absolute right-10 top-1/2 -translate-y-1/2">
             <Check className="h-4 w-4 text-green-500" />
           </div>
