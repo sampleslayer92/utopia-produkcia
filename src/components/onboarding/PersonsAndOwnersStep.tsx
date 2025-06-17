@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { OnboardingData } from "@/types/onboarding";
 import { useTranslation } from "react-i18next";
@@ -240,10 +241,10 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
                         </div>
                       </div>
                       <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        Žiadne splnomocnené osoby
+                        {t('steps:authorizedPersons.emptyState.title')}
                       </h3>
                       <p className="text-gray-500 mb-4">
-                        Pridajte aspoň jedného štatutárneho zástupcu
+                        {t('steps:authorizedPersons.emptyState.description')}
                       </p>
                       <Button onClick={handleAddPerson}>
                         <Plus className="h-4 w-4 mr-2" />
@@ -310,10 +311,10 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
                         </div>
                       </div>
                       <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        Žiadni skutoční vlastníci
+                        {t('steps:actualOwners.emptyState.title')}
                       </h3>
                       <p className="text-gray-500 mb-4">
-                        Pridajte aspoň jedného skutočného vlastníka
+                        {t('steps:actualOwners.emptyState.description')}
                       </p>
                       <Button onClick={handleAddOwner}>
                         <Plus className="h-4 w-4 mr-2" />
