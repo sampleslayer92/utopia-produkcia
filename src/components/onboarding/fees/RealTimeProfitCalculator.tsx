@@ -243,12 +243,12 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
             {/* Simplified calculation info */}
             <div className="bg-blue-50 p-3 rounded-lg">
               <h4 className="text-sm font-medium text-blue-900 mb-2">
-                Výpočet poplatkov
+                {t('fees.calculator.results.calculationBreakdown.title')}
               </h4>
               <div className="text-xs text-blue-700 space-y-1">
-                <p>• Celý obrat: {formatCurrency(calculations.monthlyTurnover)}</p>
-                <p>• Efektívna sadzba: {formatPercentage(calculations.effectiveRate)}</p>
-                <p>• Transakčný poplatok: {formatCurrency(calculations.transactionMargin)}</p>
+                <p>{t('fees.calculator.results.calculationBreakdown.totalTurnover', { amount: formatCurrency(calculations.monthlyTurnover) })}</p>
+                <p>{t('fees.calculator.results.calculationBreakdown.effectiveRate', { rate: formatPercentage(calculations.effectiveRate) })}</p>
+                <p>{t('fees.calculator.results.calculationBreakdown.transactionFee', { amount: formatCurrency(calculations.transactionMargin) })}</p>
               </div>
             </div>
           </div>
@@ -265,20 +265,20 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="h-4 w-4 text-blue-600" />
                   <span className="font-medium text-blue-900">
-                    Príjem z transakcií
+                    {t('fees.calculator.results.transactionRevenue.title')}
                   </span>
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>Celkový obrat:</span>
+                    <span>{t('fees.calculator.results.transactionRevenue.totalTurnover')}</span>
                     <span className="text-slate-600">{formatCurrency(calculations.monthlyTurnover)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Efektívna sadzba:</span>
+                    <span>{t('fees.calculator.results.transactionRevenue.effectiveRate')}</span>
                     <span className="text-slate-600">{formatPercentage(calculations.effectiveRate)}</span>
                   </div>
                   <div className="flex justify-between font-medium pt-2 border-t border-blue-300">
-                    <span>Transakčný príjem:</span>
+                    <span>{t('fees.calculator.results.transactionRevenue.transactionIncome')}</span>
                     <span className={`${formatCurrencyWithColor(calculations.transactionMargin).className}`}>
                       {formatCurrencyWithColor(calculations.transactionMargin).value}
                     </span>

@@ -1,3 +1,4 @@
+
 {
   "contactInfo": {
     "title": "Kontaktné údaje",
@@ -476,12 +477,18 @@
         "mifRate": {
           "label": "MIF++ sadzba (%)",
           "placeholder": "0.90",
-          "effectiveRate": "→ Efektívna sadzba: {rate}",
+          "effectiveRate": "→ Efektívna sadzba: {{rate}}",
           "description": "Jednotná sadzba pre všetky karty (0,2% sa automaticky odpočíta)"
         }
       },
       "results": {
         "title": "Výsledky výpočtu",
+        "transactionRevenue": {
+          "title": "Príjem z transakcií",
+          "totalTurnover": "Celkový obrat:",
+          "effectiveRate": "Efektívna sadzba:",
+          "transactionIncome": "Transakčný príjem:"
+        },
         "serviceMargin": {
           "customerPayments": "💼 Platby klientov:",
           "companyCosts": "🔧 Vaše náklady:",
@@ -493,6 +500,12 @@
             "transactionRevenue": "Príjem z transakcií:",
             "serviceMargin": "+ Marža zo služieb:"
           }
+        },
+        "calculationBreakdown": {
+          "title": "Výpočet poplatkov",
+          "totalTurnover": "• Celý obrat: {{amount}}",
+          "effectiveRate": "• Efektívna sadzba: {{rate}}",
+          "transactionFee": "• Transakčný poplatok: {{amount}}"
         }
       },
       "explanations": {

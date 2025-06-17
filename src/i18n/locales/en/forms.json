@@ -476,22 +476,17 @@
         "mifRate": {
           "label": "MIF++ Rate (%)",
           "placeholder": "0.90",
-          "effectiveRate": "→ Effective rate: {rate}",
-          "description": "Unified rate for both regulated and unregulated cards (0.2% automatically deducted)"
-        },
-        "turnoverDistribution": {
-          "title": "Turnover Distribution",
-          "regulated": "Regulated cards ({percentage}): {amount}",
-          "unregulated": "Unregulated cards ({percentage}): {amount}"
+          "effectiveRate": "→ Effective rate: {{rate}}",
+          "description": "Unified rate for all cards (0.2% automatically deducted)"
         }
       },
       "results": {
         "title": "Calculation Results",
         "transactionRevenue": {
           "title": "Transaction Revenue",
-          "regulatedCards": "Regulated cards:",
-          "unregulatedCards": "Unregulated cards:",
-          "totalRevenue": "Total revenue:"
+          "totalTurnover": "Total turnover:",
+          "effectiveRate": "Effective rate:",
+          "transactionIncome": "Transaction income:"
         },
         "serviceMargin": {
           "customerPayments": "💼 Customer payments:",
@@ -504,6 +499,12 @@
             "transactionRevenue": "Transaction revenue:",
             "serviceMargin": "+ Service margin:"
           }
+        },
+        "calculationBreakdown": {
+          "title": "Fee Calculation",
+          "totalTurnover": "• Total turnover: {{amount}}",
+          "effectiveRate": "• Effective rate: {{rate}}",
+          "transactionFee": "• Transaction fee: {{amount}}"
         }
       },
       "explanations": {
@@ -516,32 +517,15 @@
   "authorizedPersons": {
     "title": "Authorized Persons",
     "description": "Authorized persons are statutory representatives or authorized persons who can act on behalf of the company.",
-    "sidebar": {
-      "title": "Authorized Persons",
-      "description": "Authorized persons are statutory representatives or authorized persons who can act on behalf of the company.",
-      "importantInfo": {
-        "title": "Important Information",
-        "items": [
-          "Data must be consistent with official documents",
-          "A valid identity document is required for each authorized person",
-          "At least one authorized person must be listed"
-        ]
-      },
-      "addButton": "Add Person"
-    },
-    "emptyState": {
-      "title": "No authorized persons yet",
-      "description": "Add at least one statutory representative or authorized person",
-      "addButton": "Add Authorized Person"
-    },
-    "personTitle": "Authorized Person {index}",
+    "addPerson": "Add Authorized Person",
+    "fromContact": "From Contacts",
     "sections": {
       "basicInfo": {
         "title": "Basic Information",
-        "firstName": "First Name *",
-        "lastName": "Last Name *",
-        "email": "Email *",
-        "phone": "Phone *",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "phone": "Phone",
         "maidenName": "Maiden Name",
         "placeholders": {
           "firstName": "Enter first name",
@@ -553,11 +537,11 @@
       },
       "personalData": {
         "title": "Personal Data",
-        "birthDate": "Date of Birth *",
-        "birthPlace": "Place of Birth *",
-        "birthNumber": "Birth Number *",
-        "position": "Position *",
-        "permanentAddress": "Permanent Address *",
+        "birthDate": "Date of Birth",
+        "birthPlace": "Place of Birth",
+        "birthNumber": "Birth Number",
+        "position": "Position",
+        "permanentAddress": "Permanent Address",
         "placeholders": {
           "birthPlace": "Bratislava",
           "birthNumber": "123456/7890",
@@ -567,13 +551,11 @@
       },
       "document": {
         "title": "Identity Document",
-        "documentType": "Document Type *",
-        "documentNumber": "Document Number *",
-        "documentValidity": "Valid Until *",
-        "documentIssuer": "Issued By *",
-        "documentCountry": "Issuing Country *",
-        "documentFront": "Front Side of Document *",
-        "documentBack": "Back Side of Document *",
+        "documentType": "Document Type",
+        "documentNumber": "Document Number",
+        "documentValidity": "Valid Until",
+        "documentIssuer": "Issued By",
+        "documentCountry": "Issuing Country",
         "documentTypeOptions": {
           "OP": "Identity Card",
           "Pas": "Passport"
@@ -586,7 +568,7 @@
       },
       "additionalInfo": {
         "title": "Additional Information",
-        "citizenship": "Citizenship *",
+        "citizenship": "Citizenship",
         "isPoliticallyExposed": "Politically Exposed Person",
         "isUSCitizen": "US Citizen",
         "placeholders": {
@@ -597,40 +579,18 @@
           "isUSCitizen": "Persons with US citizenship are subject to special reporting obligations."
         }
       }
-    },
-    "buttons": {
-      "addPerson": "Add Another Authorized Person",
-      "remove": "Remove"
     }
   },
   "actualOwners": {
     "title": "Actual Owners",
     "description": "Actual owners are natural persons who actually own or control the company.",
-    "sidebar": {
-      "title": "Actual Owners",
-      "description": "Actual owners are natural persons who actually own or control the company.",
-      "whoIsOwner": {
-        "title": "Who is an actual owner?",
-        "items": [
-          "Person who has a direct or indirect stake of at least 25%",
-          "Person who has the right to appoint or dismiss the statutory body",
-          "Person who otherwise controls the company"
-        ]
-      },
-      "addButton": "Add Owner"
-    },
-    "emptyState": {
-      "title": "No actual owners yet",
-      "description": "Add at least one beneficial owner",
-      "addButton": "Add Actual Owner"
-    },
-    "ownerTitle": "Actual Owner {index}",
+    "fromContact": "From Contacts",
     "bornLabel": "Born: {date}",
     "sections": {
       "basicInfo": {
         "title": "Basic Information",
-        "firstName": "First Name *",
-        "lastName": "Last Name *",
+        "firstName": "First Name",
+        "lastName": "Last Name",
         "maidenName": "Maiden Name",
         "placeholders": {
           "firstName": "Enter first name",
@@ -640,10 +600,10 @@
       },
       "personalData": {
         "title": "Personal Data",
-        "birthDate": "Date of Birth *",
-        "birthPlace": "Place of Birth *",
-        "birthNumber": "Birth Number *",
-        "permanentAddress": "Permanent Address *",
+        "birthDate": "Date of Birth",
+        "birthPlace": "Place of Birth",
+        "birthNumber": "Birth Number",
+        "permanentAddress": "Permanent Address",
         "placeholders": {
           "birthPlace": "Bratislava",
           "birthNumber": "123456/7890",
@@ -652,7 +612,7 @@
       },
       "additionalInfo": {
         "title": "Additional Information",
-        "citizenship": "Citizenship *",
+        "citizenship": "Citizenship",
         "isPoliticallyExposed": "Politically Exposed Person",
         "placeholders": {
           "citizenship": "Slovakia"
@@ -661,10 +621,6 @@
           "isPoliticallyExposed": "A politically exposed person is a person in a significant public function."
         }
       }
-    },
-    "buttons": {
-      "addOwner": "Add Another Actual Owner",
-      "remove": "Remove"
     }
   },
   "consents": {
@@ -731,5 +687,20 @@
       "title": "Important:",
       "description": "All required fields must be filled, consents granted, and electronic signature created before completing registration."
     }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "continue": "Continue",
+    "next": "Next",
+    "previous": "Previous",
+    "edit": "Edit",
+    "delete": "Delete",
+    "remove": "Remove",
+    "add": "Add",
+    "yes": "Yes",
+    "no": "No",
+    "error": "Error"
   }
 }
