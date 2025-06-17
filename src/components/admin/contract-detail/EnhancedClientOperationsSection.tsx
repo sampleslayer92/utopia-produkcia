@@ -11,8 +11,7 @@ import EditableSection from "./EditableSection";
 interface EnhancedClientOperationsSectionProps {
   onboardingData: any;
   isEditMode: boolean;
-  onUpdate: (path: string, value: any) => void;
-  onSectionUpdate: (data: any) => void;
+  onUpdate: (data: any) => Promise<void>;
   onLocalChanges?: (hasChanges: boolean) => void;
 }
 
@@ -20,7 +19,6 @@ const EnhancedClientOperationsSection = ({
   onboardingData, 
   isEditMode, 
   onUpdate,
-  onSectionUpdate,
   onLocalChanges
 }: EnhancedClientOperationsSectionProps) => {
   const { t } = useTranslation('admin');
@@ -30,8 +28,7 @@ const EnhancedClientOperationsSection = ({
     localData,
     hasLocalChanges,
     updateLocalField,
-    resetLocalData,
-    commitLocalChanges
+    forceReset
   } = useLocalFormState(onboardingData);
 
   // Use local data when in edit mode and available, otherwise use original data
@@ -48,8 +45,7 @@ const EnhancedClientOperationsSection = ({
     businessLocations,
     isEditMode,
     hasLocalChanges,
-    hasLocalData: !!localData,
-    currentDataKeys: currentData ? Object.keys(currentData) : []
+    hasLocalData: !!localData
   });
 
   // Notify parent about local changes
@@ -59,22 +55,24 @@ const EnhancedClientOperationsSection = ({
     }
   }, [hasLocalChanges, onLocalChanges]);
 
-  // Reset local data when exiting edit mode
+  // Handle saving when exiting edit mode with changes
+  useEffect(() => {
+    if (!isEditMode && hasLocalChanges && localData) {
+      console.log('Exiting edit mode with changes, saving...');
+      onUpdate(localData).then(() => {
+        console.log('Save completed');
+      }).catch((error) => {
+        console.error('Save failed:', error);
+      });
+    }
+  }, [isEditMode, hasLocalChanges, localData, onUpdate]);
+
+  // Reset when switching to edit mode
   useEffect(() => {
     if (!isEditMode) {
-      resetLocalData();
+      forceReset();
     }
-  }, [isEditMode, resetLocalData]);
-
-  // Expose commit function to parent through ref or callback
-  useEffect(() => {
-    if (onSectionUpdate && hasLocalChanges && !isEditMode) {
-      const committedData = commitLocalChanges();
-      if (committedData) {
-        onSectionUpdate(committedData);
-      }
-    }
-  }, [isEditMode, hasLocalChanges, commitLocalChanges, onSectionUpdate]);
+  }, [isEditMode, forceReset]);
 
   const handleCompanyFieldChange = (field: string, value: string) => {
     console.log(`Updating company field ${field} with value:`, value);

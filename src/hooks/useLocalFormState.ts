@@ -4,15 +4,17 @@ import { useState, useEffect, useCallback } from 'react';
 export const useLocalFormState = <T>(initialData: T | null) => {
   const [localData, setLocalData] = useState<T | null>(null);
   const [hasLocalChanges, setHasLocalChanges] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize local data when initial data changes
+  // Initialize local data only once when initial data is first available
   useEffect(() => {
-    if (initialData) {
+    if (initialData && !isInitialized) {
       console.log('useLocalFormState: Initializing with data:', initialData);
       setLocalData({ ...initialData });
       setHasLocalChanges(false);
+      setIsInitialized(true);
     }
-  }, [initialData]);
+  }, [initialData, isInitialized]);
 
   const updateLocalField = useCallback((path: string, value: any) => {
     console.log(`useLocalFormState: Updating field ${path} with value:`, value);
@@ -56,11 +58,19 @@ export const useLocalFormState = <T>(initialData: T | null) => {
     return localData;
   }, [localData]);
 
+  const forceReset = useCallback(() => {
+    console.log('useLocalFormState: Force reset');
+    setIsInitialized(false);
+    setHasLocalChanges(false);
+    setLocalData(null);
+  }, []);
+
   return {
     localData,
     hasLocalChanges,
     updateLocalField,
     resetLocalData,
-    commitLocalChanges
+    commitLocalChanges,
+    forceReset
   };
 };

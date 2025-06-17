@@ -5,7 +5,6 @@ import { useContractData } from "@/hooks/useContractData";
 import { useContractUpdate } from "@/hooks/useContractUpdate";
 import { useContractDelete } from "@/hooks/useContractDelete";
 import { useToast } from "@/hooks/use-toast";
-import { useContractDetailForm } from "@/hooks/useContractDetailForm";
 import ContractHeader from "./contract-detail/ContractHeader";
 import EnhancedClientOperationsSection from "./contract-detail/EnhancedClientOperationsSection";
 import DevicesServicesSection from "./contract-detail/DevicesServicesSection";
@@ -22,24 +21,11 @@ const ContractDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isEditMode, setIsEditMode] = useState(false);
-  const [pendingChanges, setPendingChanges] = useState<any>({});
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [clientOperationsHasChanges, setClientOperationsHasChanges] = useState(false);
   
   const contractDataResult = useContractData(id!);
   const updateContract = useContractUpdate(id!);
   const deleteContract = useContractDelete();
-
-  // Initialize form management
-  const { formData, isDirty, updateField, updateSection, resetForm, markClean, forceInitialize } = useContractDetailForm();
-
-  // Handle data loading and form initialization
-  useEffect(() => {
-    if (contractDataResult.data?.onboardingData) {
-      console.log('Contract data loaded, initializing form with:', contractDataResult.data.onboardingData);
-      forceInitialize(contractDataResult.data.onboardingData);
-    }
-  }, [contractDataResult.data?.onboardingData, forceInitialize]);
 
   if (contractDataResult.isLoading) {
     return (
@@ -67,10 +53,7 @@ const ContractDetail = () => {
   const { contract, onboardingData } = contractDataResult.data;
 
   const handleSave = async () => {
-    // Check if we have any changes to save
-    const totalHasChanges = hasUnsavedChanges || isDirty || clientOperationsHasChanges;
-    
-    if (!totalHasChanges) {
+    if (!clientOperationsHasChanges) {
       console.log('No changes to save');
       toast({
         title: "Informácia",
@@ -79,84 +62,27 @@ const ContractDetail = () => {
       return;
     }
 
-    // Merge pending changes with original data
-    const dataToSave = {
-      ...onboardingData,
-      ...pendingChanges
-    };
-    
-    if (!dataToSave) {
-      console.error('No data available to save');
-      toast({
-        title: "Chyba",
-        description: "Nie sú dostupné žiadne dáta na uloženie.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      console.log('Saving contract changes:', dataToSave);
-      
-      await updateContract.mutateAsync({
-        data: dataToSave
-      });
-
-      // Clear pending changes and reset states
-      setPendingChanges({});
-      setHasUnsavedChanges(false);
-      setClientOperationsHasChanges(false);
-      markClean();
-      
-      toast({
-        title: "Zmluva uložená",
-        description: "Zmeny boli úspešne uložené.",
-      });
-    } catch (error) {
-      console.error('Error saving contract:', error);
-      toast({
-        title: "Chyba",
-        description: "Nepodarilo sa uložiť zmeny.",
-        variant: "destructive",
-      });
-    }
+    // The actual save will be handled by the EnhancedClientOperationsSection
+    // when it commits its local changes
+    console.log('Save triggered - sections will commit their changes');
   };
 
   const handleToggleEdit = () => {
-    const totalHasChanges = hasUnsavedChanges || isDirty || clientOperationsHasChanges;
-    
     console.log('Toggling edit mode. Current state:', { 
       isEditMode, 
-      hasUnsavedChanges, 
-      isDirty, 
-      clientOperationsHasChanges,
-      totalHasChanges 
+      clientOperationsHasChanges
     });
     
-    if (isEditMode) {
-      // Leaving edit mode
-      if (totalHasChanges) {
-        const shouldSave = window.confirm('Máte neuložené zmeny. Chcete ich uložiť pred ukončením editácie?');
-        if (shouldSave) {
-          handleSave();
-        } else {
-          // Reset all pending changes
-          setPendingChanges({});
-          setHasUnsavedChanges(false);
-          setClientOperationsHasChanges(false);
-          forceInitialize(onboardingData);
-        }
+    if (isEditMode && clientOperationsHasChanges) {
+      const shouldSave = window.confirm('Máte neuložené zmeny. Chcete ich uložiť pred ukončením editácie?');
+      if (shouldSave) {
+        handleSave();
+      } else {
+        setClientOperationsHasChanges(false);
       }
-      setIsEditMode(false);
-    } else {
-      // Entering edit mode - ensure form has the latest data
-      console.log('Entering edit mode, ensuring form has current data');
-      forceInitialize(onboardingData);
-      setPendingChanges({});
-      setHasUnsavedChanges(false);
-      setClientOperationsHasChanges(false);
-      setIsEditMode(true);
     }
+    
+    setIsEditMode(!isEditMode);
   };
 
   const handleDelete = async () => {
@@ -190,7 +116,6 @@ const ContractDetail = () => {
     } catch (error) {
       console.error('Error deleting contract:', error);
       
-      // Zobrazíme podrobnejšiu chybovú správu
       const errorMessage = error instanceof Error ? error.message : 'Neočakávaná chyba pri mazaní zmluvy';
       
       toast({
@@ -201,30 +126,28 @@ const ContractDetail = () => {
     }
   };
 
-  // Determine which data to use - in edit mode use formData if available, otherwise use original data
-  const currentData = (isEditMode && formData) ? formData : onboardingData;
-
-  console.log('ContractDetail render state:', {
-    isEditMode,
-    hasFormData: !!formData,
-    hasOnboardingData: !!onboardingData,
-    hasUnsavedChanges,
-    isDirty,
-    clientOperationsHasChanges,
-    totalHasChanges: hasUnsavedChanges || isDirty || clientOperationsHasChanges,
-    currentDataSource: (isEditMode && formData) ? 'formData' : 'onboardingData',
-    contractId: id
-  });
-
-  const handleSectionUpdate = (sectionPath: string, sectionData: any) => {
-    console.log(`Section ${sectionPath} updated with data:`, sectionData);
+  const handleClientOperationsUpdate = async (updatedData: any) => {
+    console.log('Client operations updated, saving:', updatedData);
     
-    // Store changes in pending state instead of immediately applying them
-    setPendingChanges(prev => ({
-      ...prev,
-      [sectionPath]: sectionData
-    }));
-    setHasUnsavedChanges(true);
+    try {
+      await updateContract.mutateAsync({
+        data: updatedData
+      });
+      
+      setClientOperationsHasChanges(false);
+      
+      toast({
+        title: "Zmluva uložená",
+        description: "Zmeny boli úspešne uložené.",
+      });
+    } catch (error) {
+      console.error('Error saving contract:', error);
+      toast({
+        title: "Chyba",
+        description: "Nepodarilo sa uložiť zmeny.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleClientOperationsLocalChanges = (hasChanges: boolean) => {
@@ -232,76 +155,76 @@ const ContractDetail = () => {
     setClientOperationsHasChanges(hasChanges);
   };
 
-  // Calculate total dirty state for header
-  const totalIsDirty = hasUnsavedChanges || isDirty || clientOperationsHasChanges;
+  console.log('ContractDetail render state:', {
+    isEditMode,
+    clientOperationsHasChanges,
+    contractId: id
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <ContractHeader
         contract={contract}
-        onboardingData={currentData}
+        onboardingData={onboardingData}
         isEditMode={isEditMode}
         onToggleEdit={handleToggleEdit}
         onBack={() => navigate('/admin')}
         onSave={handleSave}
-        isDirty={totalIsDirty}
+        isDirty={clientOperationsHasChanges}
         isSaving={updateContract.isPending}
       />
 
       <div className="container mx-auto px-6 py-8">
         <div className="grid lg:grid-cols-4 gap-8">
-          {/* Main content - 3 columns */}
           <div className="lg:col-span-3 space-y-8">
             <EnhancedClientOperationsSection
-              onboardingData={currentData}
+              onboardingData={onboardingData}
               isEditMode={isEditMode}
-              onUpdate={updateField}
-              onSectionUpdate={(data) => handleSectionUpdate('contactInfo', data)}
+              onUpdate={handleClientOperationsUpdate}
               onLocalChanges={handleClientOperationsLocalChanges}
             />
 
             <DevicesServicesSection
-              onboardingData={currentData}
+              onboardingData={onboardingData}
               isEditMode={isEditMode}
-              onSave={(data) => handleSectionUpdate('deviceSelection', data)}
+              onSave={(data) => console.log('Device section save:', data)}
             />
 
             <CalculationFeesSection
-              onboardingData={currentData}
+              onboardingData={onboardingData}
               contract={contract}
             />
 
             <AuthorizedPersonsSection
-              onboardingData={currentData}
+              onboardingData={onboardingData}
               isEditMode={isEditMode}
-              onSave={(data) => handleSectionUpdate('authorizedPersons', data)}
+              onSave={(data) => console.log('Authorized persons save:', data)}
             />
 
             <ActualOwnersSection
-              onboardingData={currentData}
+              onboardingData={onboardingData}
               isEditMode={isEditMode}
-              onSave={(data) => handleSectionUpdate('actualOwners', data)}
+              onSave={(data) => console.log('Actual owners save:', data)}
             />
 
             <ContractNotesSection
               contract={contract}
-              onboardingData={currentData}
+              onboardingData={onboardingData}
               isEditMode={isEditMode}
-              onSave={(notes) => handleSectionUpdate('contract', { notes })}
+              onSave={(notes) => console.log('Notes save:', notes)}
             />
 
             <SignatureSection
               contract={contract}
-              onboardingData={currentData}
-              onSave={(data) => handleSectionUpdate('consents', data)}
+              onboardingData={onboardingData}
+              onSave={(data) => console.log('Signature save:', data)}
             />
           </div>
 
-          {/* Actions sidebar - 1 column */}
           <div className="lg:col-span-1">
             <ContractActions
               contract={contract}
-              onboardingData={currentData}
+              onboardingData={onboardingData}
               onDelete={handleDelete}
               isDeleting={deleteContract.isPending}
             />
