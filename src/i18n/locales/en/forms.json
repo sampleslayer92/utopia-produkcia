@@ -316,7 +316,7 @@
       "title": "Solution Selection",
       "description": "Select the types of solutions you want to use in your business",
       "stepProgress": "Step 1 of 4",
-      "selectedSolutions": "Selected solutions: {count}",
+      "selectedSolutions": "Selected solutions: {{count}}",
       "continueMessage": "Continue to device and service configuration",
       "nextButton": "Next step - Device and service selection",
       "solutions": {
@@ -389,8 +389,8 @@
       },
       "costSummary": {
         "title": "Total Costs",
-        "monthly": "€{amount}/month",
-        "yearly": "€{amount} annually"
+        "monthly": "€{{amount}}/month",
+        "yearly": "€{{amount}} annually"
       },
       "sections": {
         "devices": "Devices",
@@ -425,18 +425,19 @@
     "cards": {
       "countPieces": "pcs",
       "items": "items",
-      "monthlyFee": "€{amount}/month",
+      "monthlyFee": "€{{amount}}/month",
       "mainItem": "Main item:",
       "addons": "Add-ons:",
       "total": "Total:",
-      "addonsCount": "+{count} add-ons",
+      "addonsCount": "+{{count}} add-ons",
       "specifications": "Specifications",
       "automatic": "(automatic)",
       "quantityLabel": "Quantity",
       "monthlyFeeLabel": "Monthly fee (EUR)",
       "companyCostLabel": "Company cost (EUR)",
       "addonsTitle": "Add-ons",
-      "perMonth": "/month"
+      "perMonth": "/month",
+      "count": "{{count}} pcs"
     },
     "addons": {
       "title": "Add-ons and Accessories",
@@ -456,7 +457,7 @@
       "changeSolution": "Change Solution",
       "continue": "Continue",
       "next": "Next",
-      "itemsSelected": "{count} items"
+      "itemsSelected": "{{count}} items"
     }
   },
   "fees": {
