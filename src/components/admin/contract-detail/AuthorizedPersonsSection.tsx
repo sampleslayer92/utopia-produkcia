@@ -1,8 +1,10 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Plus, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { useTranslation } from 'react-i18next';
 import EditableSection from "./EditableSection";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import { Button } from "@/components/ui/button";
@@ -18,6 +20,7 @@ interface AuthorizedPersonsSectionProps {
 }
 
 const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: AuthorizedPersonsSectionProps) => {
+  const { t } = useTranslation('admin');
   const { id: contractId } = useParams<{ id: string }>();
   const { deletePerson, isDeleting } = useAuthorizedPersonsCrud(contractId!);
   
@@ -40,18 +43,17 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
   };
 
   const addNewPerson = () => {
-    // This would open a modal or form to add a new person
     console.log('Add new person');
   };
 
   const getDocumentTypeBadge = (docType: string) => {
     switch (docType) {
       case 'id_card':
-        return <Badge variant="outline">Občiansky preukaz</Badge>;
+        return <Badge variant="outline">{t('authorizedPersons.idCard')}</Badge>;
       case 'passport':
-        return <Badge variant="outline">Pas</Badge>;
+        return <Badge variant="outline">{t('authorizedPersons.passport')}</Badge>;
       case 'driving_license':
-        return <Badge variant="outline">Vodičský preukaz</Badge>;
+        return <Badge variant="outline">{t('authorizedPersons.drivingLicense')}</Badge>;
       default:
         return <Badge variant="outline">{docType}</Badge>;
     }
@@ -64,12 +66,12 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
           <CardTitle className="flex items-center justify-between text-slate-900">
             <div className="flex items-center">
               <Users className="h-5 w-5 mr-2 text-indigo-600" />
-              Oprávnené osoby
+              {t('authorizedPersons.title')}
             </div>
             {isEditMode && (
               <Button variant="outline" size="sm" onClick={addNewPerson}>
                 <Plus className="h-4 w-4 mr-2" />
-                Pridať osobu
+                {t('authorizedPersons.addPerson')}
               </Button>
             )}
           </CardTitle>
@@ -94,11 +96,11 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                   <div className="grid md:grid-cols-2 gap-6">
                     {/* Personal Information */}
                     <div className="space-y-4">
-                      <h5 className="font-medium text-slate-900">Osobné údaje</h5>
+                      <h5 className="font-medium text-slate-900">{t('authorizedPersons.personalData')}</h5>
                       
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Meno</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.firstName')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.firstName || ''} 
@@ -110,7 +112,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                         </div>
                         
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Priezvisko</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.lastName')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.lastName || ''} 
@@ -123,7 +125,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                       </div>
 
                       <div>
-                        <Label className="text-sm font-medium text-slate-600">Pozícia</Label>
+                        <Label className="text-sm font-medium text-slate-600">{t('authorizedPersons.position')}</Label>
                         {isEditMode ? (
                           <Input 
                             defaultValue={person.position || ''} 
@@ -136,7 +138,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Email</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.email')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.email || ''} 
@@ -149,7 +151,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                         </div>
                         
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Telefón</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.phone')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.phone || ''} 
@@ -162,7 +164,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                       </div>
 
                       <div>
-                        <Label className="text-sm font-medium text-slate-600">Adresa trvalého pobytu</Label>
+                        <Label className="text-sm font-medium text-slate-600">{t('actualOwners.permanentAddress')}</Label>
                         {isEditMode ? (
                           <Input 
                             defaultValue={person.permanentAddress || ''} 
@@ -176,10 +178,10 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
 
                     {/* Document Information */}
                     <div className="space-y-4">
-                      <h5 className="font-medium text-slate-900">Doklad totožnosti</h5>
+                      <h5 className="font-medium text-slate-900">{t('authorizedPersons.identityDocument')}</h5>
                       
                       <div>
-                        <Label className="text-sm font-medium text-slate-600">Typ dokladu</Label>
+                        <Label className="text-sm font-medium text-slate-600">{t('authorizedPersons.documentType')}</Label>
                         <div className="mt-1">
                           {getDocumentTypeBadge(person.documentType)}
                         </div>
@@ -187,7 +189,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Číslo dokladu</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('authorizedPersons.documentNumber')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.documentNumber || ''} 
@@ -199,7 +201,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                         </div>
                         
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Platnosť do</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('authorizedPersons.validUntil')}</Label>
                           {isEditMode ? (
                             <Input 
                               type="date"
@@ -208,14 +210,14 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                             />
                           ) : (
                             <p className="text-slate-900 mt-1">
-                              {person.documentValidity ? format(new Date(person.documentValidity), 'dd.MM.yyyy') : 'Neuvedené'}
+                              {person.documentValidity ? format(new Date(person.documentValidity), 'dd.MM.yyyy') : t('contractActions.notSpecified')}
                             </p>
                           )}
                         </div>
                       </div>
 
                       <div>
-                        <Label className="text-sm font-medium text-slate-600">Vydavateľ</Label>
+                        <Label className="text-sm font-medium text-slate-600">{t('authorizedPersons.issuer')}</Label>
                         {isEditMode ? (
                           <Input 
                             defaultValue={person.documentIssuer || ''} 
@@ -228,7 +230,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Dátum narodenia</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('actualOwners.birthDate')}</Label>
                           {isEditMode ? (
                             <Input 
                               type="date"
@@ -237,13 +239,13 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                             />
                           ) : (
                             <p className="text-slate-900 mt-1">
-                              {person.birthDate ? format(new Date(person.birthDate), 'dd.MM.yyyy') : 'Neuvedené'}
+                              {person.birthDate ? format(new Date(person.birthDate), 'dd.MM.yyyy') : t('contractActions.notSpecified')}
                             </p>
                           )}
                         </div>
                         
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Štátna príslušnosť</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('actualOwners.citizenship')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.citizenship || ''} 
@@ -259,10 +261,10 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                       <div className="pt-4 border-t border-slate-200">
                         <div className="flex flex-wrap gap-2">
                           {person.isPoliticallyExposed && (
-                            <Badge variant="destructive">PEP osoba</Badge>
+                            <Badge variant="destructive">{t('authorizedPersons.pepPerson')}</Badge>
                           )}
                           {person.isUsCitizen && (
-                            <Badge variant="outline">US občan</Badge>
+                            <Badge variant="outline">{t('authorizedPersons.usCitizen')}</Badge>
                           )}
                         </div>
                       </div>
@@ -273,7 +275,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
             ))
           ) : (
             <p className="text-slate-600 text-center py-8">
-              Žiadne oprávnené osoby neboli zadané
+              {t('authorizedPersons.noPersons')}
             </p>
           )}
         </CardContent>
@@ -283,7 +285,7 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        title={personToDelete ? `${personToDelete.firstName} ${personToDelete.lastName}` : 'túto osobu'}
+        title={personToDelete ? `${personToDelete.firstName} ${personToDelete.lastName}` : t('authorizedPersons.thisPerson')}
         isDeleting={isDeleting}
       />
     </>

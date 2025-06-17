@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calculator } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import { formatCurrency } from "@/components/onboarding/utils/currencyUtils";
 
 interface CalculationFeesSectionProps {
@@ -9,6 +10,8 @@ interface CalculationFeesSectionProps {
 }
 
 const CalculationFeesSection = ({ onboardingData, contract }: CalculationFeesSectionProps) => {
+  const { t } = useTranslation('admin');
+  
   // Get business location data for calculations
   const businessLocation = onboardingData.businessLocations?.[0];
   const devices = onboardingData.deviceSelection?.dynamicCards || [];
@@ -51,28 +54,28 @@ const CalculationFeesSection = ({ onboardingData, contract }: CalculationFeesSec
       <CardHeader>
         <CardTitle className="flex items-center text-slate-900">
           <Calculator className="h-5 w-5 mr-2 text-purple-600" />
-          Kalkulácia a poplatky
+          {t('calculations.title')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid md:grid-cols-3 gap-6">
           {/* Business Data */}
           <div className="space-y-4">
-            <h4 className="font-medium text-slate-900 mb-3">Obchodné údaje</h4>
+            <h4 className="font-medium text-slate-900 mb-3">{t('calculations.businessData')}</h4>
             
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-slate-600">Odhadovaný obrat:</span>
+                <span className="text-slate-600">{t('calculations.estimatedTurnover')}:</span>
                 <span className="font-medium">{formatCurrency(estimatedTurnover)}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-slate-600">Priemerná transakcia:</span>
+                <span className="text-slate-600">{t('calculations.averageTransaction')}:</span>
                 <span className="font-medium">{formatCurrency(averageTransaction)}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-slate-600">Počet transakcií/mesiac:</span>
+                <span className="text-slate-600">{t('calculations.transactionsPerMonth')}:</span>
                 <span className="font-medium">
                   {averageTransaction > 0 ? Math.round(estimatedTurnover / averageTransaction) : 0}
                 </span>
@@ -82,21 +85,21 @@ const CalculationFeesSection = ({ onboardingData, contract }: CalculationFeesSec
 
           {/* MIF++ Fees */}
           <div className="space-y-4">
-            <h4 className="font-medium text-slate-900 mb-3">MIF++ poplatky</h4>
+            <h4 className="font-medium text-slate-900 mb-3">{t('calculations.mifFees')}</h4>
             
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-slate-600">Regulované karty:</span>
+                <span className="text-slate-600">{t('calculations.regulatedCards')}:</span>
                 <span className="font-medium">{formatCurrency(mifRegulatedFee)}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-slate-600">Neregulované karty:</span>
+                <span className="text-slate-600">{t('calculations.unregulatedCards')}:</span>
                 <span className="font-medium">{formatCurrency(mifUnregulatedFee)}</span>
               </div>
               
               <div className="flex justify-between border-t border-slate-200 pt-2">
-                <span className="font-medium">Celkom MIF++:</span>
+                <span className="font-medium">{t('calculations.totalMif')}:</span>
                 <span className="font-bold text-emerald-600">{formatCurrency(totalMifFees)}</span>
               </div>
             </div>
@@ -104,26 +107,26 @@ const CalculationFeesSection = ({ onboardingData, contract }: CalculationFeesSec
 
           {/* Profit Summary */}
           <div className="space-y-4">
-            <h4 className="font-medium text-slate-900 mb-3">Súhrn výnosnosti</h4>
+            <h4 className="font-medium text-slate-900 mb-3">{t('calculations.profitabilitySummary')}</h4>
             
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-slate-600">Mesačné príjmy:</span>
+                <span className="text-slate-600">{t('calculations.monthlyIncome')}:</span>
                 <span className="font-medium">{formatCurrency(totalMonthlyRevenue + totalMifFees)}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-slate-600">Mesačné náklady:</span>
+                <span className="text-slate-600">{t('calculations.monthlyCosts')}:</span>
                 <span className="font-medium">{formatCurrency(totalMonthlyCost)}</span>
               </div>
               
               <div className={`flex justify-between border-t border-slate-200 pt-2 ${totalMonthlyProfit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                <span className="font-medium">Mesačný zisk:</span>
+                <span className="font-medium">{t('calculations.monthlyProfit')}:</span>
                 <span className="font-bold">{formatCurrency(totalMonthlyProfit)}</span>
               </div>
               
               <div className={`flex justify-between ${totalAnnualProfit < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                <span className="font-medium">Ročný zisk:</span>
+                <span className="font-medium">{t('calculations.annualProfit')}:</span>
                 <span className="font-bold text-lg">{formatCurrency(totalAnnualProfit)}</span>
               </div>
             </div>
@@ -132,16 +135,16 @@ const CalculationFeesSection = ({ onboardingData, contract }: CalculationFeesSec
 
         {/* Detailed Breakdown */}
         <div className="mt-8 p-4 bg-slate-50/50 rounded-lg">
-          <h4 className="font-medium text-slate-900 mb-4">Detailný rozpis príjmov</h4>
+          <h4 className="font-medium text-slate-900 mb-4">{t('calculations.detailedBreakdown')}</h4>
           
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h5 className="font-medium text-slate-700 mb-3">Zariadenia a služby</h5>
+              <h5 className="font-medium text-slate-700 mb-3">{t('calculations.devicesAndServices')}</h5>
               <div className="space-y-2 text-sm">
                 {devices.map((device: any, index: number) => (
                   <div key={index} className="flex justify-between">
                     <span className="text-slate-600">
-                      {device.name} ({device.count} ks):
+                      {device.name} ({device.count} {t('calculations.pieces')}):
                     </span>
                     <span className="font-medium">
                       {formatCurrency(device.count * device.monthlyFee)}
@@ -149,25 +152,25 @@ const CalculationFeesSection = ({ onboardingData, contract }: CalculationFeesSec
                   </div>
                 ))}
                 <div className="border-t border-slate-200 pt-2 flex justify-between font-medium">
-                  <span>Subtotal zariadenia:</span>
+                  <span>{t('calculations.subtotalDevices')}:</span>
                   <span>{formatCurrency(totalMonthlyRevenue)}</span>
                 </div>
               </div>
             </div>
             
             <div>
-              <h5 className="font-medium text-slate-700 mb-3">Transakčné poplatky</h5>
+              <h5 className="font-medium text-slate-700 mb-3">{t('calculations.transactionFees')}</h5>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-600">MIF++ regulované:</span>
+                  <span className="text-slate-600">{t('calculations.mifRegulated')}:</span>
                   <span className="font-medium">{formatCurrency(mifRegulatedFee)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-600">MIF++ neregulované:</span>
+                  <span className="text-slate-600">{t('calculations.mifUnregulated')}:</span>
                   <span className="font-medium">{formatCurrency(mifUnregulatedFee)}</span>
                 </div>
                 <div className="border-t border-slate-200 pt-2 flex justify-between font-medium">
-                  <span>Subtotal transakcie:</span>
+                  <span>{t('calculations.subtotalTransactions')}:</span>
                   <span>{formatCurrency(totalMifFees)}</span>
                 </div>
               </div>

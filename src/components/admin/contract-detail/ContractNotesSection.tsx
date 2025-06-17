@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { FileText, Calendar, User, Globe } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import EditableSection from "./EditableSection";
 import { format } from "date-fns";
 
@@ -15,6 +16,7 @@ interface ContractNotesSectionProps {
 }
 
 const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: ContractNotesSectionProps) => {
+  const { t } = useTranslation('admin');
   const contactInfo = onboardingData.contactInfo;
 
   return (
@@ -22,31 +24,31 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
       <CardHeader className="border-b border-indigo-200/60">
         <CardTitle className="flex items-center text-slate-900">
           <FileText className="h-5 w-5 mr-2 text-indigo-600" />
-          Poznámky a technické údaje
+          {t('contractNotes.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Poznámky */}
+          {/* Notes */}
           <div className="space-y-4">
             <h4 className="font-medium text-indigo-900 border-b border-indigo-200 pb-2">
-              Poznámky
+              {t('contractNotes.notes')}
             </h4>
             
             <EditableSection isEditMode={isEditMode}>
               <div>
-                <Label className="text-sm font-medium text-slate-600">Poznámky k zmluve</Label>
+                <Label className="text-sm font-medium text-slate-600">{t('contractNotes.contractNotes')}</Label>
                 {isEditMode ? (
                   <Textarea 
                     defaultValue={contract?.notes || ''} 
                     className="mt-1"
                     rows={4}
-                    placeholder="Poznámky k zmluve..."
+                    placeholder={t('contractNotes.contractNotesPlaceholder')}
                   />
                 ) : (
                   <div className="mt-1 p-3 bg-slate-50 rounded border min-h-[100px]">
                     <p className="text-slate-900 whitespace-pre-wrap">
-                      {contract?.notes || 'Žiadne poznámky'}
+                      {contract?.notes || t('contractNotes.noNotes')}
                     </p>
                   </div>
                 )}
@@ -55,18 +57,18 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
 
             <EditableSection isEditMode={isEditMode}>
               <div>
-                <Label className="text-sm font-medium text-slate-600">Sales poznámky</Label>
+                <Label className="text-sm font-medium text-slate-600">{t('contractNotes.salesNotes')}</Label>
                 {isEditMode ? (
                   <Textarea 
                     defaultValue={contactInfo?.salesNote || ''} 
                     className="mt-1"
                     rows={3}
-                    placeholder="Sales poznámky..."
+                    placeholder={t('contractNotes.salesNotesPlaceholder')}
                   />
                 ) : (
                   <div className="mt-1 p-3 bg-slate-50 rounded border min-h-[80px]">
                     <p className="text-slate-900 whitespace-pre-wrap">
-                      {contactInfo?.salesNote || 'Žiadne sales poznámky'}
+                      {contactInfo?.salesNote || t('contractNotes.noSalesNotes')}
                     </p>
                   </div>
                 )}
@@ -74,20 +76,20 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
             </EditableSection>
           </div>
 
-          {/* Technické údaje */}
+          {/* Technical Data */}
           <div className="space-y-4">
             <h4 className="font-medium text-indigo-900 border-b border-indigo-200 pb-2">
-              Technické údaje
+              {t('contractNotes.technicalData')}
             </h4>
             
             <div className="space-y-4">
               <div>
                 <Label className="text-sm font-medium text-slate-600 flex items-center">
                   <Calendar className="h-4 w-4 mr-1" />
-                  Vytvorená
+                  {t('contractNotes.created')}
                 </Label>
                 <p className="text-slate-900 mt-1">
-                  {contract?.created_at ? format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm:ss') : 'Neuvedené'}
+                  {contract?.created_at ? format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm:ss') : t('contractActions.notSpecified')}
                 </p>
               </div>
 
@@ -95,7 +97,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                 <div>
                   <Label className="text-sm font-medium text-slate-600 flex items-center">
                     <Calendar className="h-4 w-4 mr-1" />
-                    Odoslaná
+                    {t('contractNotes.submitted')}
                   </Label>
                   <p className="text-slate-900 mt-1">
                     {format(new Date(contract.submitted_at), 'dd.MM.yyyy HH:mm:ss')}
@@ -107,7 +109,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                 <div>
                   <Label className="text-sm font-medium text-slate-600 flex items-center">
                     <Calendar className="h-4 w-4 mr-1" />
-                    Podpísaná
+                    {t('contractNotes.signed')}
                   </Label>
                   <p className="text-slate-900 mt-1">
                     {format(new Date(contract.signed_at), 'dd.MM.yyyy HH:mm:ss')}
@@ -119,7 +121,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                 <div>
                   <Label className="text-sm font-medium text-slate-600 flex items-center">
                     <User className="h-4 w-4 mr-1" />
-                    Podpísal
+                    {t('contractNotes.signedBy')}
                   </Label>
                   <p className="text-slate-900 mt-1">{contract.signed_by}</p>
                 </div>
@@ -129,7 +131,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                 <div>
                   <Label className="text-sm font-medium text-slate-600 flex items-center">
                     <Globe className="h-4 w-4 mr-1" />
-                    IP adresa podpisu
+                    {t('contractNotes.signatureIp')}
                   </Label>
                   <p className="text-slate-900 mt-1 font-mono">{contract.signature_ip}</p>
                 </div>
@@ -139,19 +141,19 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                 <div>
                   <Label className="text-sm font-medium text-slate-600 flex items-center">
                     <User className="h-4 w-4 mr-1" />
-                    Predajca
+                    {t('contractNotes.salesperson')}
                   </Label>
                   {isEditMode ? (
                     <Input defaultValue={contract?.salesperson || ''} className="mt-1" />
                   ) : (
-                    <p className="text-slate-900 mt-1">{contract?.salesperson || 'Neuvedené'}</p>
+                    <p className="text-slate-900 mt-1">{contract?.salesperson || t('contractActions.notSpecified')}</p>
                   )}
                 </div>
               </EditableSection>
 
               <div>
-                <Label className="text-sm font-medium text-slate-600">Typ zmluvy</Label>
-                <p className="text-slate-900 mt-1">{contract?.contract_type || 'Štandardná'}</p>
+                <Label className="text-sm font-medium text-slate-600">{t('contractNotes.contractType')}</Label>
+                <p className="text-slate-900 mt-1">{contract?.contract_type || t('contractNotes.standardContract')}</p>
               </div>
             </div>
           </div>

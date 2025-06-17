@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PenTool, Clock, CheckCircle, Mail } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import { format } from "date-fns";
 
 interface SignatureSectionProps {
@@ -12,6 +13,7 @@ interface SignatureSectionProps {
 }
 
 const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSectionProps) => {
+  const { t } = useTranslation('admin');
   const consents = onboardingData.consents;
   const signedDate = consents?.signatureDate;
   const signingPersonId = consents?.signingPersonId;
@@ -35,13 +37,13 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'signed':
-        return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">Podpísané</Badge>;
+        return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">{t('signature.signed')}</Badge>;
       case 'submitted':
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Odoslané e-mailom</Badge>;
+        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">{t('signature.sentByEmail')}</Badge>;
       case 'approved':
-        return <Badge className="bg-purple-100 text-purple-700 border-purple-200">Schválené</Badge>;
+        return <Badge className="bg-purple-100 text-purple-700 border-purple-200">{t('signature.approved')}</Badge>;
       default:
-        return <Badge className="bg-amber-100 text-amber-700 border-amber-200">Čaká na podpis</Badge>;
+        return <Badge className="bg-amber-100 text-amber-700 border-amber-200">{t('signature.waitingForSignature')}</Badge>;
     }
   };
 
@@ -50,7 +52,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
       <CardHeader className="border-b border-purple-200/60">
         <CardTitle className="flex items-center text-slate-900">
           <PenTool className="h-5 w-5 mr-2 text-purple-600" />
-          Podpisová sekcia
+          {t('signature.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
@@ -60,7 +62,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
             <div className="flex items-center space-x-4">
               {getStatusIcon(contract.status)}
               <div className="flex-1">
-                <h4 className="font-medium text-slate-900">Stav zmluvy</h4>
+                <h4 className="font-medium text-slate-900">{t('signature.contractStatus')}</h4>
                 <div className="mt-1">
                   {getStatusBadge(contract.status)}
                 </div>
@@ -69,10 +71,10 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
 
             {signedDate && (
               <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-                <h5 className="font-medium text-emerald-900 mb-2">Podpísané</h5>
+                <h5 className="font-medium text-emerald-900 mb-2">{t('signature.signed')}</h5>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-emerald-700">Dátum podpisu:</span>
+                    <span className="text-emerald-700">{t('signature.signatureDate')}:</span>
                     <span className="font-medium text-emerald-900">
                       {format(new Date(signedDate), 'dd.MM.yyyy HH:mm')}
                     </span>
@@ -80,7 +82,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
                   
                   {signingPerson && (
                     <div className="flex justify-between">
-                      <span className="text-emerald-700">Podpísal:</span>
+                      <span className="text-emerald-700">{t('signature.signedBy')}:</span>
                       <span className="font-medium text-emerald-900">
                         {signingPerson.firstName} {signingPerson.lastName}
                       </span>
@@ -88,7 +90,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
                   )}
                   
                   <div className="flex justify-between">
-                    <span className="text-emerald-700">IP adresa:</span>
+                    <span className="text-emerald-700">{t('signature.ipAddress')}:</span>
                     <span className="font-medium text-emerald-900 font-mono">
                       192.168.1.100 {/* This would come from signature log */}
                     </span>
@@ -99,9 +101,9 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
 
             {!signedDate && contract.status !== 'signed' && (
               <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                <h5 className="font-medium text-amber-900 mb-2">Čaká na podpis</h5>
+                <h5 className="font-medium text-amber-900 mb-2">{t('signature.waitingForSign')}</h5>
                 <p className="text-sm text-amber-700">
-                  Zmluva bola odoslaná klientovi a čaká na elektronický podpis.
+                  {t('signature.contractSent')}
                 </p>
               </div>
             )}
@@ -110,7 +112,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
           {/* Consent Summary */}
           <div className="space-y-6">
             <div>
-              <h4 className="font-medium text-slate-900 mb-4">Súhlas s podmienkami</h4>
+              <h4 className="font-medium text-slate-900 mb-4">{t('signature.consentSummary')}</h4>
               
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
@@ -122,7 +124,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
                     )}
                   </div>
                   <span className="text-sm text-slate-700">
-                    Súhlas s obchodnými podmienkami
+                    {t('signature.termsConsent')}
                   </span>
                 </div>
 
@@ -135,7 +137,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
                     )}
                   </div>
                   <span className="text-sm text-slate-700">
-                    Súhlas so spracovaním osobných údajov (GDPR)
+                    {t('signature.gdprConsent')}
                   </span>
                 </div>
 
@@ -148,7 +150,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
                     )}
                   </div>
                   <span className="text-sm text-slate-700">
-                    Súhlas s elektronickou komunikáciou
+                    {t('signature.electronicCommunicationConsent')}
                   </span>
                 </div>
               </div>
@@ -156,25 +158,25 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
 
             {/* Signature Actions */}
             <div className="space-y-3">
-              <h4 className="font-medium text-slate-900">Akcie podpisu</h4>
+              <h4 className="font-medium text-slate-900">{t('signature.signatureActions')}</h4>
               
               {contract.status === 'draft' && (
                 <Button className="w-full bg-blue-600 hover:bg-blue-700">
                   <Mail className="h-4 w-4 mr-2" />
-                  Odoslať na podpis
+                  {t('signature.sendForSignature')}
                 </Button>
               )}
               
               {contract.status === 'submitted' && (
                 <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  Označiť ako podpísané
+                  {t('signature.markAsSigned')}
                 </Button>
               )}
               
               <Button variant="outline" className="w-full">
                 <Mail className="h-4 w-4 mr-2" />
-                Odoslať pripomienku
+                {t('signature.sendReminder')}
               </Button>
             </div>
           </div>
