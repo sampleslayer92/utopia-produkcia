@@ -41,14 +41,6 @@ const EnhancedClientOperationsSection = forwardRef<
     isInitialized
   } = useLocalFormState(onboardingData);
 
-  console.log('EnhancedClientOperationsSection - Component render:', {
-    isEditMode,
-    hasLocalChanges,
-    isInitialized,
-    hasOnboardingData: !!onboardingData,
-    hasLocalData: !!localData
-  });
-
   // Use local data when in edit mode and available, otherwise use original data
   const currentData = (isEditMode && localData) ? localData : onboardingData;
 
@@ -57,14 +49,20 @@ const EnhancedClientOperationsSection = forwardRef<
   const contactInfo = currentData?.contactInfo || {};
   const businessLocations = currentData?.businessLocations || [];
 
+  console.log('EnhancedClientOperationsSection render:', { 
+    companyInfo, 
+    contactInfo, 
+    businessLocations,
+    isEditMode,
+    hasLocalChanges,
+    hasLocalData: !!localData,
+    isInitialized
+  });
+
   // Expose methods to parent component via ref
   useImperativeHandle(ref, () => ({
     commitChanges: async () => {
-      console.log('EnhancedClientOperationsSection: commitChanges called', {
-        hasLocalChanges,
-        hasLocalData: !!localData
-      });
-      
+      console.log('EnhancedClientOperationsSection: commitChanges called');
       if (!hasLocalChanges || !localData) {
         console.log('No changes to commit');
         return true;
@@ -81,10 +79,7 @@ const EnhancedClientOperationsSection = forwardRef<
         return false;
       }
     },
-    hasChanges: () => {
-      console.log('Checking if has changes:', hasLocalChanges);
-      return hasLocalChanges;
-    }
+    hasChanges: () => hasLocalChanges
   }), [hasLocalChanges, localData, onUpdate, commitLocalChanges]);
 
   // Notify parent about local changes
@@ -94,6 +89,14 @@ const EnhancedClientOperationsSection = forwardRef<
       onLocalChanges(hasLocalChanges);
     }
   }, [hasLocalChanges, onLocalChanges]);
+
+  // Reset when switching out of edit mode
+  useEffect(() => {
+    if (!isEditMode && hasLocalChanges) {
+      console.log('Exiting edit mode, resetting local data');
+      resetLocalData();
+    }
+  }, [isEditMode, hasLocalChanges, resetLocalData]);
 
   const handleCompanyFieldChange = (field: string, value: string) => {
     console.log(`Updating company field ${field} with value:`, value);
@@ -436,7 +439,6 @@ const EnhancedClientOperationsSection = forwardRef<
   );
 });
 
-// Set display name for debugging
 EnhancedClientOperationsSection.displayName = 'EnhancedClientOperationsSection';
 
 export default EnhancedClientOperationsSection;
