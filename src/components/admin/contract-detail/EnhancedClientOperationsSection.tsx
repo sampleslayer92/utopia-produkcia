@@ -28,7 +28,8 @@ const EnhancedClientOperationsSection = ({
     localData,
     hasLocalChanges,
     updateLocalField,
-    forceReset
+    resetLocalData,
+    commitLocalChanges
   } = useLocalFormState(onboardingData);
 
   // Use local data when in edit mode and available, otherwise use original data
@@ -55,24 +56,31 @@ const EnhancedClientOperationsSection = ({
     }
   }, [hasLocalChanges, onLocalChanges]);
 
-  // Handle saving when exiting edit mode with changes
-  useEffect(() => {
-    if (!isEditMode && hasLocalChanges && localData) {
-      console.log('Exiting edit mode with changes, saving...');
-      onUpdate(localData).then(() => {
-        console.log('Save completed');
-      }).catch((error) => {
-        console.error('Save failed:', error);
-      });
-    }
-  }, [isEditMode, hasLocalChanges, localData, onUpdate]);
-
   // Reset when switching to edit mode
   useEffect(() => {
     if (!isEditMode) {
-      forceReset();
+      resetLocalData();
     }
-  }, [isEditMode, forceReset]);
+  }, [isEditMode, resetLocalData]);
+
+  // Expose commit function to parent
+  useEffect(() => {
+    if (hasLocalChanges && localData) {
+      // Store the commit function globally so parent can access it
+      (window as any).__commitClientOperationsChanges = async () => {
+        try {
+          await onUpdate(localData);
+          commitLocalChanges();
+          return true;
+        } catch (error) {
+          console.error('Save failed:', error);
+          return false;
+        }
+      };
+    } else {
+      (window as any).__commitClientOperationsChanges = null;
+    }
+  }, [hasLocalChanges, localData, onUpdate, commitLocalChanges]);
 
   const handleCompanyFieldChange = (field: string, value: string) => {
     console.log(`Updating company field ${field} with value:`, value);

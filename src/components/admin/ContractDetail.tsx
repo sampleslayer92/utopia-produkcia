@@ -62,9 +62,29 @@ const ContractDetail = () => {
       return;
     }
 
-    // The actual save will be handled by the EnhancedClientOperationsSection
-    // when it commits its local changes
-    console.log('Save triggered - sections will commit their changes');
+    // Call the global commit function exposed by EnhancedClientOperationsSection
+    const commitFunction = (window as any).__commitClientOperationsChanges;
+    if (commitFunction) {
+      try {
+        const success = await commitFunction();
+        if (success) {
+          setClientOperationsHasChanges(false);
+          toast({
+            title: "Zmluva uložená",
+            description: "Zmeny boli úspešne uložené.",
+          });
+        } else {
+          throw new Error('Save failed');
+        }
+      } catch (error) {
+        console.error('Error saving contract:', error);
+        toast({
+          title: "Chyba",
+          description: "Nepodarilo sa uložiť zmeny.",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   const handleToggleEdit = () => {
@@ -126,6 +146,7 @@ const ContractDetail = () => {
     }
   };
 
+  // Simplified update handler - no longer used for auto-save
   const handleClientOperationsUpdate = async (updatedData: any) => {
     console.log('Client operations updated, saving:', updatedData);
     
