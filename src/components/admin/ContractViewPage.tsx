@@ -2,12 +2,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { useContractData } from "@/hooks/useContractData";
+import { useDisplayValue } from "@/utils/displayUtils";
 import ContractHeader from "./contract-view/ContractHeader";
 
 const ContractViewPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const contractDataResult = useContractData(id!);
+  const displayValue = useDisplayValue();
 
   if (contractDataResult.isLoading) {
     return (
@@ -56,17 +58,20 @@ const ContractViewPage = () => {
                   <label className="text-sm font-medium text-slate-600">Meno a priezvisko</label>
                   <p className="text-slate-900">
                     {onboardingData.contactInfo.salutation && `${onboardingData.contactInfo.salutation} `}
-                    {onboardingData.contactInfo.firstName} {onboardingData.contactInfo.lastName}
+                    {displayValue(onboardingData.contactInfo.firstName) || displayValue(null)} {displayValue(onboardingData.contactInfo.lastName) || displayValue(null)}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-slate-600">Email</label>
-                  <p className="text-slate-900">{onboardingData.contactInfo.email}</p>
+                  <p className="text-slate-900">{displayValue(onboardingData.contactInfo.email)}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-slate-600">Telefón</label>
                   <p className="text-slate-900">
-                    {onboardingData.contactInfo.phonePrefix} {onboardingData.contactInfo.phone}
+                    {onboardingData.contactInfo.phone ? 
+                      `${onboardingData.contactInfo.phonePrefix} ${onboardingData.contactInfo.phone}` : 
+                      displayValue(null)
+                    }
                   </p>
                 </div>
               </div>
@@ -80,16 +85,16 @@ const ContractViewPage = () => {
               <div className="space-y-3">
                 <div>
                   <label className="text-sm font-medium text-slate-600">Názov spoločnosti</label>
-                  <p className="text-slate-900">{onboardingData.companyInfo.companyName}</p>
+                  <p className="text-slate-900">{displayValue(onboardingData.companyInfo.companyName)}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-slate-600">IČO</label>
-                    <p className="text-slate-900">{onboardingData.companyInfo.ico}</p>
+                    <p className="text-slate-900">{displayValue(onboardingData.companyInfo.ico)}</p>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-slate-600">DIČ</label>
-                    <p className="text-slate-900">{onboardingData.companyInfo.dic}</p>
+                    <p className="text-slate-900">{displayValue(onboardingData.companyInfo.dic)}</p>
                   </div>
                 </div>
               </div>

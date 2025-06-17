@@ -1,3 +1,4 @@
+
 {
   "navigation": {
     "dashboard": "Dashboard",
@@ -279,24 +280,25 @@
     "thisPerson": "this person"
   },
   "signature": {
-    "title": "Podpisová sekcia",
-    "contractStatus": "Stav zmluvy",
-    "signed": "Podpísané",
-    "sentByEmail": "Odoslané e-mailom",
-    "waitingForSignature": "Čaká na podpis",
-    "approved": "Schválené",
-    "signatureDate": "Dátum podpisu:",
-    "signedBy": "Podpísal:",
-    "ipAddress": "IP adresa:",
-    "consentSummary": "Súhlas s podmienkami",
-    "termsConsent": "Súhlas s obchodnými podmienkami",
-    "gdprConsent": "Súhlas so spracovaním osobných údajov (GDPR)",
-    "electronicCommunicationConsent": "Súhlas s elektronickou komunikáciou",
-    "signatureActions": "Akcie podpisu",
-    "sendForSignature": "Odoslať na podpis",
-    "markAsSigned": "Označiť ako podpísané",
-    "sendReminder": "Odoslať pripomienku",
-    "contractSent": "Zmluva bola odoslaná klientovi a čaká na elektronický podpis.",
-    "waitingForSign": "Čaká na podpis"
+    "title": "Signature Section",
+    "contractStatus": "Contract Status",
+    "signed": "Signed",
+    "sentByEmail": "Sent by Email",
+    "approved": "Approved",
+    "waitingForSignature": "Waiting for Signature",
+    "signatureDate": "Signature Date",
+    "signedBy": "Signed By",
+    "ipAddress": "IP Address",
+    "notAvailable": "Not Available",
+    "waitingForSign": "Waiting for Signature",
+    "contractSent": "Contract has been sent to client and is waiting for electronic signature.",
+    "consentSummary": "Consent Summary",
+    "termsConsent": "Terms and Conditions Consent",
+    "gdprConsent": "GDPR Data Processing Consent",
+    "electronicCommunicationConsent": "Electronic Communication Consent",
+    "signatureActions": "Signature Actions",
+    "sendForSignature": "Send for Signature",
+    "markAsSigned": "Mark as Signed",
+    "sendReminder": "Send Reminder"
   }
 }

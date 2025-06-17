@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { FileText, Calendar, User, Globe } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { useDisplayValue, formatDateValue } from "@/utils/displayUtils";
 import EditableSection from "./EditableSection";
 import { format } from "date-fns";
 
@@ -17,7 +18,18 @@ interface ContractNotesSectionProps {
 
 const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: ContractNotesSectionProps) => {
   const { t } = useTranslation('admin');
+  const displayValue = useDisplayValue();
   const contactInfo = onboardingData.contactInfo;
+
+  const formatDisplayDate = (dateValue: any): string => {
+    const cleanDate = formatDateValue(dateValue);
+    if (!cleanDate) return displayValue(null);
+    try {
+      return format(new Date(cleanDate), 'dd.MM.yyyy HH:mm:ss');
+    } catch {
+      return displayValue(null);
+    }
+  };
 
   return (
     <Card className="border-indigo-200 bg-gradient-to-r from-indigo-50/50 to-blue-50/50 backdrop-blur-sm">
@@ -48,7 +60,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                 ) : (
                   <div className="mt-1 p-3 bg-slate-50 rounded border min-h-[100px]">
                     <p className="text-slate-900 whitespace-pre-wrap">
-                      {contract?.notes || t('contractNotes.noNotes')}
+                      {displayValue(contract?.notes, 'contractNotes.noNotes')}
                     </p>
                   </div>
                 )}
@@ -68,7 +80,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                 ) : (
                   <div className="mt-1 p-3 bg-slate-50 rounded border min-h-[80px]">
                     <p className="text-slate-900 whitespace-pre-wrap">
-                      {contactInfo?.salesNote || t('contractNotes.noSalesNotes')}
+                      {displayValue(contactInfo?.salesNote, 'contractNotes.noSalesNotes')}
                     </p>
                   </div>
                 )}
@@ -89,7 +101,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                   {t('contractNotes.created')}
                 </Label>
                 <p className="text-slate-900 mt-1">
-                  {contract?.created_at ? format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm:ss') : t('contractActions.notSpecified')}
+                  {formatDisplayDate(contract?.created_at)}
                 </p>
               </div>
 
@@ -100,7 +112,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                     {t('contractNotes.submitted')}
                   </Label>
                   <p className="text-slate-900 mt-1">
-                    {format(new Date(contract.submitted_at), 'dd.MM.yyyy HH:mm:ss')}
+                    {formatDisplayDate(contract.submitted_at)}
                   </p>
                 </div>
               )}
@@ -112,7 +124,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                     {t('contractNotes.signed')}
                   </Label>
                   <p className="text-slate-900 mt-1">
-                    {format(new Date(contract.signed_at), 'dd.MM.yyyy HH:mm:ss')}
+                    {formatDisplayDate(contract.signed_at)}
                   </p>
                 </div>
               )}
@@ -123,7 +135,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                     <User className="h-4 w-4 mr-1" />
                     {t('contractNotes.signedBy')}
                   </Label>
-                  <p className="text-slate-900 mt-1">{contract.signed_by}</p>
+                  <p className="text-slate-900 mt-1">{displayValue(contract.signed_by)}</p>
                 </div>
               )}
 
@@ -133,7 +145,7 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                     <Globe className="h-4 w-4 mr-1" />
                     {t('contractNotes.signatureIp')}
                   </Label>
-                  <p className="text-slate-900 mt-1 font-mono">{contract.signature_ip}</p>
+                  <p className="text-slate-900 mt-1 font-mono">{displayValue(contract.signature_ip)}</p>
                 </div>
               )}
 
@@ -146,14 +158,14 @@ const ContractNotesSection = ({ contract, onboardingData, isEditMode, onSave }: 
                   {isEditMode ? (
                     <Input defaultValue={contract?.salesperson || ''} className="mt-1" />
                   ) : (
-                    <p className="text-slate-900 mt-1">{contract?.salesperson || t('contractActions.notSpecified')}</p>
+                    <p className="text-slate-900 mt-1">{displayValue(contract?.salesperson)}</p>
                   )}
                 </div>
               </EditableSection>
 
               <div>
                 <Label className="text-sm font-medium text-slate-600">{t('contractNotes.contractType')}</Label>
-                <p className="text-slate-900 mt-1">{contract?.contract_type || t('contractNotes.standardContract')}</p>
+                <p className="text-slate-900 mt-1">{displayValue(contract?.contract_type, 'contractNotes.standardContract')}</p>
               </div>
             </div>
           </div>

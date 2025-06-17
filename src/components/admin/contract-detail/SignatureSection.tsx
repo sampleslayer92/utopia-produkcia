@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PenTool, Clock, CheckCircle, Mail } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { useDisplayValue, formatDateValue } from "@/utils/displayUtils";
 import { format } from "date-fns";
 
 interface SignatureSectionProps {
@@ -14,14 +15,25 @@ interface SignatureSectionProps {
 
 const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSectionProps) => {
   const { t } = useTranslation('admin');
+  const displayValue = useDisplayValue();
   const consents = onboardingData.consents;
-  const signedDate = consents?.signatureDate;
+  const signedDate = formatDateValue(consents?.signatureDate);
   const signingPersonId = consents?.signingPersonId;
   
   // Find the signing person from authorized persons
   const signingPerson = onboardingData.authorizedPersons?.find(
     (person: any) => person.personId === signingPersonId
   );
+
+  const formatDisplayDate = (dateValue: any): string => {
+    const cleanDate = formatDateValue(dateValue);
+    if (!cleanDate) return displayValue(null);
+    try {
+      return format(new Date(cleanDate), 'dd.MM.yyyy HH:mm');
+    } catch {
+      return displayValue(null);
+    }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -76,7 +88,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
                   <div className="flex justify-between">
                     <span className="text-emerald-700">{t('signature.signatureDate')}:</span>
                     <span className="font-medium text-emerald-900">
-                      {format(new Date(signedDate), 'dd.MM.yyyy HH:mm')}
+                      {formatDisplayDate(signedDate)}
                     </span>
                   </div>
                   
@@ -84,7 +96,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
                     <div className="flex justify-between">
                       <span className="text-emerald-700">{t('signature.signedBy')}:</span>
                       <span className="font-medium text-emerald-900">
-                        {signingPerson.firstName} {signingPerson.lastName}
+                        {displayValue(signingPerson.firstName)} {displayValue(signingPerson.lastName)}
                       </span>
                     </div>
                   )}
@@ -92,7 +104,7 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
                   <div className="flex justify-between">
                     <span className="text-emerald-700">{t('signature.ipAddress')}:</span>
                     <span className="font-medium text-emerald-900 font-mono">
-                      192.168.1.100 {/* This would come from signature log */}
+                      {displayValue(contract?.signature_ip, 'signature.notAvailable')}
                     </span>
                   </div>
                 </div>
@@ -117,9 +129,9 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                    consents?.termsConsent ? 'bg-emerald-100 border-emerald-500' : 'border-slate-300'
+                    consents?.terms ? 'bg-emerald-100 border-emerald-500' : 'border-slate-300'
                   }`}>
-                    {consents?.termsConsent && (
+                    {consents?.terms && (
                       <CheckCircle className="h-3 w-3 text-emerald-600" />
                     )}
                   </div>
@@ -130,9 +142,9 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
 
                 <div className="flex items-center space-x-3">
                   <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                    consents?.gdprConsent ? 'bg-emerald-100 border-emerald-500' : 'border-slate-300'
+                    consents?.gdpr ? 'bg-emerald-100 border-emerald-500' : 'border-slate-300'
                   }`}>
-                    {consents?.gdprConsent && (
+                    {consents?.gdpr && (
                       <CheckCircle className="h-3 w-3 text-emerald-600" />
                     )}
                   </div>
@@ -143,9 +155,9 @@ const SignatureSection = ({ contract, onboardingData, onSave }: SignatureSection
 
                 <div className="flex items-center space-x-3">
                   <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                    consents?.electronicCommunicationConsent ? 'bg-emerald-100 border-emerald-500' : 'border-slate-300'
+                    consents?.electronicCommunication ? 'bg-emerald-100 border-emerald-500' : 'border-slate-300'
                   }`}>
-                    {consents?.electronicCommunicationConsent && (
+                    {consents?.electronicCommunication && (
                       <CheckCircle className="h-3 w-3 text-emerald-600" />
                     )}
                   </div>

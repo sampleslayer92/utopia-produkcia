@@ -1,6 +1,20 @@
 
 import { OnboardingData } from '@/types/onboarding';
 
+const cleanValue = (value: any): any => {
+  if (value === '' || value === 'null' || value === null) {
+    return null;
+  }
+  return value;
+};
+
+const cleanStringValue = (value: any): string => {
+  if (value === '' || value === 'null' || value === null || value === undefined) {
+    return '';
+  }
+  return String(value);
+};
+
 export const transformContractData = (
   contract: any,
   contactInfo: any,
@@ -28,13 +42,13 @@ export const transformContractData = (
 
   // Transform contact info
   const transformedContactInfo = contactInfo ? {
-    salutation: contactInfo.salutation as 'Pan' | 'Pani',
-    firstName: contactInfo.first_name || '',
-    lastName: contactInfo.last_name || '',
-    email: contactInfo.email || '',
-    phone: contactInfo.phone || '',
-    phonePrefix: contactInfo.phone_prefix || '+421',
-    salesNote: contactInfo.sales_note || ''
+    salutation: cleanValue(contactInfo.salutation) as 'Pan' | 'Pani' | undefined,
+    firstName: cleanStringValue(contactInfo.first_name),
+    lastName: cleanStringValue(contactInfo.last_name),
+    email: cleanStringValue(contactInfo.email),
+    phone: cleanStringValue(contactInfo.phone),
+    phonePrefix: cleanStringValue(contactInfo.phone_prefix) || '+421',
+    salesNote: cleanStringValue(contactInfo.sales_note)
   } : {
     salutation: undefined,
     firstName: '',
@@ -47,33 +61,33 @@ export const transformContractData = (
 
   // Transform company info
   const transformedCompanyInfo = companyInfo ? {
-    ico: companyInfo.ico || '',
-    dic: companyInfo.dic || '',
-    companyName: companyInfo.company_name || '',
+    ico: cleanStringValue(companyInfo.ico),
+    dic: cleanStringValue(companyInfo.dic),
+    companyName: cleanStringValue(companyInfo.company_name),
     registryType: mapRegistryTypeFromDb(companyInfo.registry_type),
-    isVatPayer: companyInfo.is_vat_payer || false,
-    vatNumber: companyInfo.vat_number || '',
-    court: companyInfo.court || '',
-    section: companyInfo.section || '',
-    insertNumber: companyInfo.insert_number || '',
+    isVatPayer: Boolean(companyInfo.is_vat_payer),
+    vatNumber: cleanStringValue(companyInfo.vat_number),
+    court: cleanStringValue(companyInfo.court),
+    section: cleanStringValue(companyInfo.section),
+    insertNumber: cleanStringValue(companyInfo.insert_number),
     address: {
-      street: companyInfo.address_street || '',
-      city: companyInfo.address_city || '',
-      zipCode: companyInfo.address_zip_code || ''
+      street: cleanStringValue(companyInfo.address_street),
+      city: cleanStringValue(companyInfo.address_city),
+      zipCode: cleanStringValue(companyInfo.address_zip_code)
     },
     contactAddress: companyInfo.contact_address_same_as_main ? null : {
-      street: companyInfo.contact_address_street || '',
-      city: companyInfo.contact_address_city || '',
-      zipCode: companyInfo.contact_address_zip_code || ''
+      street: cleanStringValue(companyInfo.contact_address_street),
+      city: cleanStringValue(companyInfo.contact_address_city),
+      zipCode: cleanStringValue(companyInfo.contact_address_zip_code)
     },
     contactAddressSameAsMain: companyInfo.contact_address_same_as_main !== false,
     headOfficeEqualsOperatingAddress: true,
     contactPerson: {
-      firstName: companyInfo.contact_person_first_name || '',
-      lastName: companyInfo.contact_person_last_name || '',
-      email: companyInfo.contact_person_email || '',
-      phone: companyInfo.contact_person_phone || '',
-      isTechnicalPerson: companyInfo.contact_person_is_technical || false
+      firstName: cleanStringValue(companyInfo.contact_person_first_name),
+      lastName: cleanStringValue(companyInfo.contact_person_last_name),
+      email: cleanStringValue(companyInfo.contact_person_email),
+      phone: cleanStringValue(companyInfo.contact_person_phone),
+      isTechnicalPerson: Boolean(companyInfo.contact_person_is_technical)
     }
   } : {
     ico: '',
@@ -101,110 +115,110 @@ export const transformContractData = (
   // Transform business locations
   const transformedBusinessLocations = businessLocations?.map(location => ({
     id: location.location_id,
-    name: location.name || '',
-    hasPOS: location.has_pos || false,
+    name: cleanStringValue(location.name),
+    hasPOS: Boolean(location.has_pos),
     address: {
-      street: location.address_street || '',
-      city: location.address_city || '',
-      zipCode: location.address_zip_code || ''
+      street: cleanStringValue(location.address_street),
+      city: cleanStringValue(location.address_city),
+      zipCode: cleanStringValue(location.address_zip_code)
     },
-    businessSector: location.business_sector || '',
+    businessSector: cleanStringValue(location.business_sector),
     estimatedTurnover: Number(location.estimated_turnover) || 0,
     averageTransaction: Number(location.average_transaction) || 0,
-    seasonality: location.seasonality || 'year-round',
-    seasonalWeeks: location.seasonal_weeks || null,
+    seasonality: cleanStringValue(location.seasonality) || 'year-round',
+    seasonalWeeks: cleanValue(location.seasonal_weeks),
     contactPerson: {
-      name: location.contact_person_name || '',
-      email: location.contact_person_email || '',
-      phone: location.contact_person_phone || ''
+      name: cleanStringValue(location.contact_person_name),
+      email: cleanStringValue(location.contact_person_email),
+      phone: cleanStringValue(location.contact_person_phone)
     },
-    iban: location.iban || '',
-    openingHours: location.opening_hours || ''
+    iban: cleanStringValue(location.iban),
+    openingHours: cleanStringValue(location.opening_hours)
   })) || [];
 
   // Transform device selection with dynamic cards from contract items
   const deviceCards = contractItems?.filter(item => item.item_type === 'device')?.map(item => ({
     id: item.item_id,
     type: 'device' as const,
-    name: item.name,
-    category: item.category,
-    description: item.description || '',
-    count: item.count,
-    monthlyFee: Number(item.monthly_fee),
-    companyCost: Number(item.company_cost),
+    name: cleanStringValue(item.name),
+    category: cleanStringValue(item.category),
+    description: cleanStringValue(item.description),
+    count: Number(item.count) || 1,
+    monthlyFee: Number(item.monthly_fee) || 0,
+    companyCost: Number(item.company_cost) || 0,
     customValue: item.custom_value || {}
   })) || [];
 
   const serviceCards = contractItems?.filter(item => item.item_type === 'service')?.map(item => ({
     id: item.item_id,
     type: 'service' as const,
-    name: item.name,
-    category: item.category,
-    description: item.description || '',
-    count: item.count,
-    monthlyFee: Number(item.monthly_fee),
-    companyCost: Number(item.company_cost),
+    name: cleanStringValue(item.name),
+    category: cleanStringValue(item.category),
+    description: cleanStringValue(item.description),
+    count: Number(item.count) || 1,
+    monthlyFee: Number(item.monthly_fee) || 0,
+    companyCost: Number(item.company_cost) || 0,
     customValue: item.custom_value || {}
   })) || [];
 
   const transformedDeviceSelection = {
     selectedSolutions: [],
     dynamicCards: [...deviceCards, ...serviceCards],
-    note: deviceSelection?.note || ''
+    note: cleanStringValue(deviceSelection?.note)
   };
 
   // Transform authorized persons
   const transformedAuthorizedPersons = authorizedPersons?.map(person => ({
     id: person.person_id,
     personId: person.person_id,
-    firstName: person.first_name || '',
-    lastName: person.last_name || '',
-    maidenName: person.maiden_name || '',
-    birthDate: person.birth_date || '',
-    birthPlace: person.birth_place || '',
-    birthNumber: person.birth_number || '',
-    citizenship: person.citizenship || 'SK',
-    permanentAddress: person.permanent_address || '',
-    email: person.email || '',
-    phone: person.phone || '',
+    firstName: cleanStringValue(person.first_name),
+    lastName: cleanStringValue(person.last_name),
+    maidenName: cleanStringValue(person.maiden_name),
+    birthDate: cleanValue(person.birth_date),
+    birthPlace: cleanStringValue(person.birth_place),
+    birthNumber: cleanStringValue(person.birth_number),
+    citizenship: cleanStringValue(person.citizenship) || 'SK',
+    permanentAddress: cleanStringValue(person.permanent_address),
+    email: cleanStringValue(person.email),
+    phone: cleanStringValue(person.phone),
     phonePrefix: '+421',
-    position: person.position || '',
-    documentType: person.document_type || 'OP',
-    documentNumber: person.document_number || '',
-    documentIssuer: person.document_issuer || '',
-    documentValidity: person.document_validity || '',
-    documentCountry: person.document_country || 'SK',
-    isPoliticallyExposed: person.is_politically_exposed || false,
-    isUSCitizen: person.is_us_citizen || false
+    position: cleanStringValue(person.position),
+    documentType: cleanStringValue(person.document_type) || 'OP',
+    documentNumber: cleanStringValue(person.document_number),
+    documentIssuer: cleanStringValue(person.document_issuer),
+    documentValidity: cleanValue(person.document_validity),
+    documentCountry: cleanStringValue(person.document_country) || 'SK',
+    isPoliticallyExposed: Boolean(person.is_politically_exposed),
+    isUSCitizen: Boolean(person.is_us_citizen)
   })) || [];
 
   // Transform actual owners
   const transformedActualOwners = actualOwners?.map(owner => ({
     id: owner.owner_id,
     ownerId: owner.owner_id,
-    firstName: owner.first_name || '',
-    lastName: owner.last_name || '',
-    maidenName: owner.maiden_name || '',
-    birthDate: owner.birth_date || '',
-    birthPlace: owner.birth_place || '',
-    birthNumber: owner.birth_number || '',
-    citizenship: owner.citizenship || 'SK',
-    permanentAddress: owner.permanent_address || '',
-    isPoliticallyExposed: owner.is_politically_exposed || false
+    firstName: cleanStringValue(owner.first_name),
+    lastName: cleanStringValue(owner.last_name),
+    maidenName: cleanStringValue(owner.maiden_name),
+    birthDate: cleanValue(owner.birth_date),
+    birthPlace: cleanStringValue(owner.birth_place),
+    birthNumber: cleanStringValue(owner.birth_number),
+    citizenship: cleanStringValue(owner.citizenship) || 'SK',
+    permanentAddress: cleanStringValue(owner.permanent_address),
+    isPoliticallyExposed: Boolean(owner.is_politically_exposed)
   })) || [];
 
   // Transform consents
   const transformedConsents = {
-    gdpr: consents?.gdpr_consent || false,
-    terms: consents?.terms_consent || false,
-    electronicCommunication: consents?.electronic_communication_consent || false,
-    signatureDate: consents?.signature_date || undefined,
-    signingPersonId: consents?.signing_person_id || undefined
+    gdpr: Boolean(consents?.gdpr_consent),
+    terms: Boolean(consents?.terms_consent),
+    electronicCommunication: Boolean(consents?.electronic_communication_consent),
+    signatureDate: cleanValue(consents?.signature_date),
+    signingPersonId: cleanValue(consents?.signing_person_id)
   };
 
   const onboardingData: OnboardingData = {
-    contractId: contract?.id || '',
-    contractNumber: contract?.contract_number || '',
+    contractId: cleanStringValue(contract?.id),
+    contractNumber: cleanStringValue(contract?.contract_number),
     currentStep: 0,
     visitedSteps: [],
     contactInfo: transformedContactInfo,
