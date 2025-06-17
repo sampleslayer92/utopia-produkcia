@@ -42,13 +42,19 @@ const OnboardingHeader = ({
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-6 py-4 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-bold text-slate-900">
-            Utopia Registration
-          </h1>
-          
+    <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-6 py-3 sticky top-0 z-50 w-full">
+      <div className="flex items-center justify-between w-full relative">
+        {/* Left side - Logo */}
+        <div className="flex items-center">
+          <img 
+            src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+            alt="Utopia" 
+            className="h-8 w-auto"
+          />
+        </div>
+        
+        {/* Center - Contract Number and Creating Status */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
           {isCreatingContract && (
             <div className="flex items-center text-sm text-slate-600">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -66,6 +72,7 @@ const OnboardingHeader = ({
           )}
         </div>
         
+        {/* Right side - Controls */}
         <div className="flex items-center space-x-3">
           <LanguageSwitcher />
           
