@@ -1,4 +1,5 @@
 
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, Calendar } from "lucide-react";
 import { 
@@ -20,35 +21,37 @@ interface StatsCardsProps {
 }
 
 const StatsCards = ({ stats, statsLoading }: StatsCardsProps) => {
+  const { t } = useTranslation('admin');
+
   const statsCards = [
     {
-      title: "Celkový počet zmlúv",
+      title: t('stats.totalContracts'),
       value: statsLoading ? "..." : (stats?.total.toString() || "0"),
-      change: statsLoading ? "..." : `+${stats?.recentContracts || 0} za 30 dní`,
+      change: statsLoading ? "..." : t('stats.recentChange', { count: stats?.recentContracts || 0 }),
       icon: FileText,
       trend: "up",
       color: "emerald"
     },
     {
-      title: "Odoslané zmluvy",
+      title: t('stats.submittedContracts'),
       value: statsLoading ? "..." : (stats?.submitted.toString() || "0"),
-      change: "Čakajú na schválenie",
+      change: t('stats.waitingApproval'),
       icon: CreditCard,
       trend: "up",
       color: "blue"
     },
     {
-      title: "Schválené zmluvy",
+      title: t('stats.approvedContracts'),
       value: statsLoading ? "..." : (stats?.approved.toString() || "0"),
-      change: "Aktívne zmluvy",
+      change: t('stats.activeContracts'),
       icon: Building,
       trend: "up",
       color: "green"
     },
     {
-      title: "Koncepty",
+      title: t('stats.drafts'),
       value: statsLoading ? "..." : (stats?.draft.toString() || "0"),
-      change: "Nedokončené",
+      change: t('stats.incomplete'),
       icon: Users,
       trend: "neutral",
       color: "gray"

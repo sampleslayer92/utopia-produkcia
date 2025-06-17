@@ -1,0 +1,108 @@
+
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "contracts": "Contracts",
+    "clients": "Clients",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "System overview and contract management",
+    "newContract": "New Contract",
+    "status": {
+      "online": "Online"
+    }
+  },
+  "stats": {
+    "totalContracts": "Total Contracts",
+    "submittedContracts": "Submitted Contracts",
+    "approvedContracts": "Approved Contracts",
+    "drafts": "Drafts",
+    "recentChange": "+{{count}} in 30 days",
+    "waitingApproval": "Waiting for approval",
+    "activeContracts": "Active contracts",
+    "incomplete": "Incomplete"
+  },
+  "table": {
+    "title": "Enhanced Contract Management",
+    "subtitle": "Advanced filtering and contract management ({{filtered}} of {{total}})",
+    "clickHint": "Click on a row to view contract details",
+    "export": "Export",
+    "newContract": "New Contract",
+    "search": "Search contracts...",
+    "filters": {
+      "status": "Status",
+      "contractType": "Contract Type",
+      "salesPerson": "Sales Person",
+      "dateRange": "Date Range",
+      "allStatuses": "All statuses",
+      "allTypes": "All types",
+      "allSalespeople": "All sales people"
+    },
+    "columns": {
+      "contractNumber": "Contract Number",
+      "client": "Client",
+      "contractType": "Contract Type",
+      "monthlyValue": "Value/month",
+      "status": "Status",
+      "completion": "Completion",
+      "salesPerson": "Sales Person",
+      "created": "Created"
+    },
+    "noResults": {
+      "title": "No results",
+      "subtitle": "Try changing your search criteria or filters."
+    }
+  },
+  "status": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
+  "sidebar": {
+    "alerts": {
+      "title": "Alerts",
+      "contractsWaiting": "{{count}} contracts waiting for approval",
+      "systemRunning": "System running without issues",
+      "priority": {
+        "high": "high",
+        "medium": "medium",
+        "low": "low"
+      }
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "createContract": "Create new contract",
+      "generateReports": "Generate reports",
+      "manageUsers": "Manage users",
+      "systemSettings": "System settings"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "systemStarted": "System started",
+      "contractsLoaded": "Loaded {{count}} contracts",
+      "justNow": "just now",
+      "momentAgo": "a moment ago"
+    }
+  },
+  "contractView": {
+    "backToList": "Back to list",
+    "edit": "Edit",
+    "print": "Print",
+    "created": "Created:"
+  },
+  "messages": {
+    "exportStarted": "Data export started",
+    "noContractsSelected": "No contracts selected for update",
+    "noContractsToDelete": "No contracts selected for deletion",
+    "confirmDelete": "Are you sure you want to delete {{count}} {{unit}}? This action cannot be undone.",
+    "deleteUnits": {
+      "single": "selected contract",
+      "few": "selected contracts",
+      "many": "selected contracts"
+    }
+  }
+}

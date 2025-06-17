@@ -1,4 +1,5 @@
 
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle } from "lucide-react";
@@ -10,15 +11,17 @@ interface SystemAlertsProps {
 }
 
 const SystemAlerts = ({ stats }: SystemAlertsProps) => {
+  const { t } = useTranslation('admin');
+
   const systemAlerts = [
     { 
       type: "info", 
-      message: `${stats?.submitted || 0} zmlúv čaká na schválenie`, 
+      message: t('sidebar.alerts.contractsWaiting', { count: stats?.submitted || 0 }), 
       priority: "medium" 
     },
     { 
       type: "success", 
-      message: "Systém funguje bez problémov", 
+      message: t('sidebar.alerts.systemRunning'), 
       priority: "low" 
     },
   ];
@@ -28,7 +31,7 @@ const SystemAlerts = ({ stats }: SystemAlertsProps) => {
       <CardHeader>
         <CardTitle className="text-slate-900 flex items-center text-lg">
           <AlertCircle className="h-5 w-5 mr-2 text-amber-600" />
-          Upozornenia
+          {t('sidebar.alerts.title')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -52,7 +55,7 @@ const SystemAlerts = ({ stats }: SystemAlertsProps) => {
                     : 'border-emerald-200 text-emerald-700'
                 }`}
               >
-                {alert.priority === 'high' ? 'vysoká' : alert.priority === 'medium' ? 'stredná' : 'nízka'} priorita
+                {t(`sidebar.alerts.priority.${alert.priority}`)} priorita
               </Badge>
             </div>
           ))}

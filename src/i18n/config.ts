@@ -13,6 +13,8 @@ import notificationsSK from './locales/sk/notifications.json';
 import notificationsEN from './locales/en/notifications.json';
 import helpSK from './locales/sk/help.json';
 import helpEN from './locales/en/help.json';
+import adminSK from './locales/sk/admin.json';
+import adminEN from './locales/en/admin.json';
 
 const resources = {
   sk: {
@@ -21,6 +23,7 @@ const resources = {
     forms: formsSK,
     notifications: notificationsSK,
     help: helpSK,
+    admin: adminSK,
   },
   en: {
     common: commonEN,
@@ -28,6 +31,7 @@ const resources = {
     forms: formsEN,
     notifications: notificationsEN,
     help: helpEN,
+    admin: adminEN,
   },
 };
 
@@ -43,7 +47,7 @@ i18n
       escapeValue: false, // React already does escaping
     },
     
-    ns: ['common', 'steps', 'forms', 'notifications', 'help'],
+    ns: ['common', 'steps', 'forms', 'notifications', 'help', 'admin'],
     defaultNS: 'common',
   });
 

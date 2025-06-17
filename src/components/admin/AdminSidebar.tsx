@@ -1,4 +1,5 @@
 
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { 
   LayoutDashboard, 
@@ -11,36 +12,37 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AdminProfile from "./AdminProfile";
 
 const AdminSidebar = () => {
+  const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const location = useLocation();
 
   const menuItems = [
     {
-      title: "Dashboard",
+      title: t('navigation.dashboard'),
       icon: LayoutDashboard,
       path: "/admin",
       active: location.pathname === "/admin"
     },
     {
-      title: "Zmluvy",
+      title: t('navigation.contracts'),
       icon: FileText,
       path: "/admin/contracts",
       active: location.pathname.startsWith("/admin/contract")
     },
     {
-      title: "Klienti",
+      title: t('navigation.clients'),
       icon: Users,
       path: "/admin/clients",
       active: false
     },
     {
-      title: "Reporty",
+      title: t('navigation.reports'),
       icon: BarChart3,
       path: "/admin/reports",
       active: false
     },
     {
-      title: "Nastavenia",
+      title: t('navigation.settings'),
       icon: Settings,
       path: "/admin/settings",
       active: false

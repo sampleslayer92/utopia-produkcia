@@ -1,4 +1,5 @@
 
+import { useTranslation } from 'react-i18next';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit, Printer } from "lucide-react";
@@ -12,19 +13,22 @@ interface ContractHeaderProps {
 }
 
 const ContractHeader = ({ contract, onBack, onEdit, onPrint }: ContractHeaderProps) => {
+  const { t } = useTranslation('admin');
+
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'submitted':
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Odoslané</Badge>;
-      case 'approved':
-        return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">Schválené</Badge>;
-      case 'rejected':
-        return <Badge className="bg-red-100 text-red-700 border-red-200">Zamietnuté</Badge>;
-      case 'draft':
-        return <Badge className="bg-gray-100 text-gray-700 border-gray-200">Koncept</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
-    }
+    const statusKey = status as keyof typeof statusMap;
+    const statusMap = {
+      'submitted': 'bg-blue-100 text-blue-700 border-blue-200',
+      'approved': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+      'rejected': 'bg-red-100 text-red-700 border-red-200',
+      'draft': 'bg-gray-100 text-gray-700 border-gray-200'
+    };
+
+    return (
+      <Badge className={statusMap[statusKey] || 'bg-gray-100 text-gray-700 border-gray-200'}>
+        {t(`status.${status}`)}
+      </Badge>
+    );
   };
 
   return (
@@ -38,14 +42,14 @@ const ContractHeader = ({ contract, onBack, onEdit, onPrint }: ContractHeaderPro
               className="border-slate-300"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Späť na zoznam
+              {t('contractView.backToList')}
             </Button>
             <div>
               <h1 className="text-xl font-bold text-slate-900">
                 Zmluva #{contract.contract_number}
               </h1>
               <p className="text-sm text-slate-600">
-                Vytvorená: {format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}
+                {t('contractView.created')} {format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}
               </p>
             </div>
           </div>
@@ -61,7 +65,7 @@ const ContractHeader = ({ contract, onBack, onEdit, onPrint }: ContractHeaderPro
               className="bg-emerald-600 hover:bg-emerald-700"
             >
               <Edit className="h-4 w-4 mr-2" />
-              Editovať
+              {t('contractView.edit')}
             </Button>
             
             <Button
@@ -70,7 +74,7 @@ const ContractHeader = ({ contract, onBack, onEdit, onPrint }: ContractHeaderPro
               className="border-slate-300"
             >
               <Printer className="h-4 w-4 mr-2" />
-              Tlačiť
+              {t('contractView.print')}
             </Button>
           </div>
         </div>

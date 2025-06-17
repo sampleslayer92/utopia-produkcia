@@ -1,0 +1,108 @@
+
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "contracts": "Zmluvy",
+    "clients": "Klienti",
+    "reports": "Reporty",
+    "settings": "Nastavenia"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Prehľad systému a správa zmlúv",
+    "newContract": "Nová zmluva",
+    "status": {
+      "online": "Online"
+    }
+  },
+  "stats": {
+    "totalContracts": "Celkový počet zmlúv",
+    "submittedContracts": "Odoslané zmluvy",
+    "approvedContracts": "Schválené zmluvy",
+    "drafts": "Koncepty",
+    "recentChange": "+{{count}} za 30 dní",
+    "waitingApproval": "Čakajú na schválenie",
+    "activeContracts": "Aktívne zmluvy",
+    "incomplete": "Nedokončené"
+  },
+  "table": {
+    "title": "Rozšírená správa zmlúv",
+    "subtitle": "Pokročilé filtrovanie a správa zmlúv ({{filtered}} z {{total}})",
+    "clickHint": "Kliknite na riadok pre zobrazenie detailov zmluvy",
+    "export": "Export",
+    "newContract": "Nová zmluva",
+    "search": "Vyhľadať zmluvu...",
+    "filters": {
+      "status": "Stav",
+      "contractType": "Typ zmluvy",
+      "salesPerson": "Obchodník",
+      "dateRange": "Dátumový rozsah",
+      "allStatuses": "Všetky stavy",
+      "allTypes": "Všetky typy",
+      "allSalespeople": "Všetci obchodníci"
+    },
+    "columns": {
+      "contractNumber": "Číslo zmluvy",
+      "client": "Klient",
+      "contractType": "Typ zmluvy",
+      "monthlyValue": "Hodnota/mes.",
+      "status": "Stav",
+      "completion": "Dokončenosť",
+      "salesPerson": "Obchodník",
+      "created": "Vytvorené"
+    },
+    "noResults": {
+      "title": "Žiadne výsledky",
+      "subtitle": "Skúste zmeniť kritériá vyhľadávania alebo filtra."
+    }
+  },
+  "status": {
+    "draft": "Koncept",
+    "submitted": "Odoslané",
+    "approved": "Schválené",
+    "rejected": "Zamietnuté"
+  },
+  "sidebar": {
+    "alerts": {
+      "title": "Upozornenia",
+      "contractsWaiting": "{{count}} zmlúv čaká na schválenie",
+      "systemRunning": "Systém funguje bez problémov",
+      "priority": {
+        "high": "vysoká",
+        "medium": "stredná",
+        "low": "nízka"
+      }
+    },
+    "quickActions": {
+      "title": "Rýchle akcie",
+      "createContract": "Vytvoriť novú zmluvu",
+      "generateReports": "Generovať reporty",
+      "manageUsers": "Spravovať používateľov",
+      "systemSettings": "Nastavenia systému"
+    },
+    "recentActivity": {
+      "title": "Posledná aktivita",
+      "systemStarted": "Systém spustený",
+      "contractsLoaded": "Načítané {{count}} zmlúv",
+      "justNow": "práve teraz",
+      "momentAgo": "pred chvíľou"
+    }
+  },
+  "contractView": {
+    "backToList": "Späť na zoznam",
+    "edit": "Editovať",
+    "print": "Tlačiť",
+    "created": "Vytvorená:"
+  },
+  "messages": {
+    "exportStarted": "Export údajov spustený",
+    "noContractsSelected": "Nie sú označené žiadne zmluvy na aktualizáciu",
+    "noContractsToDelete": "Nie sú označené žiadne zmluvy na vymazanie",
+    "confirmDelete": "Naozaj chcete vymazať {{count}} {{unit}}? Táto akcia je nevratná.",
+    "deleteUnits": {
+      "single": "označenú zmluvu",
+      "few": "označené zmluvy",
+      "many": "označených zmlúv"
+    }
+  }
+}
