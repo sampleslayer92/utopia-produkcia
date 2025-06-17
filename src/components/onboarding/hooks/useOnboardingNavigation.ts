@@ -17,7 +17,7 @@ export const useOnboardingNavigation = (
   onStepNavigate?: (fromStep: number, toStep: number) => void // New callback for step navigation
 ) => {
   const navigate = useNavigate();
-  const totalSteps = onboardingSteps.length;
+  const totalSteps = 7; // Updated from 8 to 7 steps
   const { submitContract, isSubmitting } = useContractSubmission();
 
   const nextStep = async () => {
@@ -121,8 +121,8 @@ export const useOnboardingNavigation = (
   };
 
   const handleSaveSignature = () => {
-    // Mark step 7 (Consents) as visited when signature is saved
-    markStepAsVisited(7);
+    // Mark step 6 (Consents) as visited when signature is saved
+    markStepAsVisited(6);
     toast.success('Podpis uložený', {
       description: 'Elektronický podpis bol úspešne uložený'
     });

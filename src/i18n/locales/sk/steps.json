@@ -6,8 +6,7 @@
     "businessLocations": "Prevádzky",
     "deviceSelection": "Zariadenia a služby",
     "fees": "Poplatky",
-    "authorizedPersons": "Oprávnené osoby",
-    "actualOwners": "Skutoční majitelia",
+    "personsAndOwners": "Osoby a vlastníci",
     "consents": "Súhlasy a podpis"
   },
   "descriptions": {
@@ -16,8 +15,7 @@
     "businessLocations": "Prevádzkové lokality a údaje", 
     "deviceSelection": "Výber technického vybavenia",
     "fees": "Nastavenie poplatkov a provízie",
-    "authorizedPersons": "Osoby oprávnené konať",
-    "actualOwners": "Koneční beneficienti",
+    "personsAndOwners": "Splnomocnené osoby a skutoční vlastníci",
     "consents": "Potvrdenie a podpis zmluvy"
   },
   "authorizedPersons": {

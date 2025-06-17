@@ -5,8 +5,7 @@ import CompanyInfoStep from "../CompanyInfoStep";
 import BusinessLocationStep from "../BusinessLocationStep";
 import DeviceSelectionStep from "../DeviceSelectionStep";
 import FeesStep from "../FeesStep";
-import AuthorizedPersonsStep from "../AuthorizedPersonsStep";
-import ActualOwnersStep from "../ActualOwnersStep";
+import PersonsAndOwnersStep from "../PersonsAndOwnersStep";
 import ConsentsStep from "../ConsentsStep";
 import { useCrossStepAutoFill } from "../hooks/useCrossStepAutoFill";
 import { useEffect, useCallback } from "react";
@@ -81,11 +80,10 @@ const OnboardingStepRenderer = ({
     // Auto-fill when entering specific steps
     if (toStep === 2) { // Business Locations
       autoFillBusinessLocation();
-    } else if (toStep === 5) { // Authorized Persons
+    } else if (toStep === 5) { // Combined Persons and Owners
       autoFillAuthorizedPerson();
-    } else if (toStep === 6) { // Actual Owners
       autoFillActualOwner();
-    } else if (toStep === 7) { // Consents
+    } else if (toStep === 6) { // Consents (previously step 7)
       autoFillSigningPerson();
     }
   }, [data, autoFillAuthorizedPerson, autoFillActualOwner, autoFillBusinessLocation, autoFillSigningPerson]);
@@ -149,10 +147,8 @@ const OnboardingStepRenderer = ({
     case 4:
       return <FeesStep {...commonProps} />;
     case 5:
-      return <AuthorizedPersonsStep {...commonProps} />;
+      return <PersonsAndOwnersStep {...commonProps} />;
     case 6:
-      return <ActualOwnersStep {...commonProps} />;
-    case 7:
       return <ConsentsStep {...commonProps} onComplete={onComplete} onSaveSignature={onSaveSignature} />;
     default:
       return null;

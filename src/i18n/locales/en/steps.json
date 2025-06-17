@@ -6,8 +6,7 @@
     "businessLocations": "Business Locations", 
     "deviceSelection": "Devices and Services",
     "fees": "Fees",
-    "authorizedPersons": "Authorized Persons",
-    "actualOwners": "Actual Owners",
+    "personsAndOwners": "Persons and Owners",
     "consents": "Consents and Signature"
   },
   "descriptions": {
@@ -16,8 +15,7 @@
     "businessLocations": "Operating locations and data",
     "deviceSelection": "Technical equipment selection", 
     "fees": "Fee and commission setup",
-    "authorizedPersons": "Persons authorized to act",
-    "actualOwners": "Ultimate beneficial owners",
+    "personsAndOwners": "Authorized persons and actual owners",
     "consents": "Confirmation and contract signature"
   },
   "sidebar": {

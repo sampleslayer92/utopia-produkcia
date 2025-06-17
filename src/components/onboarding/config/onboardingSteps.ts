@@ -32,16 +32,11 @@ export const useOnboardingSteps = () => {
     },
     {
       number: 5,
-      title: t('titles.authorizedPersons'),
-      description: t('descriptions.authorizedPersons')
+      title: t('titles.personsAndOwners'),
+      description: t('descriptions.personsAndOwners')
     },
     {
       number: 6,
-      title: t('titles.actualOwners'),
-      description: t('descriptions.actualOwners')
-    },
-    {
-      number: 7,
       title: t('titles.consents'),
       description: t('descriptions.consents')
     }
@@ -77,16 +72,11 @@ export const onboardingSteps = [
   },
   {
     number: 5,
-    title: "Oprávnené osoby",
-    description: "Osoby oprávnené konať"
+    title: "Osoby a vlastníci",
+    description: "Splnomocnené osoby a skutoční vlastníci"
   },
   {
     number: 6,
-    title: "Skutoční majitelia",
-    description: "Koneční beneficienti"
-  },
-  {
-    number: 7,
     title: "Súhlasy a podpis",
     description: "Potvrdenie a podpis zmluvy"
   }

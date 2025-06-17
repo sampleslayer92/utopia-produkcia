@@ -6,8 +6,7 @@ import CompanyInfoStep from '@/components/onboarding/CompanyInfoStep';
 import BusinessLocationStep from '@/components/onboarding/BusinessLocationStep';
 import DeviceSelectionStep from '@/components/onboarding/DeviceSelectionStep';
 import FeesStep from '@/components/onboarding/FeesStep';
-import AuthorizedPersonsStep from '@/components/onboarding/AuthorizedPersonsStep';
-import ActualOwnersStep from '@/components/onboarding/ActualOwnersStep';
+import PersonsAndOwnersStep from '@/components/onboarding/PersonsAndOwnersStep';
 import ConsentsStep from '@/components/onboarding/ConsentsStep';
 
 interface ContractEditStepRendererProps {
@@ -77,7 +76,7 @@ const ContractEditStepRenderer = ({
         );
       case 5:
         return (
-          <AuthorizedPersonsStep
+          <PersonsAndOwnersStep
             data={data}
             updateData={updateData}
             onNext={onNext}
@@ -85,15 +84,6 @@ const ContractEditStepRenderer = ({
           />
         );
       case 6:
-        return (
-          <ActualOwnersStep
-            data={data}
-            updateData={updateData}
-            onNext={onNext}
-            onPrev={onPrev}
-          />
-        );
-      case 7:
         return (
           <ConsentsStep
             data={data}
