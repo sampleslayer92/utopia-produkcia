@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { OnboardingData } from "@/types/onboarding";
 import { useTranslation } from "react-i18next";
@@ -339,15 +338,6 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
           </OnboardingSection>
         </div>
       </Card>
-
-      <div className="flex justify-between pt-4">
-        <Button variant="secondary" onClick={onPrev}>
-          {t('common:previous')}
-        </Button>
-        <Button onClick={handleNextStep}>
-          {t('common:next')}
-        </Button>
-      </div>
     </div>
   );
 };
