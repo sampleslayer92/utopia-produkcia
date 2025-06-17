@@ -35,10 +35,10 @@ const OnboardingTopBar = ({
   };
 
   return (
-    <div className="bg-white/60 backdrop-blur-sm border-b border-slate-200/60 py-3 px-6 sticky top-0 z-40">
-      {/* Overall Progress Section */}
-      <div className="max-w-7xl mx-auto mb-4">
-        <div className="flex items-center justify-between mb-2">
+    <div className="bg-white/60 backdrop-blur-sm border-b border-slate-200/60 py-2 px-4 sticky top-0 z-40">
+      {/* Overall Progress Section - More Compact */}
+      <div className="max-w-7xl mx-auto mb-3">
+        <div className="flex items-center justify-between mb-1.5">
           <h2 className="text-sm font-semibold text-slate-900">Registračný proces</h2>
           <div className="text-xs text-slate-600">
             {overallProgress.overallPercentage}% dokončené • {overallProgress.completedSteps}/{overallProgress.totalSteps} krokov
@@ -49,7 +49,7 @@ const OnboardingTopBar = ({
 
       {/* Vertical Steps Layout - Numbers Above Text */}
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-7 gap-3 overflow-x-auto pb-2">
+        <div className="grid grid-cols-7 gap-0.5 overflow-x-auto pb-1">
           {steps.map((step, index) => {
             const isClickable = step.number <= currentStep + 1;
             const progress = stepProgress[step.number];
@@ -63,7 +63,7 @@ const OnboardingTopBar = ({
                 {/* Step Content - Vertical Layout */}
                 <div
                   onClick={() => isClickable && handleStepClick(step.number)}
-                  className={`flex flex-col items-center gap-2 py-3 px-2 rounded-lg transition-all duration-300 w-full group h-20
+                  className={`flex flex-col items-center gap-1 py-2 px-1.5 rounded-lg transition-all duration-300 w-full group hover:scale-[1.02] h-14
                     ${isClickable ? "cursor-pointer" : "opacity-60 cursor-not-allowed"}
                     ${
                       isCurrentStep
@@ -79,7 +79,7 @@ const OnboardingTopBar = ({
                 >
                   {/* Step Icon - Top Position */}
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0 transition-all duration-300 ${
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 transition-all duration-300 ${
                       isCurrentStep
                         ? "bg-blue-600 text-white shadow-sm"
                         : isCompleted
@@ -92,9 +92,9 @@ const OnboardingTopBar = ({
                     }`}
                   >
                     {isCompleted ? (
-                      <Check className="h-3 w-3" />
+                      <Check className="h-2.5 w-2.5" />
                     ) : isPartiallyComplete ? (
-                      <CircleDot className="h-3 w-3" />
+                      <CircleDot className="h-2.5 w-2.5" />
                     ) : (
                       step.number + 1
                     )}
@@ -102,7 +102,7 @@ const OnboardingTopBar = ({
                   
                   {/* Step Title - Below Icon */}
                   <div className="text-center w-full">
-                    <div className="text-xs font-medium text-slate-900 leading-relaxed truncate px-1">
+                    <div className="text-[10px] font-medium text-slate-900 leading-tight truncate px-0.5">
                       {step.title}
                     </div>
                   </div>
@@ -126,7 +126,7 @@ const OnboardingTopBar = ({
 
                 {/* Connector Line - Between Steps */}
                 {index < steps.length - 1 && (
-                  <div className={`h-px w-6 mt-2 transition-colors duration-300 ${
+                  <div className={`h-px w-4 mt-1 transition-colors duration-300 ${
                     isCompleted ? "bg-green-300" : "bg-slate-200"
                   }`} />
                 )}

@@ -86,44 +86,14 @@ export const useStepValidation = (
 
     if (businessLocations.length === 0) {
       validationErrors.push({ field: 'businessLocations', message: 'Minimálne jedna prevádzka je povinná', severity: 'error' });
-      return validationErrors;
     }
 
     businessLocations.forEach((location, index) => {
       if (!location.name?.trim()) {
         validationErrors.push({ field: `businessLocations.${index}.name`, message: 'Názov prevádzky je povinný', severity: 'error' });
       }
-      
-      if (!location.address?.street?.trim() || !location.address?.city?.trim() || !location.address?.zipCode?.trim()) {
-        validationErrors.push({ field: `businessLocations.${index}.address`, message: 'Kompletná adresa je povinná', severity: 'error' });
-      }
-      
-      if (!location.contactPerson?.name?.trim()) {
-        validationErrors.push({ field: `businessLocations.${index}.contactPerson.name`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
-      }
-      
-      if (!location.contactPerson?.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(location.contactPerson?.email)) {
-        validationErrors.push({ field: `businessLocations.${index}.contactPerson.email`, message: 'Platný email kontaktnej osoby je povinný', severity: 'error' });
-      }
-      
-      if (!location.contactPerson?.phone?.trim()) {
-        validationErrors.push({ field: `businessLocations.${index}.contactPerson.phone`, message: 'Telefón kontaktnej osoby je povinný', severity: 'error' });
-      }
-      
-      if (!location.bankAccounts || location.bankAccounts.length === 0 || !location.bankAccounts.every(acc => acc.iban?.trim())) {
-        validationErrors.push({ field: `businessLocations.${index}.bankAccounts`, message: 'Platný bankový účet je povinný', severity: 'error' });
-      }
-      
-      if (!location.businessSubject?.trim()) {
-        validationErrors.push({ field: `businessLocations.${index}.businessSubject`, message: 'Predmet podnikania je povinný', severity: 'error' });
-      }
-      
-      if (!location.monthlyTurnover || location.monthlyTurnover <= 0) {
-        validationErrors.push({ field: `businessLocations.${index}.monthlyTurnover`, message: 'Mesačný obrat musí byť väčší ako 0', severity: 'error' });
-      }
-      
-      if (!location.averageTransaction || location.averageTransaction <= 0) {
-        validationErrors.push({ field: `businessLocations.${index}.averageTransaction`, message: 'Priemerná transakcia musí byť väčšia ako 0', severity: 'error' });
+      if (!location.bankAccounts || location.bankAccounts.length === 0) {
+        validationErrors.push({ field: `businessLocations.${index}.bankAccounts`, message: 'Minimálne jeden bankový účet je povinný', severity: 'error' });
       }
     });
 
@@ -179,7 +149,7 @@ export const useStepValidation = (
     const totalFields = {
       0: 4, // firstName, lastName, email, phone
       1: 4, // ico, companyName, address, contactPerson
-      2: Math.max(1, data.businessLocations.length * 8), // 8 required fields per location
+      2: Math.max(1, data.businessLocations.length * 3), // name, address, bankAccount per location
       3: 2, // selectedSolutions, dynamicCards
       4: 1, // fees
       5: Math.max(1, data.authorizedPersons.length * 8), // 8 required fields per person

@@ -11,7 +11,6 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
                                 false;
 
   const addBusinessLocation = () => {
-    // Only pre-fill contact person data if user explicitly has the business contact role
     const contactPersonData = hasBusinessContactRole ? {
       name: `${data.contactInfo.firstName} ${data.contactInfo.lastName}`,
       email: data.contactInfo.email,
@@ -22,7 +21,7 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
       phone: ''
     };
 
-    // Start with empty bank account
+    // Default bank account
     const defaultBankAccount: BankAccount = {
       id: Date.now().toString(),
       format: 'IBAN',
@@ -30,15 +29,15 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
       mena: 'EUR'
     };
 
-    // Empty opening hours - user needs to set them explicitly
+    // Default opening hours (weekdays open, weekends closed)
     const defaultOpeningHours: OpeningHours[] = [
-      { day: "Po", open: "", close: "", otvorene: false },
-      { day: "Ut", open: "", close: "", otvorene: false },
-      { day: "St", open: "", close: "", otvorene: false },
-      { day: "Št", open: "", close: "", otvorene: false },
-      { day: "Pi", open: "", close: "", otvorene: false },
-      { day: "So", open: "", close: "", otvorene: false },
-      { day: "Ne", open: "", close: "", otvorene: false }
+      { day: "Po", open: "09:00", close: "17:00", otvorene: true },
+      { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
+      { day: "St", open: "09:00", close: "17:00", otvorene: true },
+      { day: "Št", open: "09:00", close: "17:00", otvorene: true },
+      { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
+      { day: "So", open: "09:00", close: "14:00", otvorene: false },
+      { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
     ];
 
     // Use head office address if checkbox is checked and this is the first location
@@ -189,7 +188,7 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
   useEffect(() => {
     const locationsNeedMigration = data.businessLocations.some(location => 
       !location.bankAccounts || !location.openingHoursDetailed || 
-      !location.businessSubject === undefined || !location.monthlyTurnover === undefined
+      !location.businessSubject || !location.monthlyTurnover
     );
 
     if (locationsNeedMigration) {
@@ -209,21 +208,21 @@ export const useBusinessLocationManager = (data: OnboardingData, updateData: (da
         // Migrate opening hours
         if (!migrated.openingHoursDetailed) {
           migrated.openingHoursDetailed = [
-            { day: "Po", open: "", close: "", otvorene: false },
-            { day: "Ut", open: "", close: "", otvorene: false },
-            { day: "St", open: "", close: "", otvorene: false },
-            { day: "Št", open: "", close: "", otvorene: false },
-            { day: "Pi", open: "", close: "", otvorene: false },
-            { day: "So", open: "", close: "", otvorene: false },
-            { day: "Ne", open: "", close: "", otvorene: false }
+            { day: "Po", open: "09:00", close: "17:00", otvorene: true },
+            { day: "Ut", open: "09:00", close: "17:00", otvorene: true },
+            { day: "St", open: "09:00", close: "17:00", otvorene: true },
+            { day: "Št", open: "09:00", close: "17:00", otvorene: true },
+            { day: "Pi", open: "09:00", close: "17:00", otvorene: true },
+            { day: "So", open: "09:00", close: "14:00", otvorene: false },
+            { day: "Ne", open: "09:00", close: "17:00", otvorene: false }
           ];
         }
         
         // Migrate business details
-        if (migrated.businessSubject === undefined) {
+        if (!migrated.businessSubject) {
           migrated.businessSubject = location.businessSector || '';
         }
-        if (migrated.monthlyTurnover === undefined) {
+        if (!migrated.monthlyTurnover) {
           migrated.monthlyTurnover = location.estimatedTurnover || 0;
         }
         if (!migrated.mccCode) {

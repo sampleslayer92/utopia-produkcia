@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTranslation } from 'react-i18next';
 import { useOnboardingData } from "./hooks/useOnboardingData";
@@ -151,7 +152,7 @@ const OnboardingFlow = () => {
         
         {/* Main Content */}
         <div className="flex-1 p-4 md:p-6 pb-24">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             {/* Auto-save indicator - Hide on mobile */}
             {!isMobile && (
               <div className="flex justify-end items-center mb-4">
