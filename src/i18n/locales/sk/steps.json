@@ -31,7 +31,7 @@
       "completed": "osôb",
       "notSet": "Nezadané",
       "autoFillTip": "Tip: Automatické vyplnenie",
-      "autoFillDescription": "Môžete použiť tlačidlo \"Vyplniť z kontaktov\" pre automatické pridanie kontaktnej osoby {name} ako splnomocnenú osobu.",
+      "autoFillDescription": "Môžete použiť tlačidlo \"Vyplniť z kontaktov\" pre automatické pridanie kontaktnej osoby {{name}} ako splnomocnenú osobu.",
       "addButton": "Pridať osobu",
       "importantInfo": "Dôležité informácie",
       "requirements": [
@@ -45,8 +45,8 @@
       "description": "Pridajte aspoň jedného štatutárneho zástupcu alebo splnomocnenú osobu"
     },
     "autoFill": {
-      "question": "Chcete pridať {name} ({email}) do splnomocnených osôb?",
-      "exists": "{name} ({email}) už je v zozname splnomocnených osôb.",
+      "question": "Chcete pridať {{name}} ({{email}}) do splnomocnených osôb?",
+      "exists": "{{name}} ({{email}}) už je v zozname splnomocnených osôb.",
       "button": "Kopírovať z kontaktných údajov"
     }
   },
@@ -63,7 +63,7 @@
       "completed": "vlastníkov",
       "notSet": "Nezadané",
       "autoFillTip": "Tip: Automatické vyplnenie",
-      "autoFillDescription": "Môžete použiť tlačidlo \"Vyplniť z kontaktov\" pre automatické pridanie kontaktnej osoby {name} ako skutočného vlastníka.",
+      "autoFillDescription": "Môžete použiť tlačidlo \"Vyplniť z kontaktov\" pre automatické pridanie kontaktnej osoby {{name}} ako skutočného vlastníka.",
       "whoIsOwner": "Kto je skutočný vlastník?",
       "ownerCriteria": [
         "Osoba s priamym alebo nepriamym podielom aspoň 25%",
@@ -76,8 +76,8 @@
       "description": "Pridajte aspoň jedného skutočného vlastníka"
     },
     "autoFill": {
-      "question": "Chcete pridať {name} ({email}) do skutočných vlastníkov?",
-      "exists": "{name} ({email}) už je v zozname skutočných vlastníkov.",
+      "question": "Chcete pridať {{name}} ({{email}}) do skutočných vlastníkov?",
+      "exists": "{{name}} ({{email}}) už je v zozname skutočných vlastníkov.",
       "button": "Kopírovať z kontaktných údajov"
     }
   },

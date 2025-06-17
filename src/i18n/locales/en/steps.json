@@ -31,7 +31,7 @@
       "completed": "persons",
       "notSet": "Not set",
       "autoFillTip": "Tip: Auto-fill",
-      "autoFillDescription": "You can use the \"Fill from contacts\" button to automatically add contact person {name} as an authorized person.",
+      "autoFillDescription": "You can use the \"Fill from contacts\" button to automatically add contact person {{name}} as an authorized person.",
       "addButton": "Add person",
       "importantInfo": "Important information",
       "requirements": [
@@ -45,8 +45,8 @@
       "description": "Add at least one statutory representative or authorized person"
     },
     "autoFill": {
-      "question": "Do you want to add {name} ({email}) to authorized persons?",
-      "exists": "{name} ({email}) is already in the list of authorized persons.",
+      "question": "Do you want to add {{name}} ({{email}}) to authorized persons?",
+      "exists": "{{name}} ({{email}}) is already in the list of authorized persons.",
       "button": "Copy from contact information"
     }
   },
@@ -63,7 +63,7 @@
       "completed": "owners",
       "notSet": "Not set",
       "autoFillTip": "Tip: Auto-fill",
-      "autoFillDescription": "You can use the \"Fill from contacts\" button to automatically add contact person {name} as an actual owner.",
+      "autoFillDescription": "You can use the \"Fill from contacts\" button to automatically add contact person {{name}} as an actual owner.",
       "whoIsOwner": "Who is an actual owner?",
       "ownerCriteria": [
         "Person with direct or indirect share of at least 25%",
@@ -76,8 +76,8 @@
       "description": "Add at least one actual owner"
     },
     "autoFill": {
-      "question": "Do you want to add {name} ({email}) to actual owners?",
-      "exists": "{name} ({email}) is already in the list of actual owners.",
+      "question": "Do you want to add {{name}} ({{email}}) to actual owners?",
+      "exists": "{{name}} ({{email}}) is already in the list of actual owners.",
       "button": "Copy from contact information"
     }
   },

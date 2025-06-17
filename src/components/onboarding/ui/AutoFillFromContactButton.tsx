@@ -27,11 +27,27 @@ const AutoFillFromContactButton = ({
 
   const stepTypeKey = stepType === 'authorized' ? 'authorizedPersons' : 'actualOwners';
 
+  // Debug logging
+  console.log('AutoFillFromContactButton data:', { contactName, contactEmail, stepType, stepTypeKey });
+
   if (!canAutoFill) {
     return null;
   }
 
   if (alreadyExists) {
+    // Try interpolation with explicit options
+    const existsText = t(`steps:${stepTypeKey}.autoFill.exists`, { 
+      name: contactName, 
+      email: contactEmail 
+    });
+    
+    // Fallback: manual replacement if i18next interpolation fails
+    const fallbackText = existsText.includes('{name}') || existsText.includes('{email}') 
+      ? existsText.replace('{name}', contactName).replace('{email}', contactEmail)
+      : existsText;
+
+    console.log('Exists text:', { original: existsText, fallback: fallbackText });
+
     return (
       <Card className={`border-green-200 bg-green-50 ${className}`}>
         <CardContent className="p-4">
@@ -39,7 +55,7 @@ const AutoFillFromContactButton = ({
             <CheckCircle2 className="h-5 w-5 text-green-600" />
             <div className="flex-1">
               <p className="text-sm text-green-800">
-                {t(`steps:${stepTypeKey}.autoFill.exists`, { name: contactName, email: contactEmail })}
+                {fallbackText}
               </p>
             </div>
           </div>
@@ -48,6 +64,19 @@ const AutoFillFromContactButton = ({
     );
   }
 
+  // Try interpolation with explicit options
+  const questionText = t(`steps:${stepTypeKey}.autoFill.question`, { 
+    name: contactName, 
+    email: contactEmail 
+  });
+  
+  // Fallback: manual replacement if i18next interpolation fails
+  const fallbackQuestionText = questionText.includes('{name}') || questionText.includes('{email}') 
+    ? questionText.replace('{name}', contactName).replace('{email}', contactEmail)
+    : questionText;
+
+  console.log('Question text:', { original: questionText, fallback: fallbackQuestionText });
+
   return (
     <Card className={`border-blue-200 bg-blue-50 ${className}`}>
       <CardContent className="p-4">
@@ -55,7 +84,7 @@ const AutoFillFromContactButton = ({
           <User className="h-5 w-5 text-blue-600" />
           <div className="flex-1">
             <p className="text-sm text-blue-800 mb-2">
-              {t(`steps:${stepTypeKey}.autoFill.question`, { name: contactName, email: contactEmail })}
+              {fallbackQuestionText}
             </p>
             <Button 
               variant="outline" 
