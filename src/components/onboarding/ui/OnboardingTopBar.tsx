@@ -35,21 +35,21 @@ const OnboardingTopBar = ({
   };
 
   return (
-    <div className="bg-white/60 backdrop-blur-sm border-b border-slate-200/60 p-4 sticky top-[77px] z-40">
-      {/* Overall Progress Section */}
-      <div className="max-w-5xl mx-auto mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-slate-900">Registračný proces</h2>
-          <div className="text-sm text-slate-600">
+    <div className="bg-white/60 backdrop-blur-sm border-b border-slate-200/60 py-3 px-4 sticky top-[77px] z-40">
+      {/* Overall Progress Section - More Compact */}
+      <div className="max-w-7xl mx-auto mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-base font-semibold text-slate-900">Registračný proces</h2>
+          <div className="text-xs text-slate-600">
             {overallProgress.overallPercentage}% dokončené • {overallProgress.completedSteps}/{overallProgress.totalSteps} krokov
           </div>
         </div>
-        <Progress value={overallProgress.overallPercentage} className="h-2" />
+        <Progress value={overallProgress.overallPercentage} className="h-1.5" />
       </div>
 
-      {/* Horizontal Steps */}
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between space-x-2 overflow-x-auto pb-2">
+      {/* Horizontal Steps - Redesigned for All Steps to Fit */}
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between gap-1 overflow-x-auto pb-1">
           {steps.map((step, index) => {
             const isClickable = step.number <= currentStep + 1;
             const progress = stepProgress[step.number];
@@ -59,103 +59,102 @@ const OnboardingTopBar = ({
             const isPartiallyComplete = progress && progress.completionPercentage > 0 && progress.completionPercentage < 100;
 
             return (
-              <div key={step.number} className="flex items-center min-w-0">
-                {/* Step Circle and Content */}
+              <div key={step.number} className="flex items-center min-w-0 flex-1">
+                {/* Step Circle and Content - Compact Modern Design */}
                 <div
                   onClick={() => isClickable && handleStepClick(step.number)}
-                  className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 min-w-0 flex-shrink-0
-                    ${isClickable ? "cursor-pointer" : "opacity-70 cursor-not-allowed"}
+                  className={`flex items-center gap-2 py-2 px-3 rounded-xl transition-all duration-300 min-w-0 flex-1 group hover:scale-[1.02]
+                    ${isClickable ? "cursor-pointer" : "opacity-60 cursor-not-allowed"}
                     ${
                       isCurrentStep
-                        ? "bg-blue-100 border-2 border-blue-300 shadow-sm"
+                        ? "bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm ring-1 ring-blue-300/30"
                         : isCompleted
-                        ? "bg-green-50 border border-green-200 hover:bg-green-100"
+                        ? "bg-gradient-to-r from-green-50 to-green-100 border border-green-200 hover:shadow-md"
                         : isPartiallyComplete
-                        ? "bg-amber-50 border border-amber-200 hover:bg-amber-100"
+                        ? "bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 hover:shadow-md"
                         : isNext
-                        ? "bg-indigo-50 border border-indigo-200 hover:bg-indigo-100"
-                        : "bg-slate-50/50 border border-slate-200"
+                        ? "bg-gradient-to-r from-indigo-50 to-indigo-100 border border-indigo-200 hover:shadow-md"
+                        : "bg-slate-50/50 border border-slate-100 hover:bg-slate-100/80"
                     }`}
                 >
-                  {/* Step Icon */}
+                  {/* Step Icon - Smaller and More Modern */}
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ${
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 transition-all duration-300 ${
                       isCurrentStep
-                        ? "bg-blue-600 text-white"
+                        ? "bg-blue-600 text-white shadow-sm"
                         : isCompleted
                         ? "bg-green-600 text-white"
                         : isPartiallyComplete
                         ? "bg-amber-500 text-white"
                         : isNext
                         ? "bg-indigo-500 text-white"
-                        : "bg-slate-300 text-slate-600"
+                        : "bg-slate-400 text-slate-50"
                     }`}
                   >
                     {isCompleted ? (
-                      <Check className="h-3 w-3" />
+                      <Check className="h-2.5 w-2.5" />
                     ) : isPartiallyComplete ? (
-                      <CircleDot className="h-3 w-3" />
+                      <CircleDot className="h-2.5 w-2.5" />
                     ) : (
                       step.number + 1
                     )}
                   </div>
                   
-                  {/* Step Title and Status */}
-                  <div className="min-w-0 hidden sm:block">
-                    <div className="text-sm font-medium text-slate-900 truncate">
+                  {/* Step Title and Status - Compact */}
+                  <div className="min-w-0 flex-1 hidden sm:block">
+                    <div className="text-xs font-medium text-slate-900 truncate leading-tight">
                       {step.title}
                     </div>
                     
-                    {/* Status indicators */}
-                    {isNext && !isPartiallyComplete && (
-                      <div className="flex items-center text-xs text-indigo-600">
-                        <AlertCircle className="h-3 w-3 mr-1" />
-                        <span>Nasledujúci</span>
-                      </div>
-                    )}
+                    {/* Status indicators - Very Compact */}
+                    <div className="flex items-center mt-0.5">
+                      {isNext && !isPartiallyComplete && (
+                        <div className="flex items-center text-xs text-indigo-600">
+                          <AlertCircle className="h-2.5 w-2.5 mr-1" />
+                          <span className="text-xs">Nasledujúci</span>
+                        </div>
+                      )}
 
-                    {isCurrentStep && progress && progress.completionPercentage > 0 && !isCompleted && (
-                      <div className="flex items-center text-xs text-blue-600">
-                        <Clock className="h-3 w-3 mr-1" />
-                        <span>Prebieha</span>
-                      </div>
-                    )}
+                      {isCurrentStep && progress && progress.completionPercentage > 0 && !isCompleted && (
+                        <div className="flex items-center text-xs text-blue-600">
+                          <Clock className="h-2.5 w-2.5 mr-1" />
+                          <span className="text-xs">Prebieha</span>
+                        </div>
+                      )}
 
-                    {isPartiallyComplete && !isCurrentStep && (
-                      <div className="flex items-center text-xs text-amber-600">
-                        <CircleDot className="h-3 w-3 mr-1" />
-                        <span>Čiastočne vyplnené</span>
-                      </div>
-                    )}
+                      {isPartiallyComplete && !isCurrentStep && (
+                        <div className="flex items-center text-xs text-amber-600">
+                          <CircleDot className="h-2.5 w-2.5 mr-1" />
+                          <span className="text-xs">Čiastočne</span>
+                        </div>
+                      )}
 
-                    {isCompleted && (
-                      <div className="flex items-center text-xs text-green-600">
-                        <Check className="h-3 w-3 mr-1" />
-                        <span>Dokončené</span>
-                      </div>
-                    )}
+                      {isCompleted && (
+                        <div className="flex items-center text-xs text-green-600">
+                          <Check className="h-2.5 w-2.5 mr-1" />
+                          <span className="text-xs">Dokončené</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Mobile: Show only step number and icon */}
+                  <div className="sm:hidden">
+                    <div className="text-xs font-medium text-slate-700">
+                      {step.number + 1}
+                    </div>
                   </div>
                 </div>
 
-                {/* Connector Line */}
+                {/* Connector Line - Thinner and More Elegant */}
                 {index < steps.length - 1 && (
-                  <div className={`h-0.5 w-8 mx-2 flex-shrink-0 ${
+                  <div className={`h-px w-2 mx-1 flex-shrink-0 transition-colors duration-300 ${
                     isCompleted ? "bg-green-300" : "bg-slate-200"
                   }`} />
                 )}
               </div>
             );
           })}
-        </div>
-      </div>
-      
-      {/* Help Section */}
-      <div className="max-w-5xl mx-auto mt-6">
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-center">
-          <h3 className="font-medium text-blue-800 text-sm mb-1">Potrebujete pomoc?</h3>
-          <p className="text-xs text-blue-700">
-            V prípade otázok nás kontaktujte na čísle +421 911 123 456 alebo na info@utopia.sk
-          </p>
         </div>
       </div>
     </div>
