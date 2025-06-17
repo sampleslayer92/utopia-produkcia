@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { OnboardingData } from "@/types/onboarding";
 import { useTranslation } from "react-i18next";
@@ -6,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import OnboardingStepHeader from "./ui/OnboardingStepHeader";
 import OnboardingSection from "./ui/OnboardingSection";
 import { useToast } from "@/hooks/use-toast";
 import { useContactAutoFill } from "./hooks/useContactAutoFill";
@@ -14,7 +12,7 @@ import AutoFillFromContactButton from "./ui/AutoFillFromContactButton";
 import AuthorizedPersonCard from "./cards/AuthorizedPersonCard";
 import AuthorizedPersonForm from "./forms/AuthorizedPersonForm";
 import ActualOwnerCard from "./cards/ActualOwnerCard";
-import ActualOwnerForm from "./forms/ActualOwnerForm";
+import ActualOwnerForm from "./ActualOwnerForm";
 import AuthorizedPersonsSidebar from "./AuthorizedPersonsStep/AuthorizedPersonsSidebar";
 import ActualOwnersSidebar from "./ActualOwnersStep/ActualOwnersSidebar";
 
@@ -184,14 +182,7 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
   const contactName = `${data.contactInfo.firstName} ${data.contactInfo.lastName}`.trim();
 
   return (
-    <div className="space-y-6">
-      <OnboardingStepHeader
-        currentStep={5}
-        totalSteps={7}
-        title={t('steps:titles.personsAndOwners')}
-        description={t('steps:descriptions.personsAndOwners')}
-      />
-
+    <div className="space-y-4">
       {/* Auto-fill suggestion */}
       {contactName && (
         <AutoFillFromContactButton
@@ -204,7 +195,7 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
           canAutoFill={canAutoFill}
           alreadyExists={contactExistsInAuthorized && contactExistsInActualOwners}
           stepType="authorized"
-          className="mb-6"
+          className="mb-4"
         />
       )}
 
@@ -348,7 +339,7 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
         </div>
       </Card>
 
-      <div className="flex justify-between">
+      <div className="flex justify-between pt-4">
         <Button variant="secondary" onClick={onPrev}>
           {t('common:previous')}
         </Button>
