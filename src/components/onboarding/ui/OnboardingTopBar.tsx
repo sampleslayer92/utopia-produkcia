@@ -35,16 +35,16 @@ const OnboardingTopBar = ({
   };
 
   return (
-    <div className="bg-white/60 backdrop-blur-sm border-b border-slate-200/60 py-3 px-4 sticky top-[77px] z-40">
+    <div className="bg-white/60 backdrop-blur-sm border-b border-slate-200/60 py-2 px-4 sticky top-0 z-40">
       {/* Overall Progress Section - More Compact */}
-      <div className="max-w-7xl mx-auto mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-base font-semibold text-slate-900">Registračný proces</h2>
+      <div className="max-w-7xl mx-auto mb-3">
+        <div className="flex items-center justify-between mb-1.5">
+          <h2 className="text-sm font-semibold text-slate-900">Registračný proces</h2>
           <div className="text-xs text-slate-600">
             {overallProgress.overallPercentage}% dokončené • {overallProgress.completedSteps}/{overallProgress.totalSteps} krokov
           </div>
         </div>
-        <Progress value={overallProgress.overallPercentage} className="h-1.5" />
+        <Progress value={overallProgress.overallPercentage} className="h-1" />
       </div>
 
       {/* Horizontal Steps - Redesigned for All Steps to Fit */}
@@ -63,7 +63,7 @@ const OnboardingTopBar = ({
                 {/* Step Circle and Content - Compact Modern Design */}
                 <div
                   onClick={() => isClickable && handleStepClick(step.number)}
-                  className={`flex items-center gap-2 py-2 px-3 rounded-xl transition-all duration-300 min-w-0 flex-1 group hover:scale-[1.02]
+                  className={`flex items-center gap-2 py-1.5 px-2.5 rounded-lg transition-all duration-300 min-w-0 flex-1 group hover:scale-[1.02]
                     ${isClickable ? "cursor-pointer" : "opacity-60 cursor-not-allowed"}
                     ${
                       isCurrentStep
@@ -79,7 +79,7 @@ const OnboardingTopBar = ({
                 >
                   {/* Step Icon - Smaller and More Modern */}
                   <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 transition-all duration-300 ${
+                    className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 transition-all duration-300 ${
                       isCurrentStep
                         ? "bg-blue-600 text-white shadow-sm"
                         : isCompleted
@@ -92,9 +92,9 @@ const OnboardingTopBar = ({
                     }`}
                   >
                     {isCompleted ? (
-                      <Check className="h-2.5 w-2.5" />
+                      <Check className="h-2 w-2" />
                     ) : isPartiallyComplete ? (
-                      <CircleDot className="h-2.5 w-2.5" />
+                      <CircleDot className="h-2 w-2" />
                     ) : (
                       step.number + 1
                     )}
@@ -110,28 +110,28 @@ const OnboardingTopBar = ({
                     <div className="flex items-center mt-0.5">
                       {isNext && !isPartiallyComplete && (
                         <div className="flex items-center text-xs text-indigo-600">
-                          <AlertCircle className="h-2.5 w-2.5 mr-1" />
+                          <AlertCircle className="h-2 w-2 mr-1" />
                           <span className="text-xs">Nasledujúci</span>
                         </div>
                       )}
 
                       {isCurrentStep && progress && progress.completionPercentage > 0 && !isCompleted && (
                         <div className="flex items-center text-xs text-blue-600">
-                          <Clock className="h-2.5 w-2.5 mr-1" />
+                          <Clock className="h-2 w-2 mr-1" />
                           <span className="text-xs">Prebieha</span>
                         </div>
                       )}
 
                       {isPartiallyComplete && !isCurrentStep && (
                         <div className="flex items-center text-xs text-amber-600">
-                          <CircleDot className="h-2.5 w-2.5 mr-1" />
+                          <CircleDot className="h-2 w-2 mr-1" />
                           <span className="text-xs">Čiastočne</span>
                         </div>
                       )}
 
                       {isCompleted && (
                         <div className="flex items-center text-xs text-green-600">
-                          <Check className="h-2.5 w-2.5 mr-1" />
+                          <Check className="h-2 w-2 mr-1" />
                           <span className="text-xs">Dokončené</span>
                         </div>
                       )}
@@ -148,7 +148,7 @@ const OnboardingTopBar = ({
 
                 {/* Connector Line - Thinner and More Elegant */}
                 {index < steps.length - 1 && (
-                  <div className={`h-px w-2 mx-1 flex-shrink-0 transition-colors duration-300 ${
+                  <div className={`h-px w-1.5 mx-0.5 flex-shrink-0 transition-colors duration-300 ${
                     isCompleted ? "bg-green-300" : "bg-slate-200"
                   }`} />
                 )}

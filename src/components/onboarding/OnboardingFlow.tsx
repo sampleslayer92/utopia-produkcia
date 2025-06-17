@@ -151,7 +151,7 @@ const OnboardingFlow = () => {
         )}
         
         {/* Main Content */}
-        <div className="flex-1 p-4 md:p-6">
+        <div className="flex-1 p-4 md:p-6 pb-24">
           <div className="max-w-5xl mx-auto">
             {/* Auto-save indicator - Hide on mobile */}
             {!isMobile && (
