@@ -1,3 +1,4 @@
+
 {
   "adminPanel": {
     "title": "Administračný Panel",
@@ -38,6 +39,8 @@
     "title": "Klientske operácie",
     "contactInformation": "Kontaktné informácie",
     "companyInformation": "Informácie o spoločnosti",
+    "companyInfo": "Informácie o spoločnosti",
+    "basicData": "Základné údaje",
     "firstName": "Meno",
     "lastName": "Priezvisko",
     "email": "E-mail",
@@ -45,8 +48,12 @@
     "companyName": "Názov spoločnosti",
     "ico": "IČO",
     "dic": "DIČ",
+    "vatNumber": "DIČ DPH",
+    "notVatPayer": "Nie je platca DPH",
     "address": "Adresa",
+    "headOfficeAddress": "Adresa sídla",
     "street": "Ulica",
+    "streetAndNumber": "Ulica a číslo",
     "city": "Mesto",
     "zipCode": "PSČ",
     "contactPerson": "Kontaktná osoba",
@@ -54,7 +61,13 @@
     "isTechnicalPerson": "Je technická osoba",
     "salesNotes": "Poznámky predajcu",
     "noSalesNotes": "Žiadne poznámky",
-    "salesNotesPlaceholder": "Zadajte poznámky predajcu..."
+    "salesNotesPlaceholder": "Zadajte poznámky predajcu...",
+    "businessLocations": "Prevádzkové miesta",
+    "locationName": "Názov miesta",
+    "iban": "IBAN",
+    "businessSector": "MCC Sektor",
+    "noLocations": "Žiadne prevádzkové miesta",
+    "location": "Miesto {{number}}"
   },
   "devicesServices": {
     "title": "Zariadenia a služby",
@@ -180,5 +193,123 @@
     "sendForSignature": "Odoslať na podpis",
     "markAsSigned": "Označiť ako podpísané",
     "sendReminder": "Odoslať pripomienku"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "contracts": "Zmluvy",
+    "clients": "Klienti",
+    "reports": "Reporty",
+    "settings": "Nastavenia"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Prehľad systému a správa zmlúv",
+    "newContract": "Nová zmluva",
+    "status": {
+      "online": "Online"
+    }
+  },
+  "stats": {
+    "totalContracts": "Celkový počet zmlúv",
+    "submittedContracts": "Odoslané zmluvy",
+    "approvedContracts": "Schválené zmluvy",
+    "drafts": "Koncepty",
+    "recentChange": "+{{count}} za 30 dní",
+    "waitingApproval": "Čaká na schválenie",
+    "activeContracts": "Aktívne zmluvy",
+    "incomplete": "Neúplné"
+  },
+  "table": {
+    "title": "Pokročilá správa zmlúv",
+    "subtitle": "Pokročilé filtrovanie a správa zmlúv ({{filtered}} z {{total}})",
+    "clickHint": "Kliknite na riadok pre zobrazenie detailov zmluvy",
+    "export": "Export",
+    "newContract": "Nová zmluva",
+    "search": "Hľadať zmluvy...",
+    "filters": {
+      "status": "Stav",
+      "contractType": "Typ zmluvy",
+      "salesPerson": "Predajca",
+      "dateRange": "Dátumový rozsah",
+      "allStatuses": "Všetky stavy",
+      "allTypes": "Všetky typy",
+      "allSalespeople": "Všetci predajcovia"
+    },
+    "columns": {
+      "contractNumber": "Číslo zmluvy",
+      "client": "Klient",
+      "contractType": "Typ zmluvy",
+      "monthlyValue": "Hodnota/mesiac",
+      "status": "Stav",
+      "completion": "Dokončenie",
+      "salesPerson": "Predajca",
+      "created": "Vytvorené"
+    },
+    "noResults": {
+      "title": "Žiadne výsledky",
+      "subtitle": "Skúste zmeniť kritériá vyhľadávania alebo filtre."
+    }
+  },
+  "status": {
+    "draft": "Koncept",
+    "submitted": "Odoslané",
+    "approved": "Schválené",
+    "rejected": "Zamietnuté"
+  },
+  "sidebar": {
+    "alerts": {
+      "title": "Upozornenia",
+      "contractsWaiting": "{{count}} zmlúv čaká na schválenie",
+      "systemRunning": "Systém beží bez problémov",
+      "priority": {
+        "high": "vysoká",
+        "medium": "stredná",
+        "low": "nízka"
+      }
+    },
+    "quickActions": {
+      "title": "Rýchle akcie",
+      "createContract": "Vytvoriť novú zmluvu",
+      "generateReports": "Generovať reporty",
+      "manageUsers": "Správa používateľov",
+      "systemSettings": "Nastavenia systému"
+    },
+    "recentActivity": {
+      "title": "Nedávna aktivita",
+      "systemStarted": "Systém spustený",
+      "contractsLoaded": "Načítané {{count}} zmlúv",
+      "justNow": "práve teraz",
+      "momentAgo": "pred chvíľou"
+    }
+  },
+  "contractDetail": {
+    "loading": "Načítavam zmluvu...",
+    "notFound": "Zmluva nebola nájdená alebo sa nepodarilo načítať údaje.",
+    "backToList": "Späť na zoznam",
+    "edit": "Upraviť",
+    "cancelEdit": "Zrušiť úpravy",
+    "save": "Uložiť zmeny",
+    "saving": "Ukladám...",
+    "unsavedChanges": "Neuložené zmeny",
+    "created": "Vytvorené:",
+    "submitted": "Odoslané:",
+    "client": "Klient:",
+    "unknownClient": "Neznámy klient",
+    "confirmCancelEdit": "Máte neuložené zmeny. Chcete ich uložiť pred zrušením úprav?",
+    "noChangesToSave": "Žiadne zmeny na uloženie.",
+    "changesSaved": "Zmeny boli úspešne uložené.",
+    "saveError": "Nepodarilo sa uložiť zmeny.",
+    "noDataToSave": "Žiadne údaje na uloženie."
+  },
+  "messages": {
+    "exportStarted": "Export údajov spustený",
+    "noContractsSelected": "Žiadne zmluvy neboli vybrané na aktualizáciu",
+    "noContractsToDelete": "Žiadne zmluvy neboli vybrané na zmazanie",
+    "confirmDelete": "Naozaj chcete zmazať {{count}} {{unit}}? Táto akcia je nevratná.",
+    "deleteUnits": {
+      "single": "vybranú zmluvu",
+      "few": "vybrané zmluvy",
+      "many": "vybraných zmlúv"
+    }
   }
 }
