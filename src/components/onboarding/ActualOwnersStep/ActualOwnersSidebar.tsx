@@ -1,8 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Plus, Users, AlertCircle, CheckCircle2, Info } from "lucide-react";
+import { Users, AlertCircle, CheckCircle2, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { OnboardingData } from "@/types/onboarding";
 
@@ -11,7 +10,7 @@ interface ActualOwnersSidebarProps {
   onAddOwner: () => void;
 }
 
-const ActualOwnersSidebar = ({ data, onAddOwner }: ActualOwnersSidebarProps) => {
+const ActualOwnersSidebar = ({ data }: ActualOwnersSidebarProps) => {
   const { t } = useTranslation(['steps', 'forms']);
 
   const hasOwners = data.actualOwners.length > 0;
@@ -33,16 +32,16 @@ const ActualOwnersSidebar = ({ data, onAddOwner }: ActualOwnersSidebarProps) => 
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Stav:</span>
+              <span className="text-sm font-medium">{t('steps:actualOwners.sidebar.status')}</span>
               {hasOwners ? (
                 <Badge variant="default" className="bg-green-100 text-green-800">
                   <CheckCircle2 className="h-3 w-3 mr-1" />
-                  {data.actualOwners.length} vlastníkov
+                  {data.actualOwners.length} {t('steps:actualOwners.sidebar.completed')}
                 </Badge>
               ) : (
                 <Badge variant="secondary">
                   <AlertCircle className="h-3 w-3 mr-1" />
-                  Nezadané
+                  {t('steps:actualOwners.sidebar.notSet')}
                 </Badge>
               )}
             </div>
@@ -51,18 +50,13 @@ const ActualOwnersSidebar = ({ data, onAddOwner }: ActualOwnersSidebarProps) => 
           {contactName && (
             <div className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
               <h4 className="text-sm font-medium text-indigo-800 mb-1">
-                Tip: Automatické vyplnenie
+                {t('steps:actualOwners.sidebar.autoFillTip')}
               </h4>
               <p className="text-xs text-indigo-700">
-                Môžete použiť tlačidlo "Vyplniť z kontaktov" pre automatické pridanie kontaktnej osoby {contactName} ako skutočného vlastníka.
+                {t('steps:actualOwners.sidebar.autoFillDescription', { name: contactName })}
               </p>
             </div>
           )}
-
-          <Button onClick={onAddOwner} className="w-full" variant="outline">
-            <Plus className="h-4 w-4 mr-2" />
-            Pridať vlastníka
-          </Button>
         </CardContent>
       </Card>
 
@@ -70,14 +64,14 @@ const ActualOwnersSidebar = ({ data, onAddOwner }: ActualOwnersSidebarProps) => 
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Info className="h-4 w-4 text-blue-600" />
-            <CardTitle className="text-sm">Kto je skutočný vlastník?</CardTitle>
+            <CardTitle className="text-sm">{t('steps:actualOwners.sidebar.whoIsOwner')}</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <ul className="text-xs text-gray-600 space-y-2">
-            <li>• Osoba s priamym alebo nepriamym podielom aspoň 25%</li>
-            <li>• Osoba s právom vymenovať alebo odvolať štatutárny orgán</li>
-            <li>• Osoba, ktorá inak kontroluje spoločnosť</li>
+            {t('steps:actualOwners.sidebar.ownerCriteria', { returnObjects: true }).map((criterion: string, index: number) => (
+              <li key={index}>• {criterion}</li>
+            ))}
           </ul>
         </CardContent>
       </Card>

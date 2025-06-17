@@ -25,6 +25,20 @@
     "validation": {
       "noPeople": "Musí byť pridaná aspoň jedna splnomocnená osoba.",
       "missingFields": "Všetky povinné polia musia byť vyplnené pre každú splnomocnenú osobu."
+    },
+    "sidebar": {
+      "status": "Stav:",
+      "completed": "osôb",
+      "notSet": "Nezadané",
+      "autoFillTip": "Tip: Automatické vyplnenie",
+      "autoFillDescription": "Môžete použiť tlačidlo \"Vyplniť z kontaktov\" pre automatické pridanie kontaktnej osoby {name} ako splnomocnenú osobu.",
+      "addButton": "Pridať osobu",
+      "importantInfo": "Dôležité informácie",
+      "requirements": [
+        "Údaje musia byť v súlade s oficiálnymi dokumentmi",
+        "Pre každú splnomocnenú osobu je potrebný platný doklad totožnosti",
+        "Musí byť uvedená aspoň jedna splnomocnená osoba"
+      ]
     }
   },
   "actualOwners": {
@@ -34,6 +48,19 @@
     "validation": {
       "noOwners": "Musí byť pridaný aspoň jeden skutočný vlastník.",
       "missingFields": "Všetky povinné polia musia byť vyplnené pre každého skutočného vlastníka."
+    },
+    "sidebar": {
+      "status": "Stav:",
+      "completed": "vlastníkov",
+      "notSet": "Nezadané",
+      "autoFillTip": "Tip: Automatické vyplnenie",
+      "autoFillDescription": "Môžete použiť tlačidlo \"Vyplniť z kontaktov\" pre automatické pridanie kontaktnej osoby {name} ako skutočného vlastníka.",
+      "whoIsOwner": "Kto je skutočný vlastník?",
+      "ownerCriteria": [
+        "Osoba s priamym alebo nepriamym podielom aspoň 25%",
+        "Osoba s právom vymenovať alebo odvolať štatutárny orgán",
+        "Osoba, ktorá inak kontroluje spoločnosť"
+      ]
     }
   },
   "sidebar": {

@@ -25,6 +25,20 @@
     "validation": {
       "noPeople": "At least one authorized person must be added",
       "missingFields": "Please fill in all required fields for all authorized persons"
+    },
+    "sidebar": {
+      "status": "Status:",
+      "completed": "persons",
+      "notSet": "Not set",
+      "autoFillTip": "Tip: Auto-fill",
+      "autoFillDescription": "You can use the \"Fill from contacts\" button to automatically add contact person {name} as an authorized person.",
+      "addButton": "Add person",
+      "importantInfo": "Important information",
+      "requirements": [
+        "Data must comply with official documents",
+        "Valid identity document required for each authorized person",
+        "At least one authorized person must be specified"
+      ]
     }
   },
   "actualOwners": {
@@ -34,6 +48,19 @@
     "validation": {
       "noOwners": "At least one actual owner must be added",
       "missingFields": "Please fill in all required fields for all actual owners"
+    },
+    "sidebar": {
+      "status": "Status:",
+      "completed": "owners",
+      "notSet": "Not set",
+      "autoFillTip": "Tip: Auto-fill",
+      "autoFillDescription": "You can use the \"Fill from contacts\" button to automatically add contact person {name} as an actual owner.",
+      "whoIsOwner": "Who is an actual owner?",
+      "ownerCriteria": [
+        "Person with direct or indirect share of at least 25%",
+        "Person with the right to appoint or dismiss statutory body",
+        "Person who otherwise controls the company"
+      ]
     }
   },
   "sidebar": {
