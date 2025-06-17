@@ -1,3 +1,4 @@
+
 import { useMemo } from 'react';
 import { OnboardingData } from '@/types/onboarding';
 
@@ -101,11 +102,10 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
       }
     ];
 
-    // Simplified progress calculation - only for completion status, not detailed percentages
+    // Calculate completion for each step
     steps.forEach(step => {
       const completedFields: string[] = [];
       
-      // Quick validation for completion status only
       step.requiredFields.forEach(fieldPath => {
         const value = getNestedValue(data, fieldPath);
         if (isFieldComplete(value, fieldPath)) {
@@ -115,7 +115,6 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
 
       step.completedFields = completedFields;
       
-      // Simplified completion calculation
       const hasAnyCompletedFields = completedFields.length > 0;
       const allFieldsCompleted = completedFields.length === step.requiredFields.length;
       
@@ -253,21 +252,30 @@ const isFieldComplete = (value: any, fieldPath: string): boolean => {
 const isBusinessLocationComplete = (location: any): boolean => {
   if (!location) return false;
   
-  const hasBasicInfo = location.businessName?.trim() && 
-                      location.address?.street?.trim() && 
-                      location.address?.city?.trim() && 
-                      location.address?.zipCode?.trim();
-                      
-  const hasContactPerson = location.contactPerson?.firstName?.trim() && 
-                          location.contactPerson?.lastName?.trim() && 
-                          location.contactPerson?.email?.trim() &&
-                          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(location.contactPerson.email);
-                          
-  const hasBankAccount = location.bankAccounts && 
-                        location.bankAccounts.length > 0 && 
-                        location.bankAccounts.every((account: any) => 
-                          account.iban?.trim() && account.currency
-                        );
+  // Check if required fields are actually filled, not just defaults
+  const hasName = location.name?.trim() && location.name !== '';
   
-  return hasBasicInfo && hasContactPerson && hasBankAccount;
+  const hasValidAddress = location.address?.street?.trim() && 
+                         location.address?.city?.trim() && 
+                         location.address?.zipCode?.trim();
+                         
+  const hasValidContactPerson = location.contactPerson?.name?.trim() && 
+                               location.contactPerson?.email?.trim() &&
+                               /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(location.contactPerson.email) &&
+                               location.contactPerson?.phone?.trim();
+                          
+  const hasValidBankAccounts = location.bankAccounts && 
+                              location.bankAccounts.length > 0 && 
+                              location.bankAccounts.every((account: any) => 
+                                account.iban?.trim() && account.iban !== '' && account.mena
+                              );
+  
+  const hasBusinessSubject = location.businessSubject?.trim() && location.businessSubject !== '';
+  
+  const hasMonthlyTurnover = typeof location.monthlyTurnover === 'number' && location.monthlyTurnover > 0;
+  
+  const hasAverageTransaction = typeof location.averageTransaction === 'number' && location.averageTransaction > 0;
+  
+  return hasName && hasValidAddress && hasValidContactPerson && hasValidBankAccounts && 
+         hasBusinessSubject && hasMonthlyTurnover && hasAverageTransaction;
 };
