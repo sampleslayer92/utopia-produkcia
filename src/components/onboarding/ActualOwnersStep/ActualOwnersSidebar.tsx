@@ -69,7 +69,7 @@ const ActualOwnersSidebar = ({ data }: ActualOwnersSidebarProps) => {
         </CardHeader>
         <CardContent>
           <ul className="text-xs text-gray-600 space-y-2">
-            {t('steps:actualOwners.sidebar.ownerCriteria', { returnObjects: true }).map((criterion: string, index: number) => (
+            {(t('steps:actualOwners.sidebar.ownerCriteria', { returnObjects: true }) as string[]).map((criterion: string, index: number) => (
               <li key={index}>• {criterion}</li>
             ))}
           </ul>

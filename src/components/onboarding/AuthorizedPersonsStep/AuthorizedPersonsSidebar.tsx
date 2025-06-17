@@ -72,7 +72,7 @@ const AuthorizedPersonsSidebar = ({ data, onAddPerson }: AuthorizedPersonsSideba
         </CardHeader>
         <CardContent>
           <ul className="text-xs text-gray-600 space-y-2">
-            {t('steps:authorizedPersons.sidebar.requirements', { returnObjects: true }).map((requirement: string, index: number) => (
+            {(t('steps:authorizedPersons.sidebar.requirements', { returnObjects: true }) as string[]).map((requirement: string, index: number) => (
               <li key={index}>• {requirement}</li>
             ))}
           </ul>
