@@ -9,9 +9,9 @@ import OnboardingSection from "./ui/OnboardingSection";
 import { useToast } from "@/hooks/use-toast";
 import { useContactAutoFill } from "./hooks/useContactAutoFill";
 import AutoFillFromContactButton from "./ui/AutoFillFromContactButton";
-import AuthorizedPersonCard from "./cards/AuthorizedPersonCard";
+import EnhancedAuthorizedPersonCard from "./cards/EnhancedAuthorizedPersonCard";
+import EnhancedActualOwnerCard from "./cards/EnhancedActualOwnerCard";
 import AuthorizedPersonForm from "./forms/AuthorizedPersonForm";
-import ActualOwnerCard from "./cards/ActualOwnerCard";
 import ActualOwnerForm from "./forms/ActualOwnerForm";
 import AuthorizedPersonsSidebar from "./AuthorizedPersonsStep/AuthorizedPersonsSidebar";
 import ActualOwnersSidebar from "./ActualOwnersStep/ActualOwnersSidebar";
@@ -32,10 +32,12 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
   // Authorized Persons state
   const [isAddingPerson, setIsAddingPerson] = useState(false);
   const [editingPersonId, setEditingPersonId] = useState<string | null>(null);
+  const [expandedPersons, setExpandedPersons] = useState<Record<string, boolean>>({});
 
   // Actual Owners state
   const [isAddingOwner, setIsAddingOwner] = useState(false);
   const [editingOwnerId, setEditingOwnerId] = useState<string | null>(null);
+  const [expandedOwners, setExpandedOwners] = useState<Record<string, boolean>>({});
 
   const { 
     autoFillAuthorizedPerson,
@@ -44,6 +46,21 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
     contactExistsInAuthorized,
     contactExistsInActualOwners
   } = useContactAutoFill({ data, updateData });
+
+  // Expansion handlers
+  const togglePersonExpansion = (personId: string) => {
+    setExpandedPersons(prev => ({
+      ...prev,
+      [personId]: !prev[personId]
+    }));
+  };
+
+  const toggleOwnerExpansion = (ownerId: string) => {
+    setExpandedOwners(prev => ({
+      ...prev,
+      [ownerId]: !prev[ownerId]
+    }));
+  };
 
   // Authorized Persons handlers
   const handleAddPerson = () => {
@@ -74,6 +91,11 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
       updateData({
         authorizedPersons: [...data.authorizedPersons, newPerson]
       });
+      // Auto-expand newly added person
+      setExpandedPersons(prev => ({
+        ...prev,
+        [newPerson.id]: true
+      }));
     }
     setIsAddingPerson(false);
   };
@@ -88,6 +110,12 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
   const handleDeletePerson = (id: string) => {
     updateData({
       authorizedPersons: data.authorizedPersons.filter(p => p.id !== id)
+    });
+    // Remove from expanded state
+    setExpandedPersons(prev => {
+      const newState = { ...prev };
+      delete newState[id];
+      return newState;
     });
   };
 
@@ -117,6 +145,11 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
         id: uuidv4()
       };
       updateData({ actualOwners: [...data.actualOwners, newOwner] });
+      // Auto-expand newly added owner
+      setExpandedOwners(prev => ({
+        ...prev,
+        [newOwner.id]: true
+      }));
     }
     setIsAddingOwner(false);
   };
@@ -131,6 +164,12 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
   const handleRemoveOwner = (id: string) => {
     const updatedActualOwners = data.actualOwners.filter(owner => owner.id !== id);
     updateData({ actualOwners: updatedActualOwners });
+    // Remove from expanded state
+    setExpandedOwners(prev => {
+      const newState = { ...prev };
+      delete newState[id];
+      return newState;
+    });
   };
 
   const handleNextStep = () => {
@@ -224,10 +263,13 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
               </Card>
             ) : (
               <div className="space-y-4">
-                {data.authorizedPersons.map(person => (
-                  <AuthorizedPersonCard
+                {data.authorizedPersons.map((person, index) => (
+                  <EnhancedAuthorizedPersonCard
                     key={person.id}
                     person={person}
+                    index={index}
+                    isExpanded={expandedPersons[person.id] || false}
+                    onToggle={() => togglePersonExpansion(person.id)}
                     onEdit={() => handleEditPerson(person.id)}
                     onDelete={() => handleDeletePerson(person.id)}
                   />
@@ -276,10 +318,13 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
               </Card>
             ) : (
               <div className="space-y-4">
-                {data.actualOwners.map((owner) => (
-                  <ActualOwnerCard
+                {data.actualOwners.map((owner, index) => (
+                  <EnhancedActualOwnerCard
                     key={owner.id}
                     owner={owner}
+                    index={index}
+                    isExpanded={expandedOwners[owner.id] || false}
+                    onToggle={() => toggleOwnerExpansion(owner.id)}
                     onEdit={() => handleEditOwner(owner.id)}
                     onDelete={() => handleRemoveOwner(owner.id)}
                   />
