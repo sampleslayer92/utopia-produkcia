@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContractData } from "@/hooks/useContractData";
 import { useContractUpdate } from "@/hooks/useContractUpdate";
@@ -22,6 +22,8 @@ const ContractDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [pendingChanges, setPendingChanges] = useState<any>({});
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
   const contractDataResult = useContractData(id!);
   const updateContract = useContractUpdate(id!);
@@ -64,17 +66,20 @@ const ContractDetail = () => {
   const { contract, onboardingData } = contractDataResult.data;
 
   const handleSave = async () => {
-    if (!isDirty) {
+    if (!hasUnsavedChanges && !isDirty) {
       console.log('No changes to save');
       toast({
         title: "Informácia",
-        description: "Nie su žiadne zmeny na uloženie.",
+        description: "Nie sú žiadne zmeny na uloženie.",
       });
       return;
     }
 
-    // Use formData if available, otherwise fall back to onboardingData
-    const dataToSave = formData || onboardingData;
+    // Merge pending changes with original data
+    const dataToSave = {
+      ...onboardingData,
+      ...pendingChanges
+    };
     
     if (!dataToSave) {
       console.error('No data available to save');
@@ -93,6 +98,9 @@ const ContractDetail = () => {
         data: dataToSave
       });
 
+      // Clear pending changes and reset states
+      setPendingChanges({});
+      setHasUnsavedChanges(false);
       markClean();
       
       toast({
@@ -110,17 +118,18 @@ const ContractDetail = () => {
   };
 
   const handleToggleEdit = () => {
-    console.log('Toggling edit mode. Current state:', { isEditMode, hasFormData: !!formData, isDirty });
+    console.log('Toggling edit mode. Current state:', { isEditMode, hasUnsavedChanges, isDirty });
     
     if (isEditMode) {
       // Leaving edit mode
-      if (isDirty) {
+      if (hasUnsavedChanges || isDirty) {
         const shouldSave = window.confirm('Máte neuložené zmeny. Chcete ich uložiť pred ukončením editácie?');
         if (shouldSave) {
           handleSave();
         } else {
-          // Reset form to original data
-          console.log('Resetting form to original data due to user cancellation');
+          // Reset all pending changes
+          setPendingChanges({});
+          setHasUnsavedChanges(false);
           forceInitialize(onboardingData);
         }
       }
@@ -129,6 +138,8 @@ const ContractDetail = () => {
       // Entering edit mode - ensure form has the latest data
       console.log('Entering edit mode, ensuring form has current data');
       forceInitialize(onboardingData);
+      setPendingChanges({});
+      setHasUnsavedChanges(false);
       setIsEditMode(true);
     }
   };
@@ -182,8 +193,7 @@ const ContractDetail = () => {
     isEditMode,
     hasFormData: !!formData,
     hasOnboardingData: !!onboardingData,
-    formDataKeys: formData ? Object.keys(formData) : [],
-    onboardingDataKeys: onboardingData ? Object.keys(onboardingData) : [],
+    hasUnsavedChanges,
     isDirty,
     currentDataSource: (isEditMode && formData) ? 'formData' : 'onboardingData',
     contractId: id
@@ -191,7 +201,13 @@ const ContractDetail = () => {
 
   const handleSectionUpdate = (sectionPath: string, sectionData: any) => {
     console.log(`Section ${sectionPath} updated with data:`, sectionData);
-    updateSection(sectionPath, sectionData);
+    
+    // Store changes in pending state instead of immediately applying them
+    setPendingChanges(prev => ({
+      ...prev,
+      [sectionPath]: sectionData
+    }));
+    setHasUnsavedChanges(true);
   };
 
   return (
@@ -203,7 +219,7 @@ const ContractDetail = () => {
         onToggleEdit={handleToggleEdit}
         onBack={() => navigate('/admin')}
         onSave={handleSave}
-        isDirty={isDirty}
+        isDirty={hasUnsavedChanges || isDirty}
         isSaving={updateContract.isPending}
       />
 

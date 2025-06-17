@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building, MapPin } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { useLocalFormState } from "@/hooks/useLocalFormState";
+import { useEffect } from 'react';
 import EditableSection from "./EditableSection";
 
 interface EnhancedClientOperationsSectionProps {
@@ -20,63 +22,72 @@ const EnhancedClientOperationsSection = ({
 }: EnhancedClientOperationsSectionProps) => {
   const { t } = useTranslation('admin');
   
+  // Use local form state for editing
+  const {
+    localData,
+    hasLocalChanges,
+    updateLocalField,
+    resetLocalData,
+    commitLocalChanges
+  } = useLocalFormState(onboardingData);
+
+  // Use local data when in edit mode, otherwise use original data
+  const currentData = isEditMode ? (localData || onboardingData) : onboardingData;
+
   // Safely access nested data with fallbacks
-  const companyInfo = onboardingData?.companyInfo || {};
-  const contactInfo = onboardingData?.contactInfo || {};
-  const businessLocations = onboardingData?.businessLocations || [];
+  const companyInfo = currentData?.companyInfo || {};
+  const contactInfo = currentData?.contactInfo || {};
+  const businessLocations = currentData?.businessLocations || [];
 
   console.log('EnhancedClientOperationsSection render:', { 
     companyInfo, 
     contactInfo, 
     businessLocations,
     isEditMode,
-    onboardingDataKeys: onboardingData ? Object.keys(onboardingData) : [],
-    hasOnUpdate: typeof onUpdate === 'function'
+    hasLocalChanges,
+    currentDataKeys: currentData ? Object.keys(currentData) : []
   });
+
+  // Reset local data when exiting edit mode
+  useEffect(() => {
+    if (!isEditMode) {
+      resetLocalData();
+    }
+  }, [isEditMode, resetLocalData]);
+
+  // Commit changes when save is triggered (this will be called from parent)
+  useEffect(() => {
+    if (hasLocalChanges && !isEditMode) {
+      const committedData = commitLocalChanges();
+      if (committedData && onSectionUpdate) {
+        onSectionUpdate(committedData);
+      }
+    }
+  }, [isEditMode, hasLocalChanges, commitLocalChanges, onSectionUpdate]);
 
   const handleCompanyFieldChange = (field: string, value: string) => {
     console.log(`Updating company field ${field} with value:`, value);
-    if (typeof onUpdate === 'function') {
-      onUpdate(`companyInfo.${field}`, value);
-    } else {
-      console.error('onUpdate function is not available');
-    }
+    updateLocalField(`companyInfo.${field}`, value);
   };
 
   const handleContactFieldChange = (field: string, value: string) => {
     console.log(`Updating contact field ${field} with value:`, value);
-    if (typeof onUpdate === 'function') {
-      onUpdate(`contactInfo.${field}`, value);
-    } else {
-      console.error('onUpdate function is not available');
-    }
+    updateLocalField(`contactInfo.${field}`, value);
   };
 
   const handleAddressFieldChange = (addressType: 'address' | 'contactAddress', field: string, value: string) => {
     console.log(`Updating ${addressType}.${field} with value:`, value);
-    if (typeof onUpdate === 'function') {
-      onUpdate(`companyInfo.${addressType}.${field}`, value);
-    } else {
-      console.error('onUpdate function is not available');
-    }
+    updateLocalField(`companyInfo.${addressType}.${field}`, value);
   };
 
   const handleBusinessLocationChange = (index: number, field: string, value: string) => {
     console.log(`Updating business location ${index}.${field} with value:`, value);
-    if (typeof onUpdate === 'function') {
-      onUpdate(`businessLocations.${index}.${field}`, value);
-    } else {
-      console.error('onUpdate function is not available');
-    }
+    updateLocalField(`businessLocations.${index}.${field}`, value);
   };
 
   const handleBusinessLocationAddressChange = (index: number, field: string, value: string) => {
     console.log(`Updating business location ${index}.address.${field} with value:`, value);
-    if (typeof onUpdate === 'function') {
-      onUpdate(`businessLocations.${index}.address.${field}`, value);
-    } else {
-      console.error('onUpdate function is not available');
-    }
+    updateLocalField(`businessLocations.${index}.address.${field}`, value);
   };
 
   return (
@@ -85,6 +96,11 @@ const EnhancedClientOperationsSection = ({
         <CardTitle className="flex items-center text-slate-900">
           <Building className="h-5 w-5 mr-2 text-blue-600" />
           {t('clientOperations.title')}
+          {hasLocalChanges && isEditMode && (
+            <span className="ml-2 text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded">
+              Neuložené zmeny
+            </span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
@@ -104,7 +120,7 @@ const EnhancedClientOperationsSection = ({
                   <Label className="text-sm font-medium text-slate-600">{t('clientOperations.companyName')}</Label>
                   {isEditMode ? (
                     <Input 
-                      defaultValue={companyInfo.companyName || ''} 
+                      value={companyInfo.companyName || ''} 
                       onChange={(e) => handleCompanyFieldChange('companyName', e.target.value)}
                       className="mt-1" 
                     />
@@ -120,7 +136,7 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">{t('clientOperations.ico')}</Label>
                     {isEditMode ? (
                       <Input 
-                        defaultValue={companyInfo.ico || ''} 
+                        value={companyInfo.ico || ''} 
                         onChange={(e) => handleCompanyFieldChange('ico', e.target.value)}
                         className="mt-1" 
                       />
@@ -135,7 +151,7 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">{t('clientOperations.dic')}</Label>
                     {isEditMode ? (
                       <Input 
-                        defaultValue={companyInfo.dic || ''} 
+                        value={companyInfo.dic || ''} 
                         onChange={(e) => handleCompanyFieldChange('dic', e.target.value)}
                         className="mt-1" 
                       />
@@ -151,7 +167,7 @@ const EnhancedClientOperationsSection = ({
                   <Label className="text-sm font-medium text-slate-600">{t('clientOperations.vatNumber')}</Label>
                   {isEditMode ? (
                     <Input 
-                      defaultValue={companyInfo.vatNumber || ''} 
+                      value={companyInfo.vatNumber || ''} 
                       onChange={(e) => handleCompanyFieldChange('vatNumber', e.target.value)}
                       className="mt-1" 
                     />
@@ -173,7 +189,7 @@ const EnhancedClientOperationsSection = ({
                   <Label className="text-sm font-medium text-slate-600">{t('clientOperations.streetAndNumber')}</Label>
                   {isEditMode ? (
                     <Input 
-                      defaultValue={companyInfo.address?.street || ''} 
+                      value={companyInfo.address?.street || ''} 
                       onChange={(e) => handleAddressFieldChange('address', 'street', e.target.value)}
                       className="mt-1" 
                     />
@@ -189,7 +205,7 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">{t('clientOperations.city')}</Label>
                     {isEditMode ? (
                       <Input 
-                        defaultValue={companyInfo.address?.city || ''} 
+                        value={companyInfo.address?.city || ''} 
                         onChange={(e) => handleAddressFieldChange('address', 'city', e.target.value)}
                         className="mt-1" 
                       />
@@ -204,7 +220,7 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">{t('clientOperations.zipCode')}</Label>
                     {isEditMode ? (
                       <Input 
-                        defaultValue={companyInfo.address?.zipCode || ''} 
+                        value={companyInfo.address?.zipCode || ''} 
                         onChange={(e) => handleAddressFieldChange('address', 'zipCode', e.target.value)}
                         className="mt-1" 
                       />
@@ -232,7 +248,7 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">{t('clientOperations.firstName')}</Label>
                     {isEditMode ? (
                       <Input 
-                        defaultValue={contactInfo.firstName || ''} 
+                        value={contactInfo.firstName || ''} 
                         onChange={(e) => handleContactFieldChange('firstName', e.target.value)}
                         className="mt-1" 
                       />
@@ -247,7 +263,7 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">{t('clientOperations.lastName')}</Label>
                     {isEditMode ? (
                       <Input 
-                        defaultValue={contactInfo.lastName || ''} 
+                        value={contactInfo.lastName || ''} 
                         onChange={(e) => handleContactFieldChange('lastName', e.target.value)}
                         className="mt-1" 
                       />
@@ -264,7 +280,7 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">{t('clientOperations.email')}</Label>
                     {isEditMode ? (
                       <Input 
-                        defaultValue={contactInfo.email || ''} 
+                        value={contactInfo.email || ''} 
                         onChange={(e) => handleContactFieldChange('email', e.target.value)}
                         type="email"
                         className="mt-1" 
@@ -280,7 +296,7 @@ const EnhancedClientOperationsSection = ({
                     <Label className="text-sm font-medium text-slate-600">{t('clientOperations.phone')}</Label>
                     {isEditMode ? (
                       <Input 
-                        defaultValue={contactInfo.phone || ''} 
+                        value={contactInfo.phone || ''} 
                         onChange={(e) => handleContactFieldChange('phone', e.target.value)}
                         className="mt-1" 
                       />
@@ -316,7 +332,7 @@ const EnhancedClientOperationsSection = ({
                           <Label className="text-sm font-medium text-slate-600">{t('clientOperations.locationName')}</Label>
                           {isEditMode ? (
                             <Input 
-                              defaultValue={location.locationName || ''} 
+                              value={location.locationName || ''} 
                               onChange={(e) => handleBusinessLocationChange(index, 'locationName', e.target.value)}
                               className="mt-1" 
                             />
@@ -331,7 +347,7 @@ const EnhancedClientOperationsSection = ({
                           <Label className="text-sm font-medium text-slate-600">{t('clientOperations.address')}</Label>
                           {isEditMode ? (
                             <Input 
-                              defaultValue={location.address?.street || ''} 
+                              value={location.address?.street || ''} 
                               onChange={(e) => handleBusinessLocationAddressChange(index, 'street', e.target.value)}
                               className="mt-1" 
                             />
@@ -350,7 +366,7 @@ const EnhancedClientOperationsSection = ({
                           <Label className="text-sm font-medium text-slate-600">{t('clientOperations.iban')}</Label>
                           {isEditMode ? (
                             <Input 
-                              defaultValue={location.iban || ''} 
+                              value={location.iban || ''} 
                               onChange={(e) => handleBusinessLocationChange(index, 'iban', e.target.value)}
                               className="mt-1" 
                             />
@@ -365,7 +381,7 @@ const EnhancedClientOperationsSection = ({
                           <Label className="text-sm font-medium text-slate-600">{t('clientOperations.businessSector')}</Label>
                           {isEditMode ? (
                             <Input 
-                              defaultValue={location.mccCode || ''} 
+                              value={location.mccCode || ''} 
                               onChange={(e) => handleBusinessLocationChange(index, 'mccCode', e.target.value)}
                               className="mt-1" 
                             />
