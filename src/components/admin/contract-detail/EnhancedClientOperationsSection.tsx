@@ -1,8 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building, MapPin } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import EditableSection from "./EditableSection";
 
 interface EnhancedClientOperationsSectionProps {
@@ -18,6 +18,8 @@ const EnhancedClientOperationsSection = ({
   onUpdate,
   onSectionUpdate 
 }: EnhancedClientOperationsSectionProps) => {
+  const { t } = useTranslation('admin');
+  
   // Safely access nested data with fallbacks
   const companyInfo = onboardingData?.companyInfo || {};
   const contactInfo = onboardingData?.contactInfo || {};
@@ -78,294 +80,313 @@ const EnhancedClientOperationsSection = ({
   };
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
-      {/* Company Information */}
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center text-slate-900">
-            <Building className="h-5 w-5 mr-2 text-blue-600" />
-            Informácie o spoločnosti
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <EditableSection isEditMode={isEditMode} label="Základné údaje">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm font-medium text-slate-600">Názov spoločnosti</Label>
-                {isEditMode ? (
-                  <Input 
-                    value={companyInfo?.companyName || ''} 
-                    onChange={(e) => handleCompanyFieldChange('companyName', e.target.value)}
-                    className="mt-1"
-                    placeholder="Názov spoločnosti"
-                  />
-                ) : (
-                  <p className="text-slate-900 mt-1">{companyInfo?.companyName || 'Neuvedené'}</p>
-                )}
-              </div>
+    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+      <CardHeader>
+        <CardTitle className="flex items-center text-slate-900">
+          <Building className="h-5 w-5 mr-2 text-blue-600" />
+          {t('clientOperations.title')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        {/* Company Information */}
+        <div className="space-y-6">
+          <h4 className="font-medium text-blue-900 border-b border-blue-200 pb-2">
+            {t('clientOperations.companyInfo')}
+          </h4>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Basic Data */}
+            <div className="space-y-4">
+              <h5 className="font-medium text-slate-700">{t('clientOperations.basicData')}</h5>
               
-              <div>
-                <Label className="text-sm font-medium text-slate-600">IČO</Label>
-                {isEditMode ? (
-                  <Input 
-                    value={companyInfo?.ico || ''} 
-                    onChange={(e) => handleCompanyFieldChange('ico', e.target.value)}
-                    className="mt-1"
-                    placeholder="IČO"
-                  />
-                ) : (
-                  <p className="text-slate-900 mt-1">{companyInfo?.ico || 'Neuvedené'}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm font-medium text-slate-600">DIČ</Label>
-                {isEditMode ? (
-                  <Input 
-                    value={companyInfo?.dic || ''} 
-                    onChange={(e) => handleCompanyFieldChange('dic', e.target.value)}
-                    className="mt-1"
-                    placeholder="DIČ"
-                  />
-                ) : (
-                  <p className="text-slate-900 mt-1">{companyInfo?.dic || 'Neuvedené'}</p>
-                )}
-              </div>
-              
-              <div>
-                <Label className="text-sm font-medium text-slate-600">IČ DPH</Label>
-                {isEditMode ? (
-                  <Input 
-                    value={companyInfo?.vatNumber || ''} 
-                    onChange={(e) => handleCompanyFieldChange('vatNumber', e.target.value)}
-                    className="mt-1"
-                    placeholder="IČ DPH"
-                  />
-                ) : (
-                  <p className="text-slate-900 mt-1">{companyInfo?.vatNumber || 'Nie je platca DPH'}</p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-sm font-medium text-slate-600">Adresa sídla</Label>
-              {isEditMode ? (
-                <div className="space-y-2 mt-1">
-                  <Input 
-                    value={companyInfo?.address?.street || ''} 
-                    onChange={(e) => handleAddressFieldChange('address', 'street', e.target.value)}
-                    placeholder="Ulica a číslo"
-                  />
-                  <div className="grid grid-cols-2 gap-2">
+              <EditableSection isEditMode={isEditMode}>
+                <div>
+                  <Label className="text-sm font-medium text-slate-600">{t('clientOperations.companyName')}</Label>
+                  {isEditMode ? (
                     <Input 
-                      value={companyInfo?.address?.city || ''} 
-                      onChange={(e) => handleAddressFieldChange('address', 'city', e.target.value)}
-                      placeholder="Mesto"
+                      defaultValue={companyInfo.companyName || ''} 
+                      onChange={(e) => handleCompanyFieldChange('companyName', e.target.value)}
+                      className="mt-1" 
                     />
-                    <Input 
-                      value={companyInfo?.address?.zipCode || ''} 
-                      onChange={(e) => handleAddressFieldChange('address', 'zipCode', e.target.value)}
-                      placeholder="PSČ"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <p className="text-slate-900 mt-1">
-                  {companyInfo?.address?.street && companyInfo?.address?.city ? 
-                    `${companyInfo.address.street}, ${companyInfo.address.city} ${companyInfo.address.zipCode || ''}` :
-                    'Neuvedené'
-                  }
-                </p>
-              )}
-            </div>
-          </EditableSection>
-
-          <div className="pt-4 border-t border-slate-200">
-            <EditableSection isEditMode={isEditMode} label="Kontaktná osoba">
-              <h4 className="font-medium text-slate-900 mb-3">Kontaktná osoba</h4>
-              <div className="space-y-2">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-medium text-slate-600">Meno</Label>
-                    {isEditMode ? (
-                      <Input 
-                        value={contactInfo?.firstName || ''} 
-                        onChange={(e) => handleContactFieldChange('firstName', e.target.value)}
-                        className="mt-1"
-                        placeholder="Meno"
-                      />
-                    ) : (
-                      <p className="text-slate-900 mt-1">{contactInfo?.firstName || 'Neuvedené'}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <Label className="text-sm font-medium text-slate-600">Priezvisko</Label>
-                    {isEditMode ? (
-                      <Input 
-                        value={contactInfo?.lastName || ''} 
-                        onChange={(e) => handleContactFieldChange('lastName', e.target.value)}
-                        className="mt-1"
-                        placeholder="Priezvisko"
-                      />
-                    ) : (
-                      <p className="text-slate-900 mt-1">{contactInfo?.lastName || 'Neuvedené'}</p>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-medium text-slate-600">Email</Label>
-                    {isEditMode ? (
-                      <Input 
-                        value={contactInfo?.email || ''} 
-                        onChange={(e) => handleContactFieldChange('email', e.target.value)}
-                        type="email"
-                        className="mt-1"
-                        placeholder="email@example.com"
-                      />
-                    ) : (
-                      <p className="text-slate-900 mt-1">{contactInfo?.email || 'Neuvedené'}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <Label className="text-sm font-medium text-slate-600">Telefón</Label>
-                    {isEditMode ? (
-                      <div className="flex mt-1">
-                        <Input 
-                          value={contactInfo?.phonePrefix || '+421'} 
-                          onChange={(e) => handleContactFieldChange('phonePrefix', e.target.value)}
-                          className="w-20 mr-2"
-                          placeholder="+421"
-                        />
-                        <Input 
-                          value={contactInfo?.phone || ''} 
-                          onChange={(e) => handleContactFieldChange('phone', e.target.value)}
-                          className="flex-1"
-                          placeholder="Telefónne číslo"
-                        />
-                      </div>
-                    ) : (
-                      <p className="text-slate-900 mt-1">
-                        {contactInfo?.phonePrefix && contactInfo?.phone ? 
-                          `${contactInfo.phonePrefix} ${contactInfo.phone}` :
-                          'Neuvedené'
-                        }
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </EditableSection>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Business Locations */}
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-slate-900">
-            <div className="flex items-center">
-              <MapPin className="h-5 w-5 mr-2 text-emerald-600" />
-              Prevádzky
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {businessLocations && businessLocations.length > 0 ? (
-            businessLocations.map((location: any, index: number) => (
-              <EditableSection key={location?.id || index} isEditMode={isEditMode} label={`Prevádzka ${index + 1}`}>
-                <div className="p-4 bg-slate-50/50 rounded-lg space-y-3">
-                  <div>
-                    <Label className="text-sm font-medium text-slate-600">Názov prevádzky</Label>
-                    {isEditMode ? (
-                      <Input 
-                        value={location?.name || ''} 
-                        onChange={(e) => handleBusinessLocationChange(index, 'name', e.target.value)}
-                        className="mt-1"
-                        placeholder="Názov prevádzky"
-                      />
-                    ) : (
-                      <p className="text-slate-900 mt-1 font-medium">{location?.name || 'Neuvedené'}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <Label className="text-sm font-medium text-slate-600">Adresa</Label>
-                    {isEditMode ? (
-                      <div className="space-y-2 mt-1">
-                        <Input 
-                          value={location?.address?.street || ''} 
-                          onChange={(e) => handleBusinessLocationAddressChange(index, 'street', e.target.value)}
-                          placeholder="Ulica a číslo"
-                        />
-                        <div className="grid grid-cols-2 gap-2">
-                          <Input 
-                            value={location?.address?.city || ''} 
-                            onChange={(e) => handleBusinessLocationAddressChange(index, 'city', e.target.value)}
-                            placeholder="Mesto"
-                          />
-                          <Input 
-                            value={location?.address?.zipCode || ''} 
-                            onChange={(e) => handleBusinessLocationAddressChange(index, 'zipCode', e.target.value)}
-                            placeholder="PSČ"
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-slate-900 mt-1">
-                        {location?.address?.street && location?.address?.city ? 
-                          `${location.address.street}, ${location.address.city} ${location.address.zipCode || ''}` :
-                          'Neuvedené'
-                        }
-                      </p>
-                    )}
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-sm font-medium text-slate-600">IBAN</Label>
-                      {isEditMode ? (
-                        <Input 
-                          value={location?.iban || ''} 
-                          onChange={(e) => handleBusinessLocationChange(index, 'iban', e.target.value)}
-                          className="mt-1"
-                          placeholder="IBAN"
-                        />
-                      ) : (
-                        <p className="text-slate-900 mt-1 font-mono text-sm">{location?.iban || 'Neuvedené'}</p>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <Label className="text-sm font-medium text-slate-600">MCC sektor</Label>
-                      {isEditMode ? (
-                        <Input 
-                          value={location?.businessSector || ''} 
-                          onChange={(e) => handleBusinessLocationChange(index, 'businessSector', e.target.value)}
-                          className="mt-1"
-                          placeholder="MCC sektor"
-                        />
-                      ) : (
-                        <p className="text-slate-900 mt-1">{location?.businessSector || 'Neuvedené'}</p>
-                      )}
-                    </div>
-                  </div>
+                  ) : (
+                    <p className="text-slate-900 mt-1">{companyInfo.companyName || t('contractActions.notSpecified')}</p>
+                  )}
                 </div>
               </EditableSection>
-            ))
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-slate-600">Žiadne prevádzky neboli zadané</p>
+
+              <div className="grid grid-cols-2 gap-4">
+                <EditableSection isEditMode={isEditMode}>
+                  <div>
+                    <Label className="text-sm font-medium text-slate-600">{t('clientOperations.ico')}</Label>
+                    {isEditMode ? (
+                      <Input 
+                        defaultValue={companyInfo.ico || ''} 
+                        onChange={(e) => handleCompanyFieldChange('ico', e.target.value)}
+                        className="mt-1" 
+                      />
+                    ) : (
+                      <p className="text-slate-900 mt-1 font-mono">{companyInfo.ico || t('contractActions.notSpecified')}</p>
+                    )}
+                  </div>
+                </EditableSection>
+
+                <EditableSection isEditMode={isEditMode}>
+                  <div>
+                    <Label className="text-sm font-medium text-slate-600">{t('clientOperations.dic')}</Label>
+                    {isEditMode ? (
+                      <Input 
+                        defaultValue={companyInfo.dic || ''} 
+                        onChange={(e) => handleCompanyFieldChange('dic', e.target.value)}
+                        className="mt-1" 
+                      />
+                    ) : (
+                      <p className="text-slate-900 mt-1 font-mono">{companyInfo.dic || t('contractActions.notSpecified')}</p>
+                    )}
+                  </div>
+                </EditableSection>
+              </div>
+
+              <EditableSection isEditMode={isEditMode}>
+                <div>
+                  <Label className="text-sm font-medium text-slate-600">{t('clientOperations.vatNumber')}</Label>
+                  {isEditMode ? (
+                    <Input 
+                      defaultValue={companyInfo.vatNumber || ''} 
+                      onChange={(e) => handleCompanyFieldChange('vatNumber', e.target.value)}
+                      className="mt-1" 
+                    />
+                  ) : (
+                    <p className="text-slate-900 mt-1 font-mono">
+                      {companyInfo.vatNumber || t('clientOperations.notVatPayer')}
+                    </p>
+                  )}
+                </div>
+              </EditableSection>
             </div>
+
+            {/* Head Office Address */}
+            <div className="space-y-4">
+              <h5 className="font-medium text-slate-700">{t('clientOperations.headOfficeAddress')}</h5>
+              
+              <EditableSection isEditMode={isEditMode}>
+                <div>
+                  <Label className="text-sm font-medium text-slate-600">{t('clientOperations.streetAndNumber')}</Label>
+                  {isEditMode ? (
+                    <Input 
+                      defaultValue={companyInfo.address?.street || ''} 
+                      onChange={(e) => handleAddressFieldChange('address', 'street', e.target.value)}
+                      className="mt-1" 
+                    />
+                  ) : (
+                    <p className="text-slate-900 mt-1">{companyInfo.address?.street || t('contractActions.notSpecified')}</p>
+                  )}
+                </div>
+              </EditableSection>
+
+              <div className="grid grid-cols-3 gap-4">
+                <EditableSection isEditMode={isEditMode}>
+                  <div>
+                    <Label className="text-sm font-medium text-slate-600">{t('clientOperations.city')}</Label>
+                    {isEditMode ? (
+                      <Input 
+                        defaultValue={companyInfo.address?.city || ''} 
+                        onChange={(e) => handleAddressFieldChange('address', 'city', e.target.value)}
+                        className="mt-1" 
+                      />
+                    ) : (
+                      <p className="text-slate-900 mt-1">{companyInfo.address?.city || t('contractActions.notSpecified')}</p>
+                    )}
+                  </div>
+                </EditableSection>
+
+                <EditableSection isEditMode={isEditMode}>
+                  <div>
+                    <Label className="text-sm font-medium text-slate-600">{t('clientOperations.zipCode')}</Label>
+                    {isEditMode ? (
+                      <Input 
+                        defaultValue={companyInfo.address?.zipCode || ''} 
+                        onChange={(e) => handleAddressFieldChange('address', 'zipCode', e.target.value)}
+                        className="mt-1" 
+                      />
+                    ) : (
+                      <p className="text-slate-900 mt-1">{companyInfo.address?.zipCode || t('contractActions.notSpecified')}</p>
+                    )}
+                  </div>
+                </EditableSection>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Contact Person */}
+        <div className="space-y-6 border-t border-slate-200 pt-6">
+          <h4 className="font-medium text-blue-900 border-b border-blue-200 pb-2">
+            {t('clientOperations.contactPerson')}
+          </h4>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <EditableSection isEditMode={isEditMode}>
+                  <div>
+                    <Label className="text-sm font-medium text-slate-600">{t('clientOperations.firstName')}</Label>
+                    {isEditMode ? (
+                      <Input 
+                        defaultValue={contactInfo.firstName || ''} 
+                        onChange={(e) => handleContactFieldChange('firstName', e.target.value)}
+                        className="mt-1" 
+                      />
+                    ) : (
+                      <p className="text-slate-900 mt-1">{contactInfo.firstName || t('contractActions.notSpecified')}</p>
+                    )}
+                  </div>
+                </EditableSection>
+
+                <EditableSection isEditMode={isEditMode}>
+                  <div>
+                    <Label className="text-sm font-medium text-slate-600">{t('clientOperations.lastName')}</Label>
+                    {isEditMode ? (
+                      <Input 
+                        defaultValue={contactInfo.lastName || ''} 
+                        onChange={(e) => handleContactFieldChange('lastName', e.target.value)}
+                        className="mt-1" 
+                      />
+                    ) : (
+                      <p className="text-slate-900 mt-1">{contactInfo.lastName || t('contractActions.notSpecified')}</p>
+                    )}
+                  </div>
+                </EditableSection>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <EditableSection isEditMode={isEditMode}>
+                  <div>
+                    <Label className="text-sm font-medium text-slate-600">{t('clientOperations.email')}</Label>
+                    {isEditMode ? (
+                      <Input 
+                        defaultValue={contactInfo.email || ''} 
+                        onChange={(e) => handleContactFieldChange('email', e.target.value)}
+                        type="email"
+                        className="mt-1" 
+                      />
+                    ) : (
+                      <p className="text-slate-900 mt-1">{contactInfo.email || t('contractActions.notSpecified')}</p>
+                    )}
+                  </div>
+                </EditableSection>
+
+                <EditableSection isEditMode={isEditMode}>
+                  <div>
+                    <Label className="text-sm font-medium text-slate-600">{t('clientOperations.phone')}</Label>
+                    {isEditMode ? (
+                      <Input 
+                        defaultValue={contactInfo.phone || ''} 
+                        onChange={(e) => handleContactFieldChange('phone', e.target.value)}
+                        className="mt-1" 
+                      />
+                    ) : (
+                      <p className="text-slate-900 mt-1">{contactInfo.phone || t('contractActions.notSpecified')}</p>
+                    )}
+                  </div>
+                </EditableSection>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Business Locations */}
+        <div className="space-y-6 border-t border-slate-200 pt-6">
+          <h4 className="font-medium text-blue-900 border-b border-blue-200 pb-2 flex items-center">
+            <MapPin className="h-4 w-4 mr-2" />
+            {t('clientOperations.businessLocations')}
+          </h4>
+          
+          {businessLocations.length > 0 ? (
+            <div className="space-y-6">
+              {businessLocations.map((location: any, index: number) => (
+                <div key={index} className="p-4 bg-blue-50/50 rounded-lg border border-blue-200/60">
+                  <h5 className="font-medium text-blue-900 mb-4">
+                    {t('clientOperations.location', { number: index + 1 })}
+                  </h5>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <EditableSection isEditMode={isEditMode}>
+                        <div>
+                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.locationName')}</Label>
+                          {isEditMode ? (
+                            <Input 
+                              defaultValue={location.locationName || ''} 
+                              onChange={(e) => handleBusinessLocationChange(index, 'locationName', e.target.value)}
+                              className="mt-1" 
+                            />
+                          ) : (
+                            <p className="text-slate-900 mt-1">{location.locationName || t('contractActions.notSpecified')}</p>
+                          )}
+                        </div>
+                      </EditableSection>
+
+                      <EditableSection isEditMode={isEditMode}>
+                        <div>
+                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.address')}</Label>
+                          {isEditMode ? (
+                            <Input 
+                              defaultValue={location.address?.street || ''} 
+                              onChange={(e) => handleBusinessLocationAddressChange(index, 'street', e.target.value)}
+                              className="mt-1" 
+                            />
+                          ) : (
+                            <p className="text-slate-900 mt-1">
+                              {location.address ? `${location.address.street}, ${location.address.city} ${location.address.zipCode}` : t('contractActions.notSpecified')}
+                            </p>
+                          )}
+                        </div>
+                      </EditableSection>
+                    </div>
+
+                    <div className="space-y-4">
+                      <EditableSection isEditMode={isEditMode}>
+                        <div>
+                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.iban')}</Label>
+                          {isEditMode ? (
+                            <Input 
+                              defaultValue={location.iban || ''} 
+                              onChange={(e) => handleBusinessLocationChange(index, 'iban', e.target.value)}
+                              className="mt-1" 
+                            />
+                          ) : (
+                            <p className="text-slate-900 mt-1 font-mono">{location.iban || t('contractActions.notSpecified')}</p>
+                          )}
+                        </div>
+                      </EditableSection>
+
+                      <EditableSection isEditMode={isEditMode}>
+                        <div>
+                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.businessSector')}</Label>
+                          {isEditMode ? (
+                            <Input 
+                              defaultValue={location.mccCode || ''} 
+                              onChange={(e) => handleBusinessLocationChange(index, 'mccCode', e.target.value)}
+                              className="mt-1" 
+                            />
+                          ) : (
+                            <p className="text-slate-900 mt-1">{location.mccCode || t('contractActions.notSpecified')}</p>
+                          )}
+                        </div>
+                      </EditableSection>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-slate-600 text-center py-8">
+              {t('clientOperations.noLocations')}
+            </p>
           )}
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
