@@ -47,9 +47,9 @@ const OnboardingTopBar = ({
         <Progress value={overallProgress.overallPercentage} className="h-1" />
       </div>
 
-      {/* Horizontal Steps - Fixed Height Grid Layout */}
+      {/* Vertical Steps Layout - Numbers Above Text */}
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-6 gap-1 overflow-x-auto pb-1">
+        <div className="grid grid-cols-7 gap-0.5 overflow-x-auto pb-1">
           {steps.map((step, index) => {
             const isClickable = step.number <= currentStep + 1;
             const progress = stepProgress[step.number];
@@ -59,11 +59,11 @@ const OnboardingTopBar = ({
             const isPartiallyComplete = progress && progress.completionPercentage > 0 && progress.completionPercentage < 100;
 
             return (
-              <div key={step.number} className="flex items-center">
-                {/* Step Content - Fixed Height */}
+              <div key={step.number} className="flex flex-col items-center">
+                {/* Step Content - Vertical Layout */}
                 <div
                   onClick={() => isClickable && handleStepClick(step.number)}
-                  className={`flex items-center gap-2 py-2 px-2.5 rounded-lg transition-all duration-300 min-w-0 w-full group hover:scale-[1.02] h-16
+                  className={`flex flex-col items-center gap-1 py-2 px-1.5 rounded-lg transition-all duration-300 w-full group hover:scale-[1.02] h-14
                     ${isClickable ? "cursor-pointer" : "opacity-60 cursor-not-allowed"}
                     ${
                       isCurrentStep
@@ -77,9 +77,9 @@ const OnboardingTopBar = ({
                         : "bg-slate-50/50 border border-slate-100 hover:bg-slate-100/80"
                     }`}
                 >
-                  {/* Step Icon - Fixed Size */}
+                  {/* Step Icon - Top Position */}
                   <div
-                    className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 transition-all duration-300 ${
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 transition-all duration-300 ${
                       isCurrentStep
                         ? "bg-blue-600 text-white shadow-sm"
                         : isCompleted
@@ -92,66 +92,41 @@ const OnboardingTopBar = ({
                     }`}
                   >
                     {isCompleted ? (
-                      <Check className="h-2 w-2" />
+                      <Check className="h-2.5 w-2.5" />
                     ) : isPartiallyComplete ? (
-                      <CircleDot className="h-2 w-2" />
+                      <CircleDot className="h-2.5 w-2.5" />
                     ) : (
                       step.number + 1
                     )}
                   </div>
                   
-                  {/* Step Content - Fixed Height Structure */}
-                  <div className="min-w-0 flex-1 hidden sm:block">
-                    {/* Title - Fixed Height */}
-                    <div className="h-4 flex items-center">
-                      <div className="text-xs font-medium text-slate-900 truncate leading-tight">
-                        {step.title}
-                      </div>
-                    </div>
-                    
-                    {/* Status indicators - Fixed Height */}
-                    <div className="h-4 flex items-center mt-1">
-                      {isNext && !isPartiallyComplete && (
-                        <div className="flex items-center text-xs text-indigo-600">
-                          <AlertCircle className="h-2 w-2 mr-1" />
-                          <span className="text-xs">Nasledujúci</span>
-                        </div>
-                      )}
-
-                      {isCurrentStep && progress && progress.completionPercentage > 0 && !isCompleted && (
-                        <div className="flex items-center text-xs text-blue-600">
-                          <Clock className="h-2 w-2 mr-1" />
-                          <span className="text-xs">Prebieha</span>
-                        </div>
-                      )}
-
-                      {isPartiallyComplete && !isCurrentStep && (
-                        <div className="flex items-center text-xs text-amber-600">
-                          <CircleDot className="h-2 w-2 mr-1" />
-                          <span className="text-xs">Čiastočne</span>
-                        </div>
-                      )}
-
-                      {isCompleted && (
-                        <div className="flex items-center text-xs text-green-600">
-                          <Check className="h-2 w-2 mr-1" />
-                          <span className="text-xs">Dokončené</span>
-                        </div>
-                      )}
+                  {/* Step Title - Below Icon */}
+                  <div className="text-center w-full">
+                    <div className="text-[10px] font-medium text-slate-900 leading-tight truncate px-0.5">
+                      {step.title}
                     </div>
                   </div>
 
-                  {/* Mobile: Show only step number - Fixed Height */}
-                  <div className="sm:hidden h-16 flex items-center">
-                    <div className="text-xs font-medium text-slate-700">
-                      {step.number + 1}
-                    </div>
+                  {/* Status indicator dots - Very minimal */}
+                  <div className="flex justify-center">
+                    {isCurrentStep && progress && progress.completionPercentage > 0 && !isCompleted && (
+                      <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
+                    )}
+                    {isPartiallyComplete && !isCurrentStep && (
+                      <div className="w-1 h-1 bg-amber-500 rounded-full"></div>
+                    )}
+                    {isNext && !isPartiallyComplete && (
+                      <div className="w-1 h-1 bg-indigo-500 rounded-full"></div>
+                    )}
+                    {isCompleted && (
+                      <div className="w-1 h-1 bg-green-500 rounded-full"></div>
+                    )}
                   </div>
                 </div>
 
-                {/* Connector Line - Fixed Position */}
+                {/* Connector Line - Between Steps */}
                 {index < steps.length - 1 && (
-                  <div className={`h-px w-1.5 mx-0.5 flex-shrink-0 transition-colors duration-300 ${
+                  <div className={`h-px w-4 mt-1 transition-colors duration-300 ${
                     isCompleted ? "bg-green-300" : "bg-slate-200"
                   }`} />
                 )}
