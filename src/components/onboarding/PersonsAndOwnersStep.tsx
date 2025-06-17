@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { OnboardingData } from "@/types/onboarding";
 import { useTranslation } from "react-i18next";
@@ -12,7 +13,7 @@ import AutoFillFromContactButton from "./ui/AutoFillFromContactButton";
 import AuthorizedPersonCard from "./cards/AuthorizedPersonCard";
 import AuthorizedPersonForm from "./forms/AuthorizedPersonForm";
 import ActualOwnerCard from "./cards/ActualOwnerCard";
-import ActualOwnerForm from "./ActualOwnerForm";
+import ActualOwnerForm from "./forms/ActualOwnerForm";
 import AuthorizedPersonsSidebar from "./AuthorizedPersonsStep/AuthorizedPersonsSidebar";
 import ActualOwnersSidebar from "./ActualOwnersStep/ActualOwnersSidebar";
 
