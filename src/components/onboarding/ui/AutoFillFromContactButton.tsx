@@ -23,9 +23,9 @@ const AutoFillFromContactButton = ({
   stepType,
   className = ""
 }: AutoFillFromContactButtonProps) => {
-  const { t } = useTranslation(['forms', 'common']);
+  const { t } = useTranslation(['steps', 'forms', 'common']);
 
-  const stepTypeText = stepType === 'authorized' ? 'oprávnených osôb' : 'skutočných majiteľov';
+  const stepTypeKey = stepType === 'authorized' ? 'authorizedPersons' : 'actualOwners';
 
   if (!canAutoFill) {
     return null;
@@ -39,7 +39,7 @@ const AutoFillFromContactButton = ({
             <CheckCircle2 className="h-5 w-5 text-green-600" />
             <div className="flex-1">
               <p className="text-sm text-green-800">
-                <strong>{contactName}</strong> ({contactEmail}) už je v zozname {stepTypeText}.
+                {t(`steps:${stepTypeKey}.autoFill.exists`, { name: contactName, email: contactEmail })}
               </p>
             </div>
           </div>
@@ -55,7 +55,7 @@ const AutoFillFromContactButton = ({
           <User className="h-5 w-5 text-blue-600" />
           <div className="flex-1">
             <p className="text-sm text-blue-800 mb-2">
-              Chcete pridať <strong>{contactName}</strong> ({contactEmail}) do {stepTypeText}?
+              {t(`steps:${stepTypeKey}.autoFill.question`, { name: contactName, email: contactEmail })}
             </p>
             <Button 
               variant="outline" 
@@ -64,7 +64,7 @@ const AutoFillFromContactButton = ({
               className="border-blue-300 text-blue-700 hover:bg-blue-100"
             >
               <Copy className="h-4 w-4 mr-2" />
-              Kopírovať z kontaktných údajov
+              {t(`steps:${stepTypeKey}.autoFill.button`)}
             </Button>
           </div>
         </div>

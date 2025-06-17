@@ -1,8 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Plus, UserCheck, AlertCircle, CheckCircle2 } from "lucide-react";
+import { UserCheck, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { OnboardingData } from "@/types/onboarding";
 
@@ -11,7 +10,7 @@ interface AuthorizedPersonsSidebarProps {
   onAddPerson: () => void;
 }
 
-const AuthorizedPersonsSidebar = ({ data, onAddPerson }: AuthorizedPersonsSidebarProps) => {
+const AuthorizedPersonsSidebar = ({ data }: AuthorizedPersonsSidebarProps) => {
   const { t } = useTranslation(['steps', 'forms']);
 
   const hasPersons = data.authorizedPersons.length > 0;
@@ -58,11 +57,6 @@ const AuthorizedPersonsSidebar = ({ data, onAddPerson }: AuthorizedPersonsSideba
               </p>
             </div>
           )}
-
-          <Button onClick={onAddPerson} className="w-full" variant="outline">
-            <Plus className="h-4 w-4 mr-2" />
-            {t('steps:authorizedPersons.sidebar.addButton')}
-          </Button>
         </CardContent>
       </Card>
 

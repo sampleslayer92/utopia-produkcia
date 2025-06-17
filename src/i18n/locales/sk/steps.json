@@ -39,6 +39,15 @@
         "Pre každú splnomocnenú osobu je potrebný platný doklad totožnosti",
         "Musí byť uvedená aspoň jedna splnomocnená osoba"
       ]
+    },
+    "emptyState": {
+      "title": "Žiadne splnomocnené osoby",
+      "description": "Pridajte aspoň jedného štatutárneho zástupcu alebo splnomocnenú osobu"
+    },
+    "autoFill": {
+      "question": "Chcete pridať {name} ({email}) do splnomocnených osôb?",
+      "exists": "{name} ({email}) už je v zozname splnomocnených osôb.",
+      "button": "Kopírovať z kontaktných údajov"
     }
   },
   "actualOwners": {
@@ -61,6 +70,15 @@
         "Osoba s právom vymenovať alebo odvolať štatutárny orgán",
         "Osoba, ktorá inak kontroluje spoločnosť"
       ]
+    },
+    "emptyState": {
+      "title": "Žiadni skutoční vlastníci",
+      "description": "Pridajte aspoň jedného skutočného vlastníka"
+    },
+    "autoFill": {
+      "question": "Chcete pridať {name} ({email}) do skutočných vlastníkov?",
+      "exists": "{name} ({email}) už je v zozname skutočných vlastníkov.",
+      "button": "Kopírovať z kontaktných údajov"
     }
   },
   "sidebar": {

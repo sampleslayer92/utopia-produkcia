@@ -39,6 +39,15 @@
         "Valid identity document required for each authorized person",
         "At least one authorized person must be specified"
       ]
+    },
+    "emptyState": {
+      "title": "No authorized persons",
+      "description": "Add at least one statutory representative or authorized person"
+    },
+    "autoFill": {
+      "question": "Do you want to add {name} ({email}) to authorized persons?",
+      "exists": "{name} ({email}) is already in the list of authorized persons.",
+      "button": "Copy from contact information"
     }
   },
   "actualOwners": {
@@ -61,6 +70,15 @@
         "Person with the right to appoint or dismiss statutory body",
         "Person who otherwise controls the company"
       ]
+    },
+    "emptyState": {
+      "title": "No actual owners",
+      "description": "Add at least one actual owner"
+    },
+    "autoFill": {
+      "question": "Do you want to add {name} ({email}) to actual owners?",
+      "exists": "{name} ({email}) is already in the list of actual owners.",
+      "button": "Copy from contact information"
     }
   },
   "sidebar": {
