@@ -63,7 +63,7 @@ const OnboardingTopBar = ({
                 {/* Step Content - Vertical Layout */}
                 <div
                   onClick={() => isClickable && handleStepClick(step.number)}
-                  className={`flex flex-col items-center gap-2 py-3 px-2 rounded-lg transition-all duration-300 w-full group hover:scale-[1.02] h-20
+                  className={`flex flex-col items-center gap-2 py-3 px-2 rounded-lg transition-all duration-300 w-full group h-20
                     ${isClickable ? "cursor-pointer" : "opacity-60 cursor-not-allowed"}
                     ${
                       isCurrentStep
