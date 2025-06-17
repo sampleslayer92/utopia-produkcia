@@ -13,7 +13,9 @@
     "confirm": "Potvrdiť",
     "close": "Zavrieť",
     "continue": "Pokračovať",
-    "saveSignature": "Uložiť podpis"
+    "saveSignature": "Uložiť podpis",
+    "delete": "Vymazať",
+    "deleting": "Vymazáva sa..."
   },
   "navigation": {
     "step": "Krok",
@@ -51,5 +53,12 @@
     "contractNumber": "Číslo zmluvy",
     "lastSaved": "Naposledy uložené",
     "autoSave": "Automatické ukladanie"
+  },
+  "modals": {
+    "deleteContract": {
+      "title": "Potvrdenie vymazania zmluvy",
+      "description": "Ste si istý, že chcete vymazať túto zmluvu? Táto akcia je nevratná.",
+      "irreversible": "Táto akcia je nevratná."
+    }
   }
 }

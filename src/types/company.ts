@@ -11,7 +11,7 @@ export interface CompanyInfo {
   ico: string;
   dic: string;
   companyName: string;
-  registryType: 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť';
+  registryType: 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' | '';
   isVatPayer: boolean;
   vatNumber?: string;
   court?: string;
