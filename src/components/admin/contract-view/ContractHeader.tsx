@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit, Printer } from "lucide-react";
 import { format } from "date-fns";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 interface ContractHeaderProps {
   contract: any;
@@ -42,21 +43,23 @@ const ContractHeader = ({ contract, onBack, onEdit, onPrint }: ContractHeaderPro
               className="border-slate-300"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('contractView.backToList')}
+              {t('contractDetail.backToList')}
             </Button>
             <div>
               <h1 className="text-xl font-bold text-slate-900">
-                Zmluva #{contract.contract_number}
+                {t('table.columns.contractNumber')} #{contract.contract_number}
               </h1>
               <p className="text-sm text-slate-600">
-                {t('contractView.created')} {format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}
+                {t('contractDetail.created')} {format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}
               </p>
             </div>
           </div>
           
           <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
+            
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-slate-600">Stav:</span>
+              <span className="text-sm text-slate-600">{t('table.columns.status')}:</span>
               {getStatusBadge(contract.status)}
             </div>
             
@@ -65,7 +68,7 @@ const ContractHeader = ({ contract, onBack, onEdit, onPrint }: ContractHeaderPro
               className="bg-emerald-600 hover:bg-emerald-700"
             >
               <Edit className="h-4 w-4 mr-2" />
-              {t('contractView.edit')}
+              {t('contractDetail.edit')}
             </Button>
             
             <Button
@@ -74,7 +77,7 @@ const ContractHeader = ({ contract, onBack, onEdit, onPrint }: ContractHeaderPro
               className="border-slate-300"
             >
               <Printer className="h-4 w-4 mr-2" />
-              {t('contractView.print')}
+              {t('contractActions.preview')}
             </Button>
           </div>
         </div>

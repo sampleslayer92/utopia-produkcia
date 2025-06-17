@@ -3,6 +3,8 @@ import { ArrowLeft, Edit, Save, X, FileText, Clock, CheckCircle, Loader2 } from 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 interface ContractHeaderProps {
   contract: any;
@@ -25,6 +27,8 @@ const ContractHeader = ({
   isDirty = false,
   isSaving = false
 }: ContractHeaderProps) => {
+  const { t } = useTranslation('admin');
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'submitted':
@@ -39,18 +43,18 @@ const ContractHeader = ({
   };
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'submitted':
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Odoslané</Badge>;
-      case 'approved':
-        return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">Schválené</Badge>;
-      case 'rejected':
-        return <Badge className="bg-red-100 text-red-700 border-red-200">Zamietnuté</Badge>;
-      case 'draft':
-        return <Badge className="bg-gray-100 text-gray-700 border-gray-200">Koncept</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
-    }
+    const statusMap = {
+      'submitted': 'bg-blue-100 text-blue-700 border-blue-200',
+      'approved': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+      'rejected': 'bg-red-100 text-red-700 border-red-200',
+      'draft': 'bg-gray-100 text-gray-700 border-gray-200'
+    };
+
+    return (
+      <Badge className={statusMap[status as keyof typeof statusMap] || 'bg-gray-100 text-gray-700 border-gray-200'}>
+        {t(`status.${status}`)}
+      </Badge>
+    );
   };
 
   return (
@@ -66,7 +70,7 @@ const ContractHeader = ({
               disabled={isSaving}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Späť na zoznam
+              {t('contractDetail.backToList')}
             </Button>
             
             <div className="h-6 w-px bg-slate-300" />
@@ -74,18 +78,18 @@ const ContractHeader = ({
             <div>
               <div className="flex items-center space-x-3">
                 <h1 className="text-xl font-semibold text-slate-900">
-                  Zmluva #{contract.contract_number}
+                  {t('table.columns.contractNumber')} #{contract.contract_number}
                 </h1>
                 {getStatusBadge(contract.status)}
                 {isDirty && (
                   <Badge variant="outline" className="text-orange-600 border-orange-300">
-                    Neuložené zmeny
+                    {t('contractDetail.unsavedChanges')}
                   </Badge>
                 )}
                 {isSaving && (
                   <Badge variant="outline" className="text-blue-600 border-blue-300">
                     <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                    Ukladám...
+                    {t('contractDetail.saving')}
                   </Badge>
                 )}
               </div>
@@ -96,15 +100,15 @@ const ContractHeader = ({
                   <span className="ml-1">
                     {onboardingData.companyInfo?.companyName || 
                      `${onboardingData.contactInfo?.firstName} ${onboardingData.contactInfo?.lastName}` || 
-                     'Neznámy klient'}
+                     t('contractDetail.unknownClient')}
                   </span>
                 </span>
                 <span>•</span>
-                <span>Vytvorené: {format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}</span>
+                <span>{t('contractDetail.created')} {format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}</span>
                 {contract.submitted_at && (
                   <>
                     <span>•</span>
-                    <span>Odoslané: {format(new Date(contract.submitted_at), 'dd.MM.yyyy HH:mm')}</span>
+                    <span>{t('contractDetail.submitted')} {format(new Date(contract.submitted_at), 'dd.MM.yyyy HH:mm')}</span>
                   </>
                 )}
               </div>
@@ -112,6 +116,8 @@ const ContractHeader = ({
           </div>
 
           <div className="flex items-center space-x-2">
+            <LanguageSwitcher />
+            
             {isEditMode && isDirty && (
               <Button 
                 onClick={onSave}
@@ -122,12 +128,12 @@ const ContractHeader = ({
                 {isSaving ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Ukladám...
+                    {t('contractDetail.saving')}
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4 mr-2" />
-                    Uložiť zmeny
+                    {t('contractDetail.save')}
                   </>
                 )}
               </Button>
@@ -143,12 +149,12 @@ const ContractHeader = ({
               {isEditMode ? (
                 <>
                   <X className="h-4 w-4 mr-2" />
-                  Zrušiť editáciu
+                  {t('contractDetail.cancelEdit')}
                 </>
               ) : (
                 <>
                   <Edit className="h-4 w-4 mr-2" />
-                  Editovať
+                  {t('contractDetail.edit')}
                 </>
               )}
             </Button>
