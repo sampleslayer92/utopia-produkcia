@@ -15,6 +15,18 @@ const cleanStringValue = (value: any): string => {
   return String(value);
 };
 
+// Helper function to validate seasonality
+const validateSeasonality = (value: any): 'year-round' | 'seasonal' => {
+  if (value === 'seasonal') return 'seasonal';
+  return 'year-round'; // default fallback
+};
+
+// Helper function to validate document type
+const validateDocumentType = (value: any): 'OP' | 'Pas' => {
+  if (value === 'Pas' || value === 'passport') return 'Pas';
+  return 'OP'; // default fallback
+};
+
 export const transformContractData = (
   contract: any,
   contactInfo: any,
@@ -125,7 +137,7 @@ export const transformContractData = (
     businessSector: cleanStringValue(location.business_sector),
     estimatedTurnover: Number(location.estimated_turnover) || 0,
     averageTransaction: Number(location.average_transaction) || 0,
-    seasonality: cleanStringValue(location.seasonality) || 'year-round',
+    seasonality: validateSeasonality(location.seasonality),
     seasonalWeeks: cleanValue(location.seasonal_weeks),
     contactPerson: {
       name: cleanStringValue(location.contact_person_name),
@@ -183,7 +195,7 @@ export const transformContractData = (
     phone: cleanStringValue(person.phone),
     phonePrefix: '+421',
     position: cleanStringValue(person.position),
-    documentType: cleanStringValue(person.document_type) || 'OP',
+    documentType: validateDocumentType(person.document_type),
     documentNumber: cleanStringValue(person.document_number),
     documentIssuer: cleanStringValue(person.document_issuer),
     documentValidity: cleanValue(person.document_validity),
