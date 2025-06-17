@@ -11,13 +11,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, Settings, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const AdminProfile = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
-  const handleLogout = () => {
-    // Clear any stored auth data if needed
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/');
+      toast.success('Úspešne odhlásený');
+    } catch (error) {
+      toast.error('Chyba pri odhlásení');
+    }
+  };
+
+  const getInitials = (email: string) => {
+    return email.split('@')[0].slice(0, 2).toUpperCase();
+  };
+
+  const getDisplayName = (email: string) => {
+    return email.split('@')[0];
   };
 
   return (
@@ -27,12 +43,16 @@ const AdminProfile = () => {
           <Button variant="ghost" className="w-full justify-start p-2 h-auto">
             <div className="flex items-center space-x-3 w-full">
               <Avatar className="h-10 w-10">
-                <AvatarImage src="" alt="ML" />
-                <AvatarFallback className="bg-blue-600 text-white">ML</AvatarFallback>
+                <AvatarImage src="" alt={getInitials(user?.email || '')} />
+                <AvatarFallback className="bg-blue-600 text-white">
+                  {getInitials(user?.email || '')}
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1 text-left">
-                <div className="font-medium text-slate-900 text-sm">Marián Lapoš</div>
-                <div className="text-xs text-slate-600">Iso organizácia Onepos</div>
+                <div className="font-medium text-slate-900 text-sm">
+                  {getDisplayName(user?.email || '')}
+                </div>
+                <div className="text-xs text-slate-600">Admin</div>
               </div>
             </div>
           </Button>

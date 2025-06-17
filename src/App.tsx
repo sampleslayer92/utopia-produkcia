@@ -12,6 +12,8 @@ import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
 import ContractDetail from "./components/admin/ContractDetail";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Import i18n configuration
 import './i18n/config';
@@ -20,20 +22,57 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <Routes>
-        <Route path="/" element={<Welcome />} />
-        <Route path="/onboarding" element={<OnboardingFlow />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/contract/:id/edit" element={<ContractEditPage />} />
-        <Route path="/admin/contract/:id/view" element={<ContractDetail />} />
-        <Route path="/partner" element={<PartnerDashboard />} />
-        <Route path="/merchant" element={<MerchantDashboard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route path="/" element={<Welcome />} />
+          <Route path="/onboarding" element={<OnboardingFlow />} />
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/contract/:id/edit" 
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <ContractEditPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/contract/:id/view" 
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <ContractDetail />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/partner" 
+            element={
+              <ProtectedRoute requiredRole="partner">
+                <PartnerDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/merchant" 
+            element={
+              <ProtectedRoute requiredRole="merchant">
+                <MerchantDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
