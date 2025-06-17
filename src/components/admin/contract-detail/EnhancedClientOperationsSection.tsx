@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Building, MapPin } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { useLocalFormState } from "@/hooks/useLocalFormState";
-import { useEffect } from 'react';
+import { useEffect, forwardRef, useImperativeHandle } from 'react';
 import EditableSection from "./EditableSection";
 
 interface EnhancedClientOperationsSectionProps {
@@ -15,12 +15,20 @@ interface EnhancedClientOperationsSectionProps {
   onLocalChanges?: (hasChanges: boolean) => void;
 }
 
-const EnhancedClientOperationsSection = ({ 
+export interface EnhancedClientOperationsSectionRef {
+  commitChanges: () => Promise<boolean>;
+  hasChanges: () => boolean;
+}
+
+const EnhancedClientOperationsSection = forwardRef<
+  EnhancedClientOperationsSectionRef,
+  EnhancedClientOperationsSectionProps
+>(({ 
   onboardingData, 
   isEditMode, 
   onUpdate,
   onLocalChanges
-}: EnhancedClientOperationsSectionProps) => {
+}, ref) => {
   const { t } = useTranslation('admin');
   
   // Use local form state for editing
@@ -29,7 +37,8 @@ const EnhancedClientOperationsSection = ({
     hasLocalChanges,
     updateLocalField,
     resetLocalData,
-    commitLocalChanges
+    commitLocalChanges,
+    isInitialized
   } = useLocalFormState(onboardingData);
 
   // Use local data when in edit mode and available, otherwise use original data
@@ -46,41 +55,48 @@ const EnhancedClientOperationsSection = ({
     businessLocations,
     isEditMode,
     hasLocalChanges,
-    hasLocalData: !!localData
+    hasLocalData: !!localData,
+    isInitialized
   });
+
+  // Expose methods to parent component via ref
+  useImperativeHandle(ref, () => ({
+    commitChanges: async () => {
+      console.log('EnhancedClientOperationsSection: commitChanges called');
+      if (!hasLocalChanges || !localData) {
+        console.log('No changes to commit');
+        return true;
+      }
+
+      try {
+        console.log('Committing changes:', localData);
+        await onUpdate(localData);
+        commitLocalChanges();
+        console.log('Changes committed successfully');
+        return true;
+      } catch (error) {
+        console.error('Failed to commit changes:', error);
+        return false;
+      }
+    },
+    hasChanges: () => hasLocalChanges
+  }), [hasLocalChanges, localData, onUpdate, commitLocalChanges]);
 
   // Notify parent about local changes
   useEffect(() => {
+    console.log('Local changes state changed:', hasLocalChanges);
     if (onLocalChanges) {
       onLocalChanges(hasLocalChanges);
     }
   }, [hasLocalChanges, onLocalChanges]);
 
-  // Reset when switching to edit mode
+  // Reset when switching out of edit mode
   useEffect(() => {
-    if (!isEditMode) {
+    if (!isEditMode && hasLocalChanges) {
+      console.log('Exiting edit mode, resetting local data');
       resetLocalData();
     }
-  }, [isEditMode, resetLocalData]);
-
-  // Expose commit function to parent
-  useEffect(() => {
-    if (hasLocalChanges && localData) {
-      // Store the commit function globally so parent can access it
-      (window as any).__commitClientOperationsChanges = async () => {
-        try {
-          await onUpdate(localData);
-          commitLocalChanges();
-          return true;
-        } catch (error) {
-          console.error('Save failed:', error);
-          return false;
-        }
-      };
-    } else {
-      (window as any).__commitClientOperationsChanges = null;
-    }
-  }, [hasLocalChanges, localData, onUpdate, commitLocalChanges]);
+  }, [isEditMode, hasLocalChanges, resetLocalData]);
 
   const handleCompanyFieldChange = (field: string, value: string) => {
     console.log(`Updating company field ${field} with value:`, value);
@@ -421,6 +437,8 @@ const EnhancedClientOperationsSection = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+EnhancedClientOperationsSection.displayName = 'EnhancedClientOperationsSection';
 
 export default EnhancedClientOperationsSection;
