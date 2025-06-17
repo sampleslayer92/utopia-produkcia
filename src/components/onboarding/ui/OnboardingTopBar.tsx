@@ -47,9 +47,9 @@ const OnboardingTopBar = ({
         <Progress value={overallProgress.overallPercentage} className="h-1" />
       </div>
 
-      {/* Horizontal Steps - Redesigned for All Steps to Fit */}
+      {/* Horizontal Steps - Fixed Height Grid Layout */}
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between gap-1 overflow-x-auto pb-1">
+        <div className="grid grid-cols-6 gap-1 overflow-x-auto pb-1">
           {steps.map((step, index) => {
             const isClickable = step.number <= currentStep + 1;
             const progress = stepProgress[step.number];
@@ -59,11 +59,11 @@ const OnboardingTopBar = ({
             const isPartiallyComplete = progress && progress.completionPercentage > 0 && progress.completionPercentage < 100;
 
             return (
-              <div key={step.number} className="flex items-center min-w-0 flex-1">
-                {/* Step Circle and Content - Compact Modern Design */}
+              <div key={step.number} className="flex items-center">
+                {/* Step Content - Fixed Height */}
                 <div
                   onClick={() => isClickable && handleStepClick(step.number)}
-                  className={`flex items-center gap-2 py-1.5 px-2.5 rounded-lg transition-all duration-300 min-w-0 flex-1 group hover:scale-[1.02]
+                  className={`flex items-center gap-2 py-2 px-2.5 rounded-lg transition-all duration-300 min-w-0 w-full group hover:scale-[1.02] h-16
                     ${isClickable ? "cursor-pointer" : "opacity-60 cursor-not-allowed"}
                     ${
                       isCurrentStep
@@ -77,7 +77,7 @@ const OnboardingTopBar = ({
                         : "bg-slate-50/50 border border-slate-100 hover:bg-slate-100/80"
                     }`}
                 >
-                  {/* Step Icon - Smaller and More Modern */}
+                  {/* Step Icon - Fixed Size */}
                   <div
                     className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 transition-all duration-300 ${
                       isCurrentStep
@@ -100,14 +100,17 @@ const OnboardingTopBar = ({
                     )}
                   </div>
                   
-                  {/* Step Title and Status - Compact */}
+                  {/* Step Content - Fixed Height Structure */}
                   <div className="min-w-0 flex-1 hidden sm:block">
-                    <div className="text-xs font-medium text-slate-900 truncate leading-tight">
-                      {step.title}
+                    {/* Title - Fixed Height */}
+                    <div className="h-4 flex items-center">
+                      <div className="text-xs font-medium text-slate-900 truncate leading-tight">
+                        {step.title}
+                      </div>
                     </div>
                     
-                    {/* Status indicators - Very Compact */}
-                    <div className="flex items-center mt-0.5">
+                    {/* Status indicators - Fixed Height */}
+                    <div className="h-4 flex items-center mt-1">
                       {isNext && !isPartiallyComplete && (
                         <div className="flex items-center text-xs text-indigo-600">
                           <AlertCircle className="h-2 w-2 mr-1" />
@@ -138,15 +141,15 @@ const OnboardingTopBar = ({
                     </div>
                   </div>
 
-                  {/* Mobile: Show only step number and icon */}
-                  <div className="sm:hidden">
+                  {/* Mobile: Show only step number - Fixed Height */}
+                  <div className="sm:hidden h-16 flex items-center">
                     <div className="text-xs font-medium text-slate-700">
                       {step.number + 1}
                     </div>
                   </div>
                 </div>
 
-                {/* Connector Line - Thinner and More Elegant */}
+                {/* Connector Line - Fixed Position */}
                 {index < steps.length - 1 && (
                   <div className={`h-px w-1.5 mx-0.5 flex-shrink-0 transition-colors duration-300 ${
                     isCompleted ? "bg-green-300" : "bg-slate-200"
