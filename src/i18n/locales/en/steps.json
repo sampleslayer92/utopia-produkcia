@@ -18,6 +18,24 @@
     "personsAndOwners": "Authorized persons and actual owners",
     "consents": "Confirmation and contract signature"
   },
+  "authorizedPersons": {
+    "title": "Authorized Persons",
+    "description": "Add statutory representatives and authorized persons who will be able to operate the payment system",
+    "addPersonButton": "Add Authorized Person",
+    "validation": {
+      "noPeople": "At least one authorized person must be added",
+      "missingFields": "Please fill in all required fields for all authorized persons"
+    }
+  },
+  "actualOwners": {
+    "title": "Actual Owners",
+    "description": "Add actual owners - natural persons who ultimately own or control the legal entity",
+    "addOwnerButton": "Add Actual Owner",
+    "validation": {
+      "noOwners": "At least one actual owner must be added",
+      "missingFields": "Please fill in all required fields for all actual owners"
+    }
+  },
   "sidebar": {
     "title": "Registration Process",
     "help": {
