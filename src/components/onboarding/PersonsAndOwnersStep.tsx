@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { OnboardingData } from "@/types/onboarding";
 import { useTranslation } from "react-i18next";
@@ -16,6 +15,8 @@ import ActualOwnerCard from "./cards/ActualOwnerCard";
 import ActualOwnerForm from "./forms/ActualOwnerForm";
 import AuthorizedPersonsSidebar from "./AuthorizedPersonsStep/AuthorizedPersonsSidebar";
 import ActualOwnersSidebar from "./ActualOwnersStep/ActualOwnersSidebar";
+import AuthorizedPersonsEmptyState from "./ui/AuthorizedPersonsEmptyState";
+import ActualOwnersEmptyState from "./ui/ActualOwnersEmptyState";
 
 interface PersonsAndOwnersStepProps {
   data: OnboardingData;
@@ -233,25 +234,7 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
                 ))}
                 
                 {data.authorizedPersons.length === 0 && (
-                  <div className="text-center py-8">
-                    <div className="max-w-sm mx-auto">
-                      <div className="mb-4">
-                        <div className="mx-auto h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
-                          <Plus className="h-6 w-6 text-gray-400" />
-                        </div>
-                      </div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        {t('steps:authorizedPersons.emptyState.title')}
-                      </h3>
-                      <p className="text-gray-500 mb-4">
-                        {t('steps:authorizedPersons.emptyState.description')}
-                      </p>
-                      <Button onClick={handleAddPerson}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        {t('steps:authorizedPersons.addPersonButton')}
-                      </Button>
-                    </div>
-                  </div>
+                  <AuthorizedPersonsEmptyState onAddPerson={handleAddPerson} />
                 )}
                 
                 {data.authorizedPersons.length > 0 && (
@@ -303,25 +286,7 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
                 ))}
                 
                 {data.actualOwners.length === 0 && (
-                  <div className="text-center py-8">
-                    <div className="max-w-sm mx-auto">
-                      <div className="mb-4">
-                        <div className="mx-auto h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
-                          <Plus className="h-6 w-6 text-gray-400" />
-                        </div>
-                      </div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        {t('steps:actualOwners.emptyState.title')}
-                      </h3>
-                      <p className="text-gray-500 mb-4">
-                        {t('steps:actualOwners.emptyState.description')}
-                      </p>
-                      <Button onClick={handleAddOwner}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        {t('steps:actualOwners.addOwnerButton')}
-                      </Button>
-                    </div>
-                  </div>
+                  <ActualOwnersEmptyState onAddOwner={handleAddOwner} />
                 )}
                 
                 {data.actualOwners.length > 0 && (
