@@ -88,30 +88,30 @@ const EnhancedAuthorizedPersonCard = ({
             <div>
               <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                 <User className="h-4 w-4" />
-                {t('forms:authorizedPersons.basicInfo')}
+                {t('forms:authorizedPersons.sections.basicInfo.title')}
               </h4>
               
               <div className="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
                 <div className="flex items-center gap-2">
                   <User className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.name')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.basicInfo.firstName')}:</span>
                   <span>{person.firstName} {person.lastName}</span>
                 </div>
                 {person.maidenName && (
                   <div className="flex items-center gap-2">
                     <User className="h-3 w-3" />
-                    <span className="font-medium">{t('forms:authorizedPersons.maidenName')}:</span>
+                    <span className="font-medium">{t('forms:authorizedPersons.sections.basicInfo.maidenName')}:</span>
                     <span>{person.maidenName}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
                   <Mail className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.email')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.basicInfo.email')}:</span>
                   <span>{person.email}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.phone')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.basicInfo.phone')}:</span>
                   <span>{person.phonePrefix} {person.phone}</span>
                 </div>
               </div>
@@ -121,28 +121,28 @@ const EnhancedAuthorizedPersonCard = ({
             <div className="border-t border-slate-100 pt-6">
               <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                 <Calendar className="h-4 w-4" />
-                {t('forms:authorizedPersons.birthInfo')}
+                {t('forms:authorizedPersons.sections.personalData.title')}
               </h4>
               
               <div className="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.birthDate')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.personalData.birthDate')}:</span>
                   <span>{person.birthDate}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.birthPlace')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.personalData.birthPlace')}:</span>
                   <span>{person.birthPlace}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FileText className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.birthNumber')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.personalData.birthNumber')}:</span>
                   <span>{person.birthNumber}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FileText className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.citizenship')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.additionalInfo.citizenship')}:</span>
                   <span>{person.citizenship}</span>
                 </div>
               </div>
@@ -152,18 +152,18 @@ const EnhancedAuthorizedPersonCard = ({
             <div className="border-t border-slate-100 pt-6">
               <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                 <MapPin className="h-4 w-4" />
-                {t('forms:authorizedPersons.addressAndPosition')}
+                {t('forms:address.street')} & {t('forms:authorizedPersons.sections.personalData.position')}
               </h4>
               
               <div className="grid md:grid-cols-1 gap-4 text-sm text-slate-600">
                 <div className="flex items-center gap-2">
                   <MapPin className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.permanentAddress')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.personalData.permanentAddress')}:</span>
                   <span>{person.permanentAddress}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FileText className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.position')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.personalData.position')}:</span>
                   <span>{person.position}</span>
                 </div>
               </div>
@@ -173,28 +173,28 @@ const EnhancedAuthorizedPersonCard = ({
             <div className="border-t border-slate-100 pt-6">
               <h4 className="text-sm font-medium text-blue-700 flex items-center gap-2 mb-4">
                 <FileText className="h-4 w-4" />
-                {t('forms:authorizedPersons.documentInfo')}
+                {t('forms:authorizedPersons.sections.document.title')}
               </h4>
               
               <div className="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
                 <div className="flex items-center gap-2">
                   <FileText className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.documentType')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.document.documentType')}:</span>
                   <span>{person.documentType}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FileText className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.documentNumber')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.document.documentNumber')}:</span>
                   <span>{person.documentNumber}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.documentValidity')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.document.documentValidity')}:</span>
                   <span>{person.documentValidity}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FileText className="h-3 w-3" />
-                  <span className="font-medium">{t('forms:authorizedPersons.documentIssuer')}:</span>
+                  <span className="font-medium">{t('forms:authorizedPersons.sections.document.documentIssuer')}:</span>
                   <span>{person.documentIssuer}</span>
                 </div>
               </div>
@@ -203,12 +203,12 @@ const EnhancedAuthorizedPersonCard = ({
               <div className="mt-4 flex gap-2">
                 {person.isPoliticallyExposed && (
                   <Badge variant="destructive" className="text-xs">
-                    {t('forms:authorizedPersons.politicallyExposed')}
+                    {t('forms:authorizedPersons.sections.additionalInfo.isPoliticallyExposed')}
                   </Badge>
                 )}
                 {person.isUSCitizen && (
                   <Badge variant="secondary" className="text-xs">
-                    {t('forms:authorizedPersons.usCitizen')}
+                    {t('forms:authorizedPersons.sections.additionalInfo.isUSCitizen')}
                   </Badge>
                 )}
                 {person.createdFromContact && (
