@@ -37,7 +37,7 @@ const OnboardingNavigation = ({
   const isConsentsStep = currentStep === totalSteps - 1;
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/90 backdrop-blur-sm p-6 z-50">
+    <div className="border-t border-slate-200 bg-white/80 backdrop-blur-sm p-6 sticky bottom-0">
       <div className="w-full flex justify-between">
         <Button
           variant="outline"

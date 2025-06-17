@@ -1,3 +1,4 @@
+
 import { useMemo } from 'react';
 import { OnboardingData } from '@/types/onboarding';
 
@@ -22,7 +23,7 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         completionPercentage: 0,
         requiredFields: ['contactInfo.firstName', 'contactInfo.lastName', 'contactInfo.email', 'contactInfo.phone'],
         completedFields: [],
-        isVisited: true
+        isVisited: true // Always consider first steps as visitable
       },
       // Step 1: Company Info
       {
@@ -59,7 +60,7 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         completedFields: [],
         isVisited: true
       },
-      // Step 4: Fees
+      // Step 4: Fees - requires visit to be complete
       {
         stepNumber: 4,
         stepName: 'Poplatky',
@@ -69,7 +70,7 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         completedFields: [],
         isVisited: data.visitedSteps?.includes(4) || false
       },
-      // Step 5: Authorized Persons
+      // Step 5: Authorized Persons - requires visit to be complete
       {
         stepNumber: 5,
         stepName: 'Oprávnené osoby',
@@ -79,7 +80,7 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         completedFields: [],
         isVisited: data.visitedSteps?.includes(5) || false
       },
-      // Step 6: Actual Owners
+      // Step 6: Actual Owners - requires visit to be complete
       {
         stepNumber: 6,
         stepName: 'Skutoční vlastníci',
@@ -89,7 +90,7 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
         completedFields: [],
         isVisited: data.visitedSteps?.includes(6) || false
       },
-      // Step 7: Consents
+      // Step 7: Consents - requires visit to be complete
       {
         stepNumber: 7,
         stepName: 'Súhlasy',
@@ -101,11 +102,10 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
       }
     ];
 
-    // Simplified progress calculation - only for completion status, not detailed percentages
+    // Calculate progress for each step with stricter validation
     steps.forEach(step => {
       const completedFields: string[] = [];
       
-      // Quick validation for completion status only
       step.requiredFields.forEach(fieldPath => {
         const value = getNestedValue(data, fieldPath);
         if (isFieldComplete(value, fieldPath)) {
@@ -114,21 +114,20 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
       });
 
       step.completedFields = completedFields;
-      
-      // Simplified completion calculation
-      const hasAnyCompletedFields = completedFields.length > 0;
-      const allFieldsCompleted = completedFields.length === step.requiredFields.length;
+      step.completionPercentage = step.requiredFields.length > 0 
+        ? Math.round((completedFields.length / step.requiredFields.length) * 100)
+        : 0;
       
       // For steps 4-7: Only mark as complete if visited AND all fields are valid
       if (step.stepNumber >= 4) {
-        step.isComplete = step.isVisited && allFieldsCompleted;
-        step.completionPercentage = step.isVisited && hasAnyCompletedFields ? 
-          (allFieldsCompleted ? 100 : 50) : 0;
+        step.isComplete = step.isVisited && step.completionPercentage === 100;
+        // If not visited, show as 0% complete regardless of field validation
+        if (!step.isVisited) {
+          step.completionPercentage = 0;
+        }
       } else {
-        // For steps 0-3: Use standard validation
-        step.isComplete = allFieldsCompleted;
-        step.completionPercentage = hasAnyCompletedFields ? 
-          (allFieldsCompleted ? 100 : 50) : 0;
+        // For steps 0-3: Use standard validation (field completion only)
+        step.isComplete = step.completionPercentage === 100;
       }
     });
 

@@ -7,7 +7,7 @@ import { useAutoSave } from "./hooks/useAutoSave";
 import { useProgressTracking } from "./hooks/useProgressTracking";
 import { useStepValidation } from "./hooks/useStepValidation";
 import { useOnboardingSteps } from "./config/onboardingSteps";
-import OnboardingTopBar from "./ui/OnboardingTopBar";
+import OnboardingSidebar from "./ui/OnboardingSidebar";
 import OnboardingNavigation from "./ui/OnboardingNavigation";
 import MobileOptimizedNavigation from "./ui/MobileOptimizedNavigation";
 import OnboardingHeader from "./ui/OnboardingHeader";
@@ -140,39 +140,45 @@ const OnboardingFlow = () => {
           />
         )}
         
-        {/* Desktop Top Bar */}
-        {!isMobile && (
-          <OnboardingTopBar
-            currentStep={currentStep}
-            steps={onboardingSteps}
-            onStepClick={handleStepClick}
-            onboardingData={onboardingData}
-          />
-        )}
-        
-        {/* Main Content */}
-        <div className="flex-1 p-4 md:p-6 pb-24">
-          <div className="max-w-5xl mx-auto">
-            {/* Auto-save indicator - Hide on mobile */}
-            {!isMobile && (
-              <div className="flex justify-end items-center mb-4">
-                <AutoSaveIndicator 
-                  status={autoSaveStatus}
-                  lastSaved={lastSaved}
-                />
-              </div>
-            )}
-
-            <OnboardingStepRenderer
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          {!isMobile && (
+            <OnboardingSidebar
               currentStep={currentStep}
-              data={onboardingData}
-              updateData={handleUpdateData}
-              onNext={nextStep}
-              onPrev={prevStep}
-              onComplete={handleComplete}
-              onSaveSignature={handleSaveSignature}
-              onStepNavigate={handleStepNavigation}
+              steps={onboardingSteps}
+              onStepClick={handleStepClick}
+              onboardingData={onboardingData}
             />
+          )}
+          
+          <div className="flex-1 p-4 md:p-6">
+            <div className="max-w-5xl mx-auto">
+              {/* Progress and Auto-save indicator - Hide on mobile */}
+              {!isMobile && (
+                <div className="flex justify-between items-center mb-4">
+                  <div className="text-sm text-slate-600">
+                    {t('common:navigation.overall')}: {overallProgress.overallPercentage}% 
+                    ({overallProgress.completedSteps}/{overallProgress.totalSteps} {t('common:navigation.steps')})
+                  </div>
+                  
+                  <AutoSaveIndicator 
+                    status={autoSaveStatus}
+                    lastSaved={lastSaved}
+                  />
+                </div>
+              )}
+
+              <OnboardingStepRenderer
+                currentStep={currentStep}
+                data={onboardingData}
+                updateData={handleUpdateData}
+                onNext={nextStep}
+                onPrev={prevStep}
+                onComplete={handleComplete}
+                onSaveSignature={handleSaveSignature}
+                onStepNavigate={handleStepNavigation}
+              />
+            </div>
           </div>
         </div>
         

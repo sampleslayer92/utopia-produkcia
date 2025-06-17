@@ -1,9 +1,9 @@
 
+import { Progress } from "@/components/ui/progress";
 import { Check, AlertCircle, Clock, CircleDot } from "lucide-react";
 import { toast } from "sonner";
 import { useProgressTracking } from "../hooks/useProgressTracking";
 import { OnboardingData } from "@/types/onboarding";
-import { Progress } from "@/components/ui/progress";
 
 interface OnboardingSidebarProps {
   currentStep: number;
@@ -102,7 +102,20 @@ const OnboardingSidebar = ({
                   {step.title}
                 </div>
 
-                {/* Simple status indicators without progress bars */}
+                {/* Progress bar for current and incomplete steps */}
+                {progress && !isCompleted && (
+                  <div className="mt-2">
+                    <Progress 
+                      value={progress.completionPercentage} 
+                      className="h-1"
+                    />
+                    <div className="text-xs text-slate-500 mt-1">
+                      {progress.completionPercentage}% dokončené
+                    </div>
+                  </div>
+                )}
+
+                {/* Status indicators */}
                 {isNext && !isPartiallyComplete && (
                   <div className="flex items-center mt-1 text-xs text-indigo-600">
                     <AlertCircle className="h-3 w-3 mr-1" />
