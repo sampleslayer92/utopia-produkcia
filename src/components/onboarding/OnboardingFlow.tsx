@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTranslation } from 'react-i18next';
 import { useOnboardingData } from "./hooks/useOnboardingData";
@@ -115,6 +116,15 @@ const OnboardingFlow = () => {
     setAutoSaveStatus('idle');
   }, []);
 
+  const handleChangeSolution = useCallback(() => {
+    updateData({
+      deviceSelection: {
+        ...onboardingData.deviceSelection,
+        selectedSolutions: []
+      }
+    });
+  }, [updateData, onboardingData.deviceSelection]);
+
   const currentStepData = onboardingSteps[currentStep];
 
   return (
@@ -185,6 +195,7 @@ const OnboardingFlow = () => {
             onComplete={handleComplete}
             onSaveAndExit={handleSaveAndExit}
             onSaveSignature={handleSaveSignature}
+            onChangeSolution={handleChangeSolution}
             isSubmitting={isSubmitting || isSaving}
             stepValidation={stepValidation}
           />
@@ -199,6 +210,7 @@ const OnboardingFlow = () => {
           onComplete={handleComplete}
           onSaveAndExit={handleSaveAndExit}
           onSaveSignature={handleSaveSignature}
+          onChangeSolution={handleChangeSolution}
           isSubmitting={isSubmitting || isSaving}
           stepValidation={stepValidation}
         />

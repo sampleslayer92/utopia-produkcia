@@ -1,17 +1,14 @@
 
 import { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { OnboardingData, DeviceCard, ServiceCard } from "@/types/onboarding";
 import SolutionSelectionSection from "./device-selection/SolutionSelectionSection";
 import DeviceCatalogPanel from "./device-selection/DeviceCatalogPanel";
 import LivePreviewPanel from "./device-selection/LivePreviewPanel";
 import ProductDetailModal from "./components/ProductDetailModal";
 import { useProductModal } from "./hooks/useProductModal";
-import { useContractPersistence } from "@/hooks/useContractPersistence";
-import { useEnhancedAutoSave } from "./hooks/useEnhancedAutoSave";
 import { useStepValidation } from "./hooks/useStepValidation";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -26,33 +23,7 @@ interface DeviceSelectionStepProps {
 const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelectionStepProps) => {
   const { t } = useTranslation('forms');
   const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
-  const { saveContractData } = useContractPersistence();
   const stepValidation = useStepValidation(3, data);
-
-  // Enhanced auto-save with better error handling
-  const handleAutoSave = useCallback(async (updatedData: OnboardingData) => {
-    if (!updatedData.contractId) {
-      console.warn('No contract ID available for auto-save');
-      return;
-    }
-
-    console.log('Auto-saving products...', updatedData.deviceSelection.dynamicCards);
-    const result = await saveContractData(updatedData.contractId, updatedData);
-    
-    if (!result.success) {
-      console.error('Auto-save failed:', result.error);
-      throw new Error(result.error || 'Auto-save failed');
-    }
-    
-    console.log('Products auto-saved successfully');
-  }, [saveContractData]);
-
-  const { isSaving, lastSaved, saveStatus, forceSave } = useEnhancedAutoSave(data, {
-    enabled: Boolean(data.contractId),
-    onSave: handleAutoSave,
-    showToasts: false,
-    delay: 2000
-  });
 
   const toggleSolution = (solutionId: string) => {
     const newSelection = data.deviceSelection.selectedSolutions.includes(solutionId)
@@ -107,20 +78,12 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
       return;
     }
 
-    // Update local state first
+    // Update local state
     updateData(updatedData);
     
-    // Force immediate save for important changes
-    try {
-      await forceSave();
-      toast.success('Produkt uložený', {
-        description: 'Zmeny boli úspešne uložené'
-      });
-    } catch (error) {
-      toast.error('Chyba pri ukladaní', {
-        description: 'Skúste to znova'
-      });
-    }
+    toast.success('Produkt uložený', {
+      description: 'Zmeny boli úspešne uložené'
+    });
   };
 
   const updateCard = async (cardId: string, updatedCard: DeviceCard | ServiceCard) => {
@@ -156,10 +119,6 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
     });
   };
 
-  const canProceedToNext = () => {
-    return stepValidation.isValid;
-  };
-
   // Show solution selection if no solutions are selected
   if (data.deviceSelection.selectedSolutions.length === 0) {
     return (
@@ -169,17 +128,6 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
           onToggleSolution={toggleSolution}
           onNext={() => {}}
         />
-        
-        <div className="flex justify-between items-center">
-          <Button
-            variant="outline"
-            onClick={onPrev}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t('deviceSelection.navigation.back')}
-          </Button>
-        </div>
       </div>
     );
   }
@@ -193,7 +141,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-6">
       {/* Header with Selected Solutions */}
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
@@ -266,60 +214,6 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
         editingCard={modalState.editingCard}
         onSave={handleSaveProduct}
       />
-
-      {/* Navigation */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <Button
-          variant="outline"
-          onClick={onPrev}
-          className="flex items-center gap-2 w-full sm:w-auto"
-          disabled={isSaving}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {t('deviceSelection.navigation.back')}
-        </Button>
-
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-          <Button
-            variant="outline"
-            onClick={() => {
-              updateData({
-                deviceSelection: {
-                  ...data.deviceSelection,
-                  selectedSolutions: []
-                }
-              });
-            }}
-            className="text-slate-600 w-full sm:w-auto"
-            disabled={isSaving}
-          >
-            {t('deviceSelection.navigation.changeSolution')}
-          </Button>
-          
-          <Button
-            onClick={onNext}
-            disabled={!canProceedToNext() || isSaving}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2 w-full sm:w-auto"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {t('deviceSelection.loading.saving')}
-              </>
-            ) : data.deviceSelection.dynamicCards.length > 0 ? (
-              <>
-                <CheckCircle className="h-4 w-4" />
-                {t('deviceSelection.navigation.continue')}
-              </>
-            ) : (
-              <>
-                {t('deviceSelection.navigation.next')}
-                <ArrowRight className="h-4 w-4" />
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
     </div>
   );
 };

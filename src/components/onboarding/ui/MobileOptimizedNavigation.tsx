@@ -1,7 +1,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Check, Loader2, Save } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Loader2, Save, RefreshCw } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface StepValidation {
@@ -19,6 +19,7 @@ interface MobileOptimizedNavigationProps {
   onComplete: () => void;
   onSaveAndExit: () => void;
   onSaveSignature?: () => void;
+  onChangeSolution?: () => void;
   isSubmitting?: boolean;
   stepValidation: StepValidation;
 }
@@ -31,12 +32,14 @@ const MobileOptimizedNavigation = ({
   onComplete,
   onSaveAndExit,
   onSaveSignature,
+  onChangeSolution,
   isSubmitting = false,
   stepValidation
 }: MobileOptimizedNavigationProps) => {
   const { t } = useTranslation(['common', 'notifications']);
   const isMobile = useIsMobile();
   const isConsentsStep = currentStep === totalSteps - 1;
+  const isDeviceSelectionStep = currentStep === 3;
   
   if (!isMobile) return null;
 
@@ -55,6 +58,19 @@ const MobileOptimizedNavigation = ({
         </Button>
         
         <div className="flex space-x-2 flex-shrink-0">
+          {isDeviceSelectionStep && onChangeSolution && (
+            <Button
+              onClick={onChangeSolution}
+              disabled={isSubmitting}
+              variant="outline"
+              size="sm"
+              className="text-slate-600 hover:bg-slate-50"
+            >
+              <RefreshCw className="mr-1 h-3 w-3" />
+              Zmeniť
+            </Button>
+          )}
+          
           {isConsentsStep && onSaveSignature && (
             <Button
               onClick={onSaveSignature}

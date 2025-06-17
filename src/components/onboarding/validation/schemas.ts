@@ -18,7 +18,7 @@ export const companyInfoSchema = z.object({
   ico: z.string().min(1, 'IČO je povinné'),
   dic: z.string().min(1, 'DIČ je povinné'),
   companyName: z.string().min(1, 'Obchodné meno je povinné'),
-  registryType: z.enum(['public', 'business', 'other']),
+  registryType: z.enum(['Živnosť', 'S.r.o.', 'Nezisková organizácia', 'Akciová spoločnosť', '']),
   isVatPayer: z.boolean(),
   vatNumber: z.string().optional(),
   court: z.string().optional(),

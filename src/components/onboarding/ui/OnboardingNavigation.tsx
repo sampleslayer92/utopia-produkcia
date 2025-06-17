@@ -1,7 +1,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Check, Loader2, Save } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Loader2, Save, RefreshCw } from "lucide-react";
 
 interface StepValidation {
   isValid: boolean;
@@ -18,6 +18,7 @@ interface OnboardingNavigationProps {
   onComplete: () => void;
   onSaveAndExit: () => void;
   onSaveSignature?: () => void;
+  onChangeSolution?: () => void;
   isSubmitting?: boolean;
   stepValidation: StepValidation;
 }
@@ -30,11 +31,13 @@ const OnboardingNavigation = ({
   onComplete,
   onSaveAndExit,
   onSaveSignature,
+  onChangeSolution,
   isSubmitting = false,
   stepValidation
 }: OnboardingNavigationProps) => {
   const { t } = useTranslation(['common', 'notifications']);
   const isConsentsStep = currentStep === totalSteps - 1;
+  const isDeviceSelectionStep = currentStep === 3;
   
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/90 backdrop-blur-sm p-6 z-50">
@@ -58,6 +61,18 @@ const OnboardingNavigation = ({
           >
             {t('common:buttons.saveAndExit')}
           </Button>
+          
+          {isDeviceSelectionStep && onChangeSolution && (
+            <Button
+              variant="outline"
+              onClick={onChangeSolution}
+              disabled={isSubmitting}
+              className="text-slate-600 hover:bg-slate-50"
+            >
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Zmeniť riešenie
+            </Button>
+          )}
           
           {isConsentsStep && onSaveSignature && (
             <Button
