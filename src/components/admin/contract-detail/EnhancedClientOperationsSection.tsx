@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,13 +13,15 @@ interface EnhancedClientOperationsSectionProps {
   isEditMode: boolean;
   onUpdate: (path: string, value: any) => void;
   onSectionUpdate: (data: any) => void;
+  onLocalChanges?: (hasChanges: boolean) => void;
 }
 
 const EnhancedClientOperationsSection = ({ 
   onboardingData, 
   isEditMode, 
   onUpdate,
-  onSectionUpdate 
+  onSectionUpdate,
+  onLocalChanges
 }: EnhancedClientOperationsSectionProps) => {
   const { t } = useTranslation('admin');
   
@@ -31,8 +34,8 @@ const EnhancedClientOperationsSection = ({
     commitLocalChanges
   } = useLocalFormState(onboardingData);
 
-  // Use local data when in edit mode, otherwise use original data
-  const currentData = isEditMode ? (localData || onboardingData) : onboardingData;
+  // Use local data when in edit mode and available, otherwise use original data
+  const currentData = (isEditMode && localData) ? localData : onboardingData;
 
   // Safely access nested data with fallbacks
   const companyInfo = currentData?.companyInfo || {};
@@ -45,8 +48,16 @@ const EnhancedClientOperationsSection = ({
     businessLocations,
     isEditMode,
     hasLocalChanges,
+    hasLocalData: !!localData,
     currentDataKeys: currentData ? Object.keys(currentData) : []
   });
+
+  // Notify parent about local changes
+  useEffect(() => {
+    if (onLocalChanges) {
+      onLocalChanges(hasLocalChanges);
+    }
+  }, [hasLocalChanges, onLocalChanges]);
 
   // Reset local data when exiting edit mode
   useEffect(() => {
@@ -55,11 +66,11 @@ const EnhancedClientOperationsSection = ({
     }
   }, [isEditMode, resetLocalData]);
 
-  // Commit changes when save is triggered (this will be called from parent)
+  // Expose commit function to parent through ref or callback
   useEffect(() => {
-    if (hasLocalChanges && !isEditMode) {
+    if (onSectionUpdate && hasLocalChanges && !isEditMode) {
       const committedData = commitLocalChanges();
-      if (committedData && onSectionUpdate) {
+      if (committedData) {
         onSectionUpdate(committedData);
       }
     }

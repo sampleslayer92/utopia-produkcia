@@ -8,12 +8,14 @@ export const useLocalFormState = <T>(initialData: T | null) => {
   // Initialize local data when initial data changes
   useEffect(() => {
     if (initialData) {
+      console.log('useLocalFormState: Initializing with data:', initialData);
       setLocalData({ ...initialData });
       setHasLocalChanges(false);
     }
   }, [initialData]);
 
   const updateLocalField = useCallback((path: string, value: any) => {
+    console.log(`useLocalFormState: Updating field ${path} with value:`, value);
     setLocalData(prev => {
       if (!prev) return null;
       
@@ -41,6 +43,7 @@ export const useLocalFormState = <T>(initialData: T | null) => {
   }, []);
 
   const resetLocalData = useCallback(() => {
+    console.log('useLocalFormState: Resetting to initial data');
     if (initialData) {
       setLocalData({ ...initialData });
       setHasLocalChanges(false);
@@ -48,6 +51,7 @@ export const useLocalFormState = <T>(initialData: T | null) => {
   }, [initialData]);
 
   const commitLocalChanges = useCallback(() => {
+    console.log('useLocalFormState: Committing changes');
     setHasLocalChanges(false);
     return localData;
   }, [localData]);

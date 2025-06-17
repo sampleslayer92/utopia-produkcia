@@ -24,6 +24,7 @@ const ContractDetail = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [pendingChanges, setPendingChanges] = useState<any>({});
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [clientOperationsHasChanges, setClientOperationsHasChanges] = useState(false);
   
   const contractDataResult = useContractData(id!);
   const updateContract = useContractUpdate(id!);
@@ -66,7 +67,10 @@ const ContractDetail = () => {
   const { contract, onboardingData } = contractDataResult.data;
 
   const handleSave = async () => {
-    if (!hasUnsavedChanges && !isDirty) {
+    // Check if we have any changes to save
+    const totalHasChanges = hasUnsavedChanges || isDirty || clientOperationsHasChanges;
+    
+    if (!totalHasChanges) {
       console.log('No changes to save');
       toast({
         title: "Informácia",
@@ -101,6 +105,7 @@ const ContractDetail = () => {
       // Clear pending changes and reset states
       setPendingChanges({});
       setHasUnsavedChanges(false);
+      setClientOperationsHasChanges(false);
       markClean();
       
       toast({
@@ -118,11 +123,19 @@ const ContractDetail = () => {
   };
 
   const handleToggleEdit = () => {
-    console.log('Toggling edit mode. Current state:', { isEditMode, hasUnsavedChanges, isDirty });
+    const totalHasChanges = hasUnsavedChanges || isDirty || clientOperationsHasChanges;
+    
+    console.log('Toggling edit mode. Current state:', { 
+      isEditMode, 
+      hasUnsavedChanges, 
+      isDirty, 
+      clientOperationsHasChanges,
+      totalHasChanges 
+    });
     
     if (isEditMode) {
       // Leaving edit mode
-      if (hasUnsavedChanges || isDirty) {
+      if (totalHasChanges) {
         const shouldSave = window.confirm('Máte neuložené zmeny. Chcete ich uložiť pred ukončením editácie?');
         if (shouldSave) {
           handleSave();
@@ -130,6 +143,7 @@ const ContractDetail = () => {
           // Reset all pending changes
           setPendingChanges({});
           setHasUnsavedChanges(false);
+          setClientOperationsHasChanges(false);
           forceInitialize(onboardingData);
         }
       }
@@ -140,6 +154,7 @@ const ContractDetail = () => {
       forceInitialize(onboardingData);
       setPendingChanges({});
       setHasUnsavedChanges(false);
+      setClientOperationsHasChanges(false);
       setIsEditMode(true);
     }
   };
@@ -195,6 +210,8 @@ const ContractDetail = () => {
     hasOnboardingData: !!onboardingData,
     hasUnsavedChanges,
     isDirty,
+    clientOperationsHasChanges,
+    totalHasChanges: hasUnsavedChanges || isDirty || clientOperationsHasChanges,
     currentDataSource: (isEditMode && formData) ? 'formData' : 'onboardingData',
     contractId: id
   });
@@ -210,6 +227,14 @@ const ContractDetail = () => {
     setHasUnsavedChanges(true);
   };
 
+  const handleClientOperationsLocalChanges = (hasChanges: boolean) => {
+    console.log('Client operations local changes:', hasChanges);
+    setClientOperationsHasChanges(hasChanges);
+  };
+
+  // Calculate total dirty state for header
+  const totalIsDirty = hasUnsavedChanges || isDirty || clientOperationsHasChanges;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <ContractHeader
@@ -219,7 +244,7 @@ const ContractDetail = () => {
         onToggleEdit={handleToggleEdit}
         onBack={() => navigate('/admin')}
         onSave={handleSave}
-        isDirty={hasUnsavedChanges || isDirty}
+        isDirty={totalIsDirty}
         isSaving={updateContract.isPending}
       />
 
@@ -232,6 +257,7 @@ const ContractDetail = () => {
               isEditMode={isEditMode}
               onUpdate={updateField}
               onSectionUpdate={(data) => handleSectionUpdate('contactInfo', data)}
+              onLocalChanges={handleClientOperationsLocalChanges}
             />
 
             <DevicesServicesSection
