@@ -203,7 +203,7 @@ const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOw
           }}
           canAutoFill={canAutoFill}
           alreadyExists={contactExistsInAuthorized && contactExistsInActualOwners}
-          stepType="combined"
+          stepType="authorized"
           className="mb-6"
         />
       )}
