@@ -1,3 +1,4 @@
+
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Check, Loader2, Save, RefreshCw } from "lucide-react";
@@ -48,8 +49,8 @@ const OnboardingNavigation = ({
     console.log('isPresentationStep:', isPresentationStep);
     console.log('stepValidation.isValid:', stepValidation.isValid);
     console.log('canProceed:', canProceed);
-    console.log('stepValidation.errors:', stepValidation.errors);
     console.log('stepValidation.completionPercentage:', stepValidation.completionPercentage);
+    console.log('stepValidation.missingFields:', stepValidation.missingFields);
   }
   
   return (

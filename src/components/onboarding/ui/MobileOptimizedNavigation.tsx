@@ -51,7 +51,7 @@ const MobileOptimizedNavigation = ({
     console.log('isPresentationStep:', isPresentationStep);
     console.log('stepValidation.isValid:', stepValidation.isValid);
     console.log('canProceed:', canProceed);
-    console.log('stepValidation.errors:', stepValidation.errors);
+    console.log('stepValidation.missingFields:', stepValidation.missingFields);
   }
   
   if (!isMobile) return null;
