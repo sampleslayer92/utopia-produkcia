@@ -116,19 +116,25 @@ export const useStepValidation = (
         validationErrors.push({ field: `businessLocations.${index}.address`, message: 'Kompletná adresa je povinná', severity: 'error' });
       }
       
-      // Fixed: Check firstName and lastName instead of name
-      if (!location.contactPerson?.firstName?.trim()) {
-        validationErrors.push({ field: `businessLocations.${index}.contactPerson.firstName`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
-      }
-      if (!location.contactPerson?.lastName?.trim()) {
-        validationErrors.push({ field: `businessLocations.${index}.contactPerson.lastName`, message: 'Priezvisko kontaktnej osoby je povinné', severity: 'error' });
+      // Fixed: Check firstName and lastName if they exist, otherwise check name
+      if (location.contactPerson?.firstName !== undefined && location.contactPerson?.lastName !== undefined) {
+        // New structure with firstName/lastName
+        if (!location.contactPerson?.firstName?.trim()) {
+          validationErrors.push({ field: `businessLocations.${index}.contactPerson.firstName`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
+        }
+        if (!location.contactPerson?.lastName?.trim()) {
+          validationErrors.push({ field: `businessLocations.${index}.contactPerson.lastName`, message: 'Priezvisko kontaktnej osoby je povinné', severity: 'error' });
+        }
+      } else {
+        // Legacy structure with name only
+        if (!location.contactPerson?.name?.trim()) {
+          validationErrors.push({ field: `businessLocations.${index}.contactPerson.name`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
+        }
       }
       
       if (!location.contactPerson?.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(location.contactPerson?.email)) {
         validationErrors.push({ field: `businessLocations.${index}.contactPerson.email`, message: 'Platný email kontaktnej osoby je povinný', severity: 'error' });
       }
-      
-      // Made phone optional for now
       
       if (!location.bankAccounts || location.bankAccounts.length === 0 || !location.bankAccounts.every(acc => acc.iban?.trim())) {
         validationErrors.push({ field: `businessLocations.${index}.bankAccounts`, message: 'Platný bankový účet je povinný', severity: 'error' });
