@@ -39,6 +39,10 @@ const OnboardingNavigation = ({
   const isConsentsStep = currentStep === totalSteps - 1;
   const isDeviceSelectionStep = currentStep === 3;
   
+  // For presentation: steps 2 and 3 should always allow proceeding
+  const isPresentationStep = currentStep === 2 || currentStep === 3;
+  const canProceed = isPresentationStep || stepValidation.isValid;
+  
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/90 backdrop-blur-sm p-6 z-50">
       <div className="max-w-7xl mx-auto flex justify-between">
@@ -107,7 +111,7 @@ const OnboardingNavigation = ({
           ) : (
             <Button
               onClick={onNextStep}
-              disabled={isSubmitting || !stepValidation.isValid}
+              disabled={isSubmitting || !canProceed}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2"
             >
               {isSubmitting ? (

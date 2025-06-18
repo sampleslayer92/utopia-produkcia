@@ -39,7 +39,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completedFields: [],
       isVisited: data.visitedSteps?.includes(1) || false
     },
-    // Step 2: Business Locations
+    // Step 2: Business Locations - For presentation: allow proceeding without full validation
     {
       stepNumber: 2,
       stepName: 'Miesta podnikania',
@@ -49,7 +49,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completedFields: [],
       isVisited: data.visitedSteps?.includes(2) || false
     },
-    // Step 3: Device Selection
+    // Step 3: Device Selection - For presentation: allow proceeding without full validation
     {
       stepNumber: 3,
       stepName: 'Výber zariadení',
@@ -59,13 +59,13 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completedFields: [],
       isVisited: data.visitedSteps?.includes(3) || false
     },
-    // Step 4: Fees
+    // Step 4: Fees - Removed required fields so it won't be green by default
     {
       stepNumber: 4,
       stepName: 'Poplatky',
       isComplete: false,
       completionPercentage: 0,
-      requiredFields: ['fees.regulatedCards', 'fees.unregulatedCards'],
+      requiredFields: [], // Empty array - no required fields for presentation
       completedFields: [],
       isVisited: data.visitedSteps?.includes(4) || false
     },
@@ -114,10 +114,17 @@ export const calculateStepCompletion = (step: StepProgress, data: OnboardingData
 
   const updatedStep = { ...step, completedFields };
   
+  // For steps with no required fields (like fees), mark as complete only if visited
+  if (step.requiredFields.length === 0) {
+    updatedStep.isComplete = step.isVisited;
+    updatedStep.completionPercentage = step.isVisited ? 100 : 0;
+    return updatedStep;
+  }
+  
   const hasAnyCompletedFields = completedFields.length > 0;
   const allFieldsCompleted = completedFields.length === step.requiredFields.length;
   
-  // Standard validation for all steps
+  // Standard validation for steps with required fields
   updatedStep.isComplete = allFieldsCompleted;
   updatedStep.completionPercentage = hasAnyCompletedFields ? 
     (allFieldsCompleted ? 100 : Math.round((completedFields.length / step.requiredFields.length) * 100)) : 0;
