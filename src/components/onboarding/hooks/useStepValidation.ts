@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { OnboardingData } from '@/types/onboarding';
 
@@ -31,9 +30,9 @@ export const useStepValidation = (
     switch (stepNumber) {
       case 0: return ['firstName', 'lastName', 'email', 'phone'];
       case 1: return ['ico', 'companyName', 'address', 'contactPerson'];
-      case 2: return ['businessLocations'];
-      case 3: return ['deviceSelection'];
-      case 4: return ['fees'];
+      case 2: return ['businessLocations']; // Simplified for presentation
+      case 3: return ['deviceSelection']; // Simplified for presentation
+      case 4: return []; // No required fields for fees
       case 5: return ['authorizedPersons'];
       case 6: return ['actualOwners'];
       case 7: return ['consents.gdpr', 'consents.terms'];
@@ -102,11 +101,13 @@ export const useStepValidation = (
     const validationErrors: ValidationError[] = [];
     const { businessLocations } = data;
 
+    // For presentation: simplified validation - only check if at least one location exists with basic info
     if (businessLocations.length === 0) {
       validationErrors.push({ field: 'businessLocations', message: 'Minimálne jedna prevádzka je povinná', severity: 'error' });
       return validationErrors;
     }
 
+    // Check only basic fields for presentation
     businessLocations.forEach((location, index) => {
       if (!location.name?.trim()) {
         validationErrors.push({ field: `businessLocations.${index}.name`, message: 'Názov prevádzky je povinný', severity: 'error' });
@@ -114,48 +115,6 @@ export const useStepValidation = (
       
       if (!location.address?.street?.trim() || !location.address?.city?.trim() || !location.address?.zipCode?.trim()) {
         validationErrors.push({ field: `businessLocations.${index}.address`, message: 'Kompletná adresa je povinná', severity: 'error' });
-      }
-      
-      // Fixed: Properly handle both contact person structures with type checking
-      const contactPerson = location.contactPerson as any;
-      if (contactPerson) {
-        // Check if it has firstName/lastName properties
-        if ('firstName' in contactPerson && 'lastName' in contactPerson) {
-          // New structure with firstName/lastName
-          if (!contactPerson.firstName?.trim()) {
-            validationErrors.push({ field: `businessLocations.${index}.contactPerson.firstName`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
-          }
-          if (!contactPerson.lastName?.trim()) {
-            validationErrors.push({ field: `businessLocations.${index}.contactPerson.lastName`, message: 'Priezvisko kontaktnej osoby je povinné', severity: 'error' });
-          }
-        } else if ('name' in contactPerson) {
-          // Legacy structure with name only
-          if (!contactPerson.name?.trim()) {
-            validationErrors.push({ field: `businessLocations.${index}.contactPerson.name`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
-          }
-        }
-        
-        if (!contactPerson.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactPerson.email)) {
-          validationErrors.push({ field: `businessLocations.${index}.contactPerson.email`, message: 'Platný email kontaktnej osoby je povinný', severity: 'error' });
-        }
-      } else {
-        validationErrors.push({ field: `businessLocations.${index}.contactPerson`, message: 'Kontaktná osoba je povinná', severity: 'error' });
-      }
-      
-      if (!location.bankAccounts || location.bankAccounts.length === 0 || !location.bankAccounts.every(acc => acc.iban?.trim())) {
-        validationErrors.push({ field: `businessLocations.${index}.bankAccounts`, message: 'Platný bankový účet je povinný', severity: 'error' });
-      }
-      
-      if (!location.businessSubject?.trim()) {
-        validationErrors.push({ field: `businessLocations.${index}.businessSubject`, message: 'Predmet podnikania je povinný', severity: 'error' });
-      }
-      
-      if (!location.monthlyTurnover || location.monthlyTurnover <= 0) {
-        validationErrors.push({ field: `businessLocations.${index}.monthlyTurnover`, message: 'Mesačný obrat musí byť väčší ako 0', severity: 'error' });
-      }
-      
-      if (!location.averageTransaction || location.averageTransaction <= 0) {
-        validationErrors.push({ field: `businessLocations.${index}.averageTransaction`, message: 'Priemerná transakcia musí byť väčšia ako 0', severity: 'error' });
       }
     });
 
@@ -166,12 +125,9 @@ export const useStepValidation = (
     const validationErrors: ValidationError[] = [];
     const { deviceSelection } = data;
 
-    if (deviceSelection.selectedSolutions.length === 0) {
-      validationErrors.push({ field: 'selectedSolutions', message: 'Vyberte aspoň jedno riešenie', severity: 'error' });
-    }
-
-    if (deviceSelection.dynamicCards.length === 0) {
-      validationErrors.push({ field: 'dynamicCards', message: 'Pridajte aspoň jedno zariadenie alebo službu', severity: 'warning' });
+    // For presentation: simplified validation
+    if (deviceSelection.selectedSolutions.length === 0 && deviceSelection.dynamicCards.length === 0) {
+      validationErrors.push({ field: 'deviceSelection', message: 'Vyberte aspoň jedno riešenie alebo zariadenie', severity: 'warning' });
     }
 
     return validationErrors;
@@ -181,9 +137,9 @@ export const useStepValidation = (
     switch (stepNumber) {
       case 0: return validateContactInfo();
       case 1: return validateCompanyInfo();
-      case 2: return validateBusinessLocations();
-      case 3: return validateDeviceSelection();
-      case 4: return []; // Fees - optional
+      case 2: return validateBusinessLocations(); // Simplified validation
+      case 3: return validateDeviceSelection(); // Simplified validation
+      case 4: return []; // Fees - no validation for presentation
       case 5: 
         if (data.authorizedPersons.length === 0) {
           return [{ field: 'authorizedPersons', message: 'Minimálne jedna oprávnená osoba je povinná', severity: 'error' }];
@@ -211,17 +167,35 @@ export const useStepValidation = (
     const currentErrors = validateStep(stepNumber);
     const errorCount = currentErrors.filter(e => e.severity === 'error').length;
     
+    // For presentation steps 2 and 3: be more lenient
+    if (stepNumber === 2) {
+      if (data.businessLocations.length > 0) {
+        const hasBasicInfo = data.businessLocations.some(loc => 
+          loc.name?.trim() && loc.address?.street?.trim()
+        );
+        return hasBasicInfo ? 100 : 50;
+      }
+      return 0;
+    }
+    
+    if (stepNumber === 3) {
+      if (data.deviceSelection.selectedSolutions.length > 0 || data.deviceSelection.dynamicCards.length > 0) {
+        return 100;
+      }
+      return 0;
+    }
+    
     // Base validation on actual step completion
     if (errorCount === 0) {
       return 100;
     }
     
-    // Calculate partial completion
+    // Calculate partial completion for other steps
     const totalFields = {
       0: 4, // firstName, lastName, email, phone
       1: 8, // ico, companyName, address fields, contactPerson fields
-      2: Math.max(1, data.businessLocations.length * 8), // 8 required fields per location
-      3: 2, // selectedSolutions, dynamicCards
+      2: 1, // businessLocations (simplified)
+      3: 1, // deviceSelection (simplified)
       4: 1, // fees
       5: Math.max(1, data.authorizedPersons.length), 
       6: Math.max(1, data.actualOwners.length),

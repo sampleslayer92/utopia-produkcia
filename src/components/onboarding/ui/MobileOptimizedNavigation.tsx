@@ -45,6 +45,15 @@ const MobileOptimizedNavigation = ({
   const isPresentationStep = currentStep === 2 || currentStep === 3;
   const canProceed = isPresentationStep || stepValidation.isValid;
   
+  // Debug logging for presentation steps
+  if (isPresentationStep && isMobile) {
+    console.log(`=== MOBILE NAVIGATION DEBUG: Step ${currentStep} ===`);
+    console.log('isPresentationStep:', isPresentationStep);
+    console.log('stepValidation.isValid:', stepValidation.isValid);
+    console.log('canProceed:', canProceed);
+    console.log('stepValidation.errors:', stepValidation.errors);
+  }
+  
   if (!isMobile) return null;
 
   return (

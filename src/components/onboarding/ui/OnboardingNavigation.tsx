@@ -1,4 +1,3 @@
-
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Check, Loader2, Save, RefreshCw } from "lucide-react";
@@ -42,6 +41,16 @@ const OnboardingNavigation = ({
   // For presentation: steps 2 and 3 should always allow proceeding
   const isPresentationStep = currentStep === 2 || currentStep === 3;
   const canProceed = isPresentationStep || stepValidation.isValid;
+  
+  // Debug logging for presentation steps
+  if (isPresentationStep) {
+    console.log(`=== NAVIGATION DEBUG: Step ${currentStep} ===`);
+    console.log('isPresentationStep:', isPresentationStep);
+    console.log('stepValidation.isValid:', stepValidation.isValid);
+    console.log('canProceed:', canProceed);
+    console.log('stepValidation.errors:', stepValidation.errors);
+    console.log('stepValidation.completionPercentage:', stepValidation.completionPercentage);
+  }
   
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/90 backdrop-blur-sm p-6 z-50">
