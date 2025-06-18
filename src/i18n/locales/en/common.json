@@ -60,5 +60,34 @@
       "description": "Are you sure you want to delete this contract? This action cannot be undone.",
       "irreversible": "This action is irreversible."
     }
+  },
+  "welcome": {
+    "title": "Registration without stress.",
+    "subtitle": "Welcome to the onboarding of the future.",
+    "login": {
+      "title": "Sign In",
+      "description": "Select your role and continue to the system"
+    },
+    "onboarding": {
+      "title": "Start Onboarding",
+      "description": "Register a new company in the system"
+    },
+    "selectRole": "Select your role",
+    "backButton": "Back",
+    "roles": {
+      "admin": {
+        "title": "Admin (ISO organization)",   
+        "description": "Full system access"
+      },
+      "partner": {
+        "title": "Business Partner",
+        "description": "Manage your own clients"
+      },
+      "merchant": {
+        "title": "Client (merchant)",
+        "description": "View your own data"
+      }
+    },
+    "footer": "Utopia Research Lab 2025"
   }
 }

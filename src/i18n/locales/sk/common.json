@@ -60,5 +60,34 @@
       "description": "Ste si istý, že chcete vymazať túto zmluvu? Táto akcia je nevratná.",
       "irreversible": "Táto akcia je nevratná."
     }
+  },
+  "welcome": {
+    "title": "Registrácia bez stresu.",
+    "subtitle": "Vitaj v onboardingu budúcnosti.",
+    "login": {
+      "title": "Prihlásiť sa",
+      "description": "Vyberte svoju rolu a pokračujte do systému"
+    },
+    "onboarding": {
+      "title": "Začať onboarding",
+      "description": "Registrácia novej spoločnosti do systému"
+    },
+    "selectRole": "Vyberte svoju rolu",
+    "backButton": "Späť",
+    "roles": {
+      "admin": {
+        "title": "Admin (ISO organizácia)",
+        "description": "Plný prístup k systému"
+      },
+      "partner": {
+        "title": "Obchodný partner",
+        "description": "Správa vlastných klientov"
+      },
+      "merchant": {
+        "title": "Klient (merchant)",
+        "description": "Zobrazenie vlastných dát"
+      }
+    },
+    "footer": "Utopia Research Lab 2025"
   }
 }
