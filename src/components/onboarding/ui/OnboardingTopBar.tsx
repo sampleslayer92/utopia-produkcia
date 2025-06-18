@@ -55,8 +55,6 @@ const OnboardingTopBar = ({
             const progress = stepProgress[step.number];
             const isCurrentStep = step.number === currentStep;
             const isCompleted = progress?.isComplete ?? false;
-            const isNext = step.number === currentStep + 1;
-            const isPartiallyComplete = progress && progress.completionPercentage > 0 && progress.completionPercentage < 100;
 
             return (
               <div key={step.number} className="flex flex-col items-center">
@@ -67,14 +65,10 @@ const OnboardingTopBar = ({
                     ${isClickable ? "cursor-pointer" : "opacity-60 cursor-not-allowed"}
                     ${
                       isCurrentStep
-                        ? "bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm ring-1 ring-blue-300/30"
+                        ? "bg-blue-50 border border-blue-200 shadow-sm"
                         : isCompleted
-                        ? "bg-gradient-to-r from-green-50 to-green-100 border border-green-200 hover:shadow-md"
-                        : isPartiallyComplete
-                        ? "bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 hover:shadow-md"
-                        : isNext
-                        ? "bg-gradient-to-r from-indigo-50 to-indigo-100 border border-indigo-200 hover:shadow-md"
-                        : "bg-slate-50/50 border border-slate-100 hover:bg-slate-100/80"
+                        ? "bg-green-50 border border-green-200 hover:shadow-md"
+                        : "bg-slate-50 border border-slate-200 hover:bg-slate-100"
                     }`}
                 >
                   {/* Step Icon - Top Position */}
@@ -84,17 +78,11 @@ const OnboardingTopBar = ({
                         ? "bg-blue-600 text-white shadow-sm"
                         : isCompleted
                         ? "bg-green-600 text-white"
-                        : isPartiallyComplete
-                        ? "bg-amber-500 text-white"
-                        : isNext
-                        ? "bg-indigo-500 text-white"
-                        : "bg-slate-400 text-slate-50"
+                        : "bg-slate-400 text-white"
                     }`}
                   >
                     {isCompleted ? (
                       <Check className="h-3 w-3" />
-                    ) : isPartiallyComplete ? (
-                      <CircleDot className="h-3 w-3" />
                     ) : (
                       step.number + 1
                     )}
@@ -109,16 +97,10 @@ const OnboardingTopBar = ({
 
                   {/* Status indicator dots - Very minimal */}
                   <div className="flex justify-center">
-                    {isCurrentStep && progress && progress.completionPercentage > 0 && !isCompleted && (
+                    {isCurrentStep && (
                       <div className="w-1 h-1 bg-blue-500 rounded-full"></div>
                     )}
-                    {isPartiallyComplete && !isCurrentStep && (
-                      <div className="w-1 h-1 bg-amber-500 rounded-full"></div>
-                    )}
-                    {isNext && !isPartiallyComplete && (
-                      <div className="w-1 h-1 bg-indigo-500 rounded-full"></div>
-                    )}
-                    {isCompleted && (
+                    {isCompleted && !isCurrentStep && (
                       <div className="w-1 h-1 bg-green-500 rounded-full"></div>
                     )}
                   </div>
