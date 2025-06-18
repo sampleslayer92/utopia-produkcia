@@ -213,6 +213,21 @@ export const useStepValidation = (
       .map(e => e.field);
   }, [validateStep]);
 
+  // PRESENTATION LOGIC: Force isValid true for steps 2 and 3
+  const getStepValidationResult = useCallback((stepNumber: number): boolean => {
+    // For presentation steps 2 and 3: always return true regardless of validation
+    if (stepNumber === 2 || stepNumber === 3) {
+      console.log(`=== FORCED VALIDATION FOR STEP ${stepNumber} ===`);
+      console.log('Forcing isValid: true for presentation step');
+      return true;
+    }
+    
+    // For other steps: use normal validation
+    const validationErrors = validateStep(stepNumber);
+    const hasErrors = validationErrors.filter(e => e.severity === 'error').length > 0;
+    return !hasErrors;
+  }, [validateStep]);
+
   useEffect(() => {
     const validationResults = validateStep(step);
     setErrors(validationResults.filter(e => e.severity === 'error'));
@@ -237,9 +252,19 @@ export const useStepValidation = (
 
   const requiredFields = getRequiredFields(step);
   const missingFields = getMissingFields(step);
+  const isValid = getStepValidationResult(step);
+
+  // Debug logging for presentation steps
+  if (step === 2 || step === 3) {
+    console.log(`=== useStepValidation DEBUG: Step ${step} ===`);
+    console.log('isValid (forced):', isValid);
+    console.log('errors count:', errors.length);
+    console.log('missingFields:', missingFields);
+    console.log('completionPercentage:', calculateCompletionPercentage(step));
+  }
 
   return {
-    isValid: errors.length === 0,
+    isValid,
     errors,
     warnings,
     completionPercentage: calculateCompletionPercentage(step),
