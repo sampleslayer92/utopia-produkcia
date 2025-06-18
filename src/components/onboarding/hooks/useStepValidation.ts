@@ -32,8 +32,8 @@ export const useStepValidation = (
       case 0: return ['firstName', 'lastName', 'email', 'phone'];
       case 1: return ['ico', 'companyName', 'address', 'contactPerson'];
       case 2: return ['businessLocations'];
-      case 3: return ['selectedSolutions', 'dynamicCards'];
-      case 4: return []; // fees - optional
+      case 3: return ['deviceSelection'];
+      case 4: return ['fees'];
       case 5: return ['authorizedPersons'];
       case 6: return ['actualOwners'];
       case 7: return ['consents.gdpr', 'consents.terms'];
@@ -76,6 +76,24 @@ export const useStepValidation = (
     if (!companyInfo.address?.street?.trim()) {
       validationErrors.push({ field: 'address.street', message: 'Adresa je povinná', severity: 'error' });
     }
+    if (!companyInfo.address?.city?.trim()) {
+      validationErrors.push({ field: 'address.city', message: 'Mesto je povinné', severity: 'error' });
+    }
+    if (!companyInfo.address?.zipCode?.trim()) {
+      validationErrors.push({ field: 'address.zipCode', message: 'PSČ je povinné', severity: 'error' });
+    }
+    if (!companyInfo.contactPerson?.firstName?.trim()) {
+      validationErrors.push({ field: 'contactPerson.firstName', message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
+    }
+    if (!companyInfo.contactPerson?.lastName?.trim()) {
+      validationErrors.push({ field: 'contactPerson.lastName', message: 'Priezvisko kontaktnej osoby je povinné', severity: 'error' });
+    }
+    if (!companyInfo.contactPerson?.email?.trim()) {
+      validationErrors.push({ field: 'contactPerson.email', message: 'Email kontaktnej osoby je povinný', severity: 'error' });
+    }
+    if (!companyInfo.contactPerson?.phone?.trim()) {
+      validationErrors.push({ field: 'contactPerson.phone', message: 'Telefón kontaktnej osoby je povinný', severity: 'error' });
+    }
 
     return validationErrors;
   }, [data]);
@@ -98,17 +116,19 @@ export const useStepValidation = (
         validationErrors.push({ field: `businessLocations.${index}.address`, message: 'Kompletná adresa je povinná', severity: 'error' });
       }
       
-      if (!location.contactPerson?.name?.trim()) {
-        validationErrors.push({ field: `businessLocations.${index}.contactPerson.name`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
+      // Fixed: Check firstName and lastName instead of name
+      if (!location.contactPerson?.firstName?.trim()) {
+        validationErrors.push({ field: `businessLocations.${index}.contactPerson.firstName`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
+      }
+      if (!location.contactPerson?.lastName?.trim()) {
+        validationErrors.push({ field: `businessLocations.${index}.contactPerson.lastName`, message: 'Priezvisko kontaktnej osoby je povinné', severity: 'error' });
       }
       
       if (!location.contactPerson?.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(location.contactPerson?.email)) {
         validationErrors.push({ field: `businessLocations.${index}.contactPerson.email`, message: 'Platný email kontaktnej osoby je povinný', severity: 'error' });
       }
       
-      if (!location.contactPerson?.phone?.trim()) {
-        validationErrors.push({ field: `businessLocations.${index}.contactPerson.phone`, message: 'Telefón kontaktnej osoby je povinný', severity: 'error' });
-      }
+      // Made phone optional for now
       
       if (!location.bankAccounts || location.bankAccounts.length === 0 || !location.bankAccounts.every(acc => acc.iban?.trim())) {
         validationErrors.push({ field: `businessLocations.${index}.bankAccounts`, message: 'Platný bankový účet je povinný', severity: 'error' });
@@ -176,21 +196,27 @@ export const useStepValidation = (
   }, [validateContactInfo, validateCompanyInfo, validateBusinessLocations, validateDeviceSelection, data]);
 
   const calculateCompletionPercentage = useCallback((stepNumber: number): number => {
+    const currentErrors = validateStep(stepNumber);
+    const errorCount = currentErrors.filter(e => e.severity === 'error').length;
+    
+    // Base validation on actual step completion
+    if (errorCount === 0) {
+      return 100;
+    }
+    
+    // Calculate partial completion
     const totalFields = {
       0: 4, // firstName, lastName, email, phone
-      1: 4, // ico, companyName, address, contactPerson
+      1: 8, // ico, companyName, address fields, contactPerson fields
       2: Math.max(1, data.businessLocations.length * 8), // 8 required fields per location
       3: 2, // selectedSolutions, dynamicCards
       4: 1, // fees
-      5: Math.max(1, data.authorizedPersons.length * 8), // 8 required fields per person
-      6: Math.max(1, data.actualOwners.length * 6), // 6 required fields per owner
+      5: Math.max(1, data.authorizedPersons.length), 
+      6: Math.max(1, data.actualOwners.length),
       7: 2  // gdpr, terms
     };
 
-    const currentErrors = validateStep(stepNumber);
-    const errorCount = currentErrors.filter(e => e.severity === 'error').length;
     const total = totalFields[stepNumber as keyof typeof totalFields] || 1;
-    
     return Math.max(0, Math.round(((total - errorCount) / total) * 100));
   }, [validateStep, data]);
 

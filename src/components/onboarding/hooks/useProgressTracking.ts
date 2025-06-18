@@ -12,12 +12,22 @@ export const useProgressTracking = (data: OnboardingData, currentStep: number) =
   const stepProgress = useMemo(() => {
     const steps = createStepProgressConfig(data);
     
-    // Calculate completion for each step
-    return steps.map(step => calculateStepCompletion(step, data));
+    // Calculate completion for each step and return as object indexed by step number
+    const progressArray = steps.map(step => calculateStepCompletion(step, data));
+    
+    // Convert array to object for easier access
+    const progressObject: { [key: number]: StepProgress } = {};
+    progressArray.forEach(step => {
+      progressObject[step.stepNumber] = step;
+    });
+    
+    return progressObject;
   }, [data]);
 
   const overallProgress = useMemo(() => {
-    return calculateOverallProgress(stepProgress, currentStep);
+    // Convert object back to array for overall progress calculation
+    const progressArray = Object.values(stepProgress);
+    return calculateOverallProgress(progressArray, currentStep);
   }, [stepProgress, currentStep]);
 
   return {

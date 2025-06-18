@@ -9,15 +9,17 @@ export const isBusinessLocationComplete = (location: any): boolean => {
                          location.address?.city?.trim() && 
                          location.address?.zipCode?.trim();
                          
-  const hasValidContactPerson = location.contactPerson?.name?.trim() && 
+  // Fixed: Check firstName and lastName instead of name, and made phone optional
+  const hasValidContactPerson = location.contactPerson?.firstName?.trim() && 
+                               location.contactPerson?.lastName?.trim() &&
                                location.contactPerson?.email?.trim() &&
-                               /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(location.contactPerson.email) &&
-                               location.contactPerson?.phone?.trim();
+                               /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(location.contactPerson.email);
                           
+  // Fixed: Made mena field optional and simplified bank account validation
   const hasValidBankAccounts = location.bankAccounts && 
                               location.bankAccounts.length > 0 && 
                               location.bankAccounts.every((account: any) => 
-                                account.iban?.trim() && account.iban !== '' && account.mena
+                                account.iban?.trim() && account.iban !== ''
                               );
   
   const hasBusinessSubject = location.businessSubject?.trim() && location.businessSubject !== '';

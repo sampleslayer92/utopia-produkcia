@@ -56,7 +56,7 @@ export const isFieldComplete = (value: any, fieldPath: string): boolean => {
       return value.length > 0 && value.every(device => device.count > 0 && device.name);
     }
     
-    // For authorized persons and actual owners
+    // For authorized persons and actual owners - simplified validation
     if (fieldPath === 'authorizedPersons' || fieldPath === 'actualOwners') {
       return value.length > 0 && value.every(person => 
         person.firstName?.trim() && 
@@ -75,7 +75,7 @@ export const isFieldComplete = (value: any, fieldPath: string): boolean => {
       return value.street?.trim() && value.city?.trim() && value.zipCode?.trim();
     }
     
-    // For contact person objects
+    // For contact person objects - fixed to check firstName and lastName
     if (fieldPath.includes('contactPerson')) {
       return value.firstName?.trim() && 
              value.lastName?.trim() && 

@@ -37,7 +37,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
         'companyInfo.contactPerson.email', 'companyInfo.contactPerson.phone'
       ],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(1) || data.currentStep >= 1
+      isVisited: data.visitedSteps?.includes(1) || false
     },
     // Step 2: Business Locations
     {
@@ -47,7 +47,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['businessLocations'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(2) || data.currentStep >= 2
+      isVisited: data.visitedSteps?.includes(2) || false
     },
     // Step 3: Device Selection
     {
@@ -57,7 +57,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['deviceSelection.dynamicCards'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(3) || data.currentStep >= 3
+      isVisited: data.visitedSteps?.includes(3) || false
     },
     // Step 4: Fees
     {
@@ -67,7 +67,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['fees.regulatedCards', 'fees.unregulatedCards'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(4) || data.currentStep >= 4
+      isVisited: data.visitedSteps?.includes(4) || false
     },
     // Step 5: Authorized Persons
     {
@@ -77,7 +77,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['authorizedPersons'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(5) || data.currentStep >= 5
+      isVisited: data.visitedSteps?.includes(5) || false
     },
     // Step 6: Actual Owners
     {
@@ -87,7 +87,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['actualOwners'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(6) || data.currentStep >= 6
+      isVisited: data.visitedSteps?.includes(6) || false
     },
     // Step 7: Consents
     {
@@ -97,7 +97,7 @@ export const createStepProgressConfig = (data: OnboardingData): StepProgress[] =
       completionPercentage: 0,
       requiredFields: ['consents.gdpr', 'consents.terms'],
       completedFields: [],
-      isVisited: data.visitedSteps?.includes(7) || data.currentStep >= 7
+      isVisited: data.visitedSteps?.includes(7) || false
     }
   ];
 };
