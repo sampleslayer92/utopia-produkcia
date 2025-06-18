@@ -116,24 +116,30 @@ export const useStepValidation = (
         validationErrors.push({ field: `businessLocations.${index}.address`, message: 'Kompletná adresa je povinná', severity: 'error' });
       }
       
-      // Fixed: Check firstName and lastName if they exist, otherwise check name
-      if (location.contactPerson?.firstName !== undefined && location.contactPerson?.lastName !== undefined) {
-        // New structure with firstName/lastName
-        if (!location.contactPerson?.firstName?.trim()) {
-          validationErrors.push({ field: `businessLocations.${index}.contactPerson.firstName`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
+      // Fixed: Properly handle both contact person structures with type checking
+      const contactPerson = location.contactPerson as any;
+      if (contactPerson) {
+        // Check if it has firstName/lastName properties
+        if ('firstName' in contactPerson && 'lastName' in contactPerson) {
+          // New structure with firstName/lastName
+          if (!contactPerson.firstName?.trim()) {
+            validationErrors.push({ field: `businessLocations.${index}.contactPerson.firstName`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
+          }
+          if (!contactPerson.lastName?.trim()) {
+            validationErrors.push({ field: `businessLocations.${index}.contactPerson.lastName`, message: 'Priezvisko kontaktnej osoby je povinné', severity: 'error' });
+          }
+        } else if ('name' in contactPerson) {
+          // Legacy structure with name only
+          if (!contactPerson.name?.trim()) {
+            validationErrors.push({ field: `businessLocations.${index}.contactPerson.name`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
+          }
         }
-        if (!location.contactPerson?.lastName?.trim()) {
-          validationErrors.push({ field: `businessLocations.${index}.contactPerson.lastName`, message: 'Priezvisko kontaktnej osoby je povinné', severity: 'error' });
+        
+        if (!contactPerson.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactPerson.email)) {
+          validationErrors.push({ field: `businessLocations.${index}.contactPerson.email`, message: 'Platný email kontaktnej osoby je povinný', severity: 'error' });
         }
       } else {
-        // Legacy structure with name only
-        if (!location.contactPerson?.name?.trim()) {
-          validationErrors.push({ field: `businessLocations.${index}.contactPerson.name`, message: 'Meno kontaktnej osoby je povinné', severity: 'error' });
-        }
-      }
-      
-      if (!location.contactPerson?.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(location.contactPerson?.email)) {
-        validationErrors.push({ field: `businessLocations.${index}.contactPerson.email`, message: 'Platný email kontaktnej osoby je povinný', severity: 'error' });
+        validationErrors.push({ field: `businessLocations.${index}.contactPerson`, message: 'Kontaktná osoba je povinná', severity: 'error' });
       }
       
       if (!location.bankAccounts || location.bankAccounts.length === 0 || !location.bankAccounts.every(acc => acc.iban?.trim())) {
