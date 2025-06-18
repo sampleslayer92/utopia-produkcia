@@ -41,8 +41,8 @@ const MobileOptimizedNavigation = ({
   const isConsentsStep = currentStep === totalSteps - 1;
   const isDeviceSelectionStep = currentStep === 3;
   
-  // For presentation: steps 2 and 3 should always allow proceeding
-  const isPresentationStep = currentStep === 2 || currentStep === 3;
+  // For presentation: steps 1, 2 and 3 should always allow proceeding
+  const isPresentationStep = currentStep === 1 || currentStep === 2 || currentStep === 3;
   const canProceed = isPresentationStep || stepValidation.isValid;
   
   // Debug logging for presentation steps

@@ -167,7 +167,14 @@ export const useStepValidation = (
     const currentErrors = validateStep(stepNumber);
     const errorCount = currentErrors.filter(e => e.severity === 'error').length;
     
-    // For presentation steps 2 and 3: be more lenient
+    // For presentation steps 1, 2 and 3: be more lenient
+    if (stepNumber === 1) {
+      if (data.companyInfo.companyName?.trim() || data.companyInfo.ico?.trim()) {
+        return 100;
+      }
+      return 0;
+    }
+    
     if (stepNumber === 2) {
       if (data.businessLocations.length > 0) {
         const hasBasicInfo = data.businessLocations.some(loc => 
@@ -213,10 +220,10 @@ export const useStepValidation = (
       .map(e => e.field);
   }, [validateStep]);
 
-  // PRESENTATION LOGIC: Force isValid true for steps 2 and 3
+  // PRESENTATION LOGIC: Force isValid true for steps 1, 2 and 3
   const getStepValidationResult = useCallback((stepNumber: number): boolean => {
-    // For presentation steps 2 and 3: always return true regardless of validation
-    if (stepNumber === 2 || stepNumber === 3) {
+    // For presentation steps 1, 2 and 3: always return true regardless of validation
+    if (stepNumber === 1 || stepNumber === 2 || stepNumber === 3) {
       console.log(`=== FORCED VALIDATION FOR STEP ${stepNumber} ===`);
       console.log('Forcing isValid: true for presentation step');
       return true;
@@ -255,7 +262,7 @@ export const useStepValidation = (
   const isValid = getStepValidationResult(step);
 
   // Debug logging for presentation steps
-  if (step === 2 || step === 3) {
+  if (step === 1 || step === 2 || step === 3) {
     console.log(`=== useStepValidation DEBUG: Step ${step} ===`);
     console.log('isValid (forced):', isValid);
     console.log('errors count:', errors.length);
