@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTranslation } from 'react-i18next';
 import { useOnboardingData } from "./hooks/useOnboardingData";
@@ -135,7 +136,7 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
   if (isAdminMode) {
     return (
       <OnboardingErrorBoundary onReset={handleErrorReset}>
-        <div className="flex flex-col min-h-full bg-slate-50/30">
+        <div className="flex flex-col min-h-full bg-gradient-to-br from-slate-50/30 via-white/50 to-blue-50/20">
           {/* Mobile Stepper for admin mode */}
           {isMobile && (
             <MobileStepper
@@ -148,22 +149,24 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
             />
           )}
           
-          {/* Desktop Top Bar for admin mode */}
+          {/* Desktop Top Bar for admin mode with delete functionality */}
           {!isMobile && (
             <OnboardingTopBar
               currentStep={currentStep}
               steps={onboardingSteps}
               onStepClick={handleStepClick}
               onboardingData={onboardingData}
+              isAdminMode={isAdminMode}
+              onContractDeleted={handleContractDeleted}
             />
           )}
           
-          {/* Main Content - flex-1 to take remaining space */}
-          <div className="flex-1 py-6">
-            <div className="max-w-7xl mx-auto px-6">
+          {/* Main Content - full width, no constraints */}
+          <div className="flex-1 py-4">
+            <div className="w-full">
               {/* Auto-save indicator - Hide on mobile */}
               {!isMobile && (
-                <div className="flex justify-end items-center mb-6">
+                <div className="flex justify-end items-center mb-4 px-4">
                   <AutoSaveIndicator 
                     status={autoSaveStatus}
                     lastSaved={lastSaved}
@@ -171,23 +174,25 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
                 </div>
               )}
 
-              <OnboardingStepRenderer
-                currentStep={currentStep}
-                data={onboardingData}
-                updateData={handleUpdateData}
-                onNext={nextStep}
-                onPrev={prevStep}
-                onComplete={handleComplete}
-                onSaveSignature={handleSaveSignature}
-                onStepNavigate={handleStepNavigation}
-              />
+              <div className="px-4">
+                <OnboardingStepRenderer
+                  currentStep={currentStep}
+                  data={onboardingData}
+                  updateData={handleUpdateData}
+                  onNext={nextStep}
+                  onPrev={prevStep}
+                  onComplete={handleComplete}
+                  onSaveSignature={handleSaveSignature}
+                  onStepNavigate={handleStepNavigation}
+                />
+              </div>
             </div>
           </div>
           
           {/* Desktop Navigation for admin mode - NOT FIXED POSITION */}
           {!isMobile && (
-            <div className="border-t border-slate-200/60 bg-white/80 backdrop-blur-sm py-6">
-              <div className="max-w-7xl mx-auto px-6">
+            <div className="border-t border-slate-200/60 bg-white/80 backdrop-blur-sm py-4">
+              <div className="w-full px-4">
                 <OnboardingNavigation
                   currentStep={currentStep}
                   totalSteps={totalSteps}
