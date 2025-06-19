@@ -9,6 +9,8 @@ import OnboardingFlow from "./pages/OnboardingFlow";
 import AdminDashboard from "./pages/AdminDashboard";
 import ContractsPage from "./pages/ContractsPage";
 import MerchantsPage from "./pages/MerchantsPage";
+import TeamPage from "./pages/TeamPage";
+import TeamMemberDetailPage from "./pages/TeamMemberDetailPage";
 import PartnerDashboard from "./pages/PartnerDashboard";
 import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
@@ -31,6 +33,8 @@ const App = () => (
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/contracts" element={<ContractsPage />} />
         <Route path="/admin/merchants" element={<MerchantsPage />} />
+        <Route path="/admin/team" element={<TeamPage />} />
+        <Route path="/admin/team/:memberId" element={<TeamMemberDetailPage />} />
         <Route path="/admin/onboarding" element={<AdminOnboardingPage />} />
         <Route path="/admin/contract/:id/edit" element={<ContractEditPage />} />
         <Route path="/admin/contract/:id/view" element={<ContractDetail />} />

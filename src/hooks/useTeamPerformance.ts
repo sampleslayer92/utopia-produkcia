@@ -29,47 +29,67 @@ export const useTeamPerformance = () => {
         throw error;
       }
 
-      // Mock team data (in real app, this would come from a team table)
+      // Enhanced mock team data with more details for member pages
       const teamMembers = [
         {
+          id: 1,
           name: 'Peter Novák',
           role: 'Senior Sales Manager',
           avatar: '',
+          email: 'peter.novak@company.com',
+          phone: '+421 901 234 567',
           monthlyTarget: 15,
           revenueTarget: 25000,
           contractsThisMonth: 12,
           revenueGenerated: 22500,
-          performance: 80
+          performance: 80,
+          joinedDate: '2023-01-15',
+          location: 'Bratislava, Slovakia'
         },
         {
+          id: 2,
           name: 'Mária Svobodová',
           role: 'Sales Representative',
           avatar: '',
+          email: 'maria.svobodova@company.com',
+          phone: '+421 902 345 678',
           monthlyTarget: 10,
           revenueTarget: 18000,
           contractsThisMonth: 11,
           revenueGenerated: 19800,
-          performance: 95
+          performance: 95,
+          joinedDate: '2023-03-20',
+          location: 'Košice, Slovakia'
         },
         {
+          id: 3,
           name: 'Ján Kováč',
           role: 'Business Developer',
           avatar: '',
+          email: 'jan.kovac@company.com',
+          phone: '+421 903 456 789',
           monthlyTarget: 8,
           revenueTarget: 15000,
           contractsThisMonth: 6,
           revenueGenerated: 11250,
-          performance: 65
+          performance: 65,
+          joinedDate: '2023-05-10',
+          location: 'Žilina, Slovakia'
         },
         {
+          id: 4,
           name: 'Eva Horáková',
           role: 'Sales Representative',
           avatar: '',
+          email: 'eva.horakova@company.com',
+          phone: '+421 904 567 890',
           monthlyTarget: 12,
           revenueTarget: 20000,
           contractsThisMonth: 14,
           revenueGenerated: 23500,
-          performance: 98
+          performance: 98,
+          joinedDate: '2022-11-05',
+          location: 'Banská Bystrica, Slovakia'
         }
       ];
 
