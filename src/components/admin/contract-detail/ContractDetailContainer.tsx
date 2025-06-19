@@ -64,7 +64,7 @@ const ContractDetailContainer = ({
             <DevicesServicesSection
               onboardingData={onboardingData}
               isEditMode={isEditMode}
-              onSave={(data) => console.log('Device section save:', data)}
+              onSave={async (data) => console.log('Device section save:', data)}
             />
 
             <CalculationFeesSection
@@ -75,26 +75,26 @@ const ContractDetailContainer = ({
             <AuthorizedPersonsSection
               onboardingData={onboardingData}
               isEditMode={isEditMode}
-              onSave={(data) => console.log('Authorized persons save:', data)}
+              onSave={async (data) => console.log('Authorized persons save:', data)}
             />
 
             <ActualOwnersSection
               onboardingData={onboardingData}
               isEditMode={isEditMode}
-              onSave={(data) => console.log('Actual owners save:', data)}
+              onSave={async (data) => console.log('Actual owners save:', data)}
             />
 
             <ContractNotesSection
               contract={contract}
               onboardingData={onboardingData}
               isEditMode={isEditMode}
-              onSave={(notes) => console.log('Notes save:', notes)}
+              onSave={async (notes) => console.log('Notes save:', notes)}
             />
 
             <SignatureSection
               contract={contract}
               onboardingData={onboardingData}
-              onSave={(data) => console.log('Signature save:', data)}
+              onSave={async (data) => console.log('Signature save:', data)}
             />
           </div>
 
