@@ -1,12 +1,8 @@
 
 import { useTranslation } from 'react-i18next';
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Activity, Plus, Download, Settings } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
-import AdminProfile from "./AdminProfile";
 
 interface AdminHeaderProps {
   title: string;
@@ -83,16 +79,9 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-3">
             <LanguageSwitcher />
-            <Badge className="bg-green-100 text-green-700 border-green-200">
-              <Activity className="h-3 w-3 mr-1" />
-              {t('dashboard.status.online')}
-            </Badge>
             
             {/* Dynamic Actions */}
             {actions}
-
-            {/* User Profile */}
-            <AdminProfile />
           </div>
         </div>
       </div>

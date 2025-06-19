@@ -9,6 +9,7 @@ import {
   BarChart3
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import AdminProfile from "./AdminProfile";
 
 const AdminSidebar = () => {
   const { t } = useTranslation('admin');
@@ -77,6 +78,11 @@ const AdminSidebar = () => {
             {item.title}
           </Button>
         ))}
+      </div>
+
+      {/* User Profile at bottom */}
+      <div className="p-4 border-t border-slate-200">
+        <AdminProfile />
       </div>
     </div>
   );

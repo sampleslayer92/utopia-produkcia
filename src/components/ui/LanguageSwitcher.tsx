@@ -10,8 +10,8 @@ import {
 import { Globe } from 'lucide-react';
 
 const languages = [
-  { code: 'sk', name: 'Slovensky', flag: '🇸🇰' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
+  { code: 'sk', name: 'Slovensky', flag: 'https://flagcdn.com/sk.svg' },
+  { code: 'en', name: 'English', flag: 'https://flagcdn.com/gb.svg' },
 ];
 
 const LanguageSwitcher = () => {
@@ -29,7 +29,11 @@ const LanguageSwitcher = () => {
         <Button variant="outline" size="sm" className="gap-2">
           <Globe className="h-4 w-4" />
           <span className="hidden sm:inline">{currentLanguage.name}</span>
-          <span className="sm:hidden">{currentLanguage.flag}</span>
+          <img 
+            src={currentLanguage.flag} 
+            alt={currentLanguage.name}
+            className="w-4 h-3 sm:hidden object-cover"
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -39,7 +43,11 @@ const LanguageSwitcher = () => {
             onClick={() => handleLanguageChange(language.code)}
             className={`gap-2 ${i18n.language === language.code ? 'bg-accent' : ''}`}
           >
-            <span>{language.flag}</span>
+            <img 
+              src={language.flag} 
+              alt={language.name}
+              className="w-4 h-3 object-cover"
+            />
             <span>{language.name}</span>
           </DropdownMenuItem>
         ))}
