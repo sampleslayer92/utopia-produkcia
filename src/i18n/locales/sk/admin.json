@@ -1,128 +1,32 @@
+
 {
   "navigation": {
     "dashboard": "Dashboard",
     "contracts": "Zmluvy",
-    "clients": "Klienti",
+    "merchants": "Merchanti",
     "reports": "Reporty",
     "settings": "Nastavenia"
   },
   "breadcrumbs": {
-    "editContract": "Úprava zmluvy",
-    "viewContract": "Detail zmluvy"
+    "editContract": "Editácia zmluvy",
+    "viewContract": "Detail zmluvy",
+    "viewMerchant": "Detail merchanta"
   },
   "dashboard": {
-    "title": "Administratívny Dashboard",
-    "subtitle": "Prehľad kľúčových metrík a výkonnosti",
-    "status": {
-      "online": "Online"
-    },
-    "newContract": "Nová zmluva",
-    "metrics": {
-      "monthlyRevenue": "Mesačné príjmy",
-      "monthlyTransactions": "Mesačné transakcie",
-      "averageProfit": "Priemerný zisk",
-      "activeClients": "Aktívni klienti",
-      "fromLastMonth": "zo minulého mesiaca"
-    },
-    "team": {
-      "title": "Výkonnosť tímu",
-      "excellent": "Výborná",
-      "good": "Dobrá",
-      "average": "Priemerná",
-      "needsImprovement": "Potrebuje zlepšenie",
-      "contractsThisMonth": "Zmluvy tento mesiac",
-      "target": "Cieľ",
-      "revenue": "Príjmy"
-    },
-    "revenue": {
-      "title": "Príjmy",
-      "monthlyTrend": "Mesačný trend príjmov",
-      "profitByMonth": "Zisk podľa mesiacov",
-      "revenue": "Príjmy",
-      "profit": "Zisk"
-    }
+    "title": "Administratívny dashboard",
+    "subtitle": "Prehľad všetkých aktivít a štatistík",
+    "newContract": "Nová zmluva"
   },
   "contracts": {
     "title": "Správa zmlúv",
     "subtitle": "Prehľad a správa všetkých zmlúv v systéme",
-    "export": "Export",
+    "export": "Exportovať",
     "newContract": "Nová zmluva"
   },
-  "table": {
-    "title": "Prehľad zmlúv",
-    "subtitle": "Zobrazených {filtered} z {total} zmlúv",
-    "clickHint": "Kliknite na riadok pre zobrazenie detailov",
+  "merchants": {
+    "title": "Správa merchantov",
+    "subtitle": "Prehľad a správa všetkých merchantov v systéme",
     "export": "Exportovať",
-    "newContract": "Nová zmluva",
-    "search": "Hľadať zmluvy...",
-    "filters": {
-      "status": "Stav",
-      "contractType": "Typ zmluvy",
-      "salesPerson": "Obchodník",
-      "dateRange": "Dátumové rozpätie",
-      "allStatuses": "Všetky stavy",
-      "allTypes": "Všetky typy",
-      "allSalespeople": "Všetci obchodníci"
-    },
-    "columns": {
-      "contractNumber": "Číslo zmluvy",
-      "client": "Klient",
-      "contractType": "Typ zmluvy",
-      "monthlyValue": "Mesačná hodnota",
-      "status": "Stav",
-      "completion": "Dokončenie",
-      "salesPerson": "Obchodník",
-      "created": "Vytvorené"
-    },
-    "noResults": {
-      "title": "Žiadne výsledky",
-      "subtitle": "Skúste upraviť filtre alebo vyhľadávací dotaz"
-    }
-  },
-  "status": {
-    "draft": "Návrh",
-    "submitted": "Odoslané",
-    "approved": "Schválené",
-    "rejected": "Zamietnuté"
-  },
-  "clientOperations": {
-    "title": "Klientské operácie",
-    "companyInfo": "Informácie o spoločnosti",
-    "basicData": "Základné údaje",
-    "companyName": "Názov spoločnosti",
-    "ico": "IČO",
-    "dic": "DIČ",
-    "vatNumber": "IČ DPH",
-    "notVatPayer": "Nie je platcom DPH",
-    "headOfficeAddress": "Adresa sídla",
-    "streetAndNumber": "Ulica a číslo",
-    "city": "Mesto",
-    "zipCode": "PSČ",
-    "contactPerson": "Kontaktná osoba",
-    "firstName": "Meno",
-    "lastName": "Priezvisko",
-    "email": "Email",
-    "phone": "Telefón",
-    "businessLocations": "Prevádzkové miesta",
-    "location": "Prevádzka {number}",
-    "locationName": "Názov prevádzky",
-    "address": "Adresa",
-    "iban": "IBAN",
-    "businessSector": "Sektor podnikania",
-    "noLocations": "Žiadne prevádzkové miesta"
-  },
-  "contractActions": {
-    "notSpecified": "Neuvedené"
-  },
-  "messages": {
-    "noContractsSelected": "Nie sú vybrané žiadne zmluvy",
-    "noContractsToDelete": "Nie sú vybrané žiadne zmluvy na zmazanie",
-    "confirmDelete": "Naozaj chcete zmazať {count} {unit}? Táto akcia sa nedá vrátiť späť.",
-    "exportStarted": "Export bol spustený",
-    "deleteUnits": {
-      "single": "zmluvu",
-      "few": "zmluvy",
-      "many": "zmlúv"
-    }
+    "newContract": "Nová zmluva"
   }
 }

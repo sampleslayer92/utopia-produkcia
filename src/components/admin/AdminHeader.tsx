@@ -24,12 +24,20 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
       breadcrumbs.push({ label: t('navigation.contracts'), href: '/admin/contracts' });
     }
 
+    if (location.pathname.startsWith('/admin/merchants')) {
+      breadcrumbs.push({ label: t('navigation.merchants'), href: '/admin/merchants' });
+    }
+
     if (location.pathname.includes('/contract/') && location.pathname.includes('/edit')) {
       breadcrumbs.push({ label: t('breadcrumbs.editContract'), href: '#' });
     }
 
     if (location.pathname.includes('/contract/') && location.pathname.includes('/view')) {
       breadcrumbs.push({ label: t('breadcrumbs.viewContract'), href: '#' });
+    }
+
+    if (location.pathname.includes('/merchant/') && location.pathname.includes('/view')) {
+      breadcrumbs.push({ label: t('breadcrumbs.viewMerchant'), href: '#' });
     }
 
     return breadcrumbs;

@@ -599,6 +599,7 @@ export type Database = {
           contract_number: string
           created_at: string
           id: string
+          merchant_id: string | null
           notes: string | null
           status: Database["public"]["Enums"]["contract_status"]
           submitted_at: string | null
@@ -608,6 +609,7 @@ export type Database = {
           contract_number?: string
           created_at?: string
           id?: string
+          merchant_id?: string | null
           notes?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
@@ -617,12 +619,21 @@ export type Database = {
           contract_number?: string
           created_at?: string
           id?: string
+          merchant_id?: string | null
           notes?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "contracts_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "merchants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       device_selection: {
         Row: {
@@ -693,6 +704,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      merchants: {
+        Row: {
+          address_city: string | null
+          address_street: string | null
+          address_zip_code: string | null
+          company_name: string
+          contact_person_email: string
+          contact_person_name: string
+          contact_person_phone: string | null
+          created_at: string
+          dic: string | null
+          ico: string | null
+          id: string
+          updated_at: string
+          vat_number: string | null
+        }
+        Insert: {
+          address_city?: string | null
+          address_street?: string | null
+          address_zip_code?: string | null
+          company_name: string
+          contact_person_email: string
+          contact_person_name: string
+          contact_person_phone?: string | null
+          created_at?: string
+          dic?: string | null
+          ico?: string | null
+          id?: string
+          updated_at?: string
+          vat_number?: string | null
+        }
+        Update: {
+          address_city?: string | null
+          address_street?: string | null
+          address_zip_code?: string | null
+          company_name?: string
+          contact_person_email?: string
+          contact_person_name?: string
+          contact_person_phone?: string | null
+          created_at?: string
+          dic?: string | null
+          ico?: string | null
+          id?: string
+          updated_at?: string
+          vat_number?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

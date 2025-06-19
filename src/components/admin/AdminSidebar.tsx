@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { 
   LayoutDashboard, 
   FileText, 
-  Users, 
+  Building2, 
   Settings, 
   BarChart3
 } from "lucide-react";
@@ -30,10 +30,10 @@ const AdminSidebar = () => {
       active: location.pathname.startsWith("/admin/contract")
     },
     {
-      title: t('navigation.clients'),
-      icon: Users,
-      path: "/admin/clients",
-      active: false
+      title: t('navigation.merchants'),
+      icon: Building2,
+      path: "/admin/merchants",
+      active: location.pathname.startsWith("/admin/merchant")
     },
     {
       title: t('navigation.reports'),
@@ -72,7 +72,7 @@ const AdminSidebar = () => {
                 ? "bg-blue-600 hover:bg-blue-700 text-white" 
                 : "text-slate-700 hover:bg-slate-100"
             }`}
-            disabled={!item.active && item.path !== "/admin" && item.path !== "/admin/contracts"}
+            disabled={!item.active && item.path !== "/admin" && item.path !== "/admin/contracts" && item.path !== "/admin/merchants"}
           >
             <item.icon className="h-4 w-4 mr-3" />
             {item.title}

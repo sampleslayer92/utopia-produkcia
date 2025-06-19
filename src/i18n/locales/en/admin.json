@@ -1,46 +1,21 @@
+
 {
   "navigation": {
     "dashboard": "Dashboard",
     "contracts": "Contracts",
-    "clients": "Clients", 
+    "merchants": "Merchants",
     "reports": "Reports",
     "settings": "Settings"
   },
   "breadcrumbs": {
     "editContract": "Edit Contract",
-    "viewContract": "Contract Details"
+    "viewContract": "Contract Detail",
+    "viewMerchant": "Merchant Detail"
   },
   "dashboard": {
-    "title": "Admin Dashboard",
-    "subtitle": "Overview of key metrics and performance",
-    "status": {
-      "online": "Online"
-    },
-    "newContract": "New Contract",
-    "metrics": {
-      "monthlyRevenue": "Monthly Revenue",
-      "monthlyTransactions": "Monthly Transactions", 
-      "averageProfit": "Average Profit",
-      "activeClients": "Active Clients",
-      "fromLastMonth": "from last month"
-    },
-    "team": {
-      "title": "Team Performance",
-      "excellent": "Excellent",
-      "good": "Good",
-      "average": "Average",
-      "needsImprovement": "Needs Improvement",
-      "contractsThisMonth": "Contracts this month",
-      "target": "Target",
-      "revenue": "Revenue"
-    },
-    "revenue": {
-      "title": "Revenue",
-      "monthlyTrend": "Monthly Revenue Trend",
-      "profitByMonth": "Profit by Month",
-      "revenue": "Revenue",
-      "profit": "Profit"
-    }
+    "title": "Administrative Dashboard",
+    "subtitle": "Overview of all activities and statistics",
+    "newContract": "New Contract"
   },
   "contracts": {
     "title": "Contract Management",
@@ -48,81 +23,10 @@
     "export": "Export",
     "newContract": "New Contract"
   },
-  "table": {
-    "title": "Contracts Overview",
-    "subtitle": "Showing {filtered} of {total} contracts",
-    "clickHint": "Click on a row to view details",
+  "merchants": {
+    "title": "Merchant Management",
+    "subtitle": "Overview and management of all merchants in the system",
     "export": "Export",
-    "newContract": "New Contract",
-    "search": "Search contracts...",
-    "filters": {
-      "status": "Status",
-      "contractType": "Contract Type",
-      "salesPerson": "Sales Person",
-      "dateRange": "Date Range",
-      "allStatuses": "All Statuses",
-      "allTypes": "All Types",
-      "allSalespeople": "All Salespeople"
-    },
-    "columns": {
-      "contractNumber": "Contract Number",
-      "client": "Client",
-      "contractType": "Contract Type",
-      "monthlyValue": "Monthly Value",
-      "status": "Status",
-      "completion": "Completion",
-      "salesPerson": "Sales Person",
-      "created": "Created"
-    },
-    "noResults": {
-      "title": "No Results",
-      "subtitle": "Try adjusting your filters or search query"
-    }
-  },
-  "status": {
-    "draft": "Draft",
-    "submitted": "Submitted",
-    "approved": "Approved",
-    "rejected": "Rejected"
-  },
-  "clientOperations": {
-    "title": "Client Operations",
-    "companyInfo": "Company Information",
-    "basicData": "Basic Data",
-    "companyName": "Company Name",
-    "ico": "ICO",
-    "dic": "DIC",
-    "vatNumber": "VAT Number",
-    "notVatPayer": "Not a VAT payer",
-    "headOfficeAddress": "Head Office Address",
-    "streetAndNumber": "Street and Number",
-    "city": "City",
-    "zipCode": "ZIP Code",
-    "contactPerson": "Contact Person",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "email": "Email",
-    "phone": "Phone",
-    "businessLocations": "Business Locations",
-    "location": "Location {number}",
-    "locationName": "Location Name",
-    "address": "Address",
-    "iban": "IBAN",
-    "businessSector": "Business Sector",
-    "noLocations": "No business locations"
-  },
-  "contractActions": {
-    "notSpecified": "Not specified"
-  },
-  "messages": {
-    "noContractsSelected": "No contracts selected",
-    "noContractsToDelete": "No contracts selected for deletion",
-    "confirmDelete": "Are you sure you want to delete {count} {unit}? This action cannot be undone.",
-    "exportStarted": "Export has been started",
-    "deleteUnits": {
-      "single": "contract",
-      "few": "contracts",
-      "many": "contracts"
-    }
+    "newContract": "New Contract"
   }
 }
