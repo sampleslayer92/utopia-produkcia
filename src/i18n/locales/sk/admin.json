@@ -69,8 +69,30 @@
       "company": "Spoločnosť",
       "ico": "IČO",
       "status": "Stav",
-      "created": "Vytvorené"
-    }
+      "created": "Vytvorené",
+      "client": "Klient",
+      "contractType": "Typ zmluvy",
+      "monthlyValue": "Mesačná hodnota",
+      "completion": "Dokončenosť",
+      "salesPerson": "Obchodník"
+    },
+    "search": "Vyhľadať zmluvu (číslo, meno, email, spoločnosť, IČO)...",
+    "filters": {
+      "status": "Filter stavu",
+      "contractType": "Typ zmluvy",
+      "salesPerson": "Obchodník",
+      "dateRange": "Časové obdobie",
+      "allStatuses": "Všetky stavy",
+      "allTypes": "Všetky typy",
+      "allSalespeople": "Všetci obchodníci"
+    },
+    "noResults": {
+      "title": "Žiadne výsledky",
+      "subtitle": "Skúste zmeniť kritériá vyhľadávania alebo filtra."
+    },
+    "export": "Exportovať",
+    "newContract": "Nová zmluva",
+    "clickHint": "Kliknite na riadok pre zobrazenie detailu"
   },
   "status": {
     "submitted": "Odoslané",
@@ -89,6 +111,134 @@
     "created": "Vytvorené",
     "submitted": "Odoslané"
   },
+  "clientOperations": {
+    "title": "Klientske operácie",
+    "companyInfo": "Informácie o spoločnosti",
+    "basicData": "Základné údaje",
+    "companyName": "Názov spoločnosti",
+    "ico": "IČO",
+    "dic": "DIČ",
+    "vatNumber": "IČ DPH",
+    "notVatPayer": "Nie je platca DPH",
+    "headOfficeAddress": "Adresa sídla",
+    "streetAndNumber": "Ulica a číslo",
+    "city": "Mesto",
+    "zipCode": "PSČ",
+    "contactPerson": "Kontaktná osoba",
+    "firstName": "Meno",
+    "lastName": "Priezvisko",
+    "email": "Email",
+    "phone": "Telefón",
+    "businessLocations": "Prevádzky",
+    "location": "Prevádzka",
+    "locationName": "Názov prevádzky",
+    "address": "Adresa",
+    "iban": "IBAN",
+    "businessSector": "MCC sektor",
+    "noLocations": "Žiadne prevádzky neboli zadané"
+  },
+  "devicesServices": {
+    "title": "Zariadenia a služby",
+    "device": "Zariadenie",
+    "service": "Služba",
+    "quantity": "Množstvo",
+    "paymentType": "Typ platby",
+    "rental": "Prenájom",
+    "monthlyFeePerPiece": "Mesačný poplatok za kus",
+    "companyCostPerPiece": "Náklady spoločnosti za kus",
+    "costSummary": "Súhrn nákladov",
+    "mainItem": "Hlavná položka",
+    "customerSubtotal": "Medzisúčet zákazníka",
+    "companyCost": "Náklady spoločnosti",
+    "margin": "Marža",
+    "addons": "Doplnky",
+    "addonsAndAccessories": "Doplnky a príslušenstvo",
+    "addAddon": "Pridať doplnok",
+    "addItem": "Pridať položku",
+    "professionalDevice": "Profesionálne zariadenie",
+    "noDevicesSelected": "Žiadne zariadenia nie sú vybrané",
+    "addFirstDevice": "Pridať prvé zariadenie",
+    "confirmDelete": "Naozaj chcete odstrániť túto položku?"
+  },
+  "calculations": {
+    "title": "Výpočty a poplatky",
+    "businessData": "Obchodné údaje",
+    "estimatedTurnover": "Odhadovaný obrat",
+    "averageTransaction": "Priemerná transakcia",
+    "transactionsPerMonth": "Transakcií za mesiac",
+    "mifFees": "MIF poplatky",
+    "regulatedCards": "Regulované karty",
+    "unregulatedCards": "Neregulované karty",
+    "totalMif": "Celkový MIF",
+    "profitabilitySummary": "Súhrn ziskovosti",
+    "monthlyIncome": "Mesačný príjem",
+    "monthlyCosts": "Mesačné náklady",
+    "monthlyProfit": "Mesačný zisk",
+    "annualProfit": "Ročný zisk",
+    "detailedBreakdown": "Podrobný rozpis",
+    "devicesAndServices": "Zariadenia a služby",
+    "pieces": "ks",
+    "subtotalDevices": "Medzisúčet zariadení",
+    "transactionFees": "Transakčné poplatky",
+    "mifRegulated": "MIF regulované",
+    "mifUnregulated": "MIF neregulované",
+    "subtotalTransactions": "Medzisúčet transakcií"
+  },
+  "authorizedPersons": {
+    "title": "Oprávnené osoby",
+    "personalData": "Osobné údaje",
+    "position": "Pozícia",
+    "identityDocument": "Doklad totožnosti",
+    "documentType": "Typ dokladu",
+    "documentNumber": "Číslo dokladu",
+    "validUntil": "Platný do",
+    "issuer": "Vydavateľ"
+  },
+  "actualOwners": {
+    "title": "Skutoční vlastníci",
+    "basicData": "Základné údaje",
+    "birthDate": "Dátum narodenia",
+    "birthPlace": "Miesto narodenia",
+    "birthNumber": "Rodné číslo",
+    "additionalData": "Doplňujúce údaje",
+    "citizenship": "Štátna príslušnosť",
+    "permanentAddress": "Trvalé bydlisko",
+    "politicallyExposed": "Politicky exponovaná osoba",
+    "no": "Nie"
+  },
+  "contractNotes": {
+    "title": "Poznámky k zmluve",
+    "notes": "Poznámky",
+    "contractNotes": "Poznámky k zmluve",
+    "salesNotes": "Obchodné poznámky",
+    "noSalesNotes": "Žiadne obchodné poznámky",
+    "technicalData": "Technické údaje",
+    "created": "Vytvorené",
+    "submitted": "Odoslané",
+    "salesperson": "Obchodník",
+    "contractType": "Typ zmluvy",
+    "standardContract": "Štandardná zmluva"
+  },
+  "signature": {
+    "title": "Podpis zmluvy",
+    "contractStatus": "Stav zmluvy",
+    "sentByEmail": "Odoslané emailom",
+    "signed": "Podpísané",
+    "signatureDate": "Dátum podpisu",
+    "signedBy": "Podpísal",
+    "ipAddress": "IP adresa",
+    "notAvailable": "Nedostupné",
+    "consentSummary": "Súhrn súhlasov",
+    "termsConsent": "Súhlas s obchodnými podmienkami",
+    "gdprConsent": "Súhlas so spracovaním osobných údajov",
+    "electronicCommunicationConsent": "Súhlas s elektronickou komunikáciou",
+    "signatureActions": "Akcie podpisu",
+    "markAsSigned": "Označiť ako podpísané",
+    "sendReminder": "Odoslať pripomienku"
+  },
+  "contractActions": {
+    "notSpecified": "Neuvedené"
+  },
   "messages": {
     "contractSaved": "Zmluva uložená",
     "contractSavedDesc": "Zmeny boli úspešne uložené.",
@@ -99,6 +249,14 @@
     "contractDeleted": "Zmluva zmazaná",
     "contractDeletedDesc": "Zmluva a všetky súvisiace údaje boli úspešne zmazané.",
     "deleteError": "Chyba pri mazaní",
-    "confirmDelete": "Naozaj chcete zmazať zmluvu {{contractNumber}}? Táto akcia sa nedá vrátiť späť."
+    "confirmDelete": "Naozaj chcete zmazať zmluvu {{contractNumber}}? Táto akcia sa nedá vrátiť späť.",
+    "noContractsSelected": "Nie sú vybrané žiadne zmluvy",
+    "noContractsToDelete": "Nie sú vybrané žiadne zmluvy na zmazanie",
+    "exportStarted": "Export sa spustil",
+    "deleteUnits": {
+      "single": "zmluvu",
+      "few": "zmluvy",
+      "many": "zmlúv"
+    }
   }
 }

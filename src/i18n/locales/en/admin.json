@@ -69,8 +69,30 @@
       "company": "Company",
       "ico": "Company ID",
       "status": "Status",
-      "created": "Created"
-    }
+      "created": "Created",
+      "client": "Client",
+      "contractType": "Contract Type",
+      "monthlyValue": "Monthly Value",
+      "completion": "Completion",
+      "salesPerson": "Sales Person"
+    },
+    "search": "Search contract (number, name, email, company, ID)...",
+    "filters": {
+      "status": "Status Filter",
+      "contractType": "Contract Type",
+      "salesPerson": "Sales Person",
+      "dateRange": "Date Range",
+      "allStatuses": "All Statuses",
+      "allTypes": "All Types",
+      "allSalespeople": "All Salespeople"
+    },
+    "noResults": {
+      "title": "No Results",
+      "subtitle": "Try changing your search criteria or filters."
+    },
+    "export": "Export",
+    "newContract": "New Contract",
+    "clickHint": "Click on row to view details"
   },
   "status": {
     "submitted": "Submitted",
@@ -89,6 +111,134 @@
     "created": "Created",
     "submitted": "Submitted"
   },
+  "clientOperations": {
+    "title": "Client Operations",
+    "companyInfo": "Company Information",
+    "basicData": "Basic Data",
+    "companyName": "Company Name",
+    "ico": "Company ID",
+    "dic": "Tax ID",
+    "vatNumber": "VAT Number",
+    "notVatPayer": "Not a VAT payer",
+    "headOfficeAddress": "Head Office Address",
+    "streetAndNumber": "Street and Number",
+    "city": "City",
+    "zipCode": "ZIP Code",
+    "contactPerson": "Contact Person",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "businessLocations": "Business Locations",
+    "location": "Location",
+    "locationName": "Location Name",
+    "address": "Address",
+    "iban": "IBAN",
+    "businessSector": "MCC Sector",
+    "noLocations": "No business locations have been entered"
+  },
+  "devicesServices": {
+    "title": "Devices and Services",
+    "device": "Device",
+    "service": "Service",
+    "quantity": "Quantity",
+    "paymentType": "Payment Type",
+    "rental": "Rental",
+    "monthlyFeePerPiece": "Monthly Fee per Piece",
+    "companyCostPerPiece": "Company Cost per Piece",
+    "costSummary": "Cost Summary",
+    "mainItem": "Main Item",
+    "customerSubtotal": "Customer Subtotal",
+    "companyCost": "Company Cost",
+    "margin": "Margin",
+    "addons": "Add-ons",
+    "addonsAndAccessories": "Add-ons and Accessories",
+    "addAddon": "Add Add-on",
+    "addItem": "Add Item",
+    "professionalDevice": "Professional Device",
+    "noDevicesSelected": "No devices selected",
+    "addFirstDevice": "Add first device",
+    "confirmDelete": "Are you sure you want to remove this item?"
+  },
+  "calculations": {
+    "title": "Calculations and Fees",
+    "businessData": "Business Data",
+    "estimatedTurnover": "Estimated Turnover",
+    "averageTransaction": "Average Transaction",
+    "transactionsPerMonth": "Transactions per Month",
+    "mifFees": "MIF Fees",
+    "regulatedCards": "Regulated Cards",
+    "unregulatedCards": "Unregulated Cards",
+    "totalMif": "Total MIF",
+    "profitabilitySummary": "Profitability Summary",
+    "monthlyIncome": "Monthly Income",
+    "monthlyCosts": "Monthly Costs",
+    "monthlyProfit": "Monthly Profit",
+    "annualProfit": "Annual Profit",
+    "detailedBreakdown": "Detailed Breakdown",
+    "devicesAndServices": "Devices and Services",
+    "pieces": "pcs",
+    "subtotalDevices": "Devices Subtotal",
+    "transactionFees": "Transaction Fees",
+    "mifRegulated": "MIF Regulated",
+    "mifUnregulated": "MIF Unregulated",
+    "subtotalTransactions": "Transactions Subtotal"
+  },
+  "authorizedPersons": {
+    "title": "Authorized Persons",
+    "personalData": "Personal Data",
+    "position": "Position",
+    "identityDocument": "Identity Document",
+    "documentType": "Document Type",
+    "documentNumber": "Document Number",
+    "validUntil": "Valid Until",
+    "issuer": "Issuer"
+  },
+  "actualOwners": {
+    "title": "Actual Owners",
+    "basicData": "Basic Data",
+    "birthDate": "Birth Date",
+    "birthPlace": "Birth Place",
+    "birthNumber": "Birth Number",
+    "additionalData": "Additional Data",
+    "citizenship": "Citizenship",
+    "permanentAddress": "Permanent Address",
+    "politicallyExposed": "Politically Exposed Person",
+    "no": "No"
+  },
+  "contractNotes": {
+    "title": "Contract Notes",
+    "notes": "Notes",
+    "contractNotes": "Contract Notes",
+    "salesNotes": "Sales Notes",
+    "noSalesNotes": "No sales notes",
+    "technicalData": "Technical Data",
+    "created": "Created",
+    "submitted": "Submitted",
+    "salesperson": "Salesperson",
+    "contractType": "Contract Type",
+    "standardContract": "Standard Contract"
+  },
+  "signature": {
+    "title": "Contract Signature",
+    "contractStatus": "Contract Status",
+    "sentByEmail": "Sent by Email",
+    "signed": "Signed",
+    "signatureDate": "Signature Date",
+    "signedBy": "Signed By",
+    "ipAddress": "IP Address",
+    "notAvailable": "Not Available",
+    "consentSummary": "Consent Summary",
+    "termsConsent": "Terms and Conditions Consent",
+    "gdprConsent": "GDPR Consent",
+    "electronicCommunicationConsent": "Electronic Communication Consent",
+    "signatureActions": "Signature Actions",
+    "markAsSigned": "Mark as Signed",
+    "sendReminder": "Send Reminder"
+  },
+  "contractActions": {
+    "notSpecified": "Not Specified"
+  },
   "messages": {
     "contractSaved": "Contract Saved",
     "contractSavedDesc": "Changes have been successfully saved.",
@@ -99,6 +249,14 @@
     "contractDeleted": "Contract Deleted",
     "contractDeletedDesc": "Contract and all related data have been successfully deleted.",
     "deleteError": "Delete Error",
-    "confirmDelete": "Are you sure you want to delete contract {{contractNumber}}? This action cannot be undone."
+    "confirmDelete": "Are you sure you want to delete contract {{contractNumber}}? This action cannot be undone.",
+    "noContractsSelected": "No contracts selected",
+    "noContractsToDelete": "No contracts selected for deletion",
+    "exportStarted": "Export started",
+    "deleteUnits": {
+      "single": "contract",
+      "few": "contracts",
+      "many": "contracts"
+    }
   }
 }
