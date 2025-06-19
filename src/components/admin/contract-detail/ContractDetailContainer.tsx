@@ -1,4 +1,3 @@
-
 import ContractHeader from "./ContractHeader";
 import EnhancedClientOperationsSection from "./EnhancedClientOperationsSection";
 import DevicesServicesSection from "./DevicesServicesSection";
@@ -20,7 +19,7 @@ interface ContractDetailContainerProps {
   onToggleEdit: () => void;
   onSave: () => void;
   onDelete: () => void;
-  onClientOperationsUpdate: (data: any) => void;
+  onClientOperationsUpdate: (data: any) => Promise<void>;
   onClientOperationsLocalChanges: (hasChanges: boolean) => void;
 }
 
