@@ -52,51 +52,61 @@ const ContractDetail = () => {
   const { contract, onboardingData } = contractDataResult.data;
 
   const handleSave = async () => {
-    if (!clientOperationsHasChanges) {
-      console.log('No changes to save');
-      toast({
-        title: "Informácia",
-        description: "Nie sú žiadne zmeny na uloženie.",
-      });
-      return;
-    }
+    console.log('HandleSave called with state:', { 
+      clientOperationsHasChanges,
+      isEditMode
+    });
 
     // Call the global commit function exposed by EnhancedClientOperationsSection
     const commitFunction = (window as any).__commitClientOperationsChanges;
+    console.log('Commit function available:', !!commitFunction);
+    
     if (commitFunction) {
       try {
         console.log('Calling commit function...');
         const updatedData = await commitFunction();
+        console.log('Commit function returned data:', updatedData);
+        
         if (updatedData) {
-          console.log('Commited data:', updatedData);
-          // Use the contract update mutation with the committed data
+          console.log('Data received from commit, calling updateContract mutation...');
           await updateContract.mutateAsync({
             data: updatedData
           });
           
           setClientOperationsHasChanges(false);
-          // Automatically exit edit mode after successful save
           setIsEditMode(false);
+          
           toast({
             title: "Zmluva uložená",
             description: "Zmeny boli úspešne uložené a editácia ukončená.",
           });
         } else {
-          throw new Error('No data returned from commit');
+          console.warn('No data returned from commit function');
+          toast({
+            title: "Informácia",
+            description: "Nie sú žiadne zmeny na uloženie.",
+          });
         }
       } catch (error) {
-        console.error('Error saving contract:', error);
+        console.error('Error in handleSave:', error);
+        
+        let errorMessage = "Nepodarilo sa uložiť zmeny.";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+          console.error('Error details:', error.stack);
+        }
+        
         toast({
-          title: "Chyba",
-          description: "Nepodarilo sa uložiť zmeny.",
+          title: "Chyba pri ukladaní",
+          description: errorMessage,
           variant: "destructive",
         });
       }
     } else {
-      console.error('Commit function not available');
+      console.error('Commit function not available on window object');
       toast({
         title: "Chyba",
-        description: "Funkcia uloženia nie je dostupná.",
+        description: "Funkcia uloženia nie je dostupná. Skúste obnoviť stránku.",
         variant: "destructive",
       });
     }

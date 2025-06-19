@@ -63,24 +63,52 @@ const EnhancedClientOperationsSection = ({
     }
   }, [isEditMode, resetLocalData]);
 
-  // Expose commit function to parent
+  // Expose commit function to parent - ALWAYS available
   useEffect(() => {
-    if (hasLocalChanges && localData) {
-      // Store the commit function globally so parent can access it
-      (window as any).__commitClientOperationsChanges = async () => {
-        try {
-          await onUpdate(localData);
-          commitLocalChanges();
-          return true;
-        } catch (error) {
-          console.error('Save failed:', error);
-          return false;
+    const commitFunction = async () => {
+      console.log('Commit function called with data:', localData || onboardingData);
+      
+      try {
+        // Use localData if available and has changes, otherwise use original data
+        const dataToSave = (hasLocalChanges && localData) ? localData : onboardingData;
+        
+        // Ensure business locations have correct field names for the database
+        if (dataToSave.businessLocations) {
+          dataToSave.businessLocations = dataToSave.businessLocations.map((location: any) => ({
+            ...location,
+            // Map frontend field names to database field names
+            name: location.locationName || location.name,
+            businessSector: location.mccCode || location.businessSector,
+            // Ensure all required fields are present
+            estimatedTurnover: location.estimatedTurnover || 0,
+            averageTransaction: location.averageTransaction || 0,
+            seasonality: location.seasonality || 'year-round',
+            openingHours: location.openingHours || '',
+          }));
         }
-      };
-    } else {
+        
+        console.log('Processed data for save:', dataToSave);
+        
+        await onUpdate(dataToSave);
+        
+        if (hasLocalChanges) {
+          commitLocalChanges();
+        }
+        
+        return dataToSave;
+      } catch (error) {
+        console.error('Commit function error:', error);
+        throw error;
+      }
+    };
+
+    // Always expose the commit function
+    (window as any).__commitClientOperationsChanges = commitFunction;
+    
+    return () => {
       (window as any).__commitClientOperationsChanges = null;
-    }
-  }, [hasLocalChanges, localData, onUpdate, commitLocalChanges]);
+    };
+  }, [hasLocalChanges, localData, onboardingData, onUpdate, commitLocalChanges]);
 
   const handleCompanyFieldChange = (field: string, value: string) => {
     console.log(`Updating company field ${field} with value:`, value);
@@ -349,12 +377,12 @@ const EnhancedClientOperationsSection = ({
                           <Label className="text-sm font-medium text-slate-600">{t('clientOperations.locationName')}</Label>
                           {isEditMode ? (
                             <Input 
-                              value={location.locationName || ''} 
-                              onChange={(e) => handleBusinessLocationChange(index, 'locationName', e.target.value)}
+                              value={location.name || location.locationName || ''} 
+                              onChange={(e) => handleBusinessLocationChange(index, 'name', e.target.value)}
                               className="mt-1" 
                             />
                           ) : (
-                            <p className="text-slate-900 mt-1">{location.locationName || t('contractActions.notSpecified')}</p>
+                            <p className="text-slate-900 mt-1">{location.name || location.locationName || t('contractActions.notSpecified')}</p>
                           )}
                         </div>
                       </EditableSection>
@@ -398,12 +426,12 @@ const EnhancedClientOperationsSection = ({
                           <Label className="text-sm font-medium text-slate-600">{t('clientOperations.businessSector')}</Label>
                           {isEditMode ? (
                             <Input 
-                              value={location.mccCode || ''} 
-                              onChange={(e) => handleBusinessLocationChange(index, 'mccCode', e.target.value)}
+                              value={location.businessSector || location.mccCode || ''} 
+                              onChange={(e) => handleBusinessLocationChange(index, 'businessSector', e.target.value)}
                               className="mt-1" 
                             />
                           ) : (
-                            <p className="text-slate-900 mt-1">{location.mccCode || t('contractActions.notSpecified')}</p>
+                            <p className="text-slate-900 mt-1">{location.businessSector || location.mccCode || t('contractActions.notSpecified')}</p>
                           )}
                         </div>
                       </EditableSection>

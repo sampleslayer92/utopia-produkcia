@@ -31,12 +31,15 @@ const convertRegistryTypeToDb = (registryType: string): Database['public']['Enum
 const validateContractData = (data: OnboardingData): string[] => {
   const errors: string[] = [];
   
+  console.log('Validating contract data:', data);
+  
   if (!data.contactInfo?.firstName) errors.push('Meno kontaktnej osoby je povinné');
   if (!data.contactInfo?.lastName) errors.push('Priezvisko kontaktnej osoby je povinné');
   if (!data.contactInfo?.email) errors.push('Email je povinný');
   if (!data.companyInfo?.companyName) errors.push('Názov spoločnosti je povinný');
   if (!data.companyInfo?.ico) errors.push('IČO je povinné');
   
+  console.log('Validation errors found:', errors);
   return errors;
 };
 
@@ -46,7 +49,7 @@ export const useContractUpdate = (contractId: string) => {
   return useMutation({
     mutationFn: async ({ data, status }: { data: OnboardingData; status?: ContractStatus }) => {
       console.log('Starting contract update for ID:', contractId);
-      console.log('Update data:', data);
+      console.log('Update data received:', data);
       
       // Validate data before processing
       const validationErrors = validateContractData(data);
@@ -195,6 +198,8 @@ export const useContractUpdate = (contractId: string) => {
           console.log('Updating business locations...', data.businessLocations);
           
           for (const location of data.businessLocations) {
+            console.log('Processing location:', location);
+            
             const { data: existingLocation } = await supabase
               .from('business_locations')
               .select('id')
@@ -202,10 +207,11 @@ export const useContractUpdate = (contractId: string) => {
               .eq('location_id', location.id)
               .maybeSingle();
 
+            // Map the frontend field names to database field names
             const locationData = {
               contract_id: contractId,
               location_id: location.id,
-              name: location.name || '',
+              name: location.name || location.locationName || '',
               has_pos: location.hasPOS || false,
               address_street: location.address?.street || '',
               address_city: location.address?.city || '',
@@ -214,13 +220,15 @@ export const useContractUpdate = (contractId: string) => {
               contact_person_name: location.contactPerson?.name || '',
               contact_person_email: location.contactPerson?.email || '',
               contact_person_phone: location.contactPerson?.phone || '',
-              business_sector: location.businessSector || '',
+              business_sector: location.businessSector || location.mccCode || '',
               estimated_turnover: location.estimatedTurnover || 0,
               average_transaction: location.averageTransaction || 0,
               opening_hours: location.openingHours || '',
               seasonality: (location.seasonality as 'year-round' | 'seasonal') || 'year-round',
               seasonal_weeks: location.seasonalWeeks || null
             };
+
+            console.log('Mapped location data:', locationData);
 
             if (existingLocation) {
               const { error: locationError } = await supabase
