@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContractData } from "@/hooks/useContractData";
@@ -69,9 +68,11 @@ const ContractDetail = () => {
         const success = await commitFunction();
         if (success) {
           setClientOperationsHasChanges(false);
+          // Automatically exit edit mode after successful save
+          setIsEditMode(false);
           toast({
             title: "Zmluva uložená",
-            description: "Zmeny boli úspešne uložené.",
+            description: "Zmeny boli úspešne uložené a editácia ukončená.",
           });
         } else {
           throw new Error('Save failed');
@@ -97,6 +98,7 @@ const ContractDetail = () => {
       const shouldSave = window.confirm('Máte neuložené zmeny. Chcete ich uložiť pred ukončením editácie?');
       if (shouldSave) {
         handleSave();
+        return; // Don't toggle edit mode here, it will be done in handleSave after successful save
       } else {
         setClientOperationsHasChanges(false);
       }
