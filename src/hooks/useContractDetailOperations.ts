@@ -136,7 +136,7 @@ export const useContractDetailOperations = (contractId: string, contract: any) =
     }
   };
 
-  // Simplified update handler - no longer used for auto-save
+  // Updated to async function to match expected type
   const handleClientOperationsUpdate = async (updatedData: any) => {
     console.log('Client operations updated, saving:', updatedData);
     
