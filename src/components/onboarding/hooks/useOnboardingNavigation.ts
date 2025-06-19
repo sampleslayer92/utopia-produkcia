@@ -14,7 +14,8 @@ export const useOnboardingNavigation = (
   createContract: () => Promise<any>,
   updateData: (data: Partial<OnboardingData>) => void,
   isBasicInfoComplete: boolean,
-  onStepNavigate?: (fromStep: number, toStep: number) => void // New callback for step navigation
+  onStepNavigate?: (fromStep: number, toStep: number) => void, // New callback for step navigation
+  isAdminMode: boolean = false // New parameter for admin mode
 ) => {
   const navigate = useNavigate();
   const totalSteps = 7; // Updated from 8 to 7 steps
@@ -99,7 +100,7 @@ export const useOnboardingNavigation = (
       // Clear onboarding data
       clearData();
       
-      // Navigate to admin dashboard instead of merchant
+      // Navigate to admin dashboard (works for both admin mode and standalone)
       navigate('/admin');
       
       toast.success('Registrácia dokončená!', {
@@ -117,7 +118,13 @@ export const useOnboardingNavigation = (
     toast.success('Onboarding údaje uložené', {
       description: 'Môžete pokračovať neskôr z rovnakého miesta'
     });
-    navigate('/');
+    
+    // Navigate based on mode
+    if (isAdminMode) {
+      navigate('/admin');
+    } else {
+      navigate('/');
+    }
   };
 
   const handleSaveSignature = () => {

@@ -19,7 +19,11 @@ import { useContractCreation } from "@/hooks/useContractCreation";
 import { useContractPersistence } from "@/hooks/useContractPersistence";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const OnboardingFlow = () => {
+interface OnboardingFlowProps {
+  isAdminMode?: boolean;
+}
+
+const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
   const { t } = useTranslation(['common', 'notifications']);
   const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData();
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
@@ -77,7 +81,8 @@ const OnboardingFlow = () => {
     createContract,
     updateData,
     isBasicInfoComplete,
-    handleStepNavigation // Pass the callback
+    handleStepNavigation, // Pass the callback
+    isAdminMode // Pass admin mode flag
   );
 
   const handleAutoSave = useCallback(async (data: typeof onboardingData) => {
@@ -127,6 +132,98 @@ const OnboardingFlow = () => {
 
   const currentStepData = onboardingSteps[currentStep];
 
+  // If in admin mode, render simplified layout
+  if (isAdminMode) {
+    return (
+      <OnboardingErrorBoundary onReset={handleErrorReset}>
+        <div className="p-6">
+          {/* Mobile Stepper for admin mode */}
+          {isMobile && (
+            <MobileStepper
+              currentStep={currentStep}
+              totalSteps={totalSteps}
+              stepTitle={currentStepData?.title || t('common:navigation.step')}
+              progress={stepValidation.completionPercentage}
+              onBack={prevStep}
+              showBackButton={currentStep > 0}
+            />
+          )}
+          
+          {/* Desktop Top Bar for admin mode */}
+          {!isMobile && (
+            <OnboardingTopBar
+              currentStep={currentStep}
+              steps={onboardingSteps}
+              onStepClick={handleStepClick}
+              onboardingData={onboardingData}
+            />
+          )}
+          
+          {/* Main Content */}
+          <div className="flex-1 py-6">
+            <div className="max-w-7xl mx-auto">
+              {/* Auto-save indicator - Hide on mobile */}
+              {!isMobile && (
+                <div className="flex justify-end items-center mb-4">
+                  <AutoSaveIndicator 
+                    status={autoSaveStatus}
+                    lastSaved={lastSaved}
+                  />
+                </div>
+              )}
+
+              <OnboardingStepRenderer
+                currentStep={currentStep}
+                data={onboardingData}
+                updateData={handleUpdateData}
+                onNext={nextStep}
+                onPrev={prevStep}
+                onComplete={handleComplete}
+                onSaveSignature={handleSaveSignature}
+                onStepNavigate={handleStepNavigation}
+              />
+            </div>
+          </div>
+          
+          {/* Desktop Navigation for admin mode */}
+          {!isMobile && (
+            <div className="border-t border-slate-200 bg-white/90 py-6">
+              <div className="max-w-7xl mx-auto flex justify-between">
+                <OnboardingNavigation
+                  currentStep={currentStep}
+                  totalSteps={totalSteps}
+                  onPrevStep={prevStep}
+                  onNextStep={nextStep}
+                  onComplete={handleComplete}
+                  onSaveAndExit={handleSaveAndExit}
+                  onSaveSignature={handleSaveSignature}
+                  onChangeSolution={handleChangeSolution}
+                  isSubmitting={isSubmitting || isSaving}
+                  stepValidation={stepValidation}
+                />
+              </div>
+            </div>
+          )}
+          
+          {/* Mobile Navigation for admin mode */}
+          <MobileOptimizedNavigation
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            onPrevStep={prevStep}
+            onNextStep={nextStep}
+            onComplete={handleComplete}
+            onSaveAndExit={handleSaveAndExit}
+            onSaveSignature={handleSaveSignature}
+            onChangeSolution={handleChangeSolution}
+            isSubmitting={isSubmitting || isSaving}
+            stepValidation={stepValidation}
+          />
+        </div>
+      </OnboardingErrorBoundary>
+    );
+  }
+
+  // Original standalone onboarding layout
   return (
     <OnboardingErrorBoundary onReset={handleErrorReset}>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">

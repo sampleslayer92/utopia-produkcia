@@ -14,6 +14,7 @@ import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
 import ContractDetail from "./components/admin/ContractDetail";
 import MerchantDetailPage from "./pages/MerchantDetailPage";
+import AdminOnboardingPage from "./pages/AdminOnboardingPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -30,6 +31,7 @@ const App = () => (
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/contracts" element={<ContractsPage />} />
         <Route path="/admin/merchants" element={<MerchantsPage />} />
+        <Route path="/admin/onboarding" element={<AdminOnboardingPage />} />
         <Route path="/admin/contract/:id/edit" element={<ContractEditPage />} />
         <Route path="/admin/contract/:id/view" element={<ContractDetail />} />
         <Route path="/admin/merchant/:id/view" element={<MerchantDetailPage />} />
