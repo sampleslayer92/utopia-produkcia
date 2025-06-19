@@ -65,8 +65,15 @@ const ContractDetail = () => {
     const commitFunction = (window as any).__commitClientOperationsChanges;
     if (commitFunction) {
       try {
-        const success = await commitFunction();
-        if (success) {
+        console.log('Calling commit function...');
+        const updatedData = await commitFunction();
+        if (updatedData) {
+          console.log('Commited data:', updatedData);
+          // Use the contract update mutation with the committed data
+          await updateContract.mutateAsync({
+            data: updatedData
+          });
+          
           setClientOperationsHasChanges(false);
           // Automatically exit edit mode after successful save
           setIsEditMode(false);
@@ -75,7 +82,7 @@ const ContractDetail = () => {
             description: "Zmeny boli úspešne uložené a editácia ukončená.",
           });
         } else {
-          throw new Error('Save failed');
+          throw new Error('No data returned from commit');
         }
       } catch (error) {
         console.error('Error saving contract:', error);
@@ -85,6 +92,13 @@ const ContractDetail = () => {
           variant: "destructive",
         });
       }
+    } else {
+      console.error('Commit function not available');
+      toast({
+        title: "Chyba",
+        description: "Funkcia uloženia nie je dostupná.",
+        variant: "destructive",
+      });
     }
   };
 

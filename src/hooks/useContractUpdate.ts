@@ -83,7 +83,7 @@ export const useContractUpdate = (contractId: string) => {
 
         // Update contact info if provided
         if (data.contactInfo) {
-          console.log('Updating contact info...');
+          console.log('Updating contact info...', data.contactInfo);
           const { data: existingContact } = await supabase
             .from('contact_info')
             .select('id')
@@ -92,12 +92,13 @@ export const useContractUpdate = (contractId: string) => {
 
           const contactData = {
             salutation: convertSalutationToDb(data.contactInfo.salutation),
-            first_name: data.contactInfo.firstName,
-            last_name: data.contactInfo.lastName,
-            email: data.contactInfo.email,
+            first_name: data.contactInfo.firstName || '',
+            last_name: data.contactInfo.lastName || '',
+            email: data.contactInfo.email || '',
             phone: data.contactInfo.phone || '',
             phone_prefix: data.contactInfo.phonePrefix || '+421',
-            sales_note: data.contactInfo.salesNote || null
+            sales_note: data.contactInfo.salesNote || null,
+            user_role: data.contactInfo.userRole || null
           };
 
           if (existingContact) {
@@ -127,7 +128,7 @@ export const useContractUpdate = (contractId: string) => {
 
         // Update company info if provided
         if (data.companyInfo) {
-          console.log('Updating company info...');
+          console.log('Updating company info...', data.companyInfo);
           const { data: existingCompany } = await supabase
             .from('company_info')
             .select('id')
@@ -140,7 +141,7 @@ export const useContractUpdate = (contractId: string) => {
           const companyData = {
             ico: data.companyInfo.ico || '',
             dic: data.companyInfo.dic || '',
-            company_name: data.companyInfo.companyName,
+            company_name: data.companyInfo.companyName || '',
             registry_type: convertRegistryTypeToDb(data.companyInfo.registryType || 'Živnosť'),
             is_vat_payer: data.companyInfo.isVatPayer || false,
             vat_number: data.companyInfo.vatNumber || null,
@@ -189,6 +190,61 @@ export const useContractUpdate = (contractId: string) => {
           }
         }
 
+        // Update business locations if provided
+        if (data.businessLocations && data.businessLocations.length > 0) {
+          console.log('Updating business locations...', data.businessLocations);
+          
+          for (const location of data.businessLocations) {
+            const { data: existingLocation } = await supabase
+              .from('business_locations')
+              .select('id')
+              .eq('contract_id', contractId)
+              .eq('location_id', location.id)
+              .maybeSingle();
+
+            const locationData = {
+              contract_id: contractId,
+              location_id: location.id,
+              name: location.name || '',
+              has_pos: location.hasPOS || false,
+              address_street: location.address?.street || '',
+              address_city: location.address?.city || '',
+              address_zip_code: location.address?.zipCode || '',
+              iban: location.iban || '',
+              contact_person_name: location.contactPerson?.name || '',
+              contact_person_email: location.contactPerson?.email || '',
+              contact_person_phone: location.contactPerson?.phone || '',
+              business_sector: location.businessSector || '',
+              estimated_turnover: location.estimatedTurnover || 0,
+              average_transaction: location.averageTransaction || 0,
+              opening_hours: location.openingHours || '',
+              seasonality: (location.seasonality as 'year-round' | 'seasonal') || 'year-round',
+              seasonal_weeks: location.seasonalWeeks || null
+            };
+
+            if (existingLocation) {
+              const { error: locationError } = await supabase
+                .from('business_locations')
+                .update(locationData)
+                .eq('id', existingLocation.id);
+
+              if (locationError) {
+                console.error('Error updating business location:', locationError);
+                throw new Error(`Chyba pri aktualizácii prevádzky: ${locationError.message}`);
+              }
+            } else {
+              const { error: locationError } = await supabase
+                .from('business_locations')
+                .insert(locationData);
+
+              if (locationError) {
+                console.error('Error inserting business location:', locationError);
+                throw new Error(`Chyba pri vytváraní prevádzky: ${locationError.message}`);
+              }
+            }
+          }
+        }
+
         console.log('Contract updated successfully');
         return { success: true };
 
@@ -203,14 +259,10 @@ export const useContractUpdate = (contractId: string) => {
     onSuccess: () => {
       console.log('Contract update successful, invalidating queries...');
       queryClient.invalidateQueries({ queryKey: ['contract', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
       queryClient.invalidateQueries({ queryKey: ['contracts'] });
       queryClient.invalidateQueries({ queryKey: ['contracts-stats'] });
       queryClient.invalidateQueries({ queryKey: ['enhanced-contracts'] });
-      
-      toast({
-        title: "Zmluva aktualizovaná",
-        description: "Zmeny boli úspešne uložené.",
-      });
     },
     onError: (error) => {
       console.error('Error updating contract:', error);
