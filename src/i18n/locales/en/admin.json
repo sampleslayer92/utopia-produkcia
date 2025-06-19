@@ -15,7 +15,24 @@
   "dashboard": {
     "title": "Administrative Dashboard",
     "subtitle": "Overview of all activities and statistics",
-    "newContract": "New Contract"
+    "newContract": "New Contract",
+    "status": {
+      "online": "Online"
+    },
+    "revenue": {
+      "title": "Revenue",
+      "monthlyTrend": "Monthly Revenue Trend",
+      "profitByMonth": "Profit by Month",
+      "revenue": "Revenue",
+      "profit": "Profit"
+    },
+    "metrics": {
+      "monthlyRevenue": "Monthly Revenue",
+      "monthlyTransactions": "Monthly Transactions",
+      "averageProfit": "Average Profit",
+      "activeClients": "Active Clients",
+      "fromLastMonth": "from last month"
+    }
   },
   "contracts": {
     "title": "Contract Management",
@@ -28,5 +45,15 @@
     "subtitle": "Overview and management of all merchants in the system",
     "export": "Export",
     "newContract": "New Contract"
+  },
+  "stats": {
+    "totalContracts": "Total Contracts",
+    "submittedContracts": "Submitted Contracts",
+    "approvedContracts": "Approved Contracts",
+    "drafts": "Drafts",
+    "recentChange": "{{count}} in recent week",
+    "waitingApproval": "Waiting for approval",
+    "activeContracts": "Active contracts",
+    "incomplete": "Incomplete"
   }
 }

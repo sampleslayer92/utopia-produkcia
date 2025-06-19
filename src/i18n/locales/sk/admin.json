@@ -15,7 +15,24 @@
   "dashboard": {
     "title": "Administratívny dashboard",
     "subtitle": "Prehľad všetkých aktivít a štatistík",
-    "newContract": "Nová zmluva"
+    "newContract": "Nová zmluva",
+    "status": {
+      "online": "Online"
+    },
+    "revenue": {
+      "title": "Príjmy",
+      "monthlyTrend": "Mesačný vývoj príjmov",
+      "profitByMonth": "Zisk podľa mesiacov",
+      "revenue": "Príjmy",
+      "profit": "Zisk"
+    },
+    "metrics": {
+      "monthlyRevenue": "Mesačné príjmy",
+      "monthlyTransactions": "Mesačné transakcie",
+      "averageProfit": "Priemerný zisk",
+      "activeClients": "Aktívni klienti",
+      "fromLastMonth": "oproti minulému mesiacu"
+    }
   },
   "contracts": {
     "title": "Správa zmlúv",
@@ -28,5 +45,15 @@
     "subtitle": "Prehľad a správa všetkých merchantov v systéme",
     "export": "Exportovať",
     "newContract": "Nová zmluva"
+  },
+  "stats": {
+    "totalContracts": "Celkový počet zmlúv",
+    "submittedContracts": "Odoslané zmluvy",
+    "approvedContracts": "Schválené zmluvy",
+    "drafts": "Koncepty",
+    "recentChange": "{{count}} za posledný týždeň",
+    "waitingApproval": "Čakajú na schválenie",
+    "activeContracts": "Aktívne zmluvy",
+    "incomplete": "Nedokončené"
   }
 }
