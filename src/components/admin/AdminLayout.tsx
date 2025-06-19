@@ -11,10 +11,10 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <AdminSidebar />
       
-      <div className="flex-1 flex flex-col">
+      <div className="ml-64 flex flex-col min-h-screen">
         <AdminHeader title={title} subtitle={subtitle} actions={actions} />
         
         <main className="flex-1 p-6">

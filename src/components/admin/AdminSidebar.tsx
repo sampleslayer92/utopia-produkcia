@@ -50,7 +50,7 @@ const AdminSidebar = () => {
   ];
 
   return (
-    <div className="w-64 min-h-screen bg-white border-r border-slate-200 flex flex-col">
+    <div className="fixed left-0 top-0 w-64 h-screen bg-white border-r border-slate-200 flex flex-col z-50">
       {/* Logo */}
       <div className="p-6 border-b border-slate-200 flex justify-center">
         <img 
@@ -61,7 +61,7 @@ const AdminSidebar = () => {
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 p-4 space-y-2">
+      <div className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => (
           <Button
             key={item.path}
