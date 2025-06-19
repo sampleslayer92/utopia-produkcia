@@ -207,11 +207,11 @@ export const useContractUpdate = (contractId: string) => {
               .eq('location_id', location.id)
               .maybeSingle();
 
-            // Map the frontend field names to database field names
+            // Map the frontend field names to database field names - use 'name' instead of 'locationName'
             const locationData = {
               contract_id: contractId,
               location_id: location.id,
-              name: location.name || location.locationName || '',
+              name: location.name || '',
               has_pos: location.hasPOS || false,
               address_street: location.address?.street || '',
               address_city: location.address?.city || '',
