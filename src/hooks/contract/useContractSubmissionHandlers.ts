@@ -112,6 +112,38 @@ export const insertBusinessLocations = async (contractId: string, businessLocati
 export const insertDeviceSelection = async (contractId: string, deviceSelection: DeviceSelection, fees: Fees) => {
   console.log('Inserting device selection for contract:', contractId, deviceSelection, fees);
   
+  // FIRST: Clear existing contract items and addons to prevent duplicates
+  console.log('Clearing existing contract items to prevent duplicates...');
+  
+  // Delete existing addons first (foreign key constraint)
+  const { error: deleteAddonsError } = await supabase
+    .from('contract_item_addons')
+    .delete()
+    .in('contract_item_id', 
+      supabase
+        .from('contract_items')
+        .select('id')
+        .eq('contract_id', contractId)
+    );
+
+  if (deleteAddonsError) {
+    console.error('Error deleting existing addons:', deleteAddonsError);
+    // Don't throw here, continue with deletion of items
+  }
+
+  // Delete existing contract items
+  const { error: deleteItemsError } = await supabase
+    .from('contract_items')
+    .delete()
+    .eq('contract_id', contractId);
+
+  if (deleteItemsError) {
+    console.error('Error deleting existing contract items:', deleteItemsError);
+    throw new Error(`Chyba pri mazaní existujúcich zariadení: ${deleteItemsError.message}`);
+  }
+
+  console.log('Existing contract items cleared successfully');
+  
   // Insert contract items
   if (deviceSelection.dynamicCards && deviceSelection.dynamicCards.length > 0) {
     const itemsData = deviceSelection.dynamicCards.map(card => ({
@@ -167,6 +199,17 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
 
   // Insert calculation data if available
   if (fees.calculatorResults) {
+    // Clear existing calculation data first
+    const { error: deleteCalcError } = await supabase
+      .from('contract_calculations')
+      .delete()
+      .eq('contract_id', contractId);
+
+    if (deleteCalcError) {
+      console.error('Error deleting existing calculations:', deleteCalcError);
+      // Don't throw, continue with insertion
+    }
+
     const calculationData = {
       customerPaymentBreakdown: fees.calculatorResults.customerPaymentBreakdown,
       companyCostBreakdown: fees.calculatorResults.companyCostBreakdown
@@ -195,7 +238,17 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
     }
   }
 
-  // Insert legacy device selection data
+  // Insert legacy device selection data (clear first to prevent duplicates)
+  const { error: deleteDeviceSelectionError } = await supabase
+    .from('device_selection')
+    .delete()
+    .eq('contract_id', contractId);
+
+  if (deleteDeviceSelectionError) {
+    console.error('Error deleting existing device selection:', deleteDeviceSelectionError);
+    // Don't throw, continue with insertion
+  }
+
   const { error } = await supabase
     .from('device_selection')
     .insert({

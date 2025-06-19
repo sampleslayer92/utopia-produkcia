@@ -149,7 +149,15 @@ export const transformContractData = (
   })) || [];
 
   // Transform device selection with dynamic cards from contract items
-  const deviceCards = contractItems?.filter(item => item.item_type === 'device')?.map(item => ({
+  // Remove duplicates by filtering unique item_id values
+  const uniqueContractItems = contractItems?.filter((item, index, self) => 
+    index === self.findIndex(i => i.item_id === item.item_id)
+  ) || [];
+
+  console.log('Contract items before deduplication:', contractItems?.length || 0);
+  console.log('Contract items after deduplication:', uniqueContractItems.length);
+
+  const deviceCards = uniqueContractItems?.filter(item => item.item_type === 'device')?.map(item => ({
     id: item.item_id,
     type: 'device' as const,
     name: cleanStringValue(item.name),
@@ -161,7 +169,7 @@ export const transformContractData = (
     customValue: item.custom_value || {}
   })) || [];
 
-  const serviceCards = contractItems?.filter(item => item.item_type === 'service')?.map(item => ({
+  const serviceCards = uniqueContractItems?.filter(item => item.item_type === 'service')?.map(item => ({
     id: item.item_id,
     type: 'service' as const,
     name: cleanStringValue(item.name),
@@ -179,8 +187,12 @@ export const transformContractData = (
     note: cleanStringValue(deviceSelection?.note)
   };
 
-  // Transform authorized persons
-  const transformedAuthorizedPersons = authorizedPersons?.map(person => ({
+  // Transform authorized persons (remove duplicates by person_id)
+  const uniqueAuthorizedPersons = authorizedPersons?.filter((person, index, self) => 
+    index === self.findIndex(p => p.person_id === person.person_id)
+  ) || [];
+
+  const transformedAuthorizedPersons = uniqueAuthorizedPersons?.map(person => ({
     id: person.person_id,
     personId: person.person_id,
     firstName: cleanStringValue(person.first_name),
@@ -204,8 +216,12 @@ export const transformContractData = (
     isUSCitizen: Boolean(person.is_us_citizen)
   })) || [];
 
-  // Transform actual owners
-  const transformedActualOwners = actualOwners?.map(owner => ({
+  // Transform actual owners (remove duplicates by owner_id)
+  const uniqueActualOwners = actualOwners?.filter((owner, index, self) => 
+    index === self.findIndex(o => o.owner_id === owner.owner_id)
+  ) || [];
+
+  const transformedActualOwners = uniqueActualOwners?.map(owner => ({
     id: owner.owner_id,
     ownerId: owner.owner_id,
     firstName: cleanStringValue(owner.first_name),

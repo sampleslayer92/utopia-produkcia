@@ -11,7 +11,44 @@ export const useContractItems = (contractId: string) => {
     mutationFn: async (item: DynamicCard) => {
       console.log('Adding contract item:', item);
 
-      // Insert main contract item
+      // Check if item with same item_id already exists
+      const { data: existingItems, error: checkError } = await supabase
+        .from('contract_items')
+        .select('id, item_id')
+        .eq('contract_id', contractId)
+        .eq('item_id', item.id);
+
+      if (checkError) {
+        console.error('Error checking existing items:', checkError);
+        throw checkError;
+      }
+
+      if (existingItems && existingItems.length > 0) {
+        console.log('Item already exists, updating instead of inserting');
+        // Update existing item instead of creating duplicate
+        const { data: updatedItem, error: updateError } = await supabase
+          .from('contract_items')
+          .update({
+            count: item.count,
+            monthly_fee: item.monthlyFee,
+            company_cost: item.companyCost || 0,
+            name: item.name,
+            description: item.description,
+            category: item.category
+          })
+          .eq('id', existingItems[0].id)
+          .select()
+          .single();
+
+        if (updateError) {
+          console.error('Error updating existing item:', updateError);
+          throw updateError;
+        }
+
+        return updatedItem;
+      }
+
+      // Insert main contract item (only if it doesn't exist)
       const { data: contractItem, error: itemError } = await supabase
         .from('contract_items')
         .insert({
@@ -64,7 +101,6 @@ export const useContractItems = (contractId: string) => {
     },
     onSuccess: () => {
       console.log('Item added successfully, invalidating queries');
-      // Use the same query key as useContractQueries
       queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
       toast({
         title: "Položka pridaná",
