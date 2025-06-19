@@ -6,7 +6,7 @@ interface OnboardingSectionProps {
 
 const OnboardingSection = ({ children, className = "" }: OnboardingSectionProps) => {
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-5 ${className}`}>
       {children}
     </div>
   );

@@ -28,12 +28,12 @@ const OnboardingInput = forwardRef<HTMLInputElement, OnboardingInputProps>(
           )}
           <Input
             ref={ref}
-            className={`h-12 border-2 transition-all duration-200 ${
+            className={`h-11 border transition-all duration-200 ${
               icon ? 'pl-10' : ''
             } ${
               error
-                ? 'border-red-300 bg-red-50'
-                : 'border-slate-200 bg-white/80 hover:border-slate-300 focus:border-blue-500 focus:shadow-md focus:shadow-blue-500/20'
+                ? 'border-red-300 bg-red-50/50 focus:border-red-400'
+                : 'border-slate-200 bg-white/80 hover:border-slate-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100'
             } ${className}`}
             {...props}
           />

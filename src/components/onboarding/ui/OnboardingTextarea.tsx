@@ -20,10 +20,10 @@ const OnboardingTextarea = forwardRef<HTMLTextAreaElement, OnboardingTextareaPro
         )}
         <Textarea
           ref={ref}
-          className={`border-2 transition-all duration-200 resize-none ${
+          className={`border transition-all duration-200 resize-none ${
             error
-              ? 'border-red-300 bg-red-50'
-              : 'border-slate-200 bg-white/80 hover:border-slate-300 focus:border-blue-500 focus:shadow-md focus:shadow-blue-500/20'
+              ? 'border-red-300 bg-red-50/50 focus:border-red-400'
+              : 'border-slate-200 bg-white/80 hover:border-slate-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100'
           } ${className}`}
           {...props}
         />
