@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { ContactInfo, CompanyInfo, BusinessLocation, DeviceSelection, Fees, AuthorizedPerson, ActualOwner, Consents } from '@/types/onboarding';
 import { 
@@ -115,20 +114,30 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
   // FIRST: Clear existing contract items and addons to prevent duplicates
   console.log('Clearing existing contract items to prevent duplicates...');
   
-  // Delete existing addons first (foreign key constraint)
-  const { error: deleteAddonsError } = await supabase
-    .from('contract_item_addons')
-    .delete()
-    .in('contract_item_id', 
-      supabase
-        .from('contract_items')
-        .select('id')
-        .eq('contract_id', contractId)
-    );
+  // Get existing contract item IDs first
+  const { data: existingItems, error: getItemsError } = await supabase
+    .from('contract_items')
+    .select('id')
+    .eq('contract_id', contractId);
 
-  if (deleteAddonsError) {
-    console.error('Error deleting existing addons:', deleteAddonsError);
-    // Don't throw here, continue with deletion of items
+  if (getItemsError) {
+    console.error('Error getting existing contract items:', getItemsError);
+    throw new Error(`Chyba pri načítaní existujúcich zariadení: ${getItemsError.message}`);
+  }
+
+  // Delete existing addons first (foreign key constraint)
+  if (existingItems && existingItems.length > 0) {
+    const itemIds = existingItems.map(item => item.id);
+    
+    const { error: deleteAddonsError } = await supabase
+      .from('contract_item_addons')
+      .delete()
+      .in('contract_item_id', itemIds);
+
+    if (deleteAddonsError) {
+      console.error('Error deleting existing addons:', deleteAddonsError);
+      // Don't throw here, continue with deletion of items
+    }
   }
 
   // Delete existing contract items
