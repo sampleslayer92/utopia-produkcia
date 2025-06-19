@@ -1,3 +1,5 @@
+
+import { useTranslation } from 'react-i18next';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -13,24 +15,25 @@ import { useContractsData, ContractWithInfo } from "@/hooks/useContractsData";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case 'submitted':
-      return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Odoslané</Badge>;
-    case 'approved':
-      return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">Schválené</Badge>;
-    case 'rejected':
-      return <Badge className="bg-red-100 text-red-700 border-red-200">Zamietnuté</Badge>;
-    case 'draft':
-      return <Badge className="bg-gray-100 text-gray-700 border-gray-200">Koncept</Badge>;
-    default:
-      return <Badge variant="secondary">{status}</Badge>;
-  }
-};
-
 const ContractsTable = () => {
+  const { t } = useTranslation('admin');
   const { data: contracts, isLoading, error } = useContractsData();
   const navigate = useNavigate();
+
+  const getStatusBadge = (status: string) => {
+    const statusClasses = {
+      'submitted': "bg-blue-100 text-blue-700 border-blue-200",
+      'approved': "bg-emerald-100 text-emerald-700 border-emerald-200",
+      'rejected': "bg-red-100 text-red-700 border-red-200",
+      'draft': "bg-gray-100 text-gray-700 border-gray-200"
+    };
+
+    return (
+      <Badge className={statusClasses[status as keyof typeof statusClasses] || "bg-gray-100 text-gray-700 border-gray-200"}>
+        {t(`status.${status}`)}
+      </Badge>
+    );
+  };
 
   const handleRowClick = (contractId: string) => {
     navigate(`/admin/contract/${contractId}/edit`);
@@ -40,9 +43,9 @@ const ContractsTable = () => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Zoznam zmlúv</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.title')}</CardTitle>
           <CardDescription className="text-slate-600">
-            Načítavam zmluvy...
+            {t('table.loading')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -58,9 +61,9 @@ const ContractsTable = () => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Zoznam zmlúv</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.title')}</CardTitle>
           <CardDescription className="text-red-600">
-            Chyba pri načítavaní zmlúv: {error.message}
+            {t('table.error', { message: error.message })}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -71,15 +74,15 @@ const ContractsTable = () => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Zoznam zmlúv</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.title')}</CardTitle>
           <CardDescription className="text-slate-600">
-            Zatiaľ nie sú vytvorené žiadne zmluvy
+            {t('table.emptySubtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8 text-slate-500">
             <Building className="h-12 w-12 mb-4" />
-            <p>Žiadne zmluvy</p>
+            <p>{t('table.emptyMessage')}</p>
           </div>
         </CardContent>
       </Card>
@@ -89,9 +92,9 @@ const ContractsTable = () => {
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-slate-900">Zoznam zmlúv</CardTitle>
+        <CardTitle className="text-slate-900">{t('table.title')}</CardTitle>
         <CardDescription className="text-slate-600">
-          Prehľad všetkých zmlúv v systéme ({contracts.length} celkom) - kliknite na riadok pre editáciu
+          {t('table.subtitle', { count: contracts.length })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -99,12 +102,12 @@ const ContractsTable = () => {
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">Číslo zmluvy</TableHead>
-                <TableHead className="font-medium text-slate-700">Kontakt</TableHead>
-                <TableHead className="font-medium text-slate-700">Spoločnosť</TableHead>
-                <TableHead className="font-medium text-slate-700">IČO</TableHead>
-                <TableHead className="font-medium text-slate-700">Stav</TableHead>
-                <TableHead className="font-medium text-slate-700">Vytvorené</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.columns.contractNumber')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.columns.contact')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.columns.company')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.columns.ico')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.columns.status')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.columns.created')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

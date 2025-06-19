@@ -55,5 +55,50 @@
     "waitingApproval": "Čakajú na schválenie",
     "activeContracts": "Aktívne zmluvy",
     "incomplete": "Nedokončené"
+  },
+  "table": {
+    "title": "Zoznam zmlúv",
+    "subtitle": "Prehľad všetkých zmlúv v systéme ({{count}} celkom) - kliknite na riadok pre editáciu",
+    "emptySubtitle": "Zatiaľ nie sú vytvorené žiadne zmluvy",
+    "emptyMessage": "Žiadne zmluvy",
+    "loading": "Načítavam zmluvy...",
+    "error": "Chyba pri načítavaní zmlúv: {{message}}",
+    "columns": {
+      "contractNumber": "Číslo zmluvy",
+      "contact": "Kontakt",
+      "company": "Spoločnosť",
+      "ico": "IČO",
+      "status": "Stav",
+      "created": "Vytvorené"
+    }
+  },
+  "status": {
+    "submitted": "Odoslané",
+    "approved": "Schválené",
+    "rejected": "Zamietnuté",
+    "draft": "Koncept"
+  },
+  "contractDetail": {
+    "backToList": "Späť na zoznam",
+    "edit": "Upraviť",
+    "cancelEdit": "Zrušiť úpravy",
+    "save": "Uložiť",
+    "saving": "Ukladám...",
+    "unsavedChanges": "Neuložené zmeny",
+    "unknownClient": "Neznámy klient",
+    "created": "Vytvorené",
+    "submitted": "Odoslané"
+  },
+  "messages": {
+    "contractSaved": "Zmluva uložená",
+    "contractSavedDesc": "Zmeny boli úspešne uložené.",
+    "saveError": "Chyba pri ukladaní",
+    "saveErrorDesc": "Nepodarilo sa uložiť zmeny.",
+    "noChanges": "Informácia",
+    "noChangesDesc": "Nie sú žiadne zmeny na uloženie.",
+    "contractDeleted": "Zmluva zmazaná",
+    "contractDeletedDesc": "Zmluva a všetky súvisiace údaje boli úspešne zmazané.",
+    "deleteError": "Chyba pri mazaní",
+    "confirmDelete": "Naozaj chcete zmazať zmluvu {{contractNumber}}? Táto akcia sa nedá vrátiť späť."
   }
 }

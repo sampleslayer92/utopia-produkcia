@@ -14,11 +14,13 @@ import ContractNotesSection from "./contract-detail/ContractNotesSection";
 import SignatureSection from "./contract-detail/SignatureSection";
 import ContractActions from "./contract-detail/ContractActions";
 import { OnboardingData } from "@/types/onboarding";
+import { useTranslation } from 'react-i18next';
 
 const ContractDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation('admin');
   const [isEditMode, setIsEditMode] = useState(false);
   const [clientOperationsHasChanges, setClientOperationsHasChanges] = useState(false);
   
@@ -31,7 +33,7 @@ const ContractDetail = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="flex items-center space-x-2">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-          <span>Načítavam zmluvu...</span>
+          <span>{t('table.loading')}</span>
         </div>
       </div>
     );
@@ -42,7 +44,7 @@ const ContractDetail = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="max-w-md text-center p-6">
           <p className="text-slate-600 mb-4">
-            Zmluva nebola nájdená alebo sa nepodarilo načítať údaje.
+            {t('table.error', { message: 'Contract not found' })}
           </p>
         </div>
       </div>
@@ -77,27 +79,27 @@ const ContractDetail = () => {
           setIsEditMode(false);
           
           toast({
-            title: "Zmluva uložená",
-            description: "Zmeny boli úspešne uložené a editácia ukončená.",
+            title: t('messages.contractSaved'),
+            description: t('messages.contractSavedDesc'),
           });
         } else {
           console.warn('No data returned from commit function');
           toast({
-            title: "Informácia",
-            description: "Nie sú žiadne zmeny na uloženie.",
+            title: t('messages.noChanges'),
+            description: t('messages.noChangesDesc'),
           });
         }
       } catch (error) {
         console.error('Error in handleSave:', error);
         
-        let errorMessage = "Nepodarilo sa uložiť zmeny.";
+        let errorMessage = t('messages.saveErrorDesc');
         if (error instanceof Error) {
           errorMessage = error.message;
           console.error('Error details:', error.stack);
         }
         
         toast({
-          title: "Chyba pri ukladaní",
+          title: t('messages.saveError'),
           description: errorMessage,
           variant: "destructive",
         });
@@ -105,7 +107,7 @@ const ContractDetail = () => {
     } else {
       console.error('Commit function not available on window object');
       toast({
-        title: "Chyba",
+        title: t('messages.saveError'),
         description: "Funkcia uloženia nie je dostupná. Skúste obnoviť stránku.",
         variant: "destructive",
       });
@@ -140,7 +142,7 @@ const ContractDetail = () => {
     console.log('Delete button clicked for contract:', id);
     
     const confirmed = window.confirm(
-      `Naozaj chcete zmazať zmluvu ${contract.contract_number}? Táto akcia sa nedá vrátiť späť.`
+      t('messages.confirmDelete', { contractNumber: contract.contract_number })
     );
     
     if (!confirmed) {
@@ -153,8 +155,8 @@ const ContractDetail = () => {
       await deleteContract.mutateAsync(id);
       
       toast({
-        title: "Zmluva zmazaná",
-        description: "Zmluva a všetky súvisiace údaje boli úspešne zmazané.",
+        title: t('messages.contractDeleted'),
+        description: t('messages.contractDeletedDesc'),
       });
       
       console.log('Contract deleted successfully, navigating to admin');
@@ -165,7 +167,7 @@ const ContractDetail = () => {
       const errorMessage = error instanceof Error ? error.message : 'Neočakávaná chyba pri mazaní zmluvy';
       
       toast({
-        title: "Chyba pri mazaní",
+        title: t('messages.deleteError'),
         description: errorMessage,
         variant: "destructive",
       });
@@ -184,14 +186,14 @@ const ContractDetail = () => {
       setClientOperationsHasChanges(false);
       
       toast({
-        title: "Zmluva uložená",
-        description: "Zmeny boli úspešne uložené.",
+        title: t('messages.contractSaved'),
+        description: t('messages.contractSavedDesc'),
       });
     } catch (error) {
       console.error('Error saving contract:', error);
       toast({
-        title: "Chyba",
-        description: "Nepodarilo sa uložiť zmeny.",
+        title: t('messages.saveError'),
+        description: t('messages.saveErrorDesc'),
         variant: "destructive",
       });
     }

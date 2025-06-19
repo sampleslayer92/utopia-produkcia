@@ -55,5 +55,50 @@
     "waitingApproval": "Waiting for approval",
     "activeContracts": "Active contracts",
     "incomplete": "Incomplete"
+  },
+  "table": {
+    "title": "Contract List",
+    "subtitle": "Overview of all contracts in the system ({{count}} total) - click on row to edit",
+    "emptySubtitle": "No contracts have been created yet",
+    "emptyMessage": "No contracts",
+    "loading": "Loading contracts...",
+    "error": "Error loading contracts: {{message}}",
+    "columns": {
+      "contractNumber": "Contract Number",
+      "contact": "Contact",
+      "company": "Company",
+      "ico": "Company ID",
+      "status": "Status",
+      "created": "Created"
+    }
+  },
+  "status": {
+    "submitted": "Submitted",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "draft": "Draft"
+  },
+  "contractDetail": {
+    "backToList": "Back to List",
+    "edit": "Edit",
+    "cancelEdit": "Cancel Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "unsavedChanges": "Unsaved Changes",
+    "unknownClient": "Unknown Client",
+    "created": "Created",
+    "submitted": "Submitted"
+  },
+  "messages": {
+    "contractSaved": "Contract Saved",
+    "contractSavedDesc": "Changes have been successfully saved.",
+    "saveError": "Save Error",
+    "saveErrorDesc": "Failed to save changes.",
+    "noChanges": "Information",
+    "noChangesDesc": "No changes to save.",
+    "contractDeleted": "Contract Deleted",
+    "contractDeletedDesc": "Contract and all related data have been successfully deleted.",
+    "deleteError": "Delete Error",
+    "confirmDelete": "Are you sure you want to delete contract {{contractNumber}}? This action cannot be undone."
   }
 }
