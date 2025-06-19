@@ -1,4 +1,3 @@
-
 {
   "navigation": {
     "dashboard": "Dashboard",
@@ -6,6 +5,10 @@
     "clients": "Klienti",
     "reports": "Reporty",
     "settings": "Nastavenia"
+  },
+  "breadcrumbs": {
+    "editContract": "Úprava zmluvy",
+    "viewContract": "Detail zmluvy"
   },
   "dashboard": {
     "title": "Administratívny Dashboard",

@@ -9,7 +9,6 @@ import {
   BarChart3
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import AdminProfile from "./AdminProfile";
 
 const AdminSidebar = () => {
   const { t } = useTranslation('admin');
@@ -51,7 +50,7 @@ const AdminSidebar = () => {
 
   return (
     <div className="w-64 min-h-screen bg-white border-r border-slate-200 flex flex-col">
-      {/* Logo only - simplified */}
+      {/* Logo */}
       <div className="p-6 border-b border-slate-200 flex justify-center">
         <img 
           src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
@@ -78,11 +77,6 @@ const AdminSidebar = () => {
             {item.title}
           </Button>
         ))}
-      </div>
-
-      {/* Admin Profile at bottom */}
-      <div className="p-4">
-        <AdminProfile />
       </div>
     </div>
   );

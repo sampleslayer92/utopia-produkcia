@@ -1,18 +1,33 @@
 
-import AdminSidebar from "@/components/admin/AdminSidebar";
-import DashboardHeader from "@/components/admin/dashboard/DashboardHeader";
+import { useTranslation } from 'react-i18next';
+import AdminLayout from "@/components/admin/AdminLayout";
 import NewDashboardContent from "@/components/admin/dashboard/NewDashboardContent";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const { t } = useTranslation('admin');
+  const navigate = useNavigate();
+
+  const dashboardActions = (
+    <Button 
+      onClick={() => navigate('/onboarding')}
+      className="bg-blue-600 hover:bg-blue-700"
+    >
+      <Plus className="h-4 w-4 mr-2" />
+      {t('dashboard.newContract')}
+    </Button>
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex">
-      <AdminSidebar />
-      
-      <div className="flex-1 flex flex-col">
-        <DashboardHeader />
-        <NewDashboardContent />
-      </div>
-    </div>
+    <AdminLayout 
+      title={t('dashboard.title')} 
+      subtitle={t('dashboard.subtitle')}
+      actions={dashboardActions}
+    >
+      <NewDashboardContent />
+    </AdminLayout>
   );
 };
 

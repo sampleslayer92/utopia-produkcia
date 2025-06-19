@@ -11,19 +11,17 @@ const NewDashboardContent = () => {
   const { data: stats } = useContractsStats();
 
   return (
-    <div className="flex-1 p-6">
-      <div className="grid lg:grid-cols-4 gap-6">
-        {/* Main Content - Business Metrics and Charts */}
-        <div className="lg:col-span-3 space-y-6">
-          <BusinessMetrics />
-          <RevenueChart />
-        </div>
+    <div className="grid lg:grid-cols-4 gap-6">
+      {/* Main Content - Business Metrics and Charts */}
+      <div className="lg:col-span-3 space-y-6">
+        <BusinessMetrics />
+        <RevenueChart />
+      </div>
 
-        {/* Sidebar - Team Performance and Quick Actions */}
-        <div className="lg:col-span-1 space-y-6">
-          <TeamPerformance />
-          <DashboardSidebar stats={stats} />
-        </div>
+      {/* Sidebar - Team Performance and Quick Actions */}
+      <div className="lg:col-span-1 space-y-6">
+        <TeamPerformance />
+        <DashboardSidebar stats={stats} />
       </div>
     </div>
   );

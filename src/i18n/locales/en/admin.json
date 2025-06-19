@@ -1,4 +1,3 @@
-
 {
   "navigation": {
     "dashboard": "Dashboard",
@@ -6,6 +5,10 @@
     "clients": "Clients", 
     "reports": "Reports",
     "settings": "Settings"
+  },
+  "breadcrumbs": {
+    "editContract": "Edit Contract",
+    "viewContract": "Contract Details"
   },
   "dashboard": {
     "title": "Admin Dashboard",
