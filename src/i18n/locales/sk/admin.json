@@ -1,16 +1,17 @@
-
 {
   "navigation": {
     "dashboard": "Dashboard",
     "contracts": "Zmluvy",
     "merchants": "Merchanti",
     "reports": "Reporty",
-    "settings": "Nastavenia"
+    "settings": "Nastavenia",
+    "team": "Môj tím"
   },
   "breadcrumbs": {
     "editContract": "Editácia zmluvy",
     "viewContract": "Detail zmluvy",
-    "viewMerchant": "Detail merchanta"
+    "viewMerchant": "Detail merchanta",
+    "teamMember": "Detail člena tímu"
   },
   "dashboard": {
     "title": "Administratívny dashboard",
@@ -32,6 +33,17 @@
       "averageProfit": "Priemerný zisk",
       "activeClients": "Aktívni klienti",
       "fromLastMonth": "oproti minulému mesiacu"
+    },
+    "team": {
+      "title": "Výkonnosť tímu",
+      "viewAll": "Zobraziť všetko",
+      "excellent": "Výborný",
+      "good": "Dobrý",
+      "average": "Priemerný", 
+      "needsImprovement": "Potrebuje zlepšenie",
+      "contractsThisMonth": "Zmluvy tento mesiac",
+      "target": "Cieľ",
+      "topPerformers": "Najlepší v tíme"
     }
   },
   "contracts": {
@@ -55,6 +67,29 @@
     "waitingApproval": "Čakajú na schválenie",
     "activeContracts": "Aktívne zmluvy",
     "incomplete": "Nedokončené"
+  },
+  "team": {
+    "title": "Môj tím",
+    "subtitle": "Prehľad výkonnosti a správa tímu",
+    "member": "Člen tímu",
+    "performance": "Výkonnosť",
+    "contracts": "Zmluvy",
+    "revenue": "Príjmy",
+    "target": "Cieľ",
+    "thisMonth": "Tento mesiac",
+    "lastMonth": "Minulý mesiac",
+    "yearToDate": "Od začiatku roka",
+    "contactInfo": "Kontaktné informácie",
+    "joinedDate": "Dátum nástupu",
+    "role": "Pozícia",
+    "email": "Email",
+    "phone": "Telefón",
+    "statistics": "Štatistiky",
+    "recentActivity": "Nedávna aktivita",
+    "contractHistory": "História zmlúv",
+    "performanceHistory": "História výkonnosti",
+    "goals": "Ciele a targety",
+    "achievements": "Úspechy"
   },
   "table": {
     "title": "Zoznam zmlúv",

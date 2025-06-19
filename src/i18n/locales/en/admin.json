@@ -1,16 +1,17 @@
-
 {
   "navigation": {
     "dashboard": "Dashboard",
     "contracts": "Contracts",
     "merchants": "Merchants",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "team": "My Team"
   },
   "breadcrumbs": {
     "editContract": "Edit Contract",
     "viewContract": "Contract Detail",
-    "viewMerchant": "Merchant Detail"
+    "viewMerchant": "Merchant Detail",
+    "teamMember": "Team Member Detail"
   },
   "dashboard": {
     "title": "Administrative Dashboard",
@@ -32,6 +33,17 @@
       "averageProfit": "Average Profit",
       "activeClients": "Active Clients",
       "fromLastMonth": "from last month"
+    },
+    "team": {
+      "title": "Team Performance",
+      "viewAll": "View All",
+      "excellent": "Excellent",
+      "good": "Good", 
+      "average": "Average",
+      "needsImprovement": "Needs Improvement",
+      "contractsThisMonth": "Contracts this month",
+      "target": "Target",
+      "topPerformers": "Top Performers"
     }
   },
   "contracts": {
@@ -55,6 +67,29 @@
     "waitingApproval": "Waiting for approval",
     "activeContracts": "Active contracts",
     "incomplete": "Incomplete"
+  },
+  "team": {
+    "title": "My Team",
+    "subtitle": "Team performance overview and management",
+    "member": "Team Member",
+    "performance": "Performance",
+    "contracts": "Contracts",
+    "revenue": "Revenue",
+    "target": "Target",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "yearToDate": "Year to Date",
+    "contactInfo": "Contact Information",
+    "joinedDate": "Joined Date",
+    "role": "Role",
+    "email": "Email",
+    "phone": "Phone",
+    "statistics": "Statistics",
+    "recentActivity": "Recent Activity",
+    "contractHistory": "Contract History",
+    "performanceHistory": "Performance History",
+    "goals": "Goals and Targets",
+    "achievements": "Achievements"
   },
   "table": {
     "title": "Contract List",

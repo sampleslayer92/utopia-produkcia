@@ -6,7 +6,8 @@ import {
   FileText, 
   Building2, 
   Settings, 
-  BarChart3
+  BarChart3,
+  Users
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AdminProfile from "./AdminProfile";
@@ -34,6 +35,12 @@ const AdminSidebar = () => {
       icon: Building2,
       path: "/admin/merchants",
       active: location.pathname.startsWith("/admin/merchant")
+    },
+    {
+      title: t('navigation.team'),
+      icon: Users,
+      path: "/admin/team",
+      active: location.pathname.startsWith("/admin/team")
     },
     {
       title: t('navigation.reports'),
@@ -72,7 +79,7 @@ const AdminSidebar = () => {
                 ? "bg-blue-600 hover:bg-blue-700 text-white" 
                 : "text-slate-700 hover:bg-slate-100"
             }`}
-            disabled={!item.active && item.path !== "/admin" && item.path !== "/admin/contracts" && item.path !== "/admin/merchants"}
+            disabled={!item.active && item.path !== "/admin" && item.path !== "/admin/contracts" && item.path !== "/admin/merchants" && item.path !== "/admin/team"}
           >
             <item.icon className="h-4 w-4 mr-3" />
             {item.title}
