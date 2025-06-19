@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useContractUpdate } from "@/hooks/useContractUpdate";
 import { useContractDelete } from "@/hooks/useContractDelete";
@@ -98,6 +99,12 @@ export const useContractDetailOperations = (contractId: string, contract: any) =
   const handleDelete = async () => {
     if (!contractId) {
       console.error('No contract ID available for deletion');
+      return;
+    }
+
+    // Don't attempt deletion if contract is null (component still loading)
+    if (!contract) {
+      console.warn('Contract data not available, skipping delete operation');
       return;
     }
 

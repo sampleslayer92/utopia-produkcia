@@ -8,16 +8,7 @@ import ContractDetailContainer from "./contract-detail/ContractDetailContainer";
 const ContractDetail = () => {
   const { id, contractDataResult, handleBack, t } = useContractDetailData();
 
-  if (contractDataResult.isLoading) {
-    return <ContractDetailLoading />;
-  }
-
-  if (contractDataResult.isError || !contractDataResult.data) {
-    return <ContractDetailError />;
-  }
-
-  const { contract, onboardingData } = contractDataResult.data;
-
+  // Always call the hook, but pass null contract when data is not available
   const {
     isEditMode,
     clientOperationsHasChanges,
@@ -28,13 +19,23 @@ const ContractDetail = () => {
     handleDelete,
     handleClientOperationsUpdate,
     handleClientOperationsLocalChanges
-  } = useContractDetailOperations(id!, contract);
+  } = useContractDetailOperations(id!, contractDataResult.data?.contract || null);
 
   console.log('ContractDetail render state:', {
     isEditMode,
     clientOperationsHasChanges,
     contractId: id
   });
+
+  if (contractDataResult.isLoading) {
+    return <ContractDetailLoading />;
+  }
+
+  if (contractDataResult.isError || !contractDataResult.data) {
+    return <ContractDetailError />;
+  }
+
+  const { contract, onboardingData } = contractDataResult.data;
 
   return (
     <ContractDetailContainer
