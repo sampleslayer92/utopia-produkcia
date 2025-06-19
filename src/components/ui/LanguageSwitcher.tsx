@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Globe } from 'lucide-react';
 
 const languages = [
   { code: 'sk', name: 'Slovensky', flag: 'https://flagcdn.com/sk.svg' },
@@ -27,13 +26,12 @@ const LanguageSwitcher = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
-          <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">{currentLanguage.name}</span>
           <img 
             src={currentLanguage.flag} 
             alt={currentLanguage.name}
-            className="w-4 h-3 sm:hidden object-cover"
+            className="w-4 h-3 object-cover"
           />
+          <span className="hidden sm:inline">{currentLanguage.name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
