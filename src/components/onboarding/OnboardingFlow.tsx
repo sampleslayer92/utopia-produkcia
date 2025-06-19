@@ -136,7 +136,7 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
   if (isAdminMode) {
     return (
       <OnboardingErrorBoundary onReset={handleErrorReset}>
-        <div className="p-6">
+        <div className="flex flex-col min-h-full">
           {/* Mobile Stepper for admin mode */}
           {isMobile && (
             <MobileStepper
@@ -159,9 +159,9 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
             />
           )}
           
-          {/* Main Content */}
+          {/* Main Content - flex-1 to take remaining space */}
           <div className="flex-1 py-6">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto px-6">
               {/* Auto-save indicator - Hide on mobile */}
               {!isMobile && (
                 <div className="flex justify-end items-center mb-4">
@@ -185,10 +185,10 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
             </div>
           </div>
           
-          {/* Desktop Navigation for admin mode */}
+          {/* Desktop Navigation for admin mode - NOT FIXED POSITION */}
           {!isMobile && (
-            <div className="border-t border-slate-200 bg-white/90 py-6">
-              <div className="max-w-7xl mx-auto flex justify-between">
+            <div className="border-t border-slate-200 bg-white py-6">
+              <div className="max-w-7xl mx-auto px-6">
                 <OnboardingNavigation
                   currentStep={currentStep}
                   totalSteps={totalSteps}
@@ -200,24 +200,30 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
                   onChangeSolution={handleChangeSolution}
                   isSubmitting={isSubmitting || isSaving}
                   stepValidation={stepValidation}
+                  isAdminMode={isAdminMode}
                 />
               </div>
             </div>
           )}
           
-          {/* Mobile Navigation for admin mode */}
-          <MobileOptimizedNavigation
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-            onPrevStep={prevStep}
-            onNextStep={nextStep}
-            onComplete={handleComplete}
-            onSaveAndExit={handleSaveAndExit}
-            onSaveSignature={handleSaveSignature}
-            onChangeSolution={handleChangeSolution}
-            isSubmitting={isSubmitting || isSaving}
-            stepValidation={stepValidation}
-          />
+          {/* Mobile Navigation for admin mode - NOT FIXED POSITION */}
+          {isMobile && (
+            <div className="border-t border-slate-200 bg-white p-4">
+              <MobileOptimizedNavigation
+                currentStep={currentStep}
+                totalSteps={totalSteps}
+                onPrevStep={prevStep}
+                onNextStep={nextStep}
+                onComplete={handleComplete}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveSignature={handleSaveSignature}
+                onChangeSolution={handleChangeSolution}
+                isSubmitting={isSubmitting || isSaving}
+                stepValidation={stepValidation}
+                isAdminMode={isAdminMode}
+              />
+            </div>
+          )}
         </div>
       </OnboardingErrorBoundary>
     );
