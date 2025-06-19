@@ -72,7 +72,7 @@ const AdminSidebar = () => {
                 ? "bg-blue-600 hover:bg-blue-700 text-white" 
                 : "text-slate-700 hover:bg-slate-100"
             }`}
-            disabled={!item.active && item.path !== "/admin"}
+            disabled={!item.active && item.path !== "/admin" && item.path !== "/admin/contracts"}
           >
             <item.icon className="h-4 w-4 mr-3" />
             {item.title}

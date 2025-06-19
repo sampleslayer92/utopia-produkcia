@@ -7,6 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import Welcome from "./pages/Welcome";
 import OnboardingFlow from "./pages/OnboardingFlow";
 import AdminDashboard from "./pages/AdminDashboard";
+import ContractsPage from "./pages/ContractsPage";
 import PartnerDashboard from "./pages/PartnerDashboard";
 import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
