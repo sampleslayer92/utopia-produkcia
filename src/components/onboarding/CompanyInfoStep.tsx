@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { OnboardingData, OpeningHours } from "@/types/onboarding";
@@ -8,10 +7,8 @@ import EnhancedCompanyBasicInfoCard from "./company/EnhancedCompanyBasicInfoCard
 import CompanyAddressCard from "./company/CompanyAddressCard";
 import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
 import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
-import InfoBanner from "./ui/InfoBanner";
-import InfoModal from "./ui/InfoModal";
 import MobileOptimizedCard from "./ui/MobileOptimizedCard";
-import { useEffect, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { syncContactPersonData } from "./utils/crossStepAutoFill";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
@@ -26,7 +23,6 @@ interface CompanyInfoStepProps {
 
 const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: CompanyInfoStepProps) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
-  const [showInfoModal, setShowInfoModal] = useState(false);
   const isMobile = useIsMobile();
   const { t } = useTranslation('forms');
 
@@ -263,14 +259,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
     return baseValues;
   }, [data.companyInfo.contactAddressSameAsMain, hideContactPerson]);
 
-  const keyPoints = [
-    "ORSR automatické vyhľadávanie",
-    "Smart sync so sídlom",
-    "DPH predikcia"
-  ];
-
-  const infoModalData = {
-    title: t('companyInfo.title'),
+  const infoTooltipData = {
     description: t('companyInfo.description'),
     features: [
       t('companyInfo.smartFeatures.recognition'),
@@ -278,16 +267,6 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
       t('companyInfo.smartFeatures.registryData'),
       t('companyInfo.smartFeatures.headOffice'),
       t('companyInfo.smartFeatures.vatPrediction')
-    ],
-    tips: [
-      "Zadajte IČO pre automatické načítanie údajov z ORSR",
-      "Zaškrtnutím 'Sídlo = prevádzka' sa automaticky vytvorí prevádzka",
-      "DPH sa automaticky predikuje na základe obratu"
-    ],
-    helpInfo: [
-      "IČO musí byť platné slovenské identifikačné číslo",
-      "DIČ sa automaticky validuje",
-      "Typ registra ovplyvňuje povinné údaje"
     ]
   };
 
@@ -296,7 +275,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
       <MobileOptimizedCard
         title={t('companyInfo.title')}
         icon={<Building2 className="h-4 w-4 text-blue-600" />}
-        infoTooltip={infoModalData}
+        infoTooltip={infoTooltipData}
       >
         <div className="space-y-4">
           <EnhancedCompanyBasicInfoCard
@@ -331,90 +310,111 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
   }
 
   return (
-    <div className="space-y-6">
-      <InfoBanner
-        title={t('companyInfo.title')}
-        keyPoints={keyPoints}
-        onShowDetails={() => setShowInfoModal(true)}
-      />
+    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
+      <CardContent className="p-0">
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          {/* Left sidebar with info - Desktop only */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Building2 className="h-5 w-5 text-blue-600" />
+                </div>
+                <h3 className="font-medium text-blue-900">{t('companyInfo.title')}</h3>
+              </div>
+              
+              <p className="text-sm text-blue-800">
+                {t('companyInfo.description')}
+              </p>
+              
+              <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
+                <p className="font-medium mb-2">{t('companyInfo.smartFeatures.title')}</p>
+                <ul className="space-y-2 list-disc list-inside">
+                  <li>{t('companyInfo.smartFeatures.recognition')}</li>
+                  <li>{t('companyInfo.smartFeatures.autoFillIco')}</li>
+                  <li>{t('companyInfo.smartFeatures.registryData')}</li>
+                  <li>{t('companyInfo.smartFeatures.headOffice')}</li>
+                  <li>{t('companyInfo.smartFeatures.vatPrediction')}</li>
+                </ul>
+              </div>
 
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm overflow-hidden">
-        <CardContent className="p-6">
-          <Accordion type="multiple" defaultValue={defaultAccordionValues} className="space-y-4">
-            
-            {/* Enhanced Basic Company Info */}
-            <AccordionItem value="basic-info" className="border border-slate-200 rounded-lg">
-              <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                <span className="font-medium text-slate-900">{t('companyInfo.basicInfo')}</span>
-              </AccordionTrigger>
-              <AccordionContent className="px-4 pb-4">
-                <EnhancedCompanyBasicInfoCard
-                  data={data}
-                  updateCompanyInfo={updateCompanyInfo}
-                  autoFilledFields={autoFilledFields}
-                  setAutoFilledFields={setAutoFilledFields}
-                />
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Company Address */}
-            <AccordionItem value="address" className="border border-slate-200 rounded-lg">
-              <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                <span className="font-medium text-slate-900">{t('companyInfo.addressSection')}</span>
-              </AccordionTrigger>
-              <AccordionContent className="px-4 pb-4">
-                <CompanyAddressCard
-                  data={data}
-                  updateCompanyInfo={updateCompanyInfo}
-                  autoFilledFields={autoFilledFields}
-                />
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Contact Address - only show if not same as main */}
-            {!data.companyInfo.contactAddressSameAsMain && (
-              <AccordionItem value="contact-address" className="border border-slate-200 rounded-lg">
+              {data.companyInfo.headOfficeEqualsOperatingAddress && (
+                <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800 animate-fade-in">
+                  <p className="font-medium mb-1">{t('companyInfo.messages.syncActive')}</p>
+                  <p>{t('companyInfo.messages.syncDescription')}</p>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Main form content with accordion */}
+          <div className="col-span-1 md:col-span-2 p-6 md:p-8">
+            <Accordion type="multiple" defaultValue={defaultAccordionValues} className="space-y-4">
+              
+              {/* Enhanced Basic Company Info */}
+              <AccordionItem value="basic-info" className="border border-slate-200 rounded-lg">
                 <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-medium text-slate-900">{t('companyInfo.contactAddressSection')}</span>
+                  <span className="font-medium text-slate-900">{t('companyInfo.basicInfo')}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
-                  <CompanyContactAddressCard
+                  <EnhancedCompanyBasicInfoCard
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
+                    autoFilledFields={autoFilledFields}
+                    setAutoFilledFields={setAutoFilledFields}
                   />
                 </AccordionContent>
               </AccordionItem>
-            )}
 
-            {/* Contact Person - only show if not hidden */}
-            {!hideContactPerson && (
-              <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
+              {/* Company Address */}
+              <AccordionItem value="address" className="border border-slate-200 rounded-lg">
                 <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-medium text-slate-900">{t('companyInfo.contactPersonSection')}</span>
+                  <span className="font-medium text-slate-900">{t('companyInfo.addressSection')}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
-                  <CompanyContactPersonCard
+                  <CompanyAddressCard
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
+                    autoFilledFields={autoFilledFields}
                   />
                 </AccordionContent>
               </AccordionItem>
-            )}
 
-          </Accordion>
-        </CardContent>
-      </Card>
+              {/* Contact Address - only show if not same as main */}
+              {!data.companyInfo.contactAddressSameAsMain && (
+                <AccordionItem value="contact-address" className="border border-slate-200 rounded-lg">
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                    <span className="font-medium text-slate-900">{t('companyInfo.contactAddressSection')}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <CompanyContactAddressCard
+                      data={data}
+                      updateCompanyInfo={updateCompanyInfo}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
 
-      <InfoModal
-        isOpen={showInfoModal}
-        onClose={() => setShowInfoModal(false)}
-        title={infoModalData.title}
-        description={infoModalData.description}
-        features={infoModalData.features}
-        tips={infoModalData.tips}
-        helpInfo={infoModalData.helpInfo}
-      />
-    </div>
+              {/* Contact Person - only show if not hidden */}
+              {!hideContactPerson && (
+                <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                    <span className="font-medium text-slate-900">{t('companyInfo.contactPersonSection')}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <CompanyContactPersonCard
+                      data={data}
+                      updateCompanyInfo={updateCompanyInfo}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+
+            </Accordion>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

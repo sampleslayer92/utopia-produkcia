@@ -1,16 +1,22 @@
-
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState } from 'react';
 import { OnboardingData } from "@/types/onboarding";
-import { Users, UserCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import AuthorizedPersonsStep from "./AuthorizedPersonsStep";
-import ActualOwnersStep from "./ActualOwnersStep";
-import InfoBanner from "./ui/InfoBanner";
-import InfoModal from "./ui/InfoModal";
-import MobileOptimizedCard from "./ui/MobileOptimizedCard";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { v4 as uuidv4 } from 'uuid';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Plus } from "lucide-react";
+import OnboardingSection from "./ui/OnboardingSection";
+import { useToast } from "@/hooks/use-toast";
+import { useContactAutoFill } from "./hooks/useContactAutoFill";
+import AutoFillFromContactButton from "./ui/AutoFillFromContactButton";
+import EnhancedAuthorizedPersonCard from "./cards/EnhancedAuthorizedPersonCard";
+import EnhancedActualOwnerCard from "./cards/EnhancedActualOwnerCard";
+import AuthorizedPersonForm from "./forms/AuthorizedPersonForm";
+import ActualOwnerForm from "./forms/ActualOwnerForm";
+import AuthorizedPersonsSidebar from "./AuthorizedPersonsStep/AuthorizedPersonsSidebar";
+import ActualOwnersSidebar from "./ActualOwnersStep/ActualOwnersSidebar";
+import AuthorizedPersonsEmptyState from "./ui/AuthorizedPersonsEmptyState";
+import ActualOwnersEmptyState from "./ui/ActualOwnersEmptyState";
 
 interface PersonsAndOwnersStepProps {
   data: OnboardingData;
@@ -20,130 +26,329 @@ interface PersonsAndOwnersStepProps {
 }
 
 const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOwnersStepProps) => {
-  const { t } = useTranslation(['steps', 'forms']);
-  const isMobile = useIsMobile();
-  const [showInfoModal, setShowInfoModal] = useState(false);
+  const { t } = useTranslation(['steps', 'forms', 'common']);
+  const { toast } = useToast();
 
-  const keyPoints = [
-    "Oprávnené osoby a skutoční majitelia",
-    "Auto-vyplnenie z kontaktu",
-    "Právne požiadavky AML"
-  ];
+  // Authorized Persons state
+  const [isAddingPerson, setIsAddingPerson] = useState(false);
+  const [editingPersonId, setEditingPersonId] = useState<string | null>(null);
+  const [expandedPersons, setExpandedPersons] = useState<Record<string, boolean>>({});
 
-  const infoModalData = {
-    title: "Osoby a majitelia",
-    description: "Zadanie oprávnených osôb a skutočných majiteľov spoločnosti podľa právnych požiadaviek.",
-    features: [
-      "Automatické vyplnenie z kontaktných údajov",
-      "Validácia povinných polí",
-      "Export do PDF dokumentov",
-      "Bezpečné uloženie osobných údajov"
-    ],
-    tips: [
-      "Oprávnené osoby môžu konať v mene spoločnosti",
-      "Skutoční majitelia sú osoby s viac ako 25% podielom",
-      "Kontaktná osoba sa môže automaticky pridať do oboch kategórií"
-    ],
-    helpInfo: [
-      "Každá spoločnosť musí mať aspoň jednu oprávnenú osobu",
-      "Skutočný majiteľ je povinný pre AML compliance",
-      "Všetky údaje sú chránené GDPR"
-    ]
+  // Actual Owners state
+  const [isAddingOwner, setIsAddingOwner] = useState(false);
+  const [editingOwnerId, setEditingOwnerId] = useState<string | null>(null);
+  const [expandedOwners, setExpandedOwners] = useState<Record<string, boolean>>({});
+
+  const { 
+    autoFillAuthorizedPerson,
+    autoFillActualOwner,
+    canAutoFill,
+    contactExistsInAuthorized,
+    contactExistsInActualOwners
+  } = useContactAutoFill({ data, updateData });
+
+  // Expansion handlers
+  const togglePersonExpansion = (personId: string) => {
+    setExpandedPersons(prev => ({
+      ...prev,
+      [personId]: !prev[personId]
+    }));
   };
 
-  if (isMobile) {
-    return (
-      <MobileOptimizedCard
-        title="Osoby a majitelia"
-        icon={<Users className="h-4 w-4 text-blue-600" />}
-        infoTooltip={infoModalData}
-      >
-        <Tabs defaultValue="authorized-persons" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="authorized-persons" className="text-xs">
-              <UserCheck className="h-3 w-3 mr-1" />
-              Oprávnené
-            </TabsTrigger>
-            <TabsTrigger value="actual-owners" className="text-xs">
-              <Users className="h-3 w-3 mr-1" />
-              Majitelia
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="authorized-persons" className="mt-0">
-            <AuthorizedPersonsStep 
-              data={data} 
-              updateData={updateData} 
-              onNext={onNext} 
-              onPrev={onPrev} 
-            />
-          </TabsContent>
-          
-          <TabsContent value="actual-owners" className="mt-0">
-            <ActualOwnersStep 
-              data={data} 
-              updateData={updateData} 
-              onNext={onNext} 
-              onPrev={onPrev} 
-            />
-          </TabsContent>
-        </Tabs>
-      </MobileOptimizedCard>
-    );
-  }
+  const toggleOwnerExpansion = (ownerId: string) => {
+    setExpandedOwners(prev => ({
+      ...prev,
+      [ownerId]: !prev[ownerId]
+    }));
+  };
+
+  // Authorized Persons handlers
+  const handleAddPerson = () => {
+    setIsAddingPerson(true);
+    setEditingPersonId(null);
+    setIsAddingOwner(false);
+    setEditingOwnerId(null);
+  };
+
+  const handleCancelAddPerson = () => {
+    setIsAddingPerson(false);
+    setEditingPersonId(null);
+  };
+
+  const handleSavePerson = (person: any) => {
+    if (editingPersonId) {
+      updateData({
+        authorizedPersons: data.authorizedPersons.map(p => 
+          p.id === editingPersonId ? { ...person, id: editingPersonId } : p
+        )
+      });
+      setEditingPersonId(null);
+    } else {
+      const newPerson = {
+        ...person,
+        id: uuidv4()
+      };
+      updateData({
+        authorizedPersons: [...data.authorizedPersons, newPerson]
+      });
+      // Auto-expand newly added person
+      setExpandedPersons(prev => ({
+        ...prev,
+        [newPerson.id]: true
+      }));
+    }
+    setIsAddingPerson(false);
+  };
+
+  const handleEditPerson = (id: string) => {
+    setEditingPersonId(id);
+    setIsAddingPerson(true);
+    setIsAddingOwner(false);
+    setEditingOwnerId(null);
+  };
+
+  const handleDeletePerson = (id: string) => {
+    updateData({
+      authorizedPersons: data.authorizedPersons.filter(p => p.id !== id)
+    });
+    // Remove from expanded state
+    setExpandedPersons(prev => {
+      const newState = { ...prev };
+      delete newState[id];
+      return newState;
+    });
+  };
+
+  // Actual Owners handlers
+  const handleAddOwner = () => {
+    setIsAddingOwner(true);
+    setEditingOwnerId(null);
+    setIsAddingPerson(false);
+    setEditingPersonId(null);
+  };
+
+  const handleCancelAddOwner = () => {
+    setIsAddingOwner(false);
+    setEditingOwnerId(null);
+  };
+
+  const handleSaveOwner = (owner: any) => {
+    if (editingOwnerId) {
+      const updatedOwners = data.actualOwners.map(o => 
+        o.id === editingOwnerId ? { ...owner, id: editingOwnerId } : o
+      );
+      updateData({ actualOwners: updatedOwners });
+      setEditingOwnerId(null);
+    } else {
+      const newOwner = {
+        ...owner,
+        id: uuidv4()
+      };
+      updateData({ actualOwners: [...data.actualOwners, newOwner] });
+      // Auto-expand newly added owner
+      setExpandedOwners(prev => ({
+        ...prev,
+        [newOwner.id]: true
+      }));
+    }
+    setIsAddingOwner(false);
+  };
+
+  const handleEditOwner = (id: string) => {
+    setEditingOwnerId(id);
+    setIsAddingOwner(true);
+    setIsAddingPerson(false);
+    setEditingPersonId(null);
+  };
+
+  const handleRemoveOwner = (id: string) => {
+    const updatedActualOwners = data.actualOwners.filter(owner => owner.id !== id);
+    updateData({ actualOwners: updatedActualOwners });
+    // Remove from expanded state
+    setExpandedOwners(prev => {
+      const newState = { ...prev };
+      delete newState[id];
+      return newState;
+    });
+  };
+
+  const handleNextStep = () => {
+    // Validate authorized persons
+    if (data.authorizedPersons.length === 0) {
+      toast({
+        title: t('common:error'),
+        description: t('steps:authorizedPersons.validation.noPeople'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if all required fields are filled for each authorized person
+    for (const person of data.authorizedPersons) {
+      if (!person.firstName || !person.lastName || !person.email || !person.birthDate || !person.birthPlace || !person.birthNumber || !person.permanentAddress || !person.position) {
+        toast({
+          title: t('common:error'),
+          description: t('steps:authorizedPersons.validation.missingFields'),
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    // Validate actual owners
+    if (data.actualOwners.length === 0) {
+      toast({
+        title: t('common:error'),
+        description: t('steps:actualOwners.validation.noOwners'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if all required fields are filled for each owner
+    for (const owner of data.actualOwners) {
+      if (!owner.firstName || !owner.lastName || !owner.birthDate || !owner.birthPlace || !owner.birthNumber || !owner.citizenship || !owner.permanentAddress) {
+        toast({
+          title: t('common:error'),
+          description: t('steps:actualOwners.validation.missingFields'),
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    onNext();
+  };
+
+  const contactName = `${data.contactInfo.firstName} ${data.contactInfo.lastName}`.trim();
 
   return (
-    <div className="space-y-6">
-      <InfoBanner
-        title="Osoby a majitelia"
-        keyPoints={keyPoints}
-        onShowDetails={() => setShowInfoModal(true)}
-      />
-      
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
-        <CardContent className="p-6">
-          <Tabs defaultValue="authorized-persons" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="authorized-persons">
-                <UserCheck className="h-4 w-4 mr-2" />
-                {t('steps:authorizedPersons.title')}
-              </TabsTrigger>
-              <TabsTrigger value="actual-owners">
-                <Users className="h-4 w-4 mr-2" />
-                {t('steps:actualOwners.title')}
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="authorized-persons" className="mt-0">
-              <AuthorizedPersonsStep 
-                data={data} 
-                updateData={updateData} 
-                onNext={onNext} 
-                onPrev={onPrev} 
-              />
-            </TabsContent>
-            
-            <TabsContent value="actual-owners" className="mt-0">
-              <ActualOwnersStep 
-                data={data} 
-                updateData={updateData} 
-                onNext={onNext} 
-                onPrev={onPrev} 
-              />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
+    <div className="space-y-4">
+      {/* Auto-fill suggestion */}
+      {contactName && (
+        <AutoFillFromContactButton
+          contactName={contactName}
+          contactEmail={data.contactInfo.email}
+          onAutoFill={() => {
+            autoFillAuthorizedPerson();
+            autoFillActualOwner();
+          }}
+          canAutoFill={canAutoFill}
+          alreadyExists={contactExistsInAuthorized && contactExistsInActualOwners}
+          stepType="authorized"
+          className="mb-4"
+        />
+      )}
+
+      {/* Authorized Persons Section */}
+      <Card className="grid lg:grid-cols-3 gap-6 p-6">
+        <div className="lg:col-span-1">
+          <AuthorizedPersonsSidebar 
+            data={data} 
+            onAddPerson={handleAddPerson}
+          />
+        </div>
+
+        <div className="lg:col-span-2">
+          <OnboardingSection>
+            {isAddingPerson ? (
+              <Card>
+                <CardContent className="p-6">
+                  <AuthorizedPersonForm 
+                    initialData={editingPersonId ? data.authorizedPersons.find(p => p.id === editingPersonId) || {} : {}}
+                    onSave={handleSavePerson}
+                    onCancel={handleCancelAddPerson}
+                  />
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {data.authorizedPersons.map((person, index) => (
+                  <EnhancedAuthorizedPersonCard
+                    key={person.id}
+                    person={person}
+                    index={index}
+                    isExpanded={expandedPersons[person.id] || false}
+                    onToggle={() => togglePersonExpansion(person.id)}
+                    onEdit={() => handleEditPerson(person.id)}
+                    onDelete={() => handleDeletePerson(person.id)}
+                  />
+                ))}
+                
+                {data.authorizedPersons.length === 0 && (
+                  <AuthorizedPersonsEmptyState onAddPerson={handleAddPerson} />
+                )}
+                
+                {data.authorizedPersons.length > 0 && (
+                  <Button 
+                    variant="outline" 
+                    onClick={handleAddPerson}
+                    className="w-full py-6 border-dashed border-slate-300 bg-slate-50/50"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    {t('steps:authorizedPersons.addPersonButton')}
+                  </Button>
+                )}
+              </div>
+            )}
+          </OnboardingSection>
+        </div>
       </Card>
 
-      <InfoModal
-        isOpen={showInfoModal}
-        onClose={() => setShowInfoModal(false)}
-        title={infoModalData.title}
-        description={infoModalData.description}
-        features={infoModalData.features}
-        tips={infoModalData.tips}
-        helpInfo={infoModalData.helpInfo}
-      />
+      {/* Actual Owners Section */}
+      <Card className="grid lg:grid-cols-3 gap-6 p-6">
+        <div className="lg:col-span-1">
+          <ActualOwnersSidebar 
+            data={data} 
+            onAddOwner={handleAddOwner}
+          />
+        </div>
+
+        <div className="lg:col-span-2">
+          <OnboardingSection>
+            {isAddingOwner ? (
+              <Card>
+                <CardContent className="p-6">
+                  <ActualOwnerForm 
+                    initialData={editingOwnerId ? data.actualOwners.find(o => o.id === editingOwnerId) || {} : {}}
+                    onSave={handleSaveOwner}
+                    onCancel={handleCancelAddOwner}
+                  />
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {data.actualOwners.map((owner, index) => (
+                  <EnhancedActualOwnerCard
+                    key={owner.id}
+                    owner={owner}
+                    index={index}
+                    isExpanded={expandedOwners[owner.id] || false}
+                    onToggle={() => toggleOwnerExpansion(owner.id)}
+                    onEdit={() => handleEditOwner(owner.id)}
+                    onDelete={() => handleRemoveOwner(owner.id)}
+                  />
+                ))}
+                
+                {data.actualOwners.length === 0 && (
+                  <ActualOwnersEmptyState onAddOwner={handleAddOwner} />
+                )}
+                
+                {data.actualOwners.length > 0 && (
+                  <Button 
+                    variant="outline" 
+                    onClick={handleAddOwner}
+                    className="w-full py-6 border-dashed border-slate-300 bg-slate-50/50"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    {t('steps:actualOwners.addOwnerButton')}
+                  </Button>
+                )}
+              </div>
+            )}
+          </OnboardingSection>
+        </div>
+      </Card>
     </div>
   );
 };

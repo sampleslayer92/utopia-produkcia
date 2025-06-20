@@ -132,11 +132,11 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
 
   const currentStepData = onboardingSteps[currentStep];
 
-  // If in admin mode, render simplified layout with cleaner styling
+  // If in admin mode, render simplified layout
   if (isAdminMode) {
     return (
       <OnboardingErrorBoundary onReset={handleErrorReset}>
-        <div className="flex flex-col min-h-full bg-gradient-to-br from-slate-50/30 via-white/50 to-blue-50/20">
+        <div className="flex flex-col min-h-full">
           {/* Mobile Stepper for admin mode */}
           {isMobile && (
             <MobileStepper
@@ -149,24 +149,22 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
             />
           )}
           
-          {/* Desktop Top Bar for admin mode with delete functionality */}
+          {/* Desktop Top Bar for admin mode */}
           {!isMobile && (
             <OnboardingTopBar
               currentStep={currentStep}
               steps={onboardingSteps}
               onStepClick={handleStepClick}
               onboardingData={onboardingData}
-              isAdminMode={isAdminMode}
-              onContractDeleted={handleContractDeleted}
             />
           )}
           
-          {/* Main Content - full width, no constraints */}
-          <div className="flex-1 py-4">
-            <div className="w-full">
+          {/* Main Content - flex-1 to take remaining space */}
+          <div className="flex-1 py-6">
+            <div className="max-w-7xl mx-auto px-6">
               {/* Auto-save indicator - Hide on mobile */}
               {!isMobile && (
-                <div className="flex justify-end items-center mb-4 px-4">
+                <div className="flex justify-end items-center mb-4">
                   <AutoSaveIndicator 
                     status={autoSaveStatus}
                     lastSaved={lastSaved}
@@ -174,25 +172,23 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
                 </div>
               )}
 
-              <div className="px-4">
-                <OnboardingStepRenderer
-                  currentStep={currentStep}
-                  data={onboardingData}
-                  updateData={handleUpdateData}
-                  onNext={nextStep}
-                  onPrev={prevStep}
-                  onComplete={handleComplete}
-                  onSaveSignature={handleSaveSignature}
-                  onStepNavigate={handleStepNavigation}
-                />
-              </div>
+              <OnboardingStepRenderer
+                currentStep={currentStep}
+                data={onboardingData}
+                updateData={handleUpdateData}
+                onNext={nextStep}
+                onPrev={prevStep}
+                onComplete={handleComplete}
+                onSaveSignature={handleSaveSignature}
+                onStepNavigate={handleStepNavigation}
+              />
             </div>
           </div>
           
           {/* Desktop Navigation for admin mode - NOT FIXED POSITION */}
           {!isMobile && (
-            <div className="border-t border-slate-200/60 bg-white/80 backdrop-blur-sm py-4">
-              <div className="w-full px-4">
+            <div className="border-t border-slate-200 bg-white py-6">
+              <div className="max-w-7xl mx-auto px-6">
                 <OnboardingNavigation
                   currentStep={currentStep}
                   totalSteps={totalSteps}
@@ -212,7 +208,7 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
           
           {/* Mobile Navigation for admin mode - NOT FIXED POSITION */}
           {isMobile && (
-            <div className="border-t border-slate-200/60 bg-white/80 backdrop-blur-sm p-4">
+            <div className="border-t border-slate-200 bg-white p-4">
               <MobileOptimizedNavigation
                 currentStep={currentStep}
                 totalSteps={totalSteps}
@@ -233,10 +229,10 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
     );
   }
 
-  // Original standalone onboarding layout with cleaner background
+  // Original standalone onboarding layout
   return (
     <OnboardingErrorBoundary onReset={handleErrorReset}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <OnboardingHeader 
           contractNumber={onboardingData.contractNumber} 
           contractId={onboardingData.contractId}
@@ -271,7 +267,7 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
           <div className="max-w-7xl mx-auto">
             {/* Auto-save indicator - Hide on mobile */}
             {!isMobile && (
-              <div className="flex justify-end items-center mb-6">
+              <div className="flex justify-end items-center mb-4">
                 <AutoSaveIndicator 
                   status={autoSaveStatus}
                   lastSaved={lastSaved}

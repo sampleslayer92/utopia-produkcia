@@ -27,7 +27,9 @@ const AdminOnboardingPage = () => {
       subtitle="Vytvorenie novej zmluvy a merchanta"
       actions={onboardingActions}
     >
-      <OnboardingFlow isAdminMode={true} />
+      <div className="bg-white rounded-lg border border-slate-200">
+        <OnboardingFlow isAdminMode={true} />
+      </div>
     </AdminLayout>
   );
 };
