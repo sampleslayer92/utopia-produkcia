@@ -1,6 +1,5 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Palette, Type, Spacing, Zap, Layers } from 'lucide-react';
+import { Palette, Type, Grid3X3, Zap, Layers } from 'lucide-react';
 
 const FoundationsOverview = () => {
   const foundations = [
@@ -17,7 +16,7 @@ const FoundationsOverview = () => {
       items: ['Headings (h1-h6)', 'Body Text', 'Labels', 'Captions', 'Code']
     },
     {
-      icon: Spacing,
+      icon: Grid3X3,
       title: 'Spacing',
       description: 'Konzistentný spacing systém pre margins a paddings',
       items: ['4px grid system', 'Component spacing', 'Layout margins', 'Section gaps']
