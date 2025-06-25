@@ -17,6 +17,7 @@ import ContractEditPage from "./pages/ContractEditPage";
 import ContractDetail from "./components/admin/ContractDetail";
 import MerchantDetailPage from "./pages/MerchantDetailPage";
 import AdminOnboardingPage from "./pages/AdminOnboardingPage";
+import DesignSystemPage from "./pages/DesignSystemPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -30,6 +31,7 @@ const App = () => (
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/onboarding" element={<OnboardingFlow />} />
+        <Route path="/design-system" element={<DesignSystemPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/contracts" element={<ContractsPage />} />
         <Route path="/admin/merchants" element={<MerchantsPage />} />
