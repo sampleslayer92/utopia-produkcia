@@ -11,6 +11,21 @@ interface UseEnhancedAutoSaveProps {
   debounceMs?: number;
 }
 
+// Helper function to map frontend registry type to database enum
+const mapRegistryType = (registryType: string): 'public' | 'business' | 'other' => {
+  switch (registryType) {
+    case 'Živnosť':
+      return 'business';
+    case 'S.r.o.':
+    case 'Akciová spoločnosť':
+      return 'business';
+    case 'Nezisková organizácia':
+      return 'public';
+    default:
+      return 'other';
+  }
+};
+
 export const useEnhancedAutoSave = ({ 
   data, 
   enabled = true, 
@@ -49,7 +64,7 @@ export const useEnhancedAutoSave = ({
         promises.push(contactPromise);
       }
 
-      // Save company info with proper field mapping
+      // Save company info with proper field mapping and registry type conversion
       if (onboardingData.companyInfo) {
         const companyPromise = supabase
           .from('company_info')
@@ -58,7 +73,7 @@ export const useEnhancedAutoSave = ({
             ico: onboardingData.companyInfo.ico || '',
             dic: onboardingData.companyInfo.dic || '',
             company_name: onboardingData.companyInfo.companyName,
-            registry_type: onboardingData.companyInfo.registryType || 'other',
+            registry_type: mapRegistryType(onboardingData.companyInfo.registryType),
             is_vat_payer: onboardingData.companyInfo.isVatPayer || false,
             vat_number: onboardingData.companyInfo.vatNumber || null,
             court: onboardingData.companyInfo.court || null,
