@@ -38,15 +38,14 @@ const AuthPage = () => {
         let actualEmail = email;
         let actualPassword = password;
 
-        // Pre admin rolu umožniť login/heslo systém
+        // Pre admin rolu - jednoduché mapovanie
         if (requestedRole === 'admin') {
-          if (loginField === 'admin') {
+          if (loginField.toLowerCase() === 'admin') {
             actualEmail = 'admin@example.com';
-            // Použiť heslo ktoré používateľ zadal
-            actualPassword = password;
+            actualPassword = password; // Použiť zadané heslo
           } else {
-            // Pre admin rolu použiť login field ako email
-            actualEmail = loginField;
+            // Ak niekto zadal priamo email, použiť to
+            actualEmail = loginField.includes('@') ? loginField : `${loginField}@example.com`;
             actualPassword = password;
           }
         } else {
@@ -55,23 +54,23 @@ const AuthPage = () => {
           actualPassword = password;
         }
 
-        console.log('Login attempt:', {
-          originalEmail: email,
-          originalLogin: loginField,
+        console.log('Pokúšam sa prihlásiť s:', {
           actualEmail,
-          passwordLength: actualPassword.length,
+          passwordProvided: !!actualPassword,
           requestedRole
         });
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: actualEmail,
           password: actualPassword,
         });
 
         if (error) {
-          console.error('Login error:', error);
+          console.error('Chyba pri prihlásení:', error);
           throw error;
         }
+
+        console.log('Prihlásenie úspešné:', data);
 
         toast({
           title: "Prihlásenie úspešné",
@@ -96,10 +95,21 @@ const AuthPage = () => {
         });
       }
     } catch (error: any) {
-      console.error('Auth error:', error);
+      console.error('Chyba autentifikácie:', error);
+      
+      let errorMessage = "Nastala chyba pri autentifikácii.";
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        if (requestedRole === 'admin') {
+          errorMessage = "Nesprávny login alebo heslo. Pre admin prístup zadajte login 'admin' a heslo 'Admin123'.";
+        } else {
+          errorMessage = "Nesprávny email alebo heslo.";
+        }
+      }
+      
       toast({
         title: "Chyba",
-        description: error.message || "Nastala chyba pri autentifikácii.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -150,7 +160,7 @@ const AuthPage = () => {
                     />
                   </div>
                   <div className="text-xs text-slate-500">
-                    Pre admin prístup zadajte login: "admin"
+                    Zadajte: <strong>admin</strong>
                   </div>
                 </div>
               ) : (
@@ -187,7 +197,7 @@ const AuthPage = () => {
                 </div>
                 {requestedRole === 'admin' && isLogin && (
                   <div className="text-xs text-slate-500">
-                    Pre admin prístup zadajte heslo: "Admin123"
+                    Zadajte: <strong>Admin123</strong>
                   </div>
                 )}
               </div>
