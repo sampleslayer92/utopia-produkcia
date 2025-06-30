@@ -1,7 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Euro, FileText, Smartphone, TrendingUp, Calendar } from "lucide-react";
-import { format } from "date-fns";
+import { FileText, Euro, Package, TrendingUp, Building2, CreditCard } from "lucide-react";
 
 interface MerchantStatsProps {
   statistics: {
@@ -10,73 +9,104 @@ interface MerchantStatsProps {
     total_devices: number;
     avg_contract_value: number;
     latest_contract_date: string | null;
+    total_locations: number;
+    total_estimated_turnover: number;
+    locations_with_pos: number;
   };
 }
 
 const MerchantStats = ({ statistics }: MerchantStatsProps) => {
-  const stats = [
-    {
-      title: "Celkový mesačný zisk",
-      value: `€${statistics.total_monthly_profit.toFixed(2)}`,
-      icon: Euro,
-      color: "text-emerald-600",
-      bgColor: "bg-emerald-100"
-    },
-    {
-      title: "Počet zmlúv",
-      value: statistics.total_contracts.toString(),
-      icon: FileText,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100"
-    },
-    {
-      title: "Celkový počet zariadení",
-      value: statistics.total_devices.toString(),
-      icon: Smartphone,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100"
-    },
-    {
-      title: "Priemerná hodnota zmluvy",
-      value: `€${statistics.avg_contract_value.toFixed(2)}`,
-      icon: TrendingUp,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100"
-    }
-  ];
-
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
-          <Card key={index} className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600">{stat.title}</p>
-                  <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-                </div>
-                <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium text-slate-600">
+            Celkom zmlúv
+          </CardTitle>
+          <FileText className="h-4 w-4 text-slate-500" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-slate-900">
+            {statistics.total_contracts}
+          </div>
+        </CardContent>
+      </Card>
 
-      {statistics.latest_contract_date && (
-        <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2 text-slate-600">
-              <Calendar className="h-4 w-4" />
-              <span className="text-sm">
-                Posledná zmluva vytvorená: {format(new Date(statistics.latest_contract_date), 'dd.MM.yyyy HH:mm')}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium text-slate-600">
+            Mesačný zisk
+          </CardTitle>
+          <Euro className="h-4 w-4 text-emerald-600" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-emerald-600">
+            €{statistics.total_monthly_profit.toFixed(2)}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium text-slate-600">
+            Celkom zariadení
+          </CardTitle>
+          <Package className="h-4 w-4 text-blue-600" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-blue-600">
+            {statistics.total_devices}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium text-slate-600">
+            Priem. hodnota zmluvy
+          </CardTitle>
+          <TrendingUp className="h-4 w-4 text-purple-600" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-purple-600">
+            €{statistics.avg_contract_value.toFixed(2)}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium text-slate-600">
+            Prevádzky
+          </CardTitle>
+          <Building2 className="h-4 w-4 text-orange-600" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-orange-600">
+            {statistics.total_locations}
+          </div>
+          <p className="text-xs text-slate-600 mt-1">
+            {statistics.locations_with_pos} s POS terminálom
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium text-slate-600">
+            Plánovaný obrat
+          </CardTitle>
+          <Euro className="h-4 w-4 text-green-600" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-green-600">
+            €{statistics.total_estimated_turnover.toLocaleString()}
+          </div>
+          <p className="text-xs text-slate-600 mt-1">
+            zo všetkých prevádzkových miest
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 };
