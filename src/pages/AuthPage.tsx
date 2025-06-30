@@ -42,15 +42,26 @@ const AuthPage = () => {
         if (requestedRole === 'admin') {
           if (loginField === 'admin') {
             actualEmail = 'admin@example.com';
-            actualPassword = 'Admin123';
+            // Použiť heslo ktoré používateľ zadal
+            actualPassword = password;
           } else {
             // Pre admin rolu použiť login field ako email
             actualEmail = loginField;
+            actualPassword = password;
           }
         } else {
           // Pre ostatné role použiť štandardný email
           actualEmail = email;
+          actualPassword = password;
         }
+
+        console.log('Login attempt:', {
+          originalEmail: email,
+          originalLogin: loginField,
+          actualEmail,
+          passwordLength: actualPassword.length,
+          requestedRole
+        });
 
         const { error } = await supabase.auth.signInWithPassword({
           email: actualEmail,
@@ -58,6 +69,7 @@ const AuthPage = () => {
         });
 
         if (error) {
+          console.error('Login error:', error);
           throw error;
         }
 
@@ -138,7 +150,7 @@ const AuthPage = () => {
                     />
                   </div>
                   <div className="text-xs text-slate-500">
-                    Pre admin prístup použite login: "admin"
+                    Pre admin prístup zadajte login: "admin"
                   </div>
                 </div>
               ) : (
@@ -175,7 +187,7 @@ const AuthPage = () => {
                 </div>
                 {requestedRole === 'admin' && isLogin && (
                   <div className="text-xs text-slate-500">
-                    Admin heslo: "Admin123"
+                    Pre admin prístup zadajte heslo: "Admin123"
                   </div>
                 )}
               </div>
