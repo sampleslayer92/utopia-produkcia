@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Download, Filter, Plus, Search, Users, Eye } from "lucide-react";
+import { CalendarIcon, Filter, Search, Users, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useEnhancedContractsData, useContractTypeOptions, useSalesPersonOptions, useContractSourceOptions } from "@/hooks/useEnhancedContractsData";
@@ -231,11 +232,6 @@ const EnhancedAdminTable = () => {
     });
   };
 
-  const handleExportData = () => {
-    console.log('Exporting contracts data...');
-    toast.success(t('messages.exportStarted'));
-  };
-
   if (isLoading) {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
@@ -295,23 +291,6 @@ const EnhancedAdminTable = () => {
                   {t('table.clickHint')}
                 </span>
               </CardDescription>
-            </div>
-            <div className="flex space-x-2">
-              <Button 
-                variant="outline"
-                onClick={handleExportData}
-                className="hover:bg-slate-50"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                {t('table.export')}
-              </Button>
-              <Button 
-                onClick={() => navigate('/onboarding')}
-                className="bg-emerald-600 hover:bg-emerald-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                {t('table.newContract')}
-              </Button>
             </div>
           </div>
         </CardHeader>

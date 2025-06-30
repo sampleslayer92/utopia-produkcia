@@ -1,3 +1,4 @@
+
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { 
@@ -158,7 +159,6 @@ const AdminSidebar = () => {
                     ? "bg-blue-600 hover:bg-blue-700 text-white" 
                     : "text-slate-700 hover:bg-slate-100"
                 }`}
-                disabled={item.disabled}
               >
                 <item.icon className="h-4 w-4 mr-3" />
                 {item.title}
