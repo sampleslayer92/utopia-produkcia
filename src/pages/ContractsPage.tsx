@@ -1,5 +1,5 @@
 
-import { useTranslation } from 'react-i18n';
+import { useTranslation } from 'react-i18next';
 import AdminLayout from "@/components/admin/AdminLayout";
 import EnhancedAdminTable from "@/components/admin/EnhancedAdminTable";
 import MerchantTestingPanel from "@/components/admin/MerchantTestingPanel";

@@ -60,7 +60,7 @@ const MerchantTestingPanel = () => {
           className="w-full justify-start"
         >
           <Settings className={`h-4 w-4 mr-2 ${triggerUpdate.isPending ? 'animate-spin' : ''}`} />
-          {triggerUpdate.isPending ? 'Aktualizujem...' : 'Aktualizovať trigger'}
+          {triggerUpdate.isPending ? 'Kontrolujem...' : 'Skontrolovať triggery'}
         </Button>
         
         <div className="text-xs text-slate-500 mt-2">
