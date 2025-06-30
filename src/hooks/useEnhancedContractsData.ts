@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -6,8 +5,15 @@ export interface EnhancedContractData {
   id: string;
   contract_number: string;
   status: string;
+  source: string;
+  current_step: number;
   created_at: string;
   submitted_at: string | null;
+  email_viewed_at: string | null;
+  contract_generated_at: string | null;
+  signed_at: string | null;
+  lost_reason: string | null;
+  lost_notes: string | null;
   contact_info: {
     first_name: string;
     last_name: string;
@@ -37,7 +43,6 @@ export interface EnhancedContractData {
 
 const calculateCompletedSteps = (contract: any) => {
   let completed = 0;
-  const totalSteps = 7;
 
   // Step 1: Contact Info
   if (contract.contact_info?.first_name && contract.contact_info?.last_name && contract.contact_info?.email) {
@@ -127,15 +132,21 @@ const extractSingleRecord = (data: any) => {
 };
 
 // Define valid database status types - match actual database enum exactly
-type DatabaseStatus = 'draft' | 'submitted' | 'approved' | 'rejected';
+type DatabaseStatus = 'draft' | 'submitted' | 'approved' | 'rejected' | 'in_progress' | 'sent_to_client' | 'email_viewed' | 'step_completed' | 'contract_generated' | 'signed' | 'waiting_for_signature' | 'lost';
 
 // Map UI filter values to database enum values
 const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
   const statusMap: Record<string, DatabaseStatus> = {
     'draft': 'draft',
+    'in_progress': 'in_progress',
+    'sent_to_client': 'sent_to_client',
+    'email_viewed': 'email_viewed',
+    'step_completed': 'step_completed',
+    'contract_generated': 'contract_generated',
+    'signed': 'signed',
+    'waiting_for_signature': 'waiting_for_signature',
+    'lost': 'lost',
     'submitted': 'submitted',
-    'opened': 'submitted',
-    'viewed': 'submitted',
     'approved': 'approved',
     'rejected': 'rejected',
   };
@@ -145,6 +156,7 @@ const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
 export const useEnhancedContractsData = (filters?: {
   status?: string;
   contractType?: string;
+  source?: string;
   dateFrom?: string;
   dateTo?: string;
   salesPerson?: string;
@@ -161,8 +173,15 @@ export const useEnhancedContractsData = (filters?: {
           id,
           contract_number,
           status,
+          source,
+          current_step,
           created_at,
           submitted_at,
+          email_viewed_at,
+          contract_generated_at,
+          signed_at,
+          lost_reason,
+          lost_notes,
           contact_info (
             first_name,
             last_name,
@@ -194,6 +213,10 @@ export const useEnhancedContractsData = (filters?: {
         if (mappedStatus) {
           query = query.eq('status', mappedStatus);
         }
+      }
+
+      if (filters?.source && filters.source !== 'all') {
+        query = query.eq('source', filters.source);
       }
 
       if (filters?.dateFrom) {
@@ -237,8 +260,15 @@ export const useEnhancedContractsData = (filters?: {
           id: contract.id,
           contract_number: contract.contract_number,
           status: contract.status,
+          source: contract.source || 'web',
+          current_step: contract.current_step || 1,
           created_at: contract.created_at,
           submitted_at: contract.submitted_at,
+          email_viewed_at: contract.email_viewed_at,
+          contract_generated_at: contract.contract_generated_at,
+          signed_at: contract.signed_at,
+          lost_reason: contract.lost_reason,
+          lost_notes: contract.lost_notes,
           contact_info: contactInfo,
           company_info: companyInfo,
           contract_calculations: contractCalculations,
@@ -275,6 +305,15 @@ export const useEnhancedContractsData = (filters?: {
 
       console.log('Enhanced contracts data transformed:', transformedData);
       return transformedData;
+    },
+  });
+};
+
+export const useContractSourceOptions = () => {
+  return useQuery({
+    queryKey: ['contract-sources'],
+    queryFn: async () => {
+      return ['telesales', 'facebook', 'web', 'email', 'referral', 'other'];
     },
   });
 };

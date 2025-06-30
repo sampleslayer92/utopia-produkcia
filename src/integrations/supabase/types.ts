@@ -596,31 +596,52 @@ export type Database = {
       }
       contracts: {
         Row: {
+          contract_generated_at: string | null
           contract_number: string
           created_at: string
+          current_step: number | null
+          email_viewed_at: string | null
           id: string
+          lost_notes: string | null
+          lost_reason: Database["public"]["Enums"]["lost_reason"] | null
           merchant_id: string | null
           notes: string | null
+          signed_at: string | null
+          source: Database["public"]["Enums"]["contract_source"] | null
           status: Database["public"]["Enums"]["contract_status"]
           submitted_at: string | null
           updated_at: string
         }
         Insert: {
+          contract_generated_at?: string | null
           contract_number?: string
           created_at?: string
+          current_step?: number | null
+          email_viewed_at?: string | null
           id?: string
+          lost_notes?: string | null
+          lost_reason?: Database["public"]["Enums"]["lost_reason"] | null
           merchant_id?: string | null
           notes?: string | null
+          signed_at?: string | null
+          source?: Database["public"]["Enums"]["contract_source"] | null
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
           updated_at?: string
         }
         Update: {
+          contract_generated_at?: string | null
           contract_number?: string
           created_at?: string
+          current_step?: number | null
+          email_viewed_at?: string | null
           id?: string
+          lost_notes?: string | null
+          lost_reason?: Database["public"]["Enums"]["lost_reason"] | null
           merchant_id?: string | null
           notes?: string | null
+          signed_at?: string | null
+          source?: Database["public"]["Enums"]["contract_source"] | null
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
           updated_at?: string
@@ -789,8 +810,34 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "partner" | "merchant"
-      contract_status: "draft" | "submitted" | "approved" | "rejected"
+      contract_source:
+        | "telesales"
+        | "facebook"
+        | "web"
+        | "email"
+        | "referral"
+        | "other"
+      contract_status:
+        | "draft"
+        | "submitted"
+        | "approved"
+        | "rejected"
+        | "in_progress"
+        | "sent_to_client"
+        | "email_viewed"
+        | "step_completed"
+        | "contract_generated"
+        | "signed"
+        | "waiting_for_signature"
+        | "lost"
       document_type: "OP" | "Pas"
+      lost_reason:
+        | "no_response"
+        | "price_too_high"
+        | "competitor_chosen"
+        | "not_interested"
+        | "technical_issues"
+        | "other"
       registry_type: "public" | "business" | "other"
       salutation_type: "Pan" | "Pani"
       seasonality_type: "year-round" | "seasonal"
@@ -910,8 +957,37 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "partner", "merchant"],
-      contract_status: ["draft", "submitted", "approved", "rejected"],
+      contract_source: [
+        "telesales",
+        "facebook",
+        "web",
+        "email",
+        "referral",
+        "other",
+      ],
+      contract_status: [
+        "draft",
+        "submitted",
+        "approved",
+        "rejected",
+        "in_progress",
+        "sent_to_client",
+        "email_viewed",
+        "step_completed",
+        "contract_generated",
+        "signed",
+        "waiting_for_signature",
+        "lost",
+      ],
       document_type: ["OP", "Pas"],
+      lost_reason: [
+        "no_response",
+        "price_too_high",
+        "competitor_chosen",
+        "not_interested",
+        "technical_issues",
+        "other",
+      ],
       registry_type: ["public", "business", "other"],
       salutation_type: ["Pan", "Pani"],
       seasonality_type: ["year-round", "seasonal"],

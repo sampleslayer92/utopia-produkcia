@@ -1,3 +1,4 @@
+
 {
   "navigation": {
     "dashboard": "Dashboard",
@@ -93,7 +94,7 @@
   },
   "table": {
     "title": "Zoznam zmlúv",
-    "subtitle": "Prehľad všetkých zmlúv v systéme ({{count}} celkom) - kliknite na riadok pre editáciu",
+    "subtitle": "Zobrazené {{filtered}} z {{total}} zmlúv - kliknite na riadok pre zobrazenie detailu",
     "emptySubtitle": "Zatiaľ nie sú vytvorené žiadne zmluvy",
     "emptyMessage": "Žiadne zmluvy",
     "loading": "Načítavam zmluvy...",
@@ -109,7 +110,8 @@
       "contractType": "Typ zmluvy",
       "monthlyValue": "Mesačná hodnota",
       "completion": "Dokončenosť",
-      "salesPerson": "Obchodník"
+      "salesPerson": "Obchodník",
+      "source": "Zdroj"
     },
     "search": "Vyhľadať zmluvu (číslo, meno, email, spoločnosť, IČO)...",
     "filters": {
@@ -117,9 +119,11 @@
       "contractType": "Typ zmluvy",
       "salesPerson": "Obchodník",
       "dateRange": "Časové obdobie",
+      "source": "Zdroj",
       "allStatuses": "Všetky stavy",
       "allTypes": "Všetky typy",
-      "allSalespeople": "Všetci obchodníci"
+      "allSalespeople": "Všetci obchodníci",
+      "allSources": "Všetky zdroje"
     },
     "noResults": {
       "title": "Žiadne výsledky",
@@ -130,10 +134,34 @@
     "clickHint": "Kliknite na riadok pre zobrazenie detailu"
   },
   "status": {
+    "draft": "Neodoslané",
+    "in_progress": "Rozpracovaná",
+    "sent_to_client": "Odoslaná žiadosť",
+    "email_viewed": "Email zobrazený",
+    "step_completed": "Vyplnený krok",
+    "contract_generated": "Vygenerovaná zmluva",
+    "signed": "Podpísal",
+    "waiting_for_signature": "Čaká na podpis",
+    "lost": "Stratené",
     "submitted": "Odoslané",
     "approved": "Schválené",
-    "rejected": "Zamietnuté",
-    "draft": "Koncept"
+    "rejected": "Zamietnuté"
+  },
+  "source": {
+    "telesales": "Telesales",
+    "facebook": "Facebook",
+    "web": "Web",
+    "email": "Email",
+    "referral": "Odporúčanie",
+    "other": "Iné"
+  },
+  "lostReason": {
+    "no_response": "Bez odpovede",
+    "price_too_high": "Vysoká cena",
+    "competitor_chosen": "Vybrali konkurenciu",
+    "not_interested": "Nezáujem",
+    "technical_issues": "Technické problémy",
+    "other": "Iné"
   },
   "contractDetail": {
     "backToList": "Späť na zoznam",

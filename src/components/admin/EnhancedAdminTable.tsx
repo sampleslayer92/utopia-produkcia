@@ -24,7 +24,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon, Download, Filter, Plus, Search, Users, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { useEnhancedContractsData, useContractTypeOptions, useSalesPersonOptions } from "@/hooks/useEnhancedContractsData";
+import { useEnhancedContractsData, useContractTypeOptions, useSalesPersonOptions, useContractSourceOptions } from "@/hooks/useEnhancedContractsData";
 import { useBulkContractActions } from "@/hooks/useBulkContractActions";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -37,6 +37,7 @@ const EnhancedAdminTable = () => {
   const [filters, setFilters] = useState({
     status: 'all',
     contractType: 'all',
+    source: 'all',
     salesPerson: 'all',
     dateFrom: '',
     dateTo: '',
@@ -54,20 +55,55 @@ const EnhancedAdminTable = () => {
   const { data: contracts, isLoading, error } = useEnhancedContractsData(filters);
   const { data: contractTypes } = useContractTypeOptions();
   const { data: salesPersons } = useSalesPersonOptions();
+  const { data: contractSources } = useContractSourceOptions();
   const { bulkUpdate, bulkDelete, isUpdating, isDeleting } = useBulkContractActions();
 
-  const getStatusBadge = (status: string) => {
-    const statusKey = status as keyof typeof statusMap;
+  const getStatusBadge = (status: string, currentStep?: number) => {
     const statusMap = {
+      'draft': 'bg-gray-100 text-gray-700 border-gray-200',
+      'in_progress': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+      'sent_to_client': 'bg-blue-100 text-blue-700 border-blue-200',
+      'email_viewed': 'bg-cyan-100 text-cyan-700 border-cyan-200',
+      'step_completed': 'bg-indigo-100 text-indigo-700 border-indigo-200',
+      'contract_generated': 'bg-purple-100 text-purple-700 border-purple-200',
+      'signed': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+      'waiting_for_signature': 'bg-orange-100 text-orange-700 border-orange-200',
+      'lost': 'bg-red-100 text-red-700 border-red-200',
       'submitted': 'bg-blue-100 text-blue-700 border-blue-200',
       'approved': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      'rejected': 'bg-red-100 text-red-700 border-red-200',
-      'draft': 'bg-gray-100 text-gray-700 border-gray-200'
+      'rejected': 'bg-red-100 text-red-700 border-red-200'
     };
+
+    const statusKey = status as keyof typeof statusMap;
+    let displayText = t(`status.${status}`);
+    
+    if (status === 'in_progress' && currentStep) {
+      displayText += ` (${currentStep}/7)`;
+    } else if (status === 'step_completed' && currentStep) {
+      displayText += ` ${currentStep}`;
+    }
 
     return (
       <Badge className={statusMap[statusKey] || 'bg-gray-100 text-gray-700 border-gray-200'}>
-        {t(`status.${status}`)}
+        {displayText}
+      </Badge>
+    );
+  };
+
+  const getSourceBadge = (source: string) => {
+    const sourceMap = {
+      'telesales': 'bg-green-100 text-green-700 border-green-200',
+      'facebook': 'bg-blue-100 text-blue-700 border-blue-200',
+      'web': 'bg-purple-100 text-purple-700 border-purple-200',
+      'email': 'bg-orange-100 text-orange-700 border-orange-200',
+      'referral': 'bg-pink-100 text-pink-700 border-pink-200',
+      'other': 'bg-gray-100 text-gray-700 border-gray-200'
+    };
+
+    const sourceKey = source as keyof typeof sourceMap;
+    return (
+      <Badge variant="outline" className={sourceMap[sourceKey] || 'bg-gray-100 text-gray-700 border-gray-200'}>
+        {t(`source.${source}`)}
       </Badge>
     );
   };
@@ -281,7 +317,7 @@ const EnhancedAdminTable = () => {
         </CardHeader>
         <CardContent>
           {/* Advanced Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-6">
             {/* Search */}
             <div className="relative col-span-full md:col-span-2">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -303,12 +339,33 @@ const EnhancedAdminTable = () => {
                 <SelectContent className="bg-white">
                   <SelectItem value="all">{t('table.filters.allStatuses')}</SelectItem>
                   <SelectItem value="draft">{t('status.draft')}</SelectItem>
+                  <SelectItem value="in_progress">{t('status.in_progress')}</SelectItem>
+                  <SelectItem value="sent_to_client">{t('status.sent_to_client')}</SelectItem>
+                  <SelectItem value="email_viewed">{t('status.email_viewed')}</SelectItem>
+                  <SelectItem value="step_completed">{t('status.step_completed')}</SelectItem>
+                  <SelectItem value="contract_generated">{t('status.contract_generated')}</SelectItem>
+                  <SelectItem value="signed">{t('status.signed')}</SelectItem>
+                  <SelectItem value="waiting_for_signature">{t('status.waiting_for_signature')}</SelectItem>
+                  <SelectItem value="lost">{t('status.lost')}</SelectItem>
                   <SelectItem value="submitted">{t('status.submitted')}</SelectItem>
                   <SelectItem value="approved">{t('status.approved')}</SelectItem>
                   <SelectItem value="rejected">{t('status.rejected')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Source Filter */}
+            <Select value={filters.source} onValueChange={(value) => handleFilterChange('source', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('table.filters.source')} />
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectItem value="all">{t('table.filters.allSources')}</SelectItem>
+                {contractSources?.map((source) => (
+                  <SelectItem key={source} value={source}>{t(`source.${source}`)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {/* Contract Type Filter */}
             <Select value={filters.contractType} onValueChange={(value) => handleFilterChange('contractType', value)}>
@@ -403,6 +460,7 @@ const EnhancedAdminTable = () => {
                     </TableHead>
                     <TableHead className="font-medium text-slate-700">{t('table.columns.contractNumber')}</TableHead>
                     <TableHead className="font-medium text-slate-700">{t('table.columns.client')}</TableHead>
+                    <TableHead className="font-medium text-slate-700">{t('table.columns.source')}</TableHead>
                     <TableHead className="font-medium text-slate-700">{t('table.columns.contractType')}</TableHead>
                     <TableHead className="font-medium text-slate-700">{t('table.columns.monthlyValue')}</TableHead>
                     <TableHead className="font-medium text-slate-700">{t('table.columns.status')}</TableHead>
@@ -438,6 +496,9 @@ const EnhancedAdminTable = () => {
                         </div>
                       </TableCell>
                       <TableCell>
+                        {getSourceBadge(contract.source)}
+                      </TableCell>
+                      <TableCell>
                         <Badge variant="outline" className="text-slate-700">
                           {contract.contractType}
                         </Badge>
@@ -446,19 +507,11 @@ const EnhancedAdminTable = () => {
                         €{contract.contractValue.toFixed(2)}
                       </TableCell>
                       <TableCell>
-                        {getStatusBadge(contract.status)}
+                        {getStatusBadge(contract.status, contract.current_step)}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <div className="w-16 bg-slate-200 rounded-full h-2">
-                            <div 
-                              className="bg-emerald-500 h-2 rounded-full" 
-                              style={{ width: `${calculateProgress(contract.completedSteps)}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-sm text-slate-600">
-                            {calculateProgress(contract.completedSteps)}%
-                          </span>
+                        <div className="text-sm text-slate-600">
+                          {contract.completedSteps}/7 krokov
                         </div>
                       </TableCell>
                       <TableCell className="text-slate-700">

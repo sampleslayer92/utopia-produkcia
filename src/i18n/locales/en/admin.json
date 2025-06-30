@@ -1,3 +1,4 @@
+
 {
   "navigation": {
     "dashboard": "Dashboard",
@@ -93,7 +94,7 @@
   },
   "table": {
     "title": "Contract List",
-    "subtitle": "Overview of all contracts in the system ({{count}} total) - click on row to edit",
+    "subtitle": "Showing {{filtered}} of {{total}} contracts - click on row to view details",
     "emptySubtitle": "No contracts have been created yet",
     "emptyMessage": "No contracts",
     "loading": "Loading contracts...",
@@ -109,7 +110,8 @@
       "contractType": "Contract Type",
       "monthlyValue": "Monthly Value",
       "completion": "Completion",
-      "salesPerson": "Sales Person"
+      "salesPerson": "Sales Person",
+      "source": "Source"
     },
     "search": "Search contract (number, name, email, company, ID)...",
     "filters": {
@@ -117,9 +119,11 @@
       "contractType": "Contract Type",
       "salesPerson": "Sales Person",
       "dateRange": "Date Range",
+      "source": "Source",
       "allStatuses": "All Statuses",
       "allTypes": "All Types",
-      "allSalespeople": "All Salespeople"
+      "allSalespeople": "All Salespeople",
+      "allSources": "All Sources"
     },
     "noResults": {
       "title": "No Results",
@@ -130,10 +134,34 @@
     "clickHint": "Click on row to view details"
   },
   "status": {
+    "draft": "Not Sent",
+    "in_progress": "In Progress",
+    "sent_to_client": "Request Sent",
+    "email_viewed": "Email Viewed",
+    "step_completed": "Step Completed",
+    "contract_generated": "Contract Generated",
+    "signed": "Signed",
+    "waiting_for_signature": "Waiting for Signature",
+    "lost": "Lost",
     "submitted": "Submitted",
     "approved": "Approved",
-    "rejected": "Rejected",
-    "draft": "Draft"
+    "rejected": "Rejected"
+  },
+  "source": {
+    "telesales": "Telesales",
+    "facebook": "Facebook",
+    "web": "Web",
+    "email": "Email",
+    "referral": "Referral",
+    "other": "Other"
+  },
+  "lostReason": {
+    "no_response": "No Response",
+    "price_too_high": "Price Too High",
+    "competitor_chosen": "Competitor Chosen",
+    "not_interested": "Not Interested",
+    "technical_issues": "Technical Issues",
+    "other": "Other"
   },
   "contractDetail": {
     "backToList": "Back to List",
