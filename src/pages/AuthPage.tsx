@@ -30,6 +30,13 @@ const AuthPage = () => {
     }
   }, [user, userRole, authLoading, redirectBasedOnRole]);
 
+  // Show admin creator by default if requesting admin role and in login mode
+  useEffect(() => {
+    if (requestedRole === 'admin' && isLogin && email === 'admin@utopia.com') {
+      setShowAdminCreator(true);
+    }
+  }, [requestedRole, isLogin, email]);
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -47,7 +54,7 @@ const AuthPage = () => {
             setShowAdminCreator(true);
             toast({
               title: "Admin účet neexistuje",
-              description: "Môžete vytvoriť nový admin účet.",
+              description: "Môžete vytvoriť nový admin účet nižšie.",
               variant: "destructive",
             });
             return;
@@ -157,8 +164,8 @@ const AuthPage = () => {
               </Button>
             </form>
 
-            {/* Admin Account Creator */}
-            {showAdminCreator && requestedRole === 'admin' && (
+            {/* Admin Account Creator - zobrazí sa vždy pre admin rolu alebo po zlyhanom prihlásení */}
+            {(requestedRole === 'admin' || showAdminCreator) && (
               <div className="mt-6 pt-4 border-t border-slate-200">
                 <AdminAccountCreator />
               </div>

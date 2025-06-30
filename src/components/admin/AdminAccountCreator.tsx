@@ -28,10 +28,10 @@ const AdminAccountCreator = () => {
 
       toast({
         title: "Admin účet vytvorený",
-        description: "Admin účet bol úspešne vytvorený. Môžete sa teraz prihlásiť.",
+        description: "Admin účet bol úspešne vytvorený. Automaticky sa prihlásite...",
       });
 
-      // Automatické prihlásenie po vytvorení účtu
+      // Krátka pauza a automatické prihlásenie
       setTimeout(async () => {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: 'admin@utopia.com',
@@ -42,6 +42,11 @@ const AdminAccountCreator = () => {
           toast({
             title: "Prihlásenie úspešné",
             description: "Vitajte v admin dashboard!",
+          });
+        } else {
+          toast({
+            title: "Účet vytvorený",
+            description: "Prosím, prihláste sa manuálne s heslom 'admin'.",
           });
         }
       }, 1000);
@@ -60,9 +65,12 @@ const AdminAccountCreator = () => {
 
   return (
     <div className="text-center space-y-4">
-      <p className="text-sm text-slate-600">
-        Ak admin účet neexistuje, môžete ho vytvoriť:
-      </p>
+      <div className="text-sm text-slate-600 space-y-2">
+        <p><strong>Admin prístup:</strong></p>
+        <p>Email: admin@utopia.com</p>
+        <p>Heslo: admin</p>
+        <p className="text-xs">Ak admin účet neexistuje, vytvorte ho:</p>
+      </div>
       <Button 
         onClick={createAdminAccount} 
         disabled={isCreating}
