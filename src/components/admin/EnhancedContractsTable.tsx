@@ -26,7 +26,7 @@ const EnhancedContractsTable = () => {
     return matchesSearch && matchesStatus;
   }) || [];
 
-  const hasFilters = searchTerm || statusFilter !== "all";
+  const hasFilters = searchTerm.trim() !== "" || statusFilter !== "all";
 
   if (isLoading) {
     return (
