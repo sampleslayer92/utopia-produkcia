@@ -1,4 +1,3 @@
-
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { 
@@ -49,8 +48,7 @@ const AdminSidebar = () => {
       icon: Handshake,
       path: "/admin/deals",
       active: location.pathname.startsWith("/admin/deals"),
-      type: 'single',
-      disabled: true
+      type: 'single'
     },
     {
       id: 'contracts',
