@@ -7,7 +7,6 @@ import { ArrowLeft, Plus, Loader2, Building2, User, Mail, Phone, MapPin } from "
 import { useMerchantDetail } from "@/hooks/useMerchantDetail";
 import MerchantStats from "@/components/admin/MerchantStats";
 import MerchantContracts from "@/components/admin/MerchantContracts";
-import MerchantLocations from "@/components/admin/MerchantLocations";
 
 const MerchantDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -69,7 +68,7 @@ const MerchantDetailPage = () => {
                   {merchant.company_name}
                 </h1>
                 <p className="text-sm text-slate-600">
-                  IČO: {merchant.ico || 'N/A'} • {statistics.total_contracts} zmlúv • {statistics.total_locations} prevádzkových miest
+                  IČO: {merchant.ico || 'N/A'} • {statistics.total_contracts} zmlúv
                 </p>
               </div>
             </div>
@@ -159,9 +158,6 @@ const MerchantDetailPage = () => {
 
         {/* Statistics */}
         <MerchantStats statistics={statistics} />
-
-        {/* Business Locations */}
-        <MerchantLocations locations={merchantData.locations} />
 
         {/* Contracts */}
         <MerchantContracts contracts={merchantData.contracts} />

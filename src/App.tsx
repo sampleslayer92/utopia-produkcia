@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,7 @@ import AdminOnboardingPage from "./pages/AdminOnboardingPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
 import DealsPage from "./pages/DealsPage";
 import NotFound from "./pages/NotFound";
+import AuthPage from "./pages/AuthPage";
 
 // Import i18n configuration
 import './i18n/config';
@@ -31,6 +31,7 @@ const App = () => (
     <TooltipProvider>
       <Routes>
         <Route path="/" element={<Welcome />} />
+        <Route path="/auth" element={<AuthPage />} />
         <Route path="/onboarding" element={<OnboardingFlow />} />
         <Route path="/design-system" element={<DesignSystemPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
