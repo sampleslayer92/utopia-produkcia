@@ -9,6 +9,7 @@ import { ArrowLeft, Loader2, Mail, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import AdminAccountCreator from "@/components/admin/AdminAccountCreator";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showAdminCreator, setShowAdminCreator] = useState(false);
   const requestedRole = searchParams.get('role');
 
   useEffect(() => {
@@ -39,7 +41,19 @@ const AuthPage = () => {
           password,
         });
 
-        if (error) throw error;
+        if (error) {
+          // Ak je to admin email a prihlásenie zlyhalo, ukáž možnosť vytvorenia účtu
+          if (email === 'admin@utopia.com' && error.message.includes('Invalid login credentials')) {
+            setShowAdminCreator(true);
+            toast({
+              title: "Admin účet neexistuje",
+              description: "Môžete vytvoriť nový admin účet.",
+              variant: "destructive",
+            });
+            return;
+          }
+          throw error;
+        }
 
         toast({
           title: "Prihlásenie úspešné",
@@ -143,10 +157,20 @@ const AuthPage = () => {
               </Button>
             </form>
 
+            {/* Admin Account Creator */}
+            {showAdminCreator && requestedRole === 'admin' && (
+              <div className="mt-6 pt-4 border-t border-slate-200">
+                <AdminAccountCreator />
+              </div>
+            )}
+
             <div className="mt-4 text-center">
               <Button
                 variant="link"
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setShowAdminCreator(false);
+                }}
                 className="text-sm text-slate-600"
               >
                 {isLogin ? 'Nemáte účet? Registrujte sa' : 'Už máte účet? Prihláste sa'}
