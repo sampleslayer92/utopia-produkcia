@@ -134,6 +134,9 @@ const extractSingleRecord = (data: any) => {
 // Define valid database status types - match actual database enum exactly
 type DatabaseStatus = 'draft' | 'submitted' | 'approved' | 'rejected' | 'in_progress' | 'sent_to_client' | 'email_viewed' | 'step_completed' | 'contract_generated' | 'signed' | 'waiting_for_signature' | 'lost';
 
+// Define valid database source types
+type DatabaseSource = 'telesales' | 'facebook' | 'web' | 'email' | 'referral' | 'other';
+
 // Map UI filter values to database enum values
 const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
   const statusMap: Record<string, DatabaseStatus> = {
@@ -151,6 +154,19 @@ const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
     'rejected': 'rejected',
   };
   return statusMap[uiStatus] || null;
+};
+
+// Map UI source filter values to database enum values
+const mapSourceFilter = (uiSource: string): DatabaseSource | null => {
+  const sourceMap: Record<string, DatabaseSource> = {
+    'telesales': 'telesales',
+    'facebook': 'facebook',
+    'web': 'web',
+    'email': 'email',
+    'referral': 'referral',
+    'other': 'other',
+  };
+  return sourceMap[uiSource] || null;
 };
 
 export const useEnhancedContractsData = (filters?: {
@@ -216,7 +232,10 @@ export const useEnhancedContractsData = (filters?: {
       }
 
       if (filters?.source && filters.source !== 'all') {
-        query = query.eq('source', filters.source);
+        const mappedSource = mapSourceFilter(filters.source);
+        if (mappedSource) {
+          query = query.eq('source', mappedSource);
+        }
       }
 
       if (filters?.dateFrom) {

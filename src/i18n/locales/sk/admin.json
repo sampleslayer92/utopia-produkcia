@@ -6,7 +6,16 @@
     "merchants": "Merchanti",
     "reports": "Reporty",
     "settings": "Nastavenia",
-    "team": "Môj tím"
+    "team": "Môj tím",
+    "requests": "Žiadosti",
+    "tasks": "Úlohy",
+    "allRequests": "Všetky žiadosti",
+    "drafts": "Koncepty",
+    "allMerchants": "Všetci merchanti",
+    "locations": "Prevádzky",
+    "ticketingSystem": "Ticketovací systém",
+    "allTasks": "Všetky úlohy",
+    "completedTasks": "Vyriešené úlohy"
   },
   "breadcrumbs": {
     "editContract": "Editácia zmluvy",

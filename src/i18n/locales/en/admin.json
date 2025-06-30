@@ -6,7 +6,16 @@
     "merchants": "Merchants",
     "reports": "Reports",
     "settings": "Settings",
-    "team": "My Team"
+    "team": "My Team",
+    "requests": "Requests",
+    "tasks": "Tasks",
+    "allRequests": "All Requests",
+    "drafts": "Drafts",
+    "allMerchants": "All Merchants",
+    "locations": "Locations",
+    "ticketingSystem": "Ticketing System",
+    "allTasks": "All Tasks",
+    "completedTasks": "Completed Tasks"
   },
   "breadcrumbs": {
     "editContract": "Edit Contract",

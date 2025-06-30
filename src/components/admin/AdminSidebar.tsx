@@ -5,54 +5,134 @@ import {
   LayoutDashboard, 
   FileText, 
   Building2, 
-  Settings, 
-  BarChart3,
-  Users
+  CheckSquare, 
+  Handshake,
+  ClipboardList,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
 import AdminProfile from "./AdminProfile";
 
 const AdminSidebar = () => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // State for expandable sections
+  const [expandedSections, setExpandedSections] = useState<string[]>(['contracts', 'merchants']);
+
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => 
+      prev.includes(sectionId) 
+        ? prev.filter(id => id !== sectionId)
+        : [...prev, sectionId]
+    );
+  };
+
+  const isExpanded = (sectionId: string) => expandedSections.includes(sectionId);
+  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path);
 
   const menuItems = [
     {
+      id: 'dashboard',
       title: t('navigation.dashboard'),
       icon: LayoutDashboard,
       path: "/admin",
-      active: location.pathname === "/admin"
+      active: location.pathname === "/admin",
+      type: 'single'
     },
     {
+      id: 'deals',
+      title: 'Deals',
+      icon: Handshake,
+      path: "/admin/deals",
+      active: location.pathname.startsWith("/admin/deals"),
+      type: 'single',
+      disabled: true
+    },
+    {
+      id: 'contracts',
       title: t('navigation.contracts'),
       icon: FileText,
-      path: "/admin/contracts",
-      active: location.pathname.startsWith("/admin/contract")
+      type: 'expandable',
+      expanded: isExpanded('contracts'),
+      children: [
+        {
+          title: t('navigation.contracts'),
+          path: "/admin/contracts",
+          active: isActive("/admin/contracts")
+        }
+      ]
     },
     {
+      id: 'requests',
+      title: t('navigation.requests'),
+      icon: ClipboardList,
+      type: 'expandable',
+      expanded: isExpanded('requests'),
+      children: [
+        {
+          title: t('navigation.allRequests'),
+          path: "/admin/requests",
+          active: isActive("/admin/requests"),
+          disabled: true
+        },
+        {
+          title: t('navigation.drafts'),
+          path: "/admin/requests/drafts",
+          active: isActive("/admin/requests/drafts"),
+          disabled: true
+        }
+      ]
+    },
+    {
+      id: 'merchants',
       title: t('navigation.merchants'),
       icon: Building2,
-      path: "/admin/merchants",
-      active: location.pathname.startsWith("/admin/merchant")
+      type: 'expandable',
+      expanded: isExpanded('merchants'),
+      children: [
+        {
+          title: t('navigation.allMerchants'),
+          path: "/admin/merchants",
+          active: isActive("/admin/merchants")
+        },
+        {
+          title: t('navigation.locations'),
+          path: "/admin/merchants/locations",
+          active: isActive("/admin/merchants/locations"),
+          disabled: true
+        }
+      ]
     },
     {
-      title: t('navigation.team'),
-      icon: Users,
-      path: "/admin/team",
-      active: location.pathname.startsWith("/admin/team")
-    },
-    {
-      title: t('navigation.reports'),
-      icon: BarChart3,
-      path: "/admin/reports",
-      active: false
-    },
-    {
-      title: t('navigation.settings'),
-      icon: Settings,
-      path: "/admin/settings",
-      active: false
+      id: 'tasks',
+      title: t('navigation.tasks'),
+      icon: CheckSquare,
+      type: 'expandable',
+      expanded: isExpanded('tasks'),
+      children: [
+        {
+          title: t('navigation.ticketingSystem'),
+          path: "/admin/tasks/tickets",
+          active: isActive("/admin/tasks/tickets"),
+          disabled: true
+        },
+        {
+          title: t('navigation.allTasks'),
+          path: "/admin/tasks",
+          active: isActive("/admin/tasks"),
+          disabled: true
+        },
+        {
+          title: t('navigation.completedTasks'),
+          path: "/admin/tasks/completed",
+          active: isActive("/admin/tasks/completed"),
+          disabled: true
+        }
+      ]
     }
   ];
 
@@ -68,22 +148,66 @@ const AdminSidebar = () => {
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 p-4 space-y-2 overflow-y-auto">
+      <div className="flex-1 p-4 space-y-1 overflow-y-auto">
         {menuItems.map((item) => (
-          <Button
-            key={item.path}
-            variant={item.active ? "default" : "ghost"}
-            onClick={() => navigate(item.path)}
-            className={`w-full justify-start ${
-              item.active 
-                ? "bg-blue-600 hover:bg-blue-700 text-white" 
-                : "text-slate-700 hover:bg-slate-100"
-            }`}
-            disabled={!item.active && item.path !== "/admin" && item.path !== "/admin/contracts" && item.path !== "/admin/merchants" && item.path !== "/admin/team"}
-          >
-            <item.icon className="h-4 w-4 mr-3" />
-            {item.title}
-          </Button>
+          <div key={item.id}>
+            {item.type === 'single' ? (
+              <Button
+                variant={item.active ? "default" : "ghost"}
+                onClick={() => navigate(item.path!)}
+                className={`w-full justify-start ${
+                  item.active 
+                    ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                    : "text-slate-700 hover:bg-slate-100"
+                }`}
+                disabled={item.disabled}
+              >
+                <item.icon className="h-4 w-4 mr-3" />
+                {item.title}
+              </Button>
+            ) : (
+              <div className="space-y-1">
+                {/* Section Header */}
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleSection(item.id)}
+                  className="w-full justify-between text-slate-700 hover:bg-slate-100"
+                >
+                  <div className="flex items-center">
+                    <item.icon className="h-4 w-4 mr-3" />
+                    {item.title}
+                  </div>
+                  {item.expanded ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                </Button>
+                
+                {/* Expandable Children */}
+                {item.expanded && (
+                  <div className="ml-6 space-y-1">
+                    {item.children?.map((child, index) => (
+                      <Button
+                        key={index}
+                        variant={child.active ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => navigate(child.path)}
+                        className={`w-full justify-start ${
+                          child.active 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                            : "text-slate-600 hover:bg-slate-50"
+                        }`}
+                        disabled={child.disabled}
+                      >
+                        {child.title}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
