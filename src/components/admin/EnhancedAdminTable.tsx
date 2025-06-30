@@ -9,8 +9,7 @@ import { useBulkContractActions } from "@/hooks/useBulkContractActions";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import BulkActionsPanel from "./table/BulkActionsPanel";
-import ContractFilters from "./table/ContractFilters";
-import ContractsTable from "./table/ContractsTable";
+import EnhancedContractsTable from "./table/EnhancedContractsTable";
 
 const EnhancedAdminTable = () => {
   const { t } = useTranslation('admin');
@@ -26,12 +25,15 @@ const EnhancedAdminTable = () => {
     search: ''
   });
 
-  const [dateRange, setDateRange] = useState<{
-    from: Date | undefined;
-    to: Date | undefined;
-  }>({
-    from: undefined,
-    to: undefined,
+  // Inline table filters
+  const [inlineFilters, setInlineFilters] = useState({
+    contractNumber: '',
+    client: '',
+    source: '',
+    contractType: '',
+    status: '',
+    salesPerson: '',
+    dateRange: { from: '', to: '' }
   });
 
   const { data: contracts, isLoading, error } = useEnhancedContractsData(filters);
@@ -40,22 +42,55 @@ const EnhancedAdminTable = () => {
   const { data: contractSources } = useContractSourceOptions();
   const { bulkUpdate, bulkDelete, isUpdating, isDeleting } = useBulkContractActions();
 
-  // Apply client-side filtering
+  // Apply client-side filtering with inline filters
   const filteredContracts = contracts?.filter(contract => {
     // Date filtering
-    if (dateRange.from || dateRange.to) {
+    if (inlineFilters.dateRange.from || inlineFilters.dateRange.to) {
       const contractDate = new Date(contract.created_at);
-      const from = dateRange.from;
-      const to = dateRange.to;
+      const from = inlineFilters.dateRange.from ? new Date(inlineFilters.dateRange.from) : null;
+      const to = inlineFilters.dateRange.to ? new Date(inlineFilters.dateRange.to) : null;
       if (from && contractDate < from) return false;
       if (to && contractDate > to) return false;
     }
     
-    // Search filtering
+    // Contract number filtering
+    if (inlineFilters.contractNumber) {
+      const searchTerm = inlineFilters.contractNumber.toLowerCase();
+      if (!contract.contract_number.toLowerCase().includes(searchTerm)) return false;
+    }
+
+    // Client filtering
+    if (inlineFilters.client) {
+      const searchTerm = inlineFilters.client.toLowerCase();
+      if (!contract.clientName.toLowerCase().includes(searchTerm) &&
+          !contract.contact_info?.email?.toLowerCase().includes(searchTerm)) return false;
+    }
+
+    // Source filtering
+    if (inlineFilters.source && inlineFilters.source !== 'all') {
+      if (contract.source !== inlineFilters.source) return false;
+    }
+
+    // Contract type filtering
+    if (inlineFilters.contractType && inlineFilters.contractType !== 'all') {
+      if (contract.contractType !== inlineFilters.contractType) return false;
+    }
+
+    // Status filtering
+    if (inlineFilters.status && inlineFilters.status !== 'all') {
+      if (contract.status !== inlineFilters.status) return false;
+    }
+
+    // Sales person filtering
+    if (inlineFilters.salesPerson && inlineFilters.salesPerson !== 'all') {
+      if (contract.salesPerson !== inlineFilters.salesPerson) return false;
+    }
+
+    // Legacy search filtering
     if (filters?.search) {
       const searchTerm = filters.search.toLowerCase();
       return (
-        contract.contract_number.includes(searchTerm) ||
+        contract.contract_number.toString().includes(searchTerm) ||
         contract.clientName.toLowerCase().includes(searchTerm) ||
         contract.salesPerson.toLowerCase().includes(searchTerm) ||
         contract.contractType.toLowerCase().includes(searchTerm) ||
@@ -66,20 +101,9 @@ const EnhancedAdminTable = () => {
     return true;
   });
 
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
-
-  const handleDateRangeChange = (range: { from: Date | undefined; to: Date | undefined }) => {
-    setDateRange(range);
-    setFilters(prev => ({
-      ...prev,
-      dateFrom: range.from ? format(range.from, 'yyyy-MM-dd') : '',
-      dateTo: range.to ? format(range.to, 'yyyy-MM-dd') : ''
-    }));
+  const handleInlineFiltersChange = (newInlineFilters: any) => {
+    console.log('Inline filters changed:', newInlineFilters);
+    setInlineFilters(newInlineFilters);
   };
 
   const handleSelectContract = (contractId: string) => {
@@ -222,22 +246,16 @@ const EnhancedAdminTable = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <ContractFilters
-            filters={filters}
-            dateRange={dateRange}
-            contractTypes={contractTypes}
-            salesPersons={salesPersons}
-            contractSources={contractSources}
-            onFilterChange={handleFilterChange}
-            onDateRangeChange={handleDateRangeChange}
-          />
-
-          <ContractsTable
+          <EnhancedContractsTable
             contracts={filteredContracts || []}
             selectedContracts={selectedContracts}
             onSelectContract={handleSelectContract}
             onSelectAll={handleSelectAll}
             onRowClick={handleRowClick}
+            contractTypes={contractTypes}
+            salesPersons={salesPersons}
+            contractSources={contractSources}
+            onFiltersChange={handleInlineFiltersChange}
           />
         </CardContent>
       </Card>
