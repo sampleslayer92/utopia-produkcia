@@ -2,8 +2,10 @@
 import { ArrowLeft, Edit, Save, X, FileText, Clock, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { useTranslation } from 'react-i18next';
+import { useContractStatusUpdate } from "@/hooks/useContractStatusUpdate";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 interface ContractHeaderProps {
@@ -28,6 +30,7 @@ const ContractHeader = ({
   isSaving = false
 }: ContractHeaderProps) => {
   const { t } = useTranslation('admin');
+  const updateContractStatus = useContractStatusUpdate();
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -56,6 +59,24 @@ const ContractHeader = ({
       </Badge>
     );
   };
+
+  const handleStatusChange = async (newStatus: string) => {
+    await updateContractStatus.mutateAsync({
+      contractId: contract.id,
+      newStatus: newStatus as any
+    });
+  };
+
+  const statusOptions = [
+    { value: 'draft', label: t('status.draft') },
+    { value: 'submitted', label: t('status.submitted') },
+    { value: 'approved', label: t('status.approved') },
+    { value: 'rejected', label: t('status.rejected') },
+    { value: 'in_progress', label: t('status.in_progress') },
+    { value: 'sent_to_client', label: t('status.sent_to_client') },
+    { value: 'signed', label: t('status.signed') },
+    { value: 'lost', label: t('status.lost') }
+  ];
 
   return (
     <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
@@ -117,6 +138,23 @@ const ContractHeader = ({
 
           <div className="flex items-center space-x-2">
             <LanguageSwitcher />
+            
+            {/* Status Change Dropdown */}
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-slate-600">{t('table.columns.status')}:</span>
+              <Select value={contract.status} onValueChange={handleStatusChange} disabled={updateContractStatus.isPending}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {statusOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             
             {isEditMode && isDirty && (
               <Button 
