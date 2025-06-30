@@ -5,11 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Loader2, Mail, Lock } from "lucide-react";
+import { ArrowLeft, Loader2, Mail, Lock, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
-import AdminAccountCreator from "@/components/admin/AdminAccountCreator";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -19,9 +18,9 @@ const AuthPage = () => {
   
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
+  const [loginField, setLoginField] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showAdminCreator, setShowAdminCreator] = useState(false);
   const requestedRole = searchParams.get('role');
 
   useEffect(() => {
@@ -30,35 +29,35 @@ const AuthPage = () => {
     }
   }, [user, userRole, authLoading, redirectBasedOnRole]);
 
-  // Show admin creator by default if requesting admin role and in login mode
-  useEffect(() => {
-    if (requestedRole === 'admin' && isLogin && email === 'admin@utopia.com') {
-      setShowAdminCreator(true);
-    }
-  }, [requestedRole, isLogin, email]);
-
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       if (isLogin) {
+        let actualEmail = email;
+        let actualPassword = password;
+
+        // Pre admin rolu umožniť login/heslo systém
+        if (requestedRole === 'admin') {
+          if (loginField === 'admin') {
+            actualEmail = 'admin@example.com';
+            actualPassword = 'Admin123';
+          } else {
+            // Pre admin rolu použiť login field ako email
+            actualEmail = loginField;
+          }
+        } else {
+          // Pre ostatné role použiť štandardný email
+          actualEmail = email;
+        }
+
         const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+          email: actualEmail,
+          password: actualPassword,
         });
 
         if (error) {
-          // Ak je to admin email a prihlásenie zlyhalo, ukáž možnosť vytvorenia účtu
-          if (email === 'admin@utopia.com' && error.message.includes('Invalid login credentials')) {
-            setShowAdminCreator(true);
-            toast({
-              title: "Admin účet neexistuje",
-              description: "Môžete vytvoriť nový admin účet nižšie.",
-              variant: "destructive",
-            });
-            return;
-          }
           throw error;
         }
 
@@ -122,21 +121,43 @@ const AuthPage = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleAuth} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    placeholder="vas.email@example.com"
-                    required
-                  />
+              {/* Admin role má špeciálny login field */}
+              {requestedRole === 'admin' && isLogin ? (
+                <div className="space-y-2">
+                  <Label htmlFor="login">Login</Label>
+                  <div className="relative">
+                    <User className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
+                    <Input
+                      id="login"
+                      type="text"
+                      value={loginField}
+                      onChange={(e) => setLoginField(e.target.value)}
+                      className="pl-10"
+                      placeholder="admin"
+                      required
+                    />
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    Pre admin prístup použite login: "admin"
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <div className="relative">
+                    <Mail className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-10"
+                      placeholder="vas.email@example.com"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
               
               <div className="space-y-2">
                 <Label htmlFor="password">Heslo</Label>
@@ -152,6 +173,11 @@ const AuthPage = () => {
                     required
                   />
                 </div>
+                {requestedRole === 'admin' && isLogin && (
+                  <div className="text-xs text-slate-500">
+                    Admin heslo: "Admin123"
+                  </div>
+                )}
               </div>
 
               <Button 
@@ -164,20 +190,10 @@ const AuthPage = () => {
               </Button>
             </form>
 
-            {/* Admin Account Creator - zobrazí sa vždy pre admin rolu alebo po zlyhanom prihlásení */}
-            {(requestedRole === 'admin' || showAdminCreator) && (
-              <div className="mt-6 pt-4 border-t border-slate-200">
-                <AdminAccountCreator />
-              </div>
-            )}
-
             <div className="mt-4 text-center">
               <Button
                 variant="link"
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setShowAdminCreator(false);
-                }}
+                onClick={() => setIsLogin(!isLogin)}
                 className="text-sm text-slate-600"
               >
                 {isLogin ? 'Nemáte účet? Registrujte sa' : 'Už máte účet? Prihláste sa'}
