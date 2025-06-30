@@ -35,10 +35,13 @@ export const useContractStatusUpdate = () => {
       return data;
     },
     onSuccess: (data) => {
-      // Invalidate queries to refresh the data
+      // Invalidate all contract-related queries to ensure real-time updates
       queryClient.invalidateQueries({ queryKey: ['enhanced-contracts'] });
       queryClient.invalidateQueries({ queryKey: ['contracts'] });
       queryClient.invalidateQueries({ queryKey: ['contracts-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['contract-data', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['merchants'] });
       
       toast({
         title: "Stav zmluvy aktualizovaný",

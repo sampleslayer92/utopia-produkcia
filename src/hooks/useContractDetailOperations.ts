@@ -1,177 +1,127 @@
 
-import { useState } from "react";
-import { useContractUpdate } from "@/hooks/useContractUpdate";
-import { useContractDelete } from "@/hooks/useContractDelete";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from 'react-i18next';
+import { useState, useCallback } from 'react';
+import { useContractUpdate } from './useContractUpdate';
+import { useContractDelete } from './useContractDelete';
+import { useToast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useContractDetailOperations = (contractId: string, contract: any) => {
-  const { toast } = useToast();
-  const { t } = useTranslation('admin');
-  const navigate = useNavigate();
   const [isEditMode, setIsEditMode] = useState(false);
   const [clientOperationsHasChanges, setClientOperationsHasChanges] = useState(false);
-  
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const updateContract = useContractUpdate(contractId);
   const deleteContract = useContractDelete();
 
-  const handleSave = async () => {
-    console.log('HandleSave called with state:', { 
-      clientOperationsHasChanges,
-      isEditMode
-    });
-
-    // Call the global commit function exposed by EnhancedClientOperationsSection
-    const commitFunction = (window as any).__commitClientOperationsChanges;
-    console.log('Commit function available:', !!commitFunction);
-    
-    if (commitFunction) {
-      try {
-        console.log('Calling commit function...');
-        const updatedData = await commitFunction();
-        console.log('Commit function returned data:', updatedData);
-        
-        if (updatedData) {
-          console.log('Data received from commit, calling updateContract mutation...');
-          await updateContract.mutateAsync({
-            data: updatedData
-          });
-          
-          setClientOperationsHasChanges(false);
-          setIsEditMode(false);
-          
-          toast({
-            title: t('messages.contractSaved'),
-            description: t('messages.contractSavedDesc'),
-          });
-        } else {
-          console.warn('No data returned from commit function');
-          toast({
-            title: t('messages.noChanges'),
-            description: t('messages.noChangesDesc'),
-          });
-        }
-      } catch (error) {
-        console.error('Error in handleSave:', error);
-        
-        let errorMessage = t('messages.saveErrorDesc');
-        if (error instanceof Error) {
-          errorMessage = error.message;
-          console.error('Error details:', error.stack);
-        }
-        
-        toast({
-          title: t('messages.saveError'),
-          description: errorMessage,
-          variant: "destructive",
-        });
-      }
-    } else {
-      console.error('Commit function not available on window object');
-      toast({
-        title: t('messages.saveError'),
-        description: "Funkcia uloženia nie je dostupná. Skúste obnoviť stránku.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleToggleEdit = () => {
-    console.log('Toggling edit mode. Current state:', { 
-      isEditMode, 
-      clientOperationsHasChanges
-    });
-    
-    if (isEditMode && clientOperationsHasChanges) {
-      const shouldSave = window.confirm('Máte neuložené zmeny. Chcete ich uložiť pred ukončením editácie?');
-      if (shouldSave) {
-        handleSave();
-        return; // Don't toggle edit mode here, it will be done in handleSave after successful save
-      } else {
-        setClientOperationsHasChanges(false);
-      }
-    }
-    
-    setIsEditMode(!isEditMode);
-  };
-
-  const handleDelete = async () => {
-    if (!contractId) {
-      console.error('No contract ID available for deletion');
-      return;
-    }
-
-    // Don't attempt deletion if contract is null (component still loading)
-    if (!contract) {
-      console.warn('Contract data not available, skipping delete operation');
-      return;
-    }
-
-    console.log('Delete button clicked for contract:', contractId);
-    
-    const confirmed = window.confirm(
-      t('messages.confirmDelete', { contractNumber: contract.contract_number })
-    );
-    
-    if (!confirmed) {
-      console.log('Delete cancelled by user');
-      return;
-    }
-
+  const handleSave = useCallback(async () => {
     try {
-      console.log('Attempting to delete contract:', contractId);
-      await deleteContract.mutateAsync(contractId);
+      console.log('=== ContractDetailOperations handleSave ===');
       
-      toast({
-        title: t('messages.contractDeleted'),
-        description: t('messages.contractDeletedDesc'),
-      });
+      // Check if there's a global commit function for client operations
+      const commitClientOperations = (window as any).__commitClientOperationsChanges;
+      let clientOperationsData = null;
       
-      console.log('Contract deleted successfully, navigating to admin');
-      navigate('/admin');
-    } catch (error) {
-      console.error('Error deleting contract:', error);
-      
-      const errorMessage = error instanceof Error ? error.message : 'Neočakávaná chyba pri mazaní zmluvy';
-      
-      toast({
-        title: t('messages.deleteError'),
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-  };
+      if (commitClientOperations && clientOperationsHasChanges) {
+        console.log('Committing client operations changes');
+        clientOperationsData = await commitClientOperations();
+      }
 
-  // Updated to async function to match expected type
-  const handleClientOperationsUpdate = async (updatedData: any) => {
-    console.log('Client operations updated, saving:', updatedData);
-    
-    try {
-      await updateContract.mutateAsync({
-        data: updatedData
-      });
-      
+      if (clientOperationsData) {
+        console.log('Updating contract with client operations data:', clientOperationsData);
+        await updateContract.mutateAsync({ data: clientOperationsData });
+      }
+
+      // Invalidate all contract-related queries for real-time updates
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['enhanced-contracts'] });
+      queryClient.invalidateQueries({ queryKey: ['contracts'] });
+      queryClient.invalidateQueries({ queryKey: ['merchants'] });
+
+      setIsEditMode(false);
       setClientOperationsHasChanges(false);
       
       toast({
-        title: t('messages.contractSaved'),
-        description: t('messages.contractSavedDesc'),
+        title: "Zmluva uložená",
+        description: "Všetky zmeny boli úspešne uložené.",
       });
     } catch (error) {
       console.error('Error saving contract:', error);
       toast({
-        title: t('messages.saveError'),
-        description: t('messages.saveErrorDesc'),
+        title: "Chyba pri ukladaní",
+        description: "Nepodarilo sa uložiť zmeny. Skúste to znovu.",
         variant: "destructive",
       });
     }
-  };
+  }, [contractId, updateContract, clientOperationsHasChanges, queryClient, toast]);
 
-  const handleClientOperationsLocalChanges = (hasChanges: boolean) => {
+  const handleToggleEdit = useCallback(() => {
+    if (isEditMode && clientOperationsHasChanges) {
+      // Ask user if they want to save changes
+      const shouldSave = window.confirm('Máte neuložené zmeny. Chcete ich uložiť?');
+      if (shouldSave) {
+        handleSave();
+        return;
+      } else {
+        setClientOperationsHasChanges(false);
+      }
+    }
+    setIsEditMode(!isEditMode);
+  }, [isEditMode, clientOperationsHasChanges, handleSave]);
+
+  const handleDelete = useCallback(async () => {
+    if (!contract) return;
+    
+    try {
+      await deleteContract.mutateAsync(contract.id);
+      
+      // Invalidate queries after deletion
+      queryClient.invalidateQueries({ queryKey: ['enhanced-contracts'] });
+      queryClient.invalidateQueries({ queryKey: ['contracts'] });
+      queryClient.invalidateQueries({ queryKey: ['merchants'] });
+      
+      toast({
+        title: "Zmluva zmazaná",
+        description: `Zmluva ${contract.contract_number} bola úspešne zmazaná.`,
+      });
+    } catch (error) {
+      console.error('Error deleting contract:', error);
+      toast({
+        title: "Chyba pri mazaní",
+        description: "Nepodarilo sa zmazať zmluvu. Skúste to znovu.",
+        variant: "destructive",
+      });
+    }
+  }, [contract, deleteContract, queryClient, toast]);
+
+  const handleClientOperationsUpdate = useCallback(async (data: any) => {
+    try {
+      await updateContract.mutateAsync({ data });
+      
+      // Invalidate queries for real-time updates
+      queryClient.invalidateQueries({ queryKey: ['contract-complete', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['contract-data', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['merchants'] });
+      
+      toast({
+        title: "Údaje aktualizované",
+        description: "Zmeny boli úspešne uložené.",
+      });
+    } catch (error) {
+      console.error('Error updating client operations:', error);
+      toast({
+        title: "Chyba pri aktualizácii",
+        description: "Nepodarilo sa uložiť zmeny.",
+        variant: "destructive",
+      });
+    }
+  }, [contractId, updateContract, queryClient, toast]);
+
+  const handleClientOperationsLocalChanges = useCallback((hasChanges: boolean) => {
     console.log('Client operations local changes:', hasChanges);
     setClientOperationsHasChanges(hasChanges);
-  };
+  }, []);
 
   return {
     isEditMode,
@@ -182,8 +132,6 @@ export const useContractDetailOperations = (contractId: string, contract: any) =
     handleToggleEdit,
     handleDelete,
     handleClientOperationsUpdate,
-    handleClientOperationsLocalChanges,
-    setClientOperationsHasChanges,
-    setIsEditMode
+    handleClientOperationsLocalChanges
   };
 };
