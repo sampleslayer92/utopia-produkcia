@@ -16,7 +16,7 @@ const AdminAccountCreator = () => {
       // Vytvorenie admin účtu cez Supabase Auth API
       const { data, error } = await supabase.auth.signUp({
         email: 'admin@utopia.com',
-        password: 'admin',
+        password: 'admin123',
         options: {
           emailRedirectTo: `${window.location.origin}/admin`
         }
@@ -35,7 +35,7 @@ const AdminAccountCreator = () => {
       setTimeout(async () => {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: 'admin@utopia.com',
-          password: 'admin'
+          password: 'admin123'
         });
 
         if (!signInError) {
@@ -46,7 +46,7 @@ const AdminAccountCreator = () => {
         } else {
           toast({
             title: "Účet vytvorený",
-            description: "Prosím, prihláste sa manuálne s heslom 'admin'.",
+            description: "Prosím, prihláste sa manuálne s heslom 'admin123'.",
           });
         }
       }, 1000);
@@ -68,7 +68,7 @@ const AdminAccountCreator = () => {
       <div className="text-sm text-slate-600 space-y-2">
         <p><strong>Admin prístup:</strong></p>
         <p>Email: admin@utopia.com</p>
-        <p>Heslo: admin</p>
+        <p>Heslo: admin123</p>
         <p className="text-xs">Ak admin účet neexistuje, vytvorte ho:</p>
       </div>
       <Button 
