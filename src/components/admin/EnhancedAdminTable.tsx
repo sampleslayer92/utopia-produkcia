@@ -1,46 +1,30 @@
 
-import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye } from "lucide-react";
-import { format } from "date-fns";
 import { useEnhancedContractsData, useContractTypeOptions, useSalesPersonOptions, useContractSourceOptions } from "@/hooks/useEnhancedContractsData";
-import { useBulkContractActions } from "@/hooks/useBulkContractActions";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import BulkActionsPanel from "./table/BulkActionsPanel";
-import EnhancedContractsTable from "./table/EnhancedContractsTable";
+import { useEnhancedAdminTableState } from "@/hooks/useEnhancedAdminTableState";
+import BulkActionsHandler from "./table/BulkActionsHandler";
+import EnhancedTableContent from "./table/EnhancedTableContent";
 
 const EnhancedAdminTable = () => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
-  const [selectedContracts, setSelectedContracts] = useState<string[]>([]);
-  const [filters, setFilters] = useState({
-    status: 'all',
-    contractType: 'all',
-    source: 'all',
-    salesPerson: 'all',
-    dateFrom: '',
-    dateTo: '',
-    search: ''
-  });
-
-  // Inline table filters
-  const [inlineFilters, setInlineFilters] = useState({
-    contractNumber: '',
-    client: '',
-    source: '',
-    contractType: '',
-    status: '',
-    salesPerson: '',
-    dateRange: { from: '', to: '' }
-  });
+  
+  const {
+    selectedContracts,
+    filters,
+    inlineFilters,
+    handleInlineFiltersChange,
+    handleSelectContract,
+    handleSelectAll,
+    clearSelection
+  } = useEnhancedAdminTableState();
 
   const { data: contracts, isLoading, error } = useEnhancedContractsData(filters);
   const { data: contractTypes } = useContractTypeOptions();
   const { data: salesPersons } = useSalesPersonOptions();
   const { data: contractSources } = useContractSourceOptions();
-  const { bulkUpdate, bulkDelete, isUpdating, isDeleting } = useBulkContractActions();
 
   // Apply client-side filtering with inline filters
   const filteredContracts = contracts?.filter(contract => {
@@ -101,86 +85,12 @@ const EnhancedAdminTable = () => {
     return true;
   });
 
-  const handleInlineFiltersChange = (newInlineFilters: any) => {
-    console.log('Inline filters changed:', newInlineFilters);
-    setInlineFilters(newInlineFilters);
-  };
-
-  const handleSelectContract = (contractId: string) => {
-    setSelectedContracts(prev => 
-      prev.includes(contractId) 
-        ? prev.filter(id => id !== contractId)
-        : [...prev, contractId]
-    );
-  };
-
-  const handleSelectAll = () => {
-    if (selectedContracts.length === filteredContracts?.length) {
-      setSelectedContracts([]);
-    } else {
-      setSelectedContracts(filteredContracts?.map(c => c.id) || []);
-    }
-  };
-
   const handleRowClick = (contractId: string) => {
     navigate(`/admin/contract/${contractId}/view`);
   };
 
-  const handleBulkUpdate = (field: string, value: string) => {
-    console.log(`Bulk update: ${field} = ${value} on contracts:`, selectedContracts);
-    
-    if (selectedContracts.length === 0) {
-      toast.error(t('messages.noContractsSelected'));
-      return;
-    }
-
-    bulkUpdate(
-      { contractIds: selectedContracts, field, value },
-      {
-        onSuccess: () => {
-          setSelectedContracts([]);
-        },
-        onError: (error) => {
-          console.error('Bulk update failed:', error);
-        }
-      }
-    );
-  };
-
-  const handleBulkDelete = () => {
-    console.log('Bulk delete contracts:', selectedContracts);
-    
-    if (selectedContracts.length === 0) {
-      toast.error(t('messages.noContractsToDelete'));
-      return;
-    }
-
-    const getDeleteUnit = (count: number) => {
-      if (count === 1) return t('messages.deleteUnits.single');
-      if (count < 5) return t('messages.deleteUnits.few');
-      return t('messages.deleteUnits.many');
-    };
-
-    const confirmed = window.confirm(
-      t('messages.confirmDelete', { 
-        count: selectedContracts.length, 
-        unit: getDeleteUnit(selectedContracts.length) 
-      })
-    );
-
-    if (!confirmed) {
-      console.log('Bulk delete cancelled by user');
-      return;
-    }
-
-    bulkDelete(selectedContracts, {
-      onSuccess: () => {
-        setSelectedContracts([]);
-      },
-      onError: (error) => {
-        console.error('Bulk delete failed:', error);
-      }
-    });
+  const handleSelectAllContracts = () => {
+    handleSelectAll(filteredContracts || []);
   };
 
   if (isLoading) {
@@ -216,49 +126,23 @@ const EnhancedAdminTable = () => {
 
   return (
     <div className="space-y-4">
-      {selectedContracts.length > 0 && (
-        <BulkActionsPanel
-          selectedCount={selectedContracts.length}
-          onClearSelection={() => setSelectedContracts([])}
-          onBulkUpdate={handleBulkUpdate}
-          onBulkDelete={handleBulkDelete}
-          isLoading={isUpdating || isDeleting}
-        />
-      )}
+      <BulkActionsHandler
+        selectedContracts={selectedContracts}
+        onClearSelection={clearSelection}
+      />
       
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-slate-900">{t('table.title')}</CardTitle>
-              <CardDescription className="text-slate-600">
-                {t('table.subtitle', { 
-                  filtered: filteredContracts?.length || 0, 
-                  total: contracts?.length || 0 
-                })}
-                <br />
-                <span className="inline-flex items-center text-sm text-slate-500 mt-1">
-                  <Eye className="h-3 w-3 mr-1" />
-                  {t('table.clickHint')}
-                </span>
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <EnhancedContractsTable
-            contracts={filteredContracts || []}
-            selectedContracts={selectedContracts}
-            onSelectContract={handleSelectContract}
-            onSelectAll={handleSelectAll}
-            onRowClick={handleRowClick}
-            contractTypes={contractTypes}
-            salesPersons={salesPersons}
-            contractSources={contractSources}
-            onFiltersChange={handleInlineFiltersChange}
-          />
-        </CardContent>
-      </Card>
+      <EnhancedTableContent
+        contracts={contracts || []}
+        filteredContracts={filteredContracts || []}
+        selectedContracts={selectedContracts}
+        onSelectContract={handleSelectContract}
+        onSelectAll={handleSelectAllContracts}
+        onRowClick={handleRowClick}
+        contractTypes={contractTypes}
+        salesPersons={salesPersons}
+        contractSources={contractSources}
+        onFiltersChange={handleInlineFiltersChange}
+      />
     </div>
   );
 };
