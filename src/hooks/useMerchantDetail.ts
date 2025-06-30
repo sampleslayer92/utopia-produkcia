@@ -140,8 +140,20 @@ export const useMerchantDetail = (merchantId: string) => {
         for (const contract of locationsData[0].contracts) {
           for (const assignment of contract.location_assignments || []) {
             if (assignment.business_locations && typeof assignment.business_locations === 'object') {
+              const location = assignment.business_locations as any;
               locations.push({
-                ...assignment.business_locations,
+                id: location.id,
+                name: location.name,
+                address_street: location.address_street,
+                address_city: location.address_city,
+                address_zip_code: location.address_zip_code,
+                business_sector: location.business_sector,
+                estimated_turnover: location.estimated_turnover,
+                has_pos: location.has_pos,
+                contact_person_name: location.contact_person_name,
+                contact_person_email: location.contact_person_email,
+                contact_person_phone: location.contact_person_phone,
+                opening_hours: location.opening_hours,
                 contract_number: contract.contract_number,
                 contract_status: contract.status,
                 assignment_date: assignment.created_at
