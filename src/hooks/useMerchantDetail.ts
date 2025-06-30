@@ -139,7 +139,7 @@ export const useMerchantDetail = (merchantId: string) => {
       if (locationsData && locationsData[0]) {
         for (const contract of locationsData[0].contracts) {
           for (const assignment of contract.location_assignments || []) {
-            if (assignment.business_locations) {
+            if (assignment.business_locations && typeof assignment.business_locations === 'object') {
               locations.push({
                 ...assignment.business_locations,
                 contract_number: contract.contract_number,
