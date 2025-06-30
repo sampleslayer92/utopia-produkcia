@@ -1,7 +1,8 @@
 
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18n';
 import AdminLayout from "@/components/admin/AdminLayout";
 import EnhancedAdminTable from "@/components/admin/EnhancedAdminTable";
+import MerchantTestingPanel from "@/components/admin/MerchantTestingPanel";
 import { Button } from "@/components/ui/button";
 import { Plus, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -27,13 +28,16 @@ const ContractsPage = () => {
   );
 
   return (
-    <AdminLayout 
-      title={t('contracts.title')} 
-      subtitle={t('contracts.subtitle')}
-      actions={contractsActions}
-    >
-      <EnhancedAdminTable />
-    </AdminLayout>
+    <>
+      <AdminLayout 
+        title={t('contracts.title')} 
+        subtitle={t('contracts.subtitle')}
+        actions={contractsActions}
+      >
+        <EnhancedAdminTable />
+      </AdminLayout>
+      <MerchantTestingPanel />
+    </>
   );
 };
 

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye } from "lucide-react";
 import EnhancedContractsTable from "./EnhancedContractsTable";
+import MerchantFixButton from "./MerchantFixButton";
 
 interface EnhancedTableContentProps {
   contracts: any[];
@@ -48,6 +49,9 @@ const EnhancedTableContent = ({
                 {t('table.clickHint')}
               </span>
             </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <MerchantFixButton />
           </div>
         </div>
       </CardHeader>
