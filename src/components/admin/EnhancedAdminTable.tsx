@@ -1,35 +1,16 @@
 
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Filter, Search, Users, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import { useEnhancedContractsData, useContractTypeOptions, useSalesPersonOptions, useContractSourceOptions } from "@/hooks/useEnhancedContractsData";
 import { useBulkContractActions } from "@/hooks/useBulkContractActions";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import BulkActionsPanel from "./table/BulkActionsPanel";
+import ContractFilters from "./table/ContractFilters";
+import ContractsTable from "./table/ContractsTable";
 
 const EnhancedAdminTable = () => {
   const { t } = useTranslation('admin');
@@ -58,60 +39,6 @@ const EnhancedAdminTable = () => {
   const { data: salesPersons } = useSalesPersonOptions();
   const { data: contractSources } = useContractSourceOptions();
   const { bulkUpdate, bulkDelete, isUpdating, isDeleting } = useBulkContractActions();
-
-  const getStatusBadge = (status: string, currentStep?: number) => {
-    const statusMap = {
-      'draft': 'bg-gray-100 text-gray-700 border-gray-200',
-      'in_progress': 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      'sent_to_client': 'bg-blue-100 text-blue-700 border-blue-200',
-      'email_viewed': 'bg-cyan-100 text-cyan-700 border-cyan-200',
-      'step_completed': 'bg-indigo-100 text-indigo-700 border-indigo-200',
-      'contract_generated': 'bg-purple-100 text-purple-700 border-purple-200',
-      'signed': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      'waiting_for_signature': 'bg-orange-100 text-orange-700 border-orange-200',
-      'lost': 'bg-red-100 text-red-700 border-red-200',
-      'submitted': 'bg-blue-100 text-blue-700 border-blue-200',
-      'approved': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      'rejected': 'bg-red-100 text-red-700 border-red-200'
-    };
-
-    const statusKey = status as keyof typeof statusMap;
-    let displayText = t(`status.${status}`);
-    
-    if (status === 'in_progress' && currentStep) {
-      displayText += ` (${currentStep}/7)`;
-    } else if (status === 'step_completed' && currentStep) {
-      displayText += ` ${currentStep}`;
-    }
-
-    return (
-      <Badge className={statusMap[statusKey] || 'bg-gray-100 text-gray-700 border-gray-200'}>
-        {displayText}
-      </Badge>
-    );
-  };
-
-  const getSourceBadge = (source: string) => {
-    const sourceMap = {
-      'telesales': 'bg-green-100 text-green-700 border-green-200',
-      'facebook': 'bg-blue-100 text-blue-700 border-blue-200',
-      'web': 'bg-purple-100 text-purple-700 border-purple-200',
-      'email': 'bg-orange-100 text-orange-700 border-orange-200',
-      'referral': 'bg-pink-100 text-pink-700 border-pink-200',
-      'other': 'bg-gray-100 text-gray-700 border-gray-200'
-    };
-
-    const sourceKey = source as keyof typeof sourceMap;
-    return (
-      <Badge variant="outline" className={sourceMap[sourceKey] || 'bg-gray-100 text-gray-700 border-gray-200'}>
-        {t(`source.${source}`)}
-      </Badge>
-    );
-  };
-
-  const calculateProgress = (completedSteps: number) => {
-    return Math.round((completedSteps / 8) * 100);
-  };
 
   // Apply client-side filtering
   const filteredContracts = contracts?.filter(contract => {
@@ -295,216 +222,23 @@ const EnhancedAdminTable = () => {
           </div>
         </CardHeader>
         <CardContent>
-          {/* Advanced Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-6">
-            {/* Search */}
-            <div className="relative col-span-full md:col-span-2">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder={t('table.search')}
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="pl-10"
-              />
-            </div>
+          <ContractFilters
+            filters={filters}
+            dateRange={dateRange}
+            contractTypes={contractTypes}
+            salesPersons={salesPersons}
+            contractSources={contractSources}
+            onFilterChange={handleFilterChange}
+            onDateRangeChange={handleDateRangeChange}
+          />
 
-            {/* Status Filter */}
-            <div className="flex items-center space-x-2">
-              <Filter className="h-4 w-4 text-slate-500" />
-              <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('table.filters.status')} />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  <SelectItem value="all">{t('table.filters.allStatuses')}</SelectItem>
-                  <SelectItem value="draft">{t('status.draft')}</SelectItem>
-                  <SelectItem value="in_progress">{t('status.in_progress')}</SelectItem>
-                  <SelectItem value="sent_to_client">{t('status.sent_to_client')}</SelectItem>
-                  <SelectItem value="email_viewed">{t('status.email_viewed')}</SelectItem>
-                  <SelectItem value="step_completed">{t('status.step_completed')}</SelectItem>
-                  <SelectItem value="contract_generated">{t('status.contract_generated')}</SelectItem>
-                  <SelectItem value="signed">{t('status.signed')}</SelectItem>
-                  <SelectItem value="waiting_for_signature">{t('status.waiting_for_signature')}</SelectItem>
-                  <SelectItem value="lost">{t('status.lost')}</SelectItem>
-                  <SelectItem value="submitted">{t('status.submitted')}</SelectItem>
-                  <SelectItem value="approved">{t('status.approved')}</SelectItem>
-                  <SelectItem value="rejected">{t('status.rejected')}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Source Filter */}
-            <Select value={filters.source} onValueChange={(value) => handleFilterChange('source', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('table.filters.source')} />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="all">{t('table.filters.allSources')}</SelectItem>
-                {contractSources?.map((source) => (
-                  <SelectItem key={source} value={source}>{t(`source.${source}`)}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Contract Type Filter */}
-            <Select value={filters.contractType} onValueChange={(value) => handleFilterChange('contractType', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('table.filters.contractType')} />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="all">{t('table.filters.allTypes')}</SelectItem>
-                {contractTypes?.map((type) => (
-                  <SelectItem key={type} value={type}>{type}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Sales Person Filter */}
-            <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-slate-500" />
-              <Select value={filters.salesPerson} onValueChange={(value) => handleFilterChange('salesPerson', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('table.filters.salesPerson')} />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  <SelectItem value="all">{t('table.filters.allSalespeople')}</SelectItem>
-                  {salesPersons?.map((person) => (
-                    <SelectItem key={person} value={person}>{person}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Date Range Picker */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "justify-start text-left font-normal",
-                    !dateRange.from && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange.from ? (
-                    dateRange.to ? (
-                      <>
-                        {format(dateRange.from, "dd.MM.yyyy")} -{" "}
-                        {format(dateRange.to, "dd.MM.yyyy")}
-                      </>
-                    ) : (
-                      format(dateRange.from, "dd.MM.yyyy")
-                    )
-                  ) : (
-                    t('table.filters.dateRange')
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-white" align="start">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={dateRange.from}
-                  selected={{ from: dateRange.from, to: dateRange.to }}
-                  onSelect={(range) => handleDateRangeChange({
-                    from: range?.from,
-                    to: range?.to
-                  })}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {filteredContracts?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-              <Users className="h-16 w-16 mb-4 text-slate-300" />
-              <h3 className="text-lg font-medium mb-2">{t('table.noResults.title')}</h3>
-              <p className="text-center max-w-md">
-                {t('table.noResults.subtitle')}
-              </p>
-            </div>
-          ) : (
-            <div className="rounded-lg border border-slate-200 overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-slate-50">
-                    <TableHead className="w-12">
-                      <input
-                        type="checkbox"
-                        checked={selectedContracts.length === filteredContracts?.length && filteredContracts.length > 0}
-                        onChange={handleSelectAll}
-                        className="rounded border-slate-300"
-                      />
-                    </TableHead>
-                    <TableHead className="font-medium text-slate-700">{t('table.columns.contractNumber')}</TableHead>
-                    <TableHead className="font-medium text-slate-700">{t('table.columns.client')}</TableHead>
-                    <TableHead className="font-medium text-slate-700">{t('table.columns.source')}</TableHead>
-                    <TableHead className="font-medium text-slate-700">{t('table.columns.contractType')}</TableHead>
-                    <TableHead className="font-medium text-slate-700">{t('table.columns.monthlyValue')}</TableHead>
-                    <TableHead className="font-medium text-slate-700">{t('table.columns.status')}</TableHead>
-                    <TableHead className="font-medium text-slate-700">{t('table.columns.completion')}</TableHead>
-                    <TableHead className="font-medium text-slate-700">{t('table.columns.salesPerson')}</TableHead>
-                    <TableHead className="font-medium text-slate-700">{t('table.columns.created')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredContracts?.map((contract) => (
-                    <TableRow 
-                      key={contract.id} 
-                      className="hover:bg-slate-50/80 transition-colors cursor-pointer"
-                      onClick={() => handleRowClick(contract.id)}
-                    >
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          checked={selectedContracts.includes(contract.id)}
-                          onChange={() => handleSelectContract(contract.id)}
-                          className="rounded border-slate-300"
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium text-slate-900">
-                        #{contract.contract_number}
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium text-slate-900">{contract.clientName}</p>
-                          {contract.contact_info?.email && (
-                            <p className="text-sm text-slate-600">{contract.contact_info.email}</p>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {getSourceBadge(contract.source)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-slate-700">
-                          {contract.contractType}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="font-medium text-slate-900">
-                        €{contract.contractValue.toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        {getStatusBadge(contract.status, contract.current_step)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-slate-600">
-                          {contract.completedSteps}/7 krokov
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-slate-700">
-                        {contract.salesPerson}
-                      </TableCell>
-                      <TableCell className="text-slate-600 text-sm">
-                        {format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+          <ContractsTable
+            contracts={filteredContracts || []}
+            selectedContracts={selectedContracts}
+            onSelectContract={handleSelectContract}
+            onSelectAll={handleSelectAll}
+            onRowClick={handleRowClick}
+          />
         </CardContent>
       </Card>
     </div>
