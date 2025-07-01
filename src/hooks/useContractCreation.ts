@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useMerchantCreation } from './useMerchantCreation';
 
 export const useContractCreation = () => {
   const [isCreating, setIsCreating] = useState(false);
+  const { ensureMerchantExists } = useMerchantCreation();
 
   const createContract = async (retryCount = 0): Promise<{ success: boolean; contractId?: string; contractNumber?: string; error?: any }> => {
     setIsCreating(true);
@@ -52,6 +54,10 @@ export const useContractCreation = () => {
         description: `Číslo zmluvy: ${contract.contract_number}`
       });
 
+      // Note: Merchant creation will happen automatically via database triggers
+      // when contact_info and company_info are saved
+      console.log('Contract created, merchant will be created automatically when contact/company info is saved');
+
       return {
         success: true,
         contractId: contract.id,
@@ -74,8 +80,58 @@ export const useContractCreation = () => {
     }
   };
 
+  const createContractWithMerchant = async (retryCount = 0) => {
+    const contractResult = await createContract(retryCount);
+    
+    if (!contractResult.success || !contractResult.contractId) {
+      return contractResult;
+    }
+
+    // Return contract info, merchant will be created later by triggers
+    return {
+      success: true,
+      contractId: contractResult.contractId,
+      contractNumber: contractResult.contractNumber,
+      merchantNote: 'Merchant will be created automatically when contact and company info are provided'
+    };
+  };
+
+  const validateContractAndMerchant = async (contractId: string) => {
+    try {
+      console.log('Validating contract and merchant for:', contractId);
+      
+      // Validate merchant creation
+      const merchantResult = await ensureMerchantExists(contractId);
+      
+      if (!merchantResult.success) {
+        console.warn('Merchant validation failed, but contract exists');
+        return {
+          success: true, // Contract exists even if merchant creation failed
+          contractId,
+          merchantCreated: false,
+          merchantError: merchantResult.error
+        };
+      }
+
+      return {
+        success: true,
+        contractId,
+        merchantCreated: true,
+        merchant: merchantResult.merchant
+      };
+    } catch (error) {
+      console.error('Contract and merchant validation error:', error);
+      return {
+        success: false,
+        error
+      };
+    }
+  };
+
   return {
     createContract,
+    createContractWithMerchant,
+    validateContractAndMerchant,
     isCreating
   };
 };
