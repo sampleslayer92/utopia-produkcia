@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,7 +24,7 @@ const AuthPage = () => {
           navigate('/admin');
           break;
         case 'partner':
-          navigate('/admin'); // Same interface as admin
+          navigate('/partner'); // Redirect to partner-specific dashboard
           break;
         case 'merchant':
           navigate('/merchant');

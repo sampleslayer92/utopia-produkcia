@@ -41,9 +41,9 @@ const App = () => (
           <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route path="/design-system" element={<DesignSystemPage />} />
           
-          {/* Admin routes - accessible by admin and partner */}
+          {/* Admin routes - accessible only by admin */}
           <Route path="/admin" element={
-            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+            <ProtectedRoute requiredRole="admin">
               <AdminDashboard />
             </ProtectedRoute>
           } />
@@ -93,7 +93,7 @@ const App = () => (
             </ProtectedRoute>
           } />
           
-          {/* Partner routes - same as admin but with different access */}
+          {/* Partner routes - use dedicated PartnerDashboard */}
           <Route path="/partner" element={
             <ProtectedRoute requiredRole="partner">
               <PartnerDashboard />

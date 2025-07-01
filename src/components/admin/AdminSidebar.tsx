@@ -7,17 +7,20 @@ import {
   Building2, 
   CheckSquare, 
   Handshake,
+  Users,
   ChevronDown,
   ChevronRight
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import AdminProfile from "./AdminProfile";
+import { useAuth } from '@/contexts/AuthContext';
 
 const AdminSidebar = () => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const location = useLocation();
+  const { userRole } = useAuth();
   
   // State for expandable sections
   const [expandedSections, setExpandedSections] = useState<string[]>(['contracts', 'merchants']);
@@ -84,6 +87,15 @@ const AdminSidebar = () => {
         }
       ]
     },
+    // Only show team management for admins
+    ...(userRole?.role === 'admin' ? [{
+      id: 'team',
+      title: 'Správa tímu',
+      icon: Users,
+      path: "/admin/team",
+      active: location.pathname.startsWith("/admin/team"),
+      type: 'single' as const
+    }] : []),
     {
       id: 'tasks',
       title: t('navigation.tasks'),

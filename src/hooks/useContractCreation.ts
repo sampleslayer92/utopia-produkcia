@@ -14,11 +14,19 @@ export const useContractCreation = () => {
     try {
       console.log(`Creating new contract (attempt ${retryCount + 1})...`);
       
+      // Get current user ID for attribution
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) {
+        console.error('Error getting current user:', userError);
+        throw new Error('Nie je možné identifikovať používateľa');
+      }
+
       const { data: contract, error } = await supabase
         .from('contracts')
         .insert({
           status: 'draft',
-          notes: 'Contract created via onboarding portal'
+          notes: 'Contract created via onboarding portal',
+          created_by: user?.id // Automatically assign the creator
         })
         .select('id, contract_number')
         .single();
@@ -41,7 +49,7 @@ export const useContractCreation = () => {
       // Verify the contract was actually created
       const { data: verification, error: verifyError } = await supabase
         .from('contracts')
-        .select('id, contract_number')
+        .select('id, contract_number, created_by')
         .eq('id', contract.id)
         .single();
 
@@ -54,9 +62,11 @@ export const useContractCreation = () => {
         description: `Číslo zmluvy: ${contract.contract_number}`
       });
 
-      // Note: Merchant creation will happen automatically via database triggers
-      // when contact_info and company_info are saved
-      console.log('Contract created, merchant will be created automatically when contact/company info is saved');
+      console.log('Contract created with attribution:', {
+        contractId: contract.id,
+        contractNumber: contract.contract_number,
+        createdBy: verification.created_by
+      });
 
       return {
         success: true,
