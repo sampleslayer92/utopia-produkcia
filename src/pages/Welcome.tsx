@@ -47,7 +47,7 @@ const Welcome = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <img 
-              src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+              src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
               alt="Utopia Logo" 
               className="h-16 w-auto mx-auto mb-4" 
             />
@@ -137,7 +137,7 @@ const Welcome = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <img 
-            src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+            src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
             alt="Utopia Logo" 
             className="h-20 w-auto mx-auto mb-8 animate-fade-in" 
           />
@@ -181,7 +181,7 @@ const Welcome = () => {
               <div className="flex items-center space-x-4">
                 <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <img 
-                    src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+                    src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
                     alt="Utopia Logo" 
                     className="h-7 w-7 object-contain brightness-0 invert" 
                   />

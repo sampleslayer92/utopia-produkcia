@@ -157,7 +157,7 @@ const AuthPage = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <img 
-            src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+            src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
             alt="Utopia Logo" 
             className="h-16 w-auto mx-auto mb-6" 
           />

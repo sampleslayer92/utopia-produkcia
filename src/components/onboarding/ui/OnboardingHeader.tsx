@@ -47,7 +47,7 @@ const OnboardingHeader = ({
             {/* Left side - Logo */}
             <div className="flex items-center">
               <img 
-                src="https://famouscreative.eu/wp-content/uploads/2025/06/logo_utopia_svg.svg" 
+                src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
                 alt="Utopia" 
                 className="h-8 w-auto"
               />
