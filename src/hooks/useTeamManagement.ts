@@ -145,8 +145,12 @@ export const useTeamManagement = () => {
       if (updates.role) {
         const { error: roleError } = await supabase
           .from('user_roles')
-          .update({ role: updates.role })
-          .eq('user_id', id);
+          .upsert({ 
+            user_id: id, 
+            role: updates.role 
+          }, {
+            onConflict: 'user_id'
+          });
 
         if (roleError) throw roleError;
       }
@@ -158,6 +162,26 @@ export const useTeamManagement = () => {
     } catch (error: any) {
       console.error('Error updating team member:', error);
       toast.error('Chyba pri aktualizácii člena tímu');
+      return { error };
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const resetMemberPassword = async (id: string, newPassword: string) => {
+    setIsSaving(true);
+    try {
+      const { error } = await supabase.auth.admin.updateUserById(id, {
+        password: newPassword
+      });
+
+      if (error) throw error;
+
+      toast.success('Heslo bolo úspešne zmenené');
+      return { error: null };
+    } catch (error: any) {
+      console.error('Error resetting password:', error);
+      toast.error('Chyba pri zmene hesla');
       return { error };
     } finally {
       setIsSaving(false);
@@ -182,6 +206,7 @@ export const useTeamManagement = () => {
     isSaving,
     createTeamMember,
     updateTeamMember,
+    resetMemberPassword,
     deactivateTeamMember,
     activateTeamMember,
     refetch: fetchTeamMembers

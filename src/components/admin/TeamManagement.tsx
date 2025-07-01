@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,16 +30,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Plus, Users, UserCheck, UserX, Edit, Key, Copy, Info, LogIn } from "lucide-react";
+import { Plus, Users, UserCheck, UserX, Edit, Key, Copy, Info, LogIn, RotateCcw } from "lucide-react";
 import { useTeamManagement } from '@/hooks/useTeamManagement';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 
 const TeamManagement = () => {
-  const { teamMembers, isLoading, isSaving, createTeamMember, updateTeamMember, deactivateTeamMember, activateTeamMember } = useTeamManagement();
+  const { teamMembers, isLoading, isSaving, createTeamMember, updateTeamMember, resetMemberPassword, deactivateTeamMember, activateTeamMember } = useTeamManagement();
   const { signOut } = useAuth();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<any>(null);
+  const [resetPasswordMember, setResetPasswordMember] = useState<any>(null);
   const [newMemberCredentials, setNewMemberCredentials] = useState<{email: string, password: string} | null>(null);
   const [showCredentialsDialog, setShowCredentialsDialog] = useState(false);
 
@@ -69,8 +71,32 @@ const TeamManagement = () => {
 
   const handleTestLoginAs = async (member: any) => {
     if (confirm(`Chcete sa dočasne prihlásiť ako ${member.first_name} ${member.last_name}? Budete odhlásený zo súčasnej session.`)) {
-      toast.info('Funkcia "Test Login As" bude implementovaná v budúcej verzii', {
-        description: 'Zatiaľ môžete použiť prihlásenie s ich údajmi na /auth stránke'
+      try {
+        // Sign out current user
+        await signOut();
+        
+        // Redirect to auth page with a special parameter
+        window.location.href = `/auth?test_user=${member.email}`;
+        
+        toast.info('Odhlásený. Teraz sa môžete prihlásiť ako testovací používateľ.');
+      } catch (error) {
+        toast.error('Chyba pri odhlásení');
+      }
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!resetPasswordMember) return;
+
+    const formData = new FormData(e.currentTarget);
+    const newPassword = formData.get('newPassword') as string;
+
+    const { error } = await resetMemberPassword(resetPasswordMember.id, newPassword);
+    if (!error) {
+      setResetPasswordMember(null);
+      toast.success('Heslo bolo úspešne zmenené', {
+        description: `Nové heslo: ${newPassword}`
       });
     }
   };
@@ -216,9 +242,9 @@ const TeamManagement = () => {
                         <SelectValue placeholder="Vyberte rolu" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="merchant">Merchant</SelectItem>
                         <SelectItem value="partner">Partner</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="merchant">Merchant</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -291,6 +317,14 @@ const TeamManagement = () => {
                         onClick={() => setEditingMember(member)}
                       >
                         <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setResetPasswordMember(member)}
+                        title="Zmeniť heslo"
+                      >
+                        <RotateCcw className="h-3 w-3" />
                       </Button>
                       <Button
                         size="sm"
@@ -450,9 +484,9 @@ const TeamManagement = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="merchant">Merchant</SelectItem>
                     <SelectItem value="partner">Partner</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="merchant">Merchant</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -462,6 +496,40 @@ const TeamManagement = () => {
                 </Button>
                 <Button type="submit" disabled={isSaving}>
                   {isSaving ? 'Ukladá sa...' : 'Uložiť'}
+                </Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog open={!!resetPasswordMember} onOpenChange={() => setResetPasswordMember(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Zmeniť heslo</DialogTitle>
+            <DialogDescription>
+              Zmeňte heslo pre {resetPasswordMember?.first_name} {resetPasswordMember?.last_name}
+            </DialogDescription>
+          </DialogHeader>
+          {resetPasswordMember && (
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">Nové heslo</Label>
+                <Input 
+                  id="newPassword" 
+                  name="newPassword" 
+                  type="password" 
+                  placeholder="Zadajte nové heslo"
+                  required 
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setResetPasswordMember(null)}>
+                  Zrušiť
+                </Button>
+                <Button type="submit" disabled={isSaving}>
+                  {isSaving ? 'Mení sa...' : 'Zmeniť heslo'}
                 </Button>
               </div>
             </form>
