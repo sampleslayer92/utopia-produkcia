@@ -594,12 +594,48 @@ export type Database = {
           },
         ]
       }
+      contract_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          template_config: Json
+          template_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          template_config?: Json
+          template_type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          template_config?: Json
+          template_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contracts: {
         Row: {
           contract_generated_at: string | null
           contract_number: string
           created_at: string
           current_step: number | null
+          document_signed_at: string | null
+          document_uploaded_at: string | null
+          document_url: string | null
           email_viewed_at: string | null
           id: string
           lost_notes: string | null
@@ -607,6 +643,7 @@ export type Database = {
           merchant_id: string | null
           notes: string | null
           signed_at: string | null
+          signed_document_url: string | null
           source: Database["public"]["Enums"]["contract_source"] | null
           status: Database["public"]["Enums"]["contract_status"]
           submitted_at: string | null
@@ -617,6 +654,9 @@ export type Database = {
           contract_number?: string
           created_at?: string
           current_step?: number | null
+          document_signed_at?: string | null
+          document_uploaded_at?: string | null
+          document_url?: string | null
           email_viewed_at?: string | null
           id?: string
           lost_notes?: string | null
@@ -624,6 +664,7 @@ export type Database = {
           merchant_id?: string | null
           notes?: string | null
           signed_at?: string | null
+          signed_document_url?: string | null
           source?: Database["public"]["Enums"]["contract_source"] | null
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
@@ -634,6 +675,9 @@ export type Database = {
           contract_number?: string
           created_at?: string
           current_step?: number | null
+          document_signed_at?: string | null
+          document_uploaded_at?: string | null
+          document_url?: string | null
           email_viewed_at?: string | null
           id?: string
           lost_notes?: string | null
@@ -641,6 +685,7 @@ export type Database = {
           merchant_id?: string | null
           notes?: string | null
           signed_at?: string | null
+          signed_document_url?: string | null
           source?: Database["public"]["Enums"]["contract_source"] | null
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
@@ -696,6 +741,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      error_logs: {
+        Row: {
+          contract_id: string | null
+          created_at: string
+          error_message: string
+          error_type: string
+          id: string
+          resolved: boolean
+          session_id: string | null
+          stack_trace: string | null
+          step_number: number | null
+          user_agent: string | null
+        }
+        Insert: {
+          contract_id?: string | null
+          created_at?: string
+          error_message: string
+          error_type: string
+          id?: string
+          resolved?: boolean
+          session_id?: string | null
+          stack_trace?: string | null
+          step_number?: number | null
+          user_agent?: string | null
+        }
+        Update: {
+          contract_id?: string | null
+          created_at?: string
+          error_message?: string
+          error_type?: string
+          id?: string
+          resolved?: boolean
+          session_id?: string | null
+          stack_trace?: string | null
+          step_number?: number | null
+          user_agent?: string | null
+        }
+        Relationships: []
       }
       location_assignments: {
         Row: {
@@ -774,6 +858,45 @@ export type Database = {
         }
         Relationships: []
       }
+      step_analytics: {
+        Row: {
+          completed_at: string | null
+          contract_id: string
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          session_id: string | null
+          started_at: string
+          step_name: string
+          step_number: number
+          user_agent: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          contract_id: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          session_id?: string | null
+          started_at?: string
+          step_name: string
+          step_number: number
+          user_agent?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          contract_id?: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          session_id?: string | null
+          started_at?: string
+          step_name?: string
+          step_number?: number
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -792,6 +915,42 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_sessions: {
+        Row: {
+          contract_id: string
+          created_at: string
+          current_step: number | null
+          id: string
+          is_active: boolean
+          last_activity: string
+          session_id: string
+          user_email: string
+          user_name: string
+        }
+        Insert: {
+          contract_id: string
+          created_at?: string
+          current_step?: number | null
+          id?: string
+          is_active?: boolean
+          last_activity?: string
+          session_id: string
+          user_email: string
+          user_name: string
+        }
+        Update: {
+          contract_id?: string
+          created_at?: string
+          current_step?: number | null
+          id?: string
+          is_active?: boolean
+          last_activity?: string
+          session_id?: string
+          user_email?: string
+          user_name?: string
         }
         Relationships: []
       }

@@ -1,3 +1,4 @@
+
 import ContractHeader from "./ContractHeader";
 import EnhancedClientOperationsSection from "./EnhancedClientOperationsSection";
 import DevicesServicesSection from "./DevicesServicesSection";
@@ -7,6 +8,8 @@ import ActualOwnersSection from "./ActualOwnersSection";
 import ContractNotesSection from "./ContractNotesSection";
 import SignatureSection from "./SignatureSection";
 import ContractActions from "./ContractActions";
+import DocumentManagement from "../DocumentManagement";
+import CollaborationIndicator from "../CollaborationIndicator";
 
 interface ContractDetailContainerProps {
   contract: any;
@@ -51,6 +54,15 @@ const ContractDetailContainer = ({
       />
 
       <div className="container mx-auto px-6 py-8">
+        {/* Collaboration Indicator */}
+        <div className="mb-6">
+          <CollaborationIndicator
+            contractId={contract.id}
+            currentUserEmail="admin@example.com" // This should come from auth context
+            currentUserName="Admin User" // This should come from auth context
+          />
+        </div>
+
         <div className="grid lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3 space-y-8">
             <EnhancedClientOperationsSection
@@ -94,6 +106,16 @@ const ContractDetailContainer = ({
               contract={contract}
               onboardingData={onboardingData}
               onSave={async (data) => console.log('Signature save:', data)}
+            />
+
+            {/* Document Management Section */}
+            <DocumentManagement
+              contractId={contract.id}
+              contractNumber={contract.contract_number}
+              documentUrl={contract.document_url}
+              signedDocumentUrl={contract.signed_document_url}
+              documentUploadedAt={contract.document_uploaded_at}
+              documentSignedAt={contract.document_signed_at}
             />
           </div>
 
