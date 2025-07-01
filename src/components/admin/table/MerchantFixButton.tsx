@@ -17,6 +17,10 @@ const MerchantFixButton = () => {
     setIsFixing(true);
     setFixResults(null);
     
+    let fixed = 0;
+    let skipped = 0;
+    let errors = 0;
+    
     try {
       console.log('Starting merchant fix process...');
       
@@ -51,10 +55,6 @@ const MerchantFixButton = () => {
       }
 
       console.log('Found contracts to potentially fix:', contractsToFix?.length || 0);
-
-      let fixed = 0;
-      let skipped = 0;
-      let errors = 0;
 
       for (const contract of contractsToFix || []) {
         try {
@@ -159,7 +159,7 @@ const MerchantFixButton = () => {
         description: 'An unexpected error occurred'
       });
       errors++;
-      setFixResults({ fixed: 0, skipped: 0, errors: 1 });
+      setFixResults({ fixed, skipped, errors });
     } finally {
       setIsFixing(false);
     }
