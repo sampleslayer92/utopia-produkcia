@@ -121,7 +121,9 @@ const LiveDemoSection = () => {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="w-12 h-12 bg-utopia-100 rounded-xl flex items-center justify-center">
-                <demoSteps[currentStep].icon className="w-6 h-6 text-utopia-600" />
+                {React.createElement(demoSteps[currentStep].icon, {
+                  className: "w-6 h-6 text-utopia-600"
+                })}
               </div>
               <h3 className="text-2xl font-semibold text-gray-900">
                 {demoSteps[currentStep].title}

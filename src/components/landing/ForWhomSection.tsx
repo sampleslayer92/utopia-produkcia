@@ -96,9 +96,9 @@ const ForWhomSection = () => {
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="md:w-1/3 text-center">
               <div className="w-24 h-24 bg-gradient-to-br from-utopia-400 to-utopia-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                {segments[activeTab].icon && (
-                  <segments[activeTab].icon className="w-12 h-12 text-white" />
-                )}
+                {React.createElement(segments[activeTab].icon, {
+                  className: "w-12 h-12 text-white"
+                })}
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 {segments[activeTab].title} {segments[activeTab].emoji}
