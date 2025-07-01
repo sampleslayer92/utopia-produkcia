@@ -13,6 +13,7 @@ import OnboardingFlow from "./pages/OnboardingFlow";
 import AdminDashboard from "./pages/AdminDashboard";
 import ContractsPage from "./pages/ContractsPage";
 import MerchantsPage from "./pages/MerchantsPage";
+import TeamManagement from "./components/admin/TeamManagement";
 import TeamPage from "./pages/TeamPage";
 import TeamMemberDetailPage from "./pages/TeamMemberDetailPage";
 import PartnerDashboard from "./pages/PartnerDashboard";
@@ -63,6 +64,11 @@ const App = () => (
             </ProtectedRoute>
           } />
           <Route path="/admin/team" element={
+            <ProtectedRoute requiredRole="admin">
+              <TeamManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/team/performance" element={
             <ProtectedRoute requiredRole="admin">
               <TeamPage />
             </ProtectedRoute>

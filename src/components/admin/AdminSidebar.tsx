@@ -8,6 +8,8 @@ import {
   CheckSquare, 
   Handshake,
   Users,
+  UserCog,
+  TrendingUp,
   ChevronDown,
   ChevronRight
 } from "lucide-react";
@@ -23,7 +25,7 @@ const AdminSidebar = () => {
   const { userRole } = useAuth();
   
   // State for expandable sections
-  const [expandedSections, setExpandedSections] = useState<string[]>(['contracts', 'merchants']);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['contracts', 'merchants', 'team']);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections(prev => 
@@ -92,9 +94,20 @@ const AdminSidebar = () => {
       id: 'team',
       title: 'Správa tímu',
       icon: Users,
-      path: "/admin/team",
-      active: location.pathname.startsWith("/admin/team"),
-      type: 'single' as const
+      type: 'expandable' as const,
+      expanded: isExpanded('team'),
+      children: [
+        {
+          title: 'Správa členov',
+          path: "/admin/team",
+          active: location.pathname === "/admin/team"
+        },
+        {
+          title: 'Výkonnosť tímu',
+          path: "/admin/team/performance",
+          active: location.pathname === "/admin/team/performance"
+        }
+      ]
     }] : []),
     {
       id: 'tasks',
