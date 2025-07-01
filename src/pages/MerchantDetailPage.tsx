@@ -13,6 +13,11 @@ const MerchantDetailPage = () => {
   const navigate = useNavigate();
   const { data: merchantData, isLoading, error } = useMerchantDetail(id!);
 
+  console.log('MerchantDetailPage - ID:', id);
+  console.log('MerchantDetailPage - Loading:', isLoading);
+  console.log('MerchantDetailPage - Error:', error);
+  console.log('MerchantDetailPage - Data:', merchantData);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
@@ -38,8 +43,11 @@ const MerchantDetailPage = () => {
                 ? 'Merchant s týmto ID neexistuje.'
                 : 'Nepodarilo sa načítať detail merchanta.'}
             </p>
-            <p className="text-sm text-slate-500 mb-4">
+            <p className="text-sm text-slate-500 mb-2">
               ID: {id}
+            </p>
+            <p className="text-sm text-slate-500 mb-4">
+              Chyba: {error.message}
             </p>
             <Button onClick={() => navigate('/admin/merchants')} variant="outline">
               <ArrowLeft className="h-4 w-4 mr-2" />

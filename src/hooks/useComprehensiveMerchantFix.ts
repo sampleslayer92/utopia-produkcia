@@ -17,6 +17,8 @@ export const useComprehensiveMerchantFix = () => {
         .select(`
           id,
           merchant_id,
+          status,
+          contract_number,
           contact_info (
             first_name,
             last_name,
@@ -47,35 +49,47 @@ export const useComprehensiveMerchantFix = () => {
         throw contractsError;
       }
 
-      console.log('Found contracts without merchants:', contractsToFix);
+      console.log('Found contracts without merchants:', contractsToFix?.length || 0);
+      console.log('Contracts to fix:', contractsToFix);
 
       let fixedCount = 0;
       let createdMerchants = 0;
       let linkedLocations = 0;
 
       for (const contract of contractsToFix || []) {
+        console.log(`Processing contract ${contract.contract_number} (${contract.id})`);
+        
         const contactInfo = Array.isArray(contract.contact_info) ? contract.contact_info[0] : contract.contact_info;
         const companyInfo = Array.isArray(contract.company_info) ? contract.company_info[0] : contract.company_info;
         const businessLocations = contract.business_locations || [];
 
         if (!contactInfo || !companyInfo || !companyInfo.company_name) {
-          console.log(`Skipping contract ${contract.id} - missing required data`);
+          console.log(`Skipping contract ${contract.contract_number} - missing required data`);
+          console.log('Contact info:', contactInfo);
+          console.log('Company info:', companyInfo);
           continue;
         }
 
-        // Check if merchant already exists
-        const { data: existingMerchant } = await supabase
+        // Check if merchant already exists using maybeSingle instead of single
+        const { data: existingMerchant, error: searchError } = await supabase
           .from('merchants')
           .select('id')
           .eq('company_name', companyInfo.company_name)
           .eq('ico', companyInfo.ico || '')
           .limit(1)
-          .single();
+          .maybeSingle();
+
+        if (searchError) {
+          console.error(`Error searching for existing merchant:`, searchError);
+          continue;
+        }
 
         let merchantId = existingMerchant?.id;
 
         // Create merchant if it doesn't exist
         if (!merchantId) {
+          console.log(`Creating new merchant for ${companyInfo.company_name}`);
+          
           const { data: newMerchant, error: merchantError } = await supabase
             .from('merchants')
             .insert({
@@ -100,33 +114,44 @@ export const useComprehensiveMerchantFix = () => {
 
           merchantId = newMerchant.id;
           createdMerchants++;
-          console.log(`Created new merchant: ${companyInfo.company_name}`);
+          console.log(`Created new merchant: ${companyInfo.company_name} with ID: ${merchantId}`);
+        } else {
+          console.log(`Found existing merchant: ${companyInfo.company_name} with ID: ${merchantId}`);
         }
 
         // Link contract to merchant
+        console.log(`Linking contract ${contract.contract_number} to merchant ${merchantId}`);
+        
         const { error: updateError } = await supabase
           .from('contracts')
           .update({ merchant_id: merchantId })
           .eq('id', contract.id);
 
         if (updateError) {
-          console.error(`Error linking contract ${contract.id} to merchant:`, updateError);
+          console.error(`Error linking contract ${contract.contract_number} to merchant:`, updateError);
           continue;
         }
 
         fixedCount++;
-        console.log(`Fixed contract ${contract.id} -> merchant ${merchantId}`);
+        console.log(`Successfully fixed contract ${contract.contract_number} -> merchant ${merchantId}`);
 
-        // Now handle business locations - create location assignments
+        // Handle business locations - create location assignments if needed
         for (const location of businessLocations) {
+          console.log(`Processing location ${location.name} for contract ${contract.contract_number}`);
+          
           // Check if location assignment already exists
-          const { data: existingAssignment } = await supabase
+          const { data: existingAssignment, error: assignmentSearchError } = await supabase
             .from('location_assignments')
             .select('id')
             .eq('contract_id', contract.id)
             .eq('location_id', location.id)
             .limit(1)
-            .single();
+            .maybeSingle();
+
+          if (assignmentSearchError) {
+            console.error(`Error searching for location assignment:`, assignmentSearchError);
+            continue;
+          }
 
           if (!existingAssignment) {
             const { error: assignmentError } = await supabase
@@ -137,19 +162,23 @@ export const useComprehensiveMerchantFix = () => {
               });
 
             if (assignmentError) {
-              console.error(`Error creating location assignment for contract ${contract.id}, location ${location.id}:`, assignmentError);
+              console.error(`Error creating location assignment for contract ${contract.contract_number}, location ${location.id}:`, assignmentError);
             } else {
               linkedLocations++;
-              console.log(`Linked location ${location.name} to contract ${contract.id}`);
+              console.log(`Successfully linked location ${location.name} to contract ${contract.contract_number}`);
             }
+          } else {
+            console.log(`Location assignment already exists for ${location.name} and contract ${contract.contract_number}`);
           }
         }
       }
 
-      return { fixedCount, createdMerchants, linkedLocations };
+      const result = { fixedCount, createdMerchants, linkedLocations };
+      console.log('Comprehensive fix completed:', result);
+      return result;
     },
     onSuccess: (result) => {
-      console.log('Comprehensive fix completed:', result);
+      console.log('Fix mutation completed successfully:', result);
       
       // Invalidate all relevant queries
       queryClient.invalidateQueries({ queryKey: ['merchants'] });

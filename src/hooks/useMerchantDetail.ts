@@ -64,7 +64,7 @@ export const useMerchantDetail = (merchantId: string) => {
     queryFn: async (): Promise<MerchantDetailData> => {
       console.log('Fetching merchant detail for:', merchantId);
       
-      // Get merchant basic info - use maybeSingle instead of single
+      // Get merchant basic info - use maybeSingle to avoid errors
       const { data: merchant, error: merchantError } = await supabase
         .from('merchants')
         .select('*')
@@ -79,6 +79,8 @@ export const useMerchantDetail = (merchantId: string) => {
       if (!merchant) {
         throw new Error(`Merchant with ID ${merchantId} not found`);
       }
+
+      console.log('Found merchant:', merchant);
 
       // Get merchant's contracts with calculations and items
       const { data: contracts, error: contractsError } = await supabase
@@ -105,46 +107,32 @@ export const useMerchantDetail = (merchantId: string) => {
         throw contractsError;
       }
 
-      // Get business locations directly - simplified query
-      const { data: locationAssignments, error: locationsError } = await supabase
-        .from('location_assignments')
-        .select(`
-          created_at,
-          business_locations(
-            id,
-            name,
-            address_street,
-            address_city,
-            address_zip_code,
-            business_sector,
-            estimated_turnover,
-            has_pos,
-            contact_person_name,
-            contact_person_email,
-            contact_person_phone,
-            opening_hours
-          ),
-          contracts(
-            contract_number,
-            status
-          )
-        `)
-        .in('contract_id', (contracts || []).map(c => c.id));
+      console.log('Found contracts:', contracts);
 
-      if (locationsError) {
-        console.error('Error fetching locations:', locationsError);
-        throw locationsError;
-      }
+      // Get business locations - simplified approach
+      const contractIds = (contracts || []).map(c => c.id);
+      console.log('Contract IDs for locations:', contractIds);
 
-      // Process locations data
-      const locations: BusinessLocation[] = [];
-      if (locationAssignments) {
-        for (const assignment of locationAssignments) {
-          if (assignment.business_locations && assignment.contracts) {
-            const location = assignment.business_locations as any;
-            const contract = assignment.contracts as any;
+      let locations: BusinessLocation[] = [];
+      
+      if (contractIds.length > 0) {
+        // Get locations directly from business_locations table
+        const { data: businessLocations, error: locationsError } = await supabase
+          .from('business_locations')
+          .select('*')
+          .in('contract_id', contractIds);
+
+        if (locationsError) {
+          console.error('Error fetching business locations:', locationsError);
+        } else {
+          console.log('Found business locations:', businessLocations);
+          
+          // Transform business locations to match interface
+          locations = (businessLocations || []).map(location => {
+            // Find the contract for this location
+            const contract = contracts?.find(c => c.id === location.contract_id);
             
-            locations.push({
+            return {
               id: location.id,
               name: location.name,
               address_street: location.address_street,
@@ -157,13 +145,15 @@ export const useMerchantDetail = (merchantId: string) => {
               contact_person_email: location.contact_person_email,
               contact_person_phone: location.contact_person_phone,
               opening_hours: location.opening_hours,
-              contract_number: contract.contract_number,
-              contract_status: contract.status,
-              assignment_date: assignment.created_at
-            });
-          }
+              contract_number: contract?.contract_number || 'N/A',
+              contract_status: contract?.status || 'unknown',
+              assignment_date: contract?.created_at || location.created_at
+            };
+          });
         }
       }
+
+      console.log('Processed locations:', locations);
 
       // Process contracts data
       const processedContracts = (contracts || []).map(contract => {
@@ -220,7 +210,7 @@ export const useMerchantDetail = (merchantId: string) => {
         }
       };
 
-      console.log('Merchant detail data:', result);
+      console.log('Final merchant detail data:', result);
       return result;
     },
     enabled: !!merchantId,
