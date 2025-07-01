@@ -7,11 +7,10 @@ import CompanyAddressCard from "./company/CompanyAddressCard";
 import CompanyContactAddressCard from "./company/CompanyContactAddressCard";
 import CompanyContactPersonCard from "./company/CompanyContactPersonCard";
 import MobileOptimizedCard from "./ui/MobileOptimizedCard";
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { syncContactPersonData } from "./utils/crossStepAutoFill";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
-import { useDirectMerchantCreation } from "@/hooks/useDirectMerchantCreation";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -25,10 +24,6 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
   const isMobile = useIsMobile();
   const { t } = useTranslation('forms');
-  const { createMerchantIfNeeded, isCreating: isMerchantCreating } = useDirectMerchantCreation();
-  
-  // Ref to track if merchant creation is in progress to avoid duplicate calls
-  const merchantCreationInProgress = useRef(false);
 
   const updateCompanyInfo = useCallback((field: string, value: any) => {
     console.log('=== COMPANY INFO STEP: updateCompanyInfo called ===');
@@ -71,46 +66,6 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
     
     console.log('Update dispatched');
   }, [updateData, data.companyInfo]);
-
-  // Auto-create merchant when company name and ICO are available
-  useEffect(() => {
-    const shouldCreateMerchant = 
-      data.contractId && 
-      data.companyInfo?.companyName?.trim() &&
-      data.companyInfo?.ico?.trim() &&
-      !merchantCreationInProgress.current &&
-      !isMerchantCreating;
-
-    if (shouldCreateMerchant) {
-      merchantCreationInProgress.current = true;
-      
-      console.log('=== AUTO MERCHANT CREATION: Triggering ===');
-      console.log('Contract ID:', data.contractId);
-      console.log('Company name:', data.companyInfo.companyName);
-      console.log('ICO:', data.companyInfo.ico);
-      
-      createMerchantIfNeeded(data.contractId, data.companyInfo, data.contactInfo)
-        .then((result) => {
-          console.log('Merchant creation result:', result);
-          if (result.success) {
-            console.log('Merchant created/linked successfully');
-          }
-        })
-        .catch((error) => {
-          console.error('Merchant creation failed:', error);
-        })
-        .finally(() => {
-          merchantCreationInProgress.current = false;
-        });
-    }
-  }, [
-    data.contractId,
-    data.companyInfo?.companyName,
-    data.companyInfo?.ico,
-    data.contactInfo,
-    createMerchantIfNeeded,
-    isMerchantCreating
-  ]);
 
   // Debug effect to track data changes
   useEffect(() => {
@@ -381,14 +336,6 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
                   <li>{t('companyInfo.smartFeatures.vatPrediction')}</li>
                 </ul>
               </div>
-
-              {/* Show merchant creation status */}
-              {isMerchantCreating && (
-                <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800 animate-fade-in">
-                  <p className="font-medium mb-1">Vytváram merchant...</p>
-                  <p>Spoločnosť sa pridáva do systému</p>
-                </div>
-              )}
 
               {data.companyInfo.headOfficeEqualsOperatingAddress && (
                 <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800 animate-fade-in">

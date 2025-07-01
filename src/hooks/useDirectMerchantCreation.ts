@@ -1,18 +1,27 @@
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export const useDirectMerchantCreation = () => {
   const [isCreating, setIsCreating] = useState(false);
+  const creationMutex = useRef<Set<string>>(new Set());
 
   const createMerchantIfNeeded = async (contractId: string, companyInfo: any, contactInfo?: any) => {
+    // Prevent duplicate creation for the same contract
+    if (creationMutex.current.has(contractId)) {
+      console.log('Merchant creation already in progress for contract:', contractId);
+      return { success: false, reason: 'creation_in_progress' };
+    }
+
     // Only proceed if we have company name and ICO
     if (!companyInfo?.companyName?.trim() || !companyInfo?.ico?.trim()) {
       console.log('Merchant creation skipped - missing company name or ICO');
       return { success: false, reason: 'missing_data' };
     }
 
+    // Add to mutex
+    creationMutex.current.add(contractId);
     setIsCreating(true);
     
     try {
@@ -113,6 +122,8 @@ export const useDirectMerchantCreation = () => {
 
       return { success: false, error };
     } finally {
+      // Remove from mutex
+      creationMutex.current.delete(contractId);
       setIsCreating(false);
     }
   };

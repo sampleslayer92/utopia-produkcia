@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -36,6 +37,7 @@ export const useEnhancedAutoSave = ({
   const queryClient = useQueryClient();
   const timeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedRef = useRef<string>('');
+  const merchantTimeoutRef = useRef<NodeJS.Timeout>();
   const { validateContractExists } = useContractValidation();
   const { createMerchantIfNeeded } = useDirectMerchantCreation();
 
@@ -197,22 +199,6 @@ export const useEnhancedAutoSave = ({
         throw new Error(`Failed to save: ${errors.map(e => e.error?.message).join(', ')}`);
       }
 
-      // After successful save, trigger merchant creation if conditions are met
-      if (onboardingData.companyInfo?.companyName?.trim() && onboardingData.companyInfo?.ico?.trim()) {
-        console.log('Enhanced auto-save: Triggering merchant creation after save');
-        try {
-          const merchantResult = await createMerchantIfNeeded(
-            onboardingData.contractId, 
-            onboardingData.companyInfo, 
-            onboardingData.contactInfo
-          );
-          console.log('Enhanced auto-save: Merchant creation result:', merchantResult);
-        } catch (merchantError) {
-          console.error('Enhanced auto-save: Merchant creation failed, but continuing:', merchantError);
-          // Don't throw here - the main save was successful
-        }
-      }
-
       console.log('Enhanced auto-save: All data saved successfully');
       return results;
     },
@@ -223,6 +209,24 @@ export const useEnhancedAutoSave = ({
       queryClient.invalidateQueries({ queryKey: ['contract-data', data.contractId] });
       
       console.log('Enhanced auto-save: Success - data saved and queries invalidated');
+      
+      // Debounced merchant creation after successful save
+      if (merchantTimeoutRef.current) {
+        clearTimeout(merchantTimeoutRef.current);
+      }
+      
+      merchantTimeoutRef.current = setTimeout(() => {
+        if (data.companyInfo?.companyName?.trim() && data.companyInfo?.ico?.trim()) {
+          console.log('Enhanced auto-save: Triggering debounced merchant creation');
+          createMerchantIfNeeded(data.contractId, data.companyInfo, data.contactInfo)
+            .then((result) => {
+              console.log('Enhanced auto-save: Merchant creation result:', result);
+            })
+            .catch((error) => {
+              console.error('Enhanced auto-save: Merchant creation failed:', error);
+            });
+        }
+      }, 1000); // 1 second delay after save
     },
     onError: (error) => {
       console.error('Enhanced auto-save error:', error);
@@ -260,6 +264,9 @@ export const useEnhancedAutoSave = ({
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+      }
+      if (merchantTimeoutRef.current) {
+        clearTimeout(merchantTimeoutRef.current);
       }
     };
   }, [data, enabled, debounceMs, saveMutation]);
