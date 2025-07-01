@@ -24,15 +24,18 @@ const HowItWorksSection = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-32 px-6 bg-dark relative overflow-hidden">
+    <section id="how-it-works" className="py-32 px-6 bg-white relative overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-dark-50/50 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-light-gray-50/50 to-transparent"></div>
       
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
-            Ako prebieha <span className="text-utopia-500">objednávka</span>?
+          <h2 className="text-5xl md:text-6xl font-light text-gray-900 mb-6">
+            Ako prebieha <span className="bg-blue-gradient bg-clip-text text-transparent">objednávka</span>?
           </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Tri jednoduché kroky k tvojmu novému platobému riešeniu
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
@@ -42,25 +45,25 @@ const HowItWorksSection = () => {
               className="group relative animate-fade-in-up"
               style={{ animationDelay: `${index * 0.2}s` }}
             >
-              {/* Glassmorphism card */}
-              <div className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 h-full transition-all duration-300 hover:bg-white/10 hover:border-utopia-500/30 hover:scale-105 hover:shadow-[0_0_40px_rgba(0,212,255,0.2)]">
+              {/* Card with light theme */}
+              <div className="relative bg-white border border-gray-200 rounded-3xl p-8 h-full transition-all duration-300 hover:shadow-xl hover:border-utopia-300 hover:scale-105 shadow-lg">
                 {/* Step number */}
-                <div className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-br from-utopia-500 to-neon-blue rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                <div className="absolute -top-4 -right-4 w-12 h-12 bg-blue-gradient rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg">
                   {step.number}
                 </div>
                 
                 {/* Icon container */}
                 <div className="relative mb-8">
-                  <div className="w-20 h-20 bg-gradient-to-br from-utopia-400/20 to-neon-blue/20 backdrop-blur-sm rounded-3xl flex items-center justify-center mx-auto group-hover:animate-glow border border-utopia-500/20">
-                    <step.icon className="w-10 h-10 text-utopia-400 group-hover:text-utopia-300 transition-colors duration-300" strokeWidth={1.5} />
+                  <div className="w-20 h-20 bg-gradient-to-br from-utopia-100 to-utopia-200 rounded-3xl flex items-center justify-center mx-auto group-hover:shadow-lg transition-all duration-300 border border-utopia-200">
+                    <step.icon className="w-10 h-10 text-utopia-600 group-hover:text-utopia-700 transition-colors duration-300" strokeWidth={1.5} />
                   </div>
                 </div>
                 
-                <h3 className="text-2xl font-medium text-white mb-4 text-center">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">
                   {step.title}
                 </h3>
                 
-                <p className="text-white/70 leading-relaxed text-center font-light">
+                <p className="text-gray-600 leading-relaxed text-center">
                   {step.description}
                 </p>
               </div>
@@ -69,9 +72,11 @@ const HowItWorksSection = () => {
         </div>
 
         <div className="text-center mt-16">
-          <p className="text-utopia-400 font-light text-lg">
-            Celý proces zaberie menej než 10 minút.
-          </p>
+          <div className="bg-utopia-50 border border-utopia-200 rounded-2xl p-6 inline-block">
+            <p className="text-utopia-700 font-medium text-lg">
+              ⏱️ Celý proces zaberie menej než 10 minút
+            </p>
+          </div>
         </div>
       </div>
     </section>

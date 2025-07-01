@@ -27,15 +27,18 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-32 px-6 bg-dark relative overflow-hidden">
+    <section className="py-32 px-6 bg-white relative overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-utopia-500/5 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-light-gray-50/30 to-transparent"></div>
       
       <div className="max-w-4xl mx-auto relative z-10">
         <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
-            Často kladené <span className="text-utopia-500">otázky</span>
+          <h2 className="text-5xl md:text-6xl font-light text-gray-900 mb-6">
+            Často kladené <span className="bg-blue-gradient bg-clip-text text-transparent">otázky</span>
           </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Odpovede na najčastejšie otázky o našich službách
+          </p>
         </div>
 
         <Accordion type="single" collapsible className="space-y-6">
@@ -43,13 +46,13 @@ const FAQSection = () => {
             <AccordionItem 
               key={index} 
               value={`item-${index}`}
-              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-8 animate-fade-in-up hover:bg-white/10 hover:border-utopia-500/30 transition-all duration-300"
+              className="bg-white border border-gray-200 rounded-2xl px-8 animate-fade-in-up hover:shadow-lg hover:border-utopia-300 transition-all duration-300 shadow-sm"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <AccordionTrigger className="text-left font-medium text-white hover:text-utopia-400 transition-colors py-6 text-lg">
+              <AccordionTrigger className="text-left font-semibold text-gray-900 hover:text-utopia-600 transition-colors py-6 text-lg">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="text-white/70 pt-2 pb-6 font-light text-base leading-relaxed">
+              <AccordionContent className="text-gray-600 pt-2 pb-6 text-base leading-relaxed">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
@@ -57,9 +60,11 @@ const FAQSection = () => {
         </Accordion>
 
         <div className="text-center mt-16">
-          <p className="text-utopia-400 font-light text-lg">
-            Nenašiel si odpoveď? Ozvi sa nám. Sme tu pre teba.
-          </p>
+          <div className="bg-utopia-50 border border-utopia-200 rounded-2xl p-6 inline-block">
+            <p className="text-utopia-700 font-medium text-lg">
+              ❓ Nenašiel si odpoveď? Ozvi sa nám. Sme tu pre teba.
+            </p>
+          </div>
         </div>
       </div>
     </section>

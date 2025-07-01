@@ -7,10 +7,12 @@ import LiveDemoSection from "@/components/landing/LiveDemoSection";
 import PartnerSection from "@/components/landing/PartnerSection";
 import FAQSection from "@/components/landing/FAQSection";
 import LandingFooter from "@/components/landing/LandingFooter";
+import LandingNavigation from "@/components/landing/LandingNavigation";
 
 const LandingPage = () => {
   return (
-    <div className="font-inter bg-dark min-h-screen">
+    <div className="font-inter bg-white min-h-screen">
+      <LandingNavigation />
       <HeroSection />
       <HowItWorksSection />
       <ForWhomSection />

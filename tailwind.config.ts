@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -66,39 +65,62 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Dark theme colors inspired by Onramper
-				dark: {
-					DEFAULT: '#0a0a0a',
-					50: '#1a1a1a',
-					100: '#2a2a2a',
-					200: '#3a3a3a',
-					300: '#4a4a4a',
-					400: '#5a5a5a',
-					500: '#6a6a6a',
-					600: '#7a7a7a',
-					700: '#8a8a8a',
-					800: '#9a9a9a',
-					900: '#aaaaaa'
+				// Light theme colors inspired by Onramper
+				light: {
+					DEFAULT: '#ffffff',
+					gray: {
+						50: '#f9fafb',
+						100: '#f3f4f6',
+						200: '#e5e7eb',
+						300: '#d1d5db',
+						400: '#9ca3af',
+						500: '#6b7280',
+						600: '#4b5563',
+						700: '#374151',
+						800: '#1f2937',
+						900: '#111827'
+					}
 				},
-				utopia: {
-					DEFAULT: '#00d4ff',
-					50: '#e6f9ff',
-					100: '#ccf3ff',
-					200: '#99e7ff',
-					300: '#66dbff',
-					400: '#33cfff',
-					500: '#00d4ff',
-					600: '#00a3cc',
-					700: '#007299',
-					800: '#004166',
-					900: '#001033',
-					glow: 'rgba(0, 212, 255, 0.3)'
+				// Updated blue gradient system
+				blue: {
+					DEFAULT: '#0066ff',
+					50: '#eff6ff',
+					100: '#dbeafe',
+					200: '#bfdbfe',
+					300: '#93c5fd',
+					400: '#60a5fa',
+					500: '#3b82f6',
+					600: '#2563eb',
+					700: '#1d4ed8',
+					800: '#1e40af',
+					900: '#1e3a8a',
+					gradient: {
+						from: '#0066ff',
+						to: '#00d4ff'
+					}
 				},
-				neon: {
-					blue: '#00d4ff',
-					purple: '#9333ea',
+				// Bright accent colors
+				accent: {
+					yellow: '#fbbf24',
+					orange: '#f97316',
 					pink: '#ec4899',
 					green: '#10b981'
+				},
+				// Updated UTOPIA colors for light theme
+				utopia: {
+					DEFAULT: '#0066ff',
+					50: '#eff6ff',
+					100: '#dbeafe',
+					200: '#bfdbfe',
+					300: '#93c5fd',
+					400: '#60a5fa',
+					500: '#0066ff',
+					600: '#2563eb',
+					700: '#1d4ed8',
+					800: '#1e40af',
+					900: '#1e3a8a',
+					light: '#00d4ff',
+					glow: 'rgba(0, 102, 255, 0.3)'
 				}
 			},
 			borderRadius: {
@@ -108,6 +130,12 @@ export default {
 			},
 			backdropBlur: {
 				xs: '2px',
+			},
+			fontSize: {
+				'7xl': '4.5rem',
+				'8xl': '6rem',
+				'9xl': '8rem',
+				'10xl': '10rem'
 			},
 			keyframes: {
 				'accordion-down': {
@@ -166,10 +194,10 @@ export default {
 				},
 				'glow': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px rgba(0, 212, 255, 0.3)'
+						boxShadow: '0 0 20px rgba(0, 102, 255, 0.3)'
 					},
 					'50%': {
-						boxShadow: '0 0 40px rgba(0, 212, 255, 0.6)'
+						boxShadow: '0 0 40px rgba(0, 102, 255, 0.6)'
 					}
 				},
 				'gradient-shift': {
@@ -178,6 +206,14 @@ export default {
 					},
 					'50%': {
 						backgroundPosition: '100% 50%'
+					}
+				},
+				'bounce-gentle': {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-5px)'
 					}
 				}
 			},
@@ -189,11 +225,13 @@ export default {
 				'scale-in': 'scale-in 0.5s ease-out',
 				'float': 'float 3s ease-in-out infinite',
 				'glow': 'glow 3s ease-in-out infinite',
-				'gradient-shift': 'gradient-shift 8s ease-in-out infinite'
+				'gradient-shift': 'gradient-shift 8s ease-in-out infinite',
+				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'gradient-mesh': 'radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.2) 0%, transparent 50%)',
+				'blue-gradient': 'linear-gradient(135deg, #0066ff 0%, #00d4ff 100%)',
+				'light-gradient': 'linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)',
 			}
 		}
 	},
