@@ -39,7 +39,11 @@ export const useTeamManagement = () => {
           .from('user_roles')
           .select('role')
           .eq('user_id', profile.id)
-          .single();
+          .maybeSingle();
+
+        if (roleError) {
+          console.error('Error fetching role for user:', profile.id, roleError);
+        }
 
         formattedMembers.push({
           ...profile,
@@ -71,8 +75,10 @@ export const useTeamManagement = () => {
       // Get current session token
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        throw new Error('No active session');
+        throw new Error('No active session - please log in again');
       }
+
+      console.log('Session found, calling Edge Function...');
 
       // Call Edge Function to create user
       const { data, error } = await supabase.functions.invoke('create-team-member', {
@@ -82,9 +88,15 @@ export const useTeamManagement = () => {
         },
       });
 
+      console.log('Edge Function response:', { data, error });
+
       if (error) {
         console.error('Edge function error:', error);
-        throw error;
+        throw new Error(error.message || 'Network error calling Edge Function');
+      }
+
+      if (!data) {
+        throw new Error('No response from Edge Function');
       }
 
       if (!data.success) {
@@ -103,8 +115,20 @@ export const useTeamManagement = () => {
       return { data, error: null };
     } catch (error: any) {
       console.error('Error creating team member:', error);
-      toast.error('Chyba pri vytváraní člena tímu', {
-        description: error.message
+      const errorMessage = error.message || 'Unknown error occurred';
+      
+      // Provide more specific error messages
+      let userMessage = 'Chyba pri vytváraní člena tímu';
+      if (errorMessage.includes('admin role required')) {
+        userMessage = 'Nemáte oprávnenie na vytvorenie člena tímu';
+      } else if (errorMessage.includes('No active session')) {
+        userMessage = 'Platnosť prihlásenia vypršala, prihláste sa znovu';
+      } else if (errorMessage.includes('already registered')) {
+        userMessage = 'Používateľ s týmto emailom už existuje';
+      }
+      
+      toast.error(userMessage, {
+        description: errorMessage
       });
       return { data: null, error };
     } finally {

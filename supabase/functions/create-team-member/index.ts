@@ -26,37 +26,55 @@ serve(async (req) => {
       }
     )
 
-    // Create supabase client for user verification
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-    )
-
     // Get the authorization header
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
+      console.error('No authorization header provided')
       throw new Error('No authorization header')
     }
 
-    // Set the auth token for user verification
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    )
+    const token = authHeader.replace('Bearer ', '')
+    console.log('Verifying user token...')
 
-    if (userError || !user) {
-      throw new Error('Unauthorized')
+    // Verify user with service role client (bypasses RLS)
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token)
+
+    if (userError) {
+      console.error('User verification error:', userError)
+      throw new Error('Invalid token')
     }
 
-    // Check if user is admin
-    const { data: userRole, error: roleError } = await supabaseClient
+    if (!user) {
+      console.error('No user found from token')
+      throw new Error('Unauthorized - no user')
+    }
+
+    console.log('User verified:', user.email, 'ID:', user.id)
+
+    // Check if user is admin using service role client (bypasses RLS)
+    const { data: userRole, error: roleError } = await supabaseAdmin
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
 
-    if (roleError || userRole?.role !== 'admin') {
+    console.log('Role check result:', { userRole, roleError })
+
+    if (roleError) {
+      console.error('Role check error:', roleError)
+      throw new Error('Error checking user role: ' + roleError.message)
+    }
+
+    if (!userRole || userRole.role !== 'admin') {
+      console.error('User role check failed:', { 
+        userId: user.id, 
+        email: user.email, 
+        foundRole: userRole?.role || 'none' 
+      })
       throw new Error('User not authorized - admin role required')
     }
+
+    console.log('Admin role verified for user:', user.email)
 
     // Get request body
     const body = await req.json()
@@ -77,7 +95,7 @@ serve(async (req) => {
 
     if (authError) {
       console.error('Auth error:', authError)
-      throw authError
+      throw new Error('Failed to create user: ' + authError.message)
     }
 
     console.log('User created in auth:', authData.user?.id)
@@ -91,6 +109,8 @@ serve(async (req) => {
 
       if (profileError) {
         console.error('Profile update error:', profileError)
+      } else {
+        console.log('Profile updated with phone number')
       }
     }
 
@@ -105,10 +125,10 @@ serve(async (req) => {
 
       if (roleError) {
         console.error('Role assignment error:', roleError)
-        throw roleError
+        throw new Error('Failed to assign role: ' + roleError.message)
       }
 
-      console.log('Role assigned successfully')
+      console.log('Role assigned successfully:', role)
     }
 
     return new Response(
