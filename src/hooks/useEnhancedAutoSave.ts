@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { OnboardingData } from '@/types/onboarding';
 import { useToast } from '@/hooks/use-toast';
+import { useContractValidation } from './useContractValidation';
 
 interface UseEnhancedAutoSaveProps {
   data: OnboardingData;
@@ -35,6 +36,7 @@ export const useEnhancedAutoSave = ({
   const queryClient = useQueryClient();
   const timeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedRef = useRef<string>('');
+  const { validateContractExists } = useContractValidation();
 
   const saveMutation = useMutation({
     mutationFn: async (onboardingData: OnboardingData) => {
@@ -43,6 +45,14 @@ export const useEnhancedAutoSave = ({
       }
 
       console.log('Enhanced auto-save: Starting save process for contract:', onboardingData.contractId);
+
+      // Validate contract exists before attempting to save
+      const contractExists = await validateContractExists(onboardingData.contractId);
+      
+      if (!contractExists) {
+        console.error('Enhanced auto-save: Contract does not exist, skipping save');
+        throw new Error('Contract does not exist');
+      }
 
       const promises = [];
 
@@ -199,11 +209,15 @@ export const useEnhancedAutoSave = ({
     },
     onError: (error) => {
       console.error('Enhanced auto-save error:', error);
-      toast({
-        title: "Chyba pri ukladaní",
-        description: "Nepodarilo sa automaticky uložiť zmeny.",
-        variant: "destructive",
-      });
+      
+      // Don't show error toast for contract not existing - this is handled elsewhere
+      if (!error.message.includes('Contract does not exist')) {
+        toast({
+          title: "Chyba pri ukladaní",
+          description: "Nepodarilo sa automaticky uložiť zmeny.",
+          variant: "destructive",
+        });
+      }
     }
   });
 

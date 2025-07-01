@@ -3,13 +3,21 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { DynamicCard } from '@/types/onboarding';
 import { toast } from '@/hooks/use-toast';
+import { useContractValidation } from './useContractValidation';
 
 export const useContractItems = (contractId: string) => {
   const queryClient = useQueryClient();
+  const { validateContractExists } = useContractValidation();
 
   const addItemMutation = useMutation({
     mutationFn: async (item: DynamicCard) => {
       console.log('Adding contract item:', item);
+
+      // Validate contract exists before adding item
+      const contractExists = await validateContractExists(contractId);
+      if (!contractExists) {
+        throw new Error(`Zmluva s ID ${contractId} neexistuje. Prosím obnovte stránku a skúste znova.`);
+      }
 
       // Check if item with same item_id already exists
       const { data: existingItems, error: checkError } = await supabase
@@ -67,6 +75,12 @@ export const useContractItems = (contractId: string) => {
 
       if (itemError) {
         console.error('Error inserting contract item:', itemError);
+        
+        // Provide more specific error messages
+        if (itemError.code === '23503') {
+          throw new Error(`Zmluva s ID ${contractId} neexistuje. Prosím obnovte stránku a skúste znova.`);
+        }
+        
         throw itemError;
       }
 
@@ -109,9 +123,12 @@ export const useContractItems = (contractId: string) => {
     },
     onError: (error) => {
       console.error('Error adding contract item:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : 'Nepodarilo sa pridať položku do zmluvy.';
+      
       toast({
         title: "Chyba",
-        description: "Nepodarilo sa pridať položku do zmluvy.",
+        description: errorMessage,
         variant: "destructive",
       });
     }
@@ -120,6 +137,12 @@ export const useContractItems = (contractId: string) => {
   const updateItemMutation = useMutation({
     mutationFn: async ({ itemId, updates }: { itemId: string; updates: Partial<DynamicCard> }) => {
       console.log('Updating contract item:', itemId, updates);
+
+      // Validate contract exists before updating item
+      const contractExists = await validateContractExists(contractId);
+      if (!contractExists) {
+        throw new Error(`Zmluva s ID ${contractId} neexistuje.`);
+      }
 
       const { error } = await supabase
         .from('contract_items')

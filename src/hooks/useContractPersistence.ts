@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { OnboardingData } from '@/types/onboarding';
 import { toast } from 'sonner';
+import { useContractValidation } from './useContractValidation';
 
 export const useContractPersistence = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { ensureContractExists } = useContractValidation();
 
   // Utility function to validate and handle UUIDs
   const ensureValidUUID = (id: string): string => {
@@ -32,6 +34,20 @@ export const useContractPersistence = () => {
         throw new Error('Neplatné ID zmluvy');
       }
 
+      // Ensure contract exists before saving
+      const { exists, contractId: validContractId } = await ensureContractExists(contractId);
+      
+      if (!exists) {
+        throw new Error('Zmluva neexistuje a nepodarilo sa ju vytvoriť');
+      }
+
+      // Update the contract ID if it was recreated
+      if (validContractId !== contractId) {
+        console.log('Contract ID updated from', contractId, 'to', validContractId);
+        // Update the onboarding data with the new contract ID
+        onboardingData.contractId = validContractId;
+      }
+
       // Save contract items (devices/services) with improved error handling
       for (const card of onboardingData.deviceSelection.dynamicCards) {
         console.log('Processing contract item:', card);
@@ -43,7 +59,7 @@ export const useContractPersistence = () => {
           const { error: itemError } = await supabase
             .from('contract_items')
             .upsert({
-              contract_id: contractId,
+              contract_id: validContractId,
               item_id: validItemId,
               item_type: card.type,
               category: card.category,
@@ -70,7 +86,7 @@ export const useContractPersistence = () => {
             const { data: contractItem, error: fetchError } = await supabase
               .from('contract_items')
               .select('id')
-              .eq('contract_id', contractId)
+              .eq('contract_id', validContractId)
               .eq('item_id', validItemId)
               .single();
 
@@ -131,7 +147,7 @@ export const useContractPersistence = () => {
           const { error: calcError } = await supabase
             .from('contract_calculations')
             .upsert({
-              contract_id: contractId,
+              contract_id: validContractId,
               monthly_turnover: onboardingData.fees.calculatorResults.monthlyTurnover,
               total_customer_payments: onboardingData.fees.calculatorResults.totalCustomerPayments,
               total_company_costs: onboardingData.fees.calculatorResults.totalCompanyCosts,
@@ -156,7 +172,7 @@ export const useContractPersistence = () => {
       }
 
       console.log('Contract data saved successfully');
-      return { success: true };
+      return { success: true, contractId: validContractId };
 
     } catch (error) {
       console.error('Error saving contract data:', error);
@@ -179,6 +195,13 @@ export const useContractPersistence = () => {
       if (!contractId || contractId === 'undefined') {
         throw new Error('Neplatné ID zmluvy');
       }
+
+      // Validate contract exists before loading
+      const { exists, contractId: validContractId } = await ensureContractExists(contractId);
+      
+      if (!exists) {
+        throw new Error('Zmluva neexistuje');
+      }
       
       // Load contract items with better error handling
       const { data: items, error: itemsError } = await supabase
@@ -187,7 +210,7 @@ export const useContractPersistence = () => {
           *,
           contract_item_addons (*)
         `)
-        .eq('contract_id', contractId);
+        .eq('contract_id', validContractId);
 
       if (itemsError) {
         console.error('Error loading contract items:', itemsError);
@@ -198,7 +221,7 @@ export const useContractPersistence = () => {
       const { data: calculations, error: calcError } = await supabase
         .from('contract_calculations')
         .select('*')
-        .eq('contract_id', contractId)
+        .eq('contract_id', validContractId)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -213,7 +236,8 @@ export const useContractPersistence = () => {
       return { 
         success: true, 
         items: items || [], 
-        calculations: calculations || null 
+        calculations: calculations || null,
+        contractId: validContractId
       };
 
     } catch (error) {
