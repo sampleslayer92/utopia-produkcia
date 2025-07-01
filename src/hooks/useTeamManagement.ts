@@ -67,6 +67,8 @@ export const useTeamManagement = () => {
   }) => {
     setIsSaving(true);
     try {
+      console.log('Creating team member with data:', memberData);
+      
       // Create user in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email: memberData.email,
@@ -78,11 +80,19 @@ export const useTeamManagement = () => {
         email_confirm: true
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        console.error('Auth error:', authError);
+        throw authError;
+      }
+
+      console.log('User created in auth:', authData.user?.id);
 
       // The profile will be created automatically by the trigger
       // But we need to assign the role manually
       if (authData.user) {
+        // Wait a bit for the trigger to complete
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         const { error: roleError } = await supabase
           .from('user_roles')
           .insert({
@@ -90,11 +100,18 @@ export const useTeamManagement = () => {
             role: memberData.role
           });
 
-        if (roleError) throw roleError;
+        if (roleError) {
+          console.error('Role assignment error:', roleError);
+          throw roleError;
+        }
+        
+        console.log('Role assigned successfully');
       }
 
       await fetchTeamMembers();
-      toast.success('Člen tímu bol úspešne vytvorený');
+      toast.success('Člen tímu bol úspešne vytvorený', {
+        description: `Prihlasovacie údaje: ${memberData.email}`
+      });
       
       return { data: authData, error: null };
     } catch (error: any) {

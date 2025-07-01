@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,33 +28,56 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Users, UserCheck, UserX, Edit } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Plus, Users, UserCheck, UserX, Edit, Key, Copy, Info, LogIn } from "lucide-react";
 import { useTeamManagement } from '@/hooks/useTeamManagement';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 const TeamManagement = () => {
   const { teamMembers, isLoading, isSaving, createTeamMember, updateTeamMember, deactivateTeamMember, activateTeamMember } = useTeamManagement();
+  const { signOut } = useAuth();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<any>(null);
+  const [newMemberCredentials, setNewMemberCredentials] = useState<{email: string, password: string} | null>(null);
+  const [showCredentialsDialog, setShowCredentialsDialog] = useState(false);
 
   const handleCreateMember = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    const password = formData.get('password') as string;
+    const email = formData.get('email') as string;
+    
     const memberData = {
       first_name: formData.get('first_name') as string,
       last_name: formData.get('last_name') as string,
-      email: formData.get('email') as string,
+      email,
       phone: formData.get('phone') as string,
-      password: formData.get('password') as string,
+      password,
       role: formData.get('role') as 'admin' | 'partner' | 'merchant',
     };
 
     const { error } = await createTeamMember(memberData);
     if (!error) {
       setIsCreateDialogOpen(false);
+      setNewMemberCredentials({ email, password });
+      setShowCredentialsDialog(true);
       (e.target as HTMLFormElement).reset();
     }
+  };
+
+  const handleTestLoginAs = async (member: any) => {
+    if (confirm(`Chcete sa dočasne prihlásiť ako ${member.first_name} ${member.last_name}? Budete odhlásený zo súčasnej session.`)) {
+      toast.info('Funkcia "Test Login As" bude implementovaná v budúcej verzii', {
+        description: 'Zatiaľ môžete použiť prihlásenie s ich údajmi na /auth stránke'
+      });
+    }
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} skopírované do schránky`);
   };
 
   const handleUpdateMember = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -106,6 +128,32 @@ const TeamManagement = () => {
 
   return (
     <div className="space-y-6">
+      {/* Role Management Info Card */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-900">
+            <Info className="h-5 w-5" />
+            Správa rolí a používateľov
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div>
+              <div className="font-medium text-blue-900 mb-2">Admin</div>
+              <div className="text-blue-700">Plný prístup k systému, správa tímu, všetky zmluvy</div>
+            </div>
+            <div>
+              <div className="font-medium text-blue-900 mb-2">Partner</div>
+              <div className="text-blue-700">Vytváranie zmlúv, správa vlastných obchodníkov</div>
+            </div>
+            <div>
+              <div className="font-medium text-blue-900 mb-2">Merchant</div>
+              <div className="text-blue-700">Zobrazenie vlastných zmlúv a údajov</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -129,7 +177,7 @@ const TeamManagement = () => {
                 <DialogHeader>
                   <DialogTitle>Pridať nového člena tímu</DialogTitle>
                   <DialogDescription>
-                    Vytvorte nový účet pre člena vášho tímu
+                    Vytvorte nový účet pre člena vášho tímu. Prihlasovacie údaje budú zobrazené po vytvorení.
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleCreateMember} className="space-y-4">
@@ -152,8 +200,14 @@ const TeamManagement = () => {
                     <Input id="phone" name="phone" type="tel" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Heslo</Label>
-                    <Input id="password" name="password" type="password" required />
+                    <Label htmlFor="password">Dočasné heslo</Label>
+                    <Input 
+                      id="password" 
+                      name="password" 
+                      type="password" 
+                      placeholder="Zadajte dočasné heslo"
+                      required 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Rola</Label>
@@ -238,6 +292,14 @@ const TeamManagement = () => {
                       >
                         <Edit className="h-3 w-3" />
                       </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleTestLoginAs(member)}
+                        title="Test prihlásenie ako tento používateľ"
+                      >
+                        <LogIn className="h-3 w-3" />
+                      </Button>
                       {member.is_active ? (
                         <Button
                           size="sm"
@@ -263,6 +325,73 @@ const TeamManagement = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Credentials Display Dialog */}
+      <Dialog open={showCredentialsDialog} onOpenChange={setShowCredentialsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Key className="h-5 w-5" />
+              Prihlasovacie údaje
+            </DialogTitle>
+            <DialogDescription>
+              Nový člen tímu bol úspešne vytvorený. Tieto údaje použite pre prihlásenie:
+            </DialogDescription>
+          </DialogHeader>
+          {newMemberCredentials && (
+            <div className="space-y-4">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  Skopírujte a bezpečne uložte tieto prihlasovacie údaje. Nezabudnite ich odovzdať novému členovi tímu.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                  <div>
+                    <Label className="text-sm font-medium">Email:</Label>
+                    <p className="text-sm">{newMemberCredentials.email}</p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => copyToClipboard(newMemberCredentials.email, 'Email')}
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                  <div>
+                    <Label className="text-sm font-medium">Heslo:</Label>
+                    <p className="text-sm font-mono">{newMemberCredentials.password}</p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => copyToClipboard(newMemberCredentials.password, 'Heslo')}
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowCredentialsDialog(false);
+                    setNewMemberCredentials(null);
+                  }}
+                >
+                  Zavrieť
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Edit Member Dialog */}
       <Dialog open={!!editingMember} onOpenChange={() => setEditingMember(null)}>

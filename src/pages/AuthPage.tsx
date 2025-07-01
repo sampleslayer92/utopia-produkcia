@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,13 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import { LogOut, User, Shield } from "lucide-react";
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, user, userRole } = useAuth();
+  const { signIn, signUp, signOut, user, userRole, profile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -24,7 +27,7 @@ const AuthPage = () => {
           navigate('/admin');
           break;
         case 'partner':
-          navigate('/partner'); // Redirect to partner-specific dashboard
+          navigate('/partner');
           break;
         case 'merchant':
           navigate('/merchant');
@@ -85,6 +88,28 @@ const AuthPage = () => {
     setIsLoading(false);
   };
 
+  const handleForceLogout = async () => {
+    try {
+      await signOut();
+      toast.success('Úspešne odhlásený');
+    } catch (error) {
+      toast.error('Chyba pri odhlásení');
+    }
+  };
+
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return 'bg-red-100 text-red-700';
+      case 'partner':
+        return 'bg-blue-100 text-blue-700';
+      case 'merchant':
+        return 'bg-green-100 text-green-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
@@ -92,6 +117,42 @@ const AuthPage = () => {
         <div className="flex justify-end mb-8">
           <LanguageSwitcher />
         </div>
+
+        {/* Current User Status */}
+        {user && profile && userRole && (
+          <Card className="mb-6 border-amber-200 bg-amber-50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100">
+                    <User className="h-4 w-4 text-amber-700" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-amber-900">
+                      {profile.first_name} {profile.last_name}
+                    </p>
+                    <p className="text-sm text-amber-700">{profile.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge className={getRoleBadgeColor(userRole.role)} variant="outline">
+                    <Shield className="h-3 w-3 mr-1" />
+                    {userRole.role.toUpperCase()}
+                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleForceLogout}
+                    className="text-amber-700 border-amber-300 hover:bg-amber-100"
+                  >
+                    <LogOut className="h-3 w-3 mr-1" />
+                    Odhlásiť
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Header */}
         <div className="text-center mb-8">
