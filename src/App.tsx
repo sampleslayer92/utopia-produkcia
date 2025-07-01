@@ -48,6 +48,8 @@ const App = () => (
               <AdminDashboard />
             </ProtectedRoute>
           } />
+          
+          {/* Shared routes for admin and partner */}
           <Route path="/admin/contracts" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <ContractsPage />
@@ -61,21 +63,6 @@ const App = () => (
           <Route path="/admin/merchants" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <MerchantsPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/team" element={
-            <ProtectedRoute requiredRole="admin">
-              <TeamManagement />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/team/performance" element={
-            <ProtectedRoute requiredRole="admin">
-              <TeamPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/team/:memberId" element={
-            <ProtectedRoute requiredRole="admin">
-              <TeamMemberDetailPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/onboarding" element={
@@ -96,6 +83,23 @@ const App = () => (
           <Route path="/admin/merchant/:id/view" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <MerchantDetailPage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Admin-only routes */}
+          <Route path="/admin/team" element={
+            <ProtectedRoute requiredRole="admin">
+              <TeamManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/team/performance" element={
+            <ProtectedRoute requiredRole="admin">
+              <TeamPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/team/:memberId" element={
+            <ProtectedRoute requiredRole="admin">
+              <TeamMemberDetailPage />
             </ProtectedRoute>
           } />
           

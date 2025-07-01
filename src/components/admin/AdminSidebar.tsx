@@ -38,23 +38,37 @@ const AdminSidebar = () => {
   const isExpanded = (sectionId: string) => expandedSections.includes(sectionId);
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path);
 
+  // Determine dashboard path based on role
+  const getDashboardPath = () => {
+    if (userRole?.role === 'partner') return '/partner';
+    if (userRole?.role === 'merchant') return '/merchant';
+    return '/admin';
+  };
+
+  const getDashboardTitle = () => {
+    if (userRole?.role === 'partner') return 'Partner Dashboard';
+    if (userRole?.role === 'merchant') return 'Merchant Dashboard';
+    return t('navigation.dashboard');
+  };
+
   const menuItems = [
     {
       id: 'dashboard',
-      title: t('navigation.dashboard'),
+      title: getDashboardTitle(),
       icon: LayoutDashboard,
-      path: "/admin",
-      active: location.pathname === "/admin",
+      path: getDashboardPath(),
+      active: location.pathname === getDashboardPath(),
       type: 'single'
     },
-    {
+    // Only show deals for admin and partner
+    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'deals',
       title: 'Deals',
       icon: Handshake,
       path: "/admin/deals",
       active: location.pathname.startsWith("/admin/deals"),
-      type: 'single'
-    },
+      type: 'single' as const
+    }] : []),
     {
       id: 'contracts',
       title: t('navigation.contracts'),
@@ -63,17 +77,18 @@ const AdminSidebar = () => {
       expanded: isExpanded('contracts'),
       children: [
         {
-          title: t('navigation.contracts'),
+          title: userRole?.role === 'partner' ? 'Moje zmluvy' : t('navigation.contracts'),
           path: "/admin/contracts",
           active: isActive("/admin/contracts")
         }
       ]
     },
-    {
+    // Only show merchants for admin and partner
+    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'merchants',
       title: t('navigation.merchants'),
       icon: Building2,
-      type: 'expandable',
+      type: 'expandable' as const,
       expanded: isExpanded('merchants'),
       children: [
         {
@@ -88,7 +103,7 @@ const AdminSidebar = () => {
           disabled: true
         }
       ]
-    },
+    }] : []),
     // Only show team management for admins
     ...(userRole?.role === 'admin' ? [{
       id: 'team',
@@ -109,11 +124,12 @@ const AdminSidebar = () => {
         }
       ]
     }] : []),
-    {
+    // Only show tasks for admin and partner (but disabled for now)
+    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'tasks',
       title: t('navigation.tasks'),
       icon: CheckSquare,
-      type: 'expandable',
+      type: 'expandable' as const,
       expanded: isExpanded('tasks'),
       children: [
         {
@@ -135,7 +151,7 @@ const AdminSidebar = () => {
           disabled: true
         }
       ]
-    }
+    }] : [])
   ];
 
   return (

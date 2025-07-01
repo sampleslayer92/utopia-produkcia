@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import AdminLayout from "@/components/admin/AdminLayout";
 import NewDashboardContent from "@/components/admin/dashboard/NewDashboardContent";
 import { Button } from "@/components/ui/button";
-import { Plus, Users } from "lucide-react";
+import { Plus, Users, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,13 +14,23 @@ const PartnerDashboard = () => {
   const { profile } = useAuth();
 
   const dashboardActions = (
-    <Button 
-      onClick={() => navigate('/admin/onboarding')}
-      className="bg-blue-600 hover:bg-blue-700"
-    >
-      <Plus className="h-4 w-4 mr-2" />
-      {t('dashboard.newContract')}
-    </Button>
+    <div className="flex gap-2">
+      <Button 
+        variant="outline"
+        onClick={() => navigate('/admin/contracts')}
+        className="hover:bg-slate-50"
+      >
+        <FileText className="h-4 w-4 mr-2" />
+        Moje zmluvy
+      </Button>
+      <Button 
+        onClick={() => navigate('/admin/onboarding')}
+        className="bg-blue-600 hover:bg-blue-700"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        {t('dashboard.newContract')}
+      </Button>
+    </div>
   );
 
   return (

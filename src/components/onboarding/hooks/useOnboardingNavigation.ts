@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { OnboardingData } from "@/types/onboarding";
 import { onboardingSteps } from "../config/onboardingSteps";
 import { useContractSubmission } from "@/hooks/useContractSubmission";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const useOnboardingNavigation = (
   currentStep: number,
@@ -18,6 +19,7 @@ export const useOnboardingNavigation = (
   isAdminMode: boolean = false // New parameter for admin mode
 ) => {
   const navigate = useNavigate();
+  const { userRole } = useAuth();
   const totalSteps = 7; // Updated from 8 to 7 steps
   const { submitContract, isSubmitting } = useContractSubmission();
 
@@ -95,16 +97,27 @@ export const useOnboardingNavigation = (
       };
       
       localStorage.setItem('contract_data', JSON.stringify(contractData));
-      localStorage.setItem('utopia_user_role', 'admin');
       
       // Clear onboarding data
       clearData();
       
-      // Navigate to admin dashboard (works for both admin mode and standalone)
-      navigate('/admin');
+      // Navigate based on user role
+      const currentRole = userRole?.role;
+      let redirectPath = '/admin'; // default fallback
+      
+      if (currentRole === 'partner') {
+        redirectPath = '/partner';
+      } else if (currentRole === 'merchant') {
+        redirectPath = '/merchant';
+      } else if (currentRole === 'admin') {
+        redirectPath = '/admin';
+      }
+      
+      // Navigate to appropriate dashboard
+      navigate(redirectPath);
       
       toast.success('Registrácia dokončená!', {
-        description: `Číslo zmluvy: ${result.contractNumber}. Presmerováva sa na admin dashboard...`
+        description: `Číslo zmluvy: ${result.contractNumber}. Presmerováva sa na dashboard...`
       });
     }
   };
@@ -119,9 +132,15 @@ export const useOnboardingNavigation = (
       description: 'Môžete pokračovať neskôr z rovnakého miesta'
     });
     
-    // Navigate based on mode
+    // Navigate based on user role or mode
+    const currentRole = userRole?.role;
+    
     if (isAdminMode) {
       navigate('/admin');
+    } else if (currentRole === 'partner') {
+      navigate('/partner');
+    } else if (currentRole === 'merchant') {
+      navigate('/merchant');
     } else {
       navigate('/');
     }
