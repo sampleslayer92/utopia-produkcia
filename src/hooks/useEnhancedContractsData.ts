@@ -34,6 +34,11 @@ export interface EnhancedContractData {
     tablet_15_count: number;
     tablet_pro_15_count: number;
   } | null;
+  creator_profile: {
+    first_name: string;
+    last_name: string;
+    email: string;
+  } | null;
   completedSteps: number;
   contractValue: number;
   contractType: string;
@@ -131,13 +136,10 @@ const extractSingleRecord = (data: any) => {
   return Array.isArray(data) ? null : data;
 };
 
-// Define valid database status types - match actual database enum exactly
 type DatabaseStatus = 'draft' | 'submitted' | 'approved' | 'rejected' | 'in_progress' | 'sent_to_client' | 'email_viewed' | 'step_completed' | 'contract_generated' | 'signed' | 'waiting_for_signature' | 'lost';
 
-// Define valid database source types
 type DatabaseSource = 'telesales' | 'facebook' | 'web' | 'email' | 'referral' | 'other';
 
-// Map UI filter values to database enum values
 const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
   const statusMap: Record<string, DatabaseStatus> = {
     'draft': 'draft',
@@ -156,7 +158,6 @@ const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
   return statusMap[uiStatus] || null;
 };
 
-// Map UI source filter values to database enum values
 const mapSourceFilter = (uiSource: string): DatabaseSource | null => {
   const sourceMap: Record<string, DatabaseSource> = {
     'telesales': 'telesales',
@@ -198,6 +199,7 @@ export const useEnhancedContractsData = (filters?: {
           signed_at,
           lost_reason,
           lost_notes,
+          created_by,
           contact_info (
             first_name,
             last_name,
@@ -219,7 +221,12 @@ export const useEnhancedContractsData = (filters?: {
           business_locations (*),
           authorized_persons (*),
           actual_owners (*),
-          consents (*)
+          consents (*),
+          creator_profile:profiles!created_by (
+            first_name,
+            last_name,
+            email
+          )
         `)
         .order('created_at', { ascending: false });
 
@@ -263,6 +270,7 @@ export const useEnhancedContractsData = (filters?: {
         const contactInfo = extractSingleRecord(contract.contact_info);
         const companyInfo = extractSingleRecord(contract.company_info);
         const contractCalculations = extractSingleRecord(contract.contract_calculations);
+        const creatorProfile = extractSingleRecord(contract.creator_profile);
         
         // Map contract items to device selection format for backward compatibility
         const deviceSelection = mapContractItemsToDeviceSelection(contract.contract_items || []);
@@ -273,7 +281,10 @@ export const useEnhancedContractsData = (filters?: {
         const clientName = companyInfo?.company_name || 
           (contactInfo ? `${contactInfo.first_name} ${contactInfo.last_name}` : 'N/A');
         
-        const salesPerson = contactInfo?.user_role || 'Admin';
+        // Use creator profile if available, otherwise fall back to "Admin"
+        const salesPerson = creatorProfile 
+          ? `${creatorProfile.first_name} ${creatorProfile.last_name}`
+          : 'Admin';
 
         return {
           id: contract.id,
@@ -291,6 +302,7 @@ export const useEnhancedContractsData = (filters?: {
           contact_info: contactInfo,
           company_info: companyInfo,
           contract_calculations: contractCalculations,
+          creator_profile: creatorProfile,
           device_selection: deviceSelection,
           completedSteps,
           contractValue,
@@ -370,17 +382,25 @@ export const useSalesPersonOptions = () => {
   return useQuery({
     queryKey: ['sales-persons'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('contact_info')
-        .select('user_role')
-        .not('user_role', 'is', null);
+      // Get unique creators from contracts with their profile info
+      const { data: contractsWithCreators } = await supabase
+        .from('contracts')
+        .select(`
+          created_by,
+          creator_profile:profiles!created_by (
+            first_name,
+            last_name
+          )
+        `)
+        .not('created_by', 'is', null);
 
       const persons = new Set<string>();
-      persons.add('Admin');
+      persons.add('Admin'); // For contracts without creator
       
-      data?.forEach(contact => {
-        if (contact.user_role) {
-          persons.add(contact.user_role);
+      contractsWithCreators?.forEach(contract => {
+        const creatorProfile = extractSingleRecord(contract.creator_profile);
+        if (creatorProfile) {
+          persons.add(`${creatorProfile.first_name} ${creatorProfile.last_name}`);
         }
       });
 
