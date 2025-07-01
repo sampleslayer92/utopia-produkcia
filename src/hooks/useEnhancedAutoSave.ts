@@ -1,10 +1,10 @@
-
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { OnboardingData } from '@/types/onboarding';
 import { useToast } from '@/hooks/use-toast';
 import { useContractValidation } from './useContractValidation';
+import { useDirectMerchantCreation } from './useDirectMerchantCreation';
 
 interface UseEnhancedAutoSaveProps {
   data: OnboardingData;
@@ -37,6 +37,7 @@ export const useEnhancedAutoSave = ({
   const timeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedRef = useRef<string>('');
   const { validateContractExists } = useContractValidation();
+  const { createMerchantIfNeeded } = useDirectMerchantCreation();
 
   const saveMutation = useMutation({
     mutationFn: async (onboardingData: OnboardingData) => {
@@ -194,6 +195,22 @@ export const useEnhancedAutoSave = ({
       if (errors.length > 0) {
         console.error('Enhanced auto-save errors:', errors);
         throw new Error(`Failed to save: ${errors.map(e => e.error?.message).join(', ')}`);
+      }
+
+      // After successful save, trigger merchant creation if conditions are met
+      if (onboardingData.companyInfo?.companyName?.trim() && onboardingData.companyInfo?.ico?.trim()) {
+        console.log('Enhanced auto-save: Triggering merchant creation after save');
+        try {
+          const merchantResult = await createMerchantIfNeeded(
+            onboardingData.contractId, 
+            onboardingData.companyInfo, 
+            onboardingData.contactInfo
+          );
+          console.log('Enhanced auto-save: Merchant creation result:', merchantResult);
+        } catch (merchantError) {
+          console.error('Enhanced auto-save: Merchant creation failed, but continuing:', merchantError);
+          // Don't throw here - the main save was successful
+        }
       }
 
       console.log('Enhanced auto-save: All data saved successfully');
