@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { UtensilsCrossed, ShoppingBag, Briefcase, Zap } from "lucide-react";
 
 const ForWhomSection = () => {
