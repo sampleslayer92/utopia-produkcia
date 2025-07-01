@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -69,51 +68,39 @@ export const useTeamManagement = () => {
     try {
       console.log('Creating team member with data:', memberData);
       
-      // Create user in Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: memberData.email,
-        password: memberData.password,
-        user_metadata: {
-          first_name: memberData.first_name,
-          last_name: memberData.last_name,
+      // Get current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No active session');
+      }
+
+      // Call Edge Function to create user
+      const { data, error } = await supabase.functions.invoke('create-team-member', {
+        body: memberData,
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
         },
-        email_confirm: true
       });
 
-      if (authError) {
-        console.error('Auth error:', authError);
-        throw authError;
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
       }
 
-      console.log('User created in auth:', authData.user?.id);
-
-      // The profile will be created automatically by the trigger
-      // But we need to assign the role manually
-      if (authData.user) {
-        // Wait a bit for the trigger to complete
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: authData.user.id,
-            role: memberData.role
-          });
-
-        if (roleError) {
-          console.error('Role assignment error:', roleError);
-          throw roleError;
-        }
-        
-        console.log('Role assigned successfully');
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to create team member');
       }
 
+      console.log('Team member created successfully:', data);
+
+      // Refresh team members list
       await fetchTeamMembers();
+      
       toast.success('Člen tímu bol úspešne vytvorený', {
         description: `Prihlasovacie údaje: ${memberData.email}`
       });
       
-      return { data: authData, error: null };
+      return { data, error: null };
     } catch (error: any) {
       console.error('Error creating team member:', error);
       toast.error('Chyba pri vytváraní člena tímu', {
