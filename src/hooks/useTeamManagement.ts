@@ -24,20 +24,29 @@ export const useTeamManagement = () => {
   const fetchTeamMembers = async () => {
     setIsLoading(true);
     try {
+      // First get all profiles
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          user_roles!inner(role)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (profilesError) throw profilesError;
 
-      const formattedMembers = profiles.map(profile => ({
-        ...profile,
-        role: (profile.user_roles as any[])[0]?.role || 'merchant'
-      }));
+      // Then get roles for each profile
+      const formattedMembers: TeamMember[] = [];
+      
+      for (const profile of profiles) {
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', profile.id)
+          .single();
+
+        formattedMembers.push({
+          ...profile,
+          role: roleData?.role || 'merchant'
+        });
+      }
 
       setTeamMembers(formattedMembers);
     } catch (error) {
