@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 
 interface HeroSectionProps {
   onGetStarted: () => void;
@@ -20,49 +20,49 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const typewriterText = "Where fintech meets sales to scale merchant acquisition";
-  const [displayedText, setDisplayedText] = useState("");
-  const [textIndex, setTextIndex] = useState(0);
-
-  useEffect(() => {
-    if (textIndex < typewriterText.length) {
-      const timeout = setTimeout(() => {
-        setDisplayedText(prev => prev + typewriterText[textIndex]);
-        setTextIndex(prev => prev + 1);
-      }, 100);
-      return () => clearTimeout(timeout);
-    }
-  }, [textIndex, typewriterText]);
+  const scrollToHowItWorks = () => {
+    const element = document.getElementById('how-it-works');
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
-      {/* Animated gradient mesh */}
+    <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden bg-gradient-to-br from-white via-gray-50 to-primary/5">
+      {/* Animated background mesh */}
       <div className="absolute inset-0">
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-emerald-600/20"
-          animate={{
-            background: [
-              "linear-gradient(45deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2), rgba(16, 185, 129, 0.2))",
-              "linear-gradient(225deg, rgba(147, 51, 234, 0.2), rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2))",
-              "linear-gradient(45deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2))",
-            ],
+          className="absolute inset-0 opacity-30"
+          style={{
+            background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(0, 194, 168, 0.15) 0%, transparent 50%)`,
           }}
-          transition={{ duration: 8, repeat: Infinity }}
         />
       </div>
 
-      {/* Magnetic cursor effect */}
-      <motion.div
-        className="absolute w-96 h-96 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl pointer-events-none"
-        animate={{
-          x: mousePosition.x - 192,
-          y: mousePosition.y - 192,
-        }}
-        transition={{ type: "spring", damping: 30, stiffness: 200 }}
-      />
+      {/* 3D-like floating elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-primary/20 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.2, 0.8, 0.2],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
 
       <div className="relative z-10 text-center max-w-6xl mx-auto">
-        {/* Logo with morphing animation */}
+        {/* Logo */}
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
@@ -72,7 +72,8 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
           <img 
             src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
             alt="Utopia" 
-            className="h-20 w-auto mx-auto"
+            className="h-16 w-auto mx-auto filter brightness-0 saturate-100"
+            style={{ filter: 'brightness(0) saturate(100%) invert(47%) sepia(99%) saturate(1174%) hue-rotate(141deg) brightness(94%) contrast(101%)' }}
           />
         </motion.div>
 
@@ -81,36 +82,37 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent"
+          className="text-5xl md:text-7xl font-bold mb-6 text-gray-900"
         >
           UTOPIA
         </motion.h1>
 
-        {/* Typewriter subtitle */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="text-xl md:text-2xl text-slate-300 mb-8 h-16 flex items-center justify-center"
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.7 }}
+          className="text-2xl md:text-4xl font-semibold mb-8 text-primary"
         >
-          <span className="font-light">
-            {displayedText}
-            <motion.span
-              animate={{ opacity: [1, 0] }}
-              transition={{ duration: 0.8, repeat: Infinity }}
-              className="ml-1"
-            >
-              |
-            </motion.span>
-          </span>
-        </motion.div>
+          Budúcnosť fintech onboardingu
+        </motion.h2>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.9 }}
+          className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed"
+        >
+          Objednaj si pokladňu, terminál alebo softvér online – presne pre tvoje podnikanie.<br />
+          Bez papierov, bez stresu. Hotovo do pár minút.
+        </motion.p>
 
         {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.5 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
+          transition={{ duration: 0.8, delay: 1.1 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
         >
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -119,9 +121,9 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
             <Button
               onClick={onGetStarted}
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg font-semibold group"
+              className="bg-primary hover:bg-primary-dark text-white px-8 py-6 text-lg font-semibold group shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              Get Started
+              Začať objednávku
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </motion.div>
@@ -133,44 +135,42 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
             <Button
               variant="outline"
               size="lg"
-              className="border-slate-600 text-slate-300 hover:bg-slate-800 px-8 py-6 text-lg"
+              onClick={scrollToHowItWorks}
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-6 text-lg font-semibold group transition-all duration-300"
             >
-              Watch Demo
+              <Play className="mr-2 h-5 w-5" />
+              Ako to funguje
             </Button>
           </motion.div>
         </motion.div>
 
-        {/* Trust indicators */}
-        <motion.div
+        {/* Microtext */}
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 2 }}
-          className="flex items-center justify-center gap-6 text-slate-400"
+          transition={{ duration: 0.8, delay: 1.3 }}
+          className="text-gray-500 text-sm"
         >
-          <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            ))}
-          </div>
-          <span className="text-sm">Trusted by 1000+ merchants</span>
-        </motion.div>
+          Nie je potrebné nič inštalovať. Stačí tvoja firma a pár klikov.
+        </motion.p>
 
         {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 2.5 }}
+          transition={{ duration: 0.8, delay: 2 }}
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
         >
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-6 h-10 border-2 border-slate-600 rounded-full flex justify-center"
+            className="w-6 h-10 border-2 border-primary rounded-full flex justify-center cursor-pointer"
+            onClick={scrollToHowItWorks}
           >
             <motion.div
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="w-1 h-3 bg-slate-400 rounded-full mt-2"
+              className="w-1 h-3 bg-primary rounded-full mt-2"
             />
           </motion.div>
         </motion.div>

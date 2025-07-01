@@ -2,6 +2,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { CreditCard, Brain, FileText, Shield } from "lucide-react";
 
 const BenefitsSection = () => {
   const ref = useRef(null);
@@ -9,151 +10,97 @@ const BenefitsSection = () => {
 
   const benefits = [
     {
-      title: "Automated Workflows",
-      description: "Reduce manual work by 90% with intelligent automation",
-      size: "large",
-      gradient: "from-blue-600 to-purple-600",
+      icon: CreditCard,
+      title: "Prepojenie na platobné brány",
+      description: "Global Payments, SumUp, GP WebPay a ďalší.",
+      color: "from-blue-500 to-blue-600",
+      delay: 0,
     },
     {
-      title: "Real-time Analytics",
-      description: "Track performance and ROI instantly",
-      size: "medium",
-      gradient: "from-emerald-500 to-teal-500",
+      icon: Brain,
+      title: "Smart výber zariadení",
+      description: "Na základe tvojej firmy odporučíme vhodné riešenia.",
+      color: "from-primary to-primary-dark",
+      delay: 0.1,
     },
     {
-      title: "Compliance Ready",
-      description: "Built-in regulatory compliance",
-      size: "small",
-      gradient: "from-orange-500 to-red-500",
+      icon: FileText,
+      title: "Online podpis zmluvy",
+      description: "Žiadna tlač ani skenovanie – podpisuješ digitálne.",
+      color: "from-purple-500 to-purple-600",
+      delay: 0.2,
     },
     {
-      title: "24/7 Support",
-      description: "Always available expert assistance",
-      size: "medium",
-      gradient: "from-pink-500 to-rose-500",
-    },
-    {
-      title: "Scalable Infrastructure",
-      description: "Grows with your business needs seamlessly",
-      size: "large",
-      gradient: "from-indigo-500 to-blue-500",
-    },
-    {
-      title: "Secure Platform", 
-      description: "Bank-grade security",
-      size: "small",
-      gradient: "from-green-500 to-emerald-500",
+      icon: Shield,
+      title: "Bezpečné & rýchle",
+      description: "Cloudové riešenie s dôrazom na GDPR a stabilitu.",
+      color: "from-green-500 to-emerald-500",
+      delay: 0.3,
     },
   ];
 
-  const getSizeClass = (size: string) => {
-    switch (size) {
-      case "large":
-        return "md:col-span-2 md:row-span-2";
-      case "medium":
-        return "md:col-span-2";
-      default:
-        return "md:col-span-1";
-    }
-  };
-
   return (
-    <section ref={ref} className="py-32 px-6 relative">
+    <section ref={ref} className="py-20 px-6 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-20"
+          className="text-center mb-16"
         >
-          <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-            Why Choose Utopia
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+            Prečo si firmy vyberajú UTOPIU?
           </h2>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-            Experience the benefits that make Utopia the preferred choice for fintech professionals
-          </p>
         </motion.div>
 
-        {/* Masonry grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-fr">
+        {/* Benefits grid */}
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
           {benefits.map((benefit, index) => (
             <motion.div
               key={benefit.title}
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ 
-                y: -10,
-                transition: { duration: 0.3 }
-              }}
-              className={`${getSizeClass(benefit.size)} group cursor-pointer`}
+              initial={{ opacity: 0, y: 50 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: benefit.delay }}
+              whileHover={{ y: -10, scale: 1.02 }}
+              className="group"
             >
-              <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm h-full hover:border-slate-700 transition-all duration-500 overflow-hidden">
-                <CardContent className="p-8 h-full flex flex-col justify-center relative">
-                  {/* Background gradient */}
-                  <motion.div
-                    className={`absolute inset-0 bg-gradient-to-br ${benefit.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                    whileHover={{ scale: 1.1 }}
-                  />
-
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <motion.h3
-                      className="text-2xl font-semibold mb-4 text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-300 group-hover:bg-clip-text transition-all duration-500"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      {benefit.title}
-                    </motion.h3>
-                    
-                    <p className="text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors duration-500">
-                      {benefit.description}
-                    </p>
-
-                    {/* Decorative elements */}
+              <Card className="bg-white border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                <CardContent className="p-8">
+                  <div className="flex items-start gap-6">
                     <motion.div
-                      className="absolute -top-4 -right-4 w-20 h-20 rounded-full opacity-20"
-                      style={{
-                        background: `linear-gradient(135deg, ${benefit.gradient.replace('from-', '').replace(' to-', ', ')})`,
-                      }}
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    />
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      className={`flex-shrink-0 p-4 rounded-xl bg-gradient-to-r ${benefit.color} text-white group-hover:shadow-lg transition-all duration-300`}
+                    >
+                      <benefit.icon className="h-6 w-6" />
+                    </motion.div>
+                    
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold mb-3 text-gray-900 group-hover:text-primary transition-colors duration-300">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        {benefit.description}
+                      </p>
+                    </div>
                   </div>
-
-                  {/* Magnetic hover effect */}
-                  <motion.div
-                    className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${benefit.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}
-                  />
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </div>
 
-        {/* Background patterns */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-2 h-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                x: [0, 30, 0],
-                y: [0, -30, 0],
-                opacity: [0.2, 0.8, 0.2],
-              }}
-              transition={{
-                duration: 5 + Math.random() * 3,
-                repeat: Infinity,
-                delay: Math.random() * 3,
-              }}
-            />
-          ))}
-        </div>
+        {/* Microtext */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="text-center"
+        >
+          <p className="text-gray-500 text-lg">
+            Viac než 90 % používateľov dokončí onboarding v jeden deň.
+          </p>
+        </motion.div>
       </div>
     </section>
   );
