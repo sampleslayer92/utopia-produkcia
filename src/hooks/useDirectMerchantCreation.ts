@@ -155,33 +155,37 @@ export const useDirectMerchantCreation = () => {
         throw error;
       }
 
-      if (!data.company_info) {
+      // Handle the case where contact_info or company_info might be arrays
+      const contactInfoData = Array.isArray(data.contact_info) ? data.contact_info[0] : data.contact_info;
+      const companyInfoData = Array.isArray(data.company_info) ? data.company_info[0] : data.company_info;
+
+      if (!companyInfoData) {
         throw new Error('Company info not found for contract');
       }
 
       const companyInfo = {
-        companyName: data.company_info.company_name,
-        ico: data.company_info.ico,
-        dic: data.company_info.dic,
-        vatNumber: data.company_info.vat_number,
+        companyName: companyInfoData.company_name,
+        ico: companyInfoData.ico,
+        dic: companyInfoData.dic,
+        vatNumber: companyInfoData.vat_number,
         address: {
-          street: data.company_info.address_street,
-          city: data.company_info.address_city,
-          zipCode: data.company_info.address_zip_code
+          street: companyInfoData.address_street,
+          city: companyInfoData.address_city,
+          zipCode: companyInfoData.address_zip_code
         },
         contactPerson: {
-          firstName: data.company_info.contact_person_first_name,
-          lastName: data.company_info.contact_person_last_name,
-          email: data.company_info.contact_person_email,
-          phone: data.company_info.contact_person_phone
+          firstName: companyInfoData.contact_person_first_name,
+          lastName: companyInfoData.contact_person_last_name,
+          email: companyInfoData.contact_person_email,
+          phone: companyInfoData.contact_person_phone
         }
       };
 
-      const contactInfo = data.contact_info ? {
-        firstName: data.contact_info.first_name,
-        lastName: data.contact_info.last_name,
-        email: data.contact_info.email,
-        phone: data.contact_info.phone
+      const contactInfo = contactInfoData ? {
+        firstName: contactInfoData.first_name,
+        lastName: contactInfoData.last_name,
+        email: contactInfoData.email,
+        phone: contactInfoData.phone
       } : undefined;
 
       return await createMerchantIfNeeded(contractId, companyInfo, contactInfo);

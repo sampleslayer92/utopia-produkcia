@@ -27,10 +27,10 @@ interface ContractData {
 }
 
 export const fixExistingContracts = async () => {
+  console.log('Starting to fix existing contracts without merchants...');
+  
   try {
-    console.log('Starting to fix existing contracts without merchants...');
-    
-    // Get all contracts that have company info but no merchant
+    // Get all contracts that don't have merchant_id but have company_info
     const { data: contracts, error } = await supabase
       .from('contracts')
       .select(`
@@ -63,76 +63,74 @@ export const fixExistingContracts = async () => {
       throw error;
     }
 
-    const contractsToFix = (contracts as ContractData[]).filter(contract => 
-      contract.company_info && 
-      contract.company_info.company_name?.trim() && 
-      contract.company_info.ico?.trim()
-    );
-
-    console.log(`Found ${contractsToFix.length} contracts that need merchants`);
-
-    if (contractsToFix.length === 0) {
-      toast.success('Všetky zmluvy už majú pridelených merchants');
+    if (!contracts || contracts.length === 0) {
+      console.log('No contracts found without merchants');
+      toast.success('Všetky zmluvy už majú priradených merchantov');
       return { success: true, processed: 0 };
     }
 
-    let processed = 0;
-    let errors = 0;
+    // Process each contract
+    let processedCount = 0;
+    let createdCount = 0;
 
-    for (const contract of contractsToFix) {
+    for (const contract of contracts) {
+      // Handle the case where relations might be arrays or single objects
+      const companyInfoData = Array.isArray(contract.company_info) ? contract.company_info[0] : contract.company_info;
+      const contactInfoData = Array.isArray(contract.contact_info) ? contract.contact_info[0] : contract.contact_info;
+
+      if (!companyInfoData?.company_name || !companyInfoData?.ico) {
+        console.log(`Skipping contract ${contract.id} - missing company name or ICO`);
+        continue;
+      }
+
       try {
-        console.log(`Processing contract ${contract.id} - ${contract.company_info!.company_name}`);
-        
         // Check if merchant already exists
         const { data: existingMerchant, error: searchError } = await supabase
           .from('merchants')
           .select('id')
-          .eq('company_name', contract.company_info!.company_name)
-          .eq('ico', contract.company_info!.ico)
+          .eq('company_name', companyInfoData.company_name)
+          .eq('ico', companyInfoData.ico)
           .maybeSingle();
 
         if (searchError) {
-          console.error('Error searching for merchant:', searchError);
-          errors++;
+          console.error(`Error searching merchant for contract ${contract.id}:`, searchError);
           continue;
         }
 
         let merchantId;
 
         if (existingMerchant) {
-          console.log('Using existing merchant:', existingMerchant.id);
           merchantId = existingMerchant.id;
+          console.log(`Using existing merchant ${merchantId} for contract ${contract.id}`);
         } else {
           // Create new merchant
-          const merchantData = {
-            company_name: contract.company_info!.company_name,
-            ico: contract.company_info!.ico,
-            dic: contract.company_info!.dic || null,
-            vat_number: contract.company_info!.vat_number || null,
-            contact_person_name: contract.contact_info ? 
-              `${contract.contact_info.first_name || ''} ${contract.contact_info.last_name || ''}`.trim() : 
-              `${contract.company_info!.contact_person_first_name || ''} ${contract.company_info!.contact_person_last_name || ''}`.trim(),
-            contact_person_email: contract.contact_info?.email || contract.company_info!.contact_person_email || '',
-            contact_person_phone: contract.contact_info?.phone || contract.company_info!.contact_person_phone || '',
-            address_street: contract.company_info!.address_street || null,
-            address_city: contract.company_info!.address_city || null,
-            address_zip_code: contract.company_info!.address_zip_code || null
-          };
-
           const { data: newMerchant, error: createError } = await supabase
             .from('merchants')
-            .insert(merchantData)
+            .insert({
+              company_name: companyInfoData.company_name,
+              ico: companyInfoData.ico,
+              dic: companyInfoData.dic,
+              vat_number: companyInfoData.vat_number,
+              contact_person_name: contactInfoData ? 
+                `${contactInfoData.first_name || ''} ${contactInfoData.last_name || ''}`.trim() : 
+                `${companyInfoData.contact_person_first_name || ''} ${companyInfoData.contact_person_last_name || ''}`.trim(),
+              contact_person_email: contactInfoData?.email || companyInfoData.contact_person_email || '',
+              contact_person_phone: contactInfoData?.phone || companyInfoData.contact_person_phone || '',
+              address_street: companyInfoData.address_street,
+              address_city: companyInfoData.address_city,
+              address_zip_code: companyInfoData.address_zip_code
+            })
             .select('id')
             .single();
 
           if (createError) {
-            console.error('Error creating merchant:', createError);
-            errors++;
+            console.error(`Error creating merchant for contract ${contract.id}:`, createError);
             continue;
           }
 
           merchantId = newMerchant.id;
-          console.log('Created new merchant:', merchantId);
+          createdCount++;
+          console.log(`Created new merchant ${merchantId} for contract ${contract.id}`);
         }
 
         // Link contract to merchant
@@ -142,53 +140,42 @@ export const fixExistingContracts = async () => {
           .eq('id', contract.id);
 
         if (linkError) {
-          console.error('Error linking contract to merchant:', linkError);
-          errors++;
+          console.error(`Error linking contract ${contract.id} to merchant:`, linkError);
           continue;
         }
 
-        processed++;
+        processedCount++;
         console.log(`Successfully processed contract ${contract.id}`);
 
-      } catch (error) {
-        console.error(`Error processing contract ${contract.id}:`, error);
-        errors++;
+      } catch (contractError) {
+        console.error(`Error processing contract ${contract.id}:`, contractError);
+        continue;
       }
     }
 
-    const message = `Spracované: ${processed} zmlúv, Chyby: ${errors}`;
-    console.log(message);
+    console.log(`Completed processing: ${processedCount} contracts processed, ${createdCount} merchants created`);
+    
+    toast.success(`Processing completed`, {
+      description: `${processedCount} zmlúv spracovaných, ${createdCount} merchantov vytvorených`
+    });
 
-    if (errors === 0) {
-      toast.success('Všetky zmluvy úspešne opravené!', {
-        description: message
-      });
-    } else {
-      toast.warning('Oprava dokončená s chybami', {
-        description: message
-      });
-    }
-
-    return { 
-      success: true, 
-      processed, 
-      errors,
-      total: contractsToFix.length 
+    return {
+      success: true,
+      processed: processedCount,
+      created: createdCount,
+      total: contracts.length
     };
 
   } catch (error) {
     console.error('Error in fixExistingContracts:', error);
     
-    toast.error('Chyba pri opravovaní zmlúv', {
+    toast.error('Chyba pri spracovaní zmlúv', {
       description: 'Skúste to prosím znova'
     });
 
-    return { success: false, error };
+    return {
+      success: false,
+      error
+    };
   }
-};
-
-// Export function to run the fix
-export const runContractsFix = () => {
-  console.log('Running contracts fix...');
-  return fixExistingContracts();
 };
