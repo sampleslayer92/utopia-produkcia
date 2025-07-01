@@ -36,7 +36,7 @@ export const useTeamManagement = () => {
 
       const formattedMembers = profiles.map(profile => ({
         ...profile,
-        role: profile.user_roles[0]?.role || 'merchant'
+        role: (profile.user_roles as any[])[0]?.role || 'merchant'
       }));
 
       setTeamMembers(formattedMembers);
