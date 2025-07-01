@@ -10,7 +10,7 @@ import LandingFooter from "@/components/landing/LandingFooter";
 
 const LandingPage = () => {
   return (
-    <div className="font-inter">
+    <div className="font-inter bg-dark min-h-screen">
       <HeroSection />
       <HowItWorksSection />
       <ForWhomSection />

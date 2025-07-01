@@ -7,34 +7,37 @@ const BenefitsSection = () => {
       icon: CreditCard,
       title: "Prepojenie na platobné brány",
       description: "Global Payments, SumUp, GP WebPay a ďalší.",
-      gradient: "from-blue-400 to-blue-600"
+      gradient: "from-neon-blue/20 to-utopia-500/20"
     },
     {
       icon: Brain,
       title: "Smart výber zariadení",
       description: "Na základe tvojej firmy odporučíme vhodné riešenia.",
-      gradient: "from-purple-400 to-purple-600"
+      gradient: "from-neon-purple/20 to-neon-pink/20"
     },
     {
       icon: FileText,
       title: "Online podpis zmluvy",
       description: "Žiadna tlač ani skenovanie – podpisuješ digitálne.",
-      gradient: "from-green-400 to-green-600"
+      gradient: "from-neon-green/20 to-utopia-500/20"
     },
     {
       icon: Shield,
       title: "Bezpečné & rýchle",
       description: "Cloudové riešenie s dôrazom na GDPR a stabilitu.",
-      gradient: "from-utopia-400 to-utopia-600"
+      gradient: "from-utopia-500/20 to-neon-blue/20"
     }
   ];
 
   return (
-    <section className="py-20 px-6 bg-white">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Prečo si firmy vyberajú UTOPIU?
+    <section className="py-32 px-6 bg-dark relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-utopia-500/5 to-transparent"></div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
+            Prečo si firmy vyberajú <span className="text-utopia-500">UTOPIU</span>?
           </h2>
         </div>
 
@@ -42,26 +45,29 @@ const BenefitsSection = () => {
           {benefits.map((benefit, index) => (
             <div 
               key={index}
-              className="group p-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up"
+              className="group animate-fade-in-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className={`w-16 h-16 bg-gradient-to-br ${benefit.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                <benefit.icon className="w-8 h-8 text-white" />
+              <div className={`relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 h-full transition-all duration-300 hover:bg-white/10 hover:border-utopia-500/30 hover:scale-105 hover:shadow-[0_0_40px_rgba(0,212,255,0.2)]`}>
+                {/* Icon container */}
+                <div className={`w-20 h-20 bg-gradient-to-br ${benefit.gradient} backdrop-blur-sm rounded-3xl flex items-center justify-center mb-8 border border-white/10 group-hover:border-utopia-500/30 transition-all duration-300`}>
+                  <benefit.icon className="w-10 h-10 text-utopia-400 group-hover:text-utopia-300 transition-colors duration-300" strokeWidth={1.5} />
+                </div>
+                
+                <h3 className="text-2xl font-medium text-white mb-4">
+                  {benefit.title}
+                </h3>
+                
+                <p className="text-white/70 leading-relaxed font-light">
+                  {benefit.description}
+                </p>
               </div>
-              
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                {benefit.title}
-              </h3>
-              
-              <p className="text-gray-600 leading-relaxed">
-                {benefit.description}
-              </p>
             </div>
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <p className="text-utopia-600 font-medium">
+        <div className="text-center mt-16">
+          <p className="text-utopia-400 font-light text-lg">
             Viac než 90 % používateľov dokončí onboarding v jeden deň.
           </p>
         </div>
