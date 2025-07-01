@@ -2,7 +2,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Plus, Loader2, Building2, User, Mail, Phone, MapPin } from "lucide-react";
 import { useMerchantDetail } from "@/hooks/useMerchantDetail";
 import MerchantStats from "@/components/admin/MerchantStats";
@@ -25,7 +24,8 @@ const MerchantDetailPage = () => {
     );
   }
 
-  if (error || !merchantData) {
+  if (error) {
+    console.error('Merchant detail error:', error);
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <Card className="max-w-md">
@@ -34,7 +34,33 @@ const MerchantDetailPage = () => {
           </CardHeader>
           <CardContent>
             <p className="text-slate-600 mb-4">
-              Nepodarilo sa načítať detail merchanta.
+              {error.message.includes('not found') 
+                ? 'Merchant s týmto ID neexistuje.'
+                : 'Nepodarilo sa načítať detail merchanta.'}
+            </p>
+            <p className="text-sm text-slate-500 mb-4">
+              ID: {id}
+            </p>
+            <Button onClick={() => navigate('/admin/merchants')} variant="outline">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Späť na zoznam
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!merchantData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle className="text-slate-600">Merchant nenájdený</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-slate-600 mb-4">
+              Merchant s ID {id} neexistuje.
             </p>
             <Button onClick={() => navigate('/admin/merchants')} variant="outline">
               <ArrowLeft className="h-4 w-4 mr-2" />

@@ -7,7 +7,6 @@ import {
   Building2, 
   CheckSquare, 
   Handshake,
-  ClipboardList,
   ChevronDown,
   ChevronRight
 } from "lucide-react";
@@ -62,27 +61,6 @@ const AdminSidebar = () => {
           title: t('navigation.contracts'),
           path: "/admin/contracts",
           active: isActive("/admin/contracts")
-        }
-      ]
-    },
-    {
-      id: 'requests',
-      title: t('navigation.requests'),
-      icon: ClipboardList,
-      type: 'expandable',
-      expanded: isExpanded('requests'),
-      children: [
-        {
-          title: t('navigation.allRequests'),
-          path: "/admin/requests",
-          active: isActive("/admin/requests"),
-          disabled: true
-        },
-        {
-          title: t('navigation.drafts'),
-          path: "/admin/requests/drafts",
-          active: isActive("/admin/requests/drafts"),
-          disabled: true
         }
       ]
     },

@@ -64,16 +64,20 @@ export const useMerchantDetail = (merchantId: string) => {
     queryFn: async (): Promise<MerchantDetailData> => {
       console.log('Fetching merchant detail for:', merchantId);
       
-      // Get merchant basic info
+      // Get merchant basic info - use maybeSingle instead of single
       const { data: merchant, error: merchantError } = await supabase
         .from('merchants')
         .select('*')
         .eq('id', merchantId)
-        .single();
+        .maybeSingle();
 
       if (merchantError) {
         console.error('Error fetching merchant:', merchantError);
         throw merchantError;
+      }
+
+      if (!merchant) {
+        throw new Error(`Merchant with ID ${merchantId} not found`);
       }
 
       // Get merchant's contracts with calculations and items
@@ -101,33 +105,31 @@ export const useMerchantDetail = (merchantId: string) => {
         throw contractsError;
       }
 
-      // Get merchant's business locations
-      const { data: locationsData, error: locationsError } = await supabase
-        .from('merchants')
+      // Get business locations directly - simplified query
+      const { data: locationAssignments, error: locationsError } = await supabase
+        .from('location_assignments')
         .select(`
-          contracts!inner(
+          created_at,
+          business_locations(
+            id,
+            name,
+            address_street,
+            address_city,
+            address_zip_code,
+            business_sector,
+            estimated_turnover,
+            has_pos,
+            contact_person_name,
+            contact_person_email,
+            contact_person_phone,
+            opening_hours
+          ),
+          contracts(
             contract_number,
-            status,
-            location_assignments(
-              created_at,
-              business_locations(
-                id,
-                name,
-                address_street,
-                address_city,
-                address_zip_code,
-                business_sector,
-                estimated_turnover,
-                has_pos,
-                contact_person_name,
-                contact_person_email,
-                contact_person_phone,
-                opening_hours
-              )
-            )
+            status
           )
         `)
-        .eq('id', merchantId);
+        .in('contract_id', (contracts || []).map(c => c.id));
 
       if (locationsError) {
         console.error('Error fetching locations:', locationsError);
@@ -136,29 +138,29 @@ export const useMerchantDetail = (merchantId: string) => {
 
       // Process locations data
       const locations: BusinessLocation[] = [];
-      if (locationsData && locationsData[0]) {
-        for (const contract of locationsData[0].contracts) {
-          for (const assignment of contract.location_assignments || []) {
-            if (assignment.business_locations && typeof assignment.business_locations === 'object') {
-              const location = assignment.business_locations as any;
-              locations.push({
-                id: location.id,
-                name: location.name,
-                address_street: location.address_street,
-                address_city: location.address_city,
-                address_zip_code: location.address_zip_code,
-                business_sector: location.business_sector,
-                estimated_turnover: location.estimated_turnover,
-                has_pos: location.has_pos,
-                contact_person_name: location.contact_person_name,
-                contact_person_email: location.contact_person_email,
-                contact_person_phone: location.contact_person_phone,
-                opening_hours: location.opening_hours,
-                contract_number: contract.contract_number,
-                contract_status: contract.status,
-                assignment_date: assignment.created_at
-              });
-            }
+      if (locationAssignments) {
+        for (const assignment of locationAssignments) {
+          if (assignment.business_locations && assignment.contracts) {
+            const location = assignment.business_locations as any;
+            const contract = assignment.contracts as any;
+            
+            locations.push({
+              id: location.id,
+              name: location.name,
+              address_street: location.address_street,
+              address_city: location.address_city,
+              address_zip_code: location.address_zip_code,
+              business_sector: location.business_sector,
+              estimated_turnover: location.estimated_turnover,
+              has_pos: location.has_pos,
+              contact_person_name: location.contact_person_name,
+              contact_person_email: location.contact_person_email,
+              contact_person_phone: location.contact_person_phone,
+              opening_hours: location.opening_hours,
+              contract_number: contract.contract_number,
+              contract_status: contract.status,
+              assignment_date: assignment.created_at
+            });
           }
         }
       }
