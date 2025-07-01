@@ -632,6 +632,7 @@ export type Database = {
           contract_generated_at: string | null
           contract_number: string
           created_at: string
+          created_by: string | null
           current_step: number | null
           document_signed_at: string | null
           document_uploaded_at: string | null
@@ -653,6 +654,7 @@ export type Database = {
           contract_generated_at?: string | null
           contract_number?: string
           created_at?: string
+          created_by?: string | null
           current_step?: number | null
           document_signed_at?: string | null
           document_uploaded_at?: string | null
@@ -674,6 +676,7 @@ export type Database = {
           contract_generated_at?: string | null
           contract_number?: string
           created_at?: string
+          created_by?: string | null
           current_step?: number | null
           document_signed_at?: string | null
           document_uploaded_at?: string | null
@@ -855,6 +858,45 @@ export type Database = {
           id?: string
           updated_at?: string
           vat_number?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          created_by: string | null
+          email: string
+          first_name: string
+          id: string
+          is_active: boolean
+          last_name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          email: string
+          first_name: string
+          id: string
+          is_active?: boolean
+          last_name: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          is_active?: boolean
+          last_name?: string
+          phone?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

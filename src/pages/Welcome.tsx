@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Building2, User, ArrowRight, UserCheck } from "lucide-react";
+import { Users, Building2, User, ArrowRight, UserCheck, LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
@@ -29,6 +29,10 @@ const Welcome = () => {
 
   const handleNewClient = () => {
     navigate('/onboarding');
+  };
+
+  const handleLogin = () => {
+    navigate('/auth');
   };
 
   if (showRoleSelection) {
@@ -151,17 +155,17 @@ const Welcome = () => {
         <div className="space-y-4">
           <Card 
             className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-blue-300 group" 
-            onClick={() => setShowRoleSelection(true)}
+            onClick={handleLogin}
           >
             <CardContent className="p-8">
               <div className="flex items-center space-x-4">
                 <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <UserCheck className="h-7 w-7 text-white" />
+                  <LogIn className="h-7 w-7 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-slate-900 mb-1">{t('welcome.login.title')}</h2>
+                  <h2 className="text-xl font-semibold text-slate-900 mb-1">Prihlásiť sa</h2>
                   <p className="text-slate-600">
-                    {t('welcome.login.description')}
+                    Pristúpte k svojmu účtu
                   </p>
                 </div>
                 <ArrowRight className="h-6 w-6 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300" />
