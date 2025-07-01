@@ -98,7 +98,7 @@ const HowItWorksSection = () => {
           <p className="text-gray-500 text-lg">
             Celý proces zaberie menej než 10 minút.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
