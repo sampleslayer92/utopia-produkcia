@@ -20,7 +20,7 @@ import TeamMemberDetailPage from "./pages/TeamMemberDetailPage";
 import PartnerDashboard from "./pages/PartnerDashboard";
 import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
-import ContractDetail from "./components/admin/ContractDetail";
+import ContractDetailPage from "./pages/ContractDetailPage";
 import MerchantDetailPage from "./pages/MerchantDetailPage";
 import AdminOnboardingPage from "./pages/AdminOnboardingPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
@@ -91,7 +91,7 @@ const App = () => (
           } />
           <Route path="/admin/contract/:id/view" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
-              <ContractDetail />
+              <ContractDetailPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/merchant/:id/view" element={
