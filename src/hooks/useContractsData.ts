@@ -8,6 +8,8 @@ export interface ContractWithInfo {
   status: string;
   created_at: string;
   submitted_at: string | null;
+  merchant_id: string | null;
+  source: string | null;
   contact_info: {
     first_name: string;
     last_name: string;
@@ -33,6 +35,8 @@ export const useContractsData = () => {
           status,
           created_at,
           submitted_at,
+          merchant_id,
+          source,
           contact_info (
             first_name,
             last_name,
@@ -57,6 +61,8 @@ export const useContractsData = () => {
         status: contract.status,
         created_at: contract.created_at,
         submitted_at: contract.submitted_at,
+        merchant_id: contract.merchant_id,
+        source: contract.source,
         contact_info: Array.isArray(contract.contact_info) && contract.contact_info.length > 0 
           ? contract.contact_info[0] 
           : null,

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import AdminLayout from "@/components/admin/AdminLayout";
 import MerchantsTable from "@/components/admin/MerchantsTable";
+import MerchantFilters from "@/components/admin/MerchantFilters";
 import AddMerchantModal from "@/components/admin/AddMerchantModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Download } from "lucide-react";
@@ -11,6 +12,12 @@ const MerchantsPage = () => {
   const { t } = useTranslation('admin');
   const [showAddMerchantModal, setShowAddMerchantModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [filters, setFilters] = useState({
+    search: '',
+    city: 'all',
+    hasContracts: 'all',
+    profitRange: 'all'
+  });
 
   const handleMerchantCreated = () => {
     setRefreshKey(prev => prev + 1);
@@ -38,7 +45,13 @@ const MerchantsPage = () => {
       subtitle={t('merchants.subtitle')}
       actions={merchantsActions}
     >
-      <MerchantsTable key={refreshKey} />
+      <div className="space-y-6">
+        <MerchantFilters 
+          filters={filters}
+          onFiltersChange={setFilters}
+        />
+        <MerchantsTable key={refreshKey} filters={filters} />
+      </div>
       <AddMerchantModal 
         open={showAddMerchantModal}
         onOpenChange={setShowAddMerchantModal}

@@ -16,11 +16,16 @@ import { useNavigate } from "react-router-dom";
 
 interface MerchantsTableProps {
   key?: number;
+  filters?: {
+    search: string;
+    city: string;
+    hasContracts: string;
+    profitRange: string;
+  };
 }
 
-const MerchantsTable = ({ key }: MerchantsTableProps) => {
-
-  const { data: merchants, isLoading, error, refetch } = useMerchantsData();
+const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
+  const { data: merchants, isLoading, error, refetch } = useMerchantsData(filters);
   const navigate = useNavigate();
 
   const handleRowClick = (merchantId: string) => {

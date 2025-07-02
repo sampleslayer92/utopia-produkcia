@@ -2,18 +2,26 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useContractsData, ContractWithInfo } from "@/hooks/useContractsData";
-import ContractTableFilters from "./enhanced-contracts/ContractTableFilters";
 import ContractTableContent from "./enhanced-contracts/ContractTableContent";
 import ContractTableEmptyState from "./enhanced-contracts/ContractTableEmptyState";
 
-const EnhancedContractsTable = () => {
-  const { data: contracts, isLoading, error } = useContractsData();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+interface EnhancedContractsTableProps {
+  filters?: {
+    search: string;
+    status: string;
+    merchant: string;
+    source: string;
+  };
+}
 
-  // Filter contracts based on search term and status
+const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
+  const { data: contracts, isLoading, error } = useContractsData();
+  const searchTerm = filters?.search || "";
+  const statusFilter = filters?.status || "all";
+
+  // Filter contracts based on all filters
   const filteredContracts = contracts?.filter((contract: ContractWithInfo) => {
-    const matchesSearch = 
+    const matchesSearch = !searchTerm || 
       contract.contract_number.includes(searchTerm) ||
       contract.contact_info?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contract.contact_info?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -22,11 +30,19 @@ const EnhancedContractsTable = () => {
       contract.company_info?.ico?.includes(searchTerm);
 
     const matchesStatus = statusFilter === "all" || contract.status === statusFilter;
+    
+    const matchesMerchant = !filters?.merchant || filters.merchant === "all" || 
+      contract.merchant_id === filters.merchant;
+      
+    const matchesSource = !filters?.source || filters.source === "all" || 
+      contract.source === filters.source;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesMerchant && matchesSource;
   }) || [];
 
-  const hasFilters = searchTerm.trim() !== "" || statusFilter !== "all";
+  const hasFilters = searchTerm.trim() !== "" || statusFilter !== "all" || 
+    (filters?.merchant && filters.merchant !== "all") || 
+    (filters?.source && filters.source !== "all");
 
   if (isLoading) {
     return (
@@ -70,13 +86,6 @@ const EnhancedContractsTable = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <ContractTableFilters
-          searchTerm={searchTerm}
-          statusFilter={statusFilter}
-          onSearchChange={setSearchTerm}
-          onStatusFilterChange={setStatusFilter}
-        />
-
         {filteredContracts.length === 0 ? (
           <ContractTableEmptyState hasFilters={hasFilters} />
         ) : (

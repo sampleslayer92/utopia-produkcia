@@ -21,9 +21,16 @@ export interface Merchant {
   latest_contract_date?: string;
 }
 
-export const useMerchantsData = () => {
+interface MerchantFilters {
+  search?: string;
+  city?: string;
+  hasContracts?: string;
+  profitRange?: string;
+}
+
+export const useMerchantsData = (filters: MerchantFilters = {}) => {
   return useQuery({
-    queryKey: ['merchants'],
+    queryKey: ['merchants', filters],
     queryFn: async () => {
       console.log('Fetching merchants data...');
       
@@ -88,8 +95,52 @@ export const useMerchantsData = () => {
         };
       });
 
-      console.log('Processed merchants:', processedMerchants);
-      return processedMerchants;
+      // Apply filters
+      let filteredMerchants = processedMerchants;
+
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        filteredMerchants = filteredMerchants.filter(merchant =>
+          merchant.company_name.toLowerCase().includes(searchLower) ||
+          merchant.contact_person_name.toLowerCase().includes(searchLower) ||
+          merchant.contact_person_email.toLowerCase().includes(searchLower) ||
+          (merchant.ico && merchant.ico.includes(filters.search))
+        );
+      }
+
+      if (filters.city && filters.city !== 'all') {
+        filteredMerchants = filteredMerchants.filter(merchant =>
+          merchant.address_city === filters.city
+        );
+      }
+
+      if (filters.hasContracts && filters.hasContracts !== 'all') {
+        const hasContracts = filters.hasContracts === 'true';
+        filteredMerchants = filteredMerchants.filter(merchant =>
+          hasContracts ? (merchant.contract_count || 0) > 0 : (merchant.contract_count || 0) === 0
+        );
+      }
+
+      if (filters.profitRange && filters.profitRange !== 'all') {
+        filteredMerchants = filteredMerchants.filter(merchant => {
+          const profit = merchant.total_monthly_profit || 0;
+          switch (filters.profitRange) {
+            case '0-100':
+              return profit >= 0 && profit <= 100;
+            case '100-500':
+              return profit > 100 && profit <= 500;
+            case '500-1000':
+              return profit > 500 && profit <= 1000;
+            case '1000+':
+              return profit > 1000;
+            default:
+              return true;
+          }
+        });
+      }
+
+      console.log('Filtered merchants:', filteredMerchants);
+      return filteredMerchants;
     },
   });
 };
