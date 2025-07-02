@@ -63,7 +63,7 @@ export const useContractsData = () => {
           contract_calculations (
             total_monthly_profit
           ),
-          profiles!contracts_created_by_fkey (
+          creator_profile:profiles!fk_contracts_created_by (
             first_name,
             last_name
           )
@@ -86,9 +86,9 @@ export const useContractsData = () => {
         const contractCalculations = Array.isArray(contract.contract_calculations) && contract.contract_calculations.length > 0 
           ? contract.contract_calculations[0] 
           : null;
-        const creatorProfile = Array.isArray(contract.profiles) && contract.profiles.length > 0 
-          ? contract.profiles[0] 
-          : null;
+        const creatorProfile = Array.isArray(contract.creator_profile) && contract.creator_profile.length > 0 
+          ? contract.creator_profile[0] 
+          : contract.creator_profile;
 
         // Derive client name from contact and company info
         const clientName = companyInfo?.company_name || 
