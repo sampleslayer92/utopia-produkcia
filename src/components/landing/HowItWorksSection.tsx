@@ -1,24 +1,27 @@
 
 import { Search, Settings, PenTool } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const HowItWorksSection = () => {
+  const { t } = useTranslation('landing');
+  
   const steps = [
     {
       icon: Search,
-      title: "Vyhľadaj svoju firmu",
-      description: "Zadaj názov alebo IČO a predvyplníme všetko za teba.",
+      title: t('howItWorks.steps.search.title'),
+      description: t('howItWorks.steps.search.description'),
       number: "01"
     },
     {
       icon: Settings,
-      title: "Vyber si riešenie",
-      description: "Terminál, pokladňa alebo softvér – odporučíme ti, čo sa hodí.",
+      title: t('howItWorks.steps.select.title'),
+      description: t('howItWorks.steps.select.description'),
       number: "02"
     },
     {
       icon: PenTool,
-      title: "Vyplň, podpíš, hotovo",
-      description: "Objednávku dokončíš za pár minút bez papierovania.",
+      title: t('howItWorks.steps.complete.title'),
+      description: t('howItWorks.steps.complete.description'),
       number: "03"
     }
   ];
@@ -31,10 +34,10 @@ const HowItWorksSection = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-20">
           <h2 className="text-5xl md:text-6xl font-light text-gray-900 mb-6">
-            Ako prebieha <span className="bg-blue-gradient bg-clip-text text-transparent">objednávka</span>?
+            {t('howItWorks.title')} <span className="bg-blue-gradient bg-clip-text text-transparent">{t('howItWorks.titleHighlight')}</span>?
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Tri jednoduché kroky k tvojmu novému platobému riešeniu
+            {t('howItWorks.subtitle')}
           </p>
         </div>
 
@@ -74,7 +77,7 @@ const HowItWorksSection = () => {
         <div className="text-center mt-16">
           <div className="bg-utopia-50 border border-utopia-200 rounded-2xl p-6 inline-block">
             <p className="text-utopia-700 font-medium text-lg">
-              ⏱️ Celý proces zaberie menej než 10 minút
+              ⏱️ {t('howItWorks.timeNote')}
             </p>
           </div>
         </div>

@@ -1,0 +1,179 @@
+{
+  "navigation": {
+    "howItWorks": "How it works",
+    "benefits": "Benefits",
+    "solutions": "Solutions",
+    "login": "Sign in",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "build": "Build",
+    "brilliant": "Brilliant",
+    "fintech": "Fintech Solutions",
+    "subtitle": "Order your cash register, terminal or software online – tailored exactly for your business.",
+    "highlight": "No paperwork, no stress. Done in minutes.",
+    "startOrder": "Start your order",
+    "howItWorks": "How it works",
+    "stats": {
+      "success": "Success rate in 24h",
+      "time": "Average onboarding",
+      "clients": "Happy clients"
+    }
+  },
+  "howItWorks": {
+    "title": "How the",
+    "titleHighlight": "ordering process",
+    "subtitle": "Three simple steps to your new payment solution",
+    "steps": {
+      "search": {
+        "title": "Find your company",
+        "description": "Enter name or ID and we'll pre-fill everything for you."
+      },
+      "select": {
+        "title": "Choose your solution",
+        "description": "Terminal, cash register or software – we'll recommend what suits you."
+      },
+      "complete": {
+        "title": "Fill, sign, done",
+        "description": "Complete your order in minutes without paperwork."
+      }
+    },
+    "timeNote": "The entire process takes less than 10 minutes"
+  },
+  "segments": {
+    "title": "Solutions for every",
+    "titleHighlight": "industry",
+    "subtitle": "Specialized solutions for different types of business",
+    "gastro": {
+      "title": "Gastro",
+      "description": "Restaurants, bars, cafes – we have for you:",
+      "features": [
+        "Cash registers with QR menu",
+        "Terminals with tip option",
+        "Fast approval within 24h"
+      ]
+    },
+    "retail": {
+      "title": "Retail",
+      "description": "Stores, boutiques, tobacco shops:",
+      "features": [
+        "Everything on one device",
+        "E-shop integration",
+        "Customer support 7 days a week"
+      ]
+    },
+    "services": {
+      "title": "Services",
+      "description": "From hair salons to consultancies:",
+      "features": [
+        "Simple invoicing and payment solution",
+        "No fixed fees",
+        "Digital contract signing"
+      ]
+    },
+    "emobility": {
+      "title": "E-mobility",
+      "description": "Charging stations and rental companies:",
+      "features": [
+        "Terminals for public and private charging",
+        "SIM/WiFi connectivity",
+        "Integration into existing networks"
+      ]
+    },
+    "note": "Each segment has its own onboarding. We adapt to you."
+  },
+  "benefits": {
+    "title": "Why companies choose",
+    "titleHighlight": "UTOPIA",
+    "subtitle": "Modern solutions for modern business",
+    "items": {
+      "payments": {
+        "title": "Payment gateway integration",
+        "description": "Global Payments, SumUp, GP WebPay and others."
+      },
+      "smart": {
+        "title": "Smart device selection",
+        "description": "Based on your company, we recommend suitable solutions."
+      },
+      "digital": {
+        "title": "Online contract signing",
+        "description": "No printing or scanning – you sign digitally."
+      },
+      "secure": {
+        "title": "Secure & fast",
+        "description": "Cloud solution with emphasis on GDPR and stability."
+      }
+    },
+    "successRate": "More than 90% of users complete onboarding in one day"
+  },
+  "demo": {
+    "title": "Try how it",
+    "titleHighlight": "looks",
+    "subtitle": "Interactive demonstration of the onboarding process",
+    "steps": {
+      "company": "Enter company name",
+      "device": "Choose terminal or cash register",
+      "sign": "Digital contract signing"
+    },
+    "form": {
+      "companyLabel": "Company name or ID",
+      "companyPlaceholder": "E.g. Restaurant Bratislava...",
+      "companyFound": "Company found! Pre-filling data...",
+      "terminal": "Payment terminal",
+      "terminalDesc": "For regular card payments",
+      "recommended": "Recommended",
+      "cashRegister": "Smart cash register",
+      "cashRegisterDesc": "All-in-one solution",
+      "signTitle": "Sign contract",
+      "signDesc": "Use finger or mouse to sign",
+      "mobileSign": "You can also sign on mobile or tablet"
+    },
+    "navigation": {
+      "back": "Back",
+      "next": "Next",
+      "stepOf": "of"
+    },
+    "note": "This is just a preview. Your version will be tailored to your needs."
+  },
+  "partner": {
+    "quote": "We help partners grow.",
+    "subtitle": "You have clients? We have technology.",
+    "cta": "I want to be a partner",
+    "description": "You'll get access to our portal and commission program."
+  },
+  "faq": {
+    "title": "Frequently asked",
+    "titleHighlight": "questions",
+    "subtitle": "Answers to the most common questions about our services",
+    "items": {
+      "multipleDevices": {
+        "question": "Can I order multiple devices at once?",
+        "answer": "Yes, onboarding allows you to select any number of devices and services."
+      },
+      "digitalSigning": {
+        "question": "Do I have to sign anything in person?",
+        "answer": "No, you sign everything digitally via mobile or computer."
+      },
+      "duration": {
+        "question": "How long does onboarding take?",
+        "answer": "Usually less than 10 minutes, approval within 24h."
+      },
+      "support": {
+        "question": "Who will help me if I need assistance?",
+        "answer": "Our support is available via chat and phone."
+      }
+    },
+    "helpNote": "Didn't find an answer? Contact us. We're here for you."
+  },
+  "footer": {
+    "description": "Digital onboarding portal for modern fintech solutions. Order your cash register, terminal or software online.",
+    "loginPortal": "Sign in to portal",
+    "navigation": "Navigation",
+    "about": "About us",
+    "contact": "Contact",
+    "terms": "Terms & Conditions",
+    "gdpr": "GDPR",
+    "followUs": "Follow us",
+    "copyright": "© 2025 UTOPIA – Onboarding for the new digital world"
+  }
+}

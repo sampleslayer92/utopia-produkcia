@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 const LandingNavigation = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('landing');
   const handleAuthClick = () => {
     navigate('/auth');
   };
@@ -21,23 +24,24 @@ const LandingNavigation = () => {
           {/* Navigation Links */}
           <div className="hidden md:flex items-center gap-8">
             <a href="#how-it-works" className="text-gray-600 hover:text-utopia-500 transition-colors font-medium">
-              Ako to funguje
+              {t('navigation.howItWorks')}
             </a>
             <a href="#benefits" className="text-gray-600 hover:text-utopia-500 transition-colors font-medium">
-              Výhody
+              {t('navigation.benefits')}
             </a>
             <a href="#segments" className="text-gray-600 hover:text-utopia-500 transition-colors font-medium">
-              Riešenia
+              {t('navigation.solutions')}
             </a>
           </div>
 
           {/* Action Buttons */}
           <div className="flex items-center gap-4">
+            <LanguageSwitcher />
             <Button onClick={handleAuthClick} variant="ghost" className="text-gray-600 hover:text-utopia-500 font-medium">
-              Prihlásiť sa
+              {t('navigation.login')}
             </Button>
             <Button onClick={handleOnboardingClick} className="bg-blue-gradient text-white px-6 py-2 rounded-xl font-medium hover:shadow-lg transition-all duration-300">
-              Začať
+              {t('navigation.getStarted')}
             </Button>
           </div>
         </div>

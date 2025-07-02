@@ -1,65 +1,51 @@
 
 import React, { useState } from "react";
 import { UtensilsCrossed, ShoppingBag, Briefcase, Zap } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const ForWhomSection = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const { t } = useTranslation('landing');
 
   const segments = [
     {
       id: 'gastro',
-      title: 'Gastro',
+      title: t('segments.gastro.title'),
       icon: UtensilsCrossed,
       emoji: '🍽️',
       content: {
-        description: 'Reštaurácie, bary, kaviarne – máme pre vás:',
-        features: [
-          'Pokladne s QR menu',
-          'Terminály s možnosťou tringeltu',
-          'Rýchle schválenie do 24h'
-        ]
+        description: t('segments.gastro.description'),
+        features: t('segments.gastro.features', { returnObjects: true }) as string[]
       }
     },
     {
       id: 'retail',
-      title: 'Retail',
+      title: t('segments.retail.title'),
       icon: ShoppingBag,
       emoji: '🛍️',
       content: {
-        description: 'Predajne, butiky, trafiky:',
-        features: [
-          'Všetko na jednom zariadení',
-          'Integrácia s e-shopom',
-          'Zákaznícka podpora 7 dní v týždni'
-        ]
+        description: t('segments.retail.description'),
+        features: t('segments.retail.features', { returnObjects: true }) as string[]
       }
     },
     {
       id: 'services',
-      title: 'Služby',
+      title: t('segments.services.title'),
       icon: Briefcase,
       emoji: '💼',
       content: {
-        description: 'Od kaderníctiev po poradne:',
-        features: [
-          'Jednoduché riešenie na fakturáciu a platby',
-          'Žiadne fixné poplatky',
-          'Digitálny podpis zmluvy'
-        ]
+        description: t('segments.services.description'),
+        features: t('segments.services.features', { returnObjects: true }) as string[]
       }
     },
     {
       id: 'emobility',
-      title: 'E-mobilita',
+      title: t('segments.emobility.title'),
       icon: Zap,
       emoji: '⚡',
       content: {
-        description: 'Nabíjacie stanice a prenajímatelia:',
-        features: [
-          'Terminály pre verejné aj súkromné nabíjanie',
-          'SIM/WiFi konektivita',
-          'Integrácia do existujúcich sietí'
-        ]
+        description: t('segments.emobility.description'),
+        features: t('segments.emobility.features', { returnObjects: true }) as string[]
       }
     }
   ];
@@ -72,10 +58,10 @@ const ForWhomSection = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-20">
           <h2 className="text-5xl md:text-6xl font-light text-gray-900 mb-6">
-            Riešenia pre každé <span className="bg-blue-gradient bg-clip-text text-transparent">odvetvie</span>
+            {t('segments.title')} <span className="bg-blue-gradient bg-clip-text text-transparent">{t('segments.titleHighlight')}</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Špecializované riešenia pre rôzne typy podnikania
+            {t('segments.subtitle')}
           </p>
         </div>
 
@@ -134,7 +120,7 @@ const ForWhomSection = () => {
         <div className="text-center mt-12">
           <div className="bg-accent-yellow/20 border border-accent-yellow/40 rounded-2xl p-6 inline-block">
             <p className="text-gray-800 font-medium text-lg">
-              🎯 Každý segment má vlastný onboarding. Prispôsobíme sa ti.
+              🎯 {t('segments.note')}
             </p>
           </div>
         </div>

@@ -1,9 +1,11 @@
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('landing');
 
   const handleStartOrder = () => {
     navigate('/onboarding');
@@ -28,20 +30,20 @@ const HeroSection = () => {
           <div className="text-left">
             {/* Main heading with much larger typography */}
             <h1 className="text-6xl md:text-8xl lg:text-9xl font-light text-gray-900 mb-8 animate-fade-in-up tracking-tight leading-tight">
-              <span className="block font-extralight">Build</span>
+              <span className="block font-extralight">{t('hero.build')}</span>
               <span className="block bg-blue-gradient bg-clip-text text-transparent font-normal">
-                Brilliant
+                {t('hero.brilliant')}
               </span>
               <span className="block text-gray-700 text-4xl md:text-6xl lg:text-7xl mt-4 font-extralight">
-                Fintech Solutions
+                {t('hero.fintech')}
               </span>
             </h1>
 
             {/* Subheading */}
             <p className="text-2xl md:text-3xl text-gray-600 mb-12 max-w-2xl animate-fade-in-up leading-relaxed font-light" style={{ animationDelay: '0.2s' }}>
-              Objednaj si pokladňu, terminál alebo softvér online – presne pre tvoje podnikanie.
+              {t('hero.subtitle')}
               <br />
-              <span className="text-utopia-500 font-medium">Bez papierov, bez stresu. Hotovo do pár minút.</span>
+              <span className="text-utopia-500 font-medium">{t('hero.highlight')}</span>
             </p>
 
             {/* CTA Buttons */}
@@ -51,7 +53,7 @@ const HeroSection = () => {
                 size="lg" 
                 className="bg-blue-gradient text-white px-12 py-6 text-xl font-medium rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
-                Začať objednávku
+                {t('hero.startOrder')}
               </Button>
               
               <Button 
@@ -60,7 +62,7 @@ const HeroSection = () => {
                 size="lg" 
                 className="border-2 border-utopia-500 text-utopia-500 hover:bg-utopia-50 px-12 py-6 text-xl font-medium rounded-2xl transition-all duration-300 hover:scale-105"
               >
-                Ako to funguje
+                {t('hero.howItWorks')}
               </Button>
             </div>
 
@@ -68,15 +70,15 @@ const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-8 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
               <div className="text-center sm:text-left">
                 <div className="text-4xl font-bold text-utopia-500 mb-2">90%</div>
-                <div className="text-gray-600 font-medium">Úspešnosť za 24h</div>
+                <div className="text-gray-600 font-medium">{t('hero.stats.success')}</div>
               </div>
               <div className="text-center sm:text-left">
                 <div className="text-4xl font-bold text-utopia-500 mb-2">10 min</div>
-                <div className="text-gray-600 font-medium">Priemerný onboarding</div>
+                <div className="text-gray-600 font-medium">{t('hero.stats.time')}</div>
               </div>
               <div className="text-center sm:text-left">
                 <div className="text-4xl font-bold text-utopia-500 mb-2">500+</div>
-                <div className="text-gray-600 font-medium">Spokojných klientov</div>
+                <div className="text-gray-600 font-medium">{t('hero.stats.clients')}</div>
               </div>
             </div>
           </div>
