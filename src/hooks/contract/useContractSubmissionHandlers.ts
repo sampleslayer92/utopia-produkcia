@@ -9,6 +9,7 @@ import {
   safeEmail,
   ensureValidUUID
 } from './useContractSubmissionValidators';
+import { createMerchantIfNeeded } from './merchantCreationUtils';
 
 export const insertContactInfo = async (contractId: string, contactInfo: ContactInfo) => {
   console.log('Inserting contact info for contract:', contractId, contactInfo);
@@ -33,7 +34,7 @@ export const insertContactInfo = async (contractId: string, contactInfo: Contact
   }
 };
 
-export const insertCompanyInfo = async (contractId: string, companyInfo: CompanyInfo) => {
+export const insertCompanyInfo = async (contractId: string, companyInfo: CompanyInfo, contactInfo?: ContactInfo) => {
   console.log('Inserting company info for contract:', contractId, companyInfo);
   
   const { error } = await supabase
@@ -67,6 +68,23 @@ export const insertCompanyInfo = async (contractId: string, companyInfo: Company
   if (error) {
     console.error('Company info insertion error:', error);
     throw new Error(`Chyba pri ukladaní údajov o spoločnosti: ${error.message}`);
+  }
+
+  // Auto-create merchant after successful company info insertion
+  try {
+    console.log('Auto-creating merchant for contract:', contractId);
+    
+    // Direct implementation of merchant creation logic
+    const result = await createMerchantIfNeeded(contractId, companyInfo, contactInfo);
+    
+    if (result.success) {
+      console.log('Merchant created/linked successfully:', result.merchantId);
+    } else {
+      console.log('Merchant creation skipped:', result.reason);
+    }
+  } catch (error) {
+    console.error('Auto merchant creation failed:', error);
+    // Don't throw here - merchant creation is optional and can be done later
   }
 };
 

@@ -84,7 +84,7 @@ export const useContractSubmission = () => {
       }
 
       try {
-        await insertCompanyInfo(contractId, onboardingData.companyInfo);
+        await insertCompanyInfo(contractId, onboardingData.companyInfo, onboardingData.contactInfo);
         console.log('Company info inserted successfully');
       } catch (error) {
         console.error('Company info insertion error:', error);

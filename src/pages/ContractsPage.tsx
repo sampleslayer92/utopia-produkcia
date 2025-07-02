@@ -9,13 +9,15 @@ import CollapsibleFilters from "@/components/admin/shared/CollapsibleFilters";
 import StatsCardsSection from "@/components/admin/shared/StatsCardsSection";
 import { useContractsStats } from "@/hooks/useAdminStats";
 import { Button } from "@/components/ui/button";
-import { Plus, Download, FileText, Euro, Clock } from "lucide-react";
+import { Plus, Download, FileText, Euro, Clock, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useContractMerchantFix } from "@/hooks/useContractMerchantFix";
 
 const ContractsPage = () => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const { data: stats, isLoading: statsLoading } = useContractsStats();
+  const { fixAllContractsWithoutMerchants, isFixing } = useContractMerchantFix();
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
@@ -51,6 +53,15 @@ const ContractsPage = () => {
 
   const contractsActions = (
     <>
+      <Button 
+        variant="outline" 
+        onClick={fixAllContractsWithoutMerchants}
+        disabled={isFixing}
+        className="hover:bg-slate-50"
+      >
+        <Settings className="h-4 w-4 mr-2" />
+        {isFixing ? 'Opravujem...' : 'Opraviť merchantov'}
+      </Button>
       <Button variant="outline" className="hover:bg-slate-50">
         <Download className="h-4 w-4 mr-2" />
         {t('contracts.export')}
