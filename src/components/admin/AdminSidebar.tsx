@@ -83,10 +83,9 @@ const AdminSidebar = () => {
           active: isActive("/admin/merchants")
         },
         {
-          title: t('navigation.locations'),
+          title: "Prevádzky",
           path: "/admin/merchants/locations",
-          active: isActive("/admin/merchants/locations"),
-          disabled: true
+          active: isActive("/admin/merchants/locations")
         },
         {
           title: userRole?.role === 'partner' ? 'Moje zmluvy' : t('navigation.contracts'),

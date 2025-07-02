@@ -25,6 +25,8 @@ import MerchantDetailPage from "./pages/MerchantDetailPage";
 import AdminOnboardingPage from "./pages/AdminOnboardingPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
 import DealsPage from "./pages/DealsPage";
+import BusinessLocationsPage from "./pages/BusinessLocationsPage";
+import BusinessLocationDetailPage from "./pages/BusinessLocationDetailPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -65,6 +67,16 @@ const App = () => (
           <Route path="/admin/merchants" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <MerchantsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/merchants/locations" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <BusinessLocationsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/merchants/location/:id/view" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <BusinessLocationDetailPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/onboarding" element={
