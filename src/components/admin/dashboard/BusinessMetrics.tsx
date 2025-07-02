@@ -27,7 +27,7 @@ const BusinessMetrics = () => {
 
   const metricsData = [
     {
-      title: t('dashboard.metrics.monthlyRevenue'),
+      title: "Celkový príjem",
       value: `€${metrics?.monthlyRevenue?.toLocaleString() || '0'}`,
       change: `+${metrics?.revenueGrowth || 0}%`,
       icon: DollarSign,
@@ -35,25 +35,25 @@ const BusinessMetrics = () => {
       bgColor: "bg-green-100"
     },
     {
-      title: t('dashboard.metrics.monthlyTransactions'),
-      value: metrics?.monthlyTransactions?.toLocaleString() || '0',
-      change: `+${metrics?.transactionGrowth || 0}%`,
+      title: "Aktívne zmluvy",
+      value: metrics?.activeContracts?.toLocaleString() || '0',
+      change: `+${metrics?.contractGrowth || 0}%`,
       icon: CreditCard,
       color: "text-blue-600",
       bgColor: "bg-blue-100"
     },
     {
-      title: t('dashboard.metrics.averageProfit'),
-      value: `€${metrics?.averageProfit?.toLocaleString() || '0'}`,
-      change: `+${metrics?.profitGrowth || 0}%`,
+      title: "Celkový obrat",
+      value: `€${metrics?.totalTurnover?.toLocaleString() || '0'}`,
+      change: `+${metrics?.turnoverGrowth || 0}%`,
       icon: TrendingUp,
       color: "text-purple-600",
       bgColor: "bg-purple-100"
     },
     {
-      title: t('dashboard.metrics.activeClients'),
-      value: metrics?.activeClients?.toLocaleString() || '0',
-      change: `+${metrics?.clientGrowth || 0}%`,
+      title: "Počet merchantov",
+      value: metrics?.totalMerchants?.toLocaleString() || '0',
+      change: `+${metrics?.merchantGrowth || 0}%`,
       icon: Users,
       color: "text-orange-600",
       bgColor: "bg-orange-100"
@@ -63,17 +63,17 @@ const BusinessMetrics = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {metricsData.map((metric, index) => (
-        <Card key={index} className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow">
+        <Card key={index} className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-slate-600">{metric.title}</p>
                 <p className="text-2xl font-bold text-slate-900 mt-2">{metric.value}</p>
                 <p className={`text-sm font-medium mt-1 ${metric.color}`}>
-                  {metric.change} {t('dashboard.metrics.fromLastMonth')}
+                  {metric.change} z minulého mesiaca
                 </p>
               </div>
-              <div className={`p-3 rounded-full ${metric.bgColor}`}>
+              <div className={`p-3 rounded-full ${metric.bgColor} shadow-sm`}>
                 <metric.icon className={`h-6 w-6 ${metric.color}`} />
               </div>
             </div>

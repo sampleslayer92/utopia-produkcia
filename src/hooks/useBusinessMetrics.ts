@@ -8,80 +8,117 @@ export const useBusinessMetrics = () => {
     queryFn: async () => {
       console.log('Fetching business metrics...');
       
-      // Get contract calculations for revenue data
-      const { data: calculations, error: calcError } = await supabase
-        .from('contract_calculations')
-        .select(`
-          total_monthly_profit,
-          monthly_turnover,
-          contract_id,
-          contracts!inner (
-            status,
-            created_at
-          )
-        `)
-        .eq('contracts.status', 'approved');
+      // Get current month data
+      const currentMonth = new Date();
+      const lastMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+      
+      // Get total merchants count
+      const { data: merchantsData, error: merchantsError } = await supabase
+        .from('merchants')
+        .select('id, created_at');
 
-      if (calcError) {
-        console.error('Error fetching calculations:', calcError);
-        throw calcError;
+      if (merchantsError) {
+        console.error('Error fetching merchants:', merchantsError);
+        throw merchantsError;
       }
 
-      // Get business locations for transaction data
-      const { data: locations, error: locError } = await supabase
+      // Get contracts with calculations
+      const { data: contractsData, error: contractsError } = await supabase
+        .from('contracts')
+        .select(`
+          id,
+          status,
+          created_at,
+          merchant_id,
+          contract_calculations (
+            total_monthly_profit,
+            monthly_turnover
+          )
+        `);
+
+      if (contractsError) {
+        console.error('Error fetching contracts:', contractsError);
+        throw contractsError;
+      }
+
+      // Get business locations
+      const { data: locationsData, error: locationsError } = await supabase
         .from('business_locations')
-        .select(`
-          estimated_turnover,
-          average_transaction,
-          contract_id,
-          contracts!inner (
-            status
-          )
-        `)
-        .eq('contracts.status', 'approved');
+        .select('estimated_turnover, average_transaction, has_pos, created_at');
 
-      if (locError) {
-        console.error('Error fetching locations:', locError);
-        throw locError;
+      if (locationsError) {
+        console.error('Error fetching locations:', locationsError);
+        throw locationsError;
       }
 
-      // Calculate metrics
-      const monthlyRevenue = calculations?.reduce((sum, calc) => 
-        sum + (Number(calc.total_monthly_profit) || 0), 0
-      ) || 0;
+      // Calculate current month metrics
+      const totalMerchants = merchantsData?.length || 0;
+      const activeContracts = contractsData?.filter(c => 
+        ['approved', 'signed', 'submitted'].includes(c.status)
+      ).length || 0;
 
-      const monthlyTransactions = locations?.reduce((sum, loc) => 
+      // Calculate total monthly profit from all approved contracts
+      const monthlyRevenue = contractsData
+        ?.filter(c => c.status === 'approved' && c.contract_calculations?.[0])
+        ?.reduce((sum, contract) => {
+          const calc = Array.isArray(contract.contract_calculations) 
+            ? contract.contract_calculations[0] 
+            : contract.contract_calculations;
+          return sum + (Number(calc?.total_monthly_profit) || 0);
+        }, 0) || 0;
+
+      // Calculate total estimated turnover
+      const totalTurnover = locationsData?.reduce((sum, loc) => 
         sum + (Number(loc.estimated_turnover) || 0), 0
       ) || 0;
 
-      const averageProfit = calculations?.length > 0 
-        ? monthlyRevenue / calculations.length 
+      // Calculate average profit per merchant
+      const avgProfitPerMerchant = totalMerchants > 0 ? monthlyRevenue / totalMerchants : 0;
+
+      // Count locations with POS
+      const locationsWithPOS = locationsData?.filter(loc => loc.has_pos).length || 0;
+
+      // Calculate growth rates (compare with last month)
+      const lastMonthMerchants = merchantsData?.filter(m => 
+        new Date(m.created_at) < lastMonth
+      ).length || 0;
+      
+      const lastMonthContracts = contractsData?.filter(c => 
+        new Date(c.created_at) < lastMonth
+      ).length || 0;
+
+      const merchantGrowth = lastMonthMerchants > 0 
+        ? ((totalMerchants - lastMonthMerchants) / lastMonthMerchants * 100) 
         : 0;
 
-      const activeClients = calculations?.length || 0;
+      const contractGrowth = lastMonthContracts > 0 
+        ? ((activeContracts - lastMonthContracts) / lastMonthContracts * 100) 
+        : 0;
 
-      // Mock growth percentages (in real app, compare with previous month)
-      const revenueGrowth = 12.5;
-      const transactionGrowth = 8.3;
-      const profitGrowth = 15.2;
-      const clientGrowth = 6.7;
+      // Mock revenue growth for now (would need historical data)
+      const revenueGrowth = 12.3;
+      const turnoverGrowth = 8.7;
 
       console.log('Business metrics calculated:', {
+        totalMerchants,
+        activeContracts,
         monthlyRevenue,
-        monthlyTransactions,
-        averageProfit,
-        activeClients
+        totalTurnover,
+        avgProfitPerMerchant,
+        locationsWithPOS
       });
 
       return {
+        totalMerchants,
+        activeContracts,
         monthlyRevenue,
-        monthlyTransactions,
-        averageProfit,
-        activeClients,
+        totalTurnover,
+        avgProfitPerMerchant,
+        locationsWithPOS,
+        merchantGrowth: Math.round(merchantGrowth * 10) / 10,
+        contractGrowth: Math.round(contractGrowth * 10) / 10,
         revenueGrowth,
-        transactionGrowth,
-        profitGrowth,
-        clientGrowth
+        turnoverGrowth
       };
     },
   });
