@@ -1,6 +1,7 @@
 
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
 interface AdminLayoutProps {
   title: string;
@@ -11,17 +12,19 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <AdminSidebar />
-      
-      <div className="ml-64 flex flex-col min-h-screen">
-        <AdminHeader title={title} subtitle={subtitle} actions={actions} />
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <AdminSidebar />
         
-        <main className="flex-1 p-6">
-          {children}
-        </main>
+        <SidebarInset className="flex flex-col">
+          <AdminHeader title={title} subtitle={subtitle} actions={actions} />
+          
+          <main className="flex-1 p-6">
+            {children}
+          </main>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 

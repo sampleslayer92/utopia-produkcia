@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useNavigate, useLocation } from "react-router-dom";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface AdminHeaderProps {
   title: string;
@@ -77,11 +78,14 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
 
         {/* Header Content */}
         <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
-            {subtitle && (
-              <p className="text-sm text-slate-600 mt-1">{subtitle}</p>
-            )}
+          <div className="flex items-center gap-4 flex-1">
+            <SidebarTrigger />
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
+              {subtitle && (
+                <p className="text-sm text-slate-600 mt-1">{subtitle}</p>
+              )}
+            </div>
           </div>
 
           {/* Right Side Actions */}

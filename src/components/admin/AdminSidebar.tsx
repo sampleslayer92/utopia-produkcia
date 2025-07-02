@@ -1,6 +1,5 @@
 
 import { useTranslation } from 'react-i18next';
-import { Button } from "@/components/ui/button";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -17,6 +16,22 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import AdminProfile from "./AdminProfile";
 import { useAuth } from '@/contexts/AuthContext';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
+  useSidebar,
+} from "@/components/ui/sidebar";
 
 const AdminSidebar = () => {
   const { t } = useTranslation('admin');
@@ -144,85 +159,84 @@ const AdminSidebar = () => {
     }] : [])
   ];
 
+  const { state } = useSidebar();
+
   return (
-    <div className="fixed left-0 top-0 w-64 h-screen bg-white border-r border-slate-200 flex flex-col z-50">
-      {/* Logo */}
-      <div className="p-6 border-b border-slate-200 flex justify-center">
-        <img 
-          src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
-          alt="Onepos Logo" 
-          className="h-10 w-auto"
-        />
-      </div>
+    <Sidebar variant="sidebar" collapsible="icon">
+      <SidebarHeader className="border-b">
+        <div className="flex justify-center p-2">
+          <img 
+            src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
+            alt="Onepos Logo" 
+            className={state === "expanded" ? "h-8 w-auto" : "h-6 w-6"}
+          />
+        </div>
+      </SidebarHeader>
 
-      {/* Navigation */}
-      <div className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {menuItems.map((item) => (
-          <div key={item.id}>
-            {item.type === 'single' ? (
-              <Button
-                variant={item.active ? "default" : "ghost"}
-                onClick={() => navigate(item.path!)}
-                className={`w-full justify-start ${
-                  item.active 
-                    ? "bg-blue-600 hover:bg-blue-700 text-white" 
-                    : "text-slate-700 hover:bg-slate-100"
-                }`}
-              >
-                <item.icon className="h-4 w-4 mr-3" />
-                {item.title}
-              </Button>
-            ) : (
-              <div className="space-y-1">
-                {/* Section Header */}
-                <Button
-                  variant="ghost"
-                  onClick={() => toggleSection(item.id)}
-                  className="w-full justify-between text-slate-700 hover:bg-slate-100"
-                >
-                  <div className="flex items-center">
-                    <item.icon className="h-4 w-4 mr-3" />
-                    {item.title}
-                  </div>
-                  {item.expanded ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                </Button>
-                
-                {/* Expandable Children */}
-                {item.expanded && (
-                  <div className="ml-6 space-y-1">
-                    {item.children?.map((child, index) => (
-                      <Button
-                        key={index}
-                        variant={child.active ? "default" : "ghost"}
-                        size="sm"
-                        onClick={() => navigate(child.path)}
-                        className={`w-full justify-start ${
-                          child.active 
-                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
-                            : "text-slate-600 hover:bg-slate-50"
-                        }`}
-                        disabled={child.disabled}
-                      >
-                        {child.title}
-                      </Button>
-                    ))}
-                  </div>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarMenu>
+            {menuItems.map((item) => (
+              <SidebarMenuItem key={item.id}>
+                {item.type === 'single' ? (
+                  <SidebarMenuButton
+                    asChild
+                    isActive={item.active}
+                    tooltip={state === "collapsed" ? item.title : undefined}
+                  >
+                    <button onClick={() => navigate(item.path!)}>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </button>
+                  </SidebarMenuButton>
+                ) : (
+                  <>
+                    <SidebarMenuButton
+                      onClick={() => toggleSection(item.id)}
+                      tooltip={state === "collapsed" ? item.title : undefined}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                      {state === "expanded" && (
+                        item.expanded ? (
+                          <ChevronDown className="ml-auto h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="ml-auto h-4 w-4" />
+                        )
+                      )}
+                    </SidebarMenuButton>
+                    
+                    {item.expanded && state === "expanded" && (
+                      <SidebarMenuSub>
+                        {item.children?.map((child, index) => (
+                          <SidebarMenuSubItem key={index}>
+                            <SidebarMenuSubButton
+                              asChild
+                              isActive={child.active}
+                            >
+                              <button 
+                                onClick={() => navigate(child.path)}
+                                disabled={child.disabled}
+                              >
+                                <span>{child.title}</span>
+                              </button>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    )}
+                  </>
                 )}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
 
-      {/* User Profile at bottom */}
-      <div className="p-4 border-t border-slate-200">
+      <SidebarFooter className="border-t">
         <AdminProfile />
-      </div>
-    </div>
+      </SidebarFooter>
+    </Sidebar>
   );
 };
 

@@ -15,11 +15,13 @@ import { ChevronDown, User, Settings, LogOut, Shield } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useSidebar } from "@/components/ui/sidebar";
 
 const AdminProfile = () => {
   const { t } = useTranslation('admin');
   const { profile, userRole, signOut } = useAuth();
   const navigate = useNavigate();
+  const { state } = useSidebar();
 
   const handleSignOut = async () => {
     try {
@@ -49,18 +51,29 @@ const AdminProfile = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="w-full justify-start p-2 h-auto">
-          <div className="flex items-center space-x-3 w-full">
+        <Button 
+          variant="ghost" 
+          className={`w-full p-2 h-auto ${
+            state === "collapsed" ? "justify-center" : "justify-start"
+          }`}
+        >
+          <div className={`flex items-center w-full ${
+            state === "collapsed" ? "justify-center" : "space-x-3"
+          }`}>
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-blue-100 text-blue-700 text-sm">
                 {profile.first_name?.[0]}{profile.last_name?.[0]}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 text-left">
-              <div className="font-medium text-sm">{profile.first_name} {profile.last_name}</div>
-              <div className="text-xs text-slate-500 truncate">{profile.email}</div>
-            </div>
-            <ChevronDown className="h-4 w-4 text-slate-400" />
+            {state === "expanded" && (
+              <>
+                <div className="flex-1 text-left">
+                  <div className="font-medium text-sm">{profile.first_name} {profile.last_name}</div>
+                  <div className="text-xs text-slate-500 truncate">{profile.email}</div>
+                </div>
+                <ChevronDown className="h-4 w-4 text-slate-400" />
+              </>
+            )}
           </div>
         </Button>
       </DropdownMenuTrigger>
