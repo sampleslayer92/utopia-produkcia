@@ -21,7 +21,7 @@ const QuickActions = () => {
       icon: FileText,
       color: "bg-emerald-500 hover:bg-emerald-600",
       textColor: "text-white",
-      onClick: () => navigate('/admin/contracts')
+      onClick: () => navigate('/admin/merchants/contracts')
     },
     {
       title: "Merchanti",
@@ -37,7 +37,7 @@ const QuickActions = () => {
       icon: BarChart3,
       color: "bg-orange-500 hover:bg-orange-600",
       textColor: "text-white",
-      onClick: () => navigate('/admin/business-locations')
+      onClick: () => navigate('/admin/merchants/locations')
     },
     {
       title: "Tím",
@@ -45,15 +45,7 @@ const QuickActions = () => {
       icon: Users,
       color: "bg-cyan-500 hover:bg-cyan-600",
       textColor: "text-white",
-      onClick: () => navigate('/admin/team')
-    },
-    {
-      title: "Nastavenia",
-      description: "Konfigurácia systému",
-      icon: Settings,
-      color: "bg-slate-500 hover:bg-slate-600",
-      textColor: "text-white",
-      onClick: () => navigate('/admin/settings')
+      onClick: () => navigate('/admin/team/performance')
     }
   ];
 

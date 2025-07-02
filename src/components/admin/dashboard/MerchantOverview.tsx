@@ -99,7 +99,7 @@ const MerchantOverview = () => {
                 <div 
                   key={merchant.id} 
                   className="flex items-center space-x-3 p-3 bg-slate-50/50 rounded-lg hover:bg-slate-100/50 transition-colors cursor-pointer"
-                  onClick={() => navigate(`/admin/merchants/${merchant.id}`)}
+                  onClick={() => navigate(`/admin/merchant/${merchant.id}/view`)}
                 >
                   <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-700 rounded-full font-semibold text-sm">
                     {index + 1}
