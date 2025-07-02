@@ -34,12 +34,12 @@ export const useMerchantsData = (filters: MerchantFilters = {}) => {
     queryFn: async () => {
       console.log('Fetching merchants data...');
       
-      // Get merchants with contract statistics
+      // Get all merchants with optional contract statistics
       const { data: merchants, error } = await supabase
         .from('merchants')
         .select(`
           *,
-          contracts!inner(
+          contracts(
             id,
             status,
             created_at,
