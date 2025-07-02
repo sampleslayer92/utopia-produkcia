@@ -9,9 +9,9 @@ import { Download, MapPin } from "lucide-react";
 const BusinessLocationsPage = () => {
   const { t } = useTranslation('admin');
   const [filters, setFilters] = useState({
-    merchant: '',
-    sector: '',
-    hasPos: '',
+    merchant: 'all',
+    sector: 'all',
+    hasPos: 'all',
     search: ''
   });
 

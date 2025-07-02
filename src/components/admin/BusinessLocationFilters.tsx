@@ -23,15 +23,15 @@ const BusinessLocationFilters = ({ filters, onFiltersChange }: BusinessLocationF
   const handleFilterChange = (key: string, value: string) => {
     onFiltersChange({
       ...filters,
-      [key]: value
+      [key]: value === 'all' ? '' : value
     });
   };
 
   const clearFilters = () => {
     onFiltersChange({
-      merchant: '',
-      sector: '',
-      hasPos: '',
+      merchant: 'all',
+      sector: 'all',
+      hasPos: 'all',
       search: ''
     });
   };
@@ -67,12 +67,12 @@ const BusinessLocationFilters = ({ filters, onFiltersChange }: BusinessLocationF
 
           <div>
             <Label htmlFor="merchant">Merchant</Label>
-            <Select value={filters.merchant} onValueChange={(value) => handleFilterChange('merchant', value)}>
+            <Select value={filters.merchant || 'all'} onValueChange={(value) => handleFilterChange('merchant', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Všetci merchanti" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Všetci merchanti</SelectItem>
+                <SelectItem value="all">Všetci merchanti</SelectItem>
                 {merchants?.map((merchant) => (
                   <SelectItem key={merchant.id} value={merchant.id}>
                     {merchant.company_name}
@@ -84,12 +84,12 @@ const BusinessLocationFilters = ({ filters, onFiltersChange }: BusinessLocationF
 
           <div>
             <Label htmlFor="sector">Sektor</Label>
-            <Select value={filters.sector} onValueChange={(value) => handleFilterChange('sector', value)}>
+            <Select value={filters.sector || 'all'} onValueChange={(value) => handleFilterChange('sector', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Všetky sektory" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Všetky sektory</SelectItem>
+                <SelectItem value="all">Všetky sektory</SelectItem>
                 {businessSectors.map((sector) => (
                   <SelectItem key={sector} value={sector}>
                     {sector}
@@ -101,12 +101,12 @@ const BusinessLocationFilters = ({ filters, onFiltersChange }: BusinessLocationF
 
           <div>
             <Label htmlFor="hasPos">POS terminál</Label>
-            <Select value={filters.hasPos} onValueChange={(value) => handleFilterChange('hasPos', value)}>
+            <Select value={filters.hasPos || 'all'} onValueChange={(value) => handleFilterChange('hasPos', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Všetky prevádzky" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Všetky prevádzky</SelectItem>
+                <SelectItem value="all">Všetky prevádzky</SelectItem>
                 <SelectItem value="true">S POS terminálom</SelectItem>
                 <SelectItem value="false">Bez POS terminálu</SelectItem>
               </SelectContent>
