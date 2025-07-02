@@ -1,14 +1,20 @@
 
+import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import AdminLayout from "@/components/admin/AdminLayout";
 import MerchantsTable from "@/components/admin/MerchantsTable";
+import AddMerchantModal from "@/components/admin/AddMerchantModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Download } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const MerchantsPage = () => {
   const { t } = useTranslation('admin');
-  const navigate = useNavigate();
+  const [showAddMerchantModal, setShowAddMerchantModal] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleMerchantCreated = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   const merchantsActions = (
     <>
@@ -17,11 +23,11 @@ const MerchantsPage = () => {
         {t('merchants.export')}
       </Button>
       <Button 
-        onClick={() => navigate('/onboarding')}
+        onClick={() => setShowAddMerchantModal(true)}
         className="bg-blue-600 hover:bg-blue-700"
       >
         <Plus className="h-4 w-4 mr-2" />
-        {t('merchants.newContract')}
+        Nový merchant
       </Button>
     </>
   );
@@ -32,7 +38,12 @@ const MerchantsPage = () => {
       subtitle={t('merchants.subtitle')}
       actions={merchantsActions}
     >
-      <MerchantsTable />
+      <MerchantsTable key={refreshKey} />
+      <AddMerchantModal 
+        open={showAddMerchantModal}
+        onOpenChange={setShowAddMerchantModal}
+        onSuccess={handleMerchantCreated}
+      />
     </AdminLayout>
   );
 };

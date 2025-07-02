@@ -14,8 +14,13 @@ import { useMerchantsData, Merchant } from "@/hooks/useMerchantsData";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
-const MerchantsTable = () => {
-  const { data: merchants, isLoading, error } = useMerchantsData();
+interface MerchantsTableProps {
+  key?: number;
+}
+
+const MerchantsTable = ({ key }: MerchantsTableProps) => {
+
+  const { data: merchants, isLoading, error, refetch } = useMerchantsData();
   const navigate = useNavigate();
 
   const handleRowClick = (merchantId: string) => {
