@@ -162,20 +162,22 @@ const AdminSidebar = () => {
   const { state } = useSidebar();
 
   return (
-    <Sidebar variant="sidebar" collapsible="icon">
-      <SidebarHeader className="border-b">
-        <div className="flex justify-center p-2">
-          <img 
-            src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
-            alt="Onepos Logo" 
-            className={state === "expanded" ? "h-8 w-auto" : "h-6 w-6"}
-          />
+    <Sidebar variant="sidebar" collapsible="icon" className="border-r-0 shadow-lg">
+      <SidebarHeader className="border-b border-slate-200/50 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-tr-2xl">
+        <div className="flex justify-center p-4">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2 shadow-lg">
+            <img 
+              src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
+              alt="Onepos Logo" 
+              className={state === "expanded" ? "h-6 w-auto filter brightness-0 invert" : "h-5 w-5 filter brightness-0 invert"}
+            />
+          </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
+      <SidebarContent className="bg-gradient-to-b from-white to-slate-50/50 backdrop-blur-sm">
+        <SidebarGroup className="px-3 py-4">
+          <SidebarMenu className="space-y-2">
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.id}>
                 {item.type === 'single' ? (
@@ -183,10 +185,15 @@ const AdminSidebar = () => {
                     asChild
                     isActive={item.active}
                     tooltip={state === "collapsed" ? item.title : undefined}
+                    className={`rounded-xl transition-all duration-200 ${
+                      item.active 
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg hover:shadow-xl' 
+                        : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
+                    }`}
                   >
                     <button onClick={() => navigate(item.path!)}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      <item.icon className={`h-4 w-4 ${item.active ? 'text-white' : 'text-blue-500'}`} />
+                      <span className="font-medium">{item.title}</span>
                     </button>
                   </SidebarMenuButton>
                 ) : (
@@ -194,31 +201,41 @@ const AdminSidebar = () => {
                     <SidebarMenuButton
                       onClick={() => toggleSection(item.id)}
                       tooltip={state === "collapsed" ? item.title : undefined}
+                      className={`rounded-xl transition-all duration-200 ${
+                        item.expanded 
+                          ? 'bg-blue-50 text-blue-700 shadow-sm' 
+                          : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
+                      }`}
                     >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      <item.icon className="h-4 w-4 text-blue-500" />
+                      <span className="font-medium">{item.title}</span>
                       {state === "expanded" && (
                         item.expanded ? (
-                          <ChevronDown className="ml-auto h-4 w-4" />
+                          <ChevronDown className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />
                         ) : (
-                          <ChevronRight className="ml-auto h-4 w-4" />
+                          <ChevronRight className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />
                         )
                       )}
                     </SidebarMenuButton>
                     
                     {item.expanded && state === "expanded" && (
-                      <SidebarMenuSub>
+                      <SidebarMenuSub className="ml-4 mt-2 space-y-1 border-l-2 border-blue-100 pl-4">
                         {item.children?.map((child, index) => (
                           <SidebarMenuSubItem key={index}>
                             <SidebarMenuSubButton
                               asChild
                               isActive={child.active}
+                              className={`rounded-lg transition-all duration-200 ${
+                                child.active 
+                                  ? 'bg-gradient-to-r from-blue-400 to-indigo-400 text-white shadow-md' 
+                                  : 'hover:bg-blue-50 hover:text-blue-600'
+                              } ${child.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                               <button 
                                 onClick={() => navigate(child.path)}
                                 disabled={child.disabled}
                               >
-                                <span>{child.title}</span>
+                                <span className="text-sm font-medium">{child.title}</span>
                               </button>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
@@ -233,7 +250,7 @@ const AdminSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t">
+      <SidebarFooter className="border-t border-slate-200/50 bg-gradient-to-r from-slate-50 to-blue-50/30 p-3">
         <AdminProfile />
       </SidebarFooter>
     </Sidebar>

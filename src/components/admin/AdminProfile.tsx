@@ -36,13 +36,13 @@ const AdminProfile = () => {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'admin':
-        return 'bg-red-100 text-red-700';
+        return 'bg-gradient-to-r from-red-500 to-pink-500 text-white border-0';
       case 'partner':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-0';
       case 'merchant':
-        return 'bg-green-100 text-green-700';
+        return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0';
       default:
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0';
     }
   };
 
@@ -53,15 +53,15 @@ const AdminProfile = () => {
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          className={`w-full p-2 h-auto ${
+          className={`w-full p-3 h-auto rounded-xl transition-all duration-200 hover:bg-blue-50/50 hover:shadow-md ${
             state === "collapsed" ? "justify-center" : "justify-start"
           }`}
         >
           <div className={`flex items-center w-full ${
             state === "collapsed" ? "justify-center" : "space-x-3"
           }`}>
-            <Avatar className="h-8 w-8">
-              <AvatarFallback className="bg-blue-100 text-blue-700 text-sm">
+            <Avatar className="h-10 w-10 shadow-lg">
+              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-sm font-semibold">
                 {profile.first_name?.[0]}{profile.last_name?.[0]}
               </AvatarFallback>
             </Avatar>

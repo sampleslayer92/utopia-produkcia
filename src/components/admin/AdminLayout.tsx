@@ -13,7 +13,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-blue-50/30 via-indigo-50/20 to-purple-50/30">
         <AdminSidebar />
         
         <SidebarInset className="flex flex-col">
