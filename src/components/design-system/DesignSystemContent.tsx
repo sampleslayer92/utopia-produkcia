@@ -8,6 +8,12 @@ import AdminComponentsSection from './sections/AdminComponentsSection';
 import GuidelinesSection from './sections/GuidelinesSection';
 import ProjectDocsSection from './sections/ProjectDocsSection';
 import FoundationsOverview from './sections/FoundationsOverview';
+import SpacingSection from './sections/SpacingSection';
+import ShadowsSection from './sections/ShadowsSection';
+import AnimationsSection from './sections/AnimationsSection';
+import CardsSection from './sections/CardsSection';
+import ModalsSection from './sections/ModalsSection';
+import NavigationSection from './sections/NavigationSection';
 
 interface DesignSystemContentProps {
   selectedSection: string;
@@ -24,12 +30,24 @@ const DesignSystemContent = ({ selectedSection, searchTerm }: DesignSystemConten
         return <ColorsSection />;
       case 'typography':
         return <TypographySection />;
+      case 'spacing':
+        return <SpacingSection />;
+      case 'shadows':
+        return <ShadowsSection />;
+      case 'animations':
+        return <AnimationsSection />;
       
       // UI Components
       case 'buttons':
         return <ButtonsSection />;
       case 'inputs':
         return <InputsSection />;
+      case 'cards':
+        return <CardsSection />;
+      case 'modals':
+        return <ModalsSection />;
+      case 'navigation':
+        return <NavigationSection />;
       
       // Onboarding Components
       case 'onboarding-inputs':
