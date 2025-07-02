@@ -49,16 +49,16 @@ export const useBusinessLocations = (filters: BusinessLocationsFilters = {}) => 
           )
         `);
 
-      // Apply filters
-      if (filters.merchant) {
+      // Apply filters - convert 'all' to empty string and only apply if value exists
+      if (filters.merchant && filters.merchant !== 'all') {
         query = query.eq('contracts.merchant_id', filters.merchant);
       }
 
-      if (filters.sector) {
+      if (filters.sector && filters.sector !== 'all') {
         query = query.eq('business_sector', filters.sector);
       }
 
-      if (filters.hasPos) {
+      if (filters.hasPos && filters.hasPos !== 'all') {
         query = query.eq('has_pos', filters.hasPos === 'true');
       }
 
