@@ -1,16 +1,11 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-
 const LandingFooter = () => {
   const navigate = useNavigate();
-
   const handleLoginClick = () => {
     navigate('/auth');
   };
-
-  return (
-    <footer className="bg-gray-900 text-white py-20 px-6 relative overflow-hidden">
+  return <footer className="bg-gray-900 text-white py-20 px-6 relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-t from-utopia-900/20 to-transparent"></div>
       
@@ -19,22 +14,14 @@ const LandingFooter = () => {
           {/* Logo and description */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <img 
-                src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
-                alt="Utopia Logo" 
-                className="h-12 w-auto brightness-0 invert opacity-90 hover:scale-110 transition-transform duration-300" 
-              />
-              <span className="text-3xl font-light">UTOPIA</span>
+              <img src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" alt="Utopia Logo" className="h-12 w-auto brightness-0 invert opacity-90 hover:scale-110 transition-transform duration-300" />
+              
             </div>
             <p className="text-gray-300 mb-8 max-w-md leading-relaxed text-lg">
               Digitálny onboarding portál pre moderné fintech riešenia. 
               Objednaj si pokladňu, terminál alebo softvér online.
             </p>
-            <Button
-              onClick={handleLoginClick}
-              variant="outline"
-              className="bg-white/10 border-utopia-500 text-utopia-400 hover:bg-utopia-500/10 hover:border-utopia-400 rounded-xl px-6 py-3 transition-all duration-300 hover:shadow-lg"
-            >
+            <Button onClick={handleLoginClick} variant="outline" className="bg-white/10 border-utopia-500 text-utopia-400 hover:bg-utopia-500/10 hover:border-utopia-400 rounded-xl px-6 py-3 transition-all duration-300 hover:shadow-lg">
               Prihlásiť sa do portálu
             </Button>
           </div>
@@ -74,8 +61,6 @@ const LandingFooter = () => {
           </p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default LandingFooter;
