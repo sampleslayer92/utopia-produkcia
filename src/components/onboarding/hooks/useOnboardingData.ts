@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
+import { useContractCopy } from "@/hooks/useContractCopy";
 
 const initialData: OnboardingData = {
   contactInfo: {
@@ -72,6 +73,7 @@ const initialData: OnboardingData = {
 };
 
 export const useOnboardingData = () => {
+  const { applyContractCopy } = useContractCopy();
   const [onboardingData, setOnboardingData] = useState<OnboardingData>(() => {
     const saved = localStorage.getItem('onboarding_data');
     if (saved) {
@@ -178,6 +180,17 @@ export const useOnboardingData = () => {
     }
     return initialData;
   });
+
+  // Apply contract copy data on mount if available
+  useEffect(() => {
+    const applyCopyData = async () => {
+      const copyData = await applyContractCopy();
+      if (copyData) {
+        setOnboardingData(prev => ({ ...prev, ...copyData }));
+      }
+    };
+    applyCopyData();
+  }, [applyContractCopy]);
 
   const updateData = (data: Partial<OnboardingData>) => {
     setOnboardingData(prev => {

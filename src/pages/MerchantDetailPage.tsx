@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import ContractCopyModal from "@/components/admin/ContractCopyModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -28,6 +29,7 @@ const MerchantDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
+  const [showContractCopyModal, setShowContractCopyModal] = useState(false);
   const { data: merchantData, isLoading, error } = useMerchantDetail(id!);
 
   if (isLoading) {
@@ -90,7 +92,7 @@ const MerchantDetailPage = () => {
         Upraviť
       </Button>
       <Button 
-        onClick={() => navigate('/onboarding')}
+        onClick={() => setShowContractCopyModal(true)}
         className="bg-primary hover:bg-primary/90"
       >
         <Plus className="h-4 w-4 mr-2" />
@@ -307,6 +309,13 @@ const MerchantDetailPage = () => {
           </TabsContent>
         </Tabs>
       </div>
+      
+      <ContractCopyModal
+        open={showContractCopyModal}
+        onOpenChange={setShowContractCopyModal}
+        contracts={merchantData.contracts}
+        merchantId={merchant.id}
+      />
     </AdminLayout>
   );
 };
