@@ -14,6 +14,7 @@ import AnimationsSection from './sections/AnimationsSection';
 import CardsSection from './sections/CardsSection';
 import ModalsSection from './sections/ModalsSection';
 import NavigationSection from './sections/NavigationSection';
+import FeedbackSection from './sections/FeedbackSection';
 
 interface DesignSystemContentProps {
   selectedSection: string;
@@ -48,16 +49,21 @@ const DesignSystemContent = ({ selectedSection, searchTerm }: DesignSystemConten
         return <ModalsSection />;
       case 'navigation':
         return <NavigationSection />;
+      case 'feedback':
+        return <FeedbackSection />;
       
       // Onboarding Components
       case 'onboarding-inputs':
       case 'step-components':
       case 'product-cards':
+      case 'info-panels':
         return <OnboardingComponentsSection section={selectedSection} />;
       
       // Admin Components
       case 'admin-layout':
       case 'admin-tables':
+      case 'admin-forms':
+      case 'admin-actions':
         return <AdminComponentsSection section={selectedSection} />;
       
       // Guidelines
