@@ -25,7 +25,7 @@ const AdminSidebar = () => {
   const { userRole } = useAuth();
   
   // State for expandable sections
-  const [expandedSections, setExpandedSections] = useState<string[]>(['contracts', 'merchants', 'team']);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['merchants', 'team']);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections(prev => 
@@ -69,20 +69,6 @@ const AdminSidebar = () => {
       active: location.pathname.startsWith("/admin/deals"),
       type: 'single' as const
     }] : []),
-    {
-      id: 'contracts',
-      title: t('navigation.contracts'),
-      icon: FileText,
-      type: 'expandable',
-      expanded: isExpanded('contracts'),
-      children: [
-        {
-          title: userRole?.role === 'partner' ? 'Moje zmluvy' : t('navigation.contracts'),
-          path: "/admin/contracts",
-          active: isActive("/admin/contracts")
-        }
-      ]
-    },
     // Only show merchants for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'merchants',
@@ -101,6 +87,11 @@ const AdminSidebar = () => {
           path: "/admin/merchants/locations",
           active: isActive("/admin/merchants/locations"),
           disabled: true
+        },
+        {
+          title: userRole?.role === 'partner' ? 'Moje zmluvy' : t('navigation.contracts'),
+          path: "/admin/merchants/contracts",
+          active: isActive("/admin/merchants/contracts")
         }
       ]
     }] : []),

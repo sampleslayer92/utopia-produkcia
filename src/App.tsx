@@ -52,7 +52,7 @@ const App = () => (
           } />
           
           {/* Shared routes for admin and partner */}
-          <Route path="/admin/contracts" element={
+          <Route path="/admin/merchants/contracts" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <ContractsPage />
             </ProtectedRoute>
