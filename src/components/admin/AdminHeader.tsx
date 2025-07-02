@@ -62,10 +62,11 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
                   ) : (
                     <>
                       <BreadcrumbLink
-                        href={breadcrumb.href}
-                        className="text-slate-600 hover:text-slate-900"
+                        asChild
+                        className="text-slate-600 hover:text-slate-900 cursor-pointer"
+                        onClick={() => navigate(breadcrumb.href)}
                       >
-                        {breadcrumb.label}
+                        <span>{breadcrumb.label}</span>
                       </BreadcrumbLink>
                       <BreadcrumbSeparator />
                     </>
