@@ -5,19 +5,49 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import EnhancedContractsTable from "@/components/admin/EnhancedContractsTable";
 import ContractFilters from "@/components/admin/ContractFilters";
 import MerchantTestingPanel from "@/components/admin/MerchantTestingPanel";
+import CollapsibleFilters from "@/components/admin/shared/CollapsibleFilters";
+import StatsCardsSection from "@/components/admin/shared/StatsCardsSection";
+import { useContractsStats } from "@/hooks/useAdminStats";
 import { Button } from "@/components/ui/button";
-import { Plus, Download } from "lucide-react";
+import { Plus, Download, FileText, Euro, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const ContractsPage = () => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
+  const { data: stats, isLoading: statsLoading } = useContractsStats();
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
     merchant: 'all',
     source: 'all'
   });
+
+  const activeFiltersCount = Object.values(filters).filter(value => value !== '' && value !== 'all').length;
+
+  const statsCards = [
+    {
+      title: "Aktívne zmluvy",
+      value: stats?.activeContracts || 0,
+      subtitle: "Schválené a podpísané",
+      icon: FileText,
+      iconColor: "bg-blue-500"
+    },
+    {
+      title: "Celková hodnota",
+      value: `€${(stats?.totalValue || 0).toFixed(2)}`,
+      subtitle: "Mesačný príjem",
+      icon: Euro,
+      iconColor: "bg-emerald-500"
+    },
+    {
+      title: "Expirujúce",
+      value: stats?.expiringContracts || 0,
+      subtitle: "Staršie ako 11 mesiacov",
+      icon: Clock,
+      iconColor: "bg-orange-500"
+    }
+  ];
 
   const contractsActions = (
     <>
@@ -43,10 +73,13 @@ const ContractsPage = () => {
         actions={contractsActions}
       >
         <div className="space-y-6">
-          <ContractFilters 
-            filters={filters}
-            onFiltersChange={setFilters}
-          />
+          <StatsCardsSection stats={statsCards} isLoading={statsLoading} />
+          <CollapsibleFilters activeFiltersCount={activeFiltersCount}>
+            <ContractFilters 
+              filters={filters}
+              onFiltersChange={setFilters}
+            />
+          </CollapsibleFilters>
           <EnhancedContractsTable filters={filters} />
         </div>
       </AdminLayout>

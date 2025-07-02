@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -54,9 +53,8 @@ const ContractFilters = ({ filters, onFiltersChange }: ContractFiltersProps) => 
   ];
 
   return (
-    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-      <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <Label htmlFor="search">Hľadať</Label>
             <div className="relative">
@@ -123,16 +121,15 @@ const ContractFilters = ({ filters, onFiltersChange }: ContractFiltersProps) => 
           </div>
         </div>
 
-        {(filters.search || filters.status || filters.merchant || filters.source) && (
-          <div className="mt-4 flex justify-end">
-            <Button variant="outline" onClick={clearFilters} size="sm">
-              <X className="h-4 w-4 mr-2" />
-              Vyčistiť filtre
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {(filters.search || filters.status || filters.merchant || filters.source) && (
+        <div className="flex justify-end">
+          <Button variant="outline" onClick={clearFilters} size="sm">
+            <X className="h-4 w-4 mr-2" />
+            Vyčistiť filtre
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };
 
