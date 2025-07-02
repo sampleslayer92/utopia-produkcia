@@ -51,7 +51,8 @@ const AdminSidebar = () => {
   };
 
   const isExpanded = (sectionId: string) => expandedSections.includes(sectionId);
-  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path);
+  const isActive = (path: string) => location.pathname === path;
+  const isChildActive = (path: string) => location.pathname.startsWith(path) && location.pathname !== path;
 
   // Determine dashboard path based on role
   const getDashboardPath = () => {
@@ -163,13 +164,13 @@ const AdminSidebar = () => {
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="border-r-0 shadow-lg">
-      <SidebarHeader className="border-b border-slate-200/50 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-tr-2xl">
+      <SidebarHeader className="border-b border-slate-200/50">
         <div className="flex justify-center p-4">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2 shadow-lg">
+          <div className="p-2">
             <img 
               src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
               alt="Onepos Logo" 
-              className={state === "expanded" ? "h-6 w-auto filter brightness-0 invert" : "h-5 w-5 filter brightness-0 invert"}
+              className={state === "expanded" ? "h-6 w-auto" : "h-5 w-5"}
             />
           </div>
         </div>
@@ -185,9 +186,9 @@ const AdminSidebar = () => {
                     asChild
                     isActive={item.active}
                     tooltip={state === "collapsed" ? item.title : undefined}
-                    className={`rounded-xl transition-all duration-200 ${
+                     className={`rounded-xl transition-all duration-200 ${
                       item.active 
-                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg hover:shadow-xl' 
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 !text-white shadow-lg hover:shadow-xl' 
                         : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
                     }`}
                   >
@@ -225,11 +226,11 @@ const AdminSidebar = () => {
                             <SidebarMenuSubButton
                               asChild
                               isActive={child.active}
-                              className={`rounded-lg transition-all duration-200 ${
-                                child.active 
-                                  ? 'bg-gradient-to-r from-blue-400 to-indigo-400 text-white shadow-md' 
-                                  : 'hover:bg-blue-50 hover:text-blue-600'
-                              } ${child.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                               className={`rounded-lg transition-all duration-200 ${
+                                 child.active 
+                                   ? 'bg-gradient-to-r from-blue-400 to-indigo-400 !text-white shadow-md' 
+                                   : 'hover:bg-blue-50 hover:text-blue-600'
+                               } ${child.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                               <button 
                                 onClick={() => navigate(child.path)}
