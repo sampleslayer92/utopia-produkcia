@@ -99,8 +99,8 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                       <h5 className="font-medium text-slate-900">{t('authorizedPersons.personalData')}</h5>
                       
                       <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.firstName')}</Label>
+                       <div>
+                         <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.firstName')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.firstName || ''} 
@@ -111,8 +111,8 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                           )}
                         </div>
                         
-                        <div>
-                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.lastName')}</Label>
+                       <div>
+                         <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.lastName')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.lastName || ''} 
@@ -137,8 +137,8 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.email')}</Label>
+                       <div>
+                         <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.email')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.email || ''} 
@@ -150,8 +150,8 @@ const AuthorizedPersonsSection = ({ onboardingData, isEditMode, onSave }: Author
                           )}
                         </div>
                         
-                        <div>
-                          <Label className="text-sm font-medium text-slate-600">{t('clientOperations.phone')}</Label>
+                       <div>
+                         <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.phone')}</Label>
                           {isEditMode ? (
                             <Input 
                               defaultValue={person.phone || ''} 
