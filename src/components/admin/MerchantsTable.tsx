@@ -26,7 +26,7 @@ interface MerchantsTableProps {
 }
 
 const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
-  const { t } = useTranslation('ui');
+  const { t } = useTranslation('admin');
   const { data: merchants, isLoading, error, refetch } = useMerchantsData(filters);
   const navigate = useNavigate();
 
@@ -38,9 +38,9 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">{t('table.merchantsList')}</CardTitle>
+          <CardTitle className="text-slate-900">{t('merchants.table.title')}</CardTitle>
           <CardDescription className="text-slate-600">
-            {t('messages.loadingMerchants')}
+            {t('table.loading')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -56,9 +56,9 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">{t('table.merchantsList')}</CardTitle>
+          <CardTitle className="text-slate-900">{t('merchants.table.title')}</CardTitle>
           <CardDescription className="text-red-600">
-            {t('messages.errorLoadingMerchants')}: {error.message}
+            {t('table.error', { message: error.message })}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -69,15 +69,15 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">{t('table.merchantsList')}</CardTitle>
+          <CardTitle className="text-slate-900">{t('merchants.table.title')}</CardTitle>
           <CardDescription className="text-slate-600">
-            {t('messages.noMerchants')}
+            {t('table.emptySubtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8 text-slate-500">
             <Building2 className="h-12 w-12 mb-4" />
-            <p>{t('messages.noMerchantsEmpty')}</p>
+            <p>{t('table.emptyMessage')}</p>
           </div>
         </CardContent>
       </Card>
@@ -87,9 +87,9 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-slate-900">{t('table.merchantsList')}</CardTitle>
+        <CardTitle className="text-slate-900">{t('merchants.table.title')}</CardTitle>
         <CardDescription className="text-slate-600">
-          {t('table.merchantsOverview', { count: merchants.length })}
+          {t('merchants.table.overview', { count: merchants.length })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -97,12 +97,12 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">{t('table.company')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('table.contactPerson')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('form.labels.ico')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('table.contracts')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('table.monthlyProfit')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('table.created')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.table.company')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.table.contactPerson')}</TableHead>
+                <TableHead className="font-medium text-slate-700">IČO</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.table.contracts')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.table.monthlyProfit')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.table.created')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -142,7 +142,7 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
                     <div className="flex items-center space-x-2">
                       <FileText className="h-4 w-4 text-slate-500" />
                       <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                        {t('table.contractsCount', { count: merchant.contract_count || 0 })}
+                        {t('merchants.table.contractsCount', { count: merchant.contract_count || 0 })}
                       </Badge>
                     </div>
                   </TableCell>

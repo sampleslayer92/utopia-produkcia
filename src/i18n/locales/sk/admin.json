@@ -1,4 +1,3 @@
-
 {
   "navigation": {
     "dashboard": "Dashboard",
@@ -117,7 +116,12 @@
       "completion": "Dokončenosť",
       "salesPerson": "Obchodník",
       "created": "Vytvorené",
-      "actions": "Akcie"
+      "actions": "Akcie",
+      "company": "Spoločnosť",
+      "contactPerson": "Kontaktná osoba",
+      "contracts": "Zmluvy",
+      "monthlyProfit": "Mesačný zisk",
+      "contractsCount": "{{count}} zmlúv"
     },
     "filters": {
       "search": "Hľadať",
@@ -135,7 +139,6 @@
     "title": "Správa merchantov",
     "subtitle": "Prehľad a správa všetkých merchantov v systéme",
     "export": "Exportovať",
-    "newContract": "Nová zmluva",
     "newMerchant": "Nový merchant",
     "stats": {
       "totalCount": "Celkový počet",
@@ -157,7 +160,41 @@
       "monthlyProfit": "Mesačný zisk",
       "allValues": "Všetky hodnoty",
       "clearFilters": "Vyčistiť filtre"
+    },
+    "table": {
+      "title": "Zoznam merchantov",
+      "overview": "Prehľad všetkých merchantov v systéme ({{count}} celkom) - kliknite na riadok pre detail",
+      "company": "Spoločnosť",
+      "contactPerson": "Kontaktná osoba",
+      "contracts": "Zmluvy",
+      "monthlyProfit": "Mesačný zisk",
+      "created": "Vytvorený",
+      "contractsCount": "{{count}} zmlúv"
     }
+  },
+  "contractActions": {
+    "quickSummary": "Rýchly prehľad",
+    "contractNumber": "Číslo zmluvy",
+    "client": "Klient",
+    "monthlyRevenue": "Mesačný príjem",
+    "deviceCount": "Počet zariadení",
+    "mainActions": "Hlavné akcie",
+    "previewContract": "Náhľad zmluvy",
+    "exportPdf": "Exportovať PDF",
+    "generatingPdf": "Generujem PDF...",
+    "sendEmail": "Odoslať emailom",
+    "markAsSigned": "Označiť ako podpísanú",
+    "duplicateContract": "Duplikovať zmluvu",
+    "additionalActions": "Ďalšie akcie",
+    "changeHistory": "História zmien",
+    "downloadAttachments": "Stiahnuť prílohy",
+    "deleteContract": "Vymazať zmluvu",
+    "deleting": "Mazanie...",
+    "statusInfo": "Informácie o stave",
+    "lastModified": "Posledná úprava",
+    "submitted": "Odoslané",
+    "version": "Verzia",
+    "notSpecified": "Neuvedené"
   },
   "stats": {
     "totalContracts": "Celkový počet zmlúv",

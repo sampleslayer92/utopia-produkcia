@@ -1,4 +1,3 @@
-
 {
   "navigation": {
     "dashboard": "Dashboard",
@@ -117,7 +116,12 @@
       "completion": "Completion",
       "salesPerson": "Sales Person",
       "created": "Created",
-      "actions": "Actions"
+      "actions": "Actions",
+      "company": "Company",
+      "contactPerson": "Contact Person",
+      "contracts": "Contracts",
+      "monthlyProfit": "Monthly Profit",
+      "contractsCount": "{{count}} contracts"
     },
     "filters": {
       "search": "Search",
@@ -135,7 +139,6 @@
     "title": "Merchant Management",
     "subtitle": "Overview and management of all merchants in the system",
     "export": "Export",
-    "newContract": "New Contract",
     "newMerchant": "New Merchant",
     "stats": {
       "totalCount": "Total Count",
@@ -157,7 +160,41 @@
       "monthlyProfit": "Monthly Profit",
       "allValues": "All Values",
       "clearFilters": "Clear Filters"
+    },
+    "table": {
+      "title": "Merchants List",
+      "overview": "Overview of all merchants in the system ({{count}} total) - click on row for details",
+      "company": "Company",
+      "contactPerson": "Contact Person",
+      "contracts": "Contracts",
+      "monthlyProfit": "Monthly Profit",
+      "created": "Created",
+      "contractsCount": "{{count}} contracts"
     }
+  },
+  "contractActions": {
+    "quickSummary": "Quick Summary",
+    "contractNumber": "Contract Number",
+    "client": "Client",
+    "monthlyRevenue": "Monthly Revenue",
+    "deviceCount": "Device Count",
+    "mainActions": "Main Actions",
+    "previewContract": "Preview Contract",
+    "exportPdf": "Export PDF",
+    "generatingPdf": "Generating PDF...",
+    "sendEmail": "Send Email",
+    "markAsSigned": "Mark as Signed",
+    "duplicateContract": "Duplicate Contract",
+    "additionalActions": "Additional Actions",
+    "changeHistory": "Change History",
+    "downloadAttachments": "Download Attachments",
+    "deleteContract": "Delete Contract",
+    "deleting": "Deleting...",
+    "statusInfo": "Status Information",
+    "lastModified": "Last Modified",
+    "submitted": "Submitted",
+    "version": "Version",
+    "notSpecified": "Not Specified"
   },
   "stats": {
     "totalContracts": "Total Contracts",
@@ -273,213 +310,6 @@
     "unknownClient": "Unknown Client",
     "created": "Created",
     "submitted": "Submitted"
-  },
-  "clientOperations": {
-    "title": "Client Operations",
-    "companyInfo": "Company Information",
-    "basicData": "Basic Data",
-    "companyName": "Company Name",
-    "ico": "Company ID",
-    "dic": "Tax ID",
-    "vatNumber": "VAT Number",
-    "notVatPayer": "Not a VAT payer",
-    "headOfficeAddress": "Head Office Address",
-    "streetAndNumber": "Street and Number",
-    "city": "City",
-    "zipCode": "ZIP Code",
-    "contactPerson": "Contact Person",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "email": "Email",
-    "phone": "Phone",
-    "businessLocations": "Business Locations",
-    "location": "Location",
-    "locationName": "Location Name",
-    "address": "Address",
-    "iban": "IBAN",
-    "businessSector": "MCC Sector",
-    "noLocations": "No business locations have been entered"
-  },
-  "devicesServices": {
-    "title": "Devices and Services",
-    "device": "Device",
-    "service": "Service",
-    "quantity": "Quantity",
-    "paymentType": "Payment Type",
-    "rental": "Rental",
-    "monthlyFeePerPiece": "Monthly Fee per Piece",
-    "companyCostPerPiece": "Company Cost per Piece",
-    "costSummary": "Cost Summary",
-    "mainItem": "Main Item",
-    "customerSubtotal": "Customer Subtotal",
-    "companyCost": "Company Cost",
-    "margin": "Margin",
-    "addons": "Add-ons",
-    "addonsAndAccessories": "Add-ons and Accessories",
-    "addAddon": "Add Add-on",
-    "addItem": "Add Item",
-    "professionalDevice": "Professional Device",
-    "noDevicesSelected": "No devices selected",
-    "addFirstDevice": "Add first device",
-    "confirmDelete": "Are you sure you want to remove this item?"
-  },
-  "calculations": {
-    "title": "Calculations and Fees",
-    "businessData": "Business Data",
-    "estimatedTurnover": "Estimated Turnover",
-    "averageTransaction": "Average Transaction",
-    "transactionsPerMonth": "Transactions per Month",
-    "mifFees": "MIF Fees",
-    "regulatedCards": "Regulated Cards",
-    "unregulatedCards": "Unregulated Cards",
-    "totalMif": "Total MIF",
-    "profitabilitySummary": "Profitability Summary",
-    "monthlyIncome": "Monthly Income",
-    "monthlyCosts": "Monthly Costs",
-    "monthlyProfit": "Monthly Profit",
-    "annualProfit": "Annual Profit",
-    "detailedBreakdown": "Detailed Breakdown",
-    "devicesAndServices": "Devices and Services",
-    "pieces": "pcs",
-    "subtotalDevices": "Devices Subtotal",
-    "transactionFees": "Transaction Fees",
-    "mifRegulated": "MIF Regulated",
-    "mifUnregulated": "MIF Unregulated",
-    "subtotalTransactions": "Transactions Subtotal"
-  },
-  "authorizedPersons": {
-    "title": "Authorized Persons",
-    "personalData": "Personal Data",
-    "position": "Position",
-    "identityDocument": "Identity Document",
-    "documentType": "Document Type",
-    "documentNumber": "Document Number",
-    "validUntil": "Valid Until",
-    "issuer": "Issuer"
-  },
-  "actualOwners": {
-    "title": "Actual Owners",
-    "basicData": "Basic Data",
-    "birthDate": "Birth Date",
-    "birthPlace": "Birth Place",
-    "birthNumber": "Birth Number",
-    "additionalData": "Additional Data",
-    "citizenship": "Citizenship",
-    "permanentAddress": "Permanent Address",
-    "politicallyExposed": "Politically Exposed Person",
-    "no": "No"
-  },
-  "contractNotes": {
-    "title": "Contract Notes",
-    "notes": "Notes",
-    "contractNotes": "Contract Notes",
-    "salesNotes": "Sales Notes",
-    "noSalesNotes": "No sales notes",
-    "technicalData": "Technical Data",
-    "created": "Created",
-    "submitted": "Submitted",
-    "salesperson": "Salesperson",
-    "contractType": "Contract Type",
-    "standardContract": "Standard Contract"
-  },
-  "signature": {
-    "title": "Contract Signature",
-    "contractStatus": "Contract Status",
-    "sentByEmail": "Sent by Email",
-    "signed": "Signed",
-    "signatureDate": "Signature Date",
-    "signedBy": "Signed By",
-    "ipAddress": "IP Address",
-    "notAvailable": "Not Available",
-    "consentSummary": "Consent Summary",
-    "termsConsent": "Terms and Conditions Consent",
-    "gdprConsent": "GDPR Consent",
-    "electronicCommunicationConsent": "Electronic Communication Consent",
-    "signatureActions": "Signature Actions",
-    "markAsSigned": "Mark as Signed",
-    "sendReminder": "Send Reminder"
-  },
-  "contractActions": {
-    "notSpecified": "Not Specified"
-  },
-  "messages": {
-    "contractSaved": "Contract Saved",
-    "contractSavedDesc": "Changes have been successfully saved.",
-    "saveError": "Save Error",
-    "saveErrorDesc": "Failed to save changes.",
-    "noChanges": "Information",
-    "noChangesDesc": "No changes to save.",
-    "contractDeleted": "Contract Deleted",
-    "contractDeletedDesc": "Contract and all related data have been successfully deleted.",
-    "deleteError": "Delete Error",
-    "confirmDelete": "Are you sure you want to delete contract {{contractNumber}}? This action cannot be undone.",
-    "noContractsSelected": "No contracts selected",
-    "noContractsToDelete": "No contracts selected for deletion",
-    "exportStarted": "Export started",
-    "deleteUnits": {
-      "single": "contract",
-      "few": "contracts",
-      "many": "contracts"
-    }
-  },
-  "merchants": {
-    "detail": {
-      "title": "Merchant Detail",
-      "basicInfo": "Basic Information",
-      "recentActivity": "Activity History",
-      "latestContracts": "Latest Contracts",
-      "topLocations": "Top Locations",
-      "financialOverview": "Financial Overview",
-      "trends": "Trends",
-      "activity": "Activity",
-      "analysis": "Charts and analytics will be available soon",
-      "activityHistory": "Activity history will be available soon",
-      "tabs": {
-        "overview": "Overview",
-        "locations": "Locations",
-        "contracts": "Contracts",
-        "finance": "Finance",
-        "activity": "Activity"
-      },
-      "stats": {
-        "totalContracts": "Total Contracts",
-        "monthlyProfit": "Monthly Profit",
-        "totalDevices": "Total Devices",
-        "avgContractValue": "Avg. Contract Value",
-        "locations": "Locations",
-        "plannedTurnover": "Planned Turnover",
-        "withPosTerminal": "with POS terminal",
-        "fromAllLocations": "from all business locations"
-      },
-      "contracts": {
-        "title": "Contracts",
-        "noContracts": "No contracts",
-        "table": {
-          "contractNumber": "Contract Number",
-          "status": "Status",
-          "devices": "Devices",
-          "monthlyProfit": "Monthly Profit",
-          "created": "Created"
-        }
-      },
-      "locations": {
-        "title": "Locations",
-        "noLocations": "No locations",
-        "summary": {
-          "totalLocations": "Total business locations",
-          "withPos": "With POS terminal",
-          "totalPlannedTurnover": "Total planned turnover"
-        },
-        "table": {
-          "locationName": "Location Name",
-          "address": "Address",
-          "sector": "Sector",
-          "turnover": "Turnover",
-          "pos": "POS",
-          "contract": "Contract"
-        }
-      }
-    }
   },
   "businessLocation": {
     "detail": {

@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ContractPreviewModal from "./ContractPreviewModal";
 import { generateContractPDF } from "@/utils/pdfGenerator";
+import { useTranslation } from 'react-i18next';
 
 interface ContractActionsProps {
   contract: any;
@@ -29,6 +30,7 @@ interface ContractActionsProps {
 const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = false }: ContractActionsProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation('admin');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -39,7 +41,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
       setIsExporting(true);
       toast({
         title: "PDF Export",
-        description: "Generujem PDF súbor zmluvy...",
+        description: t('contractActions.generatingPdf'),
       });
       
       // Open preview modal first to render the content
@@ -132,26 +134,26 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
         {/* Quick Summary */}
         <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-slate-900 text-lg">Rýchly prehľad</CardTitle>
+            <CardTitle className="text-slate-900 text-lg">{t('contractActions.quickSummary')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Číslo zmluvy:</span>
+              <span className="text-slate-600">{t('contractActions.contractNumber')}:</span>
               <span className="font-mono font-medium">{contractNumber}</span>
             </div>
             
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Klient:</span>
-              <span className="font-medium">{onboardingData.companyInfo?.companyName || 'Neuvedené'}</span>
+              <span className="text-slate-600">{t('contractActions.client')}:</span>
+              <span className="font-medium">{onboardingData.companyInfo?.companyName || t('contractActions.notSpecified')}</span>
             </div>
             
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Mesačný príjem:</span>
+              <span className="text-slate-600">{t('contractActions.monthlyRevenue')}:</span>
               <span className="font-medium text-emerald-600">{formatCurrency(totalMonthlyRevenue)}</span>
             </div>
             
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Počet zariadení:</span>
+              <span className="text-slate-600">{t('contractActions.deviceCount')}:</span>
               <span className="font-medium">{devices.length}</span>
             </div>
           </CardContent>
@@ -160,7 +162,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
         {/* Main Actions */}
         <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-slate-900 text-lg">Hlavné akcie</CardTitle>
+            <CardTitle className="text-slate-900 text-lg">{t('contractActions.mainActions')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button 
@@ -168,7 +170,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
               className="w-full justify-start"
             >
               <Eye className="h-4 w-4 mr-2" />
-              Náhľad zmluvy
+              {t('contractActions.previewContract')}
             </Button>
 
             <Button 
@@ -179,12 +181,12 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
               {isExporting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generujem PDF...
+                  {t('contractActions.generatingPdf')}
                 </>
               ) : (
                 <>
                   <FileDown className="h-4 w-4 mr-2" />
-                  Exportovať PDF
+                  {t('contractActions.exportPdf')}
                 </>
               )}
             </Button>
@@ -195,7 +197,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
               className="w-full justify-start border-slate-300"
             >
               <Mail className="h-4 w-4 mr-2" />
-              Odoslať emailom
+              {t('contractActions.sendEmail')}
             </Button>
             
             {contract.status !== 'signed' && (
@@ -205,7 +207,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
                 className="w-full justify-start border-slate-300"
               >
                 <CheckCircle className="h-4 w-4 mr-2" />
-                Označiť ako podpísanú
+                {t('contractActions.markAsSigned')}
               </Button>
             )}
             
@@ -215,7 +217,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
               className="w-full justify-start border-slate-300"
             >
               <Copy className="h-4 w-4 mr-2" />
-              Duplikovať zmluvu
+              {t('contractActions.duplicateContract')}
             </Button>
           </CardContent>
         </Card>
@@ -223,7 +225,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
         {/* Secondary Actions */}
         <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-slate-900 text-lg">Ďalšie akcie</CardTitle>
+            <CardTitle className="text-slate-900 text-lg">{t('contractActions.additionalActions')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button 
@@ -232,7 +234,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
               disabled
             >
               <History className="h-4 w-4 mr-2" />
-              História zmien
+              {t('contractActions.changeHistory')}
             </Button>
             
             <Button 
@@ -241,7 +243,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
               disabled
             >
               <Download className="h-4 w-4 mr-2" />
-              Stiahnuť prílohy
+              {t('contractActions.downloadAttachments')}
             </Button>
             
             <div className="pt-3 border-t border-slate-200">
@@ -254,12 +256,12 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
                 {isDeleting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Mazanie...
+                    {t('contractActions.deleting')}
                   </>
                 ) : (
                   <>
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Vymazať zmluvu
+                    {t('contractActions.deleteContract')}
                   </>
                 )}
               </Button>
@@ -270,11 +272,11 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
         {/* Contract Status Info */}
         <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-slate-900 text-lg">Informácie o stave</CardTitle>
+            <CardTitle className="text-slate-900 text-lg">{t('contractActions.statusInfo')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-slate-600">Posledná úprava:</span>
+              <span className="text-slate-600">{t('contractActions.lastModified')}:</span>
               <span className="font-medium">
                 {new Date(contract.updated_at || contract.created_at).toLocaleDateString('sk-SK')}
               </span>
@@ -282,7 +284,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
             
             {contract.submitted_at && (
               <div className="flex justify-between">
-                <span className="text-slate-600">Odoslané:</span>
+                <span className="text-slate-600">{t('contractActions.submitted')}:</span>
                 <span className="font-medium">
                   {new Date(contract.submitted_at).toLocaleDateString('sk-SK')}
                 </span>
@@ -290,7 +292,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
             )}
             
             <div className="flex justify-between">
-              <span className="text-slate-600">Verzia:</span>
+              <span className="text-slate-600">{t('contractActions.version')}:</span>
               <span className="font-medium">1.0</span>
             </div>
           </CardContent>
