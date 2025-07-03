@@ -208,46 +208,8 @@ export const useTeamManagement = () => {
   };
 
   const deleteTeamMember = async (id: string) => {
-    setIsSaving(true);
-    try {
-      // First delete from user_roles table
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', id);
-
-      if (roleError) {
-        console.error('Error deleting user role:', roleError);
-      }
-
-      // Then delete from profiles table
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', id);
-
-      if (profileError) throw profileError;
-
-      // Finally delete from auth.users using Admin API
-      const { error: authError } = await supabase.auth.admin.deleteUser(id);
-
-      if (authError) {
-        console.error('Error deleting auth user:', authError);
-        throw authError;
-      }
-
-      // Refresh team members list
-      await fetchTeamMembers();
-      toast.success('Člen tímu bol úspešne vymazaný');
-      
-      return { error: null };
-    } catch (error: any) {
-      console.error('Error deleting team member:', error);
-      toast.error('Chyba pri mazaní člena tímu');
-      return { error };
-    } finally {
-      setIsSaving(false);
-    }
+    // Soft delete - just deactivate the user
+    return updateTeamMember(id, { is_active: false });
   };
 
   useEffect(() => {
