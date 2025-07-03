@@ -391,6 +391,52 @@
     "version": "Version",
     "notSpecified": "Not Specified"
   },
+  "contractCopy": {
+    "title": "New Contract for Merchant",
+    "selectContract": "Select contract to copy from (optional)",
+    "selectSegments": "Select segments to copy",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "selectedCount": "{{count}} of {{total}} selected",
+    "previewTitle": "Copy Preview",
+    "previewDescription": "Will copy {{count}} segments from contract {{contractNumber}}:",
+    "segments": {
+      "contactInfo": {
+        "label": "Contact Information",
+        "description": "Name, email, phone, titles"
+      },
+      "companyInfo": {
+        "label": "Company Information",
+        "description": "Company ID, tax ID, name, address, registers"
+      },
+      "businessLocations": {
+        "label": "Business Locations",
+        "description": "Operating locations and their details"
+      },
+      "deviceSelection": {
+        "label": "Devices and Services",
+        "description": "Selected devices, services, add-ons"
+      },
+      "fees": {
+        "label": "Fees",
+        "description": "Fee settings and rates"
+      },
+      "personsAndOwners": {
+        "label": "Persons and Owners",
+        "description": "Authorized persons and actual owners"
+      }
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "startClean": "Start with Clean Contract",
+      "startWithCopy": "Copy Selected Data"
+    },
+    "messages": {
+      "selectContractAndSegments": "Select a contract and at least one segment to copy",
+      "copyingSegments": "Copying {{count}} segments from contract {{contractNumber}}",
+      "startingClean": "Starting with a new clean contract"
+    }
+  },
   "authorizedPersons": {
     "title": "Authorized Persons",
     "personalData": "Personal Data",
