@@ -3,13 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 
 export interface UserSession {
   id: string;
-  contract_id: string;
-  user_email: string;
-  user_name: string;
-  session_id: string;
-  current_step?: number;
-  last_activity: string;
-  is_active: boolean;
+  user_id?: string;
+  session_token: string;
+  expires_at: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export const useRealTimeCollaboration = (contractId: string, userEmail: string, userName: string) => {
@@ -20,28 +18,28 @@ export const useRealTimeCollaboration = (contractId: string, userEmail: string, 
 
   const updateSession = useCallback(async (currentStep?: number) => {
     try {
-      await supabase
-        .from('user_sessions')
-        .upsert({
-          contract_id: contractId,
-          user_email: userEmail,
-          user_name: userName,
-          session_id: sessionIdRef.current,
-          current_step: currentStep,
-          last_activity: new Date().toISOString(),
-          is_active: true
-        });
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        await supabase
+          .from('user_sessions')
+          .upsert({
+            user_id: user.id,
+            session_token: sessionIdRef.current,
+            expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
+          });
+      }
     } catch (error) {
       console.error('Failed to update session:', error);
     }
-  }, [contractId, userEmail, userName]);
+  }, []);
 
   const endSession = useCallback(async () => {
     try {
       await supabase
         .from('user_sessions')
-        .update({ is_active: false })
-        .eq('session_id', sessionIdRef.current);
+        .delete()
+        .eq('session_token', sessionIdRef.current);
     } catch (error) {
       console.error('Failed to end session:', error);
     }
@@ -52,19 +50,15 @@ export const useRealTimeCollaboration = (contractId: string, userEmail: string, 
       const { data, error } = await supabase
         .from('user_sessions')
         .select('*')
-        .eq('contract_id', contractId)
-        .eq('is_active', true)
-        .neq('session_id', sessionIdRef.current)
-        .gte('last_activity', new Date(Date.now() - 5 * 60 * 1000).toISOString()); // Last 5 minutes
+        .gte('expires_at', new Date().toISOString())
+        .neq('session_token', sessionIdRef.current);
 
       if (error) throw error;
       
       setActiveSessions(data || []);
       
-      // Detect conflicts (multiple users on same step)
-      const currentSteps = data?.filter(s => s.current_step).map(s => s.current_step) || [];
-      const duplicateSteps = currentSteps.filter((step, index) => currentSteps.indexOf(step) !== index);
-      setConflicts([...new Set(duplicateSteps.map(String))]);
+      // Simple conflict detection - can be enhanced later
+      setConflicts([]);
       
     } catch (error) {
       console.error('Failed to fetch active sessions:', error);

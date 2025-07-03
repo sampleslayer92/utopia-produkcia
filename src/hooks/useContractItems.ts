@@ -95,13 +95,10 @@ export const useContractItems = (contractId: string) => {
             item.addons.map(addon => ({
               contract_item_id: contractItem.id,
               addon_id: addon.id,
-              name: addon.name,
-              description: addon.description || '',
-              category: addon.category,
-              quantity: addon.customQuantity || 1,
-              monthly_fee: addon.monthlyFee,
-              company_cost: addon.companyCost || 0,
-              is_per_device: addon.isPerDevice
+              addon_name: addon.name,
+              count: addon.customQuantity || 1,
+              monthly_fee: addon.monthlyFee || 0,
+              company_cost: addon.companyCost || 0
             }))
           );
 

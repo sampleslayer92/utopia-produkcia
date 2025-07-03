@@ -111,13 +111,10 @@ export const useContractPersistence = () => {
                     .insert({
                       contract_item_id: contractItem.id,
                       addon_id: validAddonId,
-                      category: addon.category,
-                      name: addon.name,
-                      description: addon.description,
-                      quantity: addon.isPerDevice ? card.count : (addon.customQuantity || 1),
-                      monthly_fee: addon.monthlyFee,
-                      company_cost: addon.companyCost,
-                      is_per_device: addon.isPerDevice
+                      addon_name: addon.name,
+                      count: addon.isPerDevice ? card.count : (addon.customQuantity || 1),
+                      monthly_fee: addon.monthlyFee || 0,
+                      company_cost: addon.companyCost || 0
                     });
 
                   if (addonError) {

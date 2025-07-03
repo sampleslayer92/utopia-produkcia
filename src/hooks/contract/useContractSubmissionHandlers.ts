@@ -203,13 +203,10 @@ export const insertDeviceSelection = async (contractId: string, deviceSelection:
         const addonsData = card.addons.map(addon => ({
           contract_item_id: item.id,
           addon_id: ensureValidUUID(addon.id),
-          category: safeString(addon.category, 'other'),
-          name: safeString(addon.name, 'Nezadané'),
-          description: addon.description || null,
-          quantity: addon.customQuantity || 1,
+          addon_name: safeString(addon.name, 'Nezadané'),
+          count: addon.customQuantity || 1,
           monthly_fee: addon.monthlyFee || 0,
-          company_cost: addon.companyCost || 0,
-          is_per_device: addon.isPerDevice || false
+          company_cost: addon.companyCost || 0
         }));
 
         const { error: addonsError } = await supabase

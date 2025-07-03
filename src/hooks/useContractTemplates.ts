@@ -7,9 +7,9 @@ export interface ContractTemplate {
   id: string;
   name: string;
   description?: string;
-  template_type: string;
+  template_data: any;
   is_active: boolean;
-  template_config: any;
+  created_by?: string;
   created_at: string;
   updated_at: string;
 }
