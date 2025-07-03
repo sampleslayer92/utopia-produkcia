@@ -31,7 +31,7 @@ interface MerchantFormData {
 }
 
 const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalProps) => {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('ui');
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   
@@ -191,10 +191,10 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
             <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
               <Building2 className="h-6 w-6 text-white" />
             </div>
-            Nový merchant
+            {t('modal.addMerchant.title')}
           </DialogTitle>
           <DialogDescription className="text-slate-600 text-sm">
-            Pridať nového merchanta so základnými údajmi a možnosťou vyhľadania v ORSR
+            {t('modal.addMerchant.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -205,7 +205,7 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Building2 className="h-5 w-5 text-blue-600" />
               </div>
-              Informácie o spoločnosti
+              {t('modal.addMerchant.companyInfo')}
             </div>
             
             <div className="space-y-4">
@@ -256,7 +256,7 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
               <div className="p-2 bg-emerald-100 rounded-lg">
                 <User className="h-5 w-5 text-emerald-600" />
               </div>
-              Kontaktná osoba
+              {t('modal.addMerchant.contactPerson')}
             </div>
             
             <div className="space-y-4">
@@ -297,7 +297,7 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
               <div className="p-2 bg-orange-100 rounded-lg">
                 <MapPin className="h-5 w-5 text-orange-600" />
               </div>
-              Adresa
+              {t('modal.addMerchant.address')}
             </div>
             
             <div className="space-y-4">

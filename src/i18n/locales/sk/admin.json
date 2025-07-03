@@ -15,7 +15,11 @@
     "locations": "Prevádzky",
     "ticketingSystem": "Ticketovací systém",
     "allTasks": "Všetky úlohy",
-    "completedTasks": "Vyriešené úlohy"
+    "completedTasks": "Vyriešené úlohy",
+    "myContracts": "Moje zmluvy",
+    "teamManagement": "Správa tímu",
+    "teamMembers": "Správa členov",
+    "teamPerformance": "Výkonnosť tímu"
   },
   "breadcrumbs": {
     "editContract": "Editácia zmluvy",

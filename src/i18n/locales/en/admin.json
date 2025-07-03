@@ -15,7 +15,11 @@
     "locations": "Locations",
     "ticketingSystem": "Ticketing System",
     "allTasks": "All Tasks",
-    "completedTasks": "Completed Tasks"
+    "completedTasks": "Completed Tasks",
+    "myContracts": "My Contracts",
+    "teamManagement": "Team Management",
+    "teamMembers": "Team Members",
+    "teamPerformance": "Team Performance"
   },
   "breadcrumbs": {
     "editContract": "Edit Contract",

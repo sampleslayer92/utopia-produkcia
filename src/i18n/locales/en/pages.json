@@ -1,0 +1,33 @@
+{
+  "notFound": {
+    "title": "404",
+    "message": "Oops! Page not found",
+    "backHome": "Return to Home"
+  },
+  "unauthorized": {
+    "title": "Unauthorized",
+    "message": "You don't have sufficient permissions to access this page.",
+    "backToMain": "Back to main page",
+    "signOut": "Sign out"
+  },
+  "contractDetail": {
+    "title": "Contract Detail",
+    "subtitle": "Contract information and editing options",
+    "backToContracts": "Back to contracts"
+  },
+  "merchantDetail": {
+    "title": "Merchant Detail",
+    "subtitle": "Merchant information and contracts",
+    "backToMerchants": "Back to merchants"
+  },
+  "businessLocationDetail": {
+    "title": "Location Detail",
+    "subtitle": "Business location information",
+    "backToLocations": "Back to locations",
+    "editLocation": "Edit location"
+  },
+  "adminOnboarding": {
+    "title": "New Contract",
+    "subtitle": "Create new contract and merchant"
+  }
+}

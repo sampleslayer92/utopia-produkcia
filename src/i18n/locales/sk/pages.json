@@ -1,0 +1,33 @@
+{
+  "notFound": {
+    "title": "404",
+    "message": "Oops! Stránka nebola nájdená",
+    "backHome": "Vrátiť sa domov"
+  },
+  "unauthorized": {
+    "title": "Nemáte oprávnenie",
+    "message": "Nemáte dostatočné oprávnenia na prístup k tejto stránke.",
+    "backToMain": "Späť na hlavnú stránku",
+    "signOut": "Odhlásiť sa"
+  },
+  "contractDetail": {
+    "title": "Detail zmluvy",
+    "subtitle": "Informácie o zmluve a možnosti úprav",
+    "backToContracts": "Späť na zmluvy"
+  },
+  "merchantDetail": {
+    "title": "Detail merchanta",
+    "subtitle": "Informácie o merchantovi a jeho zmluvách",
+    "backToMerchants": "Späť na merchantov"
+  },
+  "businessLocationDetail": {
+    "title": "Detail prevádzky",
+    "subtitle": "Informácie o prevádzkovo mieste",
+    "backToLocations": "Späť na prevádzky",
+    "editLocation": "Upraviť prevádzku"
+  },
+  "adminOnboarding": {
+    "title": "Nová zmluva",
+    "subtitle": "Vytvorenie novej zmluvy a merchanta"
+  }
+}

@@ -99,12 +99,12 @@ const AdminSidebar = () => {
           active: isActive("/admin/merchants")
         },
         {
-          title: "Prevádzky",
+          title: t('navigation.locations'),
           path: "/admin/merchants/locations",
           active: isActive("/admin/merchants/locations")
         },
         {
-          title: userRole?.role === 'partner' ? 'Moje zmluvy' : t('navigation.contracts'),
+          title: userRole?.role === 'partner' ? t('navigation.myContracts') : t('navigation.contracts'),
           path: "/admin/merchants/contracts",
           active: isActive("/admin/merchants/contracts")
         }
@@ -113,18 +113,18 @@ const AdminSidebar = () => {
     // Only show team management for admins
     ...(userRole?.role === 'admin' ? [{
       id: 'team',
-      title: 'Správa tímu',
+      title: t('navigation.teamManagement'),
       icon: Users,
       type: 'expandable' as const,
       expanded: isExpanded('team'),
       children: [
         {
-          title: 'Správa členov',
+          title: t('navigation.teamMembers'),
           path: "/admin/team",
           active: location.pathname === "/admin/team"
         },
         {
-          title: 'Výkonnosť tímu',
+          title: t('navigation.teamPerformance'),
           path: "/admin/team/performance",
           active: location.pathname === "/admin/team/performance"
         }

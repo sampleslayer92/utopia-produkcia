@@ -15,6 +15,14 @@ import helpSK from './locales/sk/help.json';
 import helpEN from './locales/en/help.json';
 import adminSK from './locales/sk/admin.json';
 import adminEN from './locales/en/admin.json';
+import authSK from './locales/sk/auth.json';
+import authEN from './locales/en/auth.json';
+import actionsSK from './locales/sk/actions.json';
+import actionsEN from './locales/en/actions.json';
+import pagesSK from './locales/sk/pages.json';
+import pagesEN from './locales/en/pages.json';
+import uiSK from './locales/sk/ui.json';
+import uiEN from './locales/en/ui.json';
 
 const resources = {
   sk: {
@@ -24,7 +32,10 @@ const resources = {
     notifications: notificationsSK,
     help: helpSK,
     admin: adminSK,
-    
+    auth: authSK,
+    actions: actionsSK,
+    pages: pagesSK,
+    ui: uiSK
   },
   en: {
     common: commonEN,
@@ -33,7 +44,10 @@ const resources = {
     notifications: notificationsEN,
     help: helpEN,
     admin: adminEN,
-    
+    auth: authEN,
+    actions: actionsEN,
+    pages: pagesEN,
+    ui: uiEN
   },
 };
 
@@ -49,7 +63,7 @@ i18n
       escapeValue: false, // React already does escaping
     },
     
-    ns: ['common', 'steps', 'forms', 'notifications', 'help', 'admin'],
+    ns: ['common', 'steps', 'forms', 'notifications', 'help', 'admin', 'auth', 'actions', 'pages', 'ui'],
     defaultNS: 'common',
   });
 

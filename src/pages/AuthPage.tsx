@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ import { LogOut, User, Shield } from "lucide-react";
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth');
   const { signIn, signUp, signOut, user, userRole, profile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -51,11 +53,11 @@ const AuthPage = () => {
 
     if (error) {
       setError(error.message);
-      toast.error('Chyba pri prihlásení', {
+      toast.error(t('messages.signInError'), {
         description: error.message
       });
     } else {
-      toast.success('Úspešne prihlásený!');
+      toast.success(t('messages.signInSuccess'));
     }
 
     setIsLoading(false);
@@ -76,12 +78,12 @@ const AuthPage = () => {
 
     if (error) {
       setError(error.message);
-      toast.error('Chyba pri registrácii', {
+      toast.error(t('messages.signUpError'), {
         description: error.message
       });
     } else {
-      toast.success('Registrácia úspešná!', {
-        description: 'Skontrolujte si email pre potvrdenie účtu.'
+      toast.success(t('messages.signUpSuccess'), {
+        description: t('messages.signUpSuccessDesc')
       });
     }
 
@@ -91,9 +93,9 @@ const AuthPage = () => {
   const handleForceLogout = async () => {
     try {
       await signOut();
-      toast.success('Úspešne odhlásený');
+      toast.success(t('messages.logoutSuccess'));
     } catch (error) {
-      toast.error('Chyba pri odhlásení');
+      toast.error(t('messages.logoutError'));
     }
   };
 
@@ -146,7 +148,7 @@ const AuthPage = () => {
                     className="text-amber-700 border-amber-300 hover:bg-amber-100"
                   >
                     <LogOut className="h-3 w-3 mr-1" />
-                    Odhlásiť
+                    {t('actions.logout')}
                   </Button>
                 </div>
               </div>
@@ -162,46 +164,46 @@ const AuthPage = () => {
             className="h-16 w-auto mx-auto mb-6" 
           />
           <h1 className="text-2xl font-bold text-slate-900 mb-2">
-            Vitajte v Utopia
+            {t('title')}
           </h1>
           <p className="text-slate-600">
-            Prihláste sa do svojho účtu
+            {t('subtitle')}
           </p>
         </div>
 
         <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>Autentifikácia</CardTitle>
+            <CardTitle>{t('header.authentication')}</CardTitle>
             <CardDescription>
-              Prihláste sa alebo si vytvorte nový účet
+              {t('header.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="signin" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Prihlásenie</TabsTrigger>
-                <TabsTrigger value="signup">Registrácia</TabsTrigger>
+                <TabsTrigger value="signin">{t('tabs.signin')}</TabsTrigger>
+                <TabsTrigger value="signup">{t('tabs.signup')}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="signin" className="space-y-4">
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
+                    <Label htmlFor="signin-email">{t('form.email')}</Label>
                     <Input
                       id="signin-email"
                       name="email"
                       type="email"
-                      placeholder="vas@email.com"
+                      placeholder={t('form.emailPlaceholder')}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signin-password">Heslo</Label>
+                    <Label htmlFor="signin-password">{t('form.password')}</Label>
                     <Input
                       id="signin-password"
                       name="password"
                       type="password"
-                      placeholder="Vaše heslo"
+                      placeholder={t('form.passwordPlaceholder')}
                       required
                     />
                   </div>
@@ -211,7 +213,7 @@ const AuthPage = () => {
                     </Alert>
                   )}
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Prihlasuje sa...' : 'Prihlásiť sa'}
+                    {isLoading ? t('actions.signingIn') : t('actions.signIn')}
                   </Button>
                 </form>
               </TabsContent>
@@ -220,43 +222,43 @@ const AuthPage = () => {
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signup-firstName">Meno</Label>
+                      <Label htmlFor="signup-firstName">{t('form.firstName')}</Label>
                       <Input
                         id="signup-firstName"
                         name="firstName"
                         type="text"
-                        placeholder="Vaše meno"
+                        placeholder={t('form.firstNamePlaceholder')}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-lastName">Priezvisko</Label>
+                      <Label htmlFor="signup-lastName">{t('form.lastName')}</Label>
                       <Input
                         id="signup-lastName"
                         name="lastName"
                         type="text"
-                        placeholder="Vaše priezvisko"
+                        placeholder={t('form.lastNamePlaceholder')}
                         required
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">{t('form.email')}</Label>
                     <Input
                       id="signup-email"
                       name="email"
                       type="email"
-                      placeholder="vas@email.com"
+                      placeholder={t('form.emailPlaceholder')}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Heslo</Label>
+                    <Label htmlFor="signup-password">{t('form.password')}</Label>
                     <Input
                       id="signup-password"
                       name="password"
                       type="password"
-                      placeholder="Vaše heslo"
+                      placeholder={t('form.passwordPlaceholder')}
                       required
                     />
                   </div>
@@ -266,7 +268,7 @@ const AuthPage = () => {
                     </Alert>
                   )}
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Registruje sa...' : 'Registrovať sa'}
+                    {isLoading ? t('actions.signingUp') : t('actions.signUp')}
                   </Button>
                 </form>
               </TabsContent>
@@ -281,7 +283,7 @@ const AuthPage = () => {
             onClick={() => navigate('/')}
             className="text-slate-600"
           >
-            ← Späť na úvodnú stránku
+            {t('actions.backToWelcome')}
           </Button>
         </div>
       </div>

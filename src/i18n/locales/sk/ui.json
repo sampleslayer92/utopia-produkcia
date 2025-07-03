@@ -1,0 +1,86 @@
+{
+  "modal": {
+    "confirm": {
+      "title": "Potvrdenie",
+      "message": "Ste si istý, že chcete vykonať túto akciu?",
+      "delete": "Naozaj chcete zmazať túto položku?",
+      "cancel": "Zrušiť",
+      "confirm": "Potvrdiť"
+    },
+    "addMerchant": {
+      "title": "Nový merchant",
+      "description": "Pridať nového merchanta so základnými údajmi a možnosťou vyhľadania v ORSR",
+      "companyInfo": "Informácie o spoločnosti",
+      "contactPerson": "Kontaktná osoba",
+      "address": "Adresa"
+    }
+  },
+  "form": {
+    "required": "Povinné pole",
+    "validation": {
+      "required": "Toto pole je povinné",
+      "email": "Neplatný formát emailu",
+      "phone": "Neplatný formát telefónneho čísla",
+      "minLength": "Minimálne {{count}} znakov",
+      "maxLength": "Maximálne {{count}} znakov"
+    },
+    "labels": {
+      "companyName": "Názov spoločnosti",
+      "ico": "IČO",
+      "dic": "DIČ",
+      "vatNumber": "IČ DPH",
+      "name": "Meno a priezvisko",
+      "email": "Email",
+      "phone": "Telefón",
+      "street": "Ulica a číslo",
+      "city": "Mesto",
+      "zipCode": "PSČ"
+    },
+    "placeholders": {
+      "companyName": "Začnite písať názov spoločnosti...",
+      "ico": "12345678",
+      "dic": "1234567890",
+      "vatNumber": "SK1234567890",
+      "name": "Ján Novák",
+      "email": "jan.novak@example.com",
+      "phone": "+421 900 123 456",
+      "street": "Hlavná 123",
+      "city": "Bratislava",
+      "zipCode": "12345"
+    }
+  },
+  "navigation": {
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "contracts": "Zmluvy",
+    "merchants": "Merchanti",
+    "locations": "Prevádzky",
+    "deals": "Deals",
+    "team": "Tím",
+    "reports": "Reporty",
+    "settings": "Nastavenia"
+  },
+  "table": {
+    "noData": "Žiadne údaje",
+    "loading": "Načítavam...",
+    "error": "Chyba pri načítavaní údajov",
+    "search": "Vyhľadať...",
+    "itemsPerPage": "Položiek na stránku",
+    "page": "Stránka",
+    "of": "z",
+    "previous": "Predchádzajúca",
+    "next": "Ďalšia",
+    "first": "Prvá",
+    "last": "Posledná"
+  },
+  "status": {
+    "active": "Aktívny",
+    "inactive": "Neaktívny",
+    "pending": "Čakajúci",
+    "completed": "Dokončený",
+    "cancelled": "Zrušený",
+    "draft": "Koncept",
+    "approved": "Schválený",
+    "rejected": "Zamietnutý"
+  }
+}

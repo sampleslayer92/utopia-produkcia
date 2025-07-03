@@ -1,0 +1,86 @@
+{
+  "modal": {
+    "confirm": {
+      "title": "Confirmation",
+      "message": "Are you sure you want to perform this action?",
+      "delete": "Do you really want to delete this item?",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "addMerchant": {
+      "title": "New Merchant",
+      "description": "Add a new merchant with basic information and ORSR search capability",
+      "companyInfo": "Company Information",
+      "contactPerson": "Contact Person",
+      "address": "Address"
+    }
+  },
+  "form": {
+    "required": "Required field",
+    "validation": {
+      "required": "This field is required",
+      "email": "Invalid email format",
+      "phone": "Invalid phone number format",
+      "minLength": "Minimum {{count}} characters",
+      "maxLength": "Maximum {{count}} characters"
+    },
+    "labels": {
+      "companyName": "Company Name",
+      "ico": "Company ID",
+      "dic": "Tax ID",
+      "vatNumber": "VAT Number",
+      "name": "Name and Surname",
+      "email": "Email",
+      "phone": "Phone",
+      "street": "Street and Number",
+      "city": "City",
+      "zipCode": "ZIP Code"
+    },
+    "placeholders": {
+      "companyName": "Start typing company name...",
+      "ico": "12345678",
+      "dic": "1234567890",
+      "vatNumber": "SK1234567890",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "phone": "+421 900 123 456",
+      "street": "Main Street 123",
+      "city": "Bratislava",
+      "zipCode": "12345"
+    }
+  },
+  "navigation": {
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "contracts": "Contracts",
+    "merchants": "Merchants",
+    "locations": "Locations",
+    "deals": "Deals",
+    "team": "Team",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "table": {
+    "noData": "No data",
+    "loading": "Loading...",
+    "error": "Error loading data",
+    "search": "Search...",
+    "itemsPerPage": "Items per page",
+    "page": "Page",
+    "of": "of",
+    "previous": "Previous",
+    "next": "Next",
+    "first": "First",
+    "last": "Last"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "draft": "Draft",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  }
+}
