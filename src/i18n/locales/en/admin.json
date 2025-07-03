@@ -56,7 +56,7 @@
       "title": "Team Performance",
       "viewAll": "View All",
       "excellent": "Excellent",
-      "good": "Good",
+      "good": "Good", 
       "average": "Average",
       "needsImprovement": "Needs Improvement",
       "contractsThisMonth": "Contracts this month",
@@ -156,14 +156,6 @@
       "saving": "Saving...",
       "edit": "Edit",
       "cancelEdit": "Cancel editing",
-      "actions": {
-        "backToList": "Back to List",
-        "exportPdf": "Export PDF",
-        "saveChanges": "Save Changes",
-        "saving": "Saving...",
-        "edit": "Edit",
-        "cancelEdit": "Cancel Edit"
-      },
       "tabs": {
         "overview": "Overview",
         "client": "Client",
@@ -391,105 +383,6 @@
     "version": "Version",
     "notSpecified": "Not Specified"
   },
-  "contractCopy": {
-    "title": "New Contract for Merchant",
-    "selectContract": "Select contract to copy from (optional)",
-    "selectSegments": "Select segments to copy",
-    "selectAll": "Select All",
-    "deselectAll": "Deselect All",
-    "selectedCount": "{{count}} of {{total}} selected",
-    "previewTitle": "Copy Preview",
-    "previewDescription": "Will copy {{count}} segments from contract {{contractNumber}}:",
-    "segments": {
-      "contactInfo": {
-        "label": "Contact Information",
-        "description": "Name, email, phone, titles"
-      },
-      "companyInfo": {
-        "label": "Company Information",
-        "description": "Company ID, tax ID, name, address, registers"
-      },
-      "businessLocations": {
-        "label": "Business Locations",
-        "description": "Operating locations and their details"
-      },
-      "deviceSelection": {
-        "label": "Devices and Services",
-        "description": "Selected devices, services, add-ons"
-      },
-      "fees": {
-        "label": "Fees",
-        "description": "Fee settings and rates"
-      },
-      "personsAndOwners": {
-        "label": "Persons and Owners",
-        "description": "Authorized persons and actual owners"
-      }
-    },
-    "buttons": {
-      "cancel": "Cancel",
-      "startClean": "Start with Clean Contract",
-      "startWithCopy": "Copy Selected Data"
-    },
-    "messages": {
-      "selectContractAndSegments": "Select a contract and at least one segment to copy",
-      "copyingSegments": "Copying {{count}} segments from contract {{contractNumber}}",
-      "startingClean": "Starting with a new clean contract"
-    }
-  },
-  "authorizedPersons": {
-    "title": "Authorized Persons",
-    "personalData": "Personal Data",
-    "position": "Position",
-    "identityDocument": "Identity Document",
-    "documentType": "Document Type",
-    "documentNumber": "Document Number",
-    "validUntil": "Valid Until",
-    "issuer": "Issuer",
-    "idCard": "ID Card",
-    "passport": "Passport",
-    "drivingLicense": "Driving License",
-    "addPerson": "Add Person",
-    "noPersons": "No authorized persons have been added",
-    "thisPerson": "this person",
-    "pepPerson": "Politically Exposed Person",
-    "usCitizen": "US Citizen"
-  },
-  "devicesServices": {
-    "title": "Devices and Services",
-    "device": "Device",
-    "service": "Service",
-    "quantity": "Quantity",
-    "paymentType": "Payment Type",
-    "rental": "Rental",
-    "monthlyFeePerPiece": "Monthly Fee per Piece",
-    "companyCostPerPiece": "Company Cost per Piece",
-    "costSummary": "Cost Summary",
-    "mainItem": "Main Item",
-    "customerSubtotal": "Customer Subtotal",
-    "companyCost": "Company Cost",
-    "margin": "Margin",
-    "addons": "Add-ons",
-    "addonsAndAccessories": "Add-ons and Accessories",
-    "addAddon": "Add Add-on",
-    "addItem": "Add Item",
-    "professionalDevice": "Professional Device",
-    "noDevicesSelected": "No devices selected",
-    "addFirstDevice": "Add first device",
-    "confirmDelete": "Are you sure you want to remove this item?"
-  },
-  "actualOwners": {
-    "title": "Actual Owners",
-    "basicData": "Basic Data",
-    "birthDate": "Birth Date",
-    "birthPlace": "Place of Birth",
-    "birthNumber": "Birth Number",
-    "additionalData": "Additional Data",
-    "citizenship": "Citizenship",
-    "permanentAddress": "Permanent Address",
-    "politicallyExposed": "Politically Exposed Person",
-    "no": "No"
-  },
   "stats": {
     "totalContracts": "Total Contracts",
     "submittedContracts": "Submitted Contracts",
@@ -611,25 +504,6 @@
       "subtitle": "Business location information",
       "backToLocations": "Back to locations",
       "editLocation": "Edit location"
-    }
-  },
-  "merchant": {
-    "navigation": {
-      "dashboard": "Dashboard",
-      "devices": "Devices",
-      "transactions": "Transactions",
-      "profile": "Profile",
-      "settings": "Settings",
-      "help": "Help & Support"
-    },
-    "actions": {
-      "logout": "Logout",
-      "loggingOut": "Logging out..."
-    },
-    "user": {
-      "defaultName": "Merchant User",
-      "defaultEmail": "merchant@example.com",
-      "defaultCompany": "Corner Coffee Shop"
     }
   }
 }
