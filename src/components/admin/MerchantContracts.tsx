@@ -12,6 +12,7 @@ import {
 import { Calendar, Euro, FileText, Smartphone } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 interface Contract {
   id: string;
@@ -29,17 +30,18 @@ interface MerchantContractsProps {
 
 const MerchantContracts = ({ contracts }: MerchantContractsProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['admin', 'ui']);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'submitted':
-        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Odoslané</Badge>;
+        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">{t('ui:status.submitted')}</Badge>;
       case 'approved':
-        return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">Schválené</Badge>;
+        return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">{t('ui:status.approved')}</Badge>;
       case 'rejected':
-        return <Badge className="bg-red-100 text-red-700 border-red-200">Zamietnuté</Badge>;
+        return <Badge className="bg-red-100 text-red-700 border-red-200">{t('ui:status.rejected')}</Badge>;
       case 'draft':
-        return <Badge className="bg-gray-100 text-gray-700 border-gray-200">Koncept</Badge>;
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-200">{t('ui:status.draft')}</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -55,13 +57,13 @@ const MerchantContracts = ({ contracts }: MerchantContractsProps) => {
         <CardHeader>
           <CardTitle className="flex items-center">
             <FileText className="h-5 w-5 mr-2" />
-            Zmluvy
+            {t('merchants.detail.contracts.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8 text-slate-500">
             <FileText className="h-12 w-12 mb-4" />
-            <p>Žiadne zmluvy</p>
+            <p>{t('merchants.detail.contracts.noContracts')}</p>
           </div>
         </CardContent>
       </Card>
@@ -73,7 +75,7 @@ const MerchantContracts = ({ contracts }: MerchantContractsProps) => {
       <CardHeader>
         <CardTitle className="flex items-center">
           <FileText className="h-5 w-5 mr-2" />
-          Zmluvy ({contracts.length})
+          {t('merchants.detail.contracts.title')} ({contracts.length})
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -81,11 +83,11 @@ const MerchantContracts = ({ contracts }: MerchantContractsProps) => {
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">Číslo zmluvy</TableHead>
-                <TableHead className="font-medium text-slate-700">Stav</TableHead>
-                <TableHead className="font-medium text-slate-700">Zariadenia</TableHead>
-                <TableHead className="font-medium text-slate-700">Mesačný zisk</TableHead>
-                <TableHead className="font-medium text-slate-700">Vytvorená</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.contracts.table.contractNumber')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.contracts.table.status')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.contracts.table.devices')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.contracts.table.monthlyProfit')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.contracts.table.created')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

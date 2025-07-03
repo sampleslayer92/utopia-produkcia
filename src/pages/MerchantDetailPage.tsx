@@ -24,6 +24,7 @@ import { useMerchantDetail } from "@/hooks/useMerchantDetail";
 import MerchantStats from "@/components/admin/MerchantStats";
 import MerchantContracts from "@/components/admin/MerchantContracts";
 import MerchantLocations from "@/components/admin/MerchantLocations";
+import { useTranslation } from 'react-i18next';
 
 const MerchantDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,14 +32,15 @@ const MerchantDetailPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [showContractCopyModal, setShowContractCopyModal] = useState(false);
   const { data: merchantData, isLoading, error } = useMerchantDetail(id!);
+  const { t } = useTranslation(['admin', 'ui']);
 
   if (isLoading) {
     return (
-      <AdminLayout title="Načítavam..." subtitle="Detail merchanta">
+      <AdminLayout title={t('ui:table.loading')} subtitle={t('merchants.detail.title')}>
         <div className="flex items-center justify-center py-8">
           <div className="flex items-center space-x-2">
             <Loader2 className="h-6 w-6 animate-spin" />
-            <span>Načítavam detail merchanta...</span>
+            <span>{t('ui:table.loading')}...</span>
           </div>
         </div>
       </AdminLayout>
@@ -47,23 +49,23 @@ const MerchantDetailPage = () => {
 
   if (error || !merchantData) {
     return (
-      <AdminLayout title="Chyba" subtitle="Detail merchanta">
+      <AdminLayout title={t('ui:validation.error')} subtitle={t('merchants.detail.title')}>
         <Card className="max-w-md mx-auto">
           <CardHeader>
             <CardTitle className="text-destructive">
-              {error ? "Chyba pri načítavaní" : "Merchant nenájdený"}
+              {error ? t('ui:table.error') : "Merchant not found"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">
               {error 
-                ? `Nepodarilo sa načítať detail merchanta. ${error.message}`
-                : `Merchant s ID ${id} neexistuje.`
+                ? `${t('ui:table.error')}. ${error.message}`
+                : `Merchant with ID ${id} does not exist.`
               }
             </p>
             <Button onClick={() => navigate('/admin/merchants')} variant="outline">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Späť na zoznam
+              {t('ui:buttons.cancel')}
             </Button>
           </CardContent>
         </Card>
@@ -81,22 +83,22 @@ const MerchantDetailPage = () => {
         className="hover:bg-muted"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Späť na zoznam
+        {t('ui:buttons.cancel')}
       </Button>
       <Button variant="outline" className="hover:bg-muted">
         <Download className="h-4 w-4 mr-2" />
-        Export
+        {t('ui:buttons.exportLocations')}
       </Button>
       <Button variant="outline" className="hover:bg-muted">
         <Edit className="h-4 w-4 mr-2" />
-        Upraviť
+        {t('ui:buttons.edit')}
       </Button>
       <Button 
         onClick={() => setShowContractCopyModal(true)}
         className="bg-primary hover:bg-primary/90"
       >
         <Plus className="h-4 w-4 mr-2" />
-        Nová zmluva
+        {t('admin:contracts.new')}
       </Button>
     </div>
   );
@@ -104,7 +106,7 @@ const MerchantDetailPage = () => {
   return (
     <AdminLayout 
       title={merchant.company_name} 
-      subtitle={`IČO: ${merchant.ico || 'N/A'} • ${statistics.total_contracts} zmlúv • ${statistics.total_locations} prevádzkových miest`}
+      subtitle={`${t('ui:form.labels.ico')}: ${merchant.ico || 'N/A'} • ${statistics.total_contracts} ${t('admin:contracts.title').toLowerCase()} • ${statistics.total_locations} ${t('merchants.detail.locations.title').toLowerCase()}`}
       actions={merchantActions}
     >
       <div className="space-y-6">
@@ -112,23 +114,23 @@ const MerchantDetailPage = () => {
           <TabsList className="grid w-full grid-cols-4 lg:grid-cols-5">
             <TabsTrigger value="overview" className="flex items-center space-x-2">
               <Building2 className="h-4 w-4" />
-              <span className="hidden sm:inline">Prehľad</span>
+              <span className="hidden sm:inline">{t('merchants.detail.tabs.overview')}</span>
             </TabsTrigger>
             <TabsTrigger value="locations" className="flex items-center space-x-2">
               <MapIcon className="h-4 w-4" />
-              <span className="hidden sm:inline">Prevádzky</span>
+              <span className="hidden sm:inline">{t('merchants.detail.tabs.locations')}</span>
             </TabsTrigger>
             <TabsTrigger value="contracts" className="flex items-center space-x-2">
               <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">Zmluvy</span>
+              <span className="hidden sm:inline">{t('merchants.detail.tabs.contracts')}</span>
             </TabsTrigger>
             <TabsTrigger value="finance" className="flex items-center space-x-2">
               <Euro className="h-4 w-4" />
-              <span className="hidden sm:inline">Financie</span>
+              <span className="hidden sm:inline">{t('merchants.detail.tabs.finance')}</span>
             </TabsTrigger>
             <TabsTrigger value="activity" className="flex items-center space-x-2 hidden lg:flex">
               <User className="h-4 w-4" />
-              <span>Aktivita</span>
+              <span>{t('merchants.detail.tabs.activity')}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -141,22 +143,22 @@ const MerchantDetailPage = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Building2 className="h-5 w-5 mr-2" />
-                  Základné informácie
+                  {t('merchants.detail.basicInfo')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">Názov spoločnosti</label>
+                      <label className="text-sm font-medium text-muted-foreground">{t('ui:form.labels.companyName')}</label>
                       <p className="text-foreground font-medium">{merchant.company_name}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">IČO</label>
+                      <label className="text-sm font-medium text-muted-foreground">{t('ui:form.labels.ico')}</label>
                       <p className="text-foreground">{merchant.ico || 'N/A'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">DIČ</label>
+                      <label className="text-sm font-medium text-muted-foreground">{t('ui:form.labels.dic')}</label>
                       <p className="text-foreground">{merchant.dic || 'N/A'}</p>
                     </div>
                   </div>
@@ -165,21 +167,21 @@ const MerchantDetailPage = () => {
                     <div>
                       <label className="text-sm font-medium text-muted-foreground flex items-center">
                         <User className="h-4 w-4 mr-1" />
-                        Kontaktná osoba
+                        {t('ui:form.labels.contactPerson')}
                       </label>
                       <p className="text-foreground font-medium">{merchant.contact_person_name}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-muted-foreground flex items-center">
                         <Mail className="h-4 w-4 mr-1" />
-                        Email
+                        {t('ui:form.labels.email')}
                       </label>
                       <p className="text-foreground">{merchant.contact_person_email}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-muted-foreground flex items-center">
                         <Phone className="h-4 w-4 mr-1" />
-                        Telefón
+                        {t('ui:form.labels.phone')}
                       </label>
                       <p className="text-foreground">{merchant.contact_person_phone || 'N/A'}</p>
                     </div>
@@ -189,7 +191,7 @@ const MerchantDetailPage = () => {
                     <div>
                       <label className="text-sm font-medium text-muted-foreground flex items-center">
                         <MapPin className="h-4 w-4 mr-1" />
-                        Adresa
+                        {t('ui:form.labels.address')}
                       </label>
                       <div className="text-foreground">
                         {merchant.address_street && <p>{merchant.address_street}</p>}
@@ -211,7 +213,7 @@ const MerchantDetailPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Najnovšie zmluvy</CardTitle>
+                  <CardTitle className="text-base">{t('merchants.detail.latestContracts')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {merchantData.contracts.slice(0, 3).map((contract) => (
@@ -228,7 +230,7 @@ const MerchantDetailPage = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Top prevádzky</CardTitle>
+                  <CardTitle className="text-base">{t('merchants.detail.topLocations')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {merchantData.locations
@@ -260,20 +262,20 @@ const MerchantDetailPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Finančný prehľad</CardTitle>
+                  <CardTitle>{t('merchants.detail.financialOverview')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Celkový mesačný zisk:</span>
+                      <span className="text-muted-foreground">{t('merchants.detail.stats.monthlyProfit')}:</span>
                       <span className="font-bold text-primary">€{statistics.total_monthly_profit.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Priemerná hodnota zmluvy:</span>
+                      <span className="text-muted-foreground">{t('merchants.detail.stats.avgContractValue')}:</span>
                       <span className="font-medium">€{statistics.avg_contract_value.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Plánovaný obrat:</span>
+                      <span className="text-muted-foreground">{t('merchants.detail.stats.plannedTurnover')}:</span>
                       <span className="font-medium">€{statistics.total_estimated_turnover.toLocaleString()}</span>
                     </div>
                   </div>
@@ -282,12 +284,12 @@ const MerchantDetailPage = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Trendy</CardTitle>
+                  <CardTitle>{t('merchants.detail.trends')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-8 text-muted-foreground">
                     <Euro className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Grafy a analýzy budú dostupné čoskoro</p>
+                    <p>{t('merchants.detail.analysis')}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -297,12 +299,12 @@ const MerchantDetailPage = () => {
           <TabsContent value="activity" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>História aktivít</CardTitle>
+                <CardTitle>{t('merchants.detail.recentActivity')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-8 text-muted-foreground">
                   <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>História aktivít bude dostupná čoskoro</p>
+                  <p>{t('merchants.detail.activityHistory')}</p>
                 </div>
               </CardContent>
             </Card>

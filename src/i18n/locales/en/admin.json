@@ -363,5 +363,72 @@
       "few": "contracts",
       "many": "contracts"
     }
+  },
+  "merchants": {
+    "detail": {
+      "title": "Merchant Detail",
+      "basicInfo": "Basic Information",
+      "recentActivity": "Activity History",
+      "latestContracts": "Latest Contracts",
+      "topLocations": "Top Locations",
+      "financialOverview": "Financial Overview",
+      "trends": "Trends",
+      "activity": "Activity",
+      "analysis": "Charts and analytics will be available soon",
+      "activityHistory": "Activity history will be available soon",
+      "tabs": {
+        "overview": "Overview",
+        "locations": "Locations",
+        "contracts": "Contracts",
+        "finance": "Finance",
+        "activity": "Activity"
+      },
+      "stats": {
+        "totalContracts": "Total Contracts",
+        "monthlyProfit": "Monthly Profit",
+        "totalDevices": "Total Devices",
+        "avgContractValue": "Avg. Contract Value",
+        "locations": "Locations",
+        "plannedTurnover": "Planned Turnover",
+        "withPosTerminal": "with POS terminal",
+        "fromAllLocations": "from all business locations"
+      },
+      "contracts": {
+        "title": "Contracts",
+        "noContracts": "No contracts",
+        "table": {
+          "contractNumber": "Contract Number",
+          "status": "Status",
+          "devices": "Devices",
+          "monthlyProfit": "Monthly Profit",
+          "created": "Created"
+        }
+      },
+      "locations": {
+        "title": "Locations",
+        "noLocations": "No locations",
+        "summary": {
+          "totalLocations": "Total business locations",
+          "withPos": "With POS terminal",
+          "totalPlannedTurnover": "Total planned turnover"
+        },
+        "table": {
+          "locationName": "Location Name",
+          "address": "Address",
+          "sector": "Sector",
+          "turnover": "Turnover",
+          "pos": "POS",
+          "contract": "Contract"
+        }
+      }
+    }
+  },
+  "businessLocation": {
+    "detail": {
+      "title": "Location Detail",
+      "subtitle": "Business location information",
+      "backToLocations": "Back to locations",
+      "editLocation": "Edit location"
+    }
   }
 }

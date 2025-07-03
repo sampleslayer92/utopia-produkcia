@@ -11,25 +11,28 @@ import {
 } from "@/components/ui/table";
 import { MapPin, CreditCard, Building2, Euro, Clock, Mail, Phone, User } from "lucide-react";
 import { BusinessLocation } from "@/hooks/useMerchantDetail";
+import { useTranslation } from 'react-i18next';
 
 interface MerchantLocationsProps {
   locations: BusinessLocation[];
 }
 
 const MerchantLocations = ({ locations }: MerchantLocationsProps) => {
+  const { t } = useTranslation(['admin', 'ui']);
+  
   if (!locations || locations.length === 0) {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center">
             <Building2 className="h-5 w-5 mr-2" />
-            Prevádzky
+            {t('merchants.detail.locations.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8 text-slate-500">
             <Building2 className="h-12 w-12 mb-4" />
-            <p>Žiadne prevádzky</p>
+            <p>{t('merchants.detail.locations.noLocations')}</p>
           </div>
         </CardContent>
       </Card>
@@ -41,7 +44,7 @@ const MerchantLocations = ({ locations }: MerchantLocationsProps) => {
       <CardHeader>
         <CardTitle className="flex items-center">
           <Building2 className="h-5 w-5 mr-2" />
-          Prevádzky ({locations.length})
+          {t('merchants.detail.locations.title')} ({locations.length})
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -49,12 +52,12 @@ const MerchantLocations = ({ locations }: MerchantLocationsProps) => {
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">Názov prevádzky</TableHead>
-                <TableHead className="font-medium text-slate-700">Adresa</TableHead>
-                <TableHead className="font-medium text-slate-700">Sektor</TableHead>
-                <TableHead className="font-medium text-slate-700">Obrat</TableHead>
-                <TableHead className="font-medium text-slate-700">POS</TableHead>
-                <TableHead className="font-medium text-slate-700">Zmluva</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.locations.table.locationName')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('ui:form.labels.address')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.locations.table.sector')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.locations.table.turnover')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.locations.table.pos')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('merchants.detail.locations.table.contract')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -112,7 +115,7 @@ const MerchantLocations = ({ locations }: MerchantLocationsProps) => {
                         variant={location.has_pos ? "default" : "secondary"}
                         className={location.has_pos ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}
                       >
-                        {location.has_pos ? "Áno" : "Nie"}
+                        {location.has_pos ? t('ui:table.yes') : t('ui:table.no')}
                       </Badge>
                     </div>
                   </TableCell>
@@ -142,19 +145,19 @@ const MerchantLocations = ({ locations }: MerchantLocationsProps) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div className="flex items-center">
                 <Building2 className="h-4 w-4 text-slate-500 mr-2" />
-                <span className="text-slate-600">Celkom prevádzkových miest:</span>
+                <span className="text-slate-600">{t('merchants.detail.locations.summary.totalLocations')}:</span>
                 <span className="font-medium text-slate-900 ml-1">{locations.length}</span>
               </div>
               <div className="flex items-center">
                 <CreditCard className="h-4 w-4 text-slate-500 mr-2" />
-                <span className="text-slate-600">S POS terminálom:</span>
+                <span className="text-slate-600">{t('merchants.detail.locations.summary.withPos')}:</span>
                 <span className="font-medium text-slate-900 ml-1">
                   {locations.filter(l => l.has_pos).length}
                 </span>
               </div>
               <div className="flex items-center">
                 <Euro className="h-4 w-4 text-slate-500 mr-2" />
-                <span className="text-slate-600">Celkový plánovaný obrat:</span>
+                <span className="text-slate-600">{t('merchants.detail.locations.summary.totalPlannedTurnover')}:</span>
                 <span className="font-medium text-slate-900 ml-1">
                   €{locations.reduce((sum, l) => sum + (l.estimated_turnover || 0), 0).toLocaleString()}
                 </span>
