@@ -89,13 +89,5 @@
       }
     },
     "footer": "Utopia Research Lab 2025"
-  },
-  "researchLab": {
-    "title": "Research Lab",
-    "subtitle": "AI Research Assistant",
-    "welcomeMessage": "Welcome to Research Lab! I'm your AI research assistant. How can I help you with analysis, research, or problem-solving?",
-    "inputPlaceholder": "Type your question or request...",
-    "errorMessage": "Sorry, there was an error processing your request. Please try again."
-  },
-  "back": "Back"
+  }
 }
