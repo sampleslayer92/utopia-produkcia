@@ -519,7 +519,15 @@ export type Database = {
           monthly_fee?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "contract_item_addons_contract_item_id_fkey"
+            columns: ["contract_item_id"]
+            isOneToOne: false
+            referencedRelation: "contract_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contract_items: {
         Row: {
