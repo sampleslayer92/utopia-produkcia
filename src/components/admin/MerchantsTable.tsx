@@ -99,7 +99,7 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
               <TableRow className="bg-slate-50">
                 <TableHead className="font-medium text-slate-700">{t('merchants.table.company')}</TableHead>
                 <TableHead className="font-medium text-slate-700">{t('merchants.table.contactPerson')}</TableHead>
-                <TableHead className="font-medium text-slate-700">IČO</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.columns.ico')}</TableHead>
                 <TableHead className="font-medium text-slate-700">{t('merchants.table.contracts')}</TableHead>
                 <TableHead className="font-medium text-slate-700">{t('merchants.table.monthlyProfit')}</TableHead>
                 <TableHead className="font-medium text-slate-700">{t('merchants.table.created')}</TableHead>

@@ -170,6 +170,63 @@
       "monthlyProfit": "Mesačný zisk",
       "created": "Vytvorený",
       "contractsCount": "{{count}} zmlúv"
+    },
+    "detail": {
+      "title": "Detail merchanta",
+      "basicInfo": "Základné informácie",
+      "recentActivity": "História aktivít",
+      "latestContracts": "Najnovšie zmluvy",
+      "topLocations": "Top prevádzky",
+      "financialOverview": "Finančný prehľad",
+      "trends": "Trendy",
+      "activity": "Aktivita",
+      "analysis": "Grafy a analýzy budú dostupné čoskoro",
+      "activityHistory": "História aktivít bude dostupná čoskoro",
+      "tabs": {
+        "overview": "Prehľad",
+        "locations": "Prevádzky",
+        "contracts": "Zmluvy",
+        "finance": "Financie",
+        "activity": "Aktivita"
+      },
+      "stats": {
+        "totalContracts": "Celkom zmlúv",
+        "monthlyProfit": "Mesačný zisk",
+        "totalDevices": "Celkom zariadení",
+        "avgContractValue": "Priem. hodnota zmluvy",
+        "locations": "Prevádzky",
+        "plannedTurnover": "Plánovaný obrat",
+        "withPosTerminal": "s POS terminálom",
+        "fromAllLocations": "zo všetkých prevádzkových miest"
+      },
+      "contracts": {
+        "title": "Zmluvy",
+        "noContracts": "Žiadne zmluvy",
+        "table": {
+          "contractNumber": "Číslo zmluvy",
+          "status": "Stav",
+          "devices": "Zariadenia",
+          "monthlyProfit": "Mesačný zisk",
+          "created": "Vytvorená"
+        }
+      },
+      "locations": {
+        "title": "Prevádzky",
+        "noLocations": "Žiadne prevádzky",
+        "summary": {
+          "totalLocations": "Celkom prevádzkových miest",
+          "withPos": "S POS terminálom",
+          "totalPlannedTurnover": "Celkový plánovaný obrat"
+        },
+        "table": {
+          "locationName": "Názov prevádzky",
+          "address": "Adresa",
+          "sector": "Sektor",
+          "turnover": "Obrat",
+          "pos": "POS",
+          "contract": "Zmluva"
+        }
+      }
     }
   },
   "contractActions": {
@@ -457,65 +514,6 @@
       "single": "zmluvu",
       "few": "zmluvy",
       "many": "zmlúv"
-    }
-  },
-  "merchants": {
-    "detail": {
-      "title": "Detail merchanta",
-      "basicInfo": "Základné informácie",
-      "recentActivity": "História aktivít",
-      "latestContracts": "Najnovšie zmluvy",
-      "topLocations": "Top prevádzky",
-      "financialOverview": "Finančný prehľad",
-      "trends": "Trendy",
-      "activity": "Aktivita",
-      "analysis": "Grafy a analýzy budú dostupné čoskoro",
-      "activityHistory": "História aktivít bude dostupná čoskoro",
-      "tabs": {
-        "overview": "Prehľad",
-        "locations": "Prevádzky",
-        "contracts": "Zmluvy",
-        "finance": "Financie",
-        "activity": "Aktivita"
-      },
-      "stats": {
-        "totalContracts": "Celkom zmlúv",
-        "monthlyProfit": "Mesačný zisk",
-        "totalDevices": "Celkom zariadení",
-        "avgContractValue": "Priem. hodnota zmluvy",
-        "locations": "Prevádzky",
-        "plannedTurnover": "Plánovaný obrat",
-        "withPosTerminal": "s POS terminálom",
-        "fromAllLocations": "zo všetkých prevádzkových miest"
-      },
-      "contracts": {
-        "title": "Zmluvy",
-        "noContracts": "Žiadne zmluvy",
-        "table": {
-          "contractNumber": "Číslo zmluvy",
-          "status": "Stav",
-          "devices": "Zariadenia",
-          "monthlyProfit": "Mesačný zisk",
-          "created": "Vytvorená"
-        }
-      },
-      "locations": {
-        "title": "Prevádzky",
-        "noLocations": "Žiadne prevádzky",
-        "summary": {
-          "totalLocations": "Celkom prevádzkových miest",
-          "withPos": "S POS terminálom",
-          "totalPlannedTurnover": "Celkový plánovaný obrat"
-        },
-        "table": {
-          "locationName": "Názov prevádzky",
-          "address": "Adresa",
-          "sector": "Sektor",
-          "turnover": "Obrat",
-          "pos": "POS",
-          "contract": "Zmluva"
-        }
-      }
     }
   },
   "businessLocation": {
