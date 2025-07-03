@@ -78,11 +78,13 @@
       "dic": "DIČ",
       "vatNumber": "IČ DPH",
       "name": "Meno a priezvisko",
+      "contactPerson": "Kontaktná osoba",
       "email": "Email",
       "phone": "Telefón",
       "street": "Ulica a číslo",
       "city": "Mesto",
-      "zipCode": "PSČ"
+      "zipCode": "PSČ",
+      "address": "Adresa"
     },
     "placeholders": {
       "companyName": "Začnite písať názov spoločnosti...",
@@ -148,6 +150,14 @@
     "cancelled": "Zrušený",
     "draft": "Koncept",
     "approved": "Schválený",
-    "rejected": "Zamietnutý"
+    "rejected": "Zamietnutý",
+    "submitted": "Odoslané"
+  },
+  "filters": {
+    "search": "Hľadať",
+    "clearFilters": "Vyčistiť filtre",
+    "allStatuses": "Všetky stavy",
+    "allSources": "Všetky zdroje",
+    "allMerchants": "Všetci merchanti"
   }
 }

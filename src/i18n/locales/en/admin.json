@@ -93,13 +93,71 @@
     "title": "Contract Management",
     "subtitle": "Overview and management of all contracts in the system",
     "export": "Export",
-    "newContract": "New Contract"
+    "newContract": "New Contract",
+    "new": "New Contract",
+    "stats": {
+      "activeContracts": "Active Contracts",
+      "totalValue": "Total Value",
+      "expiringContracts": "Expiring",
+      "approvedSigned": "Approved and signed",
+      "monthlyIncome": "Monthly income",
+      "olderThan11Months": "Older than 11 months"
+    },
+    "actions": {
+      "fixMerchants": "Fix Merchants",
+      "fixing": "Fixing..."
+    },
+    "table": {
+      "contractNumber": "Contract Number",
+      "client": "Client",
+      "source": "Source",
+      "contractType": "Contract Type",
+      "monthlyValue": "Monthly Value",
+      "status": "Status",
+      "completion": "Completion",
+      "salesPerson": "Sales Person",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Contract number, name, email...",
+      "merchant": "Merchant",
+      "status": "Status",
+      "source": "Source",
+      "allMerchants": "All Merchants",
+      "allStatuses": "All Statuses",
+      "allSources": "All Sources",
+      "clearFilters": "Clear Filters"
+    }
   },
   "merchants": {
     "title": "Merchant Management",
     "subtitle": "Overview and management of all merchants in the system",
     "export": "Export",
-    "newContract": "New Contract"
+    "newContract": "New Contract",
+    "newMerchant": "New Merchant",
+    "stats": {
+      "totalCount": "Total Count",
+      "allRegistered": "All registered",
+      "activeWithContracts": "Active with contracts",
+      "haveSignedContracts": "Have signed contracts",
+      "averageProfit": "Average Profit",
+      "monthlyPerMerchant": "Monthly per merchant"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Name, Company ID, contact person...",
+      "city": "City",
+      "allCities": "All Cities",
+      "contracts": "Contracts",
+      "allMerchants": "All Merchants",
+      "withContracts": "With contracts",
+      "withoutContracts": "Without contracts",
+      "monthlyProfit": "Monthly Profit",
+      "allValues": "All Values",
+      "clearFilters": "Clear Filters"
+    }
   },
   "stats": {
     "totalContracts": "Total Contracts",

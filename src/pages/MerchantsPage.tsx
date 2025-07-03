@@ -27,23 +27,23 @@ const MerchantsPage = () => {
 
   const statsCards = [
     {
-      title: "Celkový počet",
+      title: t('merchants.stats.totalCount'),
       value: stats?.totalMerchants || 0,
-      subtitle: "Všetci registrovaní",
+      subtitle: t('merchants.stats.allRegistered'),
       icon: Building2,
       iconColor: "bg-blue-500"
     },
     {
-      title: "Aktívni so zmluvami",
+      title: t('merchants.stats.activeWithContracts'),
       value: stats?.activeWithContracts || 0,
-      subtitle: "Majú podpísané zmluvy",
+      subtitle: t('merchants.stats.haveSignedContracts'),
       icon: HandCoins,
       iconColor: "bg-emerald-500"
     },
     {
-      title: "Priemerný zisk",
+      title: t('merchants.stats.averageProfit'),
       value: `€${(stats?.averageProfit || 0).toFixed(2)}`,
-      subtitle: "Mesačne na merchanta",
+      subtitle: t('merchants.stats.monthlyPerMerchant'),
       icon: TrendingUp,
       iconColor: "bg-purple-500"
     }
@@ -64,7 +64,7 @@ const MerchantsPage = () => {
         className="bg-blue-600 hover:bg-blue-700"
       >
         <Plus className="h-4 w-4 mr-2" />
-        Nový merchant
+        {t('merchants.newMerchant')}
       </Button>
     </>
   );

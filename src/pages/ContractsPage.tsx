@@ -29,23 +29,23 @@ const ContractsPage = () => {
 
   const statsCards = [
     {
-      title: "Aktívne zmluvy",
+      title: t('contracts.stats.activeContracts'),
       value: stats?.activeContracts || 0,
-      subtitle: "Schválené a podpísané",
+      subtitle: t('contracts.stats.approvedSigned'),
       icon: FileText,
       iconColor: "bg-blue-500"
     },
     {
-      title: "Celková hodnota",
+      title: t('contracts.stats.totalValue'),
       value: `€${(stats?.totalValue || 0).toFixed(2)}`,
-      subtitle: "Mesačný príjem",
+      subtitle: t('contracts.stats.monthlyIncome'),
       icon: Euro,
       iconColor: "bg-emerald-500"
     },
     {
-      title: "Expirujúce",
+      title: t('contracts.stats.expiringContracts'),
       value: stats?.expiringContracts || 0,
-      subtitle: "Staršie ako 11 mesiacov",
+      subtitle: t('contracts.stats.olderThan11Months'),
       icon: Clock,
       iconColor: "bg-orange-500"
     }
@@ -60,7 +60,7 @@ const ContractsPage = () => {
         className="hover:bg-slate-50"
       >
         <Settings className="h-4 w-4 mr-2" />
-        {isFixing ? 'Opravujem...' : 'Opraviť merchantov'}
+        {isFixing ? t('contracts.actions.fixing') : t('contracts.actions.fixMerchants')}
       </Button>
       <Button variant="outline" className="hover:bg-slate-50">
         <Download className="h-4 w-4 mr-2" />

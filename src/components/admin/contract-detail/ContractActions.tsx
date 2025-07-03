@@ -165,7 +165,7 @@ const ContractActions = ({ contract, onboardingData, onDelete, isDeleting = fals
           <CardContent className="space-y-3">
             <Button 
               onClick={handlePreviewContract}
-              className="w-full justify-start bg-blue-600 hover:bg-blue-700"
+              className="w-full justify-start"
             >
               <Eye className="h-4 w-4 mr-2" />
               Náhľad zmluvy

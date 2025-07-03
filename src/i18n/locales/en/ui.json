@@ -78,11 +78,13 @@
       "dic": "Tax ID",
       "vatNumber": "VAT Number",
       "name": "Name and Surname",
+      "contactPerson": "Contact Person",
       "email": "Email",
       "phone": "Phone",
       "street": "Street and Number",
       "city": "City",
-      "zipCode": "ZIP Code"
+      "zipCode": "ZIP Code",
+      "address": "Address"
     },
     "placeholders": {
       "companyName": "Start typing company name...",
@@ -148,6 +150,14 @@
     "cancelled": "Cancelled",
     "draft": "Draft",
     "approved": "Approved",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "submitted": "Submitted"
+  },
+  "filters": {
+    "search": "Search",
+    "clearFilters": "Clear Filters",
+    "allStatuses": "All Statuses",
+    "allSources": "All Sources",
+    "allMerchants": "All Merchants"
   }
 }

@@ -93,13 +93,71 @@
     "title": "Správa zmlúv",
     "subtitle": "Prehľad a správa všetkých zmlúv v systéme",
     "export": "Exportovať",
-    "newContract": "Nová zmluva"
+    "newContract": "Nová zmluva",
+    "new": "Nová zmluva",
+    "stats": {
+      "activeContracts": "Aktívne zmluvy",
+      "totalValue": "Celková hodnota",
+      "expiringContracts": "Expirujúce",
+      "approvedSigned": "Schválené a podpísané",
+      "monthlyIncome": "Mesačný príjem",
+      "olderThan11Months": "Staršie ako 11 mesiacov"
+    },
+    "actions": {
+      "fixMerchants": "Opraviť merchantov",
+      "fixing": "Opravujem..."
+    },
+    "table": {
+      "contractNumber": "Číslo zmluvy",
+      "client": "Klient",
+      "source": "Zdroj",
+      "contractType": "Typ zmluvy",
+      "monthlyValue": "Mesačná hodnota",
+      "status": "Stav",
+      "completion": "Dokončenosť",
+      "salesPerson": "Obchodník",
+      "created": "Vytvorené",
+      "actions": "Akcie"
+    },
+    "filters": {
+      "search": "Hľadať",
+      "searchPlaceholder": "Číslo zmluvy, meno, email...",
+      "merchant": "Merchant",
+      "status": "Stav",
+      "source": "Zdroj",
+      "allMerchants": "Všetci merchanti",
+      "allStatuses": "Všetky stavy",
+      "allSources": "Všetky zdroje",
+      "clearFilters": "Vyčistiť filtre"
+    }
   },
   "merchants": {
     "title": "Správa merchantov",
     "subtitle": "Prehľad a správa všetkých merchantov v systéme",
     "export": "Exportovať",
-    "newContract": "Nová zmluva"
+    "newContract": "Nová zmluva",
+    "newMerchant": "Nový merchant",
+    "stats": {
+      "totalCount": "Celkový počet",
+      "allRegistered": "Všetci registrovaní",
+      "activeWithContracts": "Aktívni so zmluvami",
+      "haveSignedContracts": "Majú podpísané zmluvy",
+      "averageProfit": "Priemerný zisk",
+      "monthlyPerMerchant": "Mesačne na merchanta"
+    },
+    "filters": {
+      "search": "Hľadať",
+      "searchPlaceholder": "Názov, IČO, kontaktná osoba...",
+      "city": "Mesto",
+      "allCities": "Všetky mestá",
+      "contracts": "Zmluvy",
+      "allMerchants": "Všetci merchanti",
+      "withContracts": "So zmluvami",
+      "withoutContracts": "Bez zmlúv",
+      "monthlyProfit": "Mesačný zisk",
+      "allValues": "Všetky hodnoty",
+      "clearFilters": "Vyčistiť filtre"
+    }
   },
   "stats": {
     "totalContracts": "Celkový počet zmlúv",
