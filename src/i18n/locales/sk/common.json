@@ -64,13 +64,31 @@
   "welcome": {
     "title": "Registrácia bez stresu.",
     "subtitle": "Vitaj v onboardingu budúcnosti.",
+    "heroDescription": "Moderná platforma pre jednoduché a rýchle spracovanie obchodných zmlúv a registrácií.",
     "login": {
       "title": "Prihlásiť sa",
-      "description": "Vyberte svoju rolu a pokračujte do systému"
+      "description": "Pristúpte k svojmu účtu a pokračujte v práci",
+      "button": "Prihlásiť sa"
     },
     "onboarding": {
-      "title": "Začať onboarding",
-      "description": "Registrácia novej spoločnosti do systému"
+      "title": "Začať registráciu",
+      "description": "Registrácia novej spoločnosti do systému",
+      "button": "Začať proces"
+    },
+    "features": {
+      "title": "Prečo Utopia?",
+      "fast": {
+        "title": "Rýchle spracovanie",
+        "description": "Automatizované procesy urýchľujú registráciu"
+      },
+      "secure": {
+        "title": "Bezpečné",
+        "description": "Najvyššie štandardy zabezpečenia dát"
+      },
+      "simple": {
+        "title": "Jednoduché",
+        "description": "Intuitívne rozhranie pre všetkých používateľov"
+      }
     },
     "selectRole": "Vyberte svoju rolu",
     "backButton": "Späť",

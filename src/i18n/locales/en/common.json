@@ -64,13 +64,31 @@
   "welcome": {
     "title": "Registration without stress.",
     "subtitle": "Welcome to the onboarding of the future.",
+    "heroDescription": "Modern platform for simple and fast processing of business contracts and registrations.",
     "login": {
       "title": "Sign In",
-      "description": "Select your role and continue to the system"
+      "description": "Access your account and continue working",
+      "button": "Sign In"
     },
     "onboarding": {
-      "title": "Start Onboarding",
-      "description": "Register a new company in the system"
+      "title": "Start Registration",
+      "description": "Register a new company in the system",
+      "button": "Start Process"
+    },
+    "features": {
+      "title": "Why Utopia?",
+      "fast": {
+        "title": "Fast Processing",
+        "description": "Automated processes speed up registration"
+      },
+      "secure": {
+        "title": "Secure",
+        "description": "Highest data security standards"
+      },
+      "simple": {
+        "title": "Simple",
+        "description": "Intuitive interface for all users"
+      }
     },
     "selectRole": "Select your role",
     "backButton": "Back",
