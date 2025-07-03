@@ -207,6 +207,41 @@ export const useTeamManagement = () => {
     return updateTeamMember(id, { is_active: true });
   };
 
+  const deleteTeamMember = async (id: string) => {
+    setIsSaving(true);
+    try {
+      // First delete from user_roles table
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', id);
+
+      if (roleError) {
+        console.error('Error deleting user role:', roleError);
+      }
+
+      // Then delete from profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', id);
+
+      if (profileError) throw profileError;
+
+      // Refresh team members list
+      await fetchTeamMembers();
+      toast.success('Člen tímu bol úspešne vymazaný');
+      
+      return { error: null };
+    } catch (error: any) {
+      console.error('Error deleting team member:', error);
+      toast.error('Chyba pri mazaní člena tímu');
+      return { error };
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   useEffect(() => {
     fetchTeamMembers();
   }, []);
@@ -220,6 +255,7 @@ export const useTeamManagement = () => {
     resetMemberPassword,
     deactivateTeamMember,
     activateTeamMember,
+    deleteTeamMember,
     refetch: fetchTeamMembers
   };
 };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -29,18 +40,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Plus, Users, UserCheck, UserX, Edit, Key, Copy, Info, LogIn, RotateCcw } from "lucide-react";
+import { Plus, Users, UserCheck, UserX, Edit, Key, Copy, Info, LogIn, RotateCcw, Trash2 } from "lucide-react";
 import { useTeamManagement } from '@/hooks/useTeamManagement';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import AdminLayout from './AdminLayout';
 
 const TeamManagement = () => {
-  const { teamMembers, isLoading, isSaving, createTeamMember, updateTeamMember, resetMemberPassword, deactivateTeamMember, activateTeamMember } = useTeamManagement();
+  const { t } = useTranslation('admin');
+  const { teamMembers, isLoading, isSaving, createTeamMember, updateTeamMember, resetMemberPassword, deactivateTeamMember, activateTeamMember, deleteTeamMember } = useTeamManagement();
   const { signOut } = useAuth();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<any>(null);
   const [resetPasswordMember, setResetPasswordMember] = useState<any>(null);
+  const [deletingMember, setDeletingMember] = useState<any>(null);
   const [newMemberCredentials, setNewMemberCredentials] = useState<{email: string, password: string} | null>(null);
   const [showCredentialsDialog, setShowCredentialsDialog] = useState(false);
 
@@ -70,7 +83,7 @@ const TeamManagement = () => {
   };
 
   const handleTestLoginAs = async (member: any) => {
-    if (confirm(`Chcete sa dočasne prihlásiť ako ${member.first_name} ${member.last_name}? Budete odhlásený zo súčasnej session.`)) {
+    if (confirm(t('teamManagement.testLoginConfirm', { name: `${member.first_name} ${member.last_name}` }))) {
       try {
         // Sign out current user
         await signOut();
@@ -78,9 +91,9 @@ const TeamManagement = () => {
         // Redirect to auth page with a special parameter
         window.location.href = `/auth?test_user=${member.email}`;
         
-        toast.info('Odhlásený. Teraz sa môžete prihlásiť ako testovací používateľ.');
+        toast.info(t('teamManagement.messages.loggedOut'));
       } catch (error) {
-        toast.error('Chyba pri odhlásení');
+        toast.error(t('teamManagement.messages.logoutError'));
       }
     }
   };
@@ -95,15 +108,27 @@ const TeamManagement = () => {
     const { error } = await resetMemberPassword(resetPasswordMember.id, newPassword);
     if (!error) {
       setResetPasswordMember(null);
-      toast.success('Heslo bolo úspešne zmenené', {
-        description: `Nové heslo: ${newPassword}`
+      toast.success(t('teamManagement.messages.passwordChanged'), {
+        description: `${t('teamManagement.resetPasswordDialog.newPassword')}: ${newPassword}`
       });
     }
   };
 
-  const copyToClipboard = (text: string, label: string) => {
+  const copyToClipboard = (text: string, type: 'email' | 'password') => {
     navigator.clipboard.writeText(text);
-    toast.success(`${label} skopírované do schránky`);
+    const message = type === 'email' 
+      ? t('teamManagement.messages.emailCopied')
+      : t('teamManagement.messages.passwordCopied');
+    toast.success(message);
+  };
+
+  const handleDeleteMember = async () => {
+    if (!deletingMember) return;
+    
+    const { error } = await deleteTeamMember(deletingMember.id);
+    if (!error) {
+      setDeletingMember(null);
+    }
   };
 
   const handleUpdateMember = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -129,11 +154,11 @@ const TeamManagement = () => {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'admin':
-        return <Badge variant="destructive">Admin</Badge>;
+        return <Badge variant="destructive">{t('teamManagement.roles.admin')}</Badge>;
       case 'partner':
-        return <Badge variant="default">Partner</Badge>;
+        return <Badge variant="default">{t('teamManagement.roles.partner')}</Badge>;
       case 'merchant':
-        return <Badge variant="secondary">Merchant</Badge>;
+        return <Badge variant="secondary">{t('teamManagement.roles.merchant')}</Badge>;
       default:
         return <Badge variant="outline">{role}</Badge>;
     }
@@ -141,12 +166,12 @@ const TeamManagement = () => {
 
   if (isLoading) {
     return (
-      <AdminLayout title="Správa tímu" subtitle="Spravujte členov vášho tímu a ich oprávnenia">
+      <AdminLayout title={t('teamManagement.title')} subtitle={t('teamManagement.subtitle')}>
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="ml-2">Načítava sa...</span>
+              <span className="ml-2">{t('teamManagement.loading')}</span>
             </div>
           </CardContent>
         </Card>
@@ -155,29 +180,29 @@ const TeamManagement = () => {
   }
 
   return (
-    <AdminLayout title="Správa tímu" subtitle="Spravujte členov vášho tímu a ich oprávnenia">
+    <AdminLayout title={t('teamManagement.title')} subtitle={t('teamManagement.subtitle')}>
       <div className="space-y-6">
         {/* Role Management Info Card */}
         <Card className="bg-blue-50 border-blue-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-blue-900">
               <Info className="h-5 w-5" />
-              Správa rolí a používateľov
+              {t('teamManagement.roleManagement')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div>
-                <div className="font-medium text-blue-900 mb-2">Admin</div>
-                <div className="text-blue-700">Plný prístup k systému, správa tímu, všetky zmluvy</div>
+                <div className="font-medium text-blue-900 mb-2">{t('teamManagement.roles.admin')}</div>
+                <div className="text-blue-700">{t('teamManagement.roles.adminDescription')}</div>
               </div>
               <div>
-                <div className="font-medium text-blue-900 mb-2">Partner</div>
-                <div className="text-blue-700">Vytváranie zmlúv, správa vlastných obchodníkov</div>
+                <div className="font-medium text-blue-900 mb-2">{t('teamManagement.roles.partner')}</div>
+                <div className="text-blue-700">{t('teamManagement.roles.partnerDescription')}</div>
               </div>
               <div>
-                <div className="font-medium text-blue-900 mb-2">Merchant</div>
-                <div className="text-blue-700">Zobrazenie vlastných zmlúv a údajov</div>
+                <div className="font-medium text-blue-900 mb-2">{t('teamManagement.roles.merchant')}</div>
+                <div className="text-blue-700">{t('teamManagement.roles.merchantDescription')}</div>
               </div>
             </div>
           </CardContent>
@@ -189,75 +214,75 @@ const TeamManagement = () => {
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  Správa tímu
+                  {t('teamManagement.title')}
                 </CardTitle>
                 <CardDescription>
-                  Spravujte členov vášho tímu a ich oprávnenia
+                  {t('teamManagement.subtitle')}
                 </CardDescription>
               </div>
               <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
-                    Pridať člena
+                    {t('teamManagement.addMember')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Pridať nového člena tímu</DialogTitle>
+                    <DialogTitle>{t('teamManagement.newMember.title')}</DialogTitle>
                     <DialogDescription>
-                      Vytvorte nový účet pre člena vášho tímu. Prihlasovacie údaje budú zobrazené po vytvorení.
+                      {t('teamManagement.newMember.description')}
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleCreateMember} className="space-y-4">
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="first_name">Meno</Label>
+                        <Label htmlFor="first_name">{t('teamManagement.firstName')}</Label>
                         <Input id="first_name" name="first_name" required />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="last_name">Priezvisko</Label>
+                        <Label htmlFor="last_name">{t('teamManagement.lastName')}</Label>
                         <Input id="last_name" name="last_name" required />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">{t('teamManagement.email')}</Label>
                       <Input id="email" name="email" type="email" required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Telefón</Label>
+                      <Label htmlFor="phone">{t('teamManagement.phone')}</Label>
                       <Input id="phone" name="phone" type="tel" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password">Dočasné heslo</Label>
+                      <Label htmlFor="password">{t('teamManagement.temporaryPassword')}</Label>
                       <Input 
                         id="password" 
                         name="password" 
                         type="password" 
-                        placeholder="Zadajte dočasné heslo"
+                        placeholder={t('teamManagement.newMember.enterTemporaryPassword')}
                         required 
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="role">Rola</Label>
+                      <Label htmlFor="role">{t('teamManagement.role')}</Label>
                       <Select name="role" required>
                         <SelectTrigger>
-                          <SelectValue placeholder="Vyberte rolu" />
+                          <SelectValue placeholder={t('teamManagement.selectRole')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="merchant">Merchant</SelectItem>
-                          <SelectItem value="partner">Partner</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="merchant">{t('teamManagement.roles.merchant')}</SelectItem>
+                          <SelectItem value="partner">{t('teamManagement.roles.partner')}</SelectItem>
+                          <SelectItem value="admin">{t('teamManagement.roles.admin')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="flex justify-end space-x-2">
                       <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                        Zrušiť
+                        {t('teamManagement.cancel')}
                       </Button>
                       <Button type="submit" disabled={isSaving}>
-                        {isSaving ? 'Vytvára sa...' : 'Vytvoriť'}
+                        {isSaving ? t('teamManagement.creating') : t('teamManagement.create')}
                       </Button>
                     </div>
                   </form>
@@ -269,12 +294,12 @@ const TeamManagement = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Člen</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Rola</TableHead>
-                  <TableHead>Stav</TableHead>
-                  <TableHead>Vytvorený</TableHead>
-                  <TableHead>Akcie</TableHead>
+                  <TableHead>{t('teamManagement.member')}</TableHead>
+                  <TableHead>{t('teamManagement.email')}</TableHead>
+                  <TableHead>{t('teamManagement.role')}</TableHead>
+                  <TableHead>{t('teamManagement.status')}</TableHead>
+                  <TableHead>{t('teamManagement.created')}</TableHead>
+                  <TableHead>{t('teamManagement.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -302,12 +327,12 @@ const TeamManagement = () => {
                       {member.is_active ? (
                         <Badge variant="outline" className="text-green-600">
                           <UserCheck className="h-3 w-3 mr-1" />
-                          Aktívny
+                          {t('teamManagement.active')}
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="text-red-600">
                           <UserX className="h-3 w-3 mr-1" />
-                          Neaktívny
+                          {t('teamManagement.inactive')}
                         </Badge>
                       )}
                     </TableCell>
@@ -355,15 +380,50 @@ const TeamManagement = () => {
                           >
                             <UserCheck className="h-3 w-3" />
                           </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                         )}
+                         <Button
+                           size="sm"
+                           variant="destructive"
+                           onClick={() => setDeletingMember(member)}
+                           title={t('teamManagement.delete')}
+                         >
+                           <Trash2 className="h-3 w-3" />
+                         </Button>
+                       </div>
+                     </TableCell>
+                   </TableRow>
+                 ))}
+               </TableBody>
+             </Table>
+           </CardContent>
+         </Card>
+
+        {/* Delete Member Dialog */}
+        <AlertDialog open={!!deletingMember} onOpenChange={() => setDeletingMember(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('teamManagement.confirmDelete')}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t('teamManagement.confirmDeleteDescription')}
+                {deletingMember && (
+                  <div className="mt-2 font-medium">
+                    {deletingMember.first_name} {deletingMember.last_name} ({deletingMember.email})
+                  </div>
+                )}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('teamManagement.cancel')}</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={handleDeleteMember}
+                className="bg-red-600 hover:bg-red-700"
+                disabled={isSaving}
+              >
+                {isSaving ? t('teamManagement.creating') : t('teamManagement.delete')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         
         {/* Credentials Display Dialog */}
@@ -396,7 +456,7 @@ const TeamManagement = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => copyToClipboard(newMemberCredentials.email, 'Email')}
+                      onClick={() => copyToClipboard(newMemberCredentials.email, 'email')}
                     >
                       <Copy className="h-3 w-3" />
                     </Button>
@@ -410,7 +470,7 @@ const TeamManagement = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => copyToClipboard(newMemberCredentials.password, 'Heslo')}
+                      onClick={() => copyToClipboard(newMemberCredentials.password, 'password')}
                     >
                       <Copy className="h-3 w-3" />
                     </Button>

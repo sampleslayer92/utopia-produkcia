@@ -498,6 +498,81 @@
     "created": "Created",
     "submitted": "Submitted"
   },
+  "teamManagement": {
+    "title": "Team Management",
+    "subtitle": "Manage your team members and their permissions",
+    "loading": "Loading...",
+    "addMember": "Add Member",
+    "roleManagement": "Role and User Management",
+    "roles": {
+      "admin": "Admin",
+      "partner": "Partner",
+      "merchant": "Merchant",
+      "adminDescription": "Full system access, team management, all contracts",
+      "partnerDescription": "Create contracts, manage own merchants",
+      "merchantDescription": "View own contracts and data"
+    },
+    "member": "Member",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "created": "Created",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "phone": "Phone",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "temporaryPassword": "Temporary Password",
+    "selectRole": "Select role",
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "resetPassword": "Reset Password",
+    "testLogin": "Test Login",
+    "confirmDelete": "Are you sure you want to delete this team member?",
+    "confirmDeleteDescription": "This action cannot be undone. The team member will be completely removed from the system.",
+    "newMember": {
+      "title": "Add New Team Member",
+      "description": "Create a new account for your team member. Login credentials will be displayed after creation.",
+      "enterTemporaryPassword": "Enter temporary password"
+    },
+    "editMember": {
+      "title": "Edit Team Member",
+      "description": "Edit team member information",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "resetPasswordDialog": {
+      "title": "Reset Password",
+      "description": "Enter new temporary password for team member",
+      "newPassword": "New Password",
+      "enterNewPassword": "Enter new password",
+      "change": "Change",
+      "changing": "Changing..."
+    },
+    "credentials": {
+      "title": "Login Credentials",
+      "description": "New team member has been successfully created. Use these credentials for login:",
+      "copyNote": "Copy and securely store these login credentials. Don't forget to provide them to the new team member.",
+      "email": "Email:",
+      "password": "Password:",
+      "close": "Close"
+    },
+    "testLoginConfirm": "Do you want to temporarily log in as {{name}}? You will be logged out from current session.",
+    "messages": {
+      "memberDeleted": "Team member has been successfully deleted",
+      "passwordChanged": "Password has been successfully changed",
+      "emailCopied": "Email copied to clipboard",
+      "passwordCopied": "Password copied to clipboard",
+      "loggedOut": "Logged out. You can now log in as the test user.",
+      "logoutError": "Error during logout"
+    }
+  },
   "businessLocation": {
     "detail": {
       "title": "Location Detail",
