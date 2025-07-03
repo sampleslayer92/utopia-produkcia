@@ -612,5 +612,24 @@
       "backToLocations": "Back to locations",
       "editLocation": "Edit location"
     }
+  },
+  "merchant": {
+    "navigation": {
+      "dashboard": "Dashboard",
+      "devices": "Devices",
+      "transactions": "Transactions",
+      "profile": "Profile",
+      "settings": "Settings",
+      "help": "Help & Support"
+    },
+    "actions": {
+      "logout": "Logout",
+      "loggingOut": "Logging out..."
+    },
+    "user": {
+      "defaultName": "Merchant User",
+      "defaultEmail": "merchant@example.com",
+      "defaultCompany": "Corner Coffee Shop"
+    }
   }
 }

@@ -6,16 +6,14 @@ import {
   CreditCard, 
   DollarSign, 
   TrendingUp, 
-  AlertCircle,
   Monitor,
   FileText,
   Settings,
   HelpCircle
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { MerchantLayout } from "@/components/merchant/MerchantLayout";
 
 const MerchantDashboard = () => {
-  const navigate = useNavigate();
 
   const stats = [
     {
@@ -69,36 +67,7 @@ const MerchantDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50/30">
-      {/* Header */}
-      <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-600 to-violet-600 flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-slate-900">Merchant Dashboard</h1>
-                <p className="text-sm text-slate-600">Corner Coffee Shop</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                Merchant
-              </Badge>
-              <Button 
-                onClick={() => navigate('/')}
-                variant="outline"
-                className="border-slate-300"
-              >
-                Back to Home
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <MerchantLayout>
       <div className="container mx-auto px-6 py-8">
         {/* Stats Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -275,7 +244,7 @@ const MerchantDashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </MerchantLayout>
   );
 };
 

@@ -612,5 +612,24 @@
       "backToLocations": "Späť na prevádzky",
       "editLocation": "Upraviť prevádzku"
     }
+  },
+  "merchant": {
+    "navigation": {
+      "dashboard": "Dashboard",
+      "devices": "Zariadenia",
+      "transactions": "Transakcie",
+      "profile": "Profil",
+      "settings": "Nastavenia",
+      "help": "Pomoc a podpora"
+    },
+    "actions": {
+      "logout": "Odhlásiť sa",
+      "loggingOut": "Odhlasuje sa..."
+    },
+    "user": {
+      "defaultName": "Používateľ partnera",
+      "defaultEmail": "partner@example.com",
+      "defaultCompany": "Corner Coffee Shop"
+    }
   }
 }
