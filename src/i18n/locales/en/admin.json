@@ -191,6 +191,14 @@
         "stepOf": "Step {{current}} of {{total}}",
         "unknown": "Unknown"
       },
+      "actions": {
+        "backToList": "Back to List",
+        "exportPdf": "Export PDF",
+        "edit": "Edit",
+        "cancelEdit": "Cancel Edit",
+        "saveChanges": "Save Changes",
+        "saving": "Saving..."
+      },
       "client": {
         "title": "Client Information",
         "companyInfo": "Company Information",
@@ -251,6 +259,9 @@
       "documents": {
         "signatureSection": "Signature Section",
         "signaturePlaceholder": "Digital signature functionality will be available soon"
+      },
+      "status": {
+        "completed": "completed"
       }
     },
     "filters": {
@@ -637,7 +648,27 @@
     "vatExcluded": "VAT Excluded",
     "calculation": "Calculation",
     "breakdown": "Breakdown",
-    "summary": "Summary"
+    "summary": "Summary",
+    "businessData": "Business Data",
+    "estimatedTurnover": "Estimated Turnover",
+    "averageTransaction": "Average Transaction",
+    "transactionsPerMonth": "Transactions per Month",
+    "mifFees": "MIF Fees",
+    "regulatedCards": "Regulated Cards",
+    "unregulatedCards": "Unregulated Cards",
+    "totalMif": "Total MIF",
+    "profitabilitySummary": "Profitability Summary",
+    "monthlyIncome": "Monthly Income",
+    "monthlyCosts": "Monthly Costs",
+    "annualProfit": "Annual Profit",
+    "detailedBreakdown": "Detailed Breakdown",
+    "devicesAndServices": "Devices and Services",
+    "pieces": "pcs",
+    "subtotalDevices": "Subtotal Devices",
+    "transactionFees": "Transaction Fees",
+    "mifRegulated": "MIF Regulated",
+    "mifUnregulated": "MIF Unregulated",
+    "subtotalTransactions": "Subtotal Transactions"
   },
   "authorizedPersons": {
     "title": "Authorized Persons",
@@ -663,7 +694,17 @@
     "save": "Save",
     "cancel": "Cancel",
     "saving": "Saving...",
-    "edit": "Edit"
+    "edit": "Edit",
+    "personalData": "Personal Data",
+    "identityDocument": "Identity Document",
+    "validUntil": "Valid Until",
+    "issuer": "Issuer",
+    "pepPerson": "PEP Person",
+    "usCitizen": "US Citizen",
+    "thisPerson": "This Person",
+    "idCard": "ID Card",
+    "passport": "Passport",
+    "drivingLicense": "Driving License"
   },
   "actualOwners": {
     "title": "Actual Owners",
@@ -684,7 +725,14 @@
     "save": "Save",
     "cancel": "Cancel",
     "saving": "Saving...",
-    "edit": "Edit"
+    "edit": "Edit",
+    "basicData": "Basic Data",
+    "additionalData": "Additional Data",
+    "politicallyExposed": "Politically Exposed Person",
+    "yesPep": "Yes, is PEP",
+    "no": "No",
+    "addFirstOwner": "Add First Owner",
+    "permanentAddress": "Permanent Address"
   },
   "contractNotes": {
     "title": "Contract Notes",
