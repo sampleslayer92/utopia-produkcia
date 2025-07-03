@@ -89,5 +89,13 @@
       }
     },
     "footer": "Utopia Research Lab 2025"
-  }
+  },
+  "researchLab": {
+    "title": "Research Lab",
+    "subtitle": "AI výskumný asistent",
+    "welcomeMessage": "Vitajte v Research Lab! Som váš AI výskumný asistent. Ako vám môžem pomôcť s analýzou, výskumom alebo riešením problémov?",
+    "inputPlaceholder": "Napíšte svoju otázku alebo požiadavku...",
+    "errorMessage": "Prepáčte, nastala chyba pri spracovávaní vašej požiadavky. Skúste to znovu."
+  },
+  "back": "Späť"
 }

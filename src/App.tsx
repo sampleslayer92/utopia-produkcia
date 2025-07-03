@@ -28,6 +28,7 @@ import DealsPage from "./pages/DealsPage";
 import BusinessLocationsPage from "./pages/BusinessLocationsPage";
 import BusinessLocationDetailPage from "./pages/BusinessLocationDetailPage";
 import NotFound from "./pages/NotFound";
+import ResearchLabPage from "./pages/ResearchLabPage";
 
 // Import i18n configuration
 import './i18n/config';
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route path="/design-system" element={<DesignSystemPage />} />
+          <Route path="/research-lab" element={<ResearchLabPage />} />
           
           {/* Admin routes - accessible only by admin */}
           <Route path="/admin" element={
