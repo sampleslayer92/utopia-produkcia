@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import ContractActions from "../contract-detail/ContractActions";
+import { useTranslation } from 'react-i18next';
 
 interface ContractOverviewTabProps {
   contract: any;
@@ -33,6 +34,7 @@ const ContractOverviewTab = ({
   onDelete,
   isDeleting
 }: ContractOverviewTabProps) => {
+  const { t } = useTranslation('admin');
   // Calculate completion percentage
   const completionPercentage = contract.current_step ? Math.round((contract.current_step / 7) * 100) : 0;
   
@@ -47,7 +49,7 @@ const ContractOverviewTab = ({
   const clientName = onboardingData.companyInfo?.companyName || 
     (onboardingData.contactInfo ? 
       `${onboardingData.contactInfo.firstName} ${onboardingData.contactInfo.lastName}` : 
-      'Neznámy klient');
+      t('contracts.detail.overview.unknownClient'));
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -86,7 +88,7 @@ const ContractOverviewTab = ({
             <div className="flex items-center">
               <Euro className="h-8 w-8 text-green-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Mesačný zisk</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.monthlyProfit')}</p>
                 <p className="text-2xl font-bold">€{monthlyProfit.toFixed(2)}</p>
               </div>
             </div>
@@ -98,7 +100,7 @@ const ContractOverviewTab = ({
             <div className="flex items-center">
               <FileText className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Dokončenosť</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.completion')}</p>
                 <p className="text-2xl font-bold">{completionPercentage}%</p>
               </div>
             </div>
@@ -110,7 +112,7 @@ const ContractOverviewTab = ({
             <div className="flex items-center">
               <FileText className="h-8 w-8 text-purple-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Zariadenia</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.devices')}</p>
                 <p className="text-2xl font-bold">{devicesCount}</p>
               </div>
             </div>
@@ -122,7 +124,7 @@ const ContractOverviewTab = ({
             <div className="flex items-center">
               <FileText className="h-8 w-8 text-orange-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Služby</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.services')}</p>
                 <p className="text-2xl font-bold">{servicesCount}</p>
               </div>
             </div>
@@ -137,18 +139,18 @@ const ContractOverviewTab = ({
             <CardHeader>
               <CardTitle className="flex items-center">
                 <FileText className="h-5 w-5 mr-2" />
-                Základné informácie o zmluve
+                {t('contracts.detail.overview.basicInfo')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Číslo zmluvy</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.contractNumber')}</label>
                     <p className="text-foreground font-medium">#{contract.contract_number}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Stav</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.status')}</label>
                     <div className="flex items-center space-x-2 mt-1">
                       {getStatusIcon(contract.status)}
                       <Badge className={getStatusColor(contract.status)}>
@@ -157,8 +159,8 @@ const ContractOverviewTab = ({
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Zdroj</label>
-                    <p className="text-foreground">{contract.source || 'Neznámy'}</p>
+                    <label className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.source')}</label>
+                    <p className="text-foreground">{contract.source || t('contracts.detail.overview.unknown')}</p>
                   </div>
                 </div>
                 
@@ -166,19 +168,19 @@ const ContractOverviewTab = ({
                   <div>
                     <label className="text-sm font-medium text-muted-foreground flex items-center">
                       <Calendar className="h-4 w-4 mr-1" />
-                      Vytvorené
+                      {t('contracts.detail.overview.created')}
                     </label>
                     <p className="text-foreground">{format(new Date(contract.created_at), 'dd.MM.yyyy HH:mm')}</p>
                   </div>
                   {contract.submitted_at && (
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">Odoslané</label>
+                      <label className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.submitted')}</label>
                       <p className="text-foreground">{format(new Date(contract.submitted_at), 'dd.MM.yyyy HH:mm')}</p>
                     </div>
                   )}
                   {contract.signed_at && (
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">Podpísané</label>
+                      <label className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.signed')}</label>
                       <p className="text-foreground">{format(new Date(contract.signed_at), 'dd.MM.yyyy HH:mm')}</p>
                     </div>
                   )}
@@ -192,19 +194,19 @@ const ContractOverviewTab = ({
             <CardHeader>
               <CardTitle className="flex items-center">
                 <User className="h-5 w-5 mr-2" />
-                Informácie o klientovi
+                {t('contracts.detail.overview.clientInfo')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Názov/Meno</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.clientName')}</label>
                     <p className="text-foreground font-medium">{clientName}</p>
                   </div>
                   {onboardingData.companyInfo?.ico && (
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">IČO</label>
+                      <label className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.ico')}</label>
                       <p className="text-foreground">{onboardingData.companyInfo.ico}</p>
                     </div>
                   )}
@@ -212,7 +214,7 @@ const ContractOverviewTab = ({
                     <div>
                       <label className="text-sm font-medium text-muted-foreground flex items-center">
                         <Mail className="h-4 w-4 mr-1" />
-                        Email
+                        {t('contracts.detail.overview.email')}
                       </label>
                       <p className="text-foreground">{onboardingData.contactInfo.email}</p>
                     </div>
@@ -224,7 +226,7 @@ const ContractOverviewTab = ({
                     <div>
                       <label className="text-sm font-medium text-muted-foreground flex items-center">
                         <Phone className="h-4 w-4 mr-1" />
-                        Telefón
+                        {t('contracts.detail.overview.phone')}
                       </label>
                       <p className="text-foreground">
                         {onboardingData.contactInfo.phonePrefix} {onboardingData.contactInfo.phone}
@@ -233,7 +235,7 @@ const ContractOverviewTab = ({
                   )}
                   {onboardingData.businessLocations?.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">Počet prevádzkových miest</label>
+                      <label className="text-sm font-medium text-muted-foreground">{t('contracts.detail.overview.businessLocationsCount')}</label>
                       <p className="text-foreground">{onboardingData.businessLocations.length}</p>
                     </div>
                   )}
@@ -255,20 +257,20 @@ const ContractOverviewTab = ({
           {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Rýchle akcie</CardTitle>
+              <CardTitle className="text-base">{t('contracts.detail.overview.quickActions')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <Button variant="outline" className="w-full justify-start">
                 <FileText className="h-4 w-4 mr-2" />
-                Generovať PDF
+                {t('contracts.detail.overview.generatePdf')}
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <Mail className="h-4 w-4 mr-2" />
-                Odoslať klientovi
+                {t('contracts.detail.overview.sendToClient')}
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <Calculator className="h-4 w-4 mr-2" />
-                Prepočítať kalkuláciu
+                {t('contracts.detail.overview.recalculate')}
               </Button>
             </CardContent>
           </Card>
@@ -276,12 +278,12 @@ const ContractOverviewTab = ({
           {/* Progress */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Stav dokončenosti</CardTitle>
+              <CardTitle className="text-base">{t('contracts.detail.overview.progressStatus')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Pokrok</span>
+                  <span>{t('contracts.detail.overview.progress')}</span>
                   <span>{completionPercentage}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -291,7 +293,7 @@ const ContractOverviewTab = ({
                   ></div>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Krok {contract.current_step || 1} z 7
+                  {t('contracts.detail.overview.stepOf', { current: contract.current_step || 1, total: 7 })}
                 </p>
               </div>
             </CardContent>

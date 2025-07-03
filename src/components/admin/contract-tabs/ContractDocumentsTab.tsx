@@ -2,6 +2,7 @@ import DocumentManagement from "../DocumentManagement";
 import SignatureSection from "../contract-detail/SignatureSection";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 interface ContractDocumentsTabProps {
   contractId: string;
@@ -20,6 +21,7 @@ const ContractDocumentsTab = ({
   documentUploadedAt,
   documentSignedAt
 }: ContractDocumentsTabProps) => {
+  const { t } = useTranslation('admin');
   return (
     <div className="space-y-8">
       <DocumentManagement
@@ -35,14 +37,14 @@ const ContractDocumentsTab = ({
         <CardHeader>
           <CardTitle className="flex items-center">
             <FileText className="h-5 w-5 mr-2" />
-            Podpis zmluvy
+            {t('contracts.detail.documents.signatureSection')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {/* Placeholder for signature section */}
           <div className="text-center py-8 text-muted-foreground">
             <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Sekcia podpisu bude dostupná čoskoro</p>
+            <p>{t('contracts.detail.documents.signaturePlaceholder')}</p>
           </div>
         </CardContent>
       </Card>

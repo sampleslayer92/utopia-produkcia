@@ -10,6 +10,7 @@ import EditableSection from "./EditableSection";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import { useBusinessLocationsCrud } from "@/hooks/useBusinessLocationsCrud";
 import { useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 interface EnhancedClientOperationsSectionProps {
   onboardingData: any;
@@ -24,6 +25,7 @@ const EnhancedClientOperationsSection = ({
   onUpdate, 
   onLocalChanges 
 }: EnhancedClientOperationsSectionProps) => {
+  const { t } = useTranslation('admin');
   const { id: contractId } = useParams<{ id: string }>();
   const { addLocation, deleteLocation, isDeleting, isAdding } = useBusinessLocationsCrud(contractId!);
   
@@ -173,7 +175,7 @@ const EnhancedClientOperationsSection = ({
         <CardHeader>
           <CardTitle className="flex items-center text-slate-900">
             <User className="h-5 w-5 mr-2 text-blue-600" />
-            Informácie o klientovi
+            {t('contracts.detail.client.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -182,13 +184,13 @@ const EnhancedClientOperationsSection = ({
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4">
                 <Building className="h-4 w-4 text-slate-600" />
-                <h3 className="font-semibold text-slate-900">Informácie o spoločnosti</h3>
+                <h3 className="font-semibold text-slate-900">{t('contracts.detail.client.companyInfo')}</h3>
               </div>
               
               <EditableSection isEditMode={isEditMode}>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm font-medium text-slate-600">Názov spoločnosti</Label>
+                    <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.companyName')}</Label>
                     {isEditMode ? (
                       <Input 
                         value={getFieldValue('companyInfo', 'companyName')}
@@ -196,12 +198,12 @@ const EnhancedClientOperationsSection = ({
                         className="mt-1"
                       />
                     ) : (
-                      <p className="text-slate-900 mt-1">{companyInfo?.companyName || 'Neuvedené'}</p>
+                      <p className="text-slate-900 mt-1">{companyInfo?.companyName || t('contracts.detail.client.notSpecified')}</p>
                     )}
                   </div>
                   
                   <div>
-                    <Label className="text-sm font-medium text-slate-600">IČO</Label>
+                    <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.ico')}</Label>
                     {isEditMode ? (
                       <Input 
                         value={getFieldValue('companyInfo', 'ico')}
@@ -209,14 +211,14 @@ const EnhancedClientOperationsSection = ({
                         className="mt-1"
                       />
                     ) : (
-                      <p className="text-slate-900 mt-1">{companyInfo?.ico || 'Neuvedené'}</p>
+                      <p className="text-slate-900 mt-1">{companyInfo?.ico || t('contracts.detail.client.notSpecified')}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm font-medium text-slate-600">DIČ</Label>
+                    <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.dic')}</Label>
                     {isEditMode ? (
                       <Input 
                         value={getFieldValue('companyInfo', 'dic')}
@@ -224,12 +226,12 @@ const EnhancedClientOperationsSection = ({
                         className="mt-1"
                       />
                     ) : (
-                      <p className="text-slate-900 mt-1">{companyInfo?.dic || 'Neuvedené'}</p>
+                      <p className="text-slate-900 mt-1">{companyInfo?.dic || t('contracts.detail.client.notSpecified')}</p>
                     )}
                   </div>
                   
                   <div>
-                    <Label className="text-sm font-medium text-slate-600">IČ DPH</Label>
+                    <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.vatNumber')}</Label>
                     {isEditMode ? (
                       <Input 
                         value={getFieldValue('companyInfo', 'vatNumber')}
@@ -237,30 +239,30 @@ const EnhancedClientOperationsSection = ({
                         className="mt-1"
                       />
                     ) : (
-                      <p className="text-slate-900 mt-1">{companyInfo?.vatNumber || 'Nie je platca DPH'}</p>
+                      <p className="text-slate-900 mt-1">{companyInfo?.vatNumber || t('contracts.detail.client.notVatPayer')}</p>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <Label className="text-sm font-medium text-slate-600">Adresa sídla</Label>
+                  <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.address')}</Label>
                   {isEditMode ? (
                     <div className="space-y-2 mt-1">
                       <Input 
                         value={getFieldValue('companyInfo', 'addressStreet')}
                         onChange={(e) => handleFieldChange('companyInfo', 'addressStreet', e.target.value)}
-                        placeholder="Ulica a číslo"
+                        placeholder={t('contracts.detail.client.streetPlaceholder')}
                       />
                       <div className="grid grid-cols-2 gap-2">
                         <Input 
                           value={getFieldValue('companyInfo', 'addressCity')}
                           onChange={(e) => handleFieldChange('companyInfo', 'addressCity', e.target.value)}
-                          placeholder="Mesto"
+                          placeholder={t('contracts.detail.client.cityPlaceholder')}
                         />
                         <Input 
                           value={getFieldValue('companyInfo', 'addressZipCode')}
                           onChange={(e) => handleFieldChange('companyInfo', 'addressZipCode', e.target.value)}
-                          placeholder="PSČ"
+                          placeholder={t('contracts.detail.client.zipPlaceholder')}
                         />
                       </div>
                     </div>
@@ -272,11 +274,11 @@ const EnhancedClientOperationsSection = ({
                 </div>
 
                 <div className="pt-4 border-t border-slate-200">
-                  <h4 className="font-medium text-slate-900 mb-3">Kontaktná osoba</h4>
+                  <h4 className="font-medium text-slate-900 mb-3">{t('contracts.detail.client.contactPerson')}</h4>
                   <div className="space-y-2">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-sm font-medium text-slate-600">Meno</Label>
+                        <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.firstName')}</Label>
                         {isEditMode ? (
                           <Input 
                             value={getFieldValue('contactInfo', 'firstName')}
@@ -289,7 +291,7 @@ const EnhancedClientOperationsSection = ({
                       </div>
                       
                       <div>
-                        <Label className="text-sm font-medium text-slate-600">Priezvisko</Label>
+                        <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.lastName')}</Label>
                         {isEditMode ? (
                           <Input 
                             value={getFieldValue('contactInfo', 'lastName')}
@@ -304,7 +306,7 @@ const EnhancedClientOperationsSection = ({
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-sm font-medium text-slate-600">Email</Label>
+                        <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.email')}</Label>
                         {isEditMode ? (
                           <Input 
                             value={getFieldValue('contactInfo', 'email')}
@@ -318,7 +320,7 @@ const EnhancedClientOperationsSection = ({
                       </div>
                       
                       <div>
-                        <Label className="text-sm font-medium text-slate-600">Telefón</Label>
+                        <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.phone')}</Label>
                         {isEditMode ? (
                           <Input 
                             value={getFieldValue('contactInfo', 'phone')}
@@ -342,12 +344,12 @@ const EnhancedClientOperationsSection = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 mb-4">
                   <MapPin className="h-4 w-4 text-slate-600" />
-                  <h3 className="font-semibold text-slate-900">Prevádzky ({businessLocations.length})</h3>
+                  <h3 className="font-semibold text-slate-900">{t('contracts.detail.client.businessLocations')} ({businessLocations.length})</h3>
                 </div>
                 {isEditMode && (
                   <Button variant="outline" size="sm" onClick={addNewLocation} disabled={isAdding}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Pridať prevádzku
+                    {t('contracts.detail.client.addLocation')}
                   </Button>
                 )}
               </div>
@@ -370,12 +372,12 @@ const EnhancedClientOperationsSection = ({
                         )}
                         
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Názov prevádzky</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.locationName')}</Label>
                           <p className="text-slate-900 mt-1 font-medium">{location.name}</p>
                         </div>
                         
                         <div>
-                          <Label className="text-sm font-medium text-slate-600">Adresa</Label>
+                          <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.locationAddress')}</Label>
                           <p className="text-slate-900 mt-1">
                             {location.addressStreet}, {location.addressCity} {location.addressZipCode}
                           </p>
@@ -383,31 +385,31 @@ const EnhancedClientOperationsSection = ({
                         
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label className="text-sm font-medium text-slate-600">IBAN</Label>
+                            <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.iban')}</Label>
                             <p className="text-slate-900 mt-1 font-mono text-sm">{location.iban}</p>
                           </div>
                           
                           <div>
-                            <Label className="text-sm font-medium text-slate-600">MCC sektor</Label>
+                            <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.businessSector')}</Label>
                             <p className="text-slate-900 mt-1">{location.businessSector}</p>
                           </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label className="text-sm font-medium text-slate-600">Odhadovaný obrat</Label>
-                            <p className="text-slate-900 mt-1">{location.estimatedTurnover}€/mesiac</p>
+                            <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.estimatedTurnover')}</Label>
+                            <p className="text-slate-900 mt-1">{location.estimatedTurnover}{t('contracts.detail.client.perMonth')}</p>
                           </div>
                           
                           <div>
-                            <Label className="text-sm font-medium text-slate-600">Priemerná transakcia</Label>
-                            <p className="text-slate-900 mt-1">{location.averageTransaction}€</p>
+                            <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.averageTransaction')}</Label>
+                            <p className="text-slate-900 mt-1">{location.averageTransaction}{t('contracts.detail.client.euroCurrency')}</p>
                           </div>
                         </div>
 
                         {location.contactPersonName && (
                           <div className="pt-3 border-t border-slate-200">
-                            <Label className="text-sm font-medium text-slate-600">Kontaktná osoba</Label>
+                            <Label className="text-sm font-medium text-slate-600">{t('contracts.detail.client.contactPersonAtLocation')}</Label>
                             <p className="text-slate-900 mt-1">{location.contactPersonName}</p>
                             {location.contactPersonEmail && (
                               <p className="text-slate-600 text-sm">{location.contactPersonEmail}</p>
