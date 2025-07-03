@@ -1,47 +1,49 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { Plus, FileText, Building2, Users, BarChart3, Settings } from "lucide-react";
 
 const QuickActions = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('admin');
 
   const actions = [
     {
-      title: "Nová zmluva",
-      description: "Spustiť onboarding proces",
+      title: t('dashboard.quickActions.newContract'),
+      description: t('dashboard.quickActions.newContractDesc'),
       icon: Plus,
       color: "bg-blue-500 hover:bg-blue-600",
       textColor: "text-white",
       onClick: () => navigate('/admin/onboarding')
     },
     {
-      title: "Zmluvy",
-      description: "Spravovať všetky zmluvy",
+      title: t('dashboard.quickActions.contracts'),
+      description: t('dashboard.quickActions.contractsDesc'),
       icon: FileText,
       color: "bg-emerald-500 hover:bg-emerald-600",
       textColor: "text-white",
       onClick: () => navigate('/admin/merchants/contracts')
     },
     {
-      title: "Merchanti",
-      description: "Prehľad partnerov",
+      title: t('dashboard.quickActions.merchants'),
+      description: t('dashboard.quickActions.merchantsDesc'),
       icon: Building2,
       color: "bg-purple-500 hover:bg-purple-600",
       textColor: "text-white",
       onClick: () => navigate('/admin/merchants')
     },
     {
-      title: "Prevádzky",
-      description: "Správa lokácií",
+      title: t('dashboard.quickActions.locations'),
+      description: t('dashboard.quickActions.locationsDesc'),
       icon: BarChart3,
       color: "bg-orange-500 hover:bg-orange-600",
       textColor: "text-white",
       onClick: () => navigate('/admin/merchants/locations')
     },
     {
-      title: "Tím",
-      description: "Členovia tímu",
+      title: t('dashboard.quickActions.team'),
+      description: t('dashboard.quickActions.teamDesc'),
       icon: Users,
       color: "bg-cyan-500 hover:bg-cyan-600",
       textColor: "text-white",
@@ -52,7 +54,7 @@ const QuickActions = () => {
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-slate-900">Rýchle akcie</CardTitle>
+        <CardTitle className="text-slate-900">{t('dashboard.quickActions.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

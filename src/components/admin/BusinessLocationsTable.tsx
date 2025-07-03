@@ -12,6 +12,7 @@ import { Building2, MapPin, Euro, CreditCard, User, Phone, Mail } from "lucide-r
 import { useBusinessLocations } from "@/hooks/useBusinessLocations";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 interface BusinessLocationsTableProps {
   filters: {
@@ -25,6 +26,7 @@ interface BusinessLocationsTableProps {
 const BusinessLocationsTable = ({ filters }: BusinessLocationsTableProps) => {
   const { data: locations, isLoading, error } = useBusinessLocations(filters);
   const navigate = useNavigate();
+  const { t } = useTranslation('ui');
 
   const handleRowClick = (locationId: string) => {
     navigate(`/admin/merchants/location/${locationId}/view`);
@@ -34,9 +36,9 @@ const BusinessLocationsTable = ({ filters }: BusinessLocationsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Prevádzky</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.businessLocations')}</CardTitle>
           <CardDescription className="text-slate-600">
-            Načítavam prevádzky...
+            {t('table.loadingLocations')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -52,9 +54,9 @@ const BusinessLocationsTable = ({ filters }: BusinessLocationsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Prevádzky</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.businessLocations')}</CardTitle>
           <CardDescription className="text-red-600">
-            Chyba pri načítavaní prevádzkových miest: {error.message}
+            {t('table.errorLoadingLocations')}: {error.message}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -65,15 +67,15 @@ const BusinessLocationsTable = ({ filters }: BusinessLocationsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Prevádzky</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.businessLocations')}</CardTitle>
           <CardDescription className="text-slate-600">
-            Zatiaľ nie sú vytvorené žiadne prevádzky
+            {t('table.noLocationsCreated')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-slate-500">
             <Building2 className="h-12 w-12 mb-4" />
-            <p>Žiadne prevádzky</p>
+            <p>{t('table.noBusinessLocations')}</p>
           </div>
         </CardContent>
       </Card>
@@ -83,9 +85,9 @@ const BusinessLocationsTable = ({ filters }: BusinessLocationsTableProps) => {
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-slate-900">Prevádzky</CardTitle>
+        <CardTitle className="text-slate-900">{t('table.businessLocations')}</CardTitle>
         <CardDescription className="text-slate-600">
-          Prehľad všetkých prevádzkových miest ({locations.length} celkom) - kliknite na riadok pre detail
+          {t('table.locationsOverview', { count: locations.length })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -93,13 +95,13 @@ const BusinessLocationsTable = ({ filters }: BusinessLocationsTableProps) => {
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">Prevádzka</TableHead>
-                <TableHead className="font-medium text-slate-700">Merchant</TableHead>
-                <TableHead className="font-medium text-slate-700">Adresa</TableHead>
-                <TableHead className="font-medium text-slate-700">Sektor</TableHead>
-                <TableHead className="font-medium text-slate-700">Obrat</TableHead>
-                <TableHead className="font-medium text-slate-700">POS</TableHead>
-                <TableHead className="font-medium text-slate-700">Zmluva</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.location')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.merchant')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.address')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.sector')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.turnover')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.pos')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.contract')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -161,7 +163,7 @@ const BusinessLocationsTable = ({ filters }: BusinessLocationsTableProps) => {
                         variant={location.has_pos ? "default" : "secondary"}
                         className={location.has_pos ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}
                       >
-                        {location.has_pos ? "Áno" : "Nie"}
+                        {location.has_pos ? t('table.yes') : t('table.no')}
                       </Badge>
                     </div>
                   </TableCell>

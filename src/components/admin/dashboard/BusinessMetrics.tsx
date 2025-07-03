@@ -27,7 +27,7 @@ const BusinessMetrics = () => {
 
   const metricsData = [
     {
-      title: "Celkový príjem",
+      title: t('dashboard.metrics.totalRevenue'),
       value: `€${metrics?.monthlyRevenue?.toLocaleString() || '0'}`,
       change: `+${metrics?.revenueGrowth || 0}%`,
       icon: DollarSign,
@@ -35,7 +35,7 @@ const BusinessMetrics = () => {
       bgColor: "bg-green-100"
     },
     {
-      title: "Aktívne zmluvy",
+      title: t('dashboard.metrics.activeContracts'),
       value: metrics?.activeContracts?.toLocaleString() || '0',
       change: `+${metrics?.contractGrowth || 0}%`,
       icon: CreditCard,
@@ -43,7 +43,7 @@ const BusinessMetrics = () => {
       bgColor: "bg-blue-100"
     },
     {
-      title: "Celkový obrat",
+      title: t('dashboard.metrics.totalTurnover'),
       value: `€${metrics?.totalTurnover?.toLocaleString() || '0'}`,
       change: `+${metrics?.turnoverGrowth || 0}%`,
       icon: TrendingUp,
@@ -51,7 +51,7 @@ const BusinessMetrics = () => {
       bgColor: "bg-purple-100"
     },
     {
-      title: "Počet merchantov",
+      title: t('dashboard.metrics.totalMerchants'),
       value: metrics?.totalMerchants?.toLocaleString() || '0',
       change: `+${metrics?.merchantGrowth || 0}%`,
       icon: Users,
@@ -70,7 +70,7 @@ const BusinessMetrics = () => {
                 <p className="text-sm font-medium text-slate-600">{metric.title}</p>
                 <p className="text-2xl font-bold text-slate-900 mt-2">{metric.value}</p>
                 <p className={`text-sm font-medium mt-1 ${metric.color}`}>
-                  {metric.change} z minulého mesiaca
+                  {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
                 </p>
               </div>
               <div className={`p-3 rounded-full ${metric.bgColor} shadow-sm`}>

@@ -46,7 +46,12 @@
       "monthlyTransactions": "Monthly Transactions",
       "averageProfit": "Average Profit",
       "activeClients": "Active Clients",
-      "fromLastMonth": "from last month"
+      "fromLastMonth": "from last month",
+      "totalRevenue": "Total Revenue",
+      "activeContracts": "Active Contracts",
+      "totalTurnover": "Total Turnover",
+      "totalMerchants": "Number of Merchants",
+      "fromPreviousMonth": "from previous month"
     },
     "team": {
       "title": "Team Performance",
@@ -58,6 +63,30 @@
       "contractsThisMonth": "Contracts this month",
       "target": "Target",
       "topPerformers": "Top Performers"
+    },
+    "merchantOverview": {
+      "topMerchants": "Top Merchants",
+      "viewAllMerchants": "View All",
+      "geographicDistribution": "Geographic Distribution",
+      "contracts": "contracts",
+      "efficiency": "Efficiency",
+      "noMerchants": "No merchants yet",
+      "noLocationData": "No location data",
+      "totalMerchants": "Total Merchants",
+      "totalLocations": "Locations"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "newContract": "New Contract",
+      "newContractDesc": "Start onboarding process",
+      "contracts": "Contracts",
+      "contractsDesc": "Manage all contracts",
+      "merchants": "Merchants",
+      "merchantsDesc": "Partner overview",
+      "locations": "Locations",
+      "locationsDesc": "Location management",
+      "team": "Team",
+      "teamDesc": "Team members"
     }
   },
   "contracts": {

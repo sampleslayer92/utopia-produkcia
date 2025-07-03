@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useContractsData, ContractWithInfo } from "@/hooks/useContractsData";
 import ContractTableContent from "./enhanced-contracts/ContractTableContent";
 import ContractTableEmptyState from "./enhanced-contracts/ContractTableEmptyState";
+import { useTranslation } from 'react-i18next';
 
 interface EnhancedContractsTableProps {
   filters?: {
@@ -16,6 +17,7 @@ interface EnhancedContractsTableProps {
 
 const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
   const { data: contracts, isLoading, error } = useContractsData();
+  const { t } = useTranslation('ui');
   const searchTerm = filters?.search || "";
   const statusFilter = filters?.status || "all";
 
@@ -48,9 +50,9 @@ const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Správa zmlúv</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.contractManagement')}</CardTitle>
           <CardDescription className="text-slate-600">
-            Načítavam zmluvy...
+            {t('table.loadingContracts')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -66,9 +68,9 @@ const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Správa zmlúv</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.contractManagement')}</CardTitle>
           <CardDescription className="text-red-600">
-            Chyba pri načítavaní zmlúv: {error.message}
+            {t('table.errorLoadingContracts')}: {error.message}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -79,9 +81,9 @@ const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>
         <div>
-          <CardTitle className="text-slate-900">Správa zmlúv</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.contractManagement')}</CardTitle>
           <CardDescription className="text-slate-600">
-            Prehľad všetkých zmlúv v systéme ({filteredContracts.length} z {contracts?.length || 0})
+            {t('table.contractsOverview', { filtered: filteredContracts.length, total: contracts?.length || 0 })}
           </CardDescription>
         </div>
       </CardHeader>

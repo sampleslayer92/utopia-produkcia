@@ -46,7 +46,12 @@
       "monthlyTransactions": "Mesačné transakcie",
       "averageProfit": "Priemerný zisk",
       "activeClients": "Aktívni klienti",
-      "fromLastMonth": "oproti minulému mesiacu"
+      "fromLastMonth": "oproti minulému mesiacu",
+      "totalRevenue": "Celkový príjem",
+      "activeContracts": "Aktívne zmluvy",
+      "totalTurnover": "Celkový obrat",
+      "totalMerchants": "Počet merchantov",
+      "fromPreviousMonth": "z minulého mesiaca"
     },
     "team": {
       "title": "Výkonnosť tímu",
@@ -58,6 +63,30 @@
       "contractsThisMonth": "Zmluvy tento mesiac",
       "target": "Cieľ",
       "topPerformers": "Najlepší v tíme"
+    },
+    "merchantOverview": {
+      "topMerchants": "Top Merchanti",
+      "viewAllMerchants": "Zobraziť všetkých",
+      "geographicDistribution": "Geografické rozloženie",
+      "contracts": "zmlúv",
+      "efficiency": "Efektivita",
+      "noMerchants": "Zatiaľ žiadni merchanti",
+      "noLocationData": "Žiadne údaje o lokalitách",
+      "totalMerchants": "Celkom merchantov",
+      "totalLocations": "Prevádzok"
+    },
+    "quickActions": {
+      "title": "Rýchle akcie",
+      "newContract": "Nová zmluva",
+      "newContractDesc": "Spustiť onboarding proces",
+      "contracts": "Zmluvy",
+      "contractsDesc": "Spravovať všetky zmluvy",
+      "merchants": "Merchanti",
+      "merchantsDesc": "Prehľad partnerov",
+      "locations": "Prevádzky",
+      "locationsDesc": "Správa lokácií",
+      "team": "Tím",
+      "teamDesc": "Členovia tímu"
     }
   },
   "contracts": {

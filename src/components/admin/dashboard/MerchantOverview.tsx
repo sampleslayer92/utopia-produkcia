@@ -20,7 +20,7 @@ const MerchantOverview = () => {
           <CardHeader>
             <CardTitle className="flex items-center text-slate-900">
               <Building2 className="h-5 w-5 mr-2 text-blue-600" />
-              Top Merchanti
+              {t('dashboard.merchantOverview.topMerchants')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -42,7 +42,7 @@ const MerchantOverview = () => {
           <CardHeader>
             <CardTitle className="flex items-center text-slate-900">
               <MapPin className="h-5 w-5 mr-2 text-green-600" />
-              Geografické rozloženie
+              {t('dashboard.merchantOverview.geographicDistribution')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -61,10 +61,10 @@ const MerchantOverview = () => {
   }
 
   const getPerformanceBadge = (profit: number) => {
-    if (profit >= 1000) return { color: "bg-green-100 text-green-700", label: "Výborný" };
-    if (profit >= 500) return { color: "bg-blue-100 text-blue-700", label: "Dobrý" };
-    if (profit >= 100) return { color: "bg-yellow-100 text-yellow-700", label: "Priemerný" };
-    return { color: "bg-slate-100 text-slate-700", label: "Nový" };
+    if (profit >= 1000) return { color: "bg-green-100 text-green-700", label: t('dashboard.team.excellent') };
+    if (profit >= 500) return { color: "bg-blue-100 text-blue-700", label: t('dashboard.team.good') };
+    if (profit >= 100) return { color: "bg-yellow-100 text-yellow-700", label: t('dashboard.team.average') };
+    return { color: "bg-slate-100 text-slate-700", label: t('dashboard.team.needsImprovement') };
   };
 
   const topMerchants = merchantData?.topMerchants?.slice(0, 5) || [];
@@ -78,7 +78,7 @@ const MerchantOverview = () => {
           <CardTitle className="flex items-center justify-between text-slate-900">
             <div className="flex items-center">
               <Building2 className="h-5 w-5 mr-2 text-blue-600" />
-              Top Merchanti
+              {t('dashboard.merchantOverview.topMerchants')}
             </div>
             <Button 
               variant="ghost" 
@@ -87,7 +87,7 @@ const MerchantOverview = () => {
               className="text-blue-600 hover:text-blue-700"
             >
               <Eye className="h-4 w-4 mr-1" />
-              Zobraziť všetkých
+              {t('dashboard.merchantOverview.viewAllMerchants')}
             </Button>
           </CardTitle>
         </CardHeader>
@@ -122,7 +122,7 @@ const MerchantOverview = () => {
                     <div className="flex items-center justify-between text-xs text-slate-600">
                       <span className="flex items-center">
                         <CreditCard className="h-3 w-3 mr-1" />
-                        {merchant.activeContracts} zmlúv
+                        {merchant.activeContracts} {t('dashboard.merchantOverview.contracts')}
                       </span>
                       <span className="flex items-center">
                         <MapPin className="h-3 w-3 mr-1" />
@@ -132,7 +132,7 @@ const MerchantOverview = () => {
                     
                     <div className="mt-2">
                       <div className="flex justify-between text-xs mb-1">
-                        <span>Efektivita</span>
+                        <span>{t('dashboard.merchantOverview.efficiency')}</span>
                         <span>{merchant.efficiency}%</span>
                       </div>
                       <Progress value={merchant.efficiency} className="h-1" />
@@ -145,7 +145,7 @@ const MerchantOverview = () => {
             {topMerchants.length === 0 && (
               <div className="text-center py-6 text-slate-500">
                 <Building2 className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">Zatiaľ žiadni merchanti</p>
+                <p className="text-sm">{t('dashboard.merchantOverview.noMerchants')}</p>
               </div>
             )}
           </div>
@@ -157,7 +157,7 @@ const MerchantOverview = () => {
         <CardHeader>
           <CardTitle className="flex items-center text-slate-900">
             <MapPin className="h-5 w-5 mr-2 text-green-600" />
-            Geografické rozloženie
+            {t('dashboard.merchantOverview.geographicDistribution')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -192,7 +192,7 @@ const MerchantOverview = () => {
             {topCities.length === 0 && (
               <div className="text-center py-6 text-slate-500">
                 <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">Žiadne údaje o lokalitách</p>
+                <p className="text-sm">{t('dashboard.merchantOverview.noLocationData')}</p>
               </div>
             )}
 
@@ -203,13 +203,13 @@ const MerchantOverview = () => {
                   <div className="text-2xl font-bold text-slate-900">
                     {merchantData?.totalMerchants || 0}
                   </div>
-                  <div className="text-xs text-slate-600">Celkom merchantov</div>
+                  <div className="text-xs text-slate-600">{t('dashboard.merchantOverview.totalMerchants')}</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-slate-900">
                     {merchantData?.totalLocations || 0}
                   </div>
-                  <div className="text-xs text-slate-600">Prevádzok</div>
+                  <div className="text-xs text-slate-600">{t('dashboard.merchantOverview.totalLocations')}</div>
                 </div>
               </div>
             </div>
