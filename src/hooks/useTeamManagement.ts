@@ -228,6 +228,14 @@ export const useTeamManagement = () => {
 
       if (profileError) throw profileError;
 
+      // Finally delete from auth.users using Admin API
+      const { error: authError } = await supabase.auth.admin.deleteUser(id);
+
+      if (authError) {
+        console.error('Error deleting auth user:', authError);
+        throw authError;
+      }
+
       // Refresh team members list
       await fetchTeamMembers();
       toast.success('Člen tímu bol úspešne vymazaný');
