@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, Download, FileText, CheckCircle } from 'lucide-react';
 import { useDocumentManager } from '@/hooks/useDocumentManager';
+import { useTranslation } from 'react-i18next';
 
 interface DocumentManagementProps {
   contractId: string;
@@ -24,6 +25,7 @@ const DocumentManagement = ({
 }: DocumentManagementProps) => {
   const [dragActive, setDragActive] = useState(false);
   const { uploadContractDocument, downloadContractDocument, isUploading, isDownloading } = useDocumentManager();
+  const { t } = useTranslation('admin');
 
   const handleFileUpload = async (file: File, type: 'unsigned' | 'signed') => {
     await uploadContractDocument(contractId, file, type);
@@ -62,23 +64,23 @@ const DocumentManagement = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileText className="h-5 w-5" />
-          Správa dokumentov
+          {t('documentManagement.title')}
         </CardTitle>
         <CardDescription>
-          Nahrávanie a správa zmluvných dokumentov pre zmluvu {contractNumber}
+          {t('documentManagement.description')} {contractNumber}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Unsigned Document Section */}
         <div className="space-y-3">
-          <h3 className="font-medium text-slate-900">Nepodpísaná zmluva</h3>
+          <h3 className="font-medium text-slate-900">{t('documentManagement.unsignedContract')}</h3>
           
           {documentUrl ? (
             <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <span className="text-sm text-green-800">
-                  Dokument nahraný {documentUploadedAt && new Date(documentUploadedAt).toLocaleString('sk-SK')}
+                  {t('documentManagement.documentUploaded')} {documentUploadedAt && new Date(documentUploadedAt).toLocaleString('sk-SK')}
                 </span>
               </div>
               <Button
@@ -88,7 +90,7 @@ const DocumentManagement = ({
                 disabled={isDownloading}
               >
                 <Download className="h-4 w-4 mr-1" />
-                Stiahnuť
+                {t('documentManagement.download')}
               </Button>
             </div>
           ) : (
@@ -103,7 +105,7 @@ const DocumentManagement = ({
             >
               <Upload className="h-8 w-8 mx-auto mb-2 text-slate-400" />
               <p className="text-sm text-slate-600 mb-2">
-                Pretiahnite súbor sem alebo kliknite na tlačidlo
+                {t('documentManagement.dragDropHere')}
               </p>
               <label>
                 <input
@@ -114,7 +116,7 @@ const DocumentManagement = ({
                 />
                 <Button variant="outline" disabled={isUploading} asChild>
                   <span>
-                    {isUploading ? 'Nahráva sa...' : 'Vybrať súbor'}
+                    {isUploading ? t('documentManagement.uploading') : t('documentManagement.selectFile')}
                   </span>
                 </Button>
               </label>
@@ -124,14 +126,14 @@ const DocumentManagement = ({
 
         {/* Signed Document Section */}
         <div className="space-y-3">
-          <h3 className="font-medium text-slate-900">Podpísaná zmluva</h3>
+          <h3 className="font-medium text-slate-900">{t('documentManagement.signedContract')}</h3>
           
           {signedDocumentUrl ? (
             <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <span className="text-sm text-green-800">
-                  Podpísaný dokument nahraný {documentSignedAt && new Date(documentSignedAt).toLocaleString('sk-SK')}
+                  {t('documentManagement.signedDocumentUploaded')} {documentSignedAt && new Date(documentSignedAt).toLocaleString('sk-SK')}
                 </span>
               </div>
               <Button
@@ -141,14 +143,14 @@ const DocumentManagement = ({
                 disabled={isDownloading}
               >
                 <Download className="h-4 w-4 mr-1" />
-                Stiahnuť
+                {t('documentManagement.download')}
               </Button>
             </div>
           ) : (
             <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center">
               <FileText className="h-8 w-8 mx-auto mb-2 text-slate-400" />
               <p className="text-sm text-slate-600 mb-2">
-                Nahrať podpísanú zmluvu
+                {t('documentManagement.uploadSignedContract')}
               </p>
               <label>
                 <input
@@ -159,7 +161,7 @@ const DocumentManagement = ({
                 />
                 <Button variant="outline" disabled={isUploading} asChild>
                   <span>
-                    {isUploading ? 'Nahráva sa...' : 'Vybrať súbor'}
+                    {isUploading ? t('documentManagement.uploading') : t('documentManagement.selectFile')}
                   </span>
                 </Button>
               </label>

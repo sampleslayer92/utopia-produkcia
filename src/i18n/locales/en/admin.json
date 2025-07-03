@@ -720,5 +720,25 @@
     "requestSignature": "Request Signature",
     "downloadDocument": "Download Document",
     "uploadSignedDocument": "Upload Signed Document"
+  },
+  "documentManagement": {
+    "title": "Document Management",
+    "description": "Upload and manage contract documents for contract",
+    "unsignedContract": "Unsigned Contract",
+    "signedContract": "Signed Contract",
+    "documentUploaded": "Document uploaded",
+    "signedDocumentUploaded": "Signed document uploaded",
+    "download": "Download",
+    "dragDropHere": "Drag file here or click the button",
+    "selectFile": "Select File",
+    "uploading": "Uploading...",
+    "uploadSignedContract": "Upload signed contract"
+  },
+  "status": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "approved": "Approved", 
+    "rejected": "Rejected",
+    "signed": "Signed"
   }
 }
