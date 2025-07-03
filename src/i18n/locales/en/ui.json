@@ -15,6 +15,54 @@
       "address": "Address"
     }
   },
+  "validation": {
+    "error": "Error",
+    "companyNameRequired": "Company name is required",
+    "contactNameRequired": "Contact person name is required",
+    "emailRequired": "Contact person email is required",
+    "invalidEmail": "Invalid email format"
+  },
+  "messages": {
+    "success": "Success",
+    "merchantCreated": "Merchant was successfully created",
+    "errorCreating": "An error occurred while creating merchant",
+    "contractDeleted": "Contract was successfully deleted",
+    "errorDeleting": "Error deleting contract",
+    "downloadPending": "PDF download will be implemented later",
+    "loadingMerchants": "Loading merchants...",
+    "errorLoadingMerchants": "Error loading merchants",
+    "noMerchants": "No merchants have been created yet",
+    "noMerchantsEmpty": "No merchants"
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "create": "Create Merchant",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "downloadPdf": "Download PDF",
+    "openMenu": "Open menu",
+    "exportLocations": "Export business locations"
+  },
+  "stats": {
+    "totalCount": "Total Count",
+    "allLocations": "All locations",
+    "withPos": "With POS terminal",
+    "hasTerminals": "Have payment terminals",
+    "averageTurnover": "Average Turnover",
+    "monthlyPerLocation": "Monthly per location"
+  },
+  "table": {
+    "merchantsList": "Merchants List",
+    "merchantsOverview": "Overview of all merchants in the system ({{count}} total) - click on row for details",
+    "company": "Company",
+    "contactPerson": "Contact Person",
+    "contracts": "Contracts",
+    "monthlyProfit": "Monthly Profit",
+    "created": "Created",
+    "contractsCount": "{{count}} contracts"
+  },
   "form": {
     "required": "Required field",
     "validation": {

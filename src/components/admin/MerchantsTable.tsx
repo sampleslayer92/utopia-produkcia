@@ -1,4 +1,5 @@
 
+import { useTranslation } from 'react-i18next';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -25,6 +26,7 @@ interface MerchantsTableProps {
 }
 
 const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
+  const { t } = useTranslation('ui');
   const { data: merchants, isLoading, error, refetch } = useMerchantsData(filters);
   const navigate = useNavigate();
 
@@ -36,9 +38,9 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Zoznam merchantov</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.merchantsList')}</CardTitle>
           <CardDescription className="text-slate-600">
-            Načítavam merchantov...
+            {t('messages.loadingMerchants')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -54,9 +56,9 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Zoznam merchantov</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.merchantsList')}</CardTitle>
           <CardDescription className="text-red-600">
-            Chyba pri načítavaní merchantov: {error.message}
+            {t('messages.errorLoadingMerchants')}: {error.message}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -67,15 +69,15 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">Zoznam merchantov</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.merchantsList')}</CardTitle>
           <CardDescription className="text-slate-600">
-            Zatiaľ nie sú vytvorení žiadni merchanti
+            {t('messages.noMerchants')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8 text-slate-500">
             <Building2 className="h-12 w-12 mb-4" />
-            <p>Žiadni merchanti</p>
+            <p>{t('messages.noMerchantsEmpty')}</p>
           </div>
         </CardContent>
       </Card>
@@ -85,9 +87,9 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-slate-900">Zoznam merchantov</CardTitle>
+        <CardTitle className="text-slate-900">{t('table.merchantsList')}</CardTitle>
         <CardDescription className="text-slate-600">
-          Prehľad všetkých merchantov v systéme ({merchants.length} celkom) - kliknite na riadok pre detail
+          {t('table.merchantsOverview', { count: merchants.length })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -95,12 +97,12 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">Spoločnosť</TableHead>
-                <TableHead className="font-medium text-slate-700">Kontaktná osoba</TableHead>
-                <TableHead className="font-medium text-slate-700">IČO</TableHead>
-                <TableHead className="font-medium text-slate-700">Zmluvy</TableHead>
-                <TableHead className="font-medium text-slate-700">Mesačný zisk</TableHead>
-                <TableHead className="font-medium text-slate-700">Vytvorený</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.company')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.contactPerson')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('form.labels.ico')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.contracts')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.monthlyProfit')}</TableHead>
+                <TableHead className="font-medium text-slate-700">{t('table.created')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -140,7 +142,7 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
                     <div className="flex items-center space-x-2">
                       <FileText className="h-4 w-4 text-slate-500" />
                       <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                        {merchant.contract_count || 0} zmlúv
+                        {t('table.contractsCount', { count: merchant.contract_count || 0 })}
                       </Badge>
                     </div>
                   </TableCell>

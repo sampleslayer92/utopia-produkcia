@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Download, MapPin, CreditCard, TrendingUp } from "lucide-react";
 
 const BusinessLocationsPage = () => {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('pages');
+  const { t: tUi } = useTranslation('ui');
   const { data: stats, isLoading: statsLoading } = useBusinessLocationsStats();
   const [filters, setFilters] = useState({
     merchant: 'all',
@@ -23,23 +24,23 @@ const BusinessLocationsPage = () => {
 
   const statsCards = [
     {
-      title: "Celkový počet",
+      title: tUi('stats.totalCount'),
       value: stats?.totalLocations || 0,
-      subtitle: "Všetky prevádzky",
+      subtitle: tUi('stats.allLocations'),
       icon: MapPin,
       iconColor: "bg-blue-500"
     },
     {
-      title: "S POS terminálom",
+      title: tUi('stats.withPos'),
       value: stats?.withPOS || 0,
-      subtitle: "Majú platobné terminály",
+      subtitle: tUi('stats.hasTerminals'),
       icon: CreditCard,
       iconColor: "bg-emerald-500"
     },
     {
-      title: "Priemerný obrat",
+      title: tUi('stats.averageTurnover'),
       value: `€${(stats?.averageTurnover || 0).toFixed(0)}`,
-      subtitle: "Mesačne na prevádzku",
+      subtitle: tUi('stats.monthlyPerLocation'),
       icon: TrendingUp,
       iconColor: "bg-purple-500"
     }
@@ -49,15 +50,15 @@ const BusinessLocationsPage = () => {
     <>
       <Button variant="outline" className="hover:bg-slate-50">
         <Download className="h-4 w-4 mr-2" />
-        Export prevádzkových miest
+        {tUi('buttons.exportLocations')}
       </Button>
     </>
   );
 
   return (
     <AdminLayout 
-      title="Prevádzky" 
-      subtitle="Prehľad všetkých prevádzkových miest"
+      title={t('businessLocations.title')} 
+      subtitle={t('businessLocations.subtitle')}
       actions={businessLocationsActions}
     >
       <div className="space-y-6">

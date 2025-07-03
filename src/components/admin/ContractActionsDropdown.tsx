@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { MoreHorizontal, Eye, Edit, Trash2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,7 @@ interface ContractActionsDropdownProps {
 }
 
 const ContractActionsDropdown = ({ contractId, contractNumber }: ContractActionsDropdownProps) => {
+  const { t } = useTranslation('ui');
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const contractDeleteMutation = useContractDelete();
@@ -34,7 +36,7 @@ const ContractActionsDropdown = ({ contractId, contractNumber }: ContractActions
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
-      `Naozaj chcete zmazať zmluvu ${contractNumber}? Táto akcia sa nedá vrátiť späť.`
+      t('modal.confirm.delete') + ` ${contractNumber}?`
     );
     
     if (!confirmed) return;
@@ -42,18 +44,18 @@ const ContractActionsDropdown = ({ contractId, contractNumber }: ContractActions
     try {
       console.log('Deleting contract from dropdown:', contractId);
       await contractDeleteMutation.mutateAsync(contractId);
-      toast.success("Zmluva bola úspešne zmazaná");
+      toast.success(t('messages.contractDeleted'));
     } catch (error) {
       console.error('Error deleting contract:', error);
       const errorMessage = error instanceof Error ? error.message : 'Neočakávaná chyba pri mazaní zmluvy';
-      toast.error(`Chyba pri mazaní zmluvy: ${errorMessage}`);
+      toast.error(`${t('messages.errorDeleting')}: ${errorMessage}`);
     }
     setIsOpen(false);
   };
 
   const handleDownload = () => {
     // TODO: Implement PDF download
-    toast.info("Sťahovanie PDF bude implementované neskôr");
+    toast.info(t('messages.downloadPending'));
     setIsOpen(false);
   };
 
@@ -61,22 +63,22 @@ const ContractActionsDropdown = ({ contractId, contractNumber }: ContractActions
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Otvoriť menu</span>
+          <span className="sr-only">{t('buttons.openMenu')}</span>
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={handleView}>
           <Eye className="mr-2 h-4 w-4" />
-          Zobraziť
+          {t('buttons.view')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleEdit}>
           <Edit className="mr-2 h-4 w-4" />
-          Upraviť
+          {t('buttons.edit')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownload}>
           <Download className="mr-2 h-4 w-4" />
-          Stiahnuť PDF
+          {t('buttons.downloadPdf')}
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={handleDelete} 
@@ -84,7 +86,7 @@ const ContractActionsDropdown = ({ contractId, contractNumber }: ContractActions
           disabled={contractDeleteMutation.isPending}
         >
           <Trash2 className="mr-2 h-4 w-4" />
-          {contractDeleteMutation.isPending ? "Mazanie..." : "Zmazať"}
+          {contractDeleteMutation.isPending ? t('buttons.deleting') : t('buttons.delete')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -83,8 +83,8 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
   const validateForm = () => {
     if (!formData.company_name.trim()) {
       toast({
-        title: "Chyba",
-        description: "Názov spoločnosti je povinný",
+        title: t('validation.error'),
+        description: t('validation.companyNameRequired'),
         variant: "destructive"
       });
       return false;
@@ -92,8 +92,8 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
     
     if (!formData.contact_person_name.trim()) {
       toast({
-        title: "Chyba", 
-        description: "Meno kontaktnej osoby je povinné",
+        title: t('validation.error'), 
+        description: t('validation.contactNameRequired'),
         variant: "destructive"
       });
       return false;
@@ -101,8 +101,8 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
     
     if (!formData.contact_person_email.trim()) {
       toast({
-        title: "Chyba",
-        description: "Email kontaktnej osoby je povinný",
+        title: t('validation.error'),
+        description: t('validation.emailRequired'),
         variant: "destructive"
       });
       return false;
@@ -112,8 +112,8 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.contact_person_email)) {
       toast({
-        title: "Chyba",
-        description: "Neplatný formát emailu",
+        title: t('validation.error'),
+        description: t('validation.invalidEmail'),
         variant: "destructive"
       });
       return false;
@@ -150,8 +150,8 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
       if (error) throw error;
 
       toast({
-        title: "Úspech",
-        description: "Merchant bol úspešne vytvorený"
+        title: t('messages.success'),
+        description: t('messages.merchantCreated')
       });
       
       // Reset form
@@ -174,8 +174,8 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
     } catch (error: any) {
       console.error('Error creating merchant:', error);
       toast({
-        title: "Chyba",
-        description: error.message || "Nastala chyba pri vytváraní merchanta",
+        title: t('validation.error'),
+        description: error.message || t('messages.errorCreating'),
         variant: "destructive"
       });
     } finally {
@@ -214,16 +214,16 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
                 value={formData.company_name}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, company_name: value }))}
                 onCompanySelect={handleCompanySelect}
-                placeholder="Začnite písať názov spoločnosti..."
+                placeholder={t('form.placeholders.companyName')}
               />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <OnboardingInput
-                    label="IČO"
+                    label={t('form.labels.ico')}
                     value={formData.ico}
                     onChange={handleInputChange('ico')}
-                    placeholder="12345678"
+                    placeholder={t('form.placeholders.ico')}
                     icon={<Hash className="h-4 w-4" />}
                   />
                   <div className="flex justify-end">
@@ -232,19 +232,19 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
                 </div>
                 
                 <OnboardingInput
-                  label="DIČ"
+                  label={t('form.labels.dic')}
                   value={formData.dic}
                   onChange={handleInputChange('dic')}
-                  placeholder="1234567890"
+                  placeholder={t('form.placeholders.dic')}
                   icon={<Hash className="h-4 w-4" />}
                 />
               </div>
               
               <OnboardingInput
-                label="IČ DPH"
+                label={t('form.labels.vatNumber')}
                 value={formData.vat_number}
                 onChange={handleInputChange('vat_number')}
-                placeholder="SK1234567890"
+                placeholder={t('form.placeholders.vatNumber')}
                 icon={<CreditCard className="h-4 w-4" />}
               />
             </div>
@@ -261,30 +261,30 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
             
             <div className="space-y-4">
               <OnboardingInput
-                label="Meno a priezvisko *"
+                label={`${t('form.labels.name')} *`}
                 value={formData.contact_person_name}
                 onChange={handleInputChange('contact_person_name')}
-                placeholder="Ján Novák"
+                placeholder={t('form.placeholders.name')}
                 icon={<User className="h-4 w-4" />}
                 required
               />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <OnboardingInput
-                  label="Email *"
+                  label={`${t('form.labels.email')} *`}
                   type="email"
                   value={formData.contact_person_email}
                   onChange={handleInputChange('contact_person_email')}
-                  placeholder="jan.novak@example.com"
+                  placeholder={t('form.placeholders.email')}
                   icon={<Mail className="h-4 w-4" />}
                   required
                 />
                 
                 <OnboardingInput
-                  label="Telefón"
+                  label={t('form.labels.phone')}
                   value={formData.contact_person_phone}
                   onChange={handleInputChange('contact_person_phone')}
-                  placeholder="+421 900 123 456"
+                  placeholder={t('form.placeholders.phone')}
                   icon={<Phone className="h-4 w-4" />}
                 />
               </div>
@@ -302,27 +302,27 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
             
             <div className="space-y-4">
               <OnboardingInput
-                label="Ulica a číslo"
+                label={t('form.labels.street')}
                 value={formData.address_street}
                 onChange={handleInputChange('address_street')}
-                placeholder="Hlavná 123"
+                placeholder={t('form.placeholders.street')}
                 icon={<MapPin className="h-4 w-4" />}
               />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <OnboardingInput
-                  label="Mesto"
+                  label={t('form.labels.city')}
                   value={formData.address_city}
                   onChange={handleInputChange('address_city')}
-                  placeholder="Bratislava"
+                  placeholder={t('form.placeholders.city')}
                   icon={<MapPin className="h-4 w-4" />}
                 />
                 
                 <OnboardingInput
-                  label="PSČ"
+                  label={t('form.labels.zipCode')}
                   value={formData.address_zip_code}
                   onChange={handleInputChange('address_zip_code')}
-                  placeholder="12345"
+                  placeholder={t('form.placeholders.zipCode')}
                   icon={<Hash className="h-4 w-4" />}
                 />
               </div>
@@ -338,7 +338,7 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
               disabled={isLoading}
               className="px-6 hover:bg-slate-50"
             >
-              Zrušiť
+              {t('buttons.cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -346,7 +346,7 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
               className="px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
             >
               {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Vytvoriť merchanta
+              {t('buttons.create')}
             </Button>
           </div>
         </form>

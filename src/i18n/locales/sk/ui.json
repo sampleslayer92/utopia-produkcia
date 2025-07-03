@@ -15,6 +15,54 @@
       "address": "Adresa"
     }
   },
+  "validation": {
+    "error": "Chyba",
+    "companyNameRequired": "Názov spoločnosti je povinný",
+    "contactNameRequired": "Meno kontaktnej osoby je povinné",
+    "emailRequired": "Email kontaktnej osoby je povinný",
+    "invalidEmail": "Neplatný formát emailu"
+  },
+  "messages": {
+    "success": "Úspech",
+    "merchantCreated": "Merchant bol úspešne vytvorený",
+    "errorCreating": "Nastala chyba pri vytváraní merchanta",
+    "contractDeleted": "Zmluva bola úspešne zmazaná",
+    "errorDeleting": "Chyba pri mazaní zmluvy",
+    "downloadPending": "Sťahovanie PDF bude implementované neskôr",
+    "loadingMerchants": "Načítavam merchantov...",
+    "errorLoadingMerchants": "Chyba pri načítavaní merchantov",
+    "noMerchants": "Zatiaľ nie sú vytvorení žiadni merchanti",
+    "noMerchantsEmpty": "Žiadni merchanti"
+  },
+  "buttons": {
+    "cancel": "Zrušiť",
+    "create": "Vytvoriť merchanta",
+    "view": "Zobraziť",
+    "edit": "Upraviť",
+    "delete": "Zmazať",
+    "deleting": "Mazanie...",
+    "downloadPdf": "Stiahnuť PDF",
+    "openMenu": "Otvoriť menu",
+    "exportLocations": "Export prevádzkových miest"
+  },
+  "stats": {
+    "totalCount": "Celkový počet",
+    "allLocations": "Všetky prevádzky",
+    "withPos": "S POS terminálom",
+    "hasTerminals": "Majú platobné terminály",
+    "averageTurnover": "Priemerný obrat",
+    "monthlyPerLocation": "Mesačne na prevádzku"
+  },
+  "table": {
+    "merchantsList": "Zoznam merchantov",
+    "merchantsOverview": "Prehľad všetkých merchantov v systéme ({{count}} celkom) - kliknite na riadok pre detail",
+    "company": "Spoločnosť",
+    "contactPerson": "Kontaktná osoba",
+    "contracts": "Zmluvy",
+    "monthlyProfit": "Mesačný zisk",
+    "created": "Vytvorený",
+    "contractsCount": "{{count}} zmlúv"
+  },
   "form": {
     "required": "Povinné pole",
     "validation": {

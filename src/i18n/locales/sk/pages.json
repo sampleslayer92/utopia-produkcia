@@ -29,5 +29,9 @@
   "adminOnboarding": {
     "title": "Nová zmluva",
     "subtitle": "Vytvorenie novej zmluvy a merchanta"
+  },
+  "businessLocations": {
+    "title": "Prevádzky",
+    "subtitle": "Prehľad všetkých prevádzkových miest"
   }
 }

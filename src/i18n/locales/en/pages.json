@@ -27,7 +27,11 @@
     "editLocation": "Edit location"
   },
   "adminOnboarding": {
-    "title": "New Contract",
+    "title": "New Contract", 
     "subtitle": "Create new contract and merchant"
+  },
+  "businessLocations": {
+    "title": "Business Locations",
+    "subtitle": "Overview of all business locations"
   }
 }
