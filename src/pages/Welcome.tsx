@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,12 +5,12 @@ import { Users, Building2, User, ArrowRight, LogIn, Zap, Shield, Sparkles } from
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
-
 const Welcome = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const [showRoleSelection, setShowRoleSelection] = useState(false);
-
   const handleRoleSelect = (role: 'admin' | 'partner' | 'merchant') => {
     localStorage.setItem('utopia_user_role', role);
     switch (role) {
@@ -26,19 +25,14 @@ const Welcome = () => {
         break;
     }
   };
-
   const handleNewClient = () => {
     navigate('/onboarding');
   };
-
   const handleLogin = () => {
     navigate('/auth');
   };
-
-
   if (showRoleSelection) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center p-6">
+    return <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
           {/* Header with Language Switcher */}
           <div className="flex justify-end mb-4">
@@ -47,20 +41,13 @@ const Welcome = () => {
 
           {/* Header */}
           <div className="text-center mb-8">
-            <img 
-              src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
-              alt="Utopia Logo" 
-              className="h-16 w-auto mx-auto mb-4" 
-            />
+            <img src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" alt="Utopia Logo" className="h-16 w-auto mx-auto mb-4" />
             <p className="text-slate-600 mt-2">{t('welcome.selectRole')}</p>
           </div>
 
           {/* Role Selection */}
           <div className="space-y-4">
-            <Card 
-              className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-blue-300" 
-              onClick={() => handleRoleSelect('admin')}
-            >
+            <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-blue-300" onClick={() => handleRoleSelect('admin')}>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
                   <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
@@ -75,10 +62,7 @@ const Welcome = () => {
               </CardContent>
             </Card>
 
-            <Card 
-              className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-blue-300" 
-              onClick={() => handleRoleSelect('partner')}
-            >
+            <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-blue-300" onClick={() => handleRoleSelect('partner')}>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
                   <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
@@ -93,10 +77,7 @@ const Welcome = () => {
               </CardContent>
             </Card>
 
-            <Card 
-              className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-blue-300" 
-              onClick={() => handleRoleSelect('merchant')}
-            >
+            <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-blue-300" onClick={() => handleRoleSelect('merchant')}>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
                   <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
@@ -114,21 +95,14 @@ const Welcome = () => {
 
           {/* Back Button */}
           <div className="mt-8 text-center">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowRoleSelection(false)} 
-              className="text-slate-600 border-slate-300"
-            >
+            <Button variant="outline" onClick={() => setShowRoleSelection(false)} className="text-slate-600 border-slate-300">
               {t('welcome.backButton')}
             </Button>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
       {/* Header with Language Switcher */}
       <div className="flex justify-end p-6">
         <LanguageSwitcher />
@@ -141,11 +115,7 @@ const Welcome = () => {
           {/* Hero Section */}
           <div className="text-center mb-16">
             <div className="mb-8">
-              <img 
-                src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
-                alt="Utopia Logo" 
-                className="h-24 w-auto mx-auto mb-8 animate-fade-in" 
-              />
+              <img src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" alt="Utopia Logo" className="h-24 w-auto mx-auto mb-8 animate-fade-in" />
             </div>
             
             <div className="space-y-6 mb-12">
@@ -155,9 +125,7 @@ const Welcome = () => {
               <p className="text-2xl md:text-3xl font-semibold text-muted-foreground animate-fade-in">
                 {t('welcome.subtitle')}
               </p>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-in">
-                {t('welcome.heroDescription')}
-              </p>
+              
             </div>
 
             {/* Features Grid */}
@@ -190,10 +158,7 @@ const Welcome = () => {
 
           {/* Action Cards */}
           <div className="max-w-2xl mx-auto space-y-4">
-            <Card 
-              className="border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-primary/30 group" 
-              onClick={handleLogin}
-            >
+            <Card className="border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-primary/30 group" onClick={handleLogin}>
               <CardContent className="p-8">
                 <div className="flex items-center space-x-6">
                   <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -208,18 +173,11 @@ const Welcome = () => {
               </CardContent>
             </Card>
 
-            <Card 
-              className="border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-emerald-500/30 group" 
-              onClick={handleNewClient}
-            >
+            <Card className="border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-emerald-500/30 group" onClick={handleNewClient}>
               <CardContent className="p-8">
                 <div className="flex items-center space-x-6">
                   <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <img 
-                      src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
-                      alt="Utopia Logo" 
-                      className="h-8 w-8 object-contain brightness-0 invert" 
-                    />
+                    <img src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" alt="Utopia Logo" className="h-8 w-8 object-contain brightness-0 invert" />
                   </div>
                   <div className="flex-1">
                     <h2 className="text-2xl font-semibold text-foreground mb-2">{t('welcome.onboarding.title')}</h2>
@@ -241,8 +199,6 @@ const Welcome = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Welcome;
