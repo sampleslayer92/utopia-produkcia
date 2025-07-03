@@ -123,6 +123,48 @@
       "monthlyProfit": "Mesačný zisk",
       "contractsCount": "{{count}} zmlúv"
     },
+    "statusOptions": {
+      "draft": "Koncept",
+      "submitted": "Odoslané",
+      "approved": "Schválené",
+      "rejected": "Zamietnuté",
+      "in_progress": "Rozpracované",
+      "sent_to_client": "Odoslané klientovi",
+      "signed": "Podpísané",
+      "lost": "Stratené"
+    },
+    "sourceOptions": {
+      "web": "Web",
+      "partner": "Partner",
+      "direct": "Priamy kontakt",
+      "referral": "Odporúčanie"
+    },
+    "detail": {
+      "title": "Detail zmluvy",
+      "loading": "Načítavam...",
+      "loadingDetail": "Načítavam detail zmluvy...",
+      "error": "Chyba",
+      "errorLoading": "Chyba pri načítavaní",
+      "contractNotFound": "Zmluva nenájdená",
+      "errorMessage": "Nepodarilo sa načítať detail zmluvy.",
+      "contractNotExists": "Zmluva s ID {{id}} neexistuje.",
+      "backToList": "Späť na zoznam",
+      "unknownClient": "Neznámy klient",
+      "completed": "dokončené",
+      "exportPdf": "Export PDF",
+      "saveChanges": "Uložiť zmeny",
+      "saving": "Ukladám...",
+      "edit": "Upraviť",
+      "cancelEdit": "Zrušiť úpravy",
+      "tabs": {
+        "overview": "Prehľad",
+        "client": "Klient",
+        "devices": "Zariadenia",
+        "finance": "Financie",
+        "documents": "Dokumenty",
+        "history": "História"
+      }
+    },
     "filters": {
       "search": "Hľadať",
       "searchPlaceholder": "Číslo zmluvy, meno, email...",

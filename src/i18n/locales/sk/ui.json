@@ -159,5 +159,13 @@
     "allStatuses": "Všetky stavy",
     "allSources": "Všetky zdroje",
     "allMerchants": "Všetci merchanti"
+  },
+  "profile": {
+    "myAccount": "Môj účet",
+    "profile": "Profil",
+    "settings": "Nastavenia",
+    "signOut": "Odhlásiť sa",
+    "signedOutSuccess": "Úspešne odhlásený",
+    "signOutError": "Chyba pri odhlásení"
   }
 }

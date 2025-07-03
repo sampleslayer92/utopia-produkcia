@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 import { useSidebar } from "@/components/ui/sidebar";
 
 const AdminProfile = () => {
-  const { t } = useTranslation('admin');
+  const { t } = useTranslation('ui');
   const { profile, userRole, signOut } = useAuth();
   const navigate = useNavigate();
   const { state } = useSidebar();
@@ -26,10 +26,10 @@ const AdminProfile = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast.success('Úspešne odhlásený');
+      toast.success(t('profile.signedOutSuccess'));
       navigate('/auth');
     } catch (error) {
-      toast.error('Chyba pri odhlásení');
+      toast.error(t('profile.signOutError'));
     }
   };
 
@@ -80,7 +80,7 @@ const AdminProfile = () => {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>
           <div className="flex items-center justify-between">
-            <span>Môj účet</span>
+            <span>{t('profile.myAccount')}</span>
             {userRole && (
               <Badge className={getRoleBadgeColor(userRole.role)} variant="outline">
                 <Shield className="h-3 w-3 mr-1" />
@@ -92,16 +92,16 @@ const AdminProfile = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <User className="mr-2 h-4 w-4" />
-          <span>Profil</span>
+          <span>{t('profile.profile')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <Settings className="mr-2 h-4 w-4" />
-          <span>Nastavenia</span>
+          <span>{t('profile.settings')}</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Odhlásiť sa</span>
+          <span>{t('profile.signOut')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

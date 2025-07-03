@@ -37,21 +37,21 @@ const ContractFilters = ({ filters, onFiltersChange }: ContractFiltersProps) => 
   };
 
   const statusOptions = [
-    { value: 'draft', label: 'Koncept' },
-    { value: 'submitted', label: 'Odoslané' },
-    { value: 'approved', label: 'Schválené' },
-    { value: 'rejected', label: 'Zamietnuté' },
-    { value: 'in_progress', label: 'Rozpracované' },
-    { value: 'sent_to_client', label: 'Odoslané klientovi' },
-    { value: 'signed', label: 'Podpísané' },
-    { value: 'lost', label: 'Stratené' }
+    { value: 'draft', label: t('statusOptions.draft') },
+    { value: 'submitted', label: t('statusOptions.submitted') },
+    { value: 'approved', label: t('statusOptions.approved') },
+    { value: 'rejected', label: t('statusOptions.rejected') },
+    { value: 'in_progress', label: t('statusOptions.in_progress') },
+    { value: 'sent_to_client', label: t('statusOptions.sent_to_client') },
+    { value: 'signed', label: t('statusOptions.signed') },
+    { value: 'lost', label: t('statusOptions.lost') }
   ];
 
   const sourceOptions = [
-    { value: 'web', label: 'Web' },
-    { value: 'partner', label: 'Partner' },
-    { value: 'direct', label: 'Priamy kontakt' },
-    { value: 'referral', label: 'Odporúčanie' }
+    { value: 'web', label: t('sourceOptions.web') },
+    { value: 'partner', label: t('sourceOptions.partner') },
+    { value: 'direct', label: t('sourceOptions.direct') },
+    { value: 'referral', label: t('sourceOptions.referral') }
   ];
 
   return (

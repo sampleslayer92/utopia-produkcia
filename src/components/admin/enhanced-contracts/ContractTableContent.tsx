@@ -16,27 +16,30 @@ import CompletionBadge from "./CompletionBadge";
 import MonthlyValueDisplay from "./MonthlyValueDisplay";
 import SourceBadge from "./SourceBadge";
 import ContractTypeBadge from "./ContractTypeBadge";
+import { useTranslation } from 'react-i18next';
 
 interface ContractTableContentProps {
   contracts: ContractWithInfo[];
 }
 
 const ContractTableContent = ({ contracts }: ContractTableContentProps) => {
+  const { t } = useTranslation('admin');
+  
   return (
     <div className="rounded-lg border border-slate-200 overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow className="bg-slate-50">
-            <TableHead className="font-medium text-slate-700">Číslo zmluvy</TableHead>
-            <TableHead className="font-medium text-slate-700">Klient</TableHead>
-            <TableHead className="font-medium text-slate-700">Zdroj</TableHead>
-            <TableHead className="font-medium text-slate-700">Typ zmluvy</TableHead>
-            <TableHead className="font-medium text-slate-700">Mesačná hodnota</TableHead>
-            <TableHead className="font-medium text-slate-700">Stav</TableHead>
-            <TableHead className="font-medium text-slate-700">Dokončenosť</TableHead>
-            <TableHead className="font-medium text-slate-700">Obchodník</TableHead>
-            <TableHead className="font-medium text-slate-700">Vytvorené</TableHead>
-            <TableHead className="font-medium text-slate-700 w-16">Akcie</TableHead>
+            <TableHead className="font-medium text-slate-700">{t('contracts.table.contractNumber')}</TableHead>
+            <TableHead className="font-medium text-slate-700">{t('contracts.table.client')}</TableHead>
+            <TableHead className="font-medium text-slate-700">{t('contracts.table.source')}</TableHead>
+            <TableHead className="font-medium text-slate-700">{t('contracts.table.contractType')}</TableHead>
+            <TableHead className="font-medium text-slate-700">{t('contracts.table.monthlyValue')}</TableHead>
+            <TableHead className="font-medium text-slate-700">{t('contracts.table.status')}</TableHead>
+            <TableHead className="font-medium text-slate-700">{t('contracts.table.completion')}</TableHead>
+            <TableHead className="font-medium text-slate-700">{t('contracts.table.salesPerson')}</TableHead>
+            <TableHead className="font-medium text-slate-700">{t('contracts.table.created')}</TableHead>
+            <TableHead className="font-medium text-slate-700 w-16">{t('contracts.table.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -61,7 +64,7 @@ const ContractTableContent = ({ contracts }: ContractTableContentProps) => {
                   )}
                   {contract.company_info?.ico && (
                     <p className="text-xs text-slate-500">
-                      IČO: {contract.company_info.ico}
+                      {t('form.labels.ico', { ns: 'ui' })}: {contract.company_info.ico}
                     </p>
                   )}
                 </div>

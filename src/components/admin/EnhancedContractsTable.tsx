@@ -17,7 +17,7 @@ interface EnhancedContractsTableProps {
 
 const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
   const { data: contracts, isLoading, error } = useContractsData();
-  const { t } = useTranslation('ui');
+  const { t } = useTranslation(['admin', 'ui']);
   const searchTerm = filters?.search || "";
   const statusFilter = filters?.status || "all";
 
@@ -50,9 +50,9 @@ const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">{t('table.contractManagement')}</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.contractManagement', { ns: 'ui' })}</CardTitle>
           <CardDescription className="text-slate-600">
-            {t('table.loadingContracts')}
+            {t('table.loadingContracts', { ns: 'ui' })}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -68,9 +68,9 @@ const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-slate-900">{t('table.contractManagement')}</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.contractManagement', { ns: 'ui' })}</CardTitle>
           <CardDescription className="text-red-600">
-            {t('table.errorLoadingContracts')}: {error.message}
+            {t('table.errorLoadingContracts', { ns: 'ui' })}: {error.message}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -81,9 +81,9 @@ const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>
         <div>
-          <CardTitle className="text-slate-900">{t('table.contractManagement')}</CardTitle>
+          <CardTitle className="text-slate-900">{t('table.contractManagement', { ns: 'ui' })}</CardTitle>
           <CardDescription className="text-slate-600">
-            {t('table.contractsOverview', { filtered: filteredContracts.length, total: contracts?.length || 0 })}
+            {t('table.contractsOverview', { ns: 'ui', filtered: filteredContracts.length, total: contracts?.length || 0 })}
           </CardDescription>
         </div>
       </CardHeader>

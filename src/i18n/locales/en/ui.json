@@ -159,5 +159,13 @@
     "allStatuses": "All Statuses",
     "allSources": "All Sources",
     "allMerchants": "All Merchants"
+  },
+  "profile": {
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "settings": "Settings",
+    "signOut": "Sign Out",
+    "signedOutSuccess": "Successfully signed out",
+    "signOutError": "Error signing out"
   }
 }

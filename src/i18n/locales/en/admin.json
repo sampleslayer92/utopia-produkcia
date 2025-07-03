@@ -123,6 +123,48 @@
       "monthlyProfit": "Monthly Profit",
       "contractsCount": "{{count}} contracts"
     },
+    "statusOptions": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "in_progress": "In Progress",
+      "sent_to_client": "Sent to Client",
+      "signed": "Signed",
+      "lost": "Lost"
+    },
+    "sourceOptions": {
+      "web": "Web",
+      "partner": "Partner",
+      "direct": "Direct Contact",
+      "referral": "Referral"
+    },
+    "detail": {
+      "title": "Contract Detail",
+      "loading": "Loading...",
+      "loadingDetail": "Loading contract detail...",
+      "error": "Error",
+      "errorLoading": "Error loading",
+      "contractNotFound": "Contract not found",
+      "errorMessage": "Failed to load contract detail.",
+      "contractNotExists": "Contract with ID {{id}} does not exist.",
+      "backToList": "Back to list",
+      "unknownClient": "Unknown client",
+      "completed": "completed",
+      "exportPdf": "Export PDF",
+      "saveChanges": "Save changes",
+      "saving": "Saving...",
+      "edit": "Edit",
+      "cancelEdit": "Cancel editing",
+      "tabs": {
+        "overview": "Overview",
+        "client": "Client",
+        "devices": "Devices",
+        "finance": "Finance",
+        "documents": "Documents",
+        "history": "History"
+      }
+    },
     "filters": {
       "search": "Search",
       "searchPlaceholder": "Contract number, name, email...",

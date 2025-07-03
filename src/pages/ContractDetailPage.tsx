@@ -24,11 +24,13 @@ import ContractDevicesTab from "@/components/admin/contract-tabs/ContractDevices
 import ContractFinanceTab from "@/components/admin/contract-tabs/ContractFinanceTab";
 import ContractDocumentsTab from "@/components/admin/contract-tabs/ContractDocumentsTab";
 import ContractHistoryTab from "@/components/admin/contract-tabs/ContractHistoryTab";
+import { useTranslation } from 'react-i18next';
 
 const ContractDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
+  const { t } = useTranslation('admin');
   
   const { contractDataResult } = useContractDetailData();
   
@@ -46,11 +48,11 @@ const ContractDetailPage = () => {
 
   if (contractDataResult.isLoading) {
     return (
-      <AdminLayout title="Načítavam..." subtitle="Detail zmluvy">
+      <AdminLayout title={t('detail.loading')} subtitle={t('detail.title')}>
         <div className="flex items-center justify-center py-8">
           <div className="flex items-center space-x-2">
             <Loader2 className="h-6 w-6 animate-spin" />
-            <span>Načítavam detail zmluvy...</span>
+            <span>{t('detail.loadingDetail')}</span>
           </div>
         </div>
       </AdminLayout>
@@ -59,23 +61,23 @@ const ContractDetailPage = () => {
 
   if (contractDataResult.isError || !contractDataResult.data) {
     return (
-      <AdminLayout title="Chyba" subtitle="Detail zmluvy">
+      <AdminLayout title={t('detail.error')} subtitle={t('detail.title')}>
         <Card className="max-w-md mx-auto">
           <CardHeader>
             <CardTitle className="text-destructive">
-              {contractDataResult.error ? "Chyba pri načítavaní" : "Zmluva nenájdená"}
+              {contractDataResult.error ? t('detail.errorLoading') : t('detail.contractNotFound')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">
               {contractDataResult.error 
-                ? `Nepodarilo sa načítať detail zmluvy. ${contractDataResult.error.message}`
-                : `Zmluva s ID ${id} neexistuje.`
+                ? `${t('detail.errorMessage')} ${contractDataResult.error.message}`
+                : t('detail.contractNotExists', { id })
               }
             </p>
             <Button onClick={() => navigate('/admin/merchants/contracts')} variant="outline">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Späť na zoznam
+              {t('detail.backToList')}
             </Button>
           </CardContent>
         </Card>
@@ -89,7 +91,7 @@ const ContractDetailPage = () => {
   const clientName = onboardingData.companyInfo?.companyName || 
     (onboardingData.contactInfo ? 
       `${onboardingData.contactInfo.firstName} ${onboardingData.contactInfo.lastName}` : 
-      'Neznámy klient');
+      t('detail.unknownClient'));
 
   // Calculate completion percentage
   const completionPercentage = contract.current_step ? Math.round((contract.current_step / 7) * 100) : 0;
@@ -114,11 +116,11 @@ const ContractDetailPage = () => {
         className="hover:bg-muted"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Späť na zoznam
+        {t('detail.backToList')}
       </Button>
       <Button variant="outline" className="hover:bg-muted">
         <Download className="h-4 w-4 mr-2" />
-        Export PDF
+        {t('detail.exportPdf')}
       </Button>
       {isEditMode && clientOperationsHasChanges && (
         <Button 
@@ -129,12 +131,12 @@ const ContractDetailPage = () => {
           {updateContract.isPending ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Ukladám...
+              {t('detail.saving')}
             </>
           ) : (
             <>
               <FileText className="h-4 w-4 mr-2" />
-              Uložiť zmeny
+              {t('detail.saveChanges')}
             </>
           )}
         </Button>
@@ -147,12 +149,12 @@ const ContractDetailPage = () => {
         {isEditMode ? (
           <>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Zrušiť úpravy
+            {t('detail.cancelEdit')}
           </>
         ) : (
           <>
             <Edit className="h-4 w-4 mr-2" />
-            Upraviť
+            {t('detail.edit')}
           </>
         )}
       </Button>
@@ -161,8 +163,8 @@ const ContractDetailPage = () => {
 
   return (
     <AdminLayout 
-      title={`Zmluva #${contract.contract_number}`}
-      subtitle={`${clientName} • ${completionPercentage}% dokončené • ${contract.status}`}
+      title={`${t('contracts.title')} #${contract.contract_number}`}
+      subtitle={`${clientName} • ${completionPercentage}% ${t('detail.completed')} • ${contract.status}`}
       actions={contractActions}
     >
       <div className="space-y-6">
@@ -170,27 +172,27 @@ const ContractDetailPage = () => {
           <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
             <TabsTrigger value="overview" className="flex items-center space-x-2">
               <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">Prehľad</span>
+              <span className="hidden sm:inline">{t('detail.tabs.overview')}</span>
             </TabsTrigger>
             <TabsTrigger value="client" className="flex items-center space-x-2">
               <User className="h-4 w-4" />
-              <span className="hidden sm:inline">Klient</span>
+              <span className="hidden sm:inline">{t('detail.tabs.client')}</span>
             </TabsTrigger>
             <TabsTrigger value="devices" className="flex items-center space-x-2">
               <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Zariadenia</span>
+              <span className="hidden sm:inline">{t('detail.tabs.devices')}</span>
             </TabsTrigger>
             <TabsTrigger value="finance" className="flex items-center space-x-2">
               <Calculator className="h-4 w-4" />
-              <span className="hidden sm:inline">Financie</span>
+              <span className="hidden sm:inline">{t('detail.tabs.finance')}</span>
             </TabsTrigger>
             <TabsTrigger value="documents" className="flex items-center space-x-2">
               <FolderOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Dokumenty</span>
+              <span className="hidden sm:inline">{t('detail.tabs.documents')}</span>
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center space-x-2 hidden lg:flex">
               <Clock className="h-4 w-4" />
-              <span>História</span>
+              <span>{t('detail.tabs.history')}</span>
             </TabsTrigger>
           </TabsList>
 
