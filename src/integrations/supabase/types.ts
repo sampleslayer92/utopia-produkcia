@@ -21,6 +21,7 @@ export type Database = {
           id: string
           is_politically_exposed: boolean
           last_name: string
+          maiden_name: string | null
           owner_id: string
           permanent_address: string
           updated_at: string
@@ -36,6 +37,7 @@ export type Database = {
           id?: string
           is_politically_exposed?: boolean
           last_name: string
+          maiden_name?: string | null
           owner_id: string
           permanent_address: string
           updated_at?: string
@@ -51,6 +53,7 @@ export type Database = {
           id?: string
           is_politically_exposed?: boolean
           last_name?: string
+          maiden_name?: string | null
           owner_id?: string
           permanent_address?: string
           updated_at?: string
@@ -84,6 +87,7 @@ export type Database = {
           is_politically_exposed: boolean
           is_us_citizen: boolean
           last_name: string
+          maiden_name: string | null
           permanent_address: string
           person_id: string
           phone: string
@@ -108,6 +112,7 @@ export type Database = {
           is_politically_exposed?: boolean
           is_us_citizen?: boolean
           last_name: string
+          maiden_name?: string | null
           permanent_address: string
           person_id: string
           phone?: string
@@ -132,6 +137,7 @@ export type Database = {
           is_politically_exposed?: boolean
           is_us_citizen?: boolean
           last_name?: string
+          maiden_name?: string | null
           permanent_address?: string
           person_id?: string
           phone?: string
@@ -167,6 +173,7 @@ export type Database = {
           location_id: string
           name: string
           opening_hours: string
+          seasonal_weeks: number | null
           seasonality: Database["public"]["Enums"]["seasonality_type"]
           updated_at: string
         }
@@ -188,6 +195,7 @@ export type Database = {
           location_id: string
           name: string
           opening_hours: string
+          seasonal_weeks?: number | null
           seasonality?: Database["public"]["Enums"]["seasonality_type"]
           updated_at?: string
         }
@@ -209,6 +217,7 @@ export type Database = {
           location_id?: string
           name?: string
           opening_hours?: string
+          seasonal_weeks?: number | null
           seasonality?: Database["public"]["Enums"]["seasonality_type"]
           updated_at?: string
         }
@@ -371,8 +380,10 @@ export type Database = {
           last_name: string
           phone: string
           phone_prefix: string
+          sales_note: string | null
           salutation: Database["public"]["Enums"]["salutation_type"] | null
           updated_at: string
+          user_role: string | null
         }
         Insert: {
           contract_id: string
@@ -383,8 +394,10 @@ export type Database = {
           last_name: string
           phone?: string
           phone_prefix?: string
+          sales_note?: string | null
           salutation?: Database["public"]["Enums"]["salutation_type"] | null
           updated_at?: string
+          user_role?: string | null
         }
         Update: {
           contract_id?: string
@@ -395,8 +408,10 @@ export type Database = {
           last_name?: string
           phone?: string
           phone_prefix?: string
+          sales_note?: string | null
           salutation?: Database["public"]["Enums"]["salutation_type"] | null
           updated_at?: string
+          user_role?: string | null
         }
         Relationships: [
           {
@@ -470,6 +485,42 @@ export type Database = {
           },
         ]
       }
+      contract_item_addons: {
+        Row: {
+          addon_id: string
+          addon_name: string
+          company_cost: number
+          contract_item_id: string
+          count: number
+          created_at: string
+          id: string
+          monthly_fee: number
+          updated_at: string
+        }
+        Insert: {
+          addon_id: string
+          addon_name: string
+          company_cost?: number
+          contract_item_id: string
+          count?: number
+          created_at?: string
+          id?: string
+          monthly_fee?: number
+          updated_at?: string
+        }
+        Update: {
+          addon_id?: string
+          addon_name?: string
+          company_cost?: number
+          contract_item_id?: string
+          count?: number
+          created_at?: string
+          id?: string
+          monthly_fee?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contract_items: {
         Row: {
           category: string
@@ -526,6 +577,39 @@ export type Database = {
           },
         ]
       }
+      contract_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          template_data: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          template_data?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          template_data?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contracts: {
         Row: {
           contract_generated_at: string | null
@@ -538,8 +622,10 @@ export type Database = {
           document_url: string | null
           email_viewed_at: string | null
           id: string
+          lost_notes: string | null
           lost_reason: Database["public"]["Enums"]["lost_reason"] | null
           merchant_id: string | null
+          notes: string | null
           signed_at: string | null
           signed_document_url: string | null
           source: Database["public"]["Enums"]["contract_source"] | null
@@ -558,8 +644,10 @@ export type Database = {
           document_url?: string | null
           email_viewed_at?: string | null
           id?: string
+          lost_notes?: string | null
           lost_reason?: Database["public"]["Enums"]["lost_reason"] | null
           merchant_id?: string | null
+          notes?: string | null
           signed_at?: string | null
           signed_document_url?: string | null
           source?: Database["public"]["Enums"]["contract_source"] | null
@@ -578,8 +666,10 @@ export type Database = {
           document_url?: string | null
           email_viewed_at?: string | null
           id?: string
+          lost_notes?: string | null
           lost_reason?: Database["public"]["Enums"]["lost_reason"] | null
           merchant_id?: string | null
+          notes?: string | null
           signed_at?: string | null
           signed_document_url?: string | null
           source?: Database["public"]["Enums"]["contract_source"] | null
@@ -611,6 +701,7 @@ export type Database = {
           id: string
           mif_regulated_cards: number
           mif_unregulated_cards: number
+          note: string | null
           transaction_types: Json
           updated_at: string
         }
@@ -620,6 +711,7 @@ export type Database = {
           id?: string
           mif_regulated_cards?: number
           mif_unregulated_cards?: number
+          note?: string | null
           transaction_types?: Json
           updated_at?: string
         }
@@ -629,6 +721,7 @@ export type Database = {
           id?: string
           mif_regulated_cards?: number
           mif_unregulated_cards?: number
+          note?: string | null
           transaction_types?: Json
           updated_at?: string
         }
@@ -854,6 +947,33 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          session_token: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          session_token: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          session_token?: string
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
