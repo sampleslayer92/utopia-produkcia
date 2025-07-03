@@ -7,7 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Welcome from "./pages/Welcome";
-import LandingPage from "./pages/LandingPage";
+
 import AuthPage from "./pages/AuthPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import OnboardingFlow from "./pages/OnboardingFlow";
@@ -40,7 +40,7 @@ const App = () => (
       <TooltipProvider>
         <Routes>
           <Route path="/" element={<Welcome />} />
-          <Route path="/landing" element={<LandingPage />} />
+          
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
