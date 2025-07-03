@@ -434,7 +434,26 @@
     "address": "Adresa",
     "iban": "IBAN",
     "businessSector": "MCC sektor",
-    "noLocations": "Žiadne prevádzky neboli zadané"
+    "noLocations": "Žiadne prevádzky neboli zadané",
+    "modal": {
+      "addLocationTitle": "Pridať novú prevádzku",
+      "locationName": "Názov prevádzky",
+      "locationAddress": "Adresa",
+      "streetPlaceholder": "Ulica a číslo",
+      "city": "Mesto",
+      "cityPlaceholder": "Mesto",
+      "zipCode": "PSČ",
+      "zipPlaceholder": "PSČ",
+      "iban": "IBAN",
+      "ibanPlaceholder": "IBAN účtu",
+      "businessSector": "MCC sektor",
+      "sectorPlaceholder": "Obchodný sektor",
+      "cancel": "Zrušiť",
+      "addLocation": "Pridať prevádzku",
+      "adding": "Pridáva sa...",
+      "emptyMessage": "Žiadne prevádzky neboli zadané",
+      "addFirstLocation": "Pridať prvú prevádzku"
+    }
   },
   "devicesServices": {
     "title": "Zariadenia a služby",
@@ -565,5 +584,13 @@
       "backToLocations": "Späť na prevádzky",
       "editLocation": "Upraviť prevádzku"
     }
+  },
+  "history": {
+    "title": "História zmien",
+    "userActivity": "Aktivita používateľov",
+    "timeline": "Timeline udalostí",
+    "historyComingSoon": "História zmien bude dostupná čoskoro",
+    "activityComingSoon": "Aktivita používateľov bude dostupná čoskoro",
+    "timelineComingSoon": "Timeline udalostí bude dostupný čoskoro"
   }
 }

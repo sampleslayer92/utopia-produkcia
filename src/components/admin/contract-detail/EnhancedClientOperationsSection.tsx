@@ -425,7 +425,7 @@ const EnhancedClientOperationsSection = ({
                 ) : (
                   <div className="text-center py-8">
                     <MapPin className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-600 mb-4">Žiadne prevádzky neboli zadané</p>
+                    <p className="text-slate-600 mb-4">{t('contracts.detail.client.modal.emptyMessage')}</p>
                     {isEditMode && (
                       <Button 
                         variant="outline"
@@ -433,7 +433,7 @@ const EnhancedClientOperationsSection = ({
                         disabled={isAdding}
                       >
                         <Plus className="h-4 w-4 mr-2" />
-                        Pridať prvú prevádzku
+                        {t('contracts.detail.client.modal.addFirstLocation')}
                       </Button>
                     )}
                   </div>
@@ -448,72 +448,72 @@ const EnhancedClientOperationsSection = ({
       <Dialog open={addLocationModal} onOpenChange={setAddLocationModal}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Pridať novú prevádzku</DialogTitle>
+            <DialogTitle>{t('contracts.detail.client.modal.addLocationTitle')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 max-h-96 overflow-y-auto">
             <div>
-              <Label htmlFor="locationName">Názov prevádzky</Label>
+              <Label htmlFor="locationName">{t('contracts.detail.client.modal.locationName')}</Label>
               <Input
                 id="locationName"
                 value={newLocationData.name}
                 onChange={(e) => setNewLocationData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Názov prevádzky"
+                placeholder={t('contracts.detail.client.modal.locationName')}
               />
             </div>
             <div>
-              <Label htmlFor="locationAddress">Adresa</Label>
+              <Label htmlFor="locationAddress">{t('contracts.detail.client.modal.locationAddress')}</Label>
               <Input
                 id="locationAddress"
                 value={newLocationData.addressStreet}
                 onChange={(e) => setNewLocationData(prev => ({ ...prev, addressStreet: e.target.value }))}
-                placeholder="Ulica a číslo"
+                placeholder={t('contracts.detail.client.modal.streetPlaceholder')}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="locationCity">Mesto</Label>
+                <Label htmlFor="locationCity">{t('contracts.detail.client.modal.city')}</Label>
                 <Input
                   id="locationCity"
                   value={newLocationData.addressCity}
                   onChange={(e) => setNewLocationData(prev => ({ ...prev, addressCity: e.target.value }))}
-                  placeholder="Mesto"
+                  placeholder={t('contracts.detail.client.modal.cityPlaceholder')}
                 />
               </div>
               <div>
-                <Label htmlFor="locationZip">PSČ</Label>
+                <Label htmlFor="locationZip">{t('contracts.detail.client.modal.zipCode')}</Label>
                 <Input
                   id="locationZip"
                   value={newLocationData.addressZipCode}
                   onChange={(e) => setNewLocationData(prev => ({ ...prev, addressZipCode: e.target.value }))}
-                  placeholder="PSČ"
+                  placeholder={t('contracts.detail.client.modal.zipPlaceholder')}
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="locationIban">IBAN</Label>
+              <Label htmlFor="locationIban">{t('contracts.detail.client.modal.iban')}</Label>
               <Input
                 id="locationIban"
                 value={newLocationData.iban}
                 onChange={(e) => setNewLocationData(prev => ({ ...prev, iban: e.target.value }))}
-                placeholder="IBAN účtu"
+                placeholder={t('contracts.detail.client.modal.ibanPlaceholder')}
               />
             </div>
             <div>
-              <Label htmlFor="locationSector">MCC sektor</Label>
+              <Label htmlFor="locationSector">{t('contracts.detail.client.modal.businessSector')}</Label>
               <Input
                 id="locationSector"
                 value={newLocationData.businessSector}
                 onChange={(e) => setNewLocationData(prev => ({ ...prev, businessSector: e.target.value }))}
-                placeholder="Obchodný sektor"
+                placeholder={t('contracts.detail.client.modal.sectorPlaceholder')}
               />
             </div>
           </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setAddLocationModal(false)} disabled={isAdding}>
-              Zrušiť
+              {t('contracts.detail.client.modal.cancel')}
             </Button>
             <Button onClick={handleAddLocation} disabled={isAdding || !newLocationData.name.trim()}>
-              {isAdding ? 'Pridáva sa...' : 'Pridať prevádzku'}
+              {isAdding ? t('contracts.detail.client.modal.adding') : t('contracts.detail.client.modal.addLocation')}
             </Button>
           </DialogFooter>
         </DialogContent>
