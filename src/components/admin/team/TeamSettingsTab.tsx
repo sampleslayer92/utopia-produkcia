@@ -8,6 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TeamDetail } from '@/hooks/useTeamDetail';
+import { useOrganizations } from '@/hooks/useOrganizations';
+import { useUpdateTeam } from '@/hooks/useTeams';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
 import { Settings, Save, Trash } from 'lucide-react';
 
 interface TeamSettingsTabProps {
@@ -16,17 +19,35 @@ interface TeamSettingsTabProps {
 
 export const TeamSettingsTab = ({ team }: TeamSettingsTabProps) => {
   const { t } = useTranslation('admin');
+  const { data: organizations, isLoading: organizationsLoading } = useOrganizations();
+  const { data: teamMembers, isLoading: membersLoading } = useTeamMembers(team.id);
+  const updateTeamMutation = useUpdateTeam();
+  
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: team.name,
     description: team.description || '',
     is_active: team.is_active,
-    team_leader_id: team.team_leader_id || ''
+    team_leader_id: team.team_leader_id || '',
+    organization_id: team.organization_id
   });
 
-  const handleSave = () => {
-    // TODO: Implement save functionality
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      await updateTeamMutation.mutateAsync({
+        teamId: team.id,
+        teamData: {
+          name: formData.name,
+          description: formData.description,
+          is_active: formData.is_active,
+          team_leader_id: formData.team_leader_id || null,
+          organization_id: formData.organization_id
+        }
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating team:', error);
+    }
   };
 
   const handleCancel = () => {
@@ -34,7 +55,8 @@ export const TeamSettingsTab = ({ team }: TeamSettingsTabProps) => {
       name: team.name,
       description: team.description || '',
       is_active: team.is_active,
-      team_leader_id: team.team_leader_id || ''
+      team_leader_id: team.team_leader_id || '',
+      organization_id: team.organization_id
     });
     setIsEditing(false);
   };
@@ -56,9 +78,9 @@ export const TeamSettingsTab = ({ team }: TeamSettingsTabProps) => {
                 <Button variant="outline" onClick={handleCancel}>
                   {t('common:buttons.cancel')}
                 </Button>
-                <Button onClick={handleSave}>
+                <Button onClick={handleSave} disabled={updateTeamMutation.isPending}>
                   <Save className="h-4 w-4 mr-2" />
-                  {t('common:buttons.save')}
+                  {updateTeamMutation.isPending ? t('common:buttons.saving') : t('common:buttons.save')}
                 </Button>
               </>
             ) : (
@@ -106,6 +128,37 @@ export const TeamSettingsTab = ({ team }: TeamSettingsTabProps) => {
         </CardContent>
       </Card>
 
+      {/* Organization */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('teams.settings.organization')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <Label htmlFor="organization">{t('teams.settings.selectOrganization')}</Label>
+            <Select 
+              value={formData.organization_id} 
+              onValueChange={(value) => setFormData({ ...formData, organization_id: value })}
+              disabled={!isEditing || organizationsLoading}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={t('teams.settings.selectOrganizationPlaceholder')} />
+              </SelectTrigger>
+              <SelectContent>
+                {organizations?.map((org) => (
+                  <SelectItem key={org.id} value={org.id}>
+                    {org.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t('teams.settings.organizationDescription')}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Team Leader */}
       <Card>
         <CardHeader>
@@ -115,16 +168,22 @@ export const TeamSettingsTab = ({ team }: TeamSettingsTabProps) => {
           <div>
             <Label htmlFor="team-leader">{t('teams.settings.selectTeamLeader')}</Label>
             <Select 
-              value={formData.team_leader_id || "none"} 
-              onValueChange={(value) => setFormData({ ...formData, team_leader_id: value === "none" ? "" : value })}
-              disabled={!isEditing}
+              value={formData.team_leader_id} 
+              onValueChange={(value) => setFormData({ ...formData, team_leader_id: value })}
+              disabled={!isEditing || membersLoading}
             >
               <SelectTrigger>
                 <SelectValue placeholder={t('teams.settings.selectTeamLeaderPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">{t('teams.settings.noLeader')}</SelectItem>
-                {/* TODO: Load team members dynamically */}
+                <SelectItem value="">
+                  {t('teams.settings.selectTeamLeaderPlaceholder')}
+                </SelectItem>
+                {teamMembers?.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.first_name} {member.last_name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <p className="text-sm text-muted-foreground mt-1">
