@@ -115,15 +115,15 @@ export const TeamSettingsTab = ({ team }: TeamSettingsTabProps) => {
           <div>
             <Label htmlFor="team-leader">{t('teams.settings.selectTeamLeader')}</Label>
             <Select 
-              value={formData.team_leader_id} 
-              onValueChange={(value) => setFormData({ ...formData, team_leader_id: value })}
+              value={formData.team_leader_id || "none"} 
+              onValueChange={(value) => setFormData({ ...formData, team_leader_id: value === "none" ? "" : value })}
               disabled={!isEditing}
             >
               <SelectTrigger>
                 <SelectValue placeholder={t('teams.settings.selectTeamLeaderPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t('teams.settings.noLeader')}</SelectItem>
+                <SelectItem value="none">{t('teams.settings.noLeader')}</SelectItem>
                 {/* TODO: Load team members dynamically */}
               </SelectContent>
             </Select>
