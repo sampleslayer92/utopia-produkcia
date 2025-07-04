@@ -17,14 +17,20 @@ import { toast } from 'sonner';
 
 interface TeamMembersTabProps {
   teamId: string;
+  showAddMemberModal?: boolean;
+  setShowAddMemberModal?: (show: boolean) => void;
 }
 
-export const TeamMembersTab = ({ teamId }: TeamMembersTabProps) => {
+export const TeamMembersTab = ({ teamId, showAddMemberModal: externalShowModal, setShowAddMemberModal: externalSetShowModal }: TeamMembersTabProps) => {
   const { t } = useTranslation('admin');
   const { data: members, isLoading, refetch } = useTeamMembers(teamId);
   const { isSaving, createTeamMember, updateTeamMember, resetMemberPassword, deactivateTeamMember, activateTeamMember } = useTeamManagement();
   
   const [showCreateModal, setShowCreateModal] = useState(false);
+  
+  // Use external modal state if provided, otherwise use internal state
+  const showModal = externalShowModal !== undefined ? externalShowModal : showCreateModal;
+  const setShowModal = externalSetShowModal || setShowCreateModal;
   const [newMember, setNewMember] = useState({
     first_name: '',
     last_name: '',
@@ -41,7 +47,7 @@ export const TeamMembersTab = ({ teamId }: TeamMembersTabProps) => {
     });
     
     if (result.data) {
-      setShowCreateModal(false);
+      setShowModal(false);
       setNewMember({
         first_name: '',
         last_name: '',
@@ -95,7 +101,7 @@ export const TeamMembersTab = ({ teamId }: TeamMembersTabProps) => {
               {t('teams.members.subtitle')}
             </p>
           </div>
-          <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+          <Dialog open={showModal} onOpenChange={setShowModal}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -175,7 +181,7 @@ export const TeamMembersTab = ({ teamId }: TeamMembersTabProps) => {
                 </div>
 
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setShowCreateModal(false)}>
+                  <Button variant="outline" onClick={() => setShowModal(false)}>
                     {t('teamManagement.cancel')}
                   </Button>
                   <Button onClick={handleCreateMember} disabled={isSaving}>

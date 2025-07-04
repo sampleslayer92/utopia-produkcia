@@ -78,7 +78,7 @@ serve(async (req) => {
 
     // Get request body
     const body = await req.json()
-    const { first_name, last_name, email, phone, password, role } = body
+    const { first_name, last_name, email, phone, password, role, team_id } = body
 
     console.log('Creating user with data:', { first_name, last_name, email, role })
 
@@ -100,17 +100,21 @@ serve(async (req) => {
 
     console.log('User created in auth:', authData.user?.id)
 
-    // Update profile with phone number if provided
-    if (authData.user && phone) {
+    // Update profile with phone number and team_id if provided
+    if (authData.user && (phone || team_id)) {
+      const updateData: any = {};
+      if (phone) updateData.phone = phone;
+      if (team_id) updateData.team_id = team_id;
+
       const { error: profileError } = await supabaseAdmin
         .from('profiles')
-        .update({ phone })
+        .update(updateData)
         .eq('id', authData.user.id)
 
       if (profileError) {
         console.error('Profile update error:', profileError)
       } else {
-        console.log('Profile updated with phone number')
+        console.log('Profile updated successfully with:', updateData)
       }
     }
 

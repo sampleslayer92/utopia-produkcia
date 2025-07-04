@@ -123,7 +123,6 @@ export const TeamSettingsTab = ({ team }: TeamSettingsTabProps) => {
                 <SelectValue placeholder={t('teams.settings.selectTeamLeaderPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t('teams.settings.noLeader')}</SelectItem>
                 {/* TODO: Load team members dynamically */}
               </SelectContent>
             </Select>
