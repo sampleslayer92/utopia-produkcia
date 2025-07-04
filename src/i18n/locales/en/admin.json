@@ -847,29 +847,42 @@
     "createOrganization": "Create Organization",
     "teams": "teams",
     "members": "members",
-    "stats": {
-      "totalOrganizations": "Total Organizations",
-      "activeOrganizations": "Active Organizations",
-      "totalTeams": "Total Teams"
-    },
+    "export": "Export Organizations",
+    "noResults": "No organizations match the filters",
     "form": {
       "name": "Organization Name",
       "namePlaceholder": "Enter organization name",
       "description": "Description",
       "descriptionPlaceholder": "Enter organization description",
-      "color": "Organization Color"
-    }
+      "color": "Color"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search organizations...",
+      "status": "Status",
+      "selectStatus": "Select status",
+      "allStatuses": "All statuses"
+    },
+    "stats": {
+      "totalOrganizations": "Total Organizations",
+      "activeOrganizations": "Active Organizations",
+      "totalTeams": "Total Teams",
+      "totalMembers": "Total Members",
+      "allRegistered": "all registered",
+      "currentlyActive": "currently active",
+      "acrossAllOrgs": "across all organizations",
+      "hierarchyLevels": "hierarchy levels"
+    },
+    "teams": "teams",
+    "members": "members"
   },
   "teams": {
     "title": "Team Management",
-    "subtitle": "Overview and management of all teams in organizations",
+    "subtitle": "Manage teams and their members",
     "createTeam": "Create Team",
-    "members": "members",
-    "stats": {
-      "totalTeams": "Total Teams",
-      "activeTeams": "Active Teams",
-      "totalMembers": "Total Members"
-    },
+    "export": "Export Teams",
+    "noResults": "No teams match the filters",
+    "noTeamsInOrganization": "No teams in this organization",
     "form": {
       "name": "Team Name",
       "namePlaceholder": "Enter team name",
@@ -877,13 +890,39 @@
       "descriptionPlaceholder": "Enter team description",
       "organization": "Organization",
       "selectOrganization": "Select organization"
-    }
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search teams...",
+      "status": "Status",
+      "selectStatus": "Select status",
+      "allStatuses": "All statuses",
+      "organization": "Organization",
+      "selectOrganization": "Select organization",
+      "allOrganizations": "All organizations"
+    },
+    "stats": {
+      "totalTeams": "Total Teams",
+      "activeTeams": "Active Teams",
+      "totalMembers": "Total Members",
+      "teamsWithLeaders": "Teams with Leaders",
+      "allRegistered": "all registered",
+      "currentlyActive": "currently active",
+      "haveAssignedLeaders": "have assigned leaders",
+      "acrossAllOrgs": "across all organizations"
+    },
+    "members": "members",
+    "teams": "teams"
   },
   "organizationalStructure": {
     "title": "Organizational Structure",
-    "subtitle": "Visualization of organization and team hierarchy",
+    "subtitle": "Overview of organizational structure and hierarchy",
     "totalMembers": "Total Members",
+    "activeUsers": "active users",
     "visualization": "Structure Visualization",
-    "comingSoon": "Organizational structure visualization will be available soon"
+    "exportStructure": "Export Structure",
+    "downloadChart": "Download Chart",
+    "noData": "No organizational data available",
+    "comingSoon": "Advanced organizational structure visualization coming soon"
   }
 }

@@ -15,7 +15,8 @@
     "continue": "Continue",
     "saveSignature": "Save Signature",
     "delete": "Delete",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "clearFilters": "Clear Filters"
   },
   "navigation": {
     "step": "Step",

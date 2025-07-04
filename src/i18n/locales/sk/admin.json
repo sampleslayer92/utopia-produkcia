@@ -856,33 +856,44 @@
   },
   "organizations": {
     "title": "Správa organizácií",
-    "subtitle": "Prehľad a správa všetkých organizácií v systéme",
+    "subtitle": "Spravujte organizácie a ich štruktúru",
     "createOrganization": "Vytvoriť organizáciu",
-    "teams": "tímy",
-    "members": "členovia",
-    "stats": {
-      "totalOrganizations": "Celkový počet organizácií",
-      "activeOrganizations": "Aktívne organizácie",
-      "totalTeams": "Celkový počet tímov"
-    },
+    "export": "Exportovať organizácie",
+    "noResults": "Žiadne organizácie nevyhovujú filtrom",
     "form": {
       "name": "Názov organizácie",
       "namePlaceholder": "Zadajte názov organizácie",
       "description": "Popis",
       "descriptionPlaceholder": "Zadajte popis organizácie",
-      "color": "Farba organizácie"
-    }
+      "color": "Farba"
+    },
+    "filters": {
+      "search": "Hľadať",
+      "searchPlaceholder": "Hľadať organizácie...",
+      "status": "Stav",
+      "selectStatus": "Vyberte stav",
+      "allStatuses": "Všetky stavy"
+    },
+    "stats": {
+      "totalOrganizations": "Celkový počet organizácií",
+      "activeOrganizations": "Aktívne organizácie",
+      "totalTeams": "Celkový počet tímov",
+      "totalMembers": "Celkový počet členov",
+      "allRegistered": "všetky registrované",
+      "currentlyActive": "momentálne aktívne",
+      "acrossAllOrgs": "vo všetkých organizáciách",
+      "hierarchyLevels": "hierarchické úrovne"
+    },
+    "teams": "tímy",
+    "members": "členovia"
   },
   "teams": {
     "title": "Správa tímov",
-    "subtitle": "Prehľad a správa všetkých tímov v organizáciách",
+    "subtitle": "Spravujte tímy a ich členov",
     "createTeam": "Vytvoriť tím",
-    "members": "členovia",
-    "stats": {
-      "totalTeams": "Celkový počet tímov",
-      "activeTeams": "Aktívne tímy",
-      "totalMembers": "Celkový počet členov"
-    },
+    "export": "Exportovať tímy",
+    "noResults": "Žiadne tímy nevyhovujú filtrom",
+    "noTeamsInOrganization": "V tejto organizácii nie sú žiadne tímy",
     "form": {
       "name": "Názov tímu",
       "namePlaceholder": "Zadajte názov tímu",
@@ -890,13 +901,39 @@
       "descriptionPlaceholder": "Zadajte popis tímu",
       "organization": "Organizácia",
       "selectOrganization": "Vyberte organizáciu"
-    }
+    },
+    "filters": {
+      "search": "Hľadať",
+      "searchPlaceholder": "Hľadať tímy...",
+      "status": "Stav",
+      "selectStatus": "Vyberte stav",
+      "allStatuses": "Všetky stavy",
+      "organization": "Organizácia",
+      "selectOrganization": "Vyberte organizáciu",
+      "allOrganizations": "Všetky organizácie"
+    },
+    "stats": {
+      "totalTeams": "Celkový počet tímov",
+      "activeTeams": "Aktívne tímy",
+      "totalMembers": "Celkový počet členov",
+      "teamsWithLeaders": "Tímy s vedúcimi",
+      "allRegistered": "všetky registrované",
+      "currentlyActive": "momentálne aktívne",
+      "haveAssignedLeaders": "majú priradených vedúcich",
+      "acrossAllOrgs": "vo všetkých organizáciách"
+    },
+    "members": "členovia",
+    "teams": "tímy"
   },
   "organizationalStructure": {
     "title": "Organizačná štruktúra",
-    "subtitle": "Vizualizácia hierarchie organizácií a tímov",
+    "subtitle": "Prehľad organizačnej štruktúry a hierarchie",
     "totalMembers": "Celkový počet členov",
+    "activeUsers": "aktívni používatelia",
     "visualization": "Vizualizácia štruktúry",
-    "comingSoon": "Vizualizácia organizačnej štruktúry bude čoskoro dostupná"
+    "exportStructure": "Exportovať štruktúru",
+    "downloadChart": "Stiahnuť diagram",
+    "noData": "Žiadne organizačné dáta nie sú k dispozícii",
+    "comingSoon": "Pokročilá vizualizácia organizačnej štruktúry bude čoskoro dostupná"
   }
 }

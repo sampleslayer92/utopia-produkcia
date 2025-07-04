@@ -15,7 +15,8 @@
     "continue": "Pokračovať",
     "saveSignature": "Uložiť podpis",
     "delete": "Vymazať",
-    "deleting": "Vymazáva sa..."
+    "deleting": "Vymazáva sa...",
+    "clearFilters": "Vymazať filtre"
   },
   "navigation": {
     "step": "Krok",
