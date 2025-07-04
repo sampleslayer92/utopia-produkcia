@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Users, Settings, BarChart, Edit, Plus } from 'lucide-react';
+import { ArrowLeft, Users, Settings, BarChart, Edit } from 'lucide-react';
 import { TeamMembersTab } from '@/components/admin/team/TeamMembersTab';
 import { TeamOverviewTab } from '@/components/admin/team/TeamOverviewTab';
 import { TeamStatsTab } from '@/components/admin/team/TeamStatsTab';
@@ -18,7 +18,6 @@ const TeamDetailPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('admin');
   const [activeTab, setActiveTab] = useState('overview');
-  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   
   const { data: team, isLoading } = useTeamDetail(teamId!);
 
@@ -52,10 +51,6 @@ const TeamDetailPage = () => {
       <Button variant="outline" onClick={() => navigate('/admin/organizations/teams')}>
         <ArrowLeft className="h-4 w-4 mr-2" />
         {t('teams.backToTeams')}
-      </Button>
-      <Button variant="outline" onClick={() => setShowAddMemberModal(true)}>
-        <Plus className="h-4 w-4 mr-2" />
-        {t('teams.members.addMember')}
       </Button>
       <Button>
         <Edit className="h-4 w-4 mr-2" />
@@ -132,11 +127,7 @@ const TeamDetailPage = () => {
           </TabsContent>
 
           <TabsContent value="members" className="mt-6">
-            <TeamMembersTab 
-              teamId={team.id} 
-              showAddMemberModal={showAddMemberModal}
-              setShowAddMemberModal={setShowAddMemberModal}
-            />
+            <TeamMembersTab teamId={team.id} />
           </TabsContent>
 
           <TabsContent value="stats" className="mt-6">

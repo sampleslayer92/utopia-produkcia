@@ -67,7 +67,7 @@ export const TeamCard = ({ team }: TeamCardProps) => {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Users className="h-4 w-4" />
-              <span>0 {t('teams.membersCount')}</span>
+              <span>0 {t('teams.members')}</span>
             </div>
           </div>
           
