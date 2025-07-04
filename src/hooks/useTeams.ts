@@ -59,3 +59,32 @@ export const useCreateTeam = () => {
     },
   });
 };
+
+export const useUpdateTeam = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ teamId, teamData }: { teamId: string; teamData: Partial<Omit<Team, 'id' | 'created_at' | 'updated_at'>> }) => {
+      const { data, error } = await supabase
+        .from('teams')
+        .update(teamData)
+        .eq('id', teamId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      queryClient.invalidateQueries({ queryKey: ['team-detail'] });
+      toast.success('Team updated successfully');
+    },
+    onError: (error) => {
+      toast.error(`Failed to update team: ${error.message}`);
+    },
+  });
+};
