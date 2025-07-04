@@ -67,6 +67,7 @@ export const useTeamManagement = () => {
     phone?: string;
     password: string;
     role: 'admin' | 'partner' | 'merchant';
+    team_id?: string;
   }) => {
     setIsSaving(true);
     try {

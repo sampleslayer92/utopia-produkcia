@@ -30,6 +30,7 @@ import BusinessLocationDetailPage from "./pages/BusinessLocationDetailPage";
 import OrganizationsPage from "./pages/OrganizationsPage";
 import OrganizationalTeamsPage from "./pages/OrganizationalTeamsPage";
 import OrganizationalStructurePage from "./pages/OrganizationalStructurePage";
+import TeamDetailPage from "./pages/TeamDetailPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -117,6 +118,11 @@ const App = () => (
           <Route path="/admin/organizations/structure" element={
             <ProtectedRoute requiredRole="admin">
               <OrganizationalStructurePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/teams/:teamId" element={
+            <ProtectedRoute requiredRole="admin">
+              <TeamDetailPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/team" element={
