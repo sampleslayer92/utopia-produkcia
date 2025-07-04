@@ -27,6 +27,9 @@ import DesignSystemPage from "./pages/DesignSystemPage";
 import DealsPage from "./pages/DealsPage";
 import BusinessLocationsPage from "./pages/BusinessLocationsPage";
 import BusinessLocationDetailPage from "./pages/BusinessLocationDetailPage";
+import OrganizationsPage from "./pages/OrganizationsPage";
+import OrganizationalTeamsPage from "./pages/OrganizationalTeamsPage";
+import OrganizationalStructurePage from "./pages/OrganizationalStructurePage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -101,6 +104,21 @@ const App = () => (
           } />
           
           {/* Admin-only routes */}
+          <Route path="/admin/organizations" element={
+            <ProtectedRoute requiredRole="admin">
+              <OrganizationsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/organizations/teams" element={
+            <ProtectedRoute requiredRole="admin">
+              <OrganizationalTeamsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/organizations/structure" element={
+            <ProtectedRoute requiredRole="admin">
+              <OrganizationalStructurePage />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/team" element={
             <ProtectedRoute requiredRole="admin">
               <TeamManagement />

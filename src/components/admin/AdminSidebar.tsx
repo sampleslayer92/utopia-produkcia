@@ -10,7 +10,9 @@ import {
   UserCog,
   TrendingUp,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Building,
+  Network
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
@@ -40,7 +42,7 @@ const AdminSidebar = () => {
   const { userRole } = useAuth();
   
   // State for expandable sections
-  const [expandedSections, setExpandedSections] = useState<string[]>(['merchants', 'team']);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['merchants', 'team', 'organizations']);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections(prev => 
@@ -107,6 +109,31 @@ const AdminSidebar = () => {
           title: userRole?.role === 'partner' ? t('navigation.myContracts') : t('navigation.contracts'),
           path: "/admin/merchants/contracts",
           active: isActive("/admin/merchants/contracts")
+        }
+      ]
+    }] : []),
+    // Only show organizations for admins
+    ...(userRole?.role === 'admin' ? [{
+      id: 'organizations',
+      title: t('navigation.organizations'),
+      icon: Building,
+      type: 'expandable' as const,
+      expanded: isExpanded('organizations'),
+      children: [
+        {
+          title: t('navigation.organizationManagement'),
+          path: "/admin/organizations",
+          active: isActive("/admin/organizations")
+        },
+        {
+          title: t('navigation.teamManagement'),
+          path: "/admin/organizations/teams",
+          active: isActive("/admin/organizations/teams")
+        },
+        {
+          title: t('navigation.organizationalStructure'),
+          path: "/admin/organizations/structure",
+          active: isActive("/admin/organizations/structure")
         }
       ]
     }] : []),

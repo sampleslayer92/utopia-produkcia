@@ -18,7 +18,10 @@
     "myContracts": "Moje zmluvy",
     "teamManagement": "Správa tímu",
     "teamMembers": "Správa členov",
-    "teamPerformance": "Výkonnosť tímu"
+    "teamPerformance": "Výkonnosť tímu",
+    "organizations": "Organizácie",
+    "organizationManagement": "Správa organizácií",
+    "organizationalStructure": "Organizačná štruktúra"
   },
   "breadcrumbs": {
     "editContract": "Editácia zmluvy",
@@ -850,5 +853,50 @@
       "copyingSegments": "Kopírujem {{count}} segmentov z zmluvy {{contractNumber}}",
       "startingClean": "Začínam s novou čistou zmluvou"
     }
+  },
+  "organizations": {
+    "title": "Správa organizácií",
+    "subtitle": "Prehľad a správa všetkých organizácií v systéme",
+    "createOrganization": "Vytvoriť organizáciu",
+    "teams": "tímy",
+    "members": "členovia",
+    "stats": {
+      "totalOrganizations": "Celkový počet organizácií",
+      "activeOrganizations": "Aktívne organizácie",
+      "totalTeams": "Celkový počet tímov"
+    },
+    "form": {
+      "name": "Názov organizácie",
+      "namePlaceholder": "Zadajte názov organizácie",
+      "description": "Popis",
+      "descriptionPlaceholder": "Zadajte popis organizácie",
+      "color": "Farba organizácie"
+    }
+  },
+  "teams": {
+    "title": "Správa tímov",
+    "subtitle": "Prehľad a správa všetkých tímov v organizáciách",
+    "createTeam": "Vytvoriť tím",
+    "members": "členovia",
+    "stats": {
+      "totalTeams": "Celkový počet tímov",
+      "activeTeams": "Aktívne tímy",
+      "totalMembers": "Celkový počet členov"
+    },
+    "form": {
+      "name": "Názov tímu",
+      "namePlaceholder": "Zadajte názov tímu",
+      "description": "Popis",
+      "descriptionPlaceholder": "Zadajte popis tímu",
+      "organization": "Organizácia",
+      "selectOrganization": "Vyberte organizáciu"
+    }
+  },
+  "organizationalStructure": {
+    "title": "Organizačná štruktúra",
+    "subtitle": "Vizualizácia hierarchie organizácií a tímov",
+    "totalMembers": "Celkový počet členov",
+    "visualization": "Vizualizácia štruktúry",
+    "comingSoon": "Vizualizácia organizačnej štruktúry bude čoskoro dostupná"
   }
 }

@@ -18,7 +18,10 @@
     "myContracts": "My Contracts",
     "teamManagement": "Team Management",
     "teamMembers": "Team Members",
-    "teamPerformance": "Team Performance"
+    "teamPerformance": "Team Performance",
+    "organizations": "Organizations",
+    "organizationManagement": "Organization Management",
+    "organizationalStructure": "Organizational Structure"
   },
   "breadcrumbs": {
     "editContract": "Edit Contract",
@@ -837,5 +840,50 @@
       "copyingSegments": "Copying {{count}} segments from contract {{contractNumber}}",
       "startingClean": "Starting with a new clean contract"
     }
+  },
+  "organizations": {
+    "title": "Organization Management",
+    "subtitle": "Overview and management of all organizations in the system",
+    "createOrganization": "Create Organization",
+    "teams": "teams",
+    "members": "members",
+    "stats": {
+      "totalOrganizations": "Total Organizations",
+      "activeOrganizations": "Active Organizations",
+      "totalTeams": "Total Teams"
+    },
+    "form": {
+      "name": "Organization Name",
+      "namePlaceholder": "Enter organization name",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter organization description",
+      "color": "Organization Color"
+    }
+  },
+  "teams": {
+    "title": "Team Management",
+    "subtitle": "Overview and management of all teams in organizations",
+    "createTeam": "Create Team",
+    "members": "members",
+    "stats": {
+      "totalTeams": "Total Teams",
+      "activeTeams": "Active Teams",
+      "totalMembers": "Total Members"
+    },
+    "form": {
+      "name": "Team Name",
+      "namePlaceholder": "Enter team name",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter team description",
+      "organization": "Organization",
+      "selectOrganization": "Select organization"
+    }
+  },
+  "organizationalStructure": {
+    "title": "Organizational Structure",
+    "subtitle": "Visualization of organization and team hierarchy",
+    "totalMembers": "Total Members",
+    "visualization": "Structure Visualization",
+    "comingSoon": "Organizational structure visualization will be available soon"
   }
 }
