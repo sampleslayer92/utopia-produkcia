@@ -788,5 +788,54 @@
     "approved": "Approved", 
     "rejected": "Rejected",
     "signed": "Signed"
+  },
+  "contractCopyModal": {
+    "title": "New Contract for Merchant",
+    "selectContract": "Select Contract to Copy (Optional)",
+    "selectSegments": "Select Segments to Copy",
+    "selectAllSegments": "Select All",
+    "deselectAllSegments": "Deselect All",
+    "segmentsSelected": "{{count}} of {{total}} selected",
+    "previewTitle": "Copy Preview",
+    "previewDescription": "Will copy {{count}} segments from contract {{contractNumber}}:",
+    "startClean": "Start with Clean Contract",
+    "copySelected": "Copy Selected Data",
+    "segments": {
+      "contactInfo": {
+        "label": "Contact Information",
+        "description": "Name, email, phone, titles"
+      },
+      "companyInfo": {
+        "label": "Company Information", 
+        "description": "ICO, DIC, name, address, registries"
+      },
+      "businessLocations": {
+        "label": "Business Locations",
+        "description": "Operating locations and their data"
+      },
+      "deviceSelection": {
+        "label": "Devices and Services",
+        "description": "Selected devices, services, add-ons"
+      },
+      "fees": {
+        "label": "Fees",
+        "description": "Fee settings and rates"
+      },
+      "personsAndOwners": {
+        "label": "Persons and Owners",
+        "description": "Authorized persons and actual owners"
+      }
+    },
+    "contractDetails": {
+      "created": "Created:",
+      "monthly": "monthly"
+    },
+    "validation": {
+      "selectContractAndSegments": "Select a contract and at least one segment to copy"
+    },
+    "success": {
+      "copyingSegments": "Copying {{count}} segments from contract {{contractNumber}}",
+      "startingClean": "Starting with a new clean contract"
+    }
   }
 }

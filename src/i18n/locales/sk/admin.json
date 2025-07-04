@@ -801,5 +801,54 @@
     "approved": "Schválené", 
     "rejected": "Zamietnuté",
     "signed": "Podpísané"
+  },
+  "contractCopyModal": {
+    "title": "Nová zmluva pre merchanta",
+    "selectContract": "Vyberte zmluvu na kopírovanie (voliteľné)",
+    "selectSegments": "Vyberte segmenty na kopírovanie",
+    "selectAllSegments": "Vybrať všetko",
+    "deselectAllSegments": "Zrušiť výber všetkých",
+    "segmentsSelected": "{{count}} z {{total}} vybraných",
+    "previewTitle": "Náhľad kopírovania",
+    "previewDescription": "Skopíruje sa {{count}} segmentov zo zmluvy {{contractNumber}}:",
+    "startClean": "Začať s čistou zmluvou",
+    "copySelected": "Kopírovať vybrané údaje",
+    "segments": {
+      "contactInfo": {
+        "label": "Kontaktné údaje",
+        "description": "Meno, email, telefón, tituly"
+      },
+      "companyInfo": {
+        "label": "Údaje o spoločnosti",
+        "description": "IČO, DIČ, názov, adresa, registre"
+      },
+      "businessLocations": {
+        "label": "Prevádzky",
+        "description": "Prevádzkovacie miesta a ich údaje"
+      },
+      "deviceSelection": {
+        "label": "Zariadenia a služby",
+        "description": "Vybraté zariadenia, služby, doplnky"
+      },
+      "fees": {
+        "label": "Poplatky",
+        "description": "Nastavenia poplatkov a sadzieb"
+      },
+      "personsAndOwners": {
+        "label": "Osoby a vlastníci",
+        "description": "Oprávnené osoby a skutoční vlastníci"
+      }
+    },
+    "contractDetails": {
+      "created": "Vytvorená:",
+      "monthly": "mesačne"
+    },
+    "validation": {
+      "selectContractAndSegments": "Vyberte zmluvu a aspoň jeden segment na kopírovanie"
+    },
+    "success": {
+      "copyingSegments": "Kopírujem {{count}} segmentov z zmluvy {{contractNumber}}",
+      "startingClean": "Začínam s novou čistou zmluvou"
+    }
   }
 }

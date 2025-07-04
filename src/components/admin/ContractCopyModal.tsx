@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +21,9 @@ import {
   Users,
   FileText,
   Copy,
-  Sparkles
+  Sparkles,
+  CheckSquare,
+  Square
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -53,6 +56,7 @@ const ContractCopyModal = ({
   contracts, 
   merchantId 
 }: ContractCopyModalProps) => {
+  const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const [selectedContract, setSelectedContract] = useState<string>('');
   const [selectedSegments, setSelectedSegments] = useState<string[]>([]);
@@ -60,38 +64,38 @@ const ContractCopyModal = ({
   const copySegments: CopySegment[] = [
     {
       id: 'contactInfo',
-      label: 'Kontaktné údaje',
-      description: 'Meno, email, telefón, tituly',
+      label: t('contractCopyModal.segments.contactInfo.label'),
+      description: t('contractCopyModal.segments.contactInfo.description'),
       icon: User,
     },
     {
       id: 'companyInfo',
-      label: 'Údaje o spoločnosti',
-      description: 'IČO, DIČ, názov, adresa, registre',
+      label: t('contractCopyModal.segments.companyInfo.label'),
+      description: t('contractCopyModal.segments.companyInfo.description'),
       icon: Building2,
     },
     {
       id: 'businessLocations',
-      label: 'Prevádzky',
-      description: 'Prevádzkovacie miesta a ich údaje',
+      label: t('contractCopyModal.segments.businessLocations.label'),
+      description: t('contractCopyModal.segments.businessLocations.description'),
       icon: MapPin,
     },
     {
       id: 'deviceSelection',
-      label: 'Zariadenia a služby',
-      description: 'Vybraté zariadenia, služby, doplnky',
+      label: t('contractCopyModal.segments.deviceSelection.label'),
+      description: t('contractCopyModal.segments.deviceSelection.description'),
       icon: CreditCard,
     },
     {
       id: 'fees',
-      label: 'Poplatky',
-      description: 'Nastavenia poplatkov a sadzieb',
+      label: t('contractCopyModal.segments.fees.label'),
+      description: t('contractCopyModal.segments.fees.description'),
       icon: Euro,
     },
     {
       id: 'personsAndOwners',
-      label: 'Osoby a vlastníci',
-      description: 'Oprávnené osoby a skutoční vlastníci',
+      label: t('contractCopyModal.segments.personsAndOwners.label'),
+      description: t('contractCopyModal.segments.personsAndOwners.description'),
       icon: Users,
     },
   ];
@@ -106,9 +110,17 @@ const ContractCopyModal = ({
     );
   };
 
+  const handleSelectAll = () => {
+    setSelectedSegments(copySegments.map(segment => segment.id));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedSegments([]);
+  };
+
   const handleStartWithCopy = () => {
     if (!selectedContract || selectedSegments.length === 0) {
-      toast.error('Vyberte zmluvu a aspoň jeden segment na kopírovanie');
+      toast.error(t('contractCopyModal.validation.selectContractAndSegments'));
       return;
     }
 
@@ -122,7 +134,10 @@ const ContractCopyModal = ({
     
     localStorage.setItem('contract_copy_config', JSON.stringify(copyConfig));
     
-    toast.success(`Kopírujem ${selectedSegments.length} segmentov z zmluvy ${selectedContractData?.contract_number}`);
+    toast.success(t('contractCopyModal.success.copyingSegments', { 
+      count: selectedSegments.length, 
+      contractNumber: selectedContractData?.contract_number 
+    }));
     
     // Navigate to admin onboarding
     navigate('/admin/onboarding');
@@ -133,7 +148,7 @@ const ContractCopyModal = ({
     // Clear any existing copy config
     localStorage.removeItem('contract_copy_config');
     
-    toast.success('Začínam s novou čistou zmluvou');
+    toast.success(t('contractCopyModal.success.startingClean'));
     
     // Navigate to admin onboarding
     navigate('/admin/onboarding');
@@ -146,14 +161,14 @@ const ContractCopyModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Copy className="h-5 w-5" />
-            Nová zmluva pre merchanta
+            {t('contractCopyModal.title')}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Contract Selection */}
           <div>
-            <h3 className="text-lg font-semibold mb-3">Vyberte zmluvu na kopírovanie (voliteľné)</h3>
+            <h3 className="text-lg font-semibold mb-3">{t('contractCopyModal.selectContract')}</h3>
             <div className="grid gap-3 max-h-48 overflow-y-auto">
               {contracts.map((contract) => (
                 <Card 
@@ -179,7 +194,7 @@ const ContractCopyModal = ({
                             <Badge variant="outline">{contract.status}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            Vytvorená: {new Date(contract.created_at).toLocaleDateString('sk-SK')}
+                            {t('contractCopyModal.contractDetails.created')} {new Date(contract.created_at).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
@@ -187,7 +202,7 @@ const ContractCopyModal = ({
                         <p className="font-semibold text-primary">
                           €{contract.total_monthly_profit.toFixed(2)}
                         </p>
-                        <p className="text-sm text-muted-foreground">mesačne</p>
+                        <p className="text-sm text-muted-foreground">{t('contractCopyModal.contractDetails.monthly')}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -199,7 +214,35 @@ const ContractCopyModal = ({
           {/* Segment Selection */}
           {selectedContract && (
             <div>
-              <h3 className="text-lg font-semibold mb-3">Vyberte segmenty na kopírovanie</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-semibold">{t('contractCopyModal.selectSegments')}</h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">
+                    {t('contractCopyModal.segmentsSelected', { 
+                      count: selectedSegments.length, 
+                      total: copySegments.length 
+                    })}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={selectedSegments.length === copySegments.length ? handleDeselectAll : handleSelectAll}
+                    className="flex items-center gap-1"
+                  >
+                    {selectedSegments.length === copySegments.length ? (
+                      <>
+                        <Square className="h-3 w-3" />
+                        {t('contractCopyModal.deselectAllSegments')}
+                      </>
+                    ) : (
+                      <>
+                        <CheckSquare className="h-3 w-3" />
+                        {t('contractCopyModal.selectAllSegments')}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {copySegments.map((segment) => (
                   <Card 
@@ -237,13 +280,15 @@ const ContractCopyModal = ({
                   <CardHeader className="pb-3">
                     <CardTitle className="text-base flex items-center gap-2">
                       <Sparkles className="h-4 w-4" />
-                      Náhľad kopírovania
+                      {t('contractCopyModal.previewTitle')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground mb-2">
-                      Skopíruje sa <span className="font-semibold">{selectedSegments.length}</span> segmentov 
-                      zo zmluvy <span className="font-semibold">{selectedContractData?.contract_number}</span>:
+                      {t('contractCopyModal.previewDescription', { 
+                        count: selectedSegments.length, 
+                        contractNumber: selectedContractData?.contract_number 
+                      })}
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {selectedSegments.map(segmentId => {
@@ -264,16 +309,16 @@ const ContractCopyModal = ({
 
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Zrušiť
+            {t('common:buttons.cancel')}
           </Button>
           <Button variant="outline" onClick={handleStartClean}>
             <FileText className="h-4 w-4 mr-2" />
-            Začať s čistou zmluvou
+            {t('contractCopyModal.startClean')}
           </Button>
           {selectedContract && selectedSegments.length > 0 && (
             <Button onClick={handleStartWithCopy}>
               <Copy className="h-4 w-4 mr-2" />
-              Kopírovať vybrané údaje
+              {t('contractCopyModal.copySelected')}
             </Button>
           )}
         </DialogFooter>
