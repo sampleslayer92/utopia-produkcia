@@ -956,6 +956,10 @@
       "selectTeamLeaderPlaceholder": "Vyberte vedúceho...",
       "noLeader": "Bez vedúceho",
       "teamLeaderDescription": "Vedúci tímu má rozšírené oprávnenia",
+      "organization": "Organizácia",
+      "selectOrganization": "Vybrať organizáciu",
+      "selectOrganizationPlaceholder": "Vyberte organizáciu...",
+      "organizationDescription": "Určuje, do ktorej organizácie tím patrí",
       "dangerZone": "Nebezpečná zóna",
       "deleteTeam": "Vymazať tím",
       "deleteTeamDescription": "Trvalo vymazať tím a všetky súvisiace dáta"

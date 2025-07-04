@@ -37,7 +37,9 @@
     "completed": "Dokončené",
     "inProgress": "Prebieha",
     "next": "Nasledujúci",
-    "partiallyComplete": "Čiastočne vyplnené"
+    "partiallyComplete": "Čiastočne vyplnené",
+    "active": "Aktívny",
+    "inactive": "Neaktívny"
   },
   "validation": {
     "required": "Toto pole je povinné",
