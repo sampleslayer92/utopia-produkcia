@@ -176,9 +176,6 @@ export const TeamSettingsTab = ({ team }: TeamSettingsTabProps) => {
                 <SelectValue placeholder={t('teams.settings.selectTeamLeaderPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">
-                  {t('teams.settings.selectTeamLeaderPlaceholder')}
-                </SelectItem>
                 {teamMembers?.map((member) => (
                   <SelectItem key={member.id} value={member.id}>
                     {member.first_name} {member.last_name}
