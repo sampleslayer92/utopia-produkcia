@@ -1,107 +1,27 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Building2, User, ArrowRight, LogIn, Zap, Shield, Sparkles } from "lucide-react";
+import { ArrowRight, LogIn, Zap, Shield, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+
 const Welcome = () => {
   const navigate = useNavigate();
-  const {
-    t
-  } = useTranslation();
-  const [showRoleSelection, setShowRoleSelection] = useState(false);
-  const handleRoleSelect = (role: 'admin' | 'partner' | 'merchant') => {
-    localStorage.setItem('utopia_user_role', role);
-    switch (role) {
-      case 'admin':
-        navigate('/admin');
-        break;
-      case 'partner':
-        navigate('/partner');
-        break;
-      case 'merchant':
-        navigate('/merchant');
-        break;
-    }
-  };
+  const { t } = useTranslation();
+
+  // Clean up any existing localStorage role data on component mount
+  useEffect(() => {
+    localStorage.removeItem('utopia_user_role');
+  }, []);
+
   const handleNewClient = () => {
     navigate('/onboarding');
   };
+
   const handleLogin = () => {
     navigate('/auth');
   };
-  if (showRoleSelection) {
-    return <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
-          {/* Header with Language Switcher */}
-          <div className="flex justify-end mb-4">
-            <LanguageSwitcher />
-          </div>
-
-          {/* Header */}
-          <div className="text-center mb-8">
-            <img src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" alt="Utopia Logo" className="h-16 w-auto mx-auto mb-4" />
-            <p className="text-slate-600 mt-2">{t('welcome.selectRole')}</p>
-          </div>
-
-          {/* Role Selection */}
-          <div className="space-y-4">
-            <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-blue-300" onClick={() => handleRoleSelect('admin')}>
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
-                    <Building2 className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900">{t('welcome.roles.admin.title')}</h3>
-                    <p className="text-sm text-slate-600">{t('welcome.roles.admin.description')}</p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-slate-400" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-blue-300" onClick={() => handleRoleSelect('partner')}>
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900">{t('welcome.roles.partner.title')}</h3>
-                    <p className="text-sm text-slate-600">{t('welcome.roles.partner.description')}</p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-slate-400" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-blue-300" onClick={() => handleRoleSelect('merchant')}>
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-                    <User className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900">{t('welcome.roles.merchant.title')}</h3>
-                    <p className="text-sm text-slate-600">{t('welcome.roles.merchant.description')}</p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-slate-400" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Back Button */}
-          <div className="mt-8 text-center">
-            <Button variant="outline" onClick={() => setShowRoleSelection(false)} className="text-slate-600 border-slate-300">
-              {t('welcome.backButton')}
-            </Button>
-          </div>
-        </div>
-      </div>;
-  }
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
       {/* Header with Language Switcher */}
       <div className="flex justify-end p-6">
