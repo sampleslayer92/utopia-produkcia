@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, Edit2, Save, X, Tags, RefreshCw } from 'lucide-react';
-import { useContractStatuses, ContractStatus } from '@/hooks/useContractStatuses';
+import { useContractStatuses, ContractStatus, EntityType } from '@/hooks/useContractStatuses';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -24,9 +24,18 @@ const CATEGORY_OPTIONS = [
   { value: 'cancelled', label: 'Zrušené' }
 ];
 
+const ENTITY_TYPE_OPTIONS = [
+  { value: 'contracts', label: 'Zmluvy' },
+  { value: 'merchants', label: 'Obchodníci' },
+  { value: 'organizations', label: 'Organizácie' },
+  { value: 'users', label: 'Užívatelia' },
+  { value: 'teams', label: 'Tímy' }
+];
+
 const ApplicationSettingsTab = () => {
   const { t } = useTranslation('admin');
-  const { statuses, createStatus, updateStatus, deleteStatus, isLoading, refetch } = useContractStatuses();
+  const [selectedEntityType, setSelectedEntityType] = useState<EntityType>('contracts');
+  const { statuses, createStatus, updateStatus, deleteStatus, isLoading, refetch } = useContractStatuses(selectedEntityType);
   const [editingStatus, setEditingStatus] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -49,7 +58,8 @@ const ApplicationSettingsTab = () => {
       name: formData.name.toLowerCase().replace(/\s+/g, '_'),
       is_system: false,
       is_active: true,
-      position: statuses.length
+      position: statuses.length,
+      entity_type: selectedEntityType
     };
 
     const result = await createStatus(statusData);
@@ -92,10 +102,10 @@ const ApplicationSettingsTab = () => {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Tags className="h-5 w-5" />
-                Správa Statusov Zmlúv
+                Správa Statusov
               </CardTitle>
               <CardDescription>
-                Spravujte statusy, ktoré sa zobrazujú v kanban boardoch a tabuľkách
+                Spravujte statusy pre rôzne entity v systéme
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -120,6 +130,23 @@ const ApplicationSettingsTab = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Entity Type Selector */}
+          <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
+            <Label className="text-sm font-medium">Typ entity:</Label>
+            <Select value={selectedEntityType} onValueChange={(value) => setSelectedEntityType(value as EntityType)}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ENTITY_TYPE_OPTIONS.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {showAddForm && (
             <Card className="p-4 border-dashed border-primary/50">
               <form onSubmit={handleSubmit} className="space-y-4">

@@ -1,4 +1,5 @@
-import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ApplicationSettingsTab from '@/components/admin/settings/ApplicationSettingsTab';
@@ -9,7 +10,19 @@ import { Settings, Cog, User } from 'lucide-react';
 const SettingsPage = () => {
   const { t } = useTranslation('admin');
   const { tab } = useParams();
-  const activeTab = tab || 'application';
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(tab || 'application');
+
+  useEffect(() => {
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+  }, [tab, activeTab]);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    navigate(`/admin/settings/${value}`);
+  };
 
   return (
     <AdminLayout 
@@ -17,7 +30,7 @@ const SettingsPage = () => {
       subtitle={t('settings.description')}
     >
       <div className="space-y-6">
-        <Tabs value={activeTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="application" className="flex items-center gap-2">
               <Cog className="h-4 w-4" />

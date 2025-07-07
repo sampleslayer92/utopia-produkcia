@@ -596,6 +596,7 @@ export type Database = {
           color: string
           created_at: string
           description: string | null
+          entity_type: Database["public"]["Enums"]["entity_type"]
           id: string
           is_active: boolean
           is_system: boolean
@@ -609,6 +610,7 @@ export type Database = {
           color?: string
           created_at?: string
           description?: string | null
+          entity_type?: Database["public"]["Enums"]["entity_type"]
           id?: string
           is_active?: boolean
           is_system?: boolean
@@ -622,6 +624,7 @@ export type Database = {
           color?: string
           created_at?: string
           description?: string | null
+          entity_type?: Database["public"]["Enums"]["entity_type"]
           id?: string
           is_active?: boolean
           is_system?: boolean
@@ -1235,6 +1238,12 @@ export type Database = {
         | "waiting_for_signature"
         | "lost"
       document_type: "OP" | "Pas"
+      entity_type:
+        | "contracts"
+        | "merchants"
+        | "organizations"
+        | "users"
+        | "teams"
       lost_reason:
         | "no_response"
         | "price_too_high"
@@ -1396,6 +1405,13 @@ export const Constants = {
         "lost",
       ],
       document_type: ["OP", "Pas"],
+      entity_type: [
+        "contracts",
+        "merchants",
+        "organizations",
+        "users",
+        "teams",
+      ],
       lost_reason: [
         "no_response",
         "price_too_high",

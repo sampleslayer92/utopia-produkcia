@@ -29,7 +29,7 @@ const CATEGORY_OPTIONS = [
 ];
 
 const StatusManagementModal = ({ isOpen, onClose }: StatusManagementModalProps) => {
-  const { statuses, createStatus, updateStatus, deleteStatus, isLoading } = useContractStatuses();
+  const { statuses, createStatus, updateStatus, deleteStatus, isLoading } = useContractStatuses('contracts');
   const [editingStatus, setEditingStatus] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,7 +52,8 @@ const StatusManagementModal = ({ isOpen, onClose }: StatusManagementModalProps) 
       name: formData.name.toLowerCase().replace(/\s+/g, '_'),
       is_system: false,
       is_active: true,
-      position: statuses.length
+      position: statuses.length,
+      entity_type: 'contracts' as const
     };
 
     const result = await createStatus(statusData);
