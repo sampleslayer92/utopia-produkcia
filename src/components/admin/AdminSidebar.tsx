@@ -13,7 +13,9 @@ import {
   ChevronRight,
   Building,
   Network,
-  Settings
+  Settings,
+  Warehouse,
+  BarChart3
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
@@ -43,7 +45,7 @@ const AdminSidebar = () => {
   const { userRole } = useAuth();
   
   // State for expandable sections
-  const [expandedSections, setExpandedSections] = useState<string[]>(['merchants', 'team', 'organizations', 'settings']);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['merchants', 'team', 'organizations', 'warehouse', 'reporting', 'settings']);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections(prev => 
@@ -110,6 +112,56 @@ const AdminSidebar = () => {
           title: userRole?.role === 'partner' ? t('navigation.myContracts') : t('navigation.contracts'),
           path: "/admin/merchants/contracts",
           active: isActive("/admin/merchants/contracts")
+        }
+      ]
+    }] : []),
+    // Only show warehouse for admin and partner
+    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
+      id: 'warehouse',
+      title: t('navigation.warehouse'),
+      icon: Warehouse,
+      type: 'expandable' as const,
+      expanded: isExpanded('warehouse'),
+      children: [
+        {
+          title: t('navigation.allItems'),
+          path: "/admin/warehouse",
+          active: isActive("/admin/warehouse")
+        },
+        {
+          title: t('navigation.devices'),
+          path: "/admin/warehouse/devices",
+          active: isActive("/admin/warehouse/devices")
+        },
+        {
+          title: t('navigation.services'),
+          path: "/admin/warehouse/services",
+          active: isActive("/admin/warehouse/services")
+        }
+      ]
+    }] : []),
+    // Only show reporting for admin and partner
+    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
+      id: 'reporting',
+      title: t('navigation.reporting'),
+      icon: BarChart3,
+      type: 'expandable' as const,
+      expanded: isExpanded('reporting'),
+      children: [
+        {
+          title: t('navigation.reportsDashboard'),
+          path: "/admin/reporting",
+          active: isActive("/admin/reporting")
+        },
+        {
+          title: t('navigation.businessReports'),
+          path: "/admin/reporting/business",
+          active: isActive("/admin/reporting/business")
+        },
+        {
+          title: t('navigation.technicalReports'),
+          path: "/admin/reporting/technical",
+          active: isActive("/admin/reporting/technical")
         }
       ]
     }] : []),

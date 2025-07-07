@@ -25,6 +25,8 @@ import MerchantDetailPage from "./pages/MerchantDetailPage";
 import AdminOnboardingPage from "./pages/AdminOnboardingPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
 import DealsPage from "./pages/DealsPage";
+import WarehousePage from "./pages/WarehousePage";
+import ReportingPage from "./pages/ReportingPage";
 import BusinessLocationsPage from "./pages/BusinessLocationsPage";
 import BusinessLocationDetailPage from "./pages/BusinessLocationDetailPage";
 import OrganizationsPage from "./pages/OrganizationsPage";
@@ -69,6 +71,41 @@ const App = () => (
               <DealsPage />
             </ProtectedRoute>
           } />
+          
+          {/* Warehouse routes */}
+          <Route path="/admin/warehouse" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/warehouse/devices" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/warehouse/services" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Reporting routes */}
+          <Route path="/admin/reporting" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <ReportingPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reporting/business" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <ReportingPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reporting/technical" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <ReportingPage />
+            </ProtectedRoute>
+          } />
+          
           <Route path="/admin/merchants" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <MerchantsPage />
