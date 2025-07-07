@@ -57,7 +57,7 @@ i18n
     resources,
     lng: 'sk', // default language
     fallbackLng: 'sk',
-    debug: false,
+    debug: true, // temporarily enable debug to check i18n loading
     
     interpolation: {
       escapeValue: false, // React already does escaping
