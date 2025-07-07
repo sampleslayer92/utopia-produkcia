@@ -65,6 +65,17 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				glass: {
+					bg: 'rgba(var(--glass-bg))',
+					border: 'rgba(var(--glass-border))',
+					card: {
+						bg: 'rgba(var(--glass-card-bg))',
+						border: 'rgba(var(--glass-card-border))'
+					},
+					hover: {
+						bg: 'rgba(var(--glass-hover-bg))'
+					}
+				},
 				kanban: {
 					column: {
 						DEFAULT: 'hsl(var(--kanban-column-bg))',
@@ -279,6 +290,11 @@ export default {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'blue-gradient': 'linear-gradient(135deg, #0066ff 0%, #00d4ff 100%)',
 				'light-gradient': 'linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)',
+				'action-blue': 'var(--action-blue)',
+				'action-emerald': 'var(--action-emerald)',
+				'action-purple': 'var(--action-purple)',
+				'action-orange': 'var(--action-orange)',
+				'action-cyan': 'var(--action-cyan)',
 			},
 			spacing: {
 				'safe-top': 'env(safe-area-inset-top)',

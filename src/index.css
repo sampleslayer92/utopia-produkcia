@@ -49,6 +49,24 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Glassmorphism design tokens */
+    --glass-bg: 255 255 255 / 0.08;
+    --glass-border: 255 255 255 / 0.15;
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    --glass-backdrop: blur(8px);
+    --glass-card-bg: 255 255 255 / 0.12;
+    --glass-card-border: 255 255 255 / 0.2;
+    --glass-card-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.3);
+    --glass-hover-bg: 255 255 255 / 0.18;
+    --glass-hover-shadow: 0 8px 24px 0 rgba(31, 38, 135, 0.4);
+    
+    /* Action button gradients */
+    --action-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --action-emerald: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --action-purple: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    --action-orange: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    --action-cyan: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
   }
 
   .dark {
@@ -133,6 +151,24 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Glassmorphism design tokens - dark mode */
+    --glass-bg: 0 0 0 / 0.15;
+    --glass-border: 255 255 255 / 0.1;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    --glass-backdrop: blur(12px);
+    --glass-card-bg: 255 255 255 / 0.08;
+    --glass-card-border: 255 255 255 / 0.12;
+    --glass-card-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.4);
+    --glass-hover-bg: 255 255 255 / 0.15;
+    --glass-hover-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.6);
+    
+    /* Action button gradients - dark mode */
+    --action-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --action-emerald: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --action-purple: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    --action-orange: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    --action-cyan: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
 
     /* Kanban-specific colors - dark mode */
     --kanban-column-bg: 217.2 32.6% 17.5%;
