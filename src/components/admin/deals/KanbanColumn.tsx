@@ -1,20 +1,20 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import KanbanCard from './KanbanCard';
+import EditableKanbanColumnHeader from './EditableKanbanColumnHeader';
 import { EnhancedContractData } from '@/hooks/useEnhancedContractsData';
+import { KanbanColumn as KanbanColumnType } from '@/hooks/useKanbanColumns';
 
 interface KanbanColumnProps {
   id: string;
-  title: string;
+  column: KanbanColumnType;
   contracts: EnhancedContractData[];
-  color: string;
-  count: number;
   isDropTarget?: boolean;
+  onUpdateColumn: (columnId: string, updates: Partial<KanbanColumnType>) => Promise<any>;
 }
 
-const KanbanColumn = ({ id, title, contracts, color, count, isDropTarget = false }: KanbanColumnProps) => {
+const KanbanColumn = ({ id, column, contracts, isDropTarget = false, onUpdateColumn }: KanbanColumnProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id,
   });
@@ -35,15 +35,11 @@ const KanbanColumn = ({ id, title, contracts, color, count, isDropTarget = false
         <div className="absolute inset-0 border-2 border-dashed border-kanban-drag-over rounded-xl opacity-50 animate-pulse-ring pointer-events-none" />
       )}
       
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-foreground text-sm">{title}</h3>
-        <Badge 
-          variant="secondary" 
-          className="bg-background/80 text-muted-foreground text-xs px-2 py-1 font-medium shadow-sm"
-        >
-          {count}
-        </Badge>
-      </div>
+      <EditableKanbanColumnHeader
+        column={column}
+        onUpdate={onUpdateColumn}
+        count={contracts.length}
+      />
       
       <div className="space-y-3 min-h-[400px] md:min-h-[500px]">
         {contracts.map((contract, index) => (

@@ -787,6 +787,42 @@ export type Database = {
         }
         Relationships: []
       }
+      kanban_columns: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          is_active: boolean
+          position: number
+          statuses: string[]
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          position?: number
+          statuses?: string[]
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          position?: number
+          statuses?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       location_assignments: {
         Row: {
           contract_id: string
@@ -1042,6 +1078,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_kanban_preferences: {
+        Row: {
+          auto_refresh: boolean
+          card_compact_mode: boolean
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          view_mode: string
+        }
+        Insert: {
+          auto_refresh?: boolean
+          card_compact_mode?: boolean
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          view_mode?: string
+        }
+        Update: {
+          auto_refresh?: boolean
+          card_compact_mode?: boolean
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          view_mode?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
