@@ -32,27 +32,27 @@ const ReportingPage = () => {
 
   // Chart data
   const contractStatusData = [
-    { name: 'Podpísané', value: stats.activeContracts, color: '#22C55E' },
-    { name: 'Čakajúce', value: stats.pendingContracts, color: '#F59E0B' },
-    { name: 'Koncepty', value: stats.draftContracts, color: '#6B7280' },
+    { name: t('reporting.statusLabels.signed'), value: stats.activeContracts, color: '#22C55E' },
+    { name: t('reporting.statusLabels.pending'), value: stats.pendingContracts, color: '#F59E0B' },
+    { name: t('reporting.statusLabels.draft'), value: stats.draftContracts, color: '#6B7280' },
   ];
 
   const monthlyRevenueData = [
-    { month: 'Jan', revenue: Math.round(stats.totalRevenue * 0.7) },
-    { month: 'Feb', revenue: Math.round(stats.totalRevenue * 0.8) },
-    { month: 'Mar', revenue: Math.round(stats.totalRevenue * 0.85) },
-    { month: 'Apr', revenue: Math.round(stats.totalRevenue * 0.9) },
-    { month: 'Máj', revenue: Math.round(stats.totalRevenue * 0.95) },
-    { month: 'Jún', revenue: Math.round(stats.totalRevenue) },
+    { month: t('reporting.months.jan'), revenue: Math.round(stats.totalRevenue * 0.7) },
+    { month: t('reporting.months.feb'), revenue: Math.round(stats.totalRevenue * 0.8) },
+    { month: t('reporting.months.mar'), revenue: Math.round(stats.totalRevenue * 0.85) },
+    { month: t('reporting.months.apr'), revenue: Math.round(stats.totalRevenue * 0.9) },
+    { month: t('reporting.months.may'), revenue: Math.round(stats.totalRevenue * 0.95) },
+    { month: t('reporting.months.jun'), revenue: Math.round(stats.totalRevenue) },
   ];
 
   const merchantGrowthData = [
-    { month: 'Jan', merchants: Math.round(stats.totalMerchants * 0.6) },
-    { month: 'Feb', merchants: Math.round(stats.totalMerchants * 0.7) },
-    { month: 'Mar', merchants: Math.round(stats.totalMerchants * 0.8) },
-    { month: 'Apr', merchants: Math.round(stats.totalMerchants * 0.85) },
-    { month: 'Máj', merchants: Math.round(stats.totalMerchants * 0.92) },
-    { month: 'Jún', merchants: stats.totalMerchants },
+    { month: t('reporting.months.jan'), merchants: Math.round(stats.totalMerchants * 0.6) },
+    { month: t('reporting.months.feb'), merchants: Math.round(stats.totalMerchants * 0.7) },
+    { month: t('reporting.months.mar'), merchants: Math.round(stats.totalMerchants * 0.8) },
+    { month: t('reporting.months.apr'), merchants: Math.round(stats.totalMerchants * 0.85) },
+    { month: t('reporting.months.may'), merchants: Math.round(stats.totalMerchants * 0.92) },
+    { month: t('reporting.months.jun'), merchants: stats.totalMerchants },
   ];
 
   const reportCards = [
@@ -149,12 +149,12 @@ const ReportingPage = () => {
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Mesačné príjmy</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('reporting.monthlyRevenue')}</CardTitle>
               <DollarSign className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{Math.round(stats.totalRevenue)}€</div>
-              <p className="text-xs text-muted-foreground">Z aktívnych kontraktov</p>
+              <p className="text-xs text-muted-foreground">{t('reporting.fromActiveContracts')}</p>
             </CardContent>
           </Card>
         </div>
@@ -172,7 +172,7 @@ const ReportingPage = () => {
               {/* Contract Status Chart */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Rozdelenie kontraktov podľa statusu</CardTitle>
+                  <CardTitle>{t('reporting.contractStatusDistribution')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[300px]">
@@ -200,7 +200,7 @@ const ReportingPage = () => {
               {/* Monthly Revenue Chart */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Mesačné príjmy (€)</CardTitle>
+                  <CardTitle>{t('reporting.monthlyRevenueChart')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[300px]">
@@ -209,7 +209,7 @@ const ReportingPage = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis />
-                        <Tooltip formatter={(value) => [`${value}€`, 'Príjmy']} />
+                        <Tooltip formatter={(value) => [`${value}€`, t('reporting.revenue')]} />
                         <Bar dataKey="revenue" fill="#3B82F6" />
                       </BarChart>
                     </ResponsiveContainer>
@@ -221,7 +221,7 @@ const ReportingPage = () => {
             {/* Merchant Growth Chart */}
             <Card>
               <CardHeader>
-                <CardTitle>Rast počtu obchodníkov</CardTitle>
+                <CardTitle>{t('reporting.merchantGrowth')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
@@ -230,7 +230,7 @@ const ReportingPage = () => {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
                       <YAxis />
-                      <Tooltip formatter={(value) => [`${value}`, 'Obchodníci']} />
+                      <Tooltip formatter={(value) => [`${value}`, t('reporting.merchants')]} />
                       <Line 
                         type="monotone" 
                         dataKey="merchants" 

@@ -483,9 +483,28 @@
     "systemLogs": "Systémové logy",
     "usageAnalytics": "Analytika používania",
     "errorReports": "Reporty chýb",
-    "userActivity": "Aktivita používateľov"
+    "userActivity": "Aktivita používateľov",
+    "monthlyRevenue": "Mesačné príjmy",
+    "fromActiveContracts": "Z aktívnych kontraktov",
+    "contractStatusDistribution": "Rozdelenie kontraktov podľa statusu",
+    "monthlyRevenueChart": "Mesačné príjmy (€)",
+    "revenue": "Príjmy",
+    "merchantGrowth": "Rast počtu obchodníkov",
+    "merchants": "Obchodníci",
+    "statusLabels": {
+      "signed": "Podpísané",
+      "pending": "Čakajúce",
+      "draft": "Koncepty"
+    },
+    "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "Máj",
+      "jun": "Jún"
+    }
   }
-}
   },
   "contractActions": {
     "quickSummary": "Rýchly prehľad",
