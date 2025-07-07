@@ -146,8 +146,8 @@ const MobileOptimizedNavigation = ({
 
   // Original fixed mobile navigation for standalone mode
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 backdrop-blur-sm p-4 z-50">
-      <div className="max-w-7xl mx-auto flex justify-between items-center gap-3">
+    <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 backdrop-blur-sm safe-area-inset-bottom z-50">
+      <div className="max-w-7xl mx-auto flex justify-between items-center gap-3 p-4">
         <Button
           variant="outline"
           onClick={onPrevStep}

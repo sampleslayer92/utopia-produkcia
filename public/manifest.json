@@ -1,0 +1,26 @@
+{
+  "name": "Utopia",
+  "short_name": "Utopia",
+  "description": "The platform where fintech meets sales to scale merchant acquisition.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0066ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://famouscreative.eu/wp-content/uploads/2025/07/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "https://famouscreative.eu/wp-content/uploads/2025/07/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["business", "finance", "productivity"],
+  "lang": "sk"
+}

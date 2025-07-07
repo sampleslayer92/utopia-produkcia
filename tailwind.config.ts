@@ -232,6 +232,18 @@ export default {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'blue-gradient': 'linear-gradient(135deg, #0066ff 0%, #00d4ff 100%)',
 				'light-gradient': 'linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)',
+			},
+			spacing: {
+				'safe-top': 'env(safe-area-inset-top)',
+				'safe-bottom': 'env(safe-area-inset-bottom)',
+				'safe-left': 'env(safe-area-inset-left)',
+				'safe-right': 'env(safe-area-inset-right)',
+			},
+			minHeight: {
+				'touch': '44px',
+			},
+			minWidth: {
+				'touch': '44px',
 			}
 		}
 	},
