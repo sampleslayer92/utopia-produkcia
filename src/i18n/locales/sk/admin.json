@@ -378,7 +378,7 @@
   },
   "warehouse": {
     "title": "Sklad",
-    "subtitle": "Spravujte zariadenia a služby skladu",
+    "subtitle": "Spravujte zariadenia a služby v sklade",
     "totalItems": "Celkom položiek",
     "devices": "Zariadenia",
     "services": "Služby",
