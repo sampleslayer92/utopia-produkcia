@@ -60,7 +60,7 @@ const QuickActions = () => {
             <Button
               key={index}
               variant="ghost"
-              className="h-24 p-4 bg-glass-card-bg border border-glass-card-border backdrop-blur-md rounded-xl hover:bg-glass-hover-bg hover:shadow-[var(--glass-hover-shadow)] hover:scale-[1.02] transition-all duration-300 ease-out group relative overflow-hidden"
+              className="h-24 p-4 bg-glass-button-default border border-glass-button-border backdrop-blur-md rounded-xl hover:bg-glass-hover-bg hover:shadow-[var(--glass-hover-shadow)] hover:scale-[1.02] transition-all duration-300 ease-out group relative overflow-hidden"
               onClick={action.onClick}
             >
               <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${action.gradient}`} />

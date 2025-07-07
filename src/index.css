@@ -62,11 +62,15 @@
     --glass-hover-shadow: 0 8px 24px 0 rgba(31, 38, 135, 0.4);
     
     /* Action button gradients */
-    --action-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --action-blue: linear-gradient(135deg, #8b9df0 0%, #9bb3f5 100%);
     --action-emerald: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     --action-purple: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
     --action-orange: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
     --action-cyan: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    
+    /* Default button states */
+    --glass-button-default: 255 255 255 / 0.08;
+    --glass-button-border: 255 255 255 / 0.15;
   }
 
   .dark {
@@ -164,11 +168,15 @@
     --glass-hover-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.6);
     
     /* Action button gradients - dark mode */
-    --action-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --action-blue: linear-gradient(135deg, #8b9df0 0%, #9bb3f5 100%);
     --action-emerald: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     --action-purple: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
     --action-orange: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
     --action-cyan: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    
+    /* Default button states - dark mode */
+    --glass-button-default: 255 255 255 / 0.06;
+    --glass-button-border: 255 255 255 / 0.12;
 
     /* Kanban-specific colors - dark mode */
     --kanban-column-bg: 217.2 32.6% 17.5%;

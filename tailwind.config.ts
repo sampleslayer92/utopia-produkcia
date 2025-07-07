@@ -74,6 +74,10 @@ export default {
 					},
 					hover: {
 						bg: 'rgba(var(--glass-hover-bg))'
+					},
+					button: {
+						default: 'rgba(var(--glass-button-default))',
+						border: 'rgba(var(--glass-button-border))'
 					}
 				},
 				kanban: {
