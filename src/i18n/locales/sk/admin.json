@@ -374,9 +374,8 @@
           "turnover": "Obrat",
           "pos": "POS",
           "contract": "Zmluva"
-        }
-      }
-    },
+    }
+  },
   "warehouse": {
     "title": "Sklad",
     "subtitle": "Spravujte zariadenia a služby v sklade",
@@ -495,6 +494,8 @@
     "drafts": "Koncepty",
     "revenue": "Príjmy",
     "merchants": "Obchodníci"
+  }
+}
   },
   "contractActions": {
     "quickSummary": "Rýchly prehľad",
