@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,24 +32,10 @@ import {
 import { Edit, MoreHorizontal, Plus, Search, Trash2, Package } from 'lucide-react';
 import { useWarehouseItems, useDeleteWarehouseItem, type WarehouseItem } from '@/hooks/useWarehouseItems';
 import { WarehouseItemModal } from './WarehouseItemModal';
-import { useTranslation } from 'react-i18next';
 
 interface WarehouseItemsTableProps {
   itemType?: 'device' | 'service';
 }
-
-const CATEGORY_LABELS = {
-  // Device categories
-  pos_terminals: 'POS Terminály',
-  tablets: 'Tablety',
-  accessories: 'Príslušenstvo',
-  // Service categories
-  software: 'Software',
-  processing: 'Spracovanie platieb',
-  support: 'Technická podpora',
-  analytics: 'Analytika',
-  other: 'Ostatné',
-};
 
 export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
   const { t } = useTranslation('admin');
@@ -88,17 +75,26 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
   };
 
   const getAvailableCategories = () => {
-    if (!itemType) return Object.entries(CATEGORY_LABELS);
+    const allCategories = [
+      'payment_cards',
+      'pos_terminals', 
+      'software',
+      'hardware',
+      'accessories',
+      'other'
+    ];
+    
+    if (!itemType) return allCategories;
     
     if (itemType === 'device') {
-      return Object.entries(CATEGORY_LABELS).filter(([key]) => 
-        ['pos_terminals', 'tablets', 'accessories', 'other'].includes(key)
-      );
+      return ['pos_terminals', 'hardware', 'accessories', 'other'];
     } else {
-      return Object.entries(CATEGORY_LABELS).filter(([key]) => 
-        ['software', 'processing', 'support', 'analytics', 'other'].includes(key)
-      );
+      return ['software', 'payment_cards', 'other'];
     }
+  };
+
+  const getCategoryLabel = (category: string) => {
+    return t(`warehouse.categories.${category}`) || category;
   };
 
   if (error) {
@@ -106,7 +102,7 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
       <Card>
         <CardContent className="p-6">
           <div className="text-center text-red-600">
-            Chyba pri načítavaní položiek: {error.message}
+            {t('warehouse.errorLoading')}: {error.message}
           </div>
         </CardContent>
       </Card>
@@ -119,15 +115,20 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">
-            {itemType === 'device' ? 'Zariadenia' : itemType === 'service' ? 'Služby' : 'Všetky položky'}
+            {itemType === 'device' 
+              ? t('warehouse.devices') 
+              : itemType === 'service' 
+                ? t('warehouse.services') 
+                : t('warehouse.allItems')
+            }
           </h2>
           <p className="text-muted-foreground">
-            Spravujte položky v sklade
+            {t('warehouse.subtitle')}
           </p>
         </div>
         <Button onClick={() => setShowModal(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Pridať položku
+          {t('warehouse.addItem')}
         </Button>
       </div>
 
@@ -138,7 +139,7 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Hľadať položky..."
+                placeholder={t('warehouse.searchItems')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10"
@@ -146,25 +147,25 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
             </div>
             <Select value={categoryFilter || 'all'} onValueChange={(val) => setCategoryFilter(val === 'all' ? '' : val)}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Všetky kategórie" />
+                <SelectValue placeholder={t('warehouse.filters.all')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Všetky kategórie</SelectItem>
-                {getAvailableCategories().map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
+                <SelectItem value="all">{t('warehouse.filters.all')}</SelectItem>
+                {getAvailableCategories().map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {getCategoryLabel(category)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Select value={statusFilter || 'all'} onValueChange={(val) => setStatusFilter(val === 'all' ? '' : val)}>
               <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Všetky" />
+                <SelectValue placeholder={t('warehouse.filters.all')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Všetky</SelectItem>
-                <SelectItem value="active">Aktívne</SelectItem>
-                <SelectItem value="inactive">Neaktívne</SelectItem>
+                <SelectItem value="all">{t('warehouse.filters.all')}</SelectItem>
+                <SelectItem value="active">{t('warehouse.active')}</SelectItem>
+                <SelectItem value="inactive">{t('warehouse.inactive')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -175,7 +176,7 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Celkom položiek</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('warehouse.totalItems')}</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -184,7 +185,7 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Aktívne</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('warehouse.active')}</CardTitle>
             <Package className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
@@ -195,7 +196,7 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Zariadenia</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('warehouse.devices')}</CardTitle>
             <Package className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
@@ -206,7 +207,7 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Služby</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('warehouse.services')}</CardTitle>
             <Package className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
@@ -223,27 +224,27 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Názov</TableHead>
-                <TableHead>Typ</TableHead>
-                <TableHead>Kategória</TableHead>
-                <TableHead>Mesačný poplatok</TableHead>
-                <TableHead>Poplatok za nastavenie</TableHead>
-                <TableHead>Status</TableHead>
-                {itemType === 'device' && <TableHead>Sklad</TableHead>}
-                <TableHead className="w-[50px]">Akcie</TableHead>
+                <TableHead>{t('warehouse.table.name')}</TableHead>
+                <TableHead>{t('warehouse.table.type')}</TableHead>
+                <TableHead>{t('warehouse.table.category')}</TableHead>
+                <TableHead>{t('warehouse.table.monthlyFee')}</TableHead>
+                <TableHead>{t('warehouse.table.setupFee')}</TableHead>
+                <TableHead>{t('warehouse.table.status')}</TableHead>
+                {itemType === 'device' && <TableHead>{t('warehouse.table.stock')}</TableHead>}
+                <TableHead className="w-[50px]">{t('warehouse.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-8">
-                    Načítavam...
+                    {t('warehouse.loading')}
                   </TableCell>
                 </TableRow>
               ) : items.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-8">
-                    Žiadne položky neboli nájdené
+                    {t('warehouse.noItemsFound')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -257,17 +258,17 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
                     </TableCell>
                     <TableCell>
                       <Badge variant={item.item_type === 'device' ? 'default' : 'secondary'}>
-                        {item.item_type === 'device' ? 'Zariadenie' : 'Služba'}
+                        {item.item_type === 'device' ? t('warehouse.device') : t('warehouse.service')}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {CATEGORY_LABELS[item.category as keyof typeof CATEGORY_LABELS] || item.category}
+                      {getCategoryLabel(item.category)}
                     </TableCell>
                     <TableCell>{item.monthly_fee}€</TableCell>
                     <TableCell>{item.setup_fee}€</TableCell>
                     <TableCell>
                       <Badge variant={item.is_active ? 'default' : 'secondary'}>
-                        {item.is_active ? 'Aktívne' : 'Neaktívne'}
+                        {item.is_active ? t('warehouse.active') : t('warehouse.inactive')}
                       </Badge>
                     </TableCell>
                     {itemType === 'device' && (
@@ -287,14 +288,14 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEdit(item)}>
                             <Edit className="mr-2 h-4 w-4" />
-                            Upraviť
+                            {t('warehouse.editItem')}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => setDeleteItem(item)}
                             className="text-red-600"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Vymazať
+                            {t('warehouse.deleteItem')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -318,19 +319,18 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
       <AlertDialog open={!!deleteItem} onOpenChange={() => setDeleteItem(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Vymazať položku</AlertDialogTitle>
+            <AlertDialogTitle>{t('warehouse.deleteItem')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Ste si istí, že chcete vymazať položku "{deleteItem?.name}"? 
-              Táto akcia sa nedá vrátiť späť.
+              {t('warehouse.confirmDeleteMessage')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Zrušiť</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteItem && handleDelete(deleteItem)}
               className="bg-red-600 hover:bg-red-700"
             >
-              Vymazať
+              {t('warehouse.deleteItem')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

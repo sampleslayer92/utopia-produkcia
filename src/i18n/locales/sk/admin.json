@@ -377,6 +377,7 @@
     }
   },
   "warehouse": {
+    "title": "Sklad",
     "subtitle": "Spravujte zariadenia a služby skladu",
     "totalItems": "Celkom položiek",
     "devices": "Zariadenia",
@@ -414,18 +415,33 @@
     "itemDeleted": "Položka bola úspešne vymazaná",
     "errorCreating": "Chyba pri vytváraní položky",
     "errorUpdating": "Chyba pri aktualizácii položky",
-    "errorDeleting": "Chyba pri mazaní položky"
-  },
-  "reporting": {
-    "subtitle": "Správa inventára zariadení a služieb",
-    "totalItems": "Celkový počet položiek",
-    "devices": "Zariadenia",
-    "services": "Služby",
-    "allItems": "Všetky položky",
-    "device": "Zariadenie",
-    "service": "Služba",
-    "searchItems": "Hľadať položky...",
-    "addItem": "Pridať položku"
+    "errorDeleting": "Chyba pri mazaní položky",
+    "name": "Názov",
+    "description": "Popis",
+    "table": {
+      "name": "Názov",
+      "type": "Typ",
+      "category": "Kategória",
+      "monthlyFee": "Mesačný poplatok",
+      "setupFee": "Poplatok za nastavenie",
+      "companyCost": "Náklady spoločnosti",
+      "stock": "Sklad",
+      "status": "Status",
+      "actions": "Akcie"
+    },
+    "filters": {
+      "all": "Všetky",
+      "devices": "Zariadenia",
+      "services": "Služby"
+    },
+    "categories": {
+      "payment_cards": "Platobné karty",
+      "pos_terminals": "POS terminály",
+      "software": "Softvér",
+      "hardware": "Hardvér",
+      "accessories": "Príslušenstvo",
+      "other": "Ostatné"
+    }
   },
   "reporting": {
     "subtitle": "Analytika a reporty naprieč aplikáciou",
