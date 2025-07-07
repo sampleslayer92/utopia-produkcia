@@ -28,9 +28,6 @@
     "applicationSettings": "Nastavenia aplikácie",
     "profileSettings": "Nastavenia profilu"
   },
-  "settings": {
-    "description": "Spravujte nastavenia aplikácie a vášho profilu"
-  },
   "breadcrumbs": {
     "editContract": "Editácia zmluvy",
     "viewContract": "Detail zmluvy",
