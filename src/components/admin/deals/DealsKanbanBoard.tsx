@@ -185,55 +185,53 @@ const DealsKanbanBoard = () => {
     );
   }
 
-  // Mobile layout with tabs
+  // Mobile layout with horizontal scrolling (Trello-like)
   if (isMobile) {
     return (
       <div className="p-3">
-        <Tabs defaultValue="new_requests" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-4">
+        <DndContext 
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart} 
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <div 
+            ref={scrollContainerRef}
+            className="flex gap-3 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent snap-x snap-mandatory"
+            style={{ scrollSnapType: 'x mandatory' }}
+          >
             {KANBAN_COLUMNS.map((column) => {
               const columnContracts = getContractsForColumn(column.statuses);
+              const isDropTarget = dragOverColumn === column.id;
+              
               return (
-                <TabsTrigger key={column.id} value={column.id} className="flex flex-col items-center gap-1 text-xs">
-                  <span className="truncate">{column.title.split(' ')[0]}</span>
-                  <Badge variant="secondary" className="text-xs px-1 py-0 min-w-[20px] h-5">
-                    {columnContracts.length}
-                  </Badge>
-                </TabsTrigger>
+                <div 
+                  key={column.id}
+                  className="flex-shrink-0 w-80 snap-start"
+                  style={{ scrollSnapAlign: 'start' }}
+                >
+                  <KanbanColumn
+                    id={column.id}
+                    title={column.title}
+                    contracts={columnContracts}
+                    color={column.color}
+                    count={columnContracts.length}
+                    isDropTarget={isDropTarget}
+                  />
+                </div>
               );
             })}
-          </TabsList>
-          
-          {KANBAN_COLUMNS.map((column) => {
-            const columnContracts = getContractsForColumn(column.statuses);
-            return (
-              <TabsContent key={column.id} value={column.id} className="mt-0">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-lg">{column.title}</h3>
-                    <Badge variant="secondary">
-                      {columnContracts.length}
-                    </Badge>
-                  </div>
-                  <div className="space-y-3">
-                    {columnContracts.map((contract) => (
-                      <KanbanCard 
-                        key={contract.id} 
-                        contract={contract}
-                        isMobile={true}
-                      />
-                    ))}
-                    {columnContracts.length === 0 && (
-                      <div className="text-center py-8 text-gray-500">
-                        Žiadne deals
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
-            );
-          })}
-        </Tabs>
+          </div>
+
+          <DragOverlay dropAnimation={{ duration: 300, easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' }}>
+            {activeContract ? (
+              <div className="animate-kanban-drag">
+                <KanbanCard contract={activeContract} isDragging />
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       </div>
     );
   }

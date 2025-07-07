@@ -45,7 +45,7 @@ const KanbanColumn = ({ id, title, contracts, color, count, isDropTarget = false
         </Badge>
       </div>
       
-      <div className="space-y-3 min-h-[500px]">
+      <div className="space-y-3 min-h-[400px] md:min-h-[500px]">
         {contracts.map((contract, index) => (
           <div
             key={contract.id}

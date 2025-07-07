@@ -26,7 +26,7 @@ const KanbanCard = ({ contract, isDragging = false, isMobile = false }: KanbanCa
     isDragging: isDraggingFromKit,
   } = useDraggable({
     id: contract.id,
-    disabled: false, // Enable drag on all devices
+    disabled: false, // Enable drag on all devices including mobile
   });
 
   const style = transform ? {
@@ -77,7 +77,6 @@ const KanbanCard = ({ contract, isDragging = false, isMobile = false }: KanbanCa
         rounded-lg group
         ${isDragging ? 'animate-kanban-drag' : ''}
       `}
-      onClick={isMobile ? handleViewContract : undefined}
       {...listeners}
       {...attributes}
     >
