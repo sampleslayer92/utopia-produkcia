@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useNavigate, useLocation } from "react-router-dom";
-import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import MobileActionMenu from "./MobileActionMenu";
 import MobileBreadcrumb from "./MobileBreadcrumb";
@@ -98,21 +98,7 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
           <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">            
             {/* Dynamic Actions - Mobile-optimized with overflow menu */}
             <MobileActionMenu singleActionMode={true}>
-              {Array.isArray(actions) ? [
-                ...actions,
-                <div key="lang-switcher" className="hidden md:block">
-                  <LanguageSwitcher />
-                </div>
-              ] : actions ? [
-                actions,
-                <div key="lang-switcher" className="hidden md:block">
-                  <LanguageSwitcher />
-                </div>
-              ] : [
-                <div key="lang-switcher" className="hidden md:block">
-                  <LanguageSwitcher />
-                </div>
-              ]}
+              {Array.isArray(actions) ? actions : actions ? [actions] : []}
             </MobileActionMenu>
           </div>
         </div>

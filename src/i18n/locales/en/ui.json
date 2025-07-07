@@ -170,6 +170,7 @@
     "myAccount": "My Account",
     "profile": "Profile",
     "settings": "Settings",
+    "language": "Language",
     "signOut": "Sign Out",
     "signedOutSuccess": "Successfully signed out",
     "signOutError": "Error signing out"

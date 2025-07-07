@@ -11,7 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, User, Settings, LogOut, Shield } from "lucide-react";
+import { ChevronDown, User, Settings, LogOut, Shield, Languages } from "lucide-react";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -97,6 +98,15 @@ const AdminProfile = () => {
         <DropdownMenuItem>
           <Settings className="mr-2 h-4 w-4" />
           <span>{t('profile.settings')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <div className="flex items-center w-full">
+            <Languages className="mr-2 h-4 w-4" />
+            <span className="mr-2">{t('profile.language')}</span>
+            <div className="ml-auto">
+              <LanguageSwitcher />
+            </div>
+          </div>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
