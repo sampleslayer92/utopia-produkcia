@@ -4,6 +4,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { useNavigate, useLocation } from "react-router-dom";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import MobileActionMenu from "./MobileActionMenu";
 
 interface AdminHeaderProps {
   title: string;
@@ -95,10 +96,10 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
               <LanguageSwitcher />
             </div>
             
-            {/* Dynamic Actions - Stack vertically on mobile if needed */}
-            <div className="flex items-center space-x-1 md:space-x-2">
-              {actions}
-            </div>
+            {/* Dynamic Actions - Mobile-optimized with overflow menu */}
+            <MobileActionMenu maxVisibleActions={1}>
+              {Array.isArray(actions) ? actions : actions ? [actions] : []}
+            </MobileActionMenu>
           </div>
         </div>
       </div>
