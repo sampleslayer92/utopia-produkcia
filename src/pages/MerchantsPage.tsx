@@ -57,19 +57,16 @@ const MerchantsPage = () => {
 
   const merchantsActions = (
     <>
-      {!isMobile && (
-        <Button variant="outline" className="hover:bg-slate-50 min-h-touch">
-          <Download className="h-4 w-4 mr-2" />
-          {t('merchants.export')}
-        </Button>
-      )}
+      <Button variant="outline" className="hover:bg-slate-50 min-h-touch">
+        <Download className="h-4 w-4 mr-2" />
+        {t('merchants.export')}
+      </Button>
       <Button 
         onClick={() => setShowAddMerchantModal(true)}
         className="bg-blue-600 hover:bg-blue-700 min-h-touch"
-        size={isMobile ? "sm" : "default"}
       >
         <Plus className="h-4 w-4 mr-2" />
-        {isMobile ? t('merchants.add') : t('merchants.newMerchant')}
+        {t('merchants.newMerchant')}
       </Button>
     </>
   );

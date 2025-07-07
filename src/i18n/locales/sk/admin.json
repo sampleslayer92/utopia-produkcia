@@ -280,6 +280,7 @@
     "title": "Správa merchantov",
     "subtitle": "Prehľad a správa všetkých merchantov v systéme",
     "export": "Exportovať",
+    "add": "Pridať",
     "newMerchant": "Nový merchant",
     "stats": {
       "totalCount": "Celkový počet",
