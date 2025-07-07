@@ -10,8 +10,10 @@ import AddColumnModal from './AddColumnModal';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const DealsKanbanBoard = () => {
+  const { t } = useTranslation('admin');
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
   const { data: contracts = [], isLoading, error } = useEnhancedContractsData();
   const { 
@@ -30,18 +32,18 @@ const DealsKanbanBoard = () => {
   const handleAddColumn = async (columnData: any) => {
     const result = await createColumn(columnData);
     if (result.success) {
-      toast.success('Stĺpec bol úspešne pridaný');
+      toast.success(t('deals.success.columnAdded'));
     } else {
-      toast.error('Chyba pri pridávaní stĺpca');
+      toast.error(t('deals.errors.addingColumn'));
     }
   };
 
   const handleResetToDefault = async () => {
     const result = await resetToDefault();
     if (result.success) {
-      toast.success('Stĺpce boli resetované na predvolené');
+      toast.success(t('deals.success.columnsReset'));
     } else {
-      toast.error('Chyba pri resetovaní stĺpcov');
+      toast.error(t('deals.errors.resettingColumns'));
     }
   };
 
@@ -89,7 +91,7 @@ const DealsKanbanBoard = () => {
     return (
       <div className="p-3 md:p-6">
         <Card className="p-8 text-center">
-          <p className="text-red-600">Chyba pri načítavaní deals: {error.message}</p>
+          <p className="text-red-600">{t('deals.errors.loadingDeals', { message: error.message })}</p>
         </Card>
       </div>
     );

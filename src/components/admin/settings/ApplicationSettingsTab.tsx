@@ -17,21 +17,6 @@ const COLOR_PALETTE = [
   '#3B82F6', '#8B5CF6', '#EC4899', '#F97316'
 ];
 
-const CATEGORY_OPTIONS = [
-  { value: 'general', label: 'Všeobecné' },
-  { value: 'in_progress', label: 'V procese' },
-  { value: 'completed', label: 'Dokončené' },
-  { value: 'cancelled', label: 'Zrušené' }
-];
-
-const ENTITY_TYPE_OPTIONS = [
-  { value: 'contracts', label: 'Zmluvy' },
-  { value: 'merchants', label: 'Obchodníci' },
-  { value: 'organizations', label: 'Organizácie' },
-  { value: 'users', label: 'Užívatelia' },
-  { value: 'teams', label: 'Tímy' }
-];
-
 const ApplicationSettingsTab = () => {
   const { t } = useTranslation('admin');
   const [selectedEntityType, setSelectedEntityType] = useState<EntityType>('contracts');
@@ -49,7 +34,7 @@ const ApplicationSettingsTab = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.label.trim()) {
-      toast.error('Názov a označenie sú povinné');
+      toast.error(t('settings.validation.nameRequired'));
       return;
     }
 
@@ -64,31 +49,31 @@ const ApplicationSettingsTab = () => {
 
     const result = await createStatus(statusData);
     if (result.success) {
-      toast.success('Status bol úspešne vytvorený');
+      toast.success(t('settings.success.statusCreated'));
       setFormData({ name: '', label: '', description: '', color: COLOR_PALETTE[0], category: 'general' });
       setShowAddForm(false);
     } else {
-      toast.error(result.error || 'Chyba pri vytváraní statusu');
+      toast.error(result.error || t('settings.errors.statusCreate'));
     }
   };
 
   const handleUpdate = async (id: string, updates: Partial<ContractStatus>) => {
     const result = await updateStatus(id, updates);
     if (result.success) {
-      toast.success('Status bol aktualizovaný');
+      toast.success(t('settings.success.statusUpdated'));
       setEditingStatus(null);
     } else {
-      toast.error(result.error || 'Chyba pri aktualizácii');
+      toast.error(result.error || t('settings.errors.statusUpdate'));
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Naozaj chcete zmazať tento status?')) {
+    if (window.confirm(t('settings.validation.deleteConfirm'))) {
       const result = await deleteStatus(id);
       if (result.success) {
-        toast.success('Status bol zmazaný');
+        toast.success(t('settings.success.statusDeleted'));
       } else {
-        toast.error(result.error || 'Chyba pri mazaní statusu');
+        toast.error(result.error || t('settings.errors.statusDelete'));
       }
     }
   };
@@ -102,10 +87,10 @@ const ApplicationSettingsTab = () => {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Tags className="h-5 w-5" />
-                Správa Statusov
+                {t('settings.applicationSettings.title')}
               </CardTitle>
               <CardDescription>
-                Spravujte statusy pre rôzne entity v systéme
+                {t('settings.applicationSettings.description')}
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -116,7 +101,7 @@ const ApplicationSettingsTab = () => {
                 disabled={isLoading}
               >
                 <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                Obnoviť
+                {t('settings.applicationSettings.refresh')}
               </Button>
               <Button 
                 variant="outline" 
@@ -124,7 +109,7 @@ const ApplicationSettingsTab = () => {
                 onClick={() => setShowAddForm(!showAddForm)}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Pridať Status
+                {t('settings.applicationSettings.addStatus')}
               </Button>
             </div>
           </div>
@@ -132,15 +117,15 @@ const ApplicationSettingsTab = () => {
         <CardContent className="space-y-4">
           {/* Entity Type Selector */}
           <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
-            <Label className="text-sm font-medium">Typ entity:</Label>
+            <Label className="text-sm font-medium">{t('settings.applicationSettings.entityType')}</Label>
             <Select value={selectedEntityType} onValueChange={(value) => setSelectedEntityType(value as EntityType)}>
               <SelectTrigger className="w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {ENTITY_TYPE_OPTIONS.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
+                {Object.entries(t('settings.applicationSettings.entityTypes', { returnObjects: true }) as Record<string, string>).map(([key, label]) => (
+                  <SelectItem key={key} value={key}>
+                    {label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -152,56 +137,56 @@ const ApplicationSettingsTab = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="name">Názov (systémový)</Label>
+                    <Label htmlFor="name">{t('settings.applicationSettings.systemName')}</Label>
                     <Input
                       id="name"
                       value={formData.name}
                       onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="napr. waiting_review"
+                      placeholder={t('settings.applicationSettings.placeholders.systemName')}
                       required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="label">Označenie (zobrazované)</Label>
+                    <Label htmlFor="label">{t('settings.applicationSettings.displayLabel')}</Label>
                     <Input
                       id="label"
                       value={formData.label}
                       onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
-                      placeholder="napr. Čaká na kontrolu"
+                      placeholder={t('settings.applicationSettings.placeholders.displayLabel')}
                       required
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <Label htmlFor="description">Popis</Label>
+                  <Label htmlFor="description">{t('settings.applicationSettings.description')}</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Popis statusu..."
+                    placeholder={t('settings.applicationSettings.placeholders.description')}
                     rows={2}
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label>Kategória</Label>
+                    <Label>{t('settings.applicationSettings.category')}</Label>
                     <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as ContractStatus['category'] }))}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {CATEGORY_OPTIONS.map(option => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
+                        {Object.entries(t('settings.applicationSettings.categories', { returnObjects: true }) as Record<string, string>).map(([key, label]) => (
+                          <SelectItem key={key} value={key}>
+                            {label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label>Farba</Label>
+                    <Label>{t('settings.applicationSettings.color')}</Label>
                     <div className="flex gap-2 mt-2">
                       {COLOR_PALETTE.map((color) => (
                         <button
@@ -221,11 +206,11 @@ const ApplicationSettingsTab = () => {
                 <div className="flex gap-2">
                   <Button type="submit" size="sm">
                     <Save className="h-4 w-4 mr-2" />
-                    Uložiť
+                    {t('settings.applicationSettings.save')}
                   </Button>
                   <Button type="button" variant="outline" size="sm" onClick={() => setShowAddForm(false)}>
                     <X className="h-4 w-4 mr-2" />
-                    Zrušiť
+                    {t('settings.applicationSettings.cancel')}
                   </Button>
                 </div>
               </form>
@@ -251,7 +236,7 @@ const ApplicationSettingsTab = () => {
                         </Badge>
                         {status.is_system && (
                           <Badge variant="secondary" className="text-xs">
-                            Systémový
+                            {t('settings.applicationSettings.systemStatus')}
                           </Badge>
                         )}
                       </div>
@@ -265,7 +250,7 @@ const ApplicationSettingsTab = () => {
                   
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-xs">
-                      {CATEGORY_OPTIONS.find(c => c.value === status.category)?.label}
+                      {t(`settings.applicationSettings.categories.${status.category}`)}
                     </Badge>
                     {!status.is_system && (
                       <>
@@ -297,14 +282,14 @@ const ApplicationSettingsTab = () => {
       {/* Future Settings Sections */}
       <Card>
         <CardHeader>
-          <CardTitle>Ďalšie nastavenia aplikácie</CardTitle>
+          <CardTitle>{t('settings.applicationSettings.futureSettings.title')}</CardTitle>
           <CardDescription>
-            Budúce nastavenia systému, integrácie a konfiguracie
+            {t('settings.applicationSettings.futureSettings.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center text-muted-foreground py-8">
-            <p>Ďalšie nastavenia budú pridané v budúcich verziách</p>
+            <p>{t('settings.applicationSettings.futureSettings.comingSoon')}</p>
           </div>
         </CardContent>
       </Card>

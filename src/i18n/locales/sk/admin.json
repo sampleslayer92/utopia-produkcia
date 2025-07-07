@@ -1014,5 +1014,127 @@
     "downloadChart": "Stiahnuť diagram",
     "noData": "Žiadne organizačné dáta nie sú k dispozícii",
     "comingSoon": "Pokročilá vizualizácia organizačnej štruktúry bude čoskoro dostupná"
+  },
+  "deals": {
+    "title": "Dealy",
+    "subtitle": "Správa deals pomocou Kanban dosky",
+    "toolbar": {
+      "kanban": "Kanban",
+      "table": "Tabuľka",
+      "addColumn": "Pridať stĺpec",
+      "statuses": "Statusy", 
+      "reset": "Reset",
+      "settings": "Nastavenia",
+      "dealsCount": "deals"
+    },
+    "errors": {
+      "loadingDeals": "Chyba pri načítavaní deals: {{message}}",
+      "addingColumn": "Chyba pri pridávaní stĺpca",
+      "resettingColumns": "Chyba pri resetovaní stĺpcov"
+    },
+    "success": {
+      "columnAdded": "Stĺpec bol úspešne pridaný",
+      "columnsReset": "Stĺpce boli resetované na predvolené"
+    }
+  },
+  "settings": {
+    "title": "Nastavenia",
+    "description": "Konfigurácia nastavení aplikácie a správa vášho profilu",
+    "applicationSettings": {
+      "title": "Správa Statusov",
+      "description": "Spravujte statusy pre rôzne entity v systéme",
+      "entityType": "Typ entity:",
+      "addStatus": "Pridať Status",
+      "refresh": "Obnoviť",
+      "systemName": "Názov (systémový)",
+      "displayLabel": "Označenie (zobrazované)",
+      "description": "Popis",
+      "category": "Kategória",
+      "color": "Farba",
+      "save": "Uložiť",
+      "cancel": "Zrušiť",
+      "edit": "Upraviť",
+      "delete": "Zmazať",
+      "systemStatus": "Systémový",
+      "placeholders": {
+        "systemName": "napr. waiting_review",
+        "displayLabel": "napr. Čaká na kontrolu",
+        "description": "Popis statusu..."
+      },
+      "categories": {
+        "general": "Všeobecné",
+        "in_progress": "V procese", 
+        "completed": "Dokončené",
+        "cancelled": "Zrušené"
+      },
+      "entityTypes": {
+        "contracts": "Zmluvy",
+        "merchants": "Obchodníci",
+        "organizations": "Organizácie",
+        "users": "Užívatelia",
+        "teams": "Tímy"
+      },
+      "futureSettings": {
+        "title": "Ďalšie nastavenia aplikácie",
+        "description": "Budúce nastavenia systému, integrácie a konfiguracie",
+        "comingSoon": "Ďalšie nastavenia budú pridané v budúcich verziách"
+      }
+    },
+    "profileSettings": {
+      "title": "Nastavenia Profilu",
+      "description": "Spravujte svoje osobné informácie a preferencie účtu",
+      "personalInfo": {
+        "title": "Osobné Informácie",
+        "firstName": "Krstné Meno",
+        "lastName": "Priezvisko", 
+        "email": "Emailová Adresa",
+        "phone": "Telefónne Číslo",
+        "position": "Pozícia/Rola",
+        "department": "Oddelenie",
+        "saveChanges": "Uložiť Zmeny"
+      },
+      "security": {
+        "title": "Bezpečnosť a Heslo",
+        "currentPassword": "Aktuálne Heslo",
+        "newPassword": "Nové Heslo",
+        "confirmPassword": "Potvrdiť Nové Heslo",
+        "changePassword": "Zmeniť Heslo",
+        "twoFactor": "Dvojfaktorová Autentifikácia",
+        "enable2FA": "Povoliť 2FA",
+        "disable2FA": "Zakázať 2FA"
+      },
+      "preferences": {
+        "title": "Preferencie",
+        "language": "Jazyk",
+        "timezone": "Časové Pásmo",
+        "notifications": "Emailové Notifikácie",
+        "darkMode": "Tmavý Režim",
+        "autoSave": "Automatické ukladanie zmien"
+      },
+      "account": {
+        "title": "Správa Účtu",
+        "deleteAccount": "Zmazať Účet",
+        "exportData": "Exportovať Moje Dáta",
+        "downloadData": "Stiahnuť Dáta Účtu"
+      }
+    },
+    "validation": {
+      "nameRequired": "Názov a označenie sú povinné",
+      "deleteConfirm": "Naozaj chcete zmazať tento status?"
+    },
+    "success": {
+      "statusCreated": "Status bol úspešne vytvorený",
+      "statusUpdated": "Status bol aktualizovaný", 
+      "statusDeleted": "Status bol zmazaný",
+      "profileUpdated": "Profil bol aktualizovaný",
+      "passwordChanged": "Heslo bolo zmenené"
+    },
+    "errors": {
+      "statusCreate": "Chyba pri vytváraní statusu",
+      "statusUpdate": "Chyba pri aktualizácii",
+      "statusDelete": "Chyba pri mazaní statusu",
+      "profileUpdate": "Chyba pri aktualizácii profilu",
+      "passwordChange": "Chyba pri zmene hesla"
+    }
   }
 }
