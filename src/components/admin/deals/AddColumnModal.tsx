@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { KanbanColumn } from '@/hooks/useKanbanColumns';
+import { useContractStatuses } from '@/hooks/useContractStatuses';
 
 interface AddColumnModalProps {
   isOpen: boolean;
@@ -25,24 +26,13 @@ const COLOR_PALETTE = [
   '#F97316', // Orange
 ];
 
-const AVAILABLE_STATUSES = [
-  { id: 'draft', label: 'Draft', description: 'Nové žiadosti' },
-  { id: 'in_progress', label: 'In Progress', description: 'V spracovaní' },
-  { id: 'sent_to_client', label: 'Sent to Client', description: 'Odoslané klientovi' },
-  { id: 'email_viewed', label: 'Email Viewed', description: 'Email zobrazený' },
-  { id: 'contract_generated', label: 'Contract Generated', description: 'Kontrakt vygenerovaný' },
-  { id: 'waiting_for_signature', label: 'Waiting for Signature', description: 'Čaká na podpis' },
-  { id: 'signed', label: 'Signed', description: 'Podpísané' },
-  { id: 'approved', label: 'Approved', description: 'Schválené' },
-  { id: 'lost', label: 'Lost', description: 'Stratené' },
-  { id: 'rejected', label: 'Rejected', description: 'Zamietnuté' },
-];
-
 const AddColumnModal = ({ isOpen, onClose, onAddColumn, existingColumns }: AddColumnModalProps) => {
   const [title, setTitle] = useState('');
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedColor, setSelectedColor] = useState(COLOR_PALETTE[0]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const { statuses: availableStatuses, isLoading: statusesLoading } = useContractStatuses();
 
   // Get used statuses to show availability
   const usedStatuses = new Set(existingColumns.flatMap(col => col.statuses));
@@ -130,52 +120,58 @@ const AddColumnModal = ({ isOpen, onClose, onAddColumn, existingColumns }: AddCo
 
           <div className="space-y-3">
             <Label>Statusy (vyberte aspoň jeden)</Label>
-            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border rounded-md p-3">
-              {AVAILABLE_STATUSES.map((status) => {
-                const isUsed = usedStatuses.has(status.id);
-                const isSelected = selectedStatuses.includes(status.id);
-                
-                return (
-                  <div
-                    key={status.id}
-                    className={`flex items-center justify-between p-2 rounded border cursor-pointer transition-colors ${
-                      isSelected 
-                        ? 'bg-primary/10 border-primary' 
-                        : isUsed 
-                        ? 'bg-muted/50 border-muted opacity-60' 
-                        : 'hover:bg-muted/50 border-border'
-                    }`}
-                    onClick={() => !isUsed && toggleStatus(status.id)}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm">{status.label}</div>
-                      <div className="text-xs text-muted-foreground truncate">{status.description}</div>
+            {statusesLoading ? (
+              <div className="border rounded-md p-3 text-center text-muted-foreground">
+                Načítavam statusy...
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border rounded-md p-3">
+                {availableStatuses.map((status) => {
+                  const isUsed = usedStatuses.has(status.name);
+                  const isSelected = selectedStatuses.includes(status.name);
+                  
+                  return (
+                    <div
+                      key={status.id}
+                      className={`flex items-center justify-between p-2 rounded border cursor-pointer transition-colors ${
+                        isSelected 
+                          ? 'bg-primary/10 border-primary' 
+                          : isUsed 
+                          ? 'bg-muted/50 border-muted opacity-60' 
+                          : 'hover:bg-muted/50 border-border'
+                      }`}
+                      onClick={() => !isUsed && toggleStatus(status.name)}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm">{status.label}</div>
+                        <div className="text-xs text-muted-foreground truncate">{status.description}</div>
+                      </div>
+                      {isSelected && (
+                        <Badge variant="secondary" className="ml-2 text-xs">
+                          ✓
+                        </Badge>
+                      )}
+                      {isUsed && !isSelected && (
+                        <Badge variant="outline" className="ml-2 text-xs">
+                          Použité
+                        </Badge>
+                      )}
                     </div>
-                    {isSelected && (
-                      <Badge variant="secondary" className="ml-2 text-xs">
-                        ✓
-                      </Badge>
-                    )}
-                    {isUsed && !isSelected && (
-                      <Badge variant="outline" className="ml-2 text-xs">
-                        Použité
-                      </Badge>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
             {selectedStatuses.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 <span className="text-sm text-muted-foreground">Vybrané:</span>
-                {selectedStatuses.map(statusId => {
-                  const status = AVAILABLE_STATUSES.find(s => s.id === statusId);
+                {selectedStatuses.map(statusName => {
+                  const status = availableStatuses.find(s => s.name === statusName);
                   return (
-                    <Badge key={statusId} variant="secondary" className="text-xs">
+                    <Badge key={statusName} variant="secondary" className="text-xs">
                       {status?.label}
                       <button
                         type="button"
-                        onClick={() => toggleStatus(statusId)}
+                        onClick={() => toggleStatus(statusName)}
                         className="ml-1 hover:bg-muted-foreground/20 rounded-full"
                       >
                         <X className="h-3 w-3" />

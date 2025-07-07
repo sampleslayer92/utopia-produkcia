@@ -590,6 +590,48 @@ export type Database = {
           },
         ]
       }
+      contract_statuses: {
+        Row: {
+          category: string
+          color: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          is_system: boolean
+          label: string
+          name: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_system?: boolean
+          label: string
+          name: string
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_system?: boolean
+          label?: string
+          name?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contract_templates: {
         Row: {
           created_at: string

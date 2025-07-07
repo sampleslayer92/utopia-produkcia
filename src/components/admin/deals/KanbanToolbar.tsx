@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LayoutGrid, Table2, Settings, Plus, RotateCcw } from 'lucide-react';
+import { LayoutGrid, Table2, Settings, Plus, RotateCcw, Tags } from 'lucide-react';
 import { KanbanPreferences } from '@/hooks/useKanbanColumns';
+import StatusManagementModal from './StatusManagementModal';
 
 interface KanbanToolbarProps {
   preferences: KanbanPreferences;
@@ -19,6 +21,8 @@ const KanbanToolbar = ({
   onResetToDefault,
   contractsCount = 0 
 }: KanbanToolbarProps) => {
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+
   return (
     <div className="flex items-center justify-between p-4 border-b border-border bg-background/80 backdrop-blur-sm">
       {/* Left side - View switcher and info */}
@@ -59,6 +63,16 @@ const KanbanToolbar = ({
             </Button>
             
             <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsStatusModalOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Tags className="h-4 w-4" />
+              <span className="hidden sm:inline">Statusy</span>
+            </Button>
+            
+            <Button
               variant="ghost"
               size="sm"
               onClick={onResetToDefault}
@@ -79,6 +93,11 @@ const KanbanToolbar = ({
           <span className="hidden sm:inline">Nastavenia</span>
         </Button>
       </div>
+      
+      <StatusManagementModal
+        isOpen={isStatusModalOpen}
+        onClose={() => setIsStatusModalOpen(false)}
+      />
     </div>
   );
 };
