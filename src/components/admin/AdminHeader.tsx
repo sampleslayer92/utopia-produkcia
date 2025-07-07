@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import MobileActionMenu from "./MobileActionMenu";
+import MobileBreadcrumb from "./MobileBreadcrumb";
 
 interface AdminHeaderProps {
   title: string;
@@ -48,23 +49,23 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur-sm sticky top-0 z-40 safe-area-inset-top">
+    <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-40 safe-area-inset-top">
       <div className="px-3 md:px-6 py-3 md:py-4">
-        {/* Breadcrumbs - Hidden on mobile */}
+        {/* Desktop Breadcrumbs */}
         <div className="mb-2 md:mb-3 hidden md:block">
           <Breadcrumb>
             <BreadcrumbList>
               {breadcrumbs.map((breadcrumb, index) => (
                 <BreadcrumbItem key={index}>
                   {index === breadcrumbs.length - 1 ? (
-                    <BreadcrumbPage className="text-slate-900 font-medium">
+                    <BreadcrumbPage className="text-foreground font-medium">
                       {breadcrumb.label}
                     </BreadcrumbPage>
                   ) : (
                     <>
                       <BreadcrumbLink
                         asChild
-                        className="text-slate-600 hover:text-slate-900 cursor-pointer"
+                        className="text-muted-foreground hover:text-foreground cursor-pointer"
                         onClick={() => navigate(breadcrumb.href)}
                       >
                         <span>{breadcrumb.label}</span>
@@ -78,27 +79,40 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
           </Breadcrumb>
         </div>
 
+        {/* Mobile Breadcrumb */}
+        <MobileBreadcrumb title={title} />
+
         {/* Header Content */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
-            <SidebarTrigger className="min-h-touch min-w-touch" />
-            <div className="min-w-0">
-              <h1 className="text-lg md:text-2xl font-bold text-slate-900 truncate">{title}</h1>
+            <SidebarTrigger className="min-h-touch min-w-touch flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg md:text-2xl font-bold text-foreground truncate">{title}</h1>
               {subtitle && (
-                <p className="text-xs md:text-sm text-slate-600 mt-1 truncate">{subtitle}</p>
+                <p className="text-xs md:text-sm text-muted-foreground mt-1 truncate">{subtitle}</p>
               )}
             </div>
           </div>
 
           {/* Right Side Actions */}
-          <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">
-            <div className="hidden md:block">
-              <LanguageSwitcher />
-            </div>
-            
+          <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">            
             {/* Dynamic Actions - Mobile-optimized with overflow menu */}
-            <MobileActionMenu maxVisibleActions={1}>
-              {Array.isArray(actions) ? actions : actions ? [actions] : []}
+            <MobileActionMenu maxVisibleActions={3}>
+              {Array.isArray(actions) ? [
+                ...actions,
+                <div key="lang-switcher" className="hidden md:block">
+                  <LanguageSwitcher />
+                </div>
+              ] : actions ? [
+                actions,
+                <div key="lang-switcher" className="hidden md:block">
+                  <LanguageSwitcher />
+                </div>
+              ] : [
+                <div key="lang-switcher" className="hidden md:block">
+                  <LanguageSwitcher />
+                </div>
+              ]}
             </MobileActionMenu>
           </div>
         </div>

@@ -113,7 +113,7 @@ const ContractDetailPage = () => {
       key="back"
       variant="outline" 
       onClick={() => navigate('/admin/merchants/contracts')}
-      className="hover:bg-muted min-h-[44px] text-sm px-3"
+      className="hover:bg-accent min-h-touch text-sm px-3"
     >
       <ArrowLeft className="h-4 w-4 mr-2" />
       <span className="hidden sm:inline">{t('contracts.detail.actions.backToList')}</span>
@@ -122,7 +122,7 @@ const ContractDetailPage = () => {
     <Button 
       key="export"
       variant="outline" 
-      className="hover:bg-muted min-h-[44px] text-sm px-3"
+      className="hover:bg-accent min-h-touch text-sm px-3"
     >
       <Download className="h-4 w-4 mr-2" />
       <span className="hidden sm:inline">{t('contracts.detail.actions.exportPdf')}</span>
@@ -133,7 +133,7 @@ const ContractDetailPage = () => {
         key="save"
         onClick={handleSave}
         disabled={updateContract.isPending}
-        className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px] text-sm px-3"
+        className="bg-emerald-600 hover:bg-emerald-700 text-white min-h-touch text-sm px-3"
       >
         {updateContract.isPending ? (
           <>
@@ -154,7 +154,7 @@ const ContractDetailPage = () => {
       key="edit"
       onClick={handleToggleEdit}
       variant={isEditMode ? "destructive" : "outline"}
-      className={`min-h-[44px] text-sm px-3 ${isEditMode ? "hover:bg-red-700" : "hover:bg-muted"}`}
+      className={`min-h-touch text-sm px-3 ${isEditMode ? "hover:bg-destructive/90" : "hover:bg-accent"}`}
     >
       {isEditMode ? (
         <>
@@ -181,33 +181,33 @@ const ContractDetailPage = () => {
       <div className="space-y-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="w-full overflow-x-auto">
-            <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground min-w-full md:min-w-0">
-              <TabsTrigger value="overview" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-1.5 text-sm whitespace-nowrap min-h-[44px]">
+            <TabsList className="inline-flex h-auto items-center justify-start rounded-md bg-muted p-1 text-muted-foreground min-w-full md:min-w-0">
+              <TabsTrigger value="overview" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <FileText className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.overview')}</span>
                 <span className="sm:hidden">Prehľad</span>
               </TabsTrigger>
-              <TabsTrigger value="client" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-1.5 text-sm whitespace-nowrap min-h-[44px]">
+              <TabsTrigger value="client" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <User className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.client')}</span>
                 <span className="sm:hidden">Klient</span>
               </TabsTrigger>
-              <TabsTrigger value="devices" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-1.5 text-sm whitespace-nowrap min-h-[44px]">
+              <TabsTrigger value="devices" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <Settings className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.devices')}</span>
                 <span className="sm:hidden">Zariadenia</span>
               </TabsTrigger>
-              <TabsTrigger value="finance" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-1.5 text-sm whitespace-nowrap min-h-[44px]">
+              <TabsTrigger value="finance" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <Calculator className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.finance')}</span>
                 <span className="sm:hidden">Financie</span>
               </TabsTrigger>
-              <TabsTrigger value="documents" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-1.5 text-sm whitespace-nowrap min-h-[44px]">
+              <TabsTrigger value="documents" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <FolderOpen className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.documents')}</span>
                 <span className="sm:hidden">Dokumenty</span>
               </TabsTrigger>
-              <TabsTrigger value="history" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-1.5 text-sm whitespace-nowrap min-h-[44px]">
+              <TabsTrigger value="history" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <Clock className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.history')}</span>
                 <span className="sm:hidden">História</span>
