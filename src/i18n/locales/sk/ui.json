@@ -43,7 +43,12 @@
     "deleting": "Mazanie...",
     "downloadPdf": "Stiahnuť PDF",
     "openMenu": "Otvoriť menu",
-    "exportLocations": "Export prevádzkových miest"
+    "exportLocations": "Export prevádzkových miest",
+    "add": "Pridať",
+    "export": "Export",
+    "save": "Uložiť",
+    "close": "Zavrieť",
+    "back": "Späť"
   },
   "stats": {
     "totalCount": "Celkový počet",
@@ -108,7 +113,8 @@
     "deals": "Deals",
     "team": "Tím",
     "reports": "Reporty",
-    "settings": "Nastavenia"
+    "settings": "Nastavenia",
+    "toggleSidebar": "Prepnúť menu"
   },
   "table": {
     "noData": "Žiadne údaje",

@@ -352,7 +352,7 @@ const TeamManagement = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => setResetPasswordMember(member)}
-                          title="Zmeniť heslo"
+                          title={t('teamManagement.resetPasswordTooltip')}
                         >
                           <RotateCcw className="h-3 w-3" />
                         </Button>
@@ -360,7 +360,7 @@ const TeamManagement = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => handleTestLoginAs(member)}
-                          title="Test prihlásenie ako tento používateľ"
+                          title={t('teamManagement.testLoginTooltip')}
                         >
                           <LogIn className="h-3 w-3" />
                         </Button>
@@ -432,10 +432,10 @@ const TeamManagement = () => {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Key className="h-5 w-5" />
-                Prihlasovacie údaje
+                {t('teamManagement.credentials.title')}
               </DialogTitle>
               <DialogDescription>
-                Nový člen tímu bol úspešne vytvorený. Tieto údaje použite pre prihlásenie:
+                {t('teamManagement.credentials.description')}
               </DialogDescription>
             </DialogHeader>
             {newMemberCredentials && (
@@ -443,14 +443,14 @@ const TeamManagement = () => {
                 <Alert>
                   <Info className="h-4 w-4" />
                   <AlertDescription>
-                    Skopírujte a bezpečne uložte tieto prihlasovacie údaje. Nezabudnite ich odovzdať novému členovi tímu.
+                    {t('teamManagement.credentials.copyNote')}
                   </AlertDescription>
                 </Alert>
                 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                     <div>
-                      <Label className="text-sm font-medium">Email:</Label>
+                      <Label className="text-sm font-medium">{t('teamManagement.credentials.email')}</Label>
                       <p className="text-sm">{newMemberCredentials.email}</p>
                     </div>
                     <Button
@@ -464,7 +464,7 @@ const TeamManagement = () => {
                   
                   <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                     <div>
-                      <Label className="text-sm font-medium">Heslo:</Label>
+                      <Label className="text-sm font-medium">{t('teamManagement.credentials.password')}</Label>
                       <p className="text-sm font-mono">{newMemberCredentials.password}</p>
                     </div>
                     <Button
@@ -485,7 +485,7 @@ const TeamManagement = () => {
                       setNewMemberCredentials(null);
                     }}
                   >
-                    Zavrieť
+                    {t('teamManagement.credentials.close')}
                   </Button>
                 </div>
               </div>
@@ -497,16 +497,16 @@ const TeamManagement = () => {
         <Dialog open={!!editingMember} onOpenChange={() => setEditingMember(null)}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Upraviť člena tímu</DialogTitle>
+              <DialogTitle>{t('teamManagement.editMember.title')}</DialogTitle>
               <DialogDescription>
-                Upravte údaje člena tímu
+                {t('teamManagement.editMember.description')}
               </DialogDescription>
             </DialogHeader>
             {editingMember && (
               <form onSubmit={handleUpdateMember} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="edit_first_name">Meno</Label>
+                    <Label htmlFor="edit_first_name">{t('teamManagement.firstName')}</Label>
                     <Input 
                       id="edit_first_name" 
                       name="first_name" 
@@ -515,7 +515,7 @@ const TeamManagement = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_last_name">Priezvisko</Label>
+                    <Label htmlFor="edit_last_name">{t('teamManagement.lastName')}</Label>
                     <Input 
                       id="edit_last_name" 
                       name="last_name" 
@@ -525,7 +525,7 @@ const TeamManagement = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit_email">Email</Label>
+                  <Label htmlFor="edit_email">{t('teamManagement.email')}</Label>
                   <Input 
                     id="edit_email" 
                     name="email" 
@@ -535,7 +535,7 @@ const TeamManagement = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit_phone">Telefón</Label>
+                  <Label htmlFor="edit_phone">{t('teamManagement.phone')}</Label>
                   <Input 
                     id="edit_phone" 
                     name="phone" 
@@ -544,24 +544,24 @@ const TeamManagement = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit_role">Rola</Label>
+                  <Label htmlFor="edit_role">{t('teamManagement.role')}</Label>
                   <Select name="role" defaultValue={editingMember.role}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="merchant">Merchant</SelectItem>
-                      <SelectItem value="partner">Partner</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="merchant">{t('teamManagement.roles.merchant')}</SelectItem>
+                      <SelectItem value="partner">{t('teamManagement.roles.partner')}</SelectItem>
+                      <SelectItem value="admin">{t('teamManagement.roles.admin')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="flex justify-end space-x-2">
                   <Button type="button" variant="outline" onClick={() => setEditingMember(null)}>
-                    Zrušiť
+                    {t('teamManagement.cancel')}
                   </Button>
                   <Button type="submit" disabled={isSaving}>
-                    {isSaving ? 'Ukladá sa...' : 'Uložiť'}
+                    {isSaving ? t('teamManagement.editMember.saving') : t('teamManagement.editMember.save')}
                   </Button>
                 </div>
               </form>
@@ -573,29 +573,29 @@ const TeamManagement = () => {
         <Dialog open={!!resetPasswordMember} onOpenChange={() => setResetPasswordMember(null)}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Zmeniť heslo</DialogTitle>
+              <DialogTitle>{t('teamManagement.resetPasswordDialog.title')}</DialogTitle>
               <DialogDescription>
-                Zmeňte heslo pre {resetPasswordMember?.first_name} {resetPasswordMember?.last_name}
+                {t('teamManagement.resetPasswordDialog.description')} {resetPasswordMember?.first_name} {resetPasswordMember?.last_name}
               </DialogDescription>
             </DialogHeader>
             {resetPasswordMember && (
               <form onSubmit={handleResetPassword} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="newPassword">Nové heslo</Label>
+                  <Label htmlFor="newPassword">{t('teamManagement.resetPasswordDialog.newPassword')}</Label>
                   <Input 
                     id="newPassword" 
                     name="newPassword" 
                     type="password" 
-                    placeholder="Zadajte nové heslo"
+                    placeholder={t('teamManagement.resetPasswordDialog.enterNewPassword')}
                     required 
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
                   <Button type="button" variant="outline" onClick={() => setResetPasswordMember(null)}>
-                    Zrušiť
+                    {t('teamManagement.cancel')}
                   </Button>
                   <Button type="submit" disabled={isSaving}>
-                    {isSaving ? 'Mení sa...' : 'Zmeniť heslo'}
+                    {isSaving ? t('teamManagement.resetPasswordDialog.changing') : t('teamManagement.resetPasswordDialog.change')}
                   </Button>
                 </div>
               </form>

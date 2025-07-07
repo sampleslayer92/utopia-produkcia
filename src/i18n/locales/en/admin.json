@@ -548,6 +548,8 @@
     "deactivate": "Deactivate",
     "resetPassword": "Reset Password",
     "testLogin": "Test Login",
+    "resetPasswordTooltip": "Reset Password",
+    "testLoginTooltip": "Test login as this user",
     "confirmDelete": "Are you sure you want to delete this team member?",
     "confirmDeleteDescription": "This action cannot be undone. The team member will be completely removed from the system.",
     "newMember": {

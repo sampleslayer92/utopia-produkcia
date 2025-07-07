@@ -43,7 +43,12 @@
     "deleting": "Deleting...",
     "downloadPdf": "Download PDF",
     "openMenu": "Open menu",
-    "exportLocations": "Export business locations"
+    "exportLocations": "Export business locations",
+    "add": "Add",
+    "export": "Export",
+    "save": "Save",
+    "close": "Close",
+    "back": "Back"
   },
   "stats": {
     "totalCount": "Total Count",
@@ -108,7 +113,8 @@
     "deals": "Deals",
     "team": "Team",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "toggleSidebar": "Toggle Menu"
   },
   "table": {
     "noData": "No data",

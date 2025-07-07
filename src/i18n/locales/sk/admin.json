@@ -462,6 +462,8 @@
     "deactivate": "Deaktivovať",
     "resetPassword": "Zmeniť heslo",
     "testLogin": "Test prihlásenie",
+    "resetPasswordTooltip": "Zmeniť heslo",
+    "testLoginTooltip": "Test prihlásenie ako tento používateľ",
     "confirmDelete": "Naozaj chcete vymazať tohto člena tímu?",
     "confirmDeleteDescription": "Táto akcia sa nedá vrátiť späť. Člen tímu bude úplne odstránený zo systému.",
     "newMember": {
