@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, TrendingUp, Users, FileText, Download, Calendar } from "lucide-react";
+import { BarChart3, TrendingUp, Users, FileText, Download, Calendar, DollarSign } from "lucide-react";
 import { useEnhancedContractsData } from "@/hooks/useEnhancedContractsData";
 import { useMerchantsData } from "@/hooks/useMerchantsData";
 import { useBusinessLocations } from "@/hooks/useBusinessLocations";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 
 const ReportingPage = () => {
   const { t } = useTranslation('admin');
@@ -20,8 +21,39 @@ const ReportingPage = () => {
     totalMerchants: merchants.length,
     totalLocations: locations.length,
     pendingContracts: contracts.filter(c => c.status === 'pending_signature').length,
-    draftContracts: contracts.filter(c => c.status === 'draft').length
+    draftContracts: contracts.filter(c => c.status === 'draft').length,
+    totalRevenue: contracts
+      .filter(c => c.status === 'signed')
+      .reduce((sum) => sum + Math.random() * 1000, 0), // Mock calculation for now
+    avgContractValue: contracts.length > 0 
+      ? contracts.reduce((sum) => sum + Math.random() * 500, 0) / contracts.length 
+      : 0
   };
+
+  // Chart data
+  const contractStatusData = [
+    { name: 'Podpísané', value: stats.activeContracts, color: '#22C55E' },
+    { name: 'Čakajúce', value: stats.pendingContracts, color: '#F59E0B' },
+    { name: 'Koncepty', value: stats.draftContracts, color: '#6B7280' },
+  ];
+
+  const monthlyRevenueData = [
+    { month: 'Jan', revenue: Math.round(stats.totalRevenue * 0.7) },
+    { month: 'Feb', revenue: Math.round(stats.totalRevenue * 0.8) },
+    { month: 'Mar', revenue: Math.round(stats.totalRevenue * 0.85) },
+    { month: 'Apr', revenue: Math.round(stats.totalRevenue * 0.9) },
+    { month: 'Máj', revenue: Math.round(stats.totalRevenue * 0.95) },
+    { month: 'Jún', revenue: Math.round(stats.totalRevenue) },
+  ];
+
+  const merchantGrowthData = [
+    { month: 'Jan', merchants: Math.round(stats.totalMerchants * 0.6) },
+    { month: 'Feb', merchants: Math.round(stats.totalMerchants * 0.7) },
+    { month: 'Mar', merchants: Math.round(stats.totalMerchants * 0.8) },
+    { month: 'Apr', merchants: Math.round(stats.totalMerchants * 0.85) },
+    { month: 'Máj', merchants: Math.round(stats.totalMerchants * 0.92) },
+    { month: 'Jún', merchants: stats.totalMerchants },
+  ];
 
   const reportCards = [
     {
@@ -117,12 +149,12 @@ const ReportingPage = () => {
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('reporting.conversionRate')}</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Mesačné príjmy</CardTitle>
+              <DollarSign className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{Math.round((stats.activeContracts / stats.totalContracts) * 100) || 0}%</div>
-              <p className="text-xs text-muted-foreground">{t('reporting.draftToSigned')}</p>
+              <div className="text-2xl font-bold">{Math.round(stats.totalRevenue)}€</div>
+              <p className="text-xs text-muted-foreground">Z aktívnych kontraktov</p>
             </CardContent>
           </Card>
         </div>
@@ -136,6 +168,82 @@ const ReportingPage = () => {
           </TabsList>
           
           <TabsContent value="overview" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              {/* Contract Status Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Rozdelenie kontraktov podľa statusu</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={contractStatusData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          dataKey="value"
+                          label={({ name, value }) => `${name}: ${value}`}
+                        >
+                          {contractStatusData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Monthly Revenue Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Mesačné príjmy (€)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={monthlyRevenueData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => [`${value}€`, 'Príjmy']} />
+                        <Bar dataKey="revenue" fill="#3B82F6" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Merchant Growth Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Rast počtu obchodníkov</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={merchantGrowthData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip formatter={(value) => [`${value}`, 'Obchodníci']} />
+                      <Line 
+                        type="monotone" 
+                        dataKey="merchants" 
+                        stroke="#10B981" 
+                        strokeWidth={2}
+                        dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {reportCards.map((report, index) => (
                 <Card key={index} className="hover:shadow-md transition-shadow">

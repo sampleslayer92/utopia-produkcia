@@ -1202,6 +1202,63 @@ export type Database = {
         }
         Relationships: []
       }
+      warehouse_items: {
+        Row: {
+          category: string
+          company_cost: number
+          created_at: string
+          created_by: string | null
+          current_stock: number | null
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          item_type: string
+          min_stock: number | null
+          monthly_fee: number
+          name: string
+          setup_fee: number
+          specifications: Json | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          company_cost?: number
+          created_at?: string
+          created_by?: string | null
+          current_stock?: number | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          item_type?: string
+          min_stock?: number | null
+          monthly_fee?: number
+          name: string
+          setup_fee?: number
+          specifications?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          company_cost?: number
+          created_at?: string
+          created_by?: string | null
+          current_stock?: number | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          item_type?: string
+          min_stock?: number | null
+          monthly_fee?: number
+          name?: string
+          setup_fee?: number
+          specifications?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
