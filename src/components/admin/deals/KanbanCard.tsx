@@ -67,6 +67,7 @@ const KanbanCard = ({ contract, isDragging = false, isMobile = false }: KanbanCa
       ref={setNodeRef}
       style={style}
       className={`
+        kanban-card
         ${isMobile ? 'p-4' : 'p-3'} 
         cursor-grab active:cursor-grabbing
         bg-kanban-card border-border/50
@@ -76,6 +77,7 @@ const KanbanCard = ({ contract, isDragging = false, isMobile = false }: KanbanCa
         ${isMobile ? 'min-h-touch' : ''}
         rounded-lg group
         ${isDragging ? 'animate-kanban-drag' : ''}
+        will-change-transform
       `}
       {...listeners}
       {...attributes}

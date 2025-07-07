@@ -212,4 +212,41 @@
   .scrollbar-hidden::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+
+  /* Mobile Drag & Drop Optimizations */
+  .kanban-card {
+    touch-action: none; /* Disable native touch behaviors during drag */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Enhanced mobile touch performance */
+  @media (hover: none) and (pointer: coarse) {
+    .kanban-card {
+      transform: translateZ(0); /* Force hardware acceleration */
+      backface-visibility: hidden;
+      perspective: 1000px;
+    }
+    
+    .kanban-card:active {
+      transform: translateZ(0) scale(1.02);
+      transition: transform 0.1s ease-out;
+    }
+  }
+
+  /* Improve scroll performance on mobile */
+  .snap-x {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Disable text selection during drag operations */
+  .dnd-context * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 }

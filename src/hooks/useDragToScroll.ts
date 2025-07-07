@@ -1,16 +1,29 @@
 import { useRef, useEffect } from 'react';
 
-export const useDragToScroll = () => {
+interface DragToScrollOptions {
+  disabled?: boolean;
+}
+
+export const useDragToScroll = (options: DragToScrollOptions = {}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
+  const { disabled = false } = options;
 
   useEffect(() => {
     const element = scrollRef.current;
-    if (!element) return;
+    if (!element || disabled) return;
 
     const handleMouseDown = (e: MouseEvent) => {
+      // Prevent if target has drag attributes (from dnd-kit)
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-rbd-drag-handle-context-id]') || 
+          target.closest('[draggable="true"]') ||
+          target.hasAttribute('data-rbd-drag-handle-dragging-id')) {
+        return;
+      }
+
       isDragging.current = true;
       startX.current = e.pageX - element.offsetLeft;
       scrollLeft.current = element.scrollLeft;
@@ -46,8 +59,18 @@ export const useDragToScroll = () => {
       }
     };
 
-    // Touch events for mobile
+    // Smart touch handling - avoid conflicts with DnD Kit
     const handleTouchStart = (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      
+      // Skip if target is draggable or part of DnD system
+      if (target.closest('[data-rbd-drag-handle-context-id]') || 
+          target.closest('[draggable="true"]') ||
+          target.hasAttribute('data-rbd-drag-handle-dragging-id') ||
+          target.closest('.kanban-card')) {
+        return;
+      }
+
       isDragging.current = true;
       startX.current = e.touches[0].pageX - element.offsetLeft;
       scrollLeft.current = element.scrollLeft;
@@ -55,6 +78,7 @@ export const useDragToScroll = () => {
 
     const handleTouchMove = (e: TouchEvent) => {
       if (!isDragging.current) return;
+      
       const x = e.touches[0].pageX - element.offsetLeft;
       const walk = (x - startX.current) * 1.5;
       element.scrollLeft = scrollLeft.current - walk;
@@ -64,15 +88,15 @@ export const useDragToScroll = () => {
       isDragging.current = false;
     };
 
-    // Add event listeners
+    // Add event listeners with passive options for better performance
     element.addEventListener('mousedown', handleMouseDown);
     element.addEventListener('mousemove', handleMouseMove);
     element.addEventListener('mouseup', handleMouseUp);
     element.addEventListener('mouseleave', handleMouseLeave);
     element.addEventListener('wheel', handleWheel, { passive: false });
-    element.addEventListener('touchstart', handleTouchStart);
-    element.addEventListener('touchmove', handleTouchMove);
-    element.addEventListener('touchend', handleTouchEnd);
+    element.addEventListener('touchstart', handleTouchStart, { passive: true });
+    element.addEventListener('touchmove', handleTouchMove, { passive: true });
+    element.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     // Set initial cursor
     element.style.cursor = 'grab';
@@ -87,7 +111,7 @@ export const useDragToScroll = () => {
       element.removeEventListener('touchmove', handleTouchMove);
       element.removeEventListener('touchend', handleTouchEnd);
     };
-  }, []);
+  }, [disabled]);
 
   return scrollRef;
 };
