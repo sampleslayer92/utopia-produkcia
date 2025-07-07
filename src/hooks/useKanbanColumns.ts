@@ -190,6 +190,8 @@ export const useKanbanColumns = () => {
           auto_refresh: newPreferences.autoRefresh ?? preferences.autoRefresh,
           card_compact_mode: newPreferences.cardCompactMode ?? preferences.cardCompactMode,
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) throw error;
