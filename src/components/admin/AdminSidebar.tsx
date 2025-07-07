@@ -18,7 +18,7 @@ import {
   BarChart3
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminProfile from "./AdminProfile";
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -44,16 +44,40 @@ const AdminSidebar = () => {
   const location = useLocation();
   const { userRole } = useAuth();
   
-  // State for expandable sections
-  const [expandedSections, setExpandedSections] = useState<string[]>(['merchants', 'team', 'organizations', 'warehouse', 'reporting', 'settings']);
+  // Helper function to determine which section should be expanded based on current path
+  const getActiveSectionId = (pathname: string): string | null => {
+    if (pathname.startsWith('/admin/merchants')) return 'merchants';
+    if (pathname.startsWith('/admin/warehouse')) return 'warehouse';
+    if (pathname.startsWith('/admin/reporting')) return 'reporting';
+    if (pathname.startsWith('/admin/organizations')) return 'organizations';
+    if (pathname.startsWith('/admin/team')) return 'team';
+    if (pathname.startsWith('/admin/tasks')) return 'tasks';
+    if (pathname.startsWith('/admin/settings')) return 'settings';
+    return null;
+  };
 
+  // State for expandable sections - initialize with current active section
+  const [expandedSections, setExpandedSections] = useState<string[]>(() => {
+    const activeSection = getActiveSectionId(location.pathname);
+    return activeSection ? [activeSection] : [];
+  });
+
+  // Accordion behavior - only one section expanded at a time
   const toggleSection = (sectionId: string) => {
     setExpandedSections(prev => 
       prev.includes(sectionId) 
-        ? prev.filter(id => id !== sectionId)
-        : [...prev, sectionId]
+        ? [] // Close if already open
+        : [sectionId] // Open only this section, close others
     );
   };
+
+  // Auto-expand section when route changes
+  useEffect(() => {
+    const activeSection = getActiveSectionId(location.pathname);
+    if (activeSection) {
+      setExpandedSections([activeSection]);
+    }
+  }, [location.pathname]);
 
   const isExpanded = (sectionId: string) => expandedSections.includes(sectionId);
   const isActive = (path: string) => location.pathname === path;
