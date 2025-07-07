@@ -1283,6 +1283,16 @@
     "systemLogs": "System Logs",
     "usageAnalytics": "Usage Analytics",
     "errorReports": "Error Reports",
-    "userActivity": "User Activity"
+    "userActivity": "User Activity",
+    "monthlyRevenue": "Monthly Revenue",
+    "fromActiveContracts": "From active contracts",
+    "contractStatusDistribution": "Contract Status Distribution",
+    "monthlyRevenueChart": "Monthly Revenue (€)",
+    "merchantGrowthChart": "Merchant Growth",
+    "signed": "Signed",
+    "pending": "Pending",
+    "drafts": "Drafts",
+    "revenue": "Revenue",
+    "merchants": "Merchants"
   }
 }

@@ -483,7 +483,17 @@
     "systemLogs": "Systémové logy",
     "usageAnalytics": "Analytika používania",
     "errorReports": "Reporty chýb",
-    "userActivity": "Aktivita používateľov"
+    "userActivity": "Aktivita používateľov",
+    "monthlyRevenue": "Mesačné príjmy",
+    "fromActiveContracts": "Z aktívnych kontraktov",
+    "contractStatusDistribution": "Rozdelenie kontraktov podľa statusu",
+    "monthlyRevenueChart": "Mesačné príjmy (€)",
+    "merchantGrowthChart": "Rast počtu obchodníkov",
+    "signed": "Podpísané",
+    "pending": "Čakajúce",
+    "drafts": "Koncepty",
+    "revenue": "Príjmy",
+    "merchants": "Obchodníci"
   }
 }
   },

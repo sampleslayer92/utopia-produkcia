@@ -32,9 +32,9 @@ const ReportingPage = () => {
 
   // Chart data
   const contractStatusData = [
-    { name: 'Podpísané', value: stats.activeContracts, color: '#22C55E' },
-    { name: 'Čakajúce', value: stats.pendingContracts, color: '#F59E0B' },
-    { name: 'Koncepty', value: stats.draftContracts, color: '#6B7280' },
+    { name: t('reporting.signed'), value: stats.activeContracts, color: '#22C55E' },
+    { name: t('reporting.pending'), value: stats.pendingContracts, color: '#F59E0B' },
+    { name: t('reporting.drafts'), value: stats.draftContracts, color: '#6B7280' },
   ];
 
   const monthlyRevenueData = [
@@ -147,16 +147,16 @@ const ReportingPage = () => {
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Mesačné príjmy</CardTitle>
-              <DollarSign className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{Math.round(stats.totalRevenue)}€</div>
-              <p className="text-xs text-muted-foreground">Z aktívnych kontraktov</p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{t('reporting.monthlyRevenue')}</CardTitle>
+                <DollarSign className="h-4 w-4 text-green-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{Math.round(stats.totalRevenue)}€</div>
+                <p className="text-xs text-muted-foreground">{t('reporting.fromActiveContracts')}</p>
+              </CardContent>
+            </Card>
         </div>
 
         {/* Detailed Reports */}
@@ -172,7 +172,7 @@ const ReportingPage = () => {
               {/* Contract Status Chart */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Rozdelenie kontraktov podľa statusu</CardTitle>
+                  <CardTitle>{t('reporting.contractStatusDistribution')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[300px]">
@@ -200,7 +200,7 @@ const ReportingPage = () => {
               {/* Monthly Revenue Chart */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Mesačné príjmy (€)</CardTitle>
+                  <CardTitle>{t('reporting.monthlyRevenueChart')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[300px]">
@@ -209,7 +209,7 @@ const ReportingPage = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis />
-                        <Tooltip formatter={(value) => [`${value}€`, 'Príjmy']} />
+                        <Tooltip formatter={(value) => [`${value}€`, t('reporting.revenue')]} />
                         <Bar dataKey="revenue" fill="#3B82F6" />
                       </BarChart>
                     </ResponsiveContainer>
@@ -221,7 +221,7 @@ const ReportingPage = () => {
             {/* Merchant Growth Chart */}
             <Card>
               <CardHeader>
-                <CardTitle>Rast počtu obchodníkov</CardTitle>
+                <CardTitle>{t('reporting.merchantGrowthChart')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
@@ -230,7 +230,7 @@ const ReportingPage = () => {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
                       <YAxis />
-                      <Tooltip formatter={(value) => [`${value}`, 'Obchodníci']} />
+                      <Tooltip formatter={(value) => [`${value}`, t('reporting.merchants')]} />
                       <Line 
                         type="monotone" 
                         dataKey="merchants" 
