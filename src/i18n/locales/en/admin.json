@@ -21,7 +21,12 @@
     "teamPerformance": "Team Performance",
     "organizations": "Organizations",
     "organizationManagement": "Organization Management",
-    "organizationalStructure": "Organizational Structure"
+    "organizationalStructure": "Organizational Structure",
+    "applicationSettings": "Application Settings",
+    "profileSettings": "Profile Settings"
+  },
+  "settings": {
+    "description": "Manage application settings and your profile"
   },
   "breadcrumbs": {
     "editContract": "Edit Contract",

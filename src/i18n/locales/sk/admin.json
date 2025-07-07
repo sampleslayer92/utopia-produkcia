@@ -22,7 +22,12 @@
     "teamPerformance": "Výkonnosť tímu",
     "organizations": "Organizácie",
     "organizationManagement": "Správa organizácií",
-    "organizationalStructure": "Organizačná štruktúra"
+    "organizationalStructure": "Organizačná štruktúra",
+    "applicationSettings": "Nastavenia aplikácie",
+    "profileSettings": "Nastavenia profilu"
+  },
+  "settings": {
+    "description": "Spravujte nastavenia aplikácie a vášho profilu"
   },
   "breadcrumbs": {
     "editContract": "Editácia zmluvy",

@@ -4,7 +4,7 @@ import {
   LayoutDashboard, 
   FileText, 
   Building2, 
-  CheckSquare, 
+  CheckSquare,
   Handshake,
   Users,
   UserCog,
@@ -12,7 +12,8 @@ import {
   ChevronDown,
   ChevronRight,
   Building,
-  Network
+  Network,
+  Settings
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
@@ -42,7 +43,7 @@ const AdminSidebar = () => {
   const { userRole } = useAuth();
   
   // State for expandable sections
-  const [expandedSections, setExpandedSections] = useState<string[]>(['merchants', 'team', 'organizations']);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['merchants', 'team', 'organizations', 'settings']);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections(prev => 
@@ -184,7 +185,27 @@ const AdminSidebar = () => {
           disabled: true
         }
       ]
-    }] : [])
+    }] : []),
+    // Settings for all roles
+    {
+      id: 'settings',
+      title: t('navigation.settings'),
+      icon: Settings,
+      type: 'expandable' as const,
+      expanded: isExpanded('settings'),
+      children: [
+        {
+          title: t('navigation.applicationSettings'),
+          path: "/admin/settings/application",
+          active: isActive("/admin/settings/application")
+        },
+        {
+          title: t('navigation.profileSettings'),
+          path: "/admin/settings/profile",
+          active: isActive("/admin/settings/profile")
+        }
+      ]
+    }
   ];
 
   const { state } = useSidebar();
