@@ -17,6 +17,7 @@ import { useEnhancedContractsData } from '@/hooks/useEnhancedContractsData';
 import { useContractStatusUpdate } from '@/hooks/useContractStatusUpdate';
 import { useContractsRealtime } from '@/hooks/useContractsRealtime';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useDragToScroll } from '@/hooks/useDragToScroll';
 import KanbanColumn from './KanbanColumn';
 import KanbanCard from './KanbanCard';
 import { Card } from '@/components/ui/card';
@@ -61,7 +62,7 @@ const KANBAN_COLUMNS = [
 const DealsKanbanBoard = () => {
   const [activeContract, setActiveContract] = useState<EnhancedContractData | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const dragScrollRef = useDragToScroll();
   const { data: contracts = [], isLoading, error } = useEnhancedContractsData();
   const updateContractStatus = useContractStatusUpdate();
   const isMobile = useIsMobile();
@@ -101,28 +102,6 @@ const DealsKanbanBoard = () => {
     
     if (newOverColumn !== dragOverColumn) {
       setDragOverColumn(newOverColumn);
-      
-      // Auto-scroll on mobile when dragging near edges
-      if (isMobile && scrollContainerRef.current && over) {
-        const container = scrollContainerRef.current;
-        const { left, right } = container.getBoundingClientRect();
-        const pointer = event.activatorEvent as TouchEvent | MouseEvent;
-        
-        let clientX = 0;
-        if ('touches' in pointer) {
-          clientX = pointer.touches[0]?.clientX || 0;
-        } else {
-          clientX = pointer.clientX;
-        }
-        
-        const scrollZone = 100;
-        
-        if (clientX < left + scrollZone) {
-          container.scrollBy({ left: -20, behavior: 'smooth' });
-        } else if (clientX > right - scrollZone) {
-          container.scrollBy({ left: 20, behavior: 'smooth' });
-        }
-      }
     }
   };
 
@@ -197,8 +176,8 @@ const DealsKanbanBoard = () => {
           onDragEnd={handleDragEnd}
         >
           <div 
-            ref={scrollContainerRef}
-            className="flex gap-3 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent snap-x snap-mandatory"
+            ref={dragScrollRef}
+            className="flex gap-3 overflow-x-auto pb-4 scrollbar-hidden snap-x snap-mandatory"
             style={{ scrollSnapType: 'x mandatory' }}
           >
             {KANBAN_COLUMNS.map((column) => {
@@ -247,8 +226,8 @@ const DealsKanbanBoard = () => {
         onDragEnd={handleDragEnd}
       >
         <div 
-          ref={scrollContainerRef}
-          className="grid grid-cols-2 lg:grid-cols-5 gap-6 min-h-[600px] overflow-x-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
+          ref={dragScrollRef}
+          className="grid grid-cols-2 lg:grid-cols-5 gap-6 min-h-[600px] overflow-x-auto scrollbar-hidden"
         >
           {KANBAN_COLUMNS.map((column) => {
             const columnContracts = getContractsForColumn(column.statuses);

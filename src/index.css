@@ -189,4 +189,27 @@
   * {
     -webkit-overflow-scrolling: touch;
   }
+  
+  /* Scrollbar utilities */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thumb-muted {
+    scrollbar-color: hsl(var(--muted)) transparent;
+  }
+  
+  .scrollbar-track-transparent {
+    scrollbar-color: transparent transparent;
+  }
+
+  /* Invisible scrollbars for canvas-like navigation */
+  .scrollbar-hidden {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 }
