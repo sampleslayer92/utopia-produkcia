@@ -374,8 +374,9 @@
           "turnover": "Obrat",
           "pos": "POS",
           "contract": "Zmluva"
-    }
-  },
+        }
+      }
+    },
   "warehouse": {
     "title": "Sklad",
     "subtitle": "Spravujte zariadenia a služby v sklade",
