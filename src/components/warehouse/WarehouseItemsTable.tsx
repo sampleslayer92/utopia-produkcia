@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,13 +39,29 @@ interface WarehouseItemsTableProps {
 }
 
 export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
-  const { t } = useTranslation('admin');
+  const { t, i18n } = useTranslation('admin');
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [selectedItem, setSelectedItem] = useState<WarehouseItem | undefined>();
   const [showModal, setShowModal] = useState(false);
   const [deleteItem, setDeleteItem] = useState<WarehouseItem | null>(null);
+
+  // Debug: Log translation information
+  useEffect(() => {
+    console.log('🔍 [Warehouse Debug] Current language:', i18n.language);
+    console.log('🔍 [Warehouse Debug] Translation function ready:', typeof t);
+    console.log('🔍 [Warehouse Debug] Testing warehouse.subtitle:', t('warehouse.subtitle'));
+    console.log('🔍 [Warehouse Debug] Testing warehouse.allItems:', t('warehouse.allItems'));
+    console.log('🔍 [Warehouse Debug] Testing warehouse.devices:', t('warehouse.devices'));
+    console.log('🔍 [Warehouse Debug] Testing warehouse.services:', t('warehouse.services'));
+    
+    // Test if warehouse exists in resources
+    const resources = i18n.getResourceBundle('sk', 'admin');
+    console.log('🔍 [Warehouse Debug] Available admin resources:', Object.keys(resources || {}));
+    console.log('🔍 [Warehouse Debug] Warehouse resource exists:', !!resources?.warehouse);
+    console.log('🔍 [Warehouse Debug] Warehouse resource content:', resources?.warehouse);
+  }, [t, i18n]);
 
   const { data: items = [], isLoading, error } = useWarehouseItems({
     item_type: itemType,
@@ -94,7 +111,10 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
   };
 
   const getCategoryLabel = (category: string) => {
-    return t(`warehouse.categories.${category}`) || category;
+    const translationKey = `warehouse.categories.${category}`;
+    const translation = t(translationKey);
+    console.log(`🔍 [Category Debug] Key: ${translationKey}, Translation: ${translation}`);
+    return translation || category;
   };
 
   if (error) {

@@ -24,6 +24,10 @@ import pagesEN from './locales/en/pages.json';
 import uiSK from './locales/sk/ui.json';
 import uiEN from './locales/en/ui.json';
 
+// Debug: Log the warehouse translations to verify they're loaded
+console.log('🔍 [i18n Debug] Slovak warehouse translations loaded:', adminSK.warehouse);
+console.log('🔍 [i18n Debug] Available warehouse keys:', Object.keys(adminSK.warehouse || {}));
+
 const resources = {
   sk: {
     common: commonSK,
@@ -51,13 +55,16 @@ const resources = {
   },
 };
 
+console.log('🔍 [i18n Debug] Resources registered:', Object.keys(resources));
+console.log('🔍 [i18n Debug] Slovak admin namespace:', Object.keys(resources.sk.admin));
+
 i18n
   .use(initReactI18next)
   .init({
     resources,
     lng: 'sk', // default language
     fallbackLng: 'sk',
-    debug: true, // temporarily enable debug to check i18n loading
+    debug: true, // Enable debug to see missing key warnings
     
     interpolation: {
       escapeValue: false, // React already does escaping
@@ -65,6 +72,11 @@ i18n
     
     ns: ['common', 'steps', 'forms', 'notifications', 'help', 'admin', 'auth', 'actions', 'pages', 'ui'],
     defaultNS: 'common',
+    
+    // Add debug handler to catch missing keys
+    missingKeyHandler: (lngs, ns, key, fallbackValue) => {
+      console.warn(`🚨 [i18n Missing Key] Language: ${lngs}, Namespace: ${ns}, Key: ${key}, Fallback: ${fallbackValue}`);
+    },
   });
 
 export default i18n;
