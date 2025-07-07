@@ -22,13 +22,16 @@ import { useDragToScroll } from '@/hooks/useDragToScroll';
 import KanbanToolbar from './KanbanToolbar';
 import KanbanColumn from './KanbanColumn';
 import KanbanCard from './KanbanCard';
+import AddColumnModal from './AddColumnModal';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 import { EnhancedContractData } from '@/hooks/useEnhancedContractsData';
 
 const DealsKanbanBoard = () => {
   const [activeContract, setActiveContract] = useState<EnhancedContractData | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+  const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
   const dragScrollRef = useDragToScroll();
   const { data: contracts = [], isLoading, error } = useEnhancedContractsData();
   const { 
@@ -36,7 +39,9 @@ const DealsKanbanBoard = () => {
     preferences, 
     isLoading: columnsLoading,
     updateColumn,
-    updatePreferences 
+    updatePreferences,
+    createColumn,
+    resetToDefault
   } = useKanbanColumns();
   const updateContractStatus = useContractStatusUpdate();
   const isMobile = useIsMobile();
@@ -110,6 +115,24 @@ const DealsKanbanBoard = () => {
     return contracts.filter(contract => columnStatuses.includes(contract.status));
   };
 
+  const handleAddColumn = async (columnData: any) => {
+    const result = await createColumn(columnData);
+    if (result.success) {
+      toast.success('Stĺpec bol úspešne pridaný');
+    } else {
+      toast.error('Chyba pri pridávaní stĺpca');
+    }
+  };
+
+  const handleResetToDefault = async () => {
+    const result = await resetToDefault();
+    if (result.success) {
+      toast.success('Stĺpce boli resetované na predvolené');
+    } else {
+      toast.error('Chyba pri resetovaní stĺpcov');
+    }
+  };
+
   // Show table view if preference is set to table
   if (preferences.viewMode === 'table') {
     return (
@@ -117,6 +140,8 @@ const DealsKanbanBoard = () => {
         <KanbanToolbar
           preferences={preferences}
           onPreferencesChange={updatePreferences}
+          onAddColumn={() => setIsAddColumnModalOpen(true)}
+          onResetToDefault={handleResetToDefault}
           contractsCount={contracts.length}
         />
         <div className="flex-1 p-6">
@@ -163,6 +188,8 @@ const DealsKanbanBoard = () => {
         <KanbanToolbar
           preferences={preferences}
           onPreferencesChange={updatePreferences}
+          onAddColumn={() => setIsAddColumnModalOpen(true)}
+          onResetToDefault={handleResetToDefault}
           contractsCount={contracts.length}
         />
         <div className="flex-1">
@@ -219,6 +246,8 @@ const DealsKanbanBoard = () => {
       <KanbanToolbar
         preferences={preferences}
         onPreferencesChange={updatePreferences}
+        onAddColumn={() => setIsAddColumnModalOpen(true)}
+        onResetToDefault={handleResetToDefault}
         contractsCount={contracts.length}
       />
       <div className="flex-1">
@@ -259,6 +288,13 @@ const DealsKanbanBoard = () => {
           </DragOverlay>
         </DndContext>
       </div>
+
+      <AddColumnModal
+        isOpen={isAddColumnModalOpen}
+        onClose={() => setIsAddColumnModalOpen(false)}
+        onAddColumn={handleAddColumn}
+        existingColumns={columns}
+      />
     </div>
   );
 };

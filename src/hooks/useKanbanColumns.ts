@@ -200,6 +200,26 @@ export const useKanbanColumns = () => {
     }
   };
 
+  // Reset to default columns
+  const resetToDefault = async () => {
+    if (!user) return { success: false, error: 'User not authenticated' };
+
+    try {
+      // Delete user's custom columns
+      await supabase
+        .from('kanban_columns')
+        .delete()
+        .eq('user_id', user.id);
+
+      // Refetch columns to get defaults
+      await fetchColumns();
+      return { success: true };
+    } catch (error) {
+      console.error('Error resetting to default:', error);
+      return { success: false, error };
+    }
+  };
+
   // Reorder columns
   const reorderColumns = async (newOrder: KanbanColumn[]) => {
     try {
@@ -242,6 +262,7 @@ export const useKanbanColumns = () => {
     deleteColumn,
     updatePreferences,
     reorderColumns,
+    resetToDefault,
     refetch: () => Promise.all([fetchColumns(), fetchPreferences()])
   };
 };
