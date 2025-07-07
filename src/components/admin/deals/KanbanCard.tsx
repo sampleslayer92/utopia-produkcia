@@ -11,9 +11,10 @@ import { useNavigate } from 'react-router-dom';
 interface KanbanCardProps {
   contract: EnhancedContractData;
   isDragging?: boolean;
+  isMobile?: boolean;
 }
 
-const KanbanCard = ({ contract, isDragging = false }: KanbanCardProps) => {
+const KanbanCard = ({ contract, isDragging = false, isMobile = false }: KanbanCardProps) => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   
@@ -24,6 +25,7 @@ const KanbanCard = ({ contract, isDragging = false }: KanbanCardProps) => {
     transform,
   } = useDraggable({
     id: contract.id,
+    disabled: isMobile, // Disable drag on mobile
   });
 
   const style = transform ? {
@@ -62,21 +64,24 @@ const KanbanCard = ({ contract, isDragging = false }: KanbanCardProps) => {
     <Card 
       ref={setNodeRef}
       style={style}
-      className={`p-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow ${
+      className={`${isMobile ? 'p-4' : 'p-3'} ${
+        isMobile ? 'cursor-pointer' : 'cursor-grab active:cursor-grabbing'
+      } hover:shadow-md transition-shadow ${
         isDragging ? 'opacity-50 rotate-3 shadow-lg' : ''
       }`}
-      {...listeners}
-      {...attributes}
+      onClick={isMobile ? handleViewContract : undefined}
+      {...(isMobile ? {} : listeners)}
+      {...(isMobile ? {} : attributes)}
     >
-      <div className="space-y-3">
+      <div className={`space-y-${isMobile ? '4' : '3'}`}>
         {/* Header with contract number and status */}
         <div className="flex items-center justify-between">
-          <div className="font-medium text-sm text-gray-900">
+          <div className={`font-medium ${isMobile ? 'text-base' : 'text-sm'} text-gray-900`}>
             {contract.contract_number}
           </div>
           <Badge 
             variant="outline" 
-            className={`text-xs ${getStatusBadgeColor(contract.status)}`}
+            className={`${isMobile ? 'text-sm' : 'text-xs'} ${getStatusBadgeColor(contract.status)}`}
           >
             {t(`status.${contract.status}`)}
           </Badge>
@@ -84,53 +89,55 @@ const KanbanCard = ({ contract, isDragging = false }: KanbanCardProps) => {
 
         {/* Client info */}
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Building2 className="h-3 w-3" />
-            <span className="truncate">{contract.clientName}</span>
+          <div className={`flex items-center gap-2 ${isMobile ? 'text-base' : 'text-sm'} text-gray-600`}>
+            <Building2 className={`${isMobile ? 'h-4 w-4' : 'h-3 w-3'}`} />
+            <span className="truncate font-medium">{contract.clientName}</span>
           </div>
           
           {contract.contact_info?.email && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <User className="h-3 w-3" />
+            <div className={`flex items-center gap-2 ${isMobile ? 'text-sm' : 'text-sm'} text-gray-600`}>
+              <User className={`${isMobile ? 'h-4 w-4' : 'h-3 w-3'}`} />
               <span className="truncate">{contract.contact_info.email}</span>
             </div>
           )}
         </div>
 
         {/* Contract details */}
-        <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className={`flex items-center justify-between ${isMobile ? 'text-sm' : 'text-xs'} text-gray-500`}>
           <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
+            <Calendar className={`${isMobile ? 'h-4 w-4' : 'h-3 w-3'}`} />
             <span>{new Date(contract.created_at).toLocaleDateString('sk-SK')}</span>
           </div>
           
           {contract.contractValue > 0 && (
             <div className="flex items-center gap-1">
-              <Euro className="h-3 w-3" />
-              <span>{contract.contractValue.toFixed(0)}€</span>
+              <Euro className={`${isMobile ? 'h-4 w-4' : 'h-3 w-3'}`} />
+              <span className="font-medium">{contract.contractValue.toFixed(0)}€</span>
             </div>
           )}
         </div>
 
         {/* Contract type */}
-        <div className="text-xs">
+        <div className={isMobile ? 'text-sm' : 'text-xs'}>
           <Badge variant="secondary" className="bg-gray-50 text-gray-600">
             {contract.contractType}
           </Badge>
         </div>
 
-        {/* Action button */}
-        <div className="pt-2 border-t border-gray-100">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleViewContract}
-            className="w-full h-7 text-xs"
-          >
-            <Eye className="h-3 w-3 mr-1" />
-            Zobraziť detail
-          </Button>
-        </div>
+        {/* Action button - only show on desktop in mobile mode */}
+        {!isMobile && (
+          <div className="pt-2 border-t border-gray-100">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleViewContract}
+              className="w-full h-7 text-xs"
+            >
+              <Eye className="h-3 w-3 mr-1" />
+              Zobraziť detail
+            </Button>
+          </div>
+        )}
       </div>
     </Card>
   );
