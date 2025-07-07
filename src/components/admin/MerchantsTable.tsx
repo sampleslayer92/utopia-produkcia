@@ -14,6 +14,8 @@ import { Building2, Calendar, Mail, User, Euro, FileText } from "lucide-react";
 import { useMerchantsData, Merchant } from "@/hooks/useMerchantsData";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import MerchantCard from "./MerchantCard";
 
 interface MerchantsTableProps {
   key?: number;
@@ -29,6 +31,7 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
   const { t } = useTranslation('admin');
   const { data: merchants, isLoading, error, refetch } = useMerchantsData(filters);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleRowClick = (merchantId: string) => {
     navigate(`/admin/merchant/${merchantId}/view`);
@@ -75,15 +78,39 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center py-8 text-slate-500">
+          <div className="flex flex-col items-center justify-center py-8 text-slate-500">
             <Building2 className="h-12 w-12 mb-4" />
-            <p>{t('table.emptyMessage')}</p>
+            <p className="text-center">{t('table.emptyMessage')}</p>
           </div>
         </CardContent>
       </Card>
     );
   }
 
+  // Mobile Card Layout
+  if (isMobile) {
+    return (
+      <div className="space-y-4">
+        <div className="px-1">
+          <h2 className="text-lg font-semibold text-slate-900 mb-1">{t('merchants.table.title')}</h2>
+          <p className="text-sm text-slate-600">
+            {t('merchants.table.overview', { count: merchants.length })}
+          </p>
+        </div>
+        <div className="space-y-3">
+          {merchants.map((merchant: Merchant) => (
+            <MerchantCard
+              key={merchant.id}
+              merchant={merchant}
+              onClick={handleRowClick}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop Table Layout
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
       <CardHeader>

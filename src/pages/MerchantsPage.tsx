@@ -10,6 +10,7 @@ import StatsCardsSection from "@/components/admin/shared/StatsCardsSection";
 import { useMerchantsStats } from "@/hooks/useAdminStats";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Building2, HandCoins, TrendingUp } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const MerchantsPage = () => {
   const { t } = useTranslation('admin');
@@ -22,6 +23,7 @@ const MerchantsPage = () => {
     hasContracts: 'all',
     profitRange: 'all'
   });
+  const isMobile = useIsMobile();
 
   const activeFiltersCount = Object.values(filters).filter(value => value !== '' && value !== 'all').length;
 
@@ -55,16 +57,19 @@ const MerchantsPage = () => {
 
   const merchantsActions = (
     <>
-      <Button variant="outline" className="hover:bg-slate-50">
-        <Download className="h-4 w-4 mr-2" />
-        {t('merchants.export')}
-      </Button>
+      {!isMobile && (
+        <Button variant="outline" className="hover:bg-slate-50 min-h-touch">
+          <Download className="h-4 w-4 mr-2" />
+          {t('merchants.export')}
+        </Button>
+      )}
       <Button 
         onClick={() => setShowAddMerchantModal(true)}
-        className="bg-blue-600 hover:bg-blue-700"
+        className="bg-blue-600 hover:bg-blue-700 min-h-touch"
+        size={isMobile ? "sm" : "default"}
       >
         <Plus className="h-4 w-4 mr-2" />
-        {t('merchants.newMerchant')}
+        {isMobile ? t('merchants.add') : t('merchants.newMerchant')}
       </Button>
     </>
   );
@@ -75,7 +80,7 @@ const MerchantsPage = () => {
       subtitle={t('merchants.subtitle')}
       actions={merchantsActions}
     >
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         <StatsCardsSection stats={statsCards} isLoading={statsLoading} />
         <CollapsibleFilters activeFiltersCount={activeFiltersCount}>
           <MerchantFilters 

@@ -47,10 +47,10 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-      <div className="px-6 py-4">
-        {/* Breadcrumbs */}
-        <div className="mb-3">
+    <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur-sm sticky top-0 z-40 safe-area-inset-top">
+      <div className="px-3 md:px-6 py-3 md:py-4">
+        {/* Breadcrumbs - Hidden on mobile */}
+        <div className="mb-2 md:mb-3 hidden md:block">
           <Breadcrumb>
             <BreadcrumbList>
               {breadcrumbs.map((breadcrumb, index) => (
@@ -78,23 +78,27 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
         </div>
 
         {/* Header Content */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 flex-1">
-            <SidebarTrigger />
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
+            <SidebarTrigger className="min-h-touch min-w-touch" />
+            <div className="min-w-0">
+              <h1 className="text-lg md:text-2xl font-bold text-slate-900 truncate">{title}</h1>
               {subtitle && (
-                <p className="text-sm text-slate-600 mt-1">{subtitle}</p>
+                <p className="text-xs md:text-sm text-slate-600 mt-1 truncate">{subtitle}</p>
               )}
             </div>
           </div>
 
           {/* Right Side Actions */}
-          <div className="flex items-center space-x-3">
-            <LanguageSwitcher />
+          <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">
+            <div className="hidden md:block">
+              <LanguageSwitcher />
+            </div>
             
-            {/* Dynamic Actions */}
-            {actions}
+            {/* Dynamic Actions - Stack vertically on mobile if needed */}
+            <div className="flex items-center space-x-1 md:space-x-2">
+              {actions}
+            </div>
           </div>
         </div>
       </div>
