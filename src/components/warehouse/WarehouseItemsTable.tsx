@@ -144,12 +144,12 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
                 className="pl-10"
               />
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <Select value={categoryFilter || 'all'} onValueChange={(val) => setCategoryFilter(val === 'all' ? '' : val)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Všetky kategórie" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Všetky kategórie</SelectItem>
+                <SelectItem value="all">Všetky kategórie</SelectItem>
                 {getAvailableCategories().map(([value, label]) => (
                   <SelectItem key={value} value={value}>
                     {label}
@@ -157,12 +157,12 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter || 'all'} onValueChange={(val) => setStatusFilter(val === 'all' ? '' : val)}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="Všetky" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Všetky</SelectItem>
+                <SelectItem value="all">Všetky</SelectItem>
                 <SelectItem value="active">Aktívne</SelectItem>
                 <SelectItem value="inactive">Neaktívne</SelectItem>
               </SelectContent>

@@ -64,14 +64,14 @@ export const InlineTableFilter = ({
         return (
           <div className="w-60 p-3">
             <Select 
-              value={(value as string) || ''} 
-              onValueChange={(val) => onValueChange(val || undefined)}
+              value={(value as string) || 'all'} 
+              onValueChange={(val) => onValueChange(val === 'all' ? undefined : val)}
             >
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
               <SelectContent className="bg-white">
-                <SelectItem value="">Všetky</SelectItem>
+                <SelectItem value="all">Všetky</SelectItem>
                 {options?.map(option => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
