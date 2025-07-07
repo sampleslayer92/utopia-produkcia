@@ -1,6 +1,18 @@
 
-import { useState } from 'react';
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
+import { useState, useRef } from 'react';
+import { 
+  DndContext, 
+  DragEndEvent, 
+  DragOverlay, 
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  DragOverEvent,
+  closestCorners,
+  pointerWithin
+} from '@dnd-kit/core';
 import { useEnhancedContractsData } from '@/hooks/useEnhancedContractsData';
 import { useContractStatusUpdate } from '@/hooks/useContractStatusUpdate';
 import { useContractsRealtime } from '@/hooks/useContractsRealtime';
@@ -48,6 +60,8 @@ const KANBAN_COLUMNS = [
 
 const DealsKanbanBoard = () => {
   const [activeContract, setActiveContract] = useState<EnhancedContractData | null>(null);
+  const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { data: contracts = [], isLoading, error } = useEnhancedContractsData();
   const updateContractStatus = useContractStatusUpdate();
   const isMobile = useIsMobile();
@@ -55,14 +69,67 @@ const DealsKanbanBoard = () => {
   // Enable real-time updates
   useContractsRealtime();
 
+  // Configure drag sensors with proper touch support
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 3, // 3px of movement required before drag starts
+    },
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 200, // 200ms delay to distinguish from scroll
+      tolerance: 5, // 5px tolerance for slight movements
+    },
+  });
+
+  const sensors = useSensors(mouseSensor, touchSensor);
+
   const handleDragStart = (event: DragStartEvent) => {
     const contract = contracts.find(c => c.id === event.active.id);
     setActiveContract(contract || null);
+    
+    // Add slight haptic feedback on mobile
+    if (isMobile && navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    const { over } = event;
+    const newOverColumn = over?.id as string || null;
+    
+    if (newOverColumn !== dragOverColumn) {
+      setDragOverColumn(newOverColumn);
+      
+      // Auto-scroll on mobile when dragging near edges
+      if (isMobile && scrollContainerRef.current && over) {
+        const container = scrollContainerRef.current;
+        const { left, right } = container.getBoundingClientRect();
+        const pointer = event.activatorEvent as TouchEvent | MouseEvent;
+        
+        let clientX = 0;
+        if ('touches' in pointer) {
+          clientX = pointer.touches[0]?.clientX || 0;
+        } else {
+          clientX = pointer.clientX;
+        }
+        
+        const scrollZone = 100;
+        
+        if (clientX < left + scrollZone) {
+          container.scrollBy({ left: -20, behavior: 'smooth' });
+        } else if (clientX > right - scrollZone) {
+          container.scrollBy({ left: 20, behavior: 'smooth' });
+        }
+      }
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveContract(null);
+    setDragOverColumn(null);
 
     if (!over || active.id === over.id) return;
 
@@ -74,6 +141,11 @@ const DealsKanbanBoard = () => {
     if (!targetColumn) return;
 
     const newStatus = targetColumn.statuses[0]; // Use first status of the column
+    
+    // Add haptic feedback on successful drop (mobile)
+    if (isMobile && navigator.vibrate) {
+      navigator.vibrate([50, 50, 100]);
+    }
     
     updateContractStatus.mutate({
       contractId,
@@ -169,10 +241,20 @@ const DealsKanbanBoard = () => {
   // Desktop layout with drag & drop
   return (
     <div className="p-6">
-      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 min-h-[600px]">
+      <DndContext 
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart} 
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        <div 
+          ref={scrollContainerRef}
+          className="grid grid-cols-2 lg:grid-cols-5 gap-6 min-h-[600px] overflow-x-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
+        >
           {KANBAN_COLUMNS.map((column) => {
             const columnContracts = getContractsForColumn(column.statuses);
+            const isDropTarget = dragOverColumn === column.id;
             
             return (
               <KanbanColumn
@@ -182,14 +264,17 @@ const DealsKanbanBoard = () => {
                 contracts={columnContracts}
                 color={column.color}
                 count={columnContracts.length}
+                isDropTarget={isDropTarget}
               />
             );
           })}
         </div>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={{ duration: 300, easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' }}>
           {activeContract ? (
-            <KanbanCard contract={activeContract} isDragging />
+            <div className="animate-kanban-drag">
+              <KanbanCard contract={activeContract} isDragging />
+            </div>
           ) : null}
         </DragOverlay>
       </DndContext>

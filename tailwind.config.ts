@@ -65,6 +65,20 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				kanban: {
+					column: {
+						DEFAULT: 'hsl(var(--kanban-column-bg))',
+						border: 'hsl(var(--kanban-column-border))'
+					},
+					card: {
+						DEFAULT: 'hsl(var(--kanban-card-bg))',
+						shadow: 'hsl(var(--kanban-card-shadow))'
+					},
+					drag: {
+						over: 'hsl(var(--kanban-drag-over))',
+						shadow: 'hsl(var(--kanban-drag-shadow))'
+					}
+				},
 				// Light theme colors inspired by Onramper
 				light: {
 					DEFAULT: '#ffffff',
@@ -215,6 +229,36 @@ export default {
 					'50%': {
 						transform: 'translateY(-5px)'
 					}
+				},
+				'kanban-drag': {
+					'0%': {
+						transform: 'rotate(0deg) scale(1)',
+						boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+					},
+					'100%': {
+						transform: 'rotate(2deg) scale(1.02)',
+						boxShadow: '0 8px 25px rgba(0,0,0,0.15)'
+					}
+				},
+				'kanban-drop': {
+					'0%': {
+						transform: 'scale(1.02)',
+						opacity: '0.8'
+					},
+					'100%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					}
+				},
+				'pulse-ring': {
+					'0%': {
+						transform: 'scale(0.8)',
+						opacity: '1'
+					},
+					'100%': {
+						transform: 'scale(2)',
+						opacity: '0'
+					}
 				}
 			},
 			animation: {
@@ -226,7 +270,10 @@ export default {
 				'float': 'float 3s ease-in-out infinite',
 				'glow': 'glow 3s ease-in-out infinite',
 				'gradient-shift': 'gradient-shift 8s ease-in-out infinite',
-				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite'
+				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite',
+				'kanban-drag': 'kanban-drag 0.2s ease-out forwards',
+				'kanban-drop': 'kanban-drop 0.3s ease-out forwards',
+				'pulse-ring': 'pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
