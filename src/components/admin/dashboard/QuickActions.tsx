@@ -52,46 +52,36 @@ const QuickActions = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-foreground">
+    <Card className="bg-white border border-gray-200 shadow-sm rounded-xl">
+      <CardHeader className="pb-6">
+        <CardTitle className="text-xl font-semibold text-gray-900">
           {t('dashboard.quickActions.title')}
-        </h2>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {actions.map((action, index) => (
-          <Card
-            key={index}
-            className="cursor-pointer bg-card border-border/50 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group overflow-hidden"
-            onClick={action.onClick}
-          >
-            <CardContent className="p-8 relative">
-              {/* Background decoration */}
-              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <div className="relative z-10">
-                <div className="mb-6 inline-flex items-center justify-center w-16 h-16 bg-muted/30 rounded-2xl group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-500">
-                  <action.icon className="h-8 w-8 text-primary group-hover:text-primary transition-colors duration-300" />
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-6 pt-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {actions.map((action, index) => (
+            <Card
+              key={index}
+              className="group cursor-pointer transition-all duration-200 hover:shadow-md hover:border-lime-300 rounded-lg border border-gray-200 bg-white"
+              onClick={action.onClick}
+            >
+              <CardContent className="p-6 h-32 flex flex-col justify-between">
+                <div className="flex items-start justify-between">
+                  <div className="p-2 rounded-lg bg-gray-50 group-hover:bg-lime-50">
+                    <action.icon className="h-5 w-5 text-gray-600 group-hover:text-lime-600" />
+                  </div>
                 </div>
-                
-                <div className="space-y-3">
-                  <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300">
-                    {action.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {action.description}
-                  </p>
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-900 mb-1">{action.title}</h3>
+                  <p className="text-xs text-gray-600">{action.description}</p>
                 </div>
-              </div>
-              
-              {/* Hover indicator */}
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
