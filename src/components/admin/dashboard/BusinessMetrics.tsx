@@ -65,20 +65,23 @@ const BusinessMetrics = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
       {metricsData.map((metric, index) => (
-        <Card key={index} className="bg-white border border-gray-200 hover:border-hsl(var(--lime-300)) transition-all duration-200 hover:shadow-md rounded-xl">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 mb-2">{metric.title}</p>
-                <p className="text-2xl font-bold text-gray-900 mb-2">{metric.value}</p>
-                <p className="text-sm text-hsl(var(--lime-600)) font-medium">
-                  {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
-                </p>
-              </div>
-              <div className="p-3 rounded-lg bg-gray-50">
-                <metric.icon className="h-6 w-6 text-gray-600" />
+        <Card key={index} className={`${metric.gradient} border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-110 cursor-pointer transform hover:-translate-y-2 rounded-3xl overflow-hidden`}>
+          <CardContent className="p-8 relative">
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/10 -translate-y-8 translate-x-8"></div>
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex-1">
+                  <p className="text-base font-bold text-white/90 mb-3">{metric.title}</p>
+                  <p className="text-4xl xl:text-5xl font-black text-white mb-3 tracking-tight">{metric.value}</p>
+                  <p className="text-lg font-bold text-white/90">
+                    {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
+                  </p>
+                </div>
+                <div className={`p-4 rounded-2xl ${metric.iconBg} shadow-xl`}>
+                  <metric.icon className="h-10 w-10 text-white" />
+                </div>
               </div>
             </div>
           </CardContent>

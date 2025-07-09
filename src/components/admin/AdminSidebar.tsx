@@ -288,8 +288,8 @@ const AdminSidebar = () => {
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="border-r-0 shadow-lg">
-      <SidebarHeader className="border-b border-gray-200 bg-white">
-        <div className="flex justify-center p-6">
+      <SidebarHeader className="border-b border-slate-200/50">
+        <div className="flex justify-center p-4">
           <div className="p-2">
             <img 
               src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
@@ -300,9 +300,9 @@ const AdminSidebar = () => {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-white">
-        <SidebarGroup className="px-4 py-6">
-          <SidebarMenu className="space-y-1">
+      <SidebarContent className="bg-gradient-to-b from-white to-slate-50/50 backdrop-blur-sm">
+        <SidebarGroup className="px-3 py-4">
+          <SidebarMenu className="space-y-2">
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.id}>
                 {item.type === 'single' ? (
@@ -310,15 +310,15 @@ const AdminSidebar = () => {
                     asChild
                     isActive={item.active}
                     tooltip={state === "collapsed" ? item.title : undefined}
-                     className={`rounded-lg transition-colors duration-200 font-medium ${
+                      className={`rounded-2xl transition-all duration-300 text-base font-semibold ${
                       item.active 
-                        ? 'bg-lime-500 !text-white shadow-sm' 
-                        : 'hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-bold-blue !text-white shadow-2xl hover:shadow-3xl transform hover:scale-105' 
+                        : 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 hover:shadow-lg hover:scale-105'
                     }`}
                   >
                     <button onClick={() => navigate(item.path!)}>
-                      <item.icon className={`h-5 w-5 ${item.active ? 'text-white' : 'text-gray-600'}`} />
-                      <span className="text-sm font-medium">{item.title}</span>
+                      <item.icon className={`h-7 w-7 ${item.active ? 'text-white' : 'text-blue-600'}`} />
+                      <span className="font-bold text-lg">{item.title}</span>
                     </button>
                   </SidebarMenuButton>
                 ) : (
@@ -326,41 +326,41 @@ const AdminSidebar = () => {
                     <SidebarMenuButton
                       onClick={() => toggleSection(item.id)}
                       tooltip={state === "collapsed" ? item.title : undefined}
-                      className={`rounded-lg transition-colors duration-200 font-medium ${
+                      className={`rounded-2xl transition-all duration-300 text-base font-semibold ${
                         item.expanded 
-                          ? 'bg-gray-100 text-gray-900' 
-                          : 'hover:bg-gray-50 hover:text-gray-900'
+                          ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 shadow-lg transform scale-105' 
+                          : 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 hover:shadow-lg hover:scale-105'
                       }`}
                     >
-                      <item.icon className="h-5 w-5 text-gray-600" />
-                      <span className="text-sm font-medium">{item.title}</span>
+                      <item.icon className="h-7 w-7 text-blue-600" />
+                      <span className="font-bold text-lg">{item.title}</span>
                       {state === "expanded" && (
                         item.expanded ? (
-                          <ChevronDown className="ml-auto h-4 w-4 text-gray-600 transition-transform duration-200" />
+                          <ChevronDown className="ml-auto h-6 w-6 text-blue-600 transition-transform duration-300" />
                         ) : (
-                          <ChevronRight className="ml-auto h-4 w-4 text-gray-600 transition-transform duration-200" />
+                          <ChevronRight className="ml-auto h-6 w-6 text-blue-600 transition-transform duration-300" />
                         )
                       )}
                     </SidebarMenuButton>
                     
                     {item.expanded && state === "expanded" && (
-                      <SidebarMenuSub className="ml-6 mt-2 space-y-1 border-l-2 border-gray-200 pl-4">
+                      <SidebarMenuSub className="ml-6 mt-3 space-y-2 border-l-4 border-gradient-to-b from-blue-200 to-indigo-200 pl-6">
                         {item.children?.map((child, index) => (
                           <SidebarMenuSubItem key={index}>
                             <SidebarMenuSubButton
                               asChild
                               isActive={child.active}
-                               className={`rounded-lg transition-colors duration-200 font-medium ${
+                               className={`rounded-xl transition-all duration-300 font-semibold ${
                                  child.active 
-                                   ? 'bg-lime-500 !text-white shadow-sm' 
-                                   : 'hover:bg-gray-50 hover:text-gray-900'
+                                   ? 'bg-accent-bright-blue !text-white shadow-xl transform scale-105' 
+                                   : 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 hover:shadow-md hover:scale-105'
                                } ${child.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                               <button 
                                 onClick={() => navigate(child.path)}
                                 disabled={child.disabled}
                               >
-                                <span className="text-sm">{child.title}</span>
+                                <span className="text-base font-bold">{child.title}</span>
                               </button>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
@@ -375,7 +375,7 @@ const AdminSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-gray-200 bg-white p-4">
+      <SidebarFooter className="border-t border-slate-200/50 bg-gradient-to-r from-slate-50 to-blue-50/30 p-3">
         <AdminProfile />
       </SidebarFooter>
     </Sidebar>
