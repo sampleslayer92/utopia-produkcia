@@ -1,108 +1,149 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { useTranslation } from 'react-i18next';
 import { TrendingUp, BarChart3 } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Area, AreaChart } from 'recharts';
 import { useRevenueData } from "@/hooks/useRevenueData";
 
 const RevenueChart = () => {
   const { t } = useTranslation('admin');
-  const { data: revenueData, isLoading } = useRevenueData();
+  const { data, isLoading } = useRevenueData();
 
   if (isLoading) {
     return (
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center text-slate-900">
-            <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
-            {t('dashboard.revenue.title')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-80 animate-pulse bg-slate-200 rounded"></div>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card className="glass-card-solid">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-muted rounded-xl animate-pulse"></div>
+              <div className="h-6 bg-muted rounded w-1/3 animate-pulse"></div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[320px] bg-muted rounded-xl animate-pulse"></div>
+          </CardContent>
+        </Card>
+        <Card className="glass-card-solid">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-muted rounded-xl animate-pulse"></div>
+              <div className="h-6 bg-muted rounded w-1/3 animate-pulse"></div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[320px] bg-muted rounded-xl animate-pulse"></div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center text-slate-900">
-            <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
-            {t('dashboard.revenue.monthlyTrend')}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Monthly Revenue Trend */}
+      <Card className="glass-card-solid hover-scale group">
+        <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-xl" />
+        <CardHeader className="relative">
+          <CardTitle className="flex items-center gap-3 text-xl font-bold text-foreground">
+            <div className="p-3 rounded-xl gradient-primary">
+              <TrendingUp className="h-6 w-6 text-primary-foreground" />
+            </div>
+            {t('dashboard.charts.monthlyRevenue')}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={revenueData?.monthlyTrend || []}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+        <CardContent className="relative">
+          <ResponsiveContainer width="100%" height={320}>
+            <AreaChart data={data.monthlyTrend}>
+              <defs>
+                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
               <XAxis 
                 dataKey="month" 
-                stroke="#64748b"
-                fontSize={12}
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={13}
+                fontWeight={500}
               />
               <YAxis 
-                stroke="#64748b"
-                fontSize={12}
-                tickFormatter={(value) => `€${value}`}
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={13}
+                fontWeight={500}
+                tickFormatter={(value) => `€${value.toLocaleString()}`}
               />
               <Tooltip 
-                formatter={(value: number) => [`€${value.toLocaleString()}`, t('dashboard.revenue.revenue')]}
-                labelStyle={{ color: '#1e293b' }}
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px'
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '12px',
+                  boxShadow: 'var(--shadow-lg)',
+                  backdropFilter: 'blur(8px)'
                 }}
+                formatter={(value: number) => [`€${value.toLocaleString()}`, t('dashboard.charts.revenue')]}
               />
-              <Line 
+              <Area 
                 type="monotone" 
                 dataKey="revenue" 
-                stroke="#10b981" 
+                stroke="hsl(var(--primary))" 
+                fillOpacity={1}
+                fill="url(#revenueGradient)"
                 strokeWidth={3}
-                dot={{ fill: '#10b981', strokeWidth: 2 }}
+                dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: 'hsl(var(--primary))', strokeWidth: 2, fill: 'hsl(var(--primary-foreground))' }}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center text-slate-900">
-            <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
-            {t('dashboard.revenue.profitByMonth')}
+      {/* Monthly Profit Chart */}
+      <Card className="glass-card-solid hover-scale group">
+        <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-xl" />
+        <CardHeader className="relative">
+          <CardTitle className="flex items-center gap-3 text-xl font-bold text-foreground">
+            <div className="p-3 rounded-xl gradient-primary">
+              <BarChart3 className="h-6 w-6 text-primary-foreground" />
+            </div>
+            {t('dashboard.charts.monthlyProfit')}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={revenueData?.profitTrend || []}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+        <CardContent className="relative">
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={data.profitTrend}>
+              <defs>
+                <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={1}/>
+                  <stop offset="95%" stopColor="hsl(var(--primary-light))" stopOpacity={0.8}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
               <XAxis 
                 dataKey="month" 
-                stroke="#64748b"
-                fontSize={12}
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={13}
+                fontWeight={500}
               />
               <YAxis 
-                stroke="#64748b"
-                fontSize={12}
-                tickFormatter={(value) => `€${value}`}
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={13}
+                fontWeight={500}
+                tickFormatter={(value) => `€${value.toLocaleString()}`}
               />
               <Tooltip 
-                formatter={(value: number) => [`€${value.toLocaleString()}`, t('dashboard.revenue.profit')]}
-                labelStyle={{ color: '#1e293b' }}
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px'
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '12px',
+                  boxShadow: 'var(--shadow-lg)',
+                  backdropFilter: 'blur(8px)'
                 }}
+                formatter={(value: number) => [`€${value.toLocaleString()}`, t('dashboard.charts.profit')]}
               />
               <Bar 
                 dataKey="profit" 
-                fill="#3b82f6"
-                radius={[4, 4, 0, 0]}
+                fill="url(#profitGradient)"
+                radius={[8, 8, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>

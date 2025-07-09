@@ -9,18 +9,38 @@ const NewDashboardContent = () => {
   const { t } = useTranslation('admin');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-12">
       {/* Quick Actions */}
-      <QuickActions />
+      <section>
+        <QuickActions />
+      </section>
       
       {/* Business Metrics */}
-      <BusinessMetrics />
+      <section>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('dashboard.sections.businessMetrics')}</h2>
+          <p className="text-muted-foreground">Key performance indicators for your business</p>
+        </div>
+        <BusinessMetrics />
+      </section>
       
       {/* Revenue Charts */}
-      <RevenueChart />
+      <section>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('dashboard.sections.revenueAnalytics')}</h2>
+          <p className="text-muted-foreground">Financial performance and trends</p>
+        </div>
+        <RevenueChart />
+      </section>
       
       {/* Merchant Overview */}
-      <MerchantOverview />
+      <section>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('dashboard.sections.merchantOverview')}</h2>
+          <p className="text-muted-foreground">Top performing merchants and geographic insights</p>
+        </div>
+        <MerchantOverview />
+      </section>
     </div>
   );
 };
