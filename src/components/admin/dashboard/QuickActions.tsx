@@ -47,7 +47,7 @@ const QuickActions = () => {
   ];
 
   return (
-    <Card className="border-glass-border bg-glass-bg backdrop-blur-lg shadow-[var(--glass-shadow)] relative overflow-hidden">
+    <Card className="border-slate-200/60 bg-white backdrop-blur-sm shadow-lg relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
       <CardHeader className="relative">
         <CardTitle className="text-foreground font-semibold tracking-tight">
@@ -59,13 +59,13 @@ const QuickActions = () => {
           {actions.map((action, index) => (
             <Button
               key={index}
-              variant="ghost"
-              className="h-24 p-4 bg-glass-button-default border border-glass-button-border backdrop-blur-md rounded-xl hover:bg-glass-hover-bg hover:shadow-[var(--glass-hover-shadow)] hover:scale-[1.02] transition-all duration-300 ease-out group relative overflow-hidden"
+              variant="outline"
+              className="h-24 p-4 bg-white/10 border border-white/20 backdrop-blur-md rounded-xl hover:bg-white/20 hover:border-white/30 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-out group relative overflow-hidden shadow-sm"
               onClick={action.onClick}
             >
               <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${action.gradient}`} />
               <div className="relative flex flex-col items-center justify-center space-y-2 text-center z-10">
-                <div className="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors duration-300">
+                <div className="p-2 rounded-lg bg-white/20 group-hover:bg-white/30 transition-colors duration-300 shadow-sm">
                   <action.icon className="h-5 w-5 text-foreground" />
                 </div>
                 <div>
