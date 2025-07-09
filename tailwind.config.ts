@@ -29,9 +29,7 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))',
-					light: 'hsl(var(--primary-light))',
-					dark: 'hsl(var(--primary-dark))'
+					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -47,9 +45,7 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))',
-					coral: 'hsl(var(--accent-coral))',
-					teal: 'hsl(var(--accent-teal))'
+					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
@@ -57,9 +53,7 @@ export default {
 				},
 				card: {
 					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))',
-					dark: 'hsl(var(--card-dark))',
-					'dark-foreground': 'hsl(var(--card-dark-foreground))'
+					foreground: 'hsl(var(--card-foreground))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
@@ -116,22 +110,22 @@ export default {
 						900: '#111827'
 					}
 				},
-				// Purple gradient system
-				purple: {
-					DEFAULT: '#8B5CF6',
-					50: '#F3E8FF',
-					100: '#E9D5FF',
-					200: '#DDD6FE',
-					300: '#C4B5FD',
-					400: '#A78BFA',
-					500: '#8B5CF6',
-					600: '#7C3AED',
-					700: '#6D28D9',
-					800: '#5B21B6',
-					900: '#4C1D95',
+				// Updated blue gradient system
+				blue: {
+					DEFAULT: '#0066ff',
+					50: '#eff6ff',
+					100: '#dbeafe',
+					200: '#bfdbfe',
+					300: '#93c5fd',
+					400: '#60a5fa',
+					500: '#3b82f6',
+					600: '#2563eb',
+					700: '#1d4ed8',
+					800: '#1e40af',
+					900: '#1e3a8a',
 					gradient: {
-						from: '#8B5CF6',
-						to: '#A78BFA'
+						from: '#0066ff',
+						to: '#00d4ff'
 					}
 				},
 				// Bright accent colors
@@ -317,12 +311,6 @@ export default {
 			},
 			minWidth: {
 				'touch': '44px',
-			},
-			boxShadow: {
-				'elevation-1': 'var(--elevation-1)',
-				'elevation-2': 'var(--elevation-2)',
-				'elevation-3': 'var(--elevation-3)',
-				'elevation-floating': 'var(--elevation-floating)',
 			}
 		}
 	},

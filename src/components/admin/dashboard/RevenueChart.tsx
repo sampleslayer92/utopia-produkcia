@@ -11,104 +11,97 @@ const RevenueChart = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-card border-border shadow-elevation-2">
-          <CardHeader>
-            <CardTitle className="flex items-center text-foreground">
-              <TrendingUp className="h-5 w-5 mr-2 text-primary" />
-              {t('dashboard.revenue.title')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-80 animate-pulse bg-muted rounded"></div>
-          </CardContent>
-        </Card>
-        <Card className="bg-card border-border shadow-elevation-2">
-          <CardContent className="p-6">
-            <div className="h-80 animate-pulse bg-muted rounded"></div>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="flex items-center text-slate-900">
+            <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
+            {t('dashboard.revenue.title')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80 animate-pulse bg-slate-200 rounded"></div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="bg-card border-border shadow-elevation-2">
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center text-foreground">
-            <TrendingUp className="h-5 w-5 mr-2 text-primary" />
+          <CardTitle className="flex items-center text-slate-900">
+            <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
             {t('dashboard.revenue.monthlyTrend')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={revenueData?.monthlyTrend || []}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis 
                 dataKey="month" 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="#64748b"
                 fontSize={12}
               />
               <YAxis 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="#64748b"
                 fontSize={12}
                 tickFormatter={(value) => `€${value}`}
               />
               <Tooltip 
                 formatter={(value: number) => [`€${value.toLocaleString()}`, t('dashboard.revenue.revenue')]}
-                labelStyle={{ color: 'hsl(var(--foreground))' }}
+                labelStyle={{ color: '#1e293b' }}
                 contentStyle={{ 
-                  backgroundColor: 'hsl(var(--card))', 
-                  border: '1px solid hsl(var(--border))',
+                  backgroundColor: 'white', 
+                  border: '1px solid #e2e8f0',
                   borderRadius: '8px'
                 }}
               />
               <Line 
                 type="monotone" 
                 dataKey="revenue" 
-                stroke="hsl(var(--primary))" 
+                stroke="#10b981" 
                 strokeWidth={3}
-                dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2 }}
+                dot={{ fill: '#10b981', strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      <Card className="bg-card-dark border-card-dark shadow-elevation-2">
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center text-card-dark-foreground">
-            <BarChart3 className="h-5 w-5 mr-2 text-accent" />
+          <CardTitle className="flex items-center text-slate-900">
+            <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
             {t('dashboard.revenue.profitByMonth')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={revenueData?.profitTrend || []}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--card-dark-foreground) / 0.2)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis 
                 dataKey="month" 
-                stroke="hsl(var(--card-dark-foreground) / 0.7)"
+                stroke="#64748b"
                 fontSize={12}
               />
               <YAxis 
-                stroke="hsl(var(--card-dark-foreground) / 0.7)"
+                stroke="#64748b"
                 fontSize={12}
                 tickFormatter={(value) => `€${value}`}
               />
               <Tooltip 
                 formatter={(value: number) => [`€${value.toLocaleString()}`, t('dashboard.revenue.profit')]}
-                labelStyle={{ color: 'hsl(var(--card-dark-foreground))' }}
+                labelStyle={{ color: '#1e293b' }}
                 contentStyle={{ 
-                  backgroundColor: 'hsl(var(--card-dark))', 
-                  border: '1px solid hsl(var(--card-dark-foreground) / 0.2)',
+                  backgroundColor: 'white', 
+                  border: '1px solid #e2e8f0',
                   borderRadius: '8px'
                 }}
               />
               <Bar 
                 dataKey="profit" 
-                fill="hsl(var(--accent))"
+                fill="#3b82f6"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
