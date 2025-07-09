@@ -128,12 +128,18 @@ export default {
 						to: '#00d4ff'
 					}
 				},
-				// Bright accent colors
-				accent: {
-					yellow: '#fbbf24',
-					orange: '#f97316',
-					pink: '#ec4899',
-					green: '#10b981'
+				// Professional lime system
+				lime: {
+					50: 'hsl(var(--lime-50))',
+					100: 'hsl(var(--lime-100))',
+					200: 'hsl(var(--lime-200))',
+					300: 'hsl(var(--lime-300))',
+					400: 'hsl(var(--lime-400))',
+					500: 'hsl(var(--lime-500))',
+					600: 'hsl(var(--lime-600))',
+					700: 'hsl(var(--lime-700))',
+					800: 'hsl(var(--lime-800))',
+					900: 'hsl(var(--lime-900))',
 				},
 				// Updated UTOPIA colors for light theme
 				utopia: {
