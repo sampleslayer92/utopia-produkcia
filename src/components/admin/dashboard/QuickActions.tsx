@@ -35,22 +35,21 @@ const QuickActions = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
       {actions.map((action, index) => (
         <Card
           key={index}
-          className="glass-card hover-scale cursor-pointer group overflow-hidden"
+          className="glass-card-dark hover-scale cursor-pointer group overflow-hidden border-0"
           onClick={action.onClick}
         >
-          <div className="absolute inset-0 gradient-primary opacity-20 group-hover:opacity-30 transition-opacity duration-300" />
-          <CardContent className="p-8 relative">
-            <div className="flex flex-col items-center text-center space-y-4">
-              <div className="p-6 rounded-full gradient-primary shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <action.icon className="h-8 w-8 text-primary-foreground" />
+          <CardContent className="p-4 relative">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 rounded-xl gradient-accent shadow-lg group-hover:scale-110 group-hover:shadow-glow transition-all duration-300">
+                <action.icon className="h-5 w-5 text-white" />
               </div>
-              <div>
-                <h3 className="font-bold text-lg text-foreground mb-2">{action.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{action.description}</p>
+              <div className="flex-1">
+                <h3 className="font-semibold text-white mb-1">{action.title}</h3>
+                <p className="text-xs text-white/70 leading-relaxed">{action.description}</p>
               </div>
             </div>
           </CardContent>

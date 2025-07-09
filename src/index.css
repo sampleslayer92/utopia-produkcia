@@ -30,6 +30,11 @@
     --accent: 252 40% 94%;
     --accent-foreground: 249 15% 11%;
     
+    /* Bright Accent Colors */
+    --accent-cyan: 180 100% 41%; /* #00D1B2 */
+    --accent-yellow: 48 96% 59%; /* #FCE83A */
+    --accent-pink: 330 81% 60%; /* #E91E63 */
+    
     /* Status Colors */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
@@ -52,10 +57,18 @@
     --glass-border: 257 54% 74% / 0.2;
     --glass-shadow: 257 54% 74% / 0.1;
     
+    /* Dark Glassmorphism */
+    --glass-dark-bg: 13 6% 5% / 0.85; /* Very dark with transparency */
+    --glass-dark-border: 240 3% 20% / 0.3;
+    --glass-dark-shadow: 0 0% 0% / 0.4;
+    
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(257 54% 74%), hsl(257 100% 91%));
     --gradient-secondary: linear-gradient(135deg, hsl(252 40% 94%), hsl(0 0% 100%));
     --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.2), hsl(257 54% 74% / 0.1));
+    --gradient-dark: linear-gradient(135deg, hsl(13 6% 5% / 0.9), hsl(13 6% 8% / 0.7));
+    --gradient-accent: linear-gradient(135deg, hsl(257 54% 74%), hsl(180 100% 41%));
+    --gradient-bright: linear-gradient(135deg, hsl(257 54% 74%), hsl(48 96% 59%));
 
     /* Elevation Shadows */
     --shadow-sm: 0 1px 2px 0 hsl(257 54% 74% / 0.05);
@@ -63,6 +76,8 @@
     --shadow-lg: 0 10px 15px -3px hsl(257 54% 74% / 0.1), 0 4px 6px -2px hsl(257 54% 74% / 0.05);
     --shadow-xl: 0 20px 25px -5px hsl(257 54% 74% / 0.1), 0 10px 10px -5px hsl(257 54% 74% / 0.04);
     --shadow-glass: 0 8px 32px 0 hsl(257 54% 74% / 0.12);
+    --shadow-glow: 0 0 24px hsl(257 54% 74% / 0.4);
+    --shadow-dark: 0 8px 32px 0 hsl(0 0% 0% / 0.3);
 
     /* Sidebar colors */
     --sidebar-background: 0 0% 100%;
@@ -258,12 +273,31 @@
     box-shadow: var(--shadow-lg);
   }
   
+  .glass-card-dark {
+    background: hsl(var(--glass-dark-bg));
+    backdrop-filter: blur(16px);
+    border: 1px solid hsl(var(--glass-dark-border));
+    box-shadow: var(--shadow-dark);
+  }
+  
   .gradient-primary {
     background: var(--gradient-primary);
   }
   
   .gradient-glass {
     background: var(--gradient-glass);
+  }
+  
+  .gradient-dark {
+    background: var(--gradient-dark);
+  }
+  
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+  
+  .gradient-bright {
+    background: var(--gradient-bright);
   }
   
   .hover-scale {
@@ -275,8 +309,19 @@
     box-shadow: var(--shadow-xl);
   }
   
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+  
   .text-gradient {
     background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-gradient-bright {
+    background: var(--gradient-bright);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

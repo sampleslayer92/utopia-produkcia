@@ -10,19 +10,19 @@ const BusinessMetrics = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i} className="glass-card-solid">
-            <CardContent className="p-8">
-              <div className="animate-pulse space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="w-16 h-16 bg-muted rounded-2xl"></div>
-                  <div className="h-4 bg-muted rounded w-1/2"></div>
+            <CardContent className="p-6">
+              <div className="animate-pulse">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="w-12 h-12 bg-muted rounded-xl"></div>
+                  <div className="flex-1">
+                    <div className="h-3 bg-muted rounded w-20 mb-2"></div>
+                    <div className="h-6 bg-muted rounded w-24"></div>
+                  </div>
                 </div>
-                <div>
-                  <div className="h-8 bg-muted rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-muted rounded w-1/2"></div>
-                </div>
+                <div className="h-2 bg-muted rounded w-16"></div>
               </div>
             </CardContent>
           </Card>
@@ -59,36 +59,34 @@ const BusinessMetrics = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      {metricsData.map((metric, index) => (
-        <Card key={index} className="glass-card-solid hover-scale cursor-pointer group overflow-hidden">
-          <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-          <CardContent className="p-8 relative">
-            <div className="flex flex-col space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="p-4 rounded-2xl gradient-primary">
-                  <metric.icon className="h-8 w-8 text-primary-foreground" />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {metricsData.map((metric, index) => {
+        const isDark = index % 2 === 0;
+        return (
+          <Card key={index} className={`${isDark ? 'glass-card-dark' : 'glass-card-solid'} hover-scale cursor-pointer group overflow-hidden border-0`}>
+            <div className={`absolute inset-0 ${isDark ? 'gradient-accent' : 'gradient-primary'} opacity-10 group-hover:opacity-20 transition-opacity duration-300`} />
+            <CardContent className="p-6 relative">
+              <div className="flex items-center space-x-3">
+                <div className={`p-3 rounded-xl ${isDark ? 'gradient-bright' : 'gradient-primary'} shadow-lg group-hover:scale-110 group-hover:shadow-glow transition-all duration-300`}>
+                  <metric.icon className="h-6 w-6 text-white" />
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                <div className="flex-1">
+                  <p className={`text-xs font-medium mb-1 uppercase tracking-wide ${isDark ? 'text-white/70' : 'text-muted-foreground'}`}>
                     {metric.title}
+                  </p>
+                  <p className={`text-2xl font-bold mb-1 ${isDark ? 'text-white text-gradient-bright' : 'text-foreground text-gradient'}`}>
+                    {metric.value}
+                  </p>
+                  <p className={`text-xs font-medium flex items-center gap-1 ${isDark ? 'text-accent-cyan' : 'text-primary'}`}>
+                    <span className={`inline-block w-2 h-2 rounded-full ${isDark ? 'bg-accent-cyan' : 'bg-primary'}`}></span>
+                    {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
                   </p>
                 </div>
               </div>
-              
-              <div>
-                <p className="text-3xl font-bold text-foreground mb-2 text-gradient">
-                  {metric.value}
-                </p>
-                <p className="text-sm font-semibold text-primary flex items-center gap-1">
-                  <span className="inline-block w-2 h-2 bg-primary rounded-full"></span>
-                  {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 };

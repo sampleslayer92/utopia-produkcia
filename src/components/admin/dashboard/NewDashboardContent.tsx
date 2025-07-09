@@ -9,7 +9,7 @@ const NewDashboardContent = () => {
   const { t } = useTranslation('admin');
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       {/* Quick Actions */}
       <section>
         <QuickActions />
@@ -17,27 +17,27 @@ const NewDashboardContent = () => {
       
       {/* Business Metrics */}
       <section>
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-foreground mb-2">{t('dashboard.sections.businessMetrics')}</h2>
-          <p className="text-muted-foreground">Key performance indicators for your business</p>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold text-foreground mb-1">{t('dashboard.sections.businessMetrics')}</h2>
+          <p className="text-muted-foreground text-sm">Key performance indicators for your business</p>
         </div>
         <BusinessMetrics />
       </section>
       
       {/* Revenue Charts */}
       <section>
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-foreground mb-2">{t('dashboard.sections.revenueAnalytics')}</h2>
-          <p className="text-muted-foreground">Financial performance and trends</p>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold text-foreground mb-1">{t('dashboard.sections.revenueAnalytics')}</h2>
+          <p className="text-muted-foreground text-sm">Financial performance and trends</p>
         </div>
         <RevenueChart />
       </section>
       
       {/* Merchant Overview */}
       <section>
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-foreground mb-2">{t('dashboard.sections.merchantOverview')}</h2>
-          <p className="text-muted-foreground">Top performing merchants and geographic insights</p>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold text-foreground mb-1">{t('dashboard.sections.merchantOverview')}</h2>
+          <p className="text-muted-foreground text-sm">Top performing merchants and geographic insights</p>
         </div>
         <MerchantOverview />
       </section>
