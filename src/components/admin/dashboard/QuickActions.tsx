@@ -35,26 +35,24 @@ const QuickActions = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-      {actions.map((action, index) => (
-        <Card
-          key={index}
-          className="glass-card-dark hover-scale cursor-pointer group overflow-hidden border-0"
-          onClick={action.onClick}
-        >
-          <CardContent className="p-4 relative">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 rounded-xl gradient-accent shadow-lg group-hover:scale-110 group-hover:shadow-glow transition-all duration-300">
-                <action.icon className="h-5 w-5 text-white" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-white mb-1">{action.title}</h3>
-                <p className="text-xs text-white/70 leading-relaxed">{action.description}</p>
-              </div>
+    <div className="bg-header-dark/95 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-6 shadow-xl">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {actions.map((action, index) => (
+          <button
+            key={index}
+            onClick={action.onClick}
+            className="group flex flex-col items-center gap-3 p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 transition-all duration-200 hover-lift"
+          >
+            <div className="p-3 rounded-lg gradient-accent shadow-lg group-hover:shadow-glow transition-all duration-200">
+              <action.icon className="h-5 w-5 text-white" />
             </div>
-          </CardContent>
-        </Card>
-      ))}
+            <div className="text-center">
+              <h3 className="font-semibold text-white text-sm mb-1">{action.title}</h3>
+              <p className="text-xs text-white/60 leading-tight">{action.description}</p>
+            </div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

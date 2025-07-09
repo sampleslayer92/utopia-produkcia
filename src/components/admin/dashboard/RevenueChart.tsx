@@ -38,117 +38,111 @@ const RevenueChart = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Monthly Revenue Trend */}
-      <Card className="glass-card-solid hover-scale group">
-        <div className="absolute inset-0 gradient-primary opacity-5 group-hover:opacity-10 transition-opacity duration-300 rounded-xl" />
-        <CardHeader className="relative pb-4">
-          <CardTitle className="flex items-center gap-3 text-lg font-bold text-foreground">
-            <div className="p-2 rounded-xl gradient-primary">
-              <TrendingUp className="h-5 w-5 text-primary-foreground" />
-            </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* Monthly Revenue Chart */}
+      <Card className="glass-card hover-lift border-0 overflow-hidden">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
             {t('dashboard.charts.monthlyRevenue')}
           </CardTitle>
         </CardHeader>
-        <CardContent className="relative">
-          <ResponsiveContainer width="100%" height={256}>
-            <AreaChart data={data.monthlyTrend}>
-              <defs>
-                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-              <XAxis 
-                dataKey="month" 
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={11}
-                fontWeight={500}
-              />
-              <YAxis 
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={11}
-                fontWeight={500}
-                tickFormatter={(value) => `€${value.toLocaleString()}`}
-              />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '12px',
-                  boxShadow: 'var(--shadow-lg)',
-                  backdropFilter: 'blur(8px)'
-                }}
-                formatter={(value: number) => [`€${value.toLocaleString()}`, t('dashboard.charts.revenue')]}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="hsl(var(--primary))" 
-                fillOpacity={1}
-                fill="url(#revenueGradient)"
-                strokeWidth={3}
-                dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 3 }}
-                activeDot={{ r: 5, stroke: 'hsl(var(--primary))', strokeWidth: 2, fill: 'hsl(var(--primary-foreground))' }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+        <CardContent className="pt-0">
+          <div className="h-[280px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data.monthlyTrend}>
+                <defs>
+                  <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="1 1" stroke="hsl(var(--border))" opacity={0.2} />
+                <XAxis 
+                  dataKey="month" 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                />
+                <YAxis 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                  tickFormatter={(value) => `€${(value / 1000).toFixed(0)}k`}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    background: 'hsl(var(--popover))',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                  }}
+                  formatter={(value: number) => [`€${value.toLocaleString()}`, 'Revenue']}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  fill="url(#revenueGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
 
       {/* Monthly Profit Chart */}
-      <Card className="glass-card-dark hover-scale group border-0">
-        <div className="absolute inset-0 gradient-accent opacity-10 group-hover:opacity-20 transition-opacity duration-300 rounded-xl" />
-        <CardHeader className="relative pb-4">
-          <CardTitle className="flex items-center gap-3 text-lg font-bold text-white">
-            <div className="p-2 rounded-xl gradient-bright">
-              <BarChart3 className="h-5 w-5 text-white" />
-            </div>
+      <Card className="glass-card-dark hover-lift border-0 overflow-hidden">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg font-semibold text-white flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary-light" />
             {t('dashboard.charts.monthlyProfit')}
           </CardTitle>
         </CardHeader>
-        <CardContent className="relative">
-          <ResponsiveContainer width="100%" height={256}>
-            <BarChart data={data.profitTrend}>
-              <defs>
-                <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--accent-cyan))" stopOpacity={1}/>
-                  <stop offset="95%" stopColor="hsl(var(--accent-cyan))" stopOpacity={0.7}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" opacity={0.3} />
-              <XAxis 
-                dataKey="month" 
-                stroke="rgba(255,255,255,0.7)"
-                fontSize={11}
-                fontWeight={500}
-              />
-              <YAxis 
-                stroke="rgba(255,255,255,0.7)"
-                fontSize={11}
-                fontWeight={500}
-                tickFormatter={(value) => `€${value.toLocaleString()}`}
-              />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--glass-dark-bg))',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '12px',
-                  boxShadow: 'var(--shadow-dark)',
-                  backdropFilter: 'blur(8px)',
-                  color: 'white'
-                }}
-                formatter={(value: number) => [`€${value.toLocaleString()}`, t('dashboard.charts.profit')]}
-                labelStyle={{ color: 'white' }}
-              />
-              <Bar 
-                dataKey="profit" 
-                fill="url(#profitGradient)"
-                radius={[6, 6, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+        <CardContent className="pt-0">
+          <div className="h-[280px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data.profitTrend} barCategoryGap="25%">
+                <defs>
+                  <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary-light))" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="1 1" stroke="rgba(255,255,255,0.08)" />
+                <XAxis 
+                  dataKey="month" 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.7)' }}
+                />
+                <YAxis 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.7)' }}
+                  tickFormatter={(value) => `€${(value / 1000).toFixed(0)}k`}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    background: 'rgba(0,0,0,0.95)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    color: 'white',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
+                  }}
+                  formatter={(value: number) => [`€${value.toLocaleString()}`, 'Profit']}
+                />
+                <Bar
+                  dataKey="profit"
+                  fill="url(#profitGradient)"
+                  radius={[6, 6, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
     </div>

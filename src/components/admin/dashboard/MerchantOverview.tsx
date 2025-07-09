@@ -79,7 +79,7 @@ const MerchantOverview = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Top Merchants */}
-      <Card className="glass-card-solid hover-scale group">
+      <Card className="glass-card-solid hover-lift group">
         <div className="absolute inset-0 gradient-primary opacity-5 group-hover:opacity-10 transition-opacity duration-300 rounded-xl" />
         <CardHeader className="relative pb-4">
           <CardTitle className="flex items-center gap-3 text-lg font-bold text-foreground">
@@ -95,7 +95,7 @@ const MerchantOverview = () => {
               {data.topMerchants.slice(0, 5).map((merchant, index) => {
                 const badge = getPerformanceBadge(merchant.totalProfit);
                 return (
-                  <div key={merchant.id} className="group/item p-4 glass-card hover-scale cursor-pointer">
+                  <div key={merchant.id} className="group/item p-4 glass-card hover-lift cursor-pointer">
                     <div className="flex items-center space-x-3">
                       <div className="relative">
                         <div className="flex items-center justify-center w-10 h-10 gradient-primary text-primary-foreground rounded-xl text-sm font-bold shadow-lg">
@@ -134,7 +134,7 @@ const MerchantOverview = () => {
       </Card>
 
       {/* Geographic Distribution */}
-      <Card className="glass-card-dark hover-scale group border-0">
+      <Card className="glass-card-dark hover-lift group border-0">
         <div className="absolute inset-0 gradient-accent opacity-10 group-hover:opacity-20 transition-opacity duration-300 rounded-xl" />
         <CardHeader className="relative pb-4">
           <CardTitle className="flex items-center gap-3 text-lg font-bold text-white">

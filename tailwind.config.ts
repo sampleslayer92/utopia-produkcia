@@ -51,6 +51,9 @@ export default {
           cyan: "hsl(var(--accent-cyan))",
           yellow: "hsl(var(--accent-yellow))",
           pink: "hsl(var(--accent-pink))",
+          lime: "hsl(var(--accent-lime))",
+          coral: "hsl(var(--accent-coral))",
+          amber: "hsl(var(--accent-amber))",
         },
 				popover: {
 					DEFAULT: "hsl(var(--popover))",
@@ -75,6 +78,7 @@ export default {
 					border: "hsl(var(--glass-border))",
 					shadow: "hsl(var(--glass-shadow))",
 				},
+				"header-dark": "hsl(var(--header-dark))",
 			},
 			borderRadius: {
 				lg: "var(--radius)",
