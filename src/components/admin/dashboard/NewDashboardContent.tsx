@@ -9,18 +9,26 @@ const NewDashboardContent = () => {
   const { t } = useTranslation('admin');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-12 p-2">
       {/* Quick Actions */}
-      <QuickActions />
+      <section className="animate-fade-in">
+        <QuickActions />
+      </section>
       
       {/* Business Metrics */}
-      <BusinessMetrics />
+      <section className="animate-fade-in-up">
+        <BusinessMetrics />
+      </section>
       
       {/* Revenue Charts */}
-      <RevenueChart />
+      <section className="animate-fade-in">
+        <RevenueChart />
+      </section>
       
       {/* Merchant Overview */}
-      <MerchantOverview />
+      <section className="animate-fade-in-up">
+        <MerchantOverview />
+      </section>
     </div>
   );
 };

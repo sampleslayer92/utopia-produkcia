@@ -310,15 +310,15 @@ const AdminSidebar = () => {
                     asChild
                     isActive={item.active}
                     tooltip={state === "collapsed" ? item.title : undefined}
-                     className={`rounded-xl transition-all duration-200 ${
+                      className={`rounded-2xl transition-all duration-300 text-base font-semibold ${
                       item.active 
-                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 !text-white shadow-lg hover:shadow-xl' 
-                        : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
+                        ? 'bg-bold-blue !text-white shadow-2xl hover:shadow-3xl transform hover:scale-105' 
+                        : 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 hover:shadow-lg hover:scale-105'
                     }`}
                   >
                     <button onClick={() => navigate(item.path!)}>
-                      <item.icon className={`h-4 w-4 ${item.active ? 'text-white' : 'text-blue-500'}`} />
-                      <span className="font-medium">{item.title}</span>
+                      <item.icon className={`h-7 w-7 ${item.active ? 'text-white' : 'text-blue-600'}`} />
+                      <span className="font-bold text-lg">{item.title}</span>
                     </button>
                   </SidebarMenuButton>
                 ) : (
@@ -326,41 +326,41 @@ const AdminSidebar = () => {
                     <SidebarMenuButton
                       onClick={() => toggleSection(item.id)}
                       tooltip={state === "collapsed" ? item.title : undefined}
-                      className={`rounded-xl transition-all duration-200 ${
+                      className={`rounded-2xl transition-all duration-300 text-base font-semibold ${
                         item.expanded 
-                          ? 'bg-blue-50 text-blue-700 shadow-sm' 
-                          : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
+                          ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 shadow-lg transform scale-105' 
+                          : 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 hover:shadow-lg hover:scale-105'
                       }`}
                     >
-                      <item.icon className="h-4 w-4 text-blue-500" />
-                      <span className="font-medium">{item.title}</span>
+                      <item.icon className="h-7 w-7 text-blue-600" />
+                      <span className="font-bold text-lg">{item.title}</span>
                       {state === "expanded" && (
                         item.expanded ? (
-                          <ChevronDown className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />
+                          <ChevronDown className="ml-auto h-6 w-6 text-blue-600 transition-transform duration-300" />
                         ) : (
-                          <ChevronRight className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />
+                          <ChevronRight className="ml-auto h-6 w-6 text-blue-600 transition-transform duration-300" />
                         )
                       )}
                     </SidebarMenuButton>
                     
                     {item.expanded && state === "expanded" && (
-                      <SidebarMenuSub className="ml-4 mt-2 space-y-1 border-l-2 border-blue-100 pl-4">
+                      <SidebarMenuSub className="ml-6 mt-3 space-y-2 border-l-4 border-gradient-to-b from-blue-200 to-indigo-200 pl-6">
                         {item.children?.map((child, index) => (
                           <SidebarMenuSubItem key={index}>
                             <SidebarMenuSubButton
                               asChild
                               isActive={child.active}
-                               className={`rounded-lg transition-all duration-200 ${
+                               className={`rounded-xl transition-all duration-300 font-semibold ${
                                  child.active 
-                                   ? 'bg-gradient-to-r from-blue-400 to-indigo-400 !text-white shadow-md' 
-                                   : 'hover:bg-blue-50 hover:text-blue-600'
+                                   ? 'bg-accent-bright-blue !text-white shadow-xl transform scale-105' 
+                                   : 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 hover:shadow-md hover:scale-105'
                                } ${child.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                               <button 
                                 onClick={() => navigate(child.path)}
                                 disabled={child.disabled}
                               >
-                                <span className="text-sm font-medium">{child.title}</span>
+                                <span className="text-base font-bold">{child.title}</span>
                               </button>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
