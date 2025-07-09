@@ -11,7 +11,7 @@ const RevenueChart = () => {
 
   if (isLoading) {
     return (
-      <Card className="border-slate-200/60 bg-white backdrop-blur-sm shadow-lg">
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center text-slate-900">
             <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
@@ -27,7 +27,7 @@ const RevenueChart = () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="border-slate-200/60 bg-white backdrop-blur-sm shadow-lg">
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center text-slate-900">
             <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
@@ -69,7 +69,7 @@ const RevenueChart = () => {
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/60 bg-white backdrop-blur-sm shadow-lg">
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center text-slate-900">
             <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
