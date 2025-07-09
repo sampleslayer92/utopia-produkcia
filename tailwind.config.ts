@@ -29,7 +29,9 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					light: 'hsl(var(--primary-light))',
+					dark: 'hsl(var(--primary-dark))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -45,7 +47,9 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					foreground: 'hsl(var(--accent-foreground))',
+					coral: 'hsl(var(--accent-coral))',
+					teal: 'hsl(var(--accent-teal))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
@@ -318,6 +322,7 @@ export default {
 				'elevation-1': 'var(--elevation-1)',
 				'elevation-2': 'var(--elevation-2)',
 				'elevation-3': 'var(--elevation-3)',
+				'elevation-floating': 'var(--elevation-floating)',
 			}
 		}
 	},

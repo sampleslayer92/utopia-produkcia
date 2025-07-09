@@ -13,70 +13,121 @@ const QuickActions = () => {
       title: t('dashboard.quickActions.newContract'),
       description: t('dashboard.quickActions.newContractDesc'),
       icon: Plus,
-      gradient: "bg-action-blue",
+      variant: "primary" as const,
       onClick: () => navigate('/admin/onboarding')
     },
     {
       title: t('dashboard.quickActions.contracts'),
       description: t('dashboard.quickActions.contractsDesc'),
       icon: FileText,
-      gradient: "bg-action-emerald",
+      variant: "accent" as const,
       onClick: () => navigate('/admin/merchants/contracts')
     },
     {
       title: t('dashboard.quickActions.merchants'),
       description: t('dashboard.quickActions.merchantsDesc'),
       icon: Building2,
-      gradient: "bg-action-purple",
+      variant: "teal" as const,
       onClick: () => navigate('/admin/merchants')
     },
     {
       title: t('dashboard.quickActions.locations'),
       description: t('dashboard.quickActions.locationsDesc'),
       icon: BarChart3,
-      gradient: "bg-action-orange",
+      variant: "coral" as const,
       onClick: () => navigate('/admin/merchants/locations')
     },
     {
       title: t('dashboard.quickActions.team'),
       description: t('dashboard.quickActions.teamDesc'),
       icon: Users,
-      gradient: "bg-action-cyan",
+      variant: "dark" as const,
       onClick: () => navigate('/admin/team/performance')
     }
   ];
 
+  const getActionClasses = (variant: "primary" | "accent" | "teal" | "coral" | "dark") => {
+    switch (variant) {
+      case "primary":
+        return {
+          bg: "bg-primary hover:bg-primary-dark",
+          text: "text-primary-foreground",
+          iconBg: "bg-primary-foreground/20",
+          iconText: "text-primary-foreground"
+        };
+      case "accent":
+        return {
+          bg: "bg-accent hover:bg-accent/90",
+          text: "text-accent-foreground",
+          iconBg: "bg-accent-foreground/20",
+          iconText: "text-accent-foreground"
+        };
+      case "teal":
+        return {
+          bg: "bg-accent-teal hover:bg-accent-teal/90",
+          text: "text-white",
+          iconBg: "bg-white/20",
+          iconText: "text-white"
+        };
+      case "coral":
+        return {
+          bg: "bg-accent-coral hover:bg-accent-coral/90",
+          text: "text-white",
+          iconBg: "bg-white/20",
+          iconText: "text-white"
+        };
+      case "dark":
+        return {
+          bg: "bg-card-dark hover:bg-card-dark/80",
+          text: "text-card-dark-foreground",
+          iconBg: "bg-card-dark-foreground/20",
+          iconText: "text-card-dark-foreground"
+        };
+      default:
+        return {
+          bg: "bg-card hover:bg-muted/50",
+          text: "text-foreground",
+          iconBg: "bg-primary/20",
+          iconText: "text-primary"
+        };
+    }
+  };
+
   return (
     <Card className="bg-card border-border shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300">
       <CardHeader>
-        <CardTitle className="text-foreground font-semibold tracking-tight">
+        <CardTitle className="text-xl font-bold text-foreground tracking-tight">
           {t('dashboard.quickActions.title')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-          {actions.map((action, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className="h-28 p-6 bg-card border-border hover:shadow-elevation-2 hover:bg-muted/50 transition-all duration-300 ease-out group relative overflow-hidden"
-              onClick={action.onClick}
-            >
-              <div className="flex items-start justify-between w-full">
-                <div className="flex flex-col items-start text-left flex-1 min-w-0 mr-4">
-                  <div className="font-bold text-base text-foreground leading-tight truncate w-full mb-1">
-                    {action.title}
+          {actions.map((action, index) => {
+            const actionClasses = getActionClasses(action.variant);
+            
+            return (
+              <Button
+                key={index}
+                variant="outline"
+                className={`h-32 p-6 border-0 ${actionClasses.bg} shadow-elevation-1 hover:shadow-elevation-2 transition-all duration-300 ease-out group relative overflow-hidden transform hover:scale-[1.02]`}
+                onClick={action.onClick}
+              >
+                <div className="flex flex-col items-center text-center space-y-3 w-full">
+                  <div className={`p-4 rounded-2xl ${actionClasses.iconBg} group-hover:scale-110 transition-transform duration-300`}>
+                    <action.icon className={`h-8 w-8 ${actionClasses.iconText}`} />
                   </div>
-                  <div className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                    {action.description}
+                  <div className="space-y-1">
+                    <div className={`font-bold text-base ${actionClasses.text} leading-tight`}>
+                      {action.title}
+                    </div>
+                    <div className={`text-xs ${actionClasses.text}/80 leading-relaxed line-clamp-2`}>
+                      {action.description}
+                    </div>
                   </div>
                 </div>
-                <div className="flex-shrink-0 p-3.5 rounded-full bg-primary shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
-                  <action.icon className="h-7 w-7 text-primary-foreground" />
-                </div>
-              </div>
-            </Button>
-          ))}
+              </Button>
+            );
+          })}
         </div>
       </CardContent>
     </Card>

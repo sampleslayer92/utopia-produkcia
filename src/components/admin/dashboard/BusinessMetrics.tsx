@@ -31,7 +31,7 @@ const BusinessMetrics = () => {
       value: `€${metrics?.monthlyRevenue?.toLocaleString() || '0'}`,
       change: `+${metrics?.revenueGrowth || 0}%`,
       icon: DollarSign,
-      variant: "light" as const
+      variant: "accent" as const
     },
     {
       title: t('dashboard.metrics.activeContracts'),
@@ -52,44 +52,82 @@ const BusinessMetrics = () => {
       value: metrics?.totalMerchants?.toLocaleString() || '0',
       change: `+${metrics?.merchantGrowth || 0}%`,
       icon: Users,
-      variant: "dark" as const
+      variant: "primary" as const
     }
   ];
+
+  const getCardClasses = (variant: "light" | "dark" | "accent" | "primary") => {
+    switch (variant) {
+      case "dark":
+        return "bg-card-dark border-card-dark shadow-elevation-2 hover:shadow-elevation-3";
+      case "accent":
+        return "bg-accent border-accent shadow-elevation-2 hover:shadow-elevation-floating";
+      case "primary":
+        return "bg-primary border-primary shadow-elevation-2 hover:shadow-elevation-floating";
+      default:
+        return "bg-card border-border shadow-elevation-1 hover:shadow-elevation-2";
+    }
+  };
+
+  const getTextClasses = (variant: "light" | "dark" | "accent" | "primary") => {
+    switch (variant) {
+      case "dark":
+        return {
+          title: "text-card-dark-foreground/80",
+          value: "text-card-dark-foreground",
+          icon: "text-card-dark-foreground/80",
+          change: "text-accent"
+        };
+      case "accent":
+        return {
+          title: "text-accent-foreground/90",
+          value: "text-accent-foreground",
+          icon: "text-accent-foreground/90",
+          change: "text-primary"
+        };
+      case "primary":
+        return {
+          title: "text-primary-foreground/90",
+          value: "text-primary-foreground",
+          icon: "text-primary-foreground/90",
+          change: "text-accent"
+        };
+      default:
+        return {
+          title: "text-muted-foreground",
+          value: "text-foreground",
+          icon: "text-muted-foreground",
+          change: "text-primary"
+        };
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {metricsData.map((metric, index) => {
-        const isLight = metric.variant === "light";
+        const cardClasses = getCardClasses(metric.variant);
+        const textClasses = getTextClasses(metric.variant);
+        
         return (
           <Card 
             key={index} 
-            className={`${
-              isLight 
-                ? "bg-card border-border shadow-elevation-2" 
-                : "bg-card-dark border-card-dark"
-            } hover:shadow-elevation-3 transition-all duration-300 hover:scale-105 cursor-pointer`}
+            className={`${cardClasses} transition-all duration-300 transform hover:scale-[1.02] cursor-pointer`}
           >
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className={`text-sm font-medium ${
-                    isLight ? "text-muted-foreground" : "text-card-dark-foreground/70"
-                  }`}>
+                <div className="flex-1">
+                  <p className={`text-sm font-semibold ${textClasses.title} mb-2`}>
                     {metric.title}
                   </p>
-                  <p className={`text-3xl font-bold mt-2 ${
-                    isLight ? "text-foreground" : "text-card-dark-foreground"
-                  }`}>
+                  <p className={`text-4xl font-bold tracking-tight ${textClasses.value} mb-2`}>
                     {metric.value}
                   </p>
-                  <p className="text-sm font-medium mt-1 text-primary">
+                  <p className={`text-sm font-medium ${textClasses.change}`}>
                     {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
                   </p>
                 </div>
-                <div className={`p-3 rounded-full ${
-                  isLight ? "bg-primary/10" : "bg-primary/20"
-                } shadow-sm`}>
-                  <metric.icon className="h-6 w-6 text-primary" />
+                <div className="flex-shrink-0 p-4 rounded-2xl bg-white/20 shadow-lg">
+                  <metric.icon className={`h-8 w-8 ${textClasses.icon}`} />
                 </div>
               </div>
             </CardContent>
