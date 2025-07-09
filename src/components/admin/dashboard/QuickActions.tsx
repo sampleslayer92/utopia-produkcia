@@ -60,19 +60,19 @@ const QuickActions = () => {
             <Button
               key={index}
               variant="outline"
-              className="h-24 p-4 bg-white/10 border border-white/20 backdrop-blur-md rounded-xl hover:bg-white/20 hover:border-white/30 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-out group relative overflow-hidden shadow-sm"
+              className="h-24 p-4 bg-gradient-to-br from-white to-gray-50/80 border border-gray-200/60 backdrop-blur-md rounded-xl hover:shadow-xl hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300 ease-out group relative overflow-hidden shadow-md"
               onClick={action.onClick}
             >
-              <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${action.gradient}`} />
+              <div className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300 ${action.gradient}`} />
               <div className="relative flex flex-col items-center justify-center space-y-2 text-center z-10">
-                <div className="p-2 rounded-lg bg-white/20 group-hover:bg-white/30 transition-colors duration-300 shadow-sm">
-                  <action.icon className="h-5 w-5 text-foreground" />
+                <div className={`p-2.5 rounded-lg bg-gradient-to-br from-white to-gray-100 group-hover:scale-110 transition-all duration-300 shadow-sm border border-gray-200/40`}>
+                  <action.icon className="h-5 w-5 text-gray-700" />
                 </div>
                 <div>
-                  <div className="font-medium text-xs text-foreground leading-tight">
+                  <div className="font-semibold text-xs text-gray-900 leading-tight">
                     {action.title}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-0.5 opacity-90">
+                  <div className="text-xs text-gray-600 mt-0.5">
                     {action.description}
                   </div>
                 </div>
