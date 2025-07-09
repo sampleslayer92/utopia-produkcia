@@ -13,35 +13,35 @@ const QuickActions = () => {
       title: t('dashboard.quickActions.newContract'),
       description: t('dashboard.quickActions.newContractDesc'),
       icon: Plus,
-      gradient: "bg-bold-primary",
+      gradient: "bg-action-blue",
       onClick: () => navigate('/admin/onboarding')
     },
     {
       title: t('dashboard.quickActions.contracts'),
       description: t('dashboard.quickActions.contractsDesc'),
       icon: FileText,
-      gradient: "bg-bold-success",
+      gradient: "bg-action-emerald",
       onClick: () => navigate('/admin/merchants/contracts')
     },
     {
       title: t('dashboard.quickActions.merchants'),
       description: t('dashboard.quickActions.merchantsDesc'),
       icon: Building2,
-      gradient: "bg-bold-accent",
+      gradient: "bg-action-purple",
       onClick: () => navigate('/admin/merchants')
     },
     {
       title: t('dashboard.quickActions.locations'),
       description: t('dashboard.quickActions.locationsDesc'),
       icon: BarChart3,
-      gradient: "bg-bold-warning",
+      gradient: "bg-action-orange",
       onClick: () => navigate('/admin/merchants/locations')
     },
     {
       title: t('dashboard.quickActions.team'),
       description: t('dashboard.quickActions.teamDesc'),
       icon: Users,
-      gradient: "bg-bold-info",
+      gradient: "bg-action-cyan",
       onClick: () => navigate('/admin/team/performance')
     }
   ];
