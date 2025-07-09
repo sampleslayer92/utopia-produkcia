@@ -55,26 +55,25 @@ const QuickActions = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="relative">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {actions.map((action, index) => (
             <Button
               key={index}
               variant="outline"
-              className="h-24 p-4 bg-gradient-to-br from-white to-gray-50/80 border border-gray-200/60 backdrop-blur-md rounded-xl hover:shadow-xl hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300 ease-out group relative overflow-hidden shadow-md"
+              className="h-20 p-4 bg-white border border-gray-200/60 rounded-xl hover:shadow-lg hover:scale-[1.01] transition-all duration-200 ease-out group relative overflow-hidden"
               onClick={action.onClick}
             >
-              <div className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300 ${action.gradient}`} />
-              <div className="relative flex flex-col items-center justify-center space-y-2 text-center z-10">
-                <div className={`p-2.5 rounded-lg bg-gradient-to-br from-white to-gray-100 group-hover:scale-110 transition-all duration-300 shadow-sm border border-gray-200/40`}>
-                  <action.icon className="h-5 w-5 text-gray-700" />
-                </div>
-                <div>
-                  <div className="font-semibold text-xs text-gray-900 leading-tight">
+              <div className="flex items-start justify-between w-full">
+                <div className="flex flex-col items-start text-left flex-1 min-w-0 mr-3">
+                  <div className="font-semibold text-sm text-gray-900 leading-tight truncate w-full">
                     {action.title}
                   </div>
-                  <div className="text-xs text-gray-600 mt-0.5">
+                  <div className="text-xs text-gray-600 mt-1 line-clamp-2">
                     {action.description}
                   </div>
+                </div>
+                <div className={`flex-shrink-0 p-2.5 rounded-full bg-gradient-to-br ${action.gradient} shadow-sm group-hover:scale-105 transition-transform duration-200`}>
+                  <action.icon className="h-5 w-5 text-white" />
                 </div>
               </div>
             </Button>
