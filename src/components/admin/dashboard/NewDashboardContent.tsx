@@ -9,26 +9,28 @@ const NewDashboardContent = () => {
   const { t } = useTranslation('admin');
 
   return (
-    <div className="space-y-8 p-6 bg-gray-50/30">
-      {/* Quick Actions */}
-      <section>
-        <QuickActions />
-      </section>
-      
-      {/* Business Metrics */}
-      <section>
-        <BusinessMetrics />
-      </section>
-      
-      {/* Revenue Charts */}
-      <section>
-        <RevenueChart />
-      </section>
-      
-      {/* Merchant Overview */}
-      <section>
-        <MerchantOverview />
-      </section>
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto space-y-12 p-8">
+        {/* Quick Actions */}
+        <section>
+          <QuickActions />
+        </section>
+        
+        {/* Business Metrics */}
+        <section>
+          <BusinessMetrics />
+        </section>
+        
+        {/* Revenue Charts */}
+        <section>
+          <RevenueChart />
+        </section>
+        
+        {/* Merchant Overview */}
+        <section>
+          <MerchantOverview />
+        </section>
+      </div>
     </div>
   );
 };
