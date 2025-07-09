@@ -12,11 +12,11 @@ const BusinessMetrics = () => {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+          <Card key={i} className="bg-card border-border shadow-elevation-2">
             <CardContent className="p-6">
               <div className="animate-pulse">
-                <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
-                <div className="h-8 bg-slate-200 rounded w-1/2"></div>
+                <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                <div className="h-8 bg-muted rounded w-1/2"></div>
               </div>
             </CardContent>
           </Card>
@@ -31,55 +31,71 @@ const BusinessMetrics = () => {
       value: `€${metrics?.monthlyRevenue?.toLocaleString() || '0'}`,
       change: `+${metrics?.revenueGrowth || 0}%`,
       icon: DollarSign,
-      color: "text-green-600",
-      bgColor: "bg-green-100"
+      variant: "light" as const
     },
     {
       title: t('dashboard.metrics.activeContracts'),
       value: metrics?.activeContracts?.toLocaleString() || '0',
       change: `+${metrics?.contractGrowth || 0}%`,
       icon: CreditCard,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100"
+      variant: "dark" as const
     },
     {
       title: t('dashboard.metrics.totalTurnover'),
       value: `€${metrics?.totalTurnover?.toLocaleString() || '0'}`,
       change: `+${metrics?.turnoverGrowth || 0}%`,
       icon: TrendingUp,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100"
+      variant: "light" as const
     },
     {
       title: t('dashboard.metrics.totalMerchants'),
       value: metrics?.totalMerchants?.toLocaleString() || '0',
       change: `+${metrics?.merchantGrowth || 0}%`,
       icon: Users,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100"
+      variant: "dark" as const
     }
   ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {metricsData.map((metric, index) => (
-        <Card key={index} className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">{metric.title}</p>
-                <p className="text-2xl font-bold text-slate-900 mt-2">{metric.value}</p>
-                <p className={`text-sm font-medium mt-1 ${metric.color}`}>
-                  {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
-                </p>
+      {metricsData.map((metric, index) => {
+        const isLight = metric.variant === "light";
+        return (
+          <Card 
+            key={index} 
+            className={`${
+              isLight 
+                ? "bg-card border-border shadow-elevation-2" 
+                : "bg-card-dark border-card-dark"
+            } hover:shadow-elevation-3 transition-all duration-300 hover:scale-105 cursor-pointer`}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className={`text-sm font-medium ${
+                    isLight ? "text-muted-foreground" : "text-card-dark-foreground/70"
+                  }`}>
+                    {metric.title}
+                  </p>
+                  <p className={`text-3xl font-bold mt-2 ${
+                    isLight ? "text-foreground" : "text-card-dark-foreground"
+                  }`}>
+                    {metric.value}
+                  </p>
+                  <p className="text-sm font-medium mt-1 text-primary">
+                    {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
+                  </p>
+                </div>
+                <div className={`p-3 rounded-full ${
+                  isLight ? "bg-primary/10" : "bg-primary/20"
+                } shadow-sm`}>
+                  <metric.icon className="h-6 w-6 text-primary" />
+                </div>
               </div>
-              <div className={`p-3 rounded-full ${metric.bgColor} shadow-sm`}>
-                <metric.icon className={`h-6 w-6 ${metric.color}`} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 };
