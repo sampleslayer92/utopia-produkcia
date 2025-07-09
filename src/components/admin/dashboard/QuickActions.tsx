@@ -55,25 +55,25 @@ const QuickActions = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {actions.map((action, index) => (
             <Button
               key={index}
               variant="outline"
-              className="h-20 p-4 bg-white border border-gray-200/60 rounded-xl hover:shadow-lg hover:scale-[1.01] transition-all duration-200 ease-out group relative overflow-hidden"
+              className="h-28 p-6 bg-white border border-gray-200/50 rounded-2xl hover:shadow-xl hover:border-gray-300/60 hover:bg-gray-50/30 transition-all duration-300 ease-out group relative overflow-hidden"
               onClick={action.onClick}
             >
               <div className="flex items-start justify-between w-full">
-                <div className="flex flex-col items-start text-left flex-1 min-w-0 mr-3">
-                  <div className="font-semibold text-sm text-gray-900 leading-tight truncate w-full">
+                <div className="flex flex-col items-start text-left flex-1 min-w-0 mr-4">
+                  <div className="font-bold text-base text-gray-900 leading-tight truncate w-full mb-1">
                     {action.title}
                   </div>
-                  <div className="text-xs text-gray-600 mt-1 line-clamp-2">
+                  <div className="text-sm text-gray-600 leading-relaxed line-clamp-2">
                     {action.description}
                   </div>
                 </div>
-                <div className={`flex-shrink-0 p-2.5 rounded-full bg-gradient-to-br ${action.gradient} shadow-sm group-hover:scale-105 transition-transform duration-200`}>
-                  <action.icon className="h-5 w-5 text-white" />
+                <div className={`flex-shrink-0 p-3.5 rounded-full ${action.gradient} shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300`}>
+                  <action.icon className="h-7 w-7 text-white" />
                 </div>
               </div>
             </Button>
