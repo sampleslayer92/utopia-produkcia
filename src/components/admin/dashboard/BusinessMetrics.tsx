@@ -31,50 +31,50 @@ const BusinessMetrics = () => {
       value: `€${metrics?.monthlyRevenue?.toLocaleString() || '0'}`,
       change: `+${metrics?.revenueGrowth || 0}%`,
       icon: DollarSign,
-      gradient: "bg-bold-success",
-      textColor: "text-white"
+      color: "text-green-600",
+      bgColor: "bg-green-100"
     },
     {
       title: t('dashboard.metrics.activeContracts'),
       value: metrics?.activeContracts?.toLocaleString() || '0',
       change: `+${metrics?.contractGrowth || 0}%`,
       icon: CreditCard,
-      gradient: "bg-bold-primary",
-      textColor: "text-white"
+      color: "text-blue-600",
+      bgColor: "bg-blue-100"
     },
     {
       title: t('dashboard.metrics.totalTurnover'),
       value: `€${metrics?.totalTurnover?.toLocaleString() || '0'}`,
       change: `+${metrics?.turnoverGrowth || 0}%`,
       icon: TrendingUp,
-      gradient: "bg-bold-accent",
-      textColor: "text-white"
+      color: "text-purple-600",
+      bgColor: "bg-purple-100"
     },
     {
       title: t('dashboard.metrics.totalMerchants'),
       value: metrics?.totalMerchants?.toLocaleString() || '0',
       change: `+${metrics?.merchantGrowth || 0}%`,
       icon: Users,
-      gradient: "bg-bold-warning",
-      textColor: "text-white"
+      color: "text-orange-600",
+      bgColor: "bg-orange-100"
     }
   ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {metricsData.map((metric, index) => (
-        <Card key={index} className={`border-0 ${metric.gradient} shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-[1.02] cursor-pointer`}>
-          <CardContent className="p-8">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className={`text-base font-bold ${metric.textColor} opacity-90 mb-4`}>{metric.title}</p>
-                <p className={`text-4xl font-black ${metric.textColor} mb-2`}>{metric.value}</p>
-                <p className={`text-sm font-semibold ${metric.textColor} opacity-80`}>
+        <Card key={index} className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">{metric.title}</p>
+                <p className="text-2xl font-bold text-slate-900 mt-2">{metric.value}</p>
+                <p className={`text-sm font-medium mt-1 ${metric.color}`}>
                   {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
                 </p>
               </div>
-              <div className="h-12 w-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ml-4">
-                <metric.icon className={`h-6 w-6 ${metric.textColor}`} />
+              <div className={`p-3 rounded-full ${metric.bgColor} shadow-sm`}>
+                <metric.icon className={`h-6 w-6 ${metric.color}`} />
               </div>
             </div>
           </CardContent>

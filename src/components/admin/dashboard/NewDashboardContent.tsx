@@ -9,22 +9,18 @@ const NewDashboardContent = () => {
   const { t } = useTranslation('admin');
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Quick Actions */}
       <QuickActions />
       
       {/* Business Metrics */}
       <BusinessMetrics />
       
-      {/* Revenue Charts & Merchant Overview */}
-      <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <RevenueChart />
-        </div>
-        <div>
-          <MerchantOverview />
-        </div>
-      </div>
+      {/* Revenue Charts */}
+      <RevenueChart />
+      
+      {/* Merchant Overview */}
+      <MerchantOverview />
     </div>
   );
 };
