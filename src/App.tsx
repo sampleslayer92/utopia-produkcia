@@ -12,7 +12,6 @@ import AuthPage from "./pages/AuthPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import OnboardingFlow from "./pages/OnboardingFlow";
 import AdminDashboard from "./pages/AdminDashboard";
-import DesignDashboardPage from "./pages/DesignDashboardPage";
 import ContractsPage from "./pages/ContractsPage";
 import MerchantsPage from "./pages/MerchantsPage";
 import TeamManagement from "./components/admin/TeamManagement";
@@ -58,11 +57,6 @@ const App = () => (
           <Route path="/admin" element={
             <ProtectedRoute requiredRole="admin">
               <AdminDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/design" element={
-            <ProtectedRoute requiredRole="admin">
-              <DesignDashboardPage />
             </ProtectedRoute>
           } />
           
