@@ -49,7 +49,7 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="border-b border-border bg-white/95 backdrop-blur-sm sticky top-0 z-40 shadow-md">
+    <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-40">
       <div className="px-3 md:px-6 py-2 md:py-4">
         {/* Desktop Breadcrumbs */}
         <div className="mb-2 md:mb-3 hidden md:block">

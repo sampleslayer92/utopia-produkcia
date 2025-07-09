@@ -16,7 +16,7 @@ const MerchantOverview = () => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-slate-200/60 bg-white backdrop-blur-sm shadow-lg">
+        <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center text-slate-900">
               <Building2 className="h-5 w-5 mr-2 text-blue-600" />
@@ -38,7 +38,7 @@ const MerchantOverview = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200/60 bg-white backdrop-blur-sm shadow-lg">
+        <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center text-slate-900">
               <MapPin className="h-5 w-5 mr-2 text-green-600" />
@@ -73,7 +73,7 @@ const MerchantOverview = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Top Merchants */}
-      <Card className="border-slate-200/60 bg-white backdrop-blur-sm shadow-lg">
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center justify-between text-slate-900">
             <div className="flex items-center">
@@ -153,7 +153,7 @@ const MerchantOverview = () => {
       </Card>
 
       {/* Geographic Distribution */}
-      <Card className="border-slate-200/60 bg-white backdrop-blur-sm shadow-lg">
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center text-slate-900">
             <MapPin className="h-5 w-5 mr-2 text-green-600" />
