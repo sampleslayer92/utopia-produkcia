@@ -40,7 +40,7 @@ const RevenueChart = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Monthly Revenue Chart */}
-      <Card className="glass-card hover-lift border-0 overflow-hidden">
+      <Card className="glass-card-solid hover-lift border-0 overflow-hidden">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
@@ -94,10 +94,10 @@ const RevenueChart = () => {
       </Card>
 
       {/* Monthly Profit Chart */}
-      <Card className="glass-card-dark hover-lift border-0 overflow-hidden">
+      <Card className="glass-card-solid hover-lift border-0 overflow-hidden">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold text-white flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary-light" />
+          <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary" />
             {t('dashboard.charts.monthlyProfit')}
           </CardTitle>
         </CardHeader>
@@ -111,27 +111,26 @@ const RevenueChart = () => {
                     <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="1 1" stroke="rgba(255,255,255,0.08)" />
+                <CartesianGrid strokeDasharray="1 1" stroke="hsl(var(--border))" opacity={0.2} />
                 <XAxis 
                   dataKey="month" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.7)' }}
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                 />
                 <YAxis 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.7)' }}
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                   tickFormatter={(value) => `€${(value / 1000).toFixed(0)}k`}
                 />
                 <Tooltip 
                   contentStyle={{
-                    background: 'rgba(0,0,0,0.95)',
+                    background: 'hsl(var(--popover))',
                     border: 'none',
                     borderRadius: '12px',
                     fontSize: '12px',
-                    color: 'white',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
                   }}
                   formatter={(value: number) => [`€${value.toLocaleString()}`, 'Profit']}
                 />

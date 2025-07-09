@@ -35,13 +35,13 @@ const QuickActions = () => {
   ];
 
   return (
-    <div className="bg-header-dark/95 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-6 shadow-xl">
+    <div className="bg-black/90 backdrop-blur-xl rounded-2xl border border-white/5 p-4 mb-4 shadow-xl">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {actions.map((action, index) => (
           <button
             key={index}
             onClick={action.onClick}
-            className="group flex flex-col items-center gap-3 p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 transition-all duration-200 hover-lift"
+            className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 transition-all duration-200 hover-lift"
           >
             <div className="p-3 rounded-lg gradient-accent shadow-lg group-hover:shadow-glow transition-all duration-200">
               <action.icon className="h-5 w-5 text-white" />

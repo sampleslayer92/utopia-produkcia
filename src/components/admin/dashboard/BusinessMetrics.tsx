@@ -63,19 +63,12 @@ const BusinessMetrics = () => {
       {metricsData.map((metric, index) => (
         <Card
           key={index}
-          className={`
-            ${index % 2 === 0 ? 'glass-card hover-lift' : 'glass-card-dark hover-lift'}
-            transition-all duration-200 border-0 overflow-hidden group
-          `}
+          className="glass-card-solid transition-all duration-200 border-0 overflow-hidden group hover-lift"
         >
           <CardContent className="p-5 relative">
             <div className="flex items-center justify-between mb-3">
-              <div className={`p-2.5 rounded-lg shadow-md ${
-                index % 2 === 0 ? 'gradient-accent' : 'bg-white/15'
-              }`}>
-                <metric.icon className={`h-5 w-5 ${
-                  index % 2 === 0 ? 'text-white' : 'text-white'
-                }`} />
+              <div className="p-2.5 rounded-lg shadow-md gradient-accent">
+                <metric.icon className="h-5 w-5 text-white" />
               </div>
               {metric.change && (
                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${
@@ -91,14 +84,10 @@ const BusinessMetrics = () => {
             </div>
             
             <div className="space-y-1">
-              <p className={`text-4xl font-bold tracking-tight ${
-                index % 2 === 0 ? 'text-foreground' : 'text-white'
-              }`}>
+              <p className="text-4xl font-bold tracking-tight text-foreground">
                 {metric.value}
               </p>
-              <h3 className={`text-sm font-medium ${
-                index % 2 === 0 ? 'text-muted-foreground' : 'text-white/70'
-              }`}>
+              <h3 className="text-sm font-medium text-muted-foreground">
                 {metric.title}
               </h3>
             </div>

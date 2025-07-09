@@ -134,10 +134,10 @@ const MerchantOverview = () => {
       </Card>
 
       {/* Geographic Distribution */}
-      <Card className="glass-card-dark hover-lift group border-0">
-        <div className="absolute inset-0 gradient-accent opacity-10 group-hover:opacity-20 transition-opacity duration-300 rounded-xl" />
+      <Card className="glass-card-solid hover-lift group border-0">
+        <div className="absolute inset-0 gradient-accent opacity-5 group-hover:opacity-10 transition-opacity duration-300 rounded-xl" />
         <CardHeader className="relative pb-4">
-          <CardTitle className="flex items-center gap-3 text-lg font-bold text-white">
+          <CardTitle className="flex items-center gap-3 text-lg font-bold text-foreground">
             <div className="p-2 rounded-xl gradient-bright">
               <MapPin className="h-5 w-5 text-white" />
             </div>
@@ -148,7 +148,7 @@ const MerchantOverview = () => {
           {data?.topCities && data.topCities.length > 0 ? (
             <div className="space-y-3">
               {data.topCities.slice(0, 6).map((location, index) => (
-                <div key={location.city} className="flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-xl cursor-pointer group/item transition-all duration-200">
+                <div key={location.city} className="flex items-center justify-between p-3 bg-muted/20 hover:bg-muted/30 rounded-xl cursor-pointer group/item transition-all duration-200">
                   <div className="flex items-center space-x-2">
                     <div 
                       className="w-3 h-3 rounded-full shadow-sm"
@@ -156,29 +156,29 @@ const MerchantOverview = () => {
                         background: `hsl(${180 + index * 40}, 100%, ${60 - index * 8}%)` 
                       }}
                     ></div>
-                    <span className="font-medium text-white text-sm group-hover/item:text-accent-cyan transition-colors">{location.city}</span>
+                    <span className="font-medium text-foreground text-sm group-hover/item:text-primary transition-colors">{location.city}</span>
                   </div>
                   <div className="text-right">
-                    <span className="font-bold text-sm text-white">{location.count}</span>
-                    <div className="text-xs text-white/70">({Math.round((location.count / (data?.totalMerchants || 1)) * 100)}%)</div>
+                    <span className="font-bold text-sm text-foreground">{location.count}</span>
+                    <div className="text-xs text-muted-foreground">({Math.round((location.count / (data?.totalMerchants || 1)) * 100)}%)</div>
                   </div>
                 </div>
               ))}
               
               {/* Summary Stats */}
-              <div className="border-t border-white/20 pt-4 mt-4 space-y-3">
-                <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
-                  <span className="text-white/70 text-sm">{t('dashboard.merchants.totalMerchants')}:</span>
-                  <span className="font-bold text-sm text-white">{data?.totalMerchants || 0}</span>
+              <div className="border-t border-border pt-4 mt-4 space-y-3">
+                <div className="flex justify-between items-center p-3 bg-muted/20 rounded-xl">
+                  <span className="text-muted-foreground text-sm">{t('dashboard.merchants.totalMerchants')}:</span>
+                  <span className="font-bold text-sm text-foreground">{data?.totalMerchants || 0}</span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
-                  <span className="text-white/70 text-sm">{t('dashboard.merchants.totalLocations')}:</span>
-                  <span className="font-bold text-sm text-white">{data?.totalLocations || 0}</span>
+                <div className="flex justify-between items-center p-3 bg-muted/20 rounded-xl">
+                  <span className="text-muted-foreground text-sm">{t('dashboard.merchants.totalLocations')}:</span>
+                  <span className="font-bold text-sm text-foreground">{data?.totalLocations || 0}</span>
                 </div>
               </div>
             </div>
           ) : (
-            <p className="text-white/70 text-center py-8 text-sm">
+            <p className="text-muted-foreground text-center py-8 text-sm">
               {t('dashboard.merchants.noLocationData')}
             </p>
           )}
