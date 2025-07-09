@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Sparkles, 
   TrendingUp, 
@@ -21,34 +22,126 @@ import {
   ArrowDownRight,
   Play,
   Pause,
-  Plus
+  Plus,
+  FileText,
+  Building,
+  Loader2,
+  DollarSign,
+  UserPlus,
+  Settings
 } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { useDesignDashboardData } from '@/hooks/useDesignDashboardData';
+import { toast } from '@/hooks/use-toast';
 
 const DesignDashboardPage = () => {
-  const stats = [
-    { icon: Users, value: '2.8K', label: 'Active Users', change: '+12%', trend: 'up' },
-    { icon: TrendingUp, value: '€15.2K', label: 'Revenue', change: '+8.2%', trend: 'up' },
-    { icon: Activity, value: '94.5%', label: 'Performance', change: '+2.1%', trend: 'up' },
-    { icon: Globe, value: '156', label: 'Countries', change: '+5', trend: 'up' }
-  ];
+  const navigate = useNavigate();
+  const { businessMetrics, recentActivity, chartData, teamData, isLoading, error } = useDesignDashboardData();
 
-  const activities = [
-    { type: 'sale', user: 'Sarah Chen', action: 'completed a transaction', amount: '€245', time: '2 min ago', color: 'bg-emerald-500' },
-    { type: 'user', user: 'Alex Morgan', action: 'joined the platform', time: '5 min ago', color: 'bg-blue-500' },
-    { type: 'achievement', user: 'Maria Lopez', action: 'reached milestone', badge: 'Gold Member', time: '8 min ago', color: 'bg-amber-500' },
-    { type: 'feature', user: 'System', action: 'deployed new update', version: 'v2.1.0', time: '12 min ago', color: 'bg-purple-500' }
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'New Contract':
+        navigate('/admin/merchants');
+        toast({
+          title: "Navigating to Merchants",
+          description: "You can create new contracts from merchant profiles",
+        });
+        break;
+      case 'Add Merchant':
+        navigate('/admin/merchants');
+        toast({
+          title: "Opening Merchants",
+          description: "Add new merchants to expand your business",
+        });
+        break;
+      case 'View Reports':
+        navigate('/admin/reporting');
+        toast({
+          title: "Loading Reports",
+          description: "Accessing comprehensive analytics dashboard",
+        });
+        break;
+      case 'Manage Warehouse':
+        navigate('/admin/warehouse');
+        toast({
+          title: "Opening Warehouse",
+          description: "Manage inventory and product catalog",
+        });
+        break;
+      default:
+        toast({
+          title: "Feature Coming Soon",
+          description: "This feature is currently in development",
+        });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <AdminLayout title="Design Dashboard">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4">
+            <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
+            <p className="text-muted-foreground">Loading dashboard data...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <AdminLayout title="Design Dashboard">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4">
+            <p className="text-destructive">Error loading dashboard data</p>
+            <Button onClick={() => window.location.reload()}>Retry</Button>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  const stats = [
+    {
+      icon: Building,
+      value: businessMetrics?.totalMerchants?.toString() || "0",
+      label: 'Total Merchants',
+      change: `+${businessMetrics?.merchantGrowth?.toFixed(1) || 0}%`,
+      trend: 'up'
+    },
+    {
+      icon: DollarSign,
+      value: `€${businessMetrics?.monthlyRevenue?.toLocaleString() || '0'}`,
+      label: 'Monthly Revenue',
+      change: `+${businessMetrics?.revenueGrowth?.toFixed(1) || 0}%`,
+      trend: 'up'
+    },
+    {
+      icon: FileText,
+      value: `${businessMetrics?.activeContracts || 0}`,
+      label: 'Active Contracts',
+      change: `+${businessMetrics?.contractGrowth?.toFixed(1) || 0}%`,
+      trend: 'up'
+    },
+    {
+      icon: Globe,
+      value: businessMetrics?.locationsWithPOS?.toString() || "0",
+      label: 'Locations with POS',
+      change: '+5.2%',
+      trend: 'up'
+    }
   ];
 
   const quickActions = [
-    { icon: Plus, label: 'New Project', color: 'from-violet-500 to-purple-600' },
-    { icon: Users, label: 'Add Team', color: 'from-blue-500 to-cyan-500' },
-    { icon: Rocket, label: 'Deploy', color: 'from-emerald-500 to-teal-500' },
-    { icon: BarChart3, label: 'Analytics', color: 'from-orange-500 to-red-500' }
+    { icon: Plus, label: 'New Contract', color: 'from-violet-500 to-purple-600', action: 'New Contract' },
+    { icon: UserPlus, label: 'Add Merchant', color: 'from-blue-500 to-cyan-500', action: 'Add Merchant' },
+    { icon: BarChart3, label: 'View Reports', color: 'from-emerald-500 to-teal-500', action: 'View Reports' },
+    { icon: Settings, label: 'Manage Warehouse', color: 'from-orange-500 to-red-500', action: 'Manage Warehouse' }
   ];
 
   return (
@@ -169,27 +262,56 @@ const DesignDashboardPage = () => {
               <Card className="p-6 bg-white/70 backdrop-blur-xl border-0 shadow-lg">
                 <h3 className="text-xl font-semibold text-slate-800 mb-6">Live Activity</h3>
                 <div className="space-y-4">
-                  {activities.map((activity, index) => (
+                {recentActivity.map((activity, index) => {
+                  const iconMap: Record<string, any> = {
+                    'FileText': FileText,
+                    'Building': Building,
+                    'Users': Users,
+                    'Activity': Activity
+                  };
+                  const IconComponent = iconMap[activity.icon] || Activity;
+                  const colorMap: Record<string, string> = {
+                    'contract': 'bg-emerald-500',
+                    'merchant': 'bg-blue-500',
+                    'system': 'bg-purple-500',
+                    'user': 'bg-amber-500'
+                  };
+
+                  return (
                     <motion.div
-                      key={index}
+                      key={activity.id}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.1 * index }}
-                      className="flex items-center gap-4 p-4 rounded-lg bg-slate-50/50 hover:bg-slate-100/50 transition-colors"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-slate-50/50 hover:bg-slate-100/50 transition-colors cursor-pointer"
+                      onClick={() => {
+                        if (activity.type === 'contract') {
+                          navigate('/admin/contracts');
+                        } else if (activity.type === 'merchant') {
+                          navigate('/admin/merchants');
+                        }
+                      }}
                     >
-                      <div className={`w-3 h-3 rounded-full ${activity.color}`} />
+                      <div className={`w-8 h-8 rounded-full ${colorMap[activity.type]} flex items-center justify-center`}>
+                        <IconComponent className="w-4 h-4 text-white" />
+                      </div>
                       <div className="flex-1">
                         <p className="text-sm">
-                          <span className="font-medium text-slate-800">{activity.user}</span>
-                          <span className="text-slate-600"> {activity.action}</span>
-                          {activity.amount && <span className="font-medium text-emerald-600"> {activity.amount}</span>}
-                          {activity.badge && <Badge className="ml-2 bg-amber-100 text-amber-800">{activity.badge}</Badge>}
-                          {activity.version && <code className="ml-2 px-2 py-1 bg-slate-200 rounded text-xs">{activity.version}</code>}
+                          <span className="font-medium text-slate-800">{activity.title}</span>
                         </p>
-                        <p className="text-xs text-slate-500">{activity.time}</p>
+                        <p className="text-xs text-slate-600">{activity.description}</p>
+                        <p className="text-xs text-slate-500">
+                          {new Date(activity.timestamp).toLocaleDateString('sk-SK', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
                       </div>
                     </motion.div>
-                  ))}
+                  );
+                })}
                 </div>
               </Card>
             </motion.div>
@@ -211,6 +333,7 @@ const DesignDashboardPage = () => {
                       key={index}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      onClick={() => handleQuickAction(action.action)}
                       className={`p-4 rounded-xl bg-gradient-to-br ${action.color} text-white font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-300`}
                     >
                       <action.icon className="w-5 h-5 mb-2 mx-auto" />
@@ -231,15 +354,35 @@ const DesignDashboardPage = () => {
                 <h3 className="text-lg font-semibold text-slate-800 mb-4">Performance</h3>
                 <div className="space-y-4">
                   {[
-                    { label: 'CPU Usage', value: 68, color: 'bg-blue-500' },
-                    { label: 'Memory', value: 84, color: 'bg-emerald-500' },
-                    { label: 'Storage', value: 42, color: 'bg-violet-500' },
-                    { label: 'Network', value: 76, color: 'bg-orange-500' }
+                    { 
+                      label: 'Avg Profit/Merchant', 
+                      value: Math.min((businessMetrics?.avgProfitPerMerchant || 0) / 100, 100), 
+                      display: `€${businessMetrics?.avgProfitPerMerchant?.toLocaleString() || '0'}`,
+                      color: 'bg-blue-500' 
+                    },
+                    { 
+                      label: 'Contract Success Rate', 
+                      value: businessMetrics ? (businessMetrics.activeContracts / businessMetrics.totalMerchants) * 100 : 0,
+                      display: `${businessMetrics ? Math.round((businessMetrics.activeContracts / businessMetrics.totalMerchants) * 100) : 0}%`,
+                      color: 'bg-emerald-500' 
+                    },
+                    { 
+                      label: 'Total Turnover', 
+                      value: Math.min((businessMetrics?.totalTurnover || 0) / 1000000 * 100, 100),
+                      display: `€${businessMetrics?.totalTurnover?.toLocaleString() || '0'}`,
+                      color: 'bg-violet-500' 
+                    },
+                    { 
+                      label: 'Growth Rate', 
+                      value: Math.abs(businessMetrics?.merchantGrowth || 0),
+                      display: `${businessMetrics?.merchantGrowth?.toFixed(1) || 0}%`,
+                      color: 'bg-orange-500' 
+                    }
                   ].map((metric, index) => (
                     <div key={index} className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-slate-600">{metric.label}</span>
-                        <span className="font-medium">{metric.value}%</span>
+                        <span className="font-medium">{metric.display}</span>
                       </div>
                       <Progress 
                         value={metric.value} 
@@ -261,17 +404,37 @@ const DesignDashboardPage = () => {
                 <h3 className="text-lg font-semibold text-slate-800 mb-4">Team Status</h3>
                 <div className="space-y-3">
                   {[
-                    { name: 'Design Team', members: 8, status: 'active', color: 'bg-emerald-500' },
-                    { name: 'Development', members: 12, status: 'active', color: 'bg-blue-500' },
-                    { name: 'Marketing', members: 6, status: 'meeting', color: 'bg-amber-500' },
-                    { name: 'Sales', members: 4, status: 'offline', color: 'bg-slate-400' }
+                    { 
+                      name: 'Active Users', 
+                      members: teamData?.activeUsers || 0, 
+                      status: 'online', 
+                      color: 'bg-emerald-500' 
+                    },
+                    { 
+                      name: 'Admin Users', 
+                      members: teamData?.adminUsers || 0, 
+                      status: 'active', 
+                      color: 'bg-blue-500' 
+                    },
+                    { 
+                      name: 'Partner Users', 
+                      members: teamData?.partnerUsers || 0, 
+                      status: 'active', 
+                      color: 'bg-purple-500' 
+                    },
+                    { 
+                      name: 'Organizations', 
+                      members: teamData?.totalOrganizations || 0, 
+                      status: 'registered', 
+                      color: 'bg-cyan-500' 
+                    }
                   ].map((team, index) => (
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className={`w-3 h-3 rounded-full ${team.color}`} />
                         <div>
                           <p className="font-medium text-sm">{team.name}</p>
-                          <p className="text-xs text-slate-500">{team.members} members</p>
+                          <p className="text-xs text-slate-500">{team.members} {team.name.toLowerCase().includes('organization') ? 'total' : 'users'}</p>
                         </div>
                       </div>
                       <Badge variant="outline" className="text-xs">
