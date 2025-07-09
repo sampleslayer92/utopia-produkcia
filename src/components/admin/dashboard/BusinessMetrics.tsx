@@ -12,7 +12,7 @@ const BusinessMetrics = () => {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+          <Card key={i} className="border-slate-200/60 bg-white backdrop-blur-sm shadow-lg">
             <CardContent className="p-6">
               <div className="animate-pulse">
                 <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
@@ -63,7 +63,7 @@ const BusinessMetrics = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {metricsData.map((metric, index) => (
-        <Card key={index} className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+        <Card key={index} className="border-slate-200/60 bg-white backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
