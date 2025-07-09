@@ -5,8 +5,8 @@
 @layer base {
   :root {
     /* Application Background */
-    --background: 243 244 251; /* #F3F4FB */
-    --background-gradient: linear-gradient(135deg, hsl(243 244 251) 0%, hsl(239 240 248) 100%);
+    --background: 243 28% 98%; /* #F3F4FB */
+    --background-gradient: linear-gradient(135deg, hsl(243 28% 98%) 0%, hsl(239 41% 96%) 100%);
     --foreground: 249 15% 11%;
     
     /* Cards & Surfaces */
@@ -35,9 +35,9 @@
     --accent-cyan: 180 100% 41%; /* #00D1B2 */
     --accent-yellow: 48 96% 59%; /* #FCE83A */
     --accent-pink: 330 81% 60%; /* #E91E63 */
-    --accent-lime: 132 204 22; /* #84CC16 */
-    --accent-coral: 251 113 133; /* #FB7185 */
-    --accent-amber: 245 158 11; /* #F59E0B */
+    --accent-lime: 84 85% 44%; /* #84CC16 */
+    --accent-coral: 351 95% 71%; /* #FB7185 */
+    --accent-amber: 45 93% 47%; /* #F59E0B */
     
     /* Status Colors */
     --destructive: 0 84% 60%;
@@ -65,7 +65,7 @@
     --glass-dark-bg: 13 6% 5% / 0.85; /* Very dark with transparency */
     --glass-dark-border: 240 3% 20% / 0.3;
     --glass-dark-shadow: 0 0% 0% / 0.4;
-    --header-dark: 6 6 10; /* #06060A */
+    --header-dark: 240 5% 6%; /* #06060A */
     
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(257 54% 74%), hsl(257 100% 91%));
@@ -270,13 +270,13 @@
 /* Glassmorphism utilities */
 @layer utilities {
   .glass-card {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
-    box-shadow: var(--shadow-glass);
+    @apply bg-white/80 backdrop-blur-md border border-white/40;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
   }
   
   .glass-card-solid {
-    @apply bg-card/80 backdrop-blur-md border border-border/50;
-    box-shadow: var(--shadow-lg);
+    @apply bg-white/90 backdrop-blur-md border border-white/50;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
   }
   
   .glass-card-dark {
