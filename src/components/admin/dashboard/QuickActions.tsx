@@ -13,40 +13,35 @@ const QuickActions = () => {
       title: t('dashboard.quickActions.newContract'),
       description: t('dashboard.quickActions.newContractDesc'),
       icon: Plus,
-      gradient: "bg-bold-blue",
-      iconBg: "bg-gradient-to-br from-blue-400 to-indigo-500",
+      gradient: "bg-bold-primary",
       onClick: () => navigate('/admin/onboarding')
     },
     {
       title: t('dashboard.quickActions.contracts'),
       description: t('dashboard.quickActions.contractsDesc'),
       icon: FileText,
-      gradient: "bg-bold-emerald",
-      iconBg: "bg-gradient-to-br from-emerald-400 to-green-500",
+      gradient: "bg-bold-success",
       onClick: () => navigate('/admin/merchants/contracts')
     },
     {
       title: t('dashboard.quickActions.merchants'),
       description: t('dashboard.quickActions.merchantsDesc'),
       icon: Building2,
-      gradient: "bg-bold-purple",
-      iconBg: "bg-gradient-to-br from-purple-400 to-violet-500",
+      gradient: "bg-bold-accent",
       onClick: () => navigate('/admin/merchants')
     },
     {
       title: t('dashboard.quickActions.locations'),
       description: t('dashboard.quickActions.locationsDesc'),
       icon: BarChart3,
-      gradient: "bg-bold-orange",
-      iconBg: "bg-gradient-to-br from-orange-400 to-amber-500",
+      gradient: "bg-bold-warning",
       onClick: () => navigate('/admin/merchants/locations')
     },
     {
       title: t('dashboard.quickActions.team'),
       description: t('dashboard.quickActions.teamDesc'),
       icon: Users,
-      gradient: "bg-bold-cyan",
-      iconBg: "bg-gradient-to-br from-cyan-400 to-teal-500",
+      gradient: "bg-bold-info",
       onClick: () => navigate('/admin/team/performance')
     }
   ];
@@ -60,32 +55,28 @@ const QuickActions = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {actions.map((action, index) => (
-            <Card
+            <Button
               key={index}
-              className={`${action.gradient} border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-110 cursor-pointer transform hover:-translate-y-3 rounded-3xl overflow-hidden h-48 group`}
+              variant="outline"
+              className="h-28 p-6 bg-white border border-gray-200/50 rounded-2xl hover:shadow-xl hover:border-gray-300/60 hover:bg-gray-50/30 transition-all duration-300 ease-out group relative overflow-hidden"
               onClick={action.onClick}
             >
-              <CardContent className="p-8 h-full relative">
-                <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/10 -translate-y-6 translate-x-6"></div>
-                <div className="relative z-10 h-full flex flex-col justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-black text-xl text-white mb-3 leading-tight">
-                      {action.title}
-                    </h3>
-                    <p className="text-base font-semibold text-white/90 leading-relaxed">
-                      {action.description}
-                    </p>
+              <div className="flex items-start justify-between w-full">
+                <div className="flex flex-col items-start text-left flex-1 min-w-0 mr-4">
+                  <div className="font-bold text-base text-gray-900 leading-tight truncate w-full mb-1">
+                    {action.title}
                   </div>
-                  <div className="flex justify-end mt-6">
-                    <div className={`p-4 rounded-2xl ${action.iconBg} shadow-xl group-hover:scale-110 transition-transform duration-300`}>
-                      <action.icon className="h-10 w-10 text-white" />
-                    </div>
+                  <div className="text-sm text-gray-600 leading-relaxed line-clamp-2">
+                    {action.description}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+                <div className={`flex-shrink-0 p-3.5 rounded-full ${action.gradient} shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300`}>
+                  <action.icon className="h-7 w-7 text-white" />
+                </div>
+              </div>
+            </Button>
           ))}
         </div>
       </CardContent>

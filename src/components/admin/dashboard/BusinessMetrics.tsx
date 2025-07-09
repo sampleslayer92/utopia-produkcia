@@ -31,8 +31,7 @@ const BusinessMetrics = () => {
       value: `€${metrics?.monthlyRevenue?.toLocaleString() || '0'}`,
       change: `+${metrics?.revenueGrowth || 0}%`,
       icon: DollarSign,
-      gradient: "bg-bold-emerald",
-      iconBg: "bg-gradient-to-br from-emerald-400 to-green-500",
+      gradient: "bg-bold-success",
       textColor: "text-white"
     },
     {
@@ -40,8 +39,7 @@ const BusinessMetrics = () => {
       value: metrics?.activeContracts?.toLocaleString() || '0',
       change: `+${metrics?.contractGrowth || 0}%`,
       icon: CreditCard,
-      gradient: "bg-bold-blue",
-      iconBg: "bg-gradient-to-br from-blue-400 to-indigo-500",
+      gradient: "bg-bold-primary",
       textColor: "text-white"
     },
     {
@@ -49,8 +47,7 @@ const BusinessMetrics = () => {
       value: `€${metrics?.totalTurnover?.toLocaleString() || '0'}`,
       change: `+${metrics?.turnoverGrowth || 0}%`,
       icon: TrendingUp,
-      gradient: "bg-bold-purple",
-      iconBg: "bg-gradient-to-br from-purple-400 to-violet-500",
+      gradient: "bg-bold-accent",
       textColor: "text-white"
     },
     {
@@ -58,30 +55,26 @@ const BusinessMetrics = () => {
       value: metrics?.totalMerchants?.toLocaleString() || '0',
       change: `+${metrics?.merchantGrowth || 0}%`,
       icon: Users,
-      gradient: "bg-bold-orange",
-      iconBg: "bg-gradient-to-br from-orange-400 to-amber-500",
+      gradient: "bg-bold-warning",
       textColor: "text-white"
     }
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {metricsData.map((metric, index) => (
-        <Card key={index} className={`${metric.gradient} border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-110 cursor-pointer transform hover:-translate-y-2 rounded-3xl overflow-hidden`}>
-          <CardContent className="p-8 relative">
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/10 -translate-y-8 translate-x-8"></div>
-            <div className="relative z-10">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex-1">
-                  <p className="text-base font-bold text-white/90 mb-3">{metric.title}</p>
-                  <p className="text-4xl xl:text-5xl font-black text-white mb-3 tracking-tight">{metric.value}</p>
-                  <p className="text-lg font-bold text-white/90">
-                    {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
-                  </p>
-                </div>
-                <div className={`p-4 rounded-2xl ${metric.iconBg} shadow-xl`}>
-                  <metric.icon className="h-10 w-10 text-white" />
-                </div>
+        <Card key={index} className={`border-0 ${metric.gradient} shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-[1.02] cursor-pointer`}>
+          <CardContent className="p-8">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className={`text-base font-bold ${metric.textColor} opacity-90 mb-4`}>{metric.title}</p>
+                <p className={`text-4xl font-black ${metric.textColor} mb-2`}>{metric.value}</p>
+                <p className={`text-sm font-semibold ${metric.textColor} opacity-80`}>
+                  {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
+                </p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ml-4">
+                <metric.icon className={`h-6 w-6 ${metric.textColor}`} />
               </div>
             </div>
           </CardContent>

@@ -61,27 +61,20 @@
     --glass-hover-bg: 255 255 255 / 0.18;
     --glass-hover-shadow: 0 8px 24px 0 rgba(31, 38, 135, 0.4);
     
-    /* Bold modern gradients */
-    --bold-blue: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    --bold-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    --bold-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    --bold-orange: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    --bold-pink: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
-    --bold-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    /* Action button gradients */
+    --action-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --action-emerald: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --action-purple: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+    --action-orange: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --action-cyan: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     
-    /* Vibrant accent gradients */
-    --accent-bright-blue: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-    --accent-bright-green: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-    --accent-bright-yellow: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-    --accent-bright-purple: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
-    --accent-bright-pink: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
-    
-    /* Action button gradients - enhanced */
-    --action-blue: var(--bold-blue);
-    --action-emerald: var(--bold-emerald);
-    --action-purple: var(--bold-purple);
-    --action-orange: var(--bold-orange);
-    --action-cyan: var(--bold-cyan);
+    /* Bold dashboard gradients */
+    --bold-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bold-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --bold-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --bold-warning: linear-gradient(135deg, #ffc107 0%, #ff8a00 100%);
+    --bold-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --bold-accent: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
     
     /* Default button states */
     --glass-button-default: 255 255 255 / 0.08;
@@ -182,20 +175,20 @@
     --glass-hover-bg: 255 255 255 / 0.15;
     --glass-hover-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.6);
     
-    /* Bold modern gradients - dark mode */
-    --bold-blue: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-    --bold-purple: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
-    --bold-emerald: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-    --bold-orange: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-    --bold-pink: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
-    --bold-cyan: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+    /* Action button gradients - dark mode */
+    --action-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --action-emerald: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --action-purple: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
+    --action-orange: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --action-cyan: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     
-    /* Action button gradients - dark mode enhanced */
-    --action-blue: var(--bold-blue);
-    --action-emerald: var(--bold-emerald);
-    --action-purple: var(--bold-purple);
-    --action-orange: var(--bold-orange);
-    --action-cyan: var(--bold-cyan);
+    /* Bold dashboard gradients - dark mode */
+    --bold-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bold-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --bold-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --bold-warning: linear-gradient(135deg, #ffc107 0%, #ff8a00 100%);
+    --bold-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --bold-accent: linear-gradient(135deg, #8360c3 0%, #2ebf91 100%);
     
     /* Default button states - dark mode */
     --glass-button-default: 255 255 255 / 0.06;
