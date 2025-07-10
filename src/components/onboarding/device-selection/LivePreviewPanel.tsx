@@ -13,6 +13,7 @@ interface LivePreviewPanelProps {
   onRemoveCard: (cardId: string) => void;
   onClearAll: () => void;
   onEditCard: (card: DeviceCard | ServiceCard) => void;
+  businessLocations?: Array<{ id: string; name: string }>;
 }
 
 const LivePreviewPanel = ({ 
@@ -20,7 +21,8 @@ const LivePreviewPanel = ({
   onUpdateCard, 
   onRemoveCard,
   onClearAll,
-  onEditCard
+  onEditCard,
+  businessLocations = []
 }: LivePreviewPanelProps) => {
   const { t } = useTranslation('forms');
   const deviceCards = dynamicCards.filter(card => card.type === 'device') as DeviceCard[];
@@ -34,6 +36,22 @@ const LivePreviewPanel = ({
     acc[service.category].push(service);
     return acc;
   }, {} as Record<string, ServiceCard[]>);
+
+  // Group cards by location if multiple locations exist
+  const cardsByLocation = businessLocations.length > 1 ? dynamicCards.reduce((acc, card) => {
+    const locationId = card.locationId || 'unassigned';
+    if (!acc[locationId]) {
+      acc[locationId] = [];
+    }
+    acc[locationId].push(card);
+    return acc;
+  }, {} as Record<string, Array<DeviceCard | ServiceCard>>) : {};
+
+  const getLocationName = (locationId: string) => {
+    if (locationId === 'unassigned') return t('deviceSelection.preview.unassigned');
+    const location = businessLocations.find(loc => loc.id === locationId);
+    return location?.name || t('deviceSelection.preview.unknownLocation');
+  };
 
   const totalDevices = deviceCards.reduce((sum, card) => sum + card.count, 0);
   const totalServices = serviceCards.reduce((sum, card) => sum + card.count, 0);

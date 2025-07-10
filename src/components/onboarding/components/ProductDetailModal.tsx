@@ -1,6 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DeviceCard, ServiceCard } from "@/types/onboarding";
+import { BusinessLocation } from "@/types/business";
 import { useTranslation } from "react-i18next";
 import EnhancedAddonManager from "./EnhancedAddonManager";
 import ProductForm from "./ProductDetailModal/ProductForm";
@@ -16,6 +17,7 @@ interface ProductDetailModalProps {
   product?: any;
   editingCard?: DeviceCard | ServiceCard;
   onSave: (card: DeviceCard | ServiceCard) => void;
+  businessLocations: BusinessLocation[];
 }
 
 const ProductDetailModal = ({
@@ -25,7 +27,8 @@ const ProductDetailModal = ({
   productType,
   product,
   editingCard,
-  onSave
+  onSave,
+  businessLocations
 }: ProductDetailModalProps) => {
   const { t } = useTranslation('forms');
   
@@ -36,10 +39,22 @@ const ProductDetailModal = ({
     handleAddAddon,
     handleRemoveAddon,
     handleUpdateAddon
-  } = useProductForm({ mode, product, editingCard, isOpen });
+  } = useProductForm({ 
+    mode, 
+    product, 
+    editingCard, 
+    isOpen, 
+    businessLocations: businessLocations.map(loc => ({ id: loc.id, name: loc.name }))
+  });
 
   const handleSave = () => {
     try {
+      // Validate location selection if multiple locations exist
+      if (businessLocations.length > 1 && !formData.locationId) {
+        console.error('Location selection is required');
+        return;
+      }
+
       const savedCard = createProductCard({
         formData,
         selectedAddons,
@@ -68,7 +83,11 @@ const ProductDetailModal = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          <ProductForm formData={formData} onUpdateField={updateField} />
+          <ProductForm 
+            formData={formData} 
+            onUpdateField={updateField}
+            businessLocations={businessLocations}
+          />
 
           <EnhancedAddonManager
             selectedAddons={selectedAddons}

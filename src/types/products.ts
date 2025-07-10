@@ -24,6 +24,7 @@ export interface DeviceCard {
   catalogId?: string;
   specifications?: string[];
   simCards?: number;
+  locationId?: string; // ID of the business location this device is assigned to
 }
 
 export interface ServiceCard {
@@ -38,6 +39,7 @@ export interface ServiceCard {
   customValue?: string;
   addons?: AddonCard[];
   catalogId?: string;
+  locationId?: string; // ID of the business location this service is assigned to
 }
 
 export interface DeviceSelection {

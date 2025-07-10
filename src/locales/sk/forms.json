@@ -1,0 +1,30 @@
+{
+  "deviceSelection": {
+    "modal": {
+      "selectLocation": "Vyberte prevádzku",
+      "selectLocationPlaceholder": "Zvoľte prevádzku...",
+      "addTitle": "Pridať",
+      "editTitle": "Upraviť",
+      "quantity": "Množstvo",
+      "monthlyFee": "Mesačný poplatok",
+      "companyCost": "Náklady spoločnosti",
+      "customSpecification": "Vlastná špecifikácia",
+      "customSpecificationPlaceholder": "Zadajte vlastnú špecifikáciu..."
+    },
+    "preview": {
+      "emptyTitle": "Žiadne zariadenia",
+      "emptyDescription": "Začnite pridávaním zariadení alebo služieb",
+      "sections": {
+        "devices": "Zariadenia"
+      },
+      "types": "typov",
+      "categoryNames": {
+        "software": "Softvér",
+        "technical": "Technické služby",
+        "accessories": "Príslušenstvo"
+      },
+      "unassigned": "Nepridelené",
+      "unknownLocation": "Neznáma prevádzka"
+    }
+  }
+}

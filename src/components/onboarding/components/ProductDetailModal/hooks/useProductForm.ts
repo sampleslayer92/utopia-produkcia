@@ -9,6 +9,7 @@ interface ProductFormData {
   monthlyFee: number;
   companyCost: number;
   customValue: string;
+  locationId: string;
 }
 
 interface UseProductFormProps {
@@ -16,29 +17,35 @@ interface UseProductFormProps {
   product?: any;
   editingCard?: DeviceCard | ServiceCard;
   isOpen: boolean;
+  businessLocations?: Array<{ id: string; name: string }>;
 }
 
-export const useProductForm = ({ mode, product, editingCard, isOpen }: UseProductFormProps) => {
+export const useProductForm = ({ mode, product, editingCard, isOpen, businessLocations = [] }: UseProductFormProps) => {
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
     count: 1,
     monthlyFee: 0,
     companyCost: 0,
-    customValue: ''
+    customValue: '',
+    locationId: ''
   });
   
   const [selectedAddons, setSelectedAddons] = useState<AddonCard[]>([]);
 
   useEffect(() => {
     if (mode === 'add' && product) {
+      // Auto-assign location if there's only one business location
+      const defaultLocationId = businessLocations.length === 1 ? businessLocations[0].id : '';
+      
       setFormData({
         name: product.name || '',
         description: product.description || '',
         count: 1,
         monthlyFee: product.monthlyFee || 0,
         companyCost: product.companyCost || 0,
-        customValue: ''
+        customValue: '',
+        locationId: defaultLocationId
       });
       setSelectedAddons([]);
     } else if (mode === 'edit' && editingCard) {
@@ -48,7 +55,8 @@ export const useProductForm = ({ mode, product, editingCard, isOpen }: UseProduc
         count: editingCard.count,
         monthlyFee: editingCard.monthlyFee,
         companyCost: editingCard.companyCost,
-        customValue: (editingCard as ServiceCard).customValue || ''
+        customValue: (editingCard as ServiceCard).customValue || '',
+        locationId: editingCard.locationId || ''
       });
       setSelectedAddons(editingCard.addons || []);
     }

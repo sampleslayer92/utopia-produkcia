@@ -200,20 +200,22 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
             onRemoveCard={removeCard}
             onClearAll={clearAllCards}
             onEditCard={openEditModal}
+            businessLocations={data.businessLocations.map(loc => ({ id: loc.id, name: loc.name }))}
           />
         </Card>
       </div>
 
       {/* Product Detail Modal */}
-      <ProductDetailModal
-        isOpen={modalState.isOpen}
-        onClose={closeModal}
-        mode={modalState.mode}
-        productType={modalState.productType}
-        product={modalState.product}
-        editingCard={modalState.editingCard}
-        onSave={handleSaveProduct}
-      />
+        <ProductDetailModal
+          isOpen={modalState.isOpen}
+          onClose={closeModal}
+          mode={modalState.mode}
+          productType={modalState.productType}
+          product={modalState.product}
+          editingCard={modalState.editingCard}
+          onSave={handleSaveProduct}
+          businessLocations={data.businessLocations}
+        />
     </div>
   );
 };

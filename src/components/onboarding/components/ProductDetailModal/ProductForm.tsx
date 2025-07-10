@@ -2,7 +2,9 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
+import { BusinessLocation } from "@/types/business";
 
 interface ProductFormData {
   name: string;
@@ -11,18 +13,42 @@ interface ProductFormData {
   monthlyFee: number;
   companyCost: number;
   customValue: string;
+  locationId: string;
 }
 
 interface ProductFormProps {
   formData: ProductFormData;
   onUpdateField: (field: string, value: any) => void;
+  businessLocations: BusinessLocation[];
 }
 
-const ProductForm = ({ formData, onUpdateField }: ProductFormProps) => {
+const ProductForm = ({ formData, onUpdateField, businessLocations }: ProductFormProps) => {
   const { t } = useTranslation('forms');
 
   return (
     <div className="space-y-4">
+      {/* Location Selection */}
+      {businessLocations.length > 1 && (
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">
+            {t('deviceSelection.modal.selectLocation')}
+            <span className="text-red-500 ml-1">*</span>
+          </Label>
+          <Select value={formData.locationId} onValueChange={(value) => onUpdateField('locationId', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder={t('deviceSelection.modal.selectLocationPlaceholder')} />
+            </SelectTrigger>
+            <SelectContent>
+              {businessLocations.map((location) => (
+                <SelectItem key={location.id} value={location.id}>
+                  {location.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>{t('deviceSelection.modal.quantity')}</Label>

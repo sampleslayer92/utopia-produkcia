@@ -8,6 +8,7 @@ interface ProductFormData {
   monthlyFee: number;
   companyCost: number;
   customValue: string;
+  locationId: string;
 }
 
 interface SaveProductParams {
@@ -39,7 +40,8 @@ export const createProductCard = ({
     count: formData.count,
     monthlyFee: formData.monthlyFee,
     companyCost: formData.companyCost,
-    addons: selectedAddons
+    addons: selectedAddons,
+    locationId: formData.locationId
   };
 
   if (productType === 'device') {
