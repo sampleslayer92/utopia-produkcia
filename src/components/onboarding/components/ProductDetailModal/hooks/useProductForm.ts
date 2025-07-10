@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DeviceCard, ServiceCard, AddonCard } from "@/types/onboarding";
 
 interface ProductFormData {
@@ -60,11 +60,11 @@ export const useProductForm = ({ mode, product, editingCard, isOpen, businessLoc
       });
       setSelectedAddons(editingCard.addons || []);
     }
-  }, [mode, product, editingCard, isOpen]);
+  }, [mode, product, editingCard, isOpen, businessLocations]);
 
-  const updateField = (field: string, value: any) => {
+  const updateField = useCallback((field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
   const handleAddAddon = (addon: AddonCard) => {
     setSelectedAddons(prev => [...prev, addon]);

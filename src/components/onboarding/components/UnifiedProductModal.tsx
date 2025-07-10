@@ -61,7 +61,10 @@ const UnifiedProductModal = ({
     }
   }, [isOpen, product?.id]);
 
-  if (!product && mode === 'add') return null;
+  // Early return - move before hooks to fix React Rules
+  if (!product && mode === 'add') {
+    return null;
+  }
 
   const displayProduct = mode === 'edit' ? editingCard : product;
   const productImage = displayProduct?.image || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=400&fit=crop';
@@ -84,13 +87,9 @@ const UnifiedProductModal = ({
   const totalPurchasePrice = purchasePrice * formData.count;
   const monthlyMargin = totalMonthlyFee - totalCompanyCost;
 
-  // Update form data when payment method changes
-  useEffect(() => {
-    if (paymentMethod === 'rental') {
-      updateField('monthlyFee', monthlyFeePerUnit * formData.count);
-      updateField('companyCost', companyCostPerUnit * formData.count);
-    }
-  }, [paymentMethod, formData.count, monthlyFeePerUnit, companyCostPerUnit]);
+  // Calculate final values when payment method or quantity changes
+  const finalMonthlyFee = paymentMethod === 'rental' ? monthlyFeePerUnit * formData.count : 0;
+  const finalCompanyCost = companyCostPerUnit * formData.count;
 
   const handleSave = () => {
     try {
@@ -103,8 +102,8 @@ const UnifiedProductModal = ({
       const savedCard = createProductCard({
         formData: {
           ...formData,
-          monthlyFee: totalMonthlyFee,
-          companyCost: totalCompanyCost
+          monthlyFee: finalMonthlyFee,
+          companyCost: finalCompanyCost
         },
         selectedAddons,
         productType,
@@ -217,15 +216,15 @@ const UnifiedProductModal = ({
               {/* Pricing Information */}
               <Card>
                 <CardContent className="p-4 space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Mesačný poplatok za 1 kus:</span>
-                    <span className="font-semibold">€{(formData.monthlyFee / formData.count).toFixed(2)}</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Mesačný náklad pre firmu za 1 kus:</span>
-                    <span className="font-semibold">€{(formData.companyCost / formData.count).toFixed(2)}</span>
-                  </div>
+                   <div className="flex justify-between items-center">
+                     <span className="text-sm text-muted-foreground">Mesačný poplatok za 1 kus:</span>
+                     <span className="font-semibold">€{monthlyFeePerUnit.toFixed(2)}</span>
+                   </div>
+                   
+                   <div className="flex justify-between items-center">
+                     <span className="text-sm text-muted-foreground">Mesačný náklad pre firmu za 1 kus:</span>
+                     <span className="font-semibold">€{companyCostPerUnit.toFixed(2)}</span>
+                   </div>
 
                   {paymentMethod === 'purchase' && purchasePrice > 0 && (
                     <div className="flex justify-between items-center">
@@ -236,15 +235,15 @@ const UnifiedProductModal = ({
 
                   <hr className="my-3" />
 
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="font-semibold">Celkový mesačný poplatok:</span>
-                    <span className="font-bold text-primary">€{formData.monthlyFee.toFixed(2)}</span>
-                  </div>
+                   <div className="flex justify-between items-center text-lg">
+                     <span className="font-semibold">Celkový mesačný poplatok:</span>
+                     <span className="font-bold text-primary">€{finalMonthlyFee.toFixed(2)}</span>
+                   </div>
 
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Celkový mesačný náklad:</span>
-                    <span className="font-semibold">€{formData.companyCost.toFixed(2)}</span>
-                  </div>
+                   <div className="flex justify-between items-center">
+                     <span className="text-sm text-muted-foreground">Celkový mesačný náklad:</span>
+                     <span className="font-semibold">€{finalCompanyCost.toFixed(2)}</span>
+                   </div>
 
                   {paymentMethod === 'purchase' && (
                     <div className="flex justify-between items-center">
@@ -253,12 +252,12 @@ const UnifiedProductModal = ({
                     </div>
                   )}
 
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Mesačná marža:</span>
-                    <span className={`font-semibold ${monthlyMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      €{monthlyMargin.toFixed(2)}
-                    </span>
-                  </div>
+                   <div className="flex justify-between items-center">
+                     <span className="text-sm text-muted-foreground">Mesačná marža:</span>
+                     <span className={`font-semibold ${(finalMonthlyFee - finalCompanyCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                       €{(finalMonthlyFee - finalCompanyCost).toFixed(2)}
+                     </span>
+                   </div>
                 </CardContent>
               </Card>
 
