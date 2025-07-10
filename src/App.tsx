@@ -13,6 +13,7 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import OnboardingFlow from "./pages/OnboardingFlow";
 import AdminDashboard from "./pages/AdminDashboard";
 import ContractsPage from "./pages/ContractsPage";
+import RequestsPage from "./pages/RequestsPage";
 import MerchantsPage from "./pages/MerchantsPage";
 import TeamManagement from "./components/admin/TeamManagement";
 import TeamPage from "./pages/TeamPage";
@@ -61,6 +62,16 @@ const App = () => (
           } />
           
           {/* Shared routes for admin and partner */}
+          <Route path="/admin/requests" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <RequestsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/contracts" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <ContractsPage />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/merchants/contracts" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <ContractsPage />

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { 
   LayoutDashboard, 
   FileText, 
+  FileQuestion,
   Building2, 
   CheckSquare,
   Handshake,
@@ -114,6 +115,24 @@ const AdminSidebar = () => {
       active: location.pathname.startsWith("/admin/deals"),
       type: 'single' as const
     }] : []),
+    // Only show requests for admin and partner
+    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
+      id: 'requests',
+      title: t('navigation.requests'),
+      icon: FileQuestion,
+      path: "/admin/requests",
+      active: location.pathname.startsWith("/admin/requests"),
+      type: 'single' as const
+    }] : []),
+    // Only show contracts for admin and partner
+    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
+      id: 'contracts',
+      title: t('navigation.contracts'),
+      icon: FileText,
+      path: "/admin/contracts",
+      active: location.pathname.startsWith("/admin/contracts"),
+      type: 'single' as const
+    }] : []),
     // Only show merchants for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'merchants',
@@ -133,7 +152,7 @@ const AdminSidebar = () => {
           active: isActive("/admin/merchants/locations")
         },
         {
-          title: userRole?.role === 'partner' ? t('navigation.myContracts') : t('navigation.contracts'),
+          title: userRole?.role === 'partner' ? t('navigation.myOldContracts') : t('navigation.oldContracts'),
           path: "/admin/merchants/contracts",
           active: isActive("/admin/merchants/contracts")
         }

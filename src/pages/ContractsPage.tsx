@@ -20,7 +20,7 @@ const ContractsPage = () => {
   const { fixAllContractsWithoutMerchants, isFixing } = useContractMerchantFix();
   const [filters, setFilters] = useState({
     search: '',
-    status: 'all',
+    status: 'signed', // Only show signed contracts
     merchant: 'all',
     source: 'all'
   });
@@ -29,9 +29,9 @@ const ContractsPage = () => {
 
   const statsCards = [
     {
-      title: t('contracts.stats.activeContracts'),
+      title: t('contracts.stats.signedContracts'),
       value: stats?.activeContracts || 0,
-      subtitle: t('contracts.stats.approvedSigned'),
+      subtitle: t('contracts.stats.fullyExecuted'),
       icon: FileText,
       iconColor: "bg-blue-500"
     },

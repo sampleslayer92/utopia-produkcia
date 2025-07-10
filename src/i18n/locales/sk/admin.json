@@ -5,8 +5,11 @@
     "merchants": "Merchanti",
     "allMerchants": "Všetci merchanti",
     "locations": "Lokality",
+    "requests": "Žiadosti",
     "contracts": "Zmluvy",
     "myContracts": "Moje zmluvy",
+    "oldContracts": "Staré zmluvy",
+    "myOldContracts": "Moje staré zmluvy",
     "warehouse": "Sklad",
     "allItems": "Všetky položky",
     "devices": "Zariadenia",
@@ -108,9 +111,11 @@
     "new": "Nová zmluva",
     "stats": {
       "activeContracts": "Aktívne zmluvy",
+      "signedContracts": "Podpísané zmluvy", 
       "totalValue": "Celková hodnota",
       "expiringContracts": "Expirujúce",
       "approvedSigned": "Schválené a podpísané",
+      "fullyExecuted": "Plne vykonané",
       "monthlyIncome": "Mesačný príjem",
       "olderThan11Months": "Staršie ako 11 mesiacov"
     },
@@ -282,6 +287,27 @@
       "allStatuses": "Všetky stavy",
       "allSources": "Všetky zdroje",
       "clearFilters": "Vyčistiť filtre"
+    }
+  },
+  "requests": {
+    "title": "Správa žiadostí",
+    "subtitle": "Prehľad a správa všetkých žiadostí ktoré ešte nie sú podpísané",
+    "stats": {
+      "pendingRequests": "Čakajúce žiadosti",
+      "awaitingReview": "Čakajú na kontrolu",
+      "inProgress": "V procese",
+      "beingProcessed": "Spracovávajú sa",
+      "waitingForSignature": "Čakajú podpis",
+      "readyToSign": "Pripravené na podpis",
+      "totalValue": "Celková hodnota",
+      "estimatedValue": "Odhadovaná hodnota"
+    },
+    "actions": {
+      "newRequest": "Nová žiadosť",
+      "export": "Exportovať"
+    },
+    "filters": {
+      "title": "Filtre žiadostí"
     }
   },
   "merchants": {
