@@ -159,34 +159,17 @@ const AuthPage = () => {
             </Card>
           )}
 
-          {/* Hero Section */}
-          <div className="text-center mb-12 animate-fade-in">
-            <div className="mb-8">
-              <img 
-                src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
-                alt="Utopia Logo" 
-                className="h-20 w-auto mx-auto mb-6" 
-              />
-            </div>
-            
-            <div className="space-y-4 mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary bg-clip-text text-transparent">
-                {t('title')}
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                {t('subtitle')}
-              </p>
-            </div>
+          {/* Logo */}
+          <div className="text-center mb-8 animate-fade-in">
+            <img 
+              src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
+              alt="Utopia Logo" 
+              className="h-16 w-auto mx-auto" 
+            />
           </div>
 
           {/* Auth Card */}
           <Card className="border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 animate-fade-in">
-            <CardHeader className="text-center pb-6">
-              <CardTitle className="text-2xl font-semibold text-foreground">{t('header.authentication')}</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                {t('header.description')}
-              </CardDescription>
-            </CardHeader>
             <CardContent className="p-6 pt-0">
               <Tabs defaultValue="signin" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-6">
