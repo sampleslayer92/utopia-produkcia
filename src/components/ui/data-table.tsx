@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { InlineTableFilter } from "@/components/admin/table/InlineTableFilters";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { X, FilterX } from "lucide-react";
 
 export interface DataTableColumn<T> {
   key: string;
@@ -59,16 +62,26 @@ export function DataTable<T extends { id: string }>({
     onFiltersChange?.(newFilters);
   };
 
+  const clearAllFilters = () => {
+    setFilters({});
+    onFiltersChange?.({});
+  };
+
+  const activeFiltersCount = Object.values(filters).filter(Boolean).length;
+
   if (isLoading) {
     return (
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
+      <Card className="border-slate-200/60 bg-white/90 backdrop-blur-sm shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-slate-50/50 to-blue-50/30 border-b border-slate-100">
           {title && <CardTitle className="text-slate-900">{title}</CardTitle>}
           {subtitle && <CardDescription className="text-slate-600">{subtitle}</CardDescription>}
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+        <CardContent className="p-8">
+          <div className="flex items-center justify-center py-12">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-600"></div>
+              <p className="text-slate-600 font-medium">Načítavam dáta...</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -77,10 +90,10 @@ export function DataTable<T extends { id: string }>({
 
   if (error) {
     return (
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
+      <Card className="border-red-200/60 bg-white/90 backdrop-blur-sm shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-red-50/50 to-red-100/30 border-b border-red-100">
           {title && <CardTitle className="text-slate-900">{title}</CardTitle>}
-          <CardDescription className="text-red-600">
+          <CardDescription className="text-red-600 font-medium">
             {t('table.error', { message: error.message })}
           </CardDescription>
         </CardHeader>
@@ -90,15 +103,18 @@ export function DataTable<T extends { id: string }>({
 
   if (!data || data.length === 0) {
     return (
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
+      <Card className="border-slate-200/60 bg-white/90 backdrop-blur-sm shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-slate-50/50 to-blue-50/30 border-b border-slate-100">
           {title && <CardTitle className="text-slate-900">{title}</CardTitle>}
           {subtitle && <CardDescription className="text-slate-600">{subtitle}</CardDescription>}
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 text-slate-500">
-            {emptyIcon}
-            <p className="text-center mt-4">{emptyMessage || t('table.emptyMessage')}</p>
+        <CardContent className="p-8">
+          <div className="flex flex-col items-center justify-center py-12 text-slate-500">
+            <div className="p-4 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 mb-4">
+              {emptyIcon}
+            </div>
+            <p className="text-center text-lg font-medium text-slate-600 mb-2">Žiadne dáta</p>
+            <p className="text-center text-sm text-slate-500">{emptyMessage || t('table.emptyMessage')}</p>
           </div>
         </CardContent>
       </Card>
@@ -106,27 +122,47 @@ export function DataTable<T extends { id: string }>({
   }
 
   return (
-    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-      <CardHeader>
-        {title && <CardTitle className="text-slate-900">{title}</CardTitle>}
-        {subtitle && (
-          <CardDescription className="text-slate-600">
-            {subtitle.includes('{count}') 
-              ? subtitle.replace('{count}', data.length.toString())
-              : subtitle
-            }
-          </CardDescription>
-        )}
+    <Card className="border-slate-200/60 bg-white/90 backdrop-blur-sm shadow-lg">
+      <CardHeader className="bg-gradient-to-r from-slate-50/50 to-blue-50/30 border-b border-slate-100">
+        <div className="flex items-center justify-between">
+          <div>
+            {title && <CardTitle className="text-slate-900">{title}</CardTitle>}
+            {subtitle && (
+              <CardDescription className="text-slate-600 mt-1">
+                {subtitle.includes('{count}') 
+                  ? subtitle.replace('{count}', data.length.toString())
+                  : subtitle
+                }
+              </CardDescription>
+            )}
+          </div>
+          {activeFiltersCount > 0 && (
+            <div className="flex items-center space-x-2">
+              <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
+                {activeFiltersCount} {activeFiltersCount === 1 ? 'filter' : 'filtrov'}
+              </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearAllFilters}
+                className="h-8 px-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+              >
+                <FilterX className="h-4 w-4 mr-1" />
+                Vymazať všetky
+              </Button>
+            </div>
+          )}
+        </div>
       </CardHeader>
-      <CardContent>
-        <div className="rounded-lg border border-slate-200 overflow-hidden">
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-slate-50">
+              <TableRow className="bg-gradient-to-r from-slate-50/80 to-blue-50/50 border-b border-slate-200 hover:bg-slate-50">
                 {columns.map((column) => (
-                  <TableHead key={column.key} className={`font-medium text-slate-700 ${column.className || ''}`}>
-                    <div className="flex items-center justify-between">
-                      {column.header}
+                  <TableHead key={column.key} className={`font-semibold text-slate-700 ${column.className || ''}`}>
+                    <div className="flex items-center justify-between min-h-[2.5rem]">
+                      <span>{column.header}</span>
                       {column.filter && (
                         <InlineTableFilter
                           type={column.filter.type}
@@ -143,16 +179,19 @@ export function DataTable<T extends { id: string }>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((item) => (
+              {data.map((item, index) => (
                 <TableRow 
                   key={item.id} 
-                  className={`hover:bg-slate-50/50 transition-colors ${
-                    onRowClick ? 'cursor-pointer' : ''
-                  }`}
+                  className={`
+                    hover:bg-gradient-to-r hover:from-slate-50/50 hover:to-blue-50/30 
+                    transition-all duration-200 border-b border-slate-100/50
+                    ${onRowClick ? 'cursor-pointer hover:shadow-sm' : ''}
+                    ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}
+                  `}
                   onClick={() => onRowClick?.(item)}
                 >
                   {columns.map((column) => (
-                    <TableCell key={column.key} className={column.className}>
+                    <TableCell key={column.key} className={`py-4 ${column.className || ''}`}>
                       {column.accessor(item)}
                     </TableCell>
                   ))}
