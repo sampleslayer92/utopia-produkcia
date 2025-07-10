@@ -48,6 +48,7 @@ export const useProductForm = ({ mode, product, editingCard, isOpen, businessLoc
         locationId: defaultLocationId
       });
       setSelectedAddons([]);
+      console.log('🔧 useProductForm: Add mode initialized with locationId:', defaultLocationId);
     } else if (mode === 'edit' && editingCard) {
       setFormData({
         name: editingCard.name,
@@ -59,12 +60,19 @@ export const useProductForm = ({ mode, product, editingCard, isOpen, businessLoc
         locationId: editingCard.locationId || ''
       });
       setSelectedAddons(editingCard.addons || []);
+      console.log('🔧 useProductForm: Edit mode initialized with locationId:', editingCard.locationId);
     }
-  }, [mode, product, editingCard, isOpen, businessLocations]);
+  }, [mode, product, editingCard, isOpen]);
 
   const updateField = useCallback((field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    console.log('🔧 useProductForm: Updating field', field, 'with value:', value);
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+      console.log('🔧 useProductForm: New formData:', newData);
+      return newData;
+    });
   }, []);
+
 
   const handleAddAddon = (addon: AddonCard) => {
     setSelectedAddons(prev => [...prev, addon]);

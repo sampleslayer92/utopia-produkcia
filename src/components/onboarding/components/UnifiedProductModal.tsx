@@ -94,8 +94,13 @@ const UnifiedProductModal = ({
 
   const handleSave = () => {
     try {
+      console.log('🎯 HandleSave called with formData:', formData);
+      console.log('🎯 Business locations count:', businessLocations.length);
+      console.log('🎯 Current locationId:', formData.locationId);
+      
       // Validate location selection if multiple locations exist
       if (businessLocations.length > 1 && !formData.locationId) {
+        console.log('❌ Location validation failed');
         toast({
           title: "Chyba",
           description: "Musíte vybrať prevádzku",
@@ -203,8 +208,15 @@ const UnifiedProductModal = ({
                         </label>
                         <select
                           value={formData.locationId || ""}
-                          onChange={(e) => updateField('locationId', e.target.value)}
-                          className="w-full p-2 border border-input rounded-md bg-background"
+                          onChange={(e) => {
+                            console.log('🎯 Location select onChange:', e.target.value);
+                            updateField('locationId', e.target.value);
+                          }}
+                          className={`w-full p-2 border rounded-md bg-background ${
+                            !formData.locationId && businessLocations.length > 1 
+                              ? 'border-red-500 focus:border-red-500' 
+                              : 'border-input focus:border-primary'
+                          }`}
                         >
                           <option value="">Vyberte prevádzku</option>
                           {businessLocations.map((location) => (
@@ -213,6 +225,9 @@ const UnifiedProductModal = ({
                             </option>
                           ))}
                         </select>
+                        {!formData.locationId && businessLocations.length > 1 && (
+                          <p className="text-sm text-red-500">Prevádzka je povinná</p>
+                        )}
                       </div>
                     )}
 
