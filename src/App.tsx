@@ -25,7 +25,7 @@ import ContractDetailPage from "./pages/ContractDetailPage";
 import MerchantDetailPage from "./pages/MerchantDetailPage";
 import AdminOnboardingPage from "./pages/AdminOnboardingPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
-import DealsPage from "./pages/DealsPage";
+import OverviewPage from "./pages/OverviewPage";
 import WarehousePage from "./pages/WarehousePage";
 import ReportingPage from "./pages/ReportingPage";
 import BusinessLocationsPage from "./pages/BusinessLocationsPage";
@@ -79,7 +79,7 @@ const App = () => (
           } />
           <Route path="/admin/deals" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
-              <DealsPage />
+              <OverviewPage />
             </ProtectedRoute>
           } />
           
