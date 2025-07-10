@@ -2,6 +2,7 @@
 {
   "navigation": {
     "dashboard": "Dashboard",
+    "overview": "Prehľad",
     "merchants": "Merchanti",
     "allMerchants": "Všetci merchanti",
     "locations": "Lokality",
@@ -1270,7 +1271,59 @@
       "statusDeleted": "Status bol zmazaný",
       "profileUpdated": "Profil bol aktualizovaný",
       "passwordChanged": "Heslo bolo zmenené"
+  },
+  "overview": {
+    "title": "Prehľad",
+    "subtitle": "Komplexný prehľad všetkých žiadostí a zmlúv",
+    "toolbar": {
+      "kanban": "Kanban",
+      "table": "Tabuľka",
+      "itemsCount": "položiek",
+      "searchPlaceholder": "Hľadať žiadosti a zmluvy...",
+      "filters": "Filtre",
+      "advancedFilters": "Pokročilé filtre",
+      "clearAll": "Vymazať všetko",
+      "addColumn": "Pridať stĺpec",
+      "statuses": "Stavy",
+      "reset": "Reset",
+      "settings": "Nastavenia"
     },
+    "entityTypes": {
+      "both": "Všetko",
+      "requests": "Žiadosti", 
+      "contracts": "Zmluvy"
+    },
+    "filters": {
+      "status": "Stav",
+      "dateRange": "Dátumový rozsah",
+      "valueRange": "Hodnota",
+      "merchant": "Obchodník",
+      "source": "Zdroj"
+    },
+    "stats": {
+      "totalPipelineValue": "Celková hodnota",
+      "conversionRate": "Úspešnosť",
+      "avgDealValue": "Priemerná hodnota",
+      "activePipeline": "Aktívne",
+      "signedDeals": "Podpísané",
+      "lostDeals": "Neúspešné",
+      "deals": "dealy",
+      "converted": "konvertované",
+      "perSignedDeal": "na podpísanú zmluvu",
+      "inProgress": "prebieha",
+      "completed": "dokončené",
+      "unsuccessful": "neúspešné"
+    },
+    "success": {
+      "columnAdded": "Stĺpec bol úspešne pridaný",
+      "columnsReset": "Stĺpce boli obnovené na predvolené"
+    },
+    "errors": {
+      "addingColumn": "Chyba pri pridávaní stĺpca",
+      "resettingColumns": "Chyba pri obnovovaní stĺpcov",
+      "loadingDeals": "Chyba pri načítavaní dát: {{message}}"
+    }
+  }
     "errors": {
       "statusCreate": "Chyba pri vytváraní statusu",
       "statusUpdate": "Chyba pri aktualizácii",

@@ -108,8 +108,8 @@ const AdminSidebar = () => {
     },
     // Only show deals for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
-      id: 'deals',
-      title: 'Deals',
+      id: 'overview',
+      title: t('navigation.overview'),
       icon: Handshake,
       path: "/admin/deals",
       active: location.pathname.startsWith("/admin/deals"),
