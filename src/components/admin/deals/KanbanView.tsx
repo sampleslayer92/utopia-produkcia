@@ -194,7 +194,7 @@ const KanbanView = ({ contracts, columns, onUpdateColumn }: KanbanViewProps) => 
     );
   }
 
-  // Desktop layout
+  // Desktop layout with horizontal scrolling
   return (
     <DndContext 
       sensors={sensors}
@@ -205,21 +205,22 @@ const KanbanView = ({ contracts, columns, onUpdateColumn }: KanbanViewProps) => 
     >
       <div 
         ref={dragScrollRef}
-        className="dnd-context grid grid-cols-2 lg:grid-cols-5 gap-6 min-h-[600px] overflow-x-auto scrollbar-hidden p-6"
+        className="dnd-context flex gap-6 min-h-[600px] overflow-x-auto overflow-y-hidden scrollbar-hidden p-6"
       >
         {columns.map((column) => {
           const columnContracts = getContractsForColumn(column.statuses);
           const isDropTarget = dragOverColumn === column.id;
           
           return (
-            <KanbanColumn
-              key={column.id}
-              id={column.id}
-              column={column}
-              contracts={columnContracts}
-              isDropTarget={isDropTarget}
-              onUpdateColumn={onUpdateColumn}
-            />
+            <div key={column.id} className="flex-shrink-0 w-80">
+              <KanbanColumn
+                id={column.id}
+                column={column}
+                contracts={columnContracts}
+                isDropTarget={isDropTarget}
+                onUpdateColumn={onUpdateColumn}
+              />
+            </div>
           );
         })}
       </div>

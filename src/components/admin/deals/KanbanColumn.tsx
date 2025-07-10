@@ -1,6 +1,7 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { Card } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import KanbanCard from './KanbanCard';
 import EditableKanbanColumnHeader from './EditableKanbanColumnHeader';
 import { EnhancedContractData } from '@/hooks/useEnhancedContractsData';
@@ -41,31 +42,33 @@ const KanbanColumn = ({ id, column, contracts, isDropTarget = false, onUpdateCol
         count={contracts.length}
       />
       
-      <div className="space-y-3 min-h-[400px] md:min-h-[500px]">
-        {contracts.map((contract, index) => (
-          <div
-            key={contract.id}
-            className="animate-fade-in"
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            <KanbanCard 
-              contract={contract}
-            />
-          </div>
-        ))}
-        
-        {contracts.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-            <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-3">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+      <ScrollArea className="h-[calc(100vh-300px)]">
+        <div className="space-y-3 pr-4">
+          {contracts.map((contract, index) => (
+            <div
+              key={contract.id}
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <KanbanCard 
+                contract={contract}
+              />
             </div>
-            <p className="text-sm font-medium">Žiadne deals</p>
-            <p className="text-xs text-center mt-1">Karty presunuté sem sa zobrazia tu</p>
-          </div>
-        )}
-      </div>
+          ))}
+          
+          {contracts.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-3">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium">Žiadne deals</p>
+              <p className="text-xs text-center mt-1">Karty presunuté sem sa zobrazia tu</p>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
     </Card>
   );
 };
