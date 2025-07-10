@@ -22,16 +22,10 @@ export interface Merchant {
 }
 
 interface MerchantFilters {
-  // Old format filters
   search?: string;
   city?: string;
   hasContracts?: string;
   profitRange?: string;
-  
-  // New DataTable format filters
-  company?: string;
-  contracts?: string;
-  profit?: string;
 }
 
 export const useMerchantsData = (filters: MerchantFilters = {}) => {
@@ -101,17 +95,16 @@ export const useMerchantsData = (filters: MerchantFilters = {}) => {
         };
       });
 
-      // Apply filters - support both old and new format
+      // Apply filters
       let filteredMerchants = processedMerchants;
 
-      const searchTerm = filters.search || filters.company;
-      if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase();
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
         filteredMerchants = filteredMerchants.filter(merchant =>
           merchant.company_name.toLowerCase().includes(searchLower) ||
           merchant.contact_person_name.toLowerCase().includes(searchLower) ||
           merchant.contact_person_email.toLowerCase().includes(searchLower) ||
-          (merchant.ico && merchant.ico.includes(searchTerm))
+          (merchant.ico && merchant.ico.includes(filters.search))
         );
       }
 
@@ -121,19 +114,17 @@ export const useMerchantsData = (filters: MerchantFilters = {}) => {
         );
       }
 
-      const hasContractsFilter = filters.hasContracts || filters.contracts;
-      if (hasContractsFilter && hasContractsFilter !== 'all') {
-        const hasContracts = hasContractsFilter === 'true';
+      if (filters.hasContracts && filters.hasContracts !== 'all') {
+        const hasContracts = filters.hasContracts === 'true';
         filteredMerchants = filteredMerchants.filter(merchant =>
           hasContracts ? (merchant.contract_count || 0) > 0 : (merchant.contract_count || 0) === 0
         );
       }
 
-      const profitFilter = filters.profitRange || filters.profit;
-      if (profitFilter && profitFilter !== 'all') {
+      if (filters.profitRange && filters.profitRange !== 'all') {
         filteredMerchants = filteredMerchants.filter(merchant => {
           const profit = merchant.total_monthly_profit || 0;
-          switch (profitFilter) {
+          switch (filters.profitRange) {
             case '0-100':
               return profit >= 0 && profit <= 100;
             case '100-500':

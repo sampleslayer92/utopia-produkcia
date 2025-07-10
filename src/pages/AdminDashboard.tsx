@@ -13,9 +13,9 @@ const AdminDashboard = () => {
   const dashboardActions = (
     <Button 
       onClick={() => navigate('/admin/onboarding')}
-      className="bg-blue-600 hover:bg-blue-700"
+      className="gradient-primary hover:scale-105 transition-all duration-300 shadow-lg font-semibold px-6 py-3 h-auto"
     >
-      <Plus className="h-4 w-4 mr-2" />
+      <Plus className="h-5 w-5 mr-2" />
       {t('dashboard.newContract')}
     </Button>
   );

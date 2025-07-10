@@ -10,17 +10,32 @@ const NewDashboardContent = () => {
 
   return (
     <div className="space-y-6">
-      {/* Quick Actions */}
+      {/* Quick Actions Header */}
       <QuickActions />
       
       {/* Business Metrics */}
-      <BusinessMetrics />
+      <section>
+        <div className="mb-3">
+          <h2 className="text-xl font-bold text-foreground mb-1">{t('dashboard.sections.businessMetrics')}</h2>
+        </div>
+        <BusinessMetrics />
+      </section>
       
       {/* Revenue Charts */}
-      <RevenueChart />
+      <section>
+        <div className="mb-3">
+          <h2 className="text-xl font-bold text-foreground mb-1">{t('dashboard.sections.revenueAnalytics')}</h2>
+        </div>
+        <RevenueChart />
+      </section>
       
       {/* Merchant Overview */}
-      <MerchantOverview />
+      <section>
+        <div className="mb-3">
+          <h2 className="text-xl font-bold text-foreground mb-1">{t('dashboard.sections.merchantOverview')}</h2>
+        </div>
+        <MerchantOverview />
+      </section>
     </div>
   );
 };
