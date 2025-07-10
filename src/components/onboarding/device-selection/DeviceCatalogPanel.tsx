@@ -4,7 +4,8 @@ import { Zap, CreditCard, Monitor, Globe, Smartphone } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import MinimalDeviceCatalogCard from "../components/MinimalDeviceCatalogCard";
 import MinimalServiceCatalogGroup from "../components/MinimalServiceCatalogGroup";
-import ProductShowcaseModal from "../components/ProductShowcaseModal";
+import UnifiedProductModal from "../components/UnifiedProductModal";
+import { BusinessLocation } from "@/types/business";
 import { useTranslation } from "react-i18next";
 import { DynamicCard } from "@/types/onboarding";
 
@@ -12,12 +13,14 @@ interface DeviceCatalogPanelProps {
   selectedSolutions: string[];
   onAddDevice: (deviceTemplate: any) => void;
   onAddService: (serviceTemplate: any, category: string) => void;
+  businessLocations: BusinessLocation[];
 }
 
 const DeviceCatalogPanel = ({ 
   selectedSolutions, 
   onAddDevice, 
-  onAddService 
+  onAddService,
+  businessLocations
 }: DeviceCatalogPanelProps) => {
   const { t } = useTranslation('forms');
   const [openGroups, setOpenGroups] = useState<string[]>(['terminals', 'pos', 'software']);
@@ -354,13 +357,15 @@ const DeviceCatalogPanel = ({
         </div>
       </div>
 
-      {/* Product Showcase Modal */}
-      <ProductShowcaseModal
+      {/* Unified Product Modal */}
+      <UnifiedProductModal
         isOpen={showcaseModal.isOpen}
         onClose={handleShowcaseClose}
-        product={showcaseModal.product}
+        mode="add"
         productType={showcaseModal.type}
-        onAddToContract={handleShowcaseAdd}
+        product={showcaseModal.product}
+        onSave={handleShowcaseAdd}
+        businessLocations={businessLocations}
       />
     </>
   );

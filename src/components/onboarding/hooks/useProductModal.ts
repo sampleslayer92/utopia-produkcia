@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { DeviceCard, ServiceCard } from '@/types/onboarding';
 
-interface ProductModalState {
+interface UnifiedModalState {
   isOpen: boolean;
   mode: 'add' | 'edit';
   productType: 'device' | 'service';
@@ -11,7 +11,7 @@ interface ProductModalState {
 }
 
 export const useProductModal = () => {
-  const [modalState, setModalState] = useState<ProductModalState>({
+  const [modalState, setModalState] = useState<UnifiedModalState>({
     isOpen: false,
     mode: 'add',
     productType: 'device',

@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Monitor, Wifi, ShoppingCart, Wrench } from "lucide-react";
 import DeviceCatalogCard from "@/components/onboarding/components/DeviceCatalogCard";
 import MinimalServiceCatalogGroup from "@/components/onboarding/components/MinimalServiceCatalogGroup";
-import ProductShowcaseModal from "@/components/onboarding/components/ProductShowcaseModal";
+import UnifiedProductModal from "@/components/onboarding/components/UnifiedProductModal";
 import { DEVICE_CATALOG } from "@/components/onboarding/config/deviceCatalog";
 import { SERVICE_CATALOG } from "@/components/onboarding/config/serviceCatalog";
 import { DynamicCard } from "@/types/onboarding";
@@ -127,13 +127,15 @@ const AddDeviceServiceModal = ({ isOpen, onClose, onAddItem }: AddDeviceServiceM
         </DialogContent>
       </Dialog>
 
-      {/* Product Showcase Modal */}
-      <ProductShowcaseModal
+      {/* Unified Product Modal */}
+      <UnifiedProductModal
         isOpen={showcaseModal.isOpen}
         onClose={handleShowcaseClose}
-        product={showcaseModal.product}
+        mode="add"
         productType={showcaseModal.type}
-        onAddToContract={onAddItem}
+        product={showcaseModal.product}
+        onSave={onAddItem}
+        businessLocations={[]}
       />
     </>
   );

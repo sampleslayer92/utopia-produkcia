@@ -7,7 +7,7 @@ import { OnboardingData, DeviceCard, ServiceCard } from "@/types/onboarding";
 import SolutionSelectionSection from "./device-selection/SolutionSelectionSection";
 import DeviceCatalogPanel from "./device-selection/DeviceCatalogPanel";
 import LivePreviewPanel from "./device-selection/LivePreviewPanel";
-import ProductDetailModal from "./components/ProductDetailModal";
+import UnifiedProductModal from "./components/UnifiedProductModal";
 import { useProductModal } from "./hooks/useProductModal";
 import { useStepValidation } from "./hooks/useStepValidation";
 import { useTranslation } from "react-i18next";
@@ -189,6 +189,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
             selectedSolutions={data.deviceSelection.selectedSolutions}
             onAddDevice={addDevice}
             onAddService={addService}
+            businessLocations={data.businessLocations}
           />
         </Card>
 
@@ -205,8 +206,8 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
         </Card>
       </div>
 
-      {/* Product Detail Modal */}
-        <ProductDetailModal
+      {/* Unified Product Modal */}
+        <UnifiedProductModal
           isOpen={modalState.isOpen}
           onClose={closeModal}
           mode={modalState.mode}
