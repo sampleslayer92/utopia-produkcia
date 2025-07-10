@@ -170,7 +170,7 @@ const AuthPage = () => {
 
           {/* Auth Card */}
           <Card className="border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 animate-fade-in">
-            <CardContent className="p-6 pt-0">
+            <CardContent className="p-6 pt-8">
               <Tabs defaultValue="signin" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-6">
                   <TabsTrigger value="signin" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
