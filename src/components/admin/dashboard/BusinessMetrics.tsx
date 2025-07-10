@@ -10,13 +10,19 @@ const BusinessMetrics = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+          <Card key={i} className="glass-card-solid">
             <CardContent className="p-6">
               <div className="animate-pulse">
-                <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
-                <div className="h-8 bg-slate-200 rounded w-1/2"></div>
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="w-12 h-12 bg-muted rounded-xl"></div>
+                  <div className="flex-1">
+                    <div className="h-3 bg-muted rounded w-20 mb-2"></div>
+                    <div className="h-6 bg-muted rounded w-24"></div>
+                  </div>
+                </div>
+                <div className="h-2 bg-muted rounded w-16"></div>
               </div>
             </CardContent>
           </Card>
@@ -31,51 +37,59 @@ const BusinessMetrics = () => {
       value: `€${metrics?.monthlyRevenue?.toLocaleString() || '0'}`,
       change: `+${metrics?.revenueGrowth || 0}%`,
       icon: DollarSign,
-      color: "text-green-600",
-      bgColor: "bg-green-100"
     },
     {
       title: t('dashboard.metrics.activeContracts'),
       value: metrics?.activeContracts?.toLocaleString() || '0',
       change: `+${metrics?.contractGrowth || 0}%`,
       icon: CreditCard,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100"
     },
     {
       title: t('dashboard.metrics.totalTurnover'),
       value: `€${metrics?.totalTurnover?.toLocaleString() || '0'}`,
       change: `+${metrics?.turnoverGrowth || 0}%`,
       icon: TrendingUp,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100"
     },
     {
       title: t('dashboard.metrics.totalMerchants'),
       value: metrics?.totalMerchants?.toLocaleString() || '0',
       change: `+${metrics?.merchantGrowth || 0}%`,
       icon: Users,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100"
     }
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {metricsData.map((metric, index) => (
-        <Card key={index} className="border-slate-200/60 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">{metric.title}</p>
-                <p className="text-2xl font-bold text-slate-900 mt-2">{metric.value}</p>
-                <p className={`text-sm font-medium mt-1 ${metric.color}`}>
-                  {metric.change} {t('dashboard.metrics.fromPreviousMonth')}
-                </p>
+        <Card
+          key={index}
+          className="glass-card-solid transition-all duration-200 border-0 overflow-hidden group hover-lift"
+        >
+          <CardContent className="p-5 relative">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2.5 rounded-lg shadow-md gradient-accent">
+                <metric.icon className="h-5 w-5 text-white" />
               </div>
-              <div className={`p-3 rounded-full ${metric.bgColor} shadow-sm`}>
-                <metric.icon className={`h-6 w-6 ${metric.color}`} />
-              </div>
+              {metric.change && (
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                  metric.change.startsWith('+') 
+                    ? 'bg-accent-lime/20 text-accent-lime' 
+                    : metric.change.startsWith('-')
+                    ? 'bg-accent-coral/20 text-accent-coral'
+                    : 'bg-gray-500/20 text-gray-400'
+                }`}>
+                  {metric.change}
+                </span>
+              )}
+            </div>
+            
+            <div className="space-y-1">
+              <p className="text-4xl font-bold tracking-tight text-foreground">
+                {metric.value}
+              </p>
+              <h3 className="text-sm font-medium text-muted-foreground">
+                {metric.title}
+              </h3>
             </div>
           </CardContent>
         </Card>

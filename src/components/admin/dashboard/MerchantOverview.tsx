@@ -1,56 +1,72 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { useTranslation } from 'react-i18next';
-import { Building2, MapPin, CreditCard, TrendingUp, Eye, Users } from "lucide-react";
+import { Trophy, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMerchantOverview } from "@/hooks/useMerchantOverview";
 
 const MerchantOverview = () => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
-  const { data: merchantData, isLoading } = useMerchantOverview();
+  const { data, isLoading } = useMerchantOverview();
+
+  const getPerformanceBadge = (profit: number) => {
+    if (profit >= 10000) {
+      return { color: "bg-green-500/10 text-green-600 border border-green-500/20", label: t('dashboard.merchants.excellent') };
+    } else if (profit >= 5000) {
+      return { color: "bg-primary/10 text-primary border border-primary/20", label: t('dashboard.merchants.good') };
+    } else if (profit >= 2000) {
+      return { color: "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20", label: t('dashboard.merchants.average') };
+    } else {
+      return { color: "bg-red-500/10 text-red-600 border border-red-500/20", label: t('dashboard.merchants.poor') };
+    }
+  };
 
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center text-slate-900">
-              <Building2 className="h-5 w-5 mr-2 text-blue-600" />
-              {t('dashboard.merchantOverview.topMerchants')}
-            </CardTitle>
+        <Card className="glass-card-solid">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-muted rounded-xl animate-pulse"></div>
+              <div className="h-5 bg-muted rounded w-1/3 animate-pulse"></div>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="animate-pulse space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center space-x-3 p-3">
-                  <div className="h-10 w-10 bg-slate-200 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="h-3 bg-slate-200 rounded w-1/2 mb-2"></div>
-                    <div className="h-2 bg-slate-200 rounded w-full"></div>
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="p-4 glass-card">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-muted rounded-xl animate-pulse"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 bg-muted rounded w-24 animate-pulse"></div>
+                      <div className="h-2 bg-muted rounded w-16 animate-pulse"></div>
+                    </div>
+                    <div className="h-5 bg-muted rounded w-16 animate-pulse"></div>
                   </div>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
-
-        <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center text-slate-900">
-              <MapPin className="h-5 w-5 mr-2 text-green-600" />
-              {t('dashboard.merchantOverview.geographicDistribution')}
-            </CardTitle>
+        <Card className="glass-card-dark border-0">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl animate-pulse"></div>
+              <div className="h-5 bg-white/20 rounded w-1/3 animate-pulse"></div>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="animate-pulse space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex justify-between items-center">
-                  <div className="h-3 bg-slate-200 rounded w-1/3"></div>
-                  <div className="h-3 bg-slate-200 rounded w-1/4"></div>
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="p-3 bg-white/5 rounded-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-white/20 rounded-full animate-pulse"></div>
+                      <div className="h-3 bg-white/20 rounded w-16 animate-pulse"></div>
+                    </div>
+                    <div className="h-3 bg-white/20 rounded w-12 animate-pulse"></div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -60,160 +76,112 @@ const MerchantOverview = () => {
     );
   }
 
-  const getPerformanceBadge = (profit: number) => {
-    if (profit >= 1000) return { color: "bg-green-100 text-green-700", label: t('dashboard.team.excellent') };
-    if (profit >= 500) return { color: "bg-blue-100 text-blue-700", label: t('dashboard.team.good') };
-    if (profit >= 100) return { color: "bg-yellow-100 text-yellow-700", label: t('dashboard.team.average') };
-    return { color: "bg-slate-100 text-slate-700", label: t('dashboard.team.needsImprovement') };
-  };
-
-  const topMerchants = merchantData?.topMerchants?.slice(0, 5) || [];
-  const topCities = merchantData?.topCities || [];
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Top Merchants */}
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-slate-900">
-            <div className="flex items-center">
-              <Building2 className="h-5 w-5 mr-2 text-blue-600" />
-              {t('dashboard.merchantOverview.topMerchants')}
+      <Card className="glass-card-solid hover-lift group">
+        <div className="absolute inset-0 gradient-primary opacity-5 group-hover:opacity-10 transition-opacity duration-300 rounded-xl" />
+        <CardHeader className="relative pb-4">
+          <CardTitle className="flex items-center gap-3 text-lg font-bold text-foreground">
+            <div className="p-2 rounded-xl gradient-primary">
+              <Trophy className="h-5 w-5 text-primary-foreground" />
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/admin/merchants')}
-              className="text-blue-600 hover:text-blue-700"
-            >
-              <Eye className="h-4 w-4 mr-1" />
-              {t('dashboard.merchantOverview.viewAllMerchants')}
-            </Button>
+            {t('dashboard.merchants.topMerchants')}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {topMerchants.map((merchant, index) => {
-              const badge = getPerformanceBadge(merchant.totalProfit);
-              return (
-                <div 
-                  key={merchant.id} 
-                  className="flex items-center space-x-3 p-3 bg-slate-50/50 rounded-lg hover:bg-slate-100/50 transition-colors cursor-pointer"
-                  onClick={() => navigate(`/admin/merchant/${merchant.id}/view`)}
-                >
-                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-700 rounded-full font-semibold text-sm">
-                    {index + 1}
-                  </div>
-                  
-                  <Avatar className="h-10 w-10">
-                    <AvatarFallback className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 font-medium">
-                      {merchant.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="font-medium text-sm text-slate-900 truncate">{merchant.name}</h4>
-                      <Badge className={`${badge.color} text-xs px-2 py-1`}>
-                        €{merchant.totalProfit.toLocaleString()}
-                      </Badge>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-xs text-slate-600">
-                      <span className="flex items-center">
-                        <CreditCard className="h-3 w-3 mr-1" />
-                        {merchant.activeContracts} {t('dashboard.merchantOverview.contracts')}
-                      </span>
-                      <span className="flex items-center">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        {merchant.city || 'N/A'}
-                      </span>
-                    </div>
-                    
-                    <div className="mt-2">
-                      <div className="flex justify-between text-xs mb-1">
-                        <span>{t('dashboard.merchantOverview.efficiency')}</span>
-                        <span>{merchant.efficiency}%</span>
+        <CardContent className="relative">
+          {data?.topMerchants && data.topMerchants.length > 0 ? (
+            <div className="space-y-3">
+              {data.topMerchants.slice(0, 5).map((merchant, index) => {
+                const badge = getPerformanceBadge(merchant.totalProfit);
+                return (
+                  <div key={merchant.id} className="group/item p-4 glass-card hover-lift cursor-pointer">
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <div className="flex items-center justify-center w-10 h-10 gradient-primary text-primary-foreground rounded-xl text-sm font-bold shadow-lg">
+                          {index + 1}
+                        </div>
                       </div>
-                      <Progress value={merchant.efficiency} className="h-1" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-foreground text-sm truncate">{merchant.name}</p>
+                        <p className="text-xs text-muted-foreground">{merchant.city}</p>
+                        <p className="text-xs font-medium text-emerald-600">€{merchant.totalProfit.toLocaleString()}</p>
+                      </div>
+                      <div className="flex flex-col items-end space-y-1">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${badge.color}`}>
+                          {badge.label}
+                        </span>
+                        <span className="text-xs text-muted-foreground">{merchant.activeContracts} {t('dashboard.merchants.contracts')}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-            
-            {topMerchants.length === 0 && (
-              <div className="text-center py-6 text-slate-500">
-                <Building2 className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">{t('dashboard.merchantOverview.noMerchants')}</p>
-              </div>
-            )}
-          </div>
+                );
+              })}
+              <Button
+                variant="outline"
+                className="w-full mt-4 h-10 text-sm font-medium border-primary/20 hover:bg-primary/10 hover:border-primary/40 transition-all duration-300"
+                onClick={() => navigate('/admin/merchants')}
+              >
+                {t('dashboard.merchants.viewAll')}
+              </Button>
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-center py-8 text-sm">
+              {t('dashboard.merchants.noData')}
+            </p>
+          )}
         </CardContent>
       </Card>
 
       {/* Geographic Distribution */}
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center text-slate-900">
-            <MapPin className="h-5 w-5 mr-2 text-green-600" />
-            {t('dashboard.merchantOverview.geographicDistribution')}
+      <Card className="glass-card-solid hover-lift group border-0">
+        <div className="absolute inset-0 gradient-accent opacity-5 group-hover:opacity-10 transition-opacity duration-300 rounded-xl" />
+        <CardHeader className="relative pb-4">
+          <CardTitle className="flex items-center gap-3 text-lg font-bold text-foreground">
+            <div className="p-2 rounded-xl gradient-bright">
+              <MapPin className="h-5 w-5 text-white" />
+            </div>
+            {t('dashboard.merchants.geographicDistribution')}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {topCities.map((cityData, index) => {
-              const percentage = merchantData?.totalMerchants 
-                ? Math.round((cityData.count / merchantData.totalMerchants) * 100)
-                : 0;
+        <CardContent className="relative">
+          {data?.topCities && data.topCities.length > 0 ? (
+            <div className="space-y-3">
+              {data.topCities.slice(0, 6).map((location, index) => (
+                <div key={location.city} className="flex items-center justify-between p-3 bg-muted/20 hover:bg-muted/30 rounded-xl cursor-pointer group/item transition-all duration-200">
+                  <div className="flex items-center space-x-2">
+                    <div 
+                      className="w-3 h-3 rounded-full shadow-sm"
+                      style={{ 
+                        background: `hsl(${180 + index * 40}, 100%, ${60 - index * 8}%)` 
+                      }}
+                    ></div>
+                    <span className="font-medium text-foreground text-sm group-hover/item:text-primary transition-colors">{location.city}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-sm text-foreground">{location.count}</span>
+                    <div className="text-xs text-muted-foreground">({Math.round((location.count / (data?.totalMerchants || 1)) * 100)}%)</div>
+                  </div>
+                </div>
+              ))}
               
-              return (
-                <div key={cityData.city} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                      <div className={`w-3 h-3 rounded-full ${
-                        index === 0 ? 'bg-green-500' : 
-                        index === 1 ? 'bg-blue-500' : 
-                        index === 2 ? 'bg-yellow-500' : 
-                        index === 3 ? 'bg-purple-500' : 'bg-slate-400'
-                      }`}></div>
-                      <span className="font-medium text-sm text-slate-900">{cityData.city}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-semibold text-slate-900">{cityData.count}</span>
-                      <span className="text-xs text-slate-500 ml-1">({percentage}%)</span>
-                    </div>
-                  </div>
-                  <Progress value={percentage} className="h-2" />
+              {/* Summary Stats */}
+              <div className="border-t border-border pt-4 mt-4 space-y-3">
+                <div className="flex justify-between items-center p-3 bg-muted/20 rounded-xl">
+                  <span className="text-muted-foreground text-sm">{t('dashboard.merchants.totalMerchants')}:</span>
+                  <span className="font-bold text-sm text-foreground">{data?.totalMerchants || 0}</span>
                 </div>
-              );
-            })}
-            
-            {topCities.length === 0 && (
-              <div className="text-center py-6 text-slate-500">
-                <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">{t('dashboard.merchantOverview.noLocationData')}</p>
-              </div>
-            )}
-
-            {/* Summary Stats */}
-            <div className="pt-4 border-t border-slate-200 mt-6">
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-slate-900">
-                    {merchantData?.totalMerchants || 0}
-                  </div>
-                  <div className="text-xs text-slate-600">{t('dashboard.merchantOverview.totalMerchants')}</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-slate-900">
-                    {merchantData?.totalLocations || 0}
-                  </div>
-                  <div className="text-xs text-slate-600">{t('dashboard.merchantOverview.totalLocations')}</div>
+                <div className="flex justify-between items-center p-3 bg-muted/20 rounded-xl">
+                  <span className="text-muted-foreground text-sm">{t('dashboard.merchants.totalLocations')}:</span>
+                  <span className="font-bold text-sm text-foreground">{data?.totalLocations || 0}</span>
                 </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <p className="text-muted-foreground text-center py-8 text-sm">
+              {t('dashboard.merchants.noLocationData')}
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>

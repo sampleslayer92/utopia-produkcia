@@ -15,7 +15,8 @@ import {
   Network,
   Settings,
   Warehouse,
-  BarChart3
+  BarChart3,
+  Palette
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -105,6 +106,15 @@ const AdminSidebar = () => {
       active: location.pathname === getDashboardPath(),
       type: 'single'
     },
+    // Only show Design for admin
+    ...(userRole?.role === 'admin' ? [{
+      id: 'design',
+      title: 'Design',
+      icon: Palette,
+      path: "/admin/design",
+      active: location.pathname === "/admin/design",
+      type: 'single' as const
+    }] : []),
     // Only show deals for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'deals',
