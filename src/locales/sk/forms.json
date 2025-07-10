@@ -18,6 +18,7 @@
         "devices": "Zariadenia"
       },
       "types": "typov",
+      "products": "produktov",
       "categoryNames": {
         "software": "Softvér",
         "technical": "Technické služby",
