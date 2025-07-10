@@ -290,8 +290,8 @@
     }
   },
   "requests": {
-    "title": "Správa žiadostí",
-    "subtitle": "Prehľad a správa všetkých žiadostí ktoré ešte nie sú podpísané",
+    "title": "Žiadosti",
+    "subtitle": "Správa žiadostí ktoré ešte nie sú podpísané",
     "stats": {
       "pendingRequests": "Čakajúce žiadosti",
       "awaitingReview": "Čakajú na kontrolu",

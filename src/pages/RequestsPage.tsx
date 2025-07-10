@@ -17,7 +17,7 @@ const RequestsPage = () => {
   // Initialize filters for requests (unsigned contracts)
   const [filters, setFilters] = useState({
     search: '',
-    status: 'draft,submitted,approved,rejected,in_progress,sent_to_client,email_viewed,step_completed,contract_generated,waiting_for_signature,lost', // All except signed
+    status: 'all',
     merchant: 'all',
     source: 'all'
   });
