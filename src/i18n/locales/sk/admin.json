@@ -1323,13 +1323,12 @@
       "resettingColumns": "Chyba pri obnovovaní stĺpcov",
       "loadingDeals": "Chyba pri načítavaní dát: {{message}}"
     }
-  }
-    "errors": {
-      "statusCreate": "Chyba pri vytváraní statusu",
-      "statusUpdate": "Chyba pri aktualizácii",
-      "statusDelete": "Chyba pri mazaní statusu",
-      "profileUpdate": "Chyba pri aktualizácii profilu",
-      "passwordChange": "Chyba pri zmene hesla"
-    }
+  },
+  "errors": {
+    "statusCreate": "Chyba pri vytváraní statusu",
+    "statusUpdate": "Chyba pri aktualizácii",
+    "statusDelete": "Chyba pri mazaní statusu",
+    "profileUpdate": "Chyba pri aktualizácii profilu",
+    "passwordChange": "Chyba pri zmene hesla"
   }
 }
