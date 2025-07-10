@@ -3,29 +3,17 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import AdminLayout from "@/components/admin/AdminLayout";
 import MerchantsTable from "@/components/admin/MerchantsTable";
-import MerchantFilters from "@/components/admin/MerchantFilters";
 import AddMerchantModal from "@/components/admin/AddMerchantModal";
-import CollapsibleFilters from "@/components/admin/shared/CollapsibleFilters";
 import StatsCardsSection from "@/components/admin/shared/StatsCardsSection";
 import { useMerchantsStats } from "@/hooks/useAdminStats";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Building2, HandCoins, TrendingUp } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const MerchantsPage = () => {
   const { t } = useTranslation('admin');
   const { data: stats, isLoading: statsLoading } = useMerchantsStats();
   const [showAddMerchantModal, setShowAddMerchantModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [filters, setFilters] = useState({
-    search: '',
-    city: 'all',
-    hasContracts: 'all',
-    profitRange: 'all'
-  });
-  const isMobile = useIsMobile();
-
-  const activeFiltersCount = Object.values(filters).filter(value => value !== '' && value !== 'all').length;
 
   const statsCards = [
     {
@@ -79,13 +67,7 @@ const MerchantsPage = () => {
     >
       <div className="space-y-4 md:space-y-6">
         <StatsCardsSection stats={statsCards} isLoading={statsLoading} />
-        <CollapsibleFilters activeFiltersCount={activeFiltersCount}>
-          <MerchantFilters 
-            filters={filters}
-            onFiltersChange={setFilters}
-          />
-        </CollapsibleFilters>
-        <MerchantsTable key={refreshKey} filters={filters} />
+        <MerchantsTable key={refreshKey} />
       </div>
       <AddMerchantModal 
         open={showAddMerchantModal}

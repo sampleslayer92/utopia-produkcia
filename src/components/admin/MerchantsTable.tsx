@@ -1,20 +1,12 @@
 
 import { useTranslation } from 'react-i18next';
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Building2, Calendar, Mail, User, Euro, FileText } from "lucide-react";
+import { Building2, Calendar, Mail, User, Euro, FileText, MapPin, TrendingUp } from "lucide-react";
 import { useMerchantsData, Merchant } from "@/hooks/useMerchantsData";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DataTable, DataTableColumn } from "@/components/ui/data-table";
 import MerchantCard from "./MerchantCard";
 
 interface MerchantsTableProps {
@@ -33,78 +25,176 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const handleRowClick = (merchantId: string) => {
-    navigate(`/admin/merchant/${merchantId}/view`);
+  const handleRowClick = (merchant: Merchant) => {
+    navigate(`/admin/merchant/${merchant.id}/view`);
   };
 
-  if (isLoading) {
-    return (
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-slate-900">{t('merchants.table.title')}</CardTitle>
-          <CardDescription className="text-slate-600">
-            {t('table.loading')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  const cities = [
+    'Bratislava',
+    'Košice', 
+    'Prešov',
+    'Žilina',
+    'Banská Bystrica',
+    'Nitra',
+    'Trnava',
+    'Trenčín'
+  ];
 
-  if (error) {
-    return (
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-slate-900">{t('merchants.table.title')}</CardTitle>
-          <CardDescription className="text-red-600">
-            {t('table.error', { message: error.message })}
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
+  const contractOptions = [
+    { value: 'true', label: t('merchants.filters.withContracts') },
+    { value: 'false', label: t('merchants.filters.withoutContracts') }
+  ];
 
-  if (!merchants || merchants.length === 0) {
-    return (
-      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-slate-900">{t('merchants.table.title')}</CardTitle>
-          <CardDescription className="text-slate-600">
-            {t('table.emptySubtitle')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 text-slate-500">
-            <Building2 className="h-12 w-12 mb-4" />
-            <p className="text-center">{t('table.emptyMessage')}</p>
+  const profitRangeOptions = [
+    { value: '0-100', label: '€0 - €100' },
+    { value: '100-500', label: '€100 - €500' },
+    { value: '500-1000', label: '€500 - €1000' },
+    { value: '1000+', label: '€1000+' }
+  ];
+
+  const columns: DataTableColumn<Merchant>[] = [
+    {
+      key: 'company',
+      header: t('merchants.table.company'),
+      accessor: (merchant) => (
+        <div className="flex items-center space-x-3">
+          <div className="p-2 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 transition-all">
+            <Building2 className="h-4 w-4 text-blue-600" />
           </div>
-        </CardContent>
-      </Card>
-    );
-  }
+          <div>
+            <p className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">{merchant.company_name}</p>
+            {merchant.address_city && (
+              <div className="flex items-center text-sm text-slate-500 mt-0.5">
+                <MapPin className="h-3 w-3 mr-1" />
+                <span>{merchant.address_city}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      ),
+      filter: {
+        type: 'text',
+        placeholder: t('merchants.filters.searchPlaceholder')
+      }
+    },
+    {
+      key: 'contact',
+      header: t('merchants.table.contactPerson'),
+      accessor: (merchant) => (
+        <div className="flex items-center space-x-3">
+          <div className="p-2 rounded-full bg-gradient-to-br from-slate-100 to-slate-200">
+            <User className="h-4 w-4 text-slate-600" />
+          </div>
+          <div>
+            <p className="font-medium text-slate-900">{merchant.contact_person_name}</p>
+            <div className="flex items-center text-sm text-slate-500 mt-0.5">
+              <Mail className="h-3 w-3 mr-1" />
+              <span className="hover:text-blue-600 transition-colors cursor-pointer">{merchant.contact_person_email}</span>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'city',
+      header: t('merchants.table.city'),
+      accessor: (merchant) => (
+        <div className="flex items-center space-x-2">
+          <MapPin className="h-4 w-4 text-slate-400" />
+          <span className="text-slate-700 font-medium">{merchant.address_city || 'N/A'}</span>
+        </div>
+      ),
+      filter: {
+        type: 'select',
+        options: cities.map(city => ({ value: city, label: city })),
+        placeholder: t('merchants.filters.allCities')
+      }
+    },
+    {
+      key: 'ico',
+      header: t('table.columns.ico'),
+      accessor: (merchant) => (
+        <span className="font-mono text-slate-700 bg-slate-100 px-2 py-1 rounded text-sm">
+          {merchant.ico || 'N/A'}
+        </span>
+      ),
+      className: "text-slate-700"
+    },
+    {
+      key: 'contracts',
+      header: t('merchants.table.contracts'),
+      accessor: (merchant) => (
+        <div className="flex items-center space-x-2">
+          <div className="p-1.5 rounded-full bg-gradient-to-br from-blue-100 to-blue-200">
+            <FileText className="h-3 w-3 text-blue-600" />
+          </div>
+          <Badge 
+            variant="secondary" 
+            className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border-blue-200 font-medium"
+          >
+            {merchant.contract_count || 0}
+          </Badge>
+        </div>
+      ),
+      filter: {
+        type: 'select',
+        options: contractOptions,
+        placeholder: t('merchants.filters.allMerchants')
+      }
+    },
+    {
+      key: 'profit',
+      header: t('merchants.table.monthlyProfit'),
+      accessor: (merchant) => (
+        <div className="flex items-center space-x-2">
+          <div className="p-1.5 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-200">
+            <TrendingUp className="h-3 w-3 text-emerald-600" />
+          </div>
+          <div className="px-3 py-1 rounded-full bg-gradient-to-r from-emerald-100 to-emerald-200 border border-emerald-200">
+            <span className="font-semibold text-emerald-800">
+              €{(merchant.total_monthly_profit || 0).toFixed(2)}
+            </span>
+          </div>
+        </div>
+      ),
+      filter: {
+        type: 'select',
+        options: profitRangeOptions,
+        placeholder: t('merchants.filters.allValues')
+      }
+    },
+    {
+      key: 'created',
+      header: t('merchants.table.created'),
+      accessor: (merchant) => (
+        <div className="flex items-center space-x-2 text-slate-600">
+          <Calendar className="h-4 w-4 text-slate-400" />
+          <span className="text-sm font-medium">
+            {format(new Date(merchant.created_at), 'dd.MM.yyyy')}
+          </span>
+        </div>
+      )
+    }
+  ];
 
   // Mobile Card Layout
   if (isMobile) {
     return (
       <div className="space-y-4">
         <div className="px-1">
-          <h2 className="text-lg font-semibold text-slate-900 mb-1">{t('merchants.table.title')}</h2>
-          <p className="text-sm text-slate-600">
-            {t('merchants.table.overview', { count: merchants.length })}
+          <h2 className="text-xl font-bold text-slate-900 mb-2">{t('merchants.table.title')}</h2>
+          <p className="text-sm text-slate-600 bg-gradient-to-r from-slate-100 to-blue-100 px-3 py-2 rounded-lg border border-slate-200">
+            {t('merchants.table.overview', { count: merchants?.length || 0 })}
           </p>
         </div>
-        <div className="space-y-3">
-          {merchants.map((merchant: Merchant) => (
+        <div className="space-y-4">
+          {merchants?.map((merchant: Merchant) => (
             <MerchantCard
               key={merchant.id}
               merchant={merchant}
               onClick={handleRowClick}
             />
-          ))}
+          )) || []}
         </div>
       </div>
     );
@@ -112,90 +202,17 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
 
   // Desktop Table Layout
   return (
-    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="text-slate-900">{t('merchants.table.title')}</CardTitle>
-        <CardDescription className="text-slate-600">
-          {t('merchants.table.overview', { count: merchants.length })}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-lg border border-slate-200 overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">{t('merchants.table.company')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('merchants.table.contactPerson')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('table.columns.ico')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('merchants.table.contracts')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('merchants.table.monthlyProfit')}</TableHead>
-                <TableHead className="font-medium text-slate-700">{t('merchants.table.created')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {merchants.map((merchant: Merchant) => (
-                <TableRow 
-                  key={merchant.id} 
-                  className="hover:bg-slate-50/50 cursor-pointer transition-colors"
-                  onClick={() => handleRowClick(merchant.id)}
-                >
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Building2 className="h-4 w-4 text-slate-500" />
-                      <div>
-                        <p className="font-medium text-slate-900">{merchant.company_name}</p>
-                        {merchant.address_city && (
-                          <p className="text-sm text-slate-600">{merchant.address_city}</p>
-                        )}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-slate-500" />
-                      <div>
-                        <p className="font-medium text-slate-900">{merchant.contact_person_name}</p>
-                        <p className="text-sm text-slate-600 flex items-center">
-                          <Mail className="h-3 w-3 mr-1" />
-                          {merchant.contact_person_email}
-                        </p>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-slate-700">
-                    {merchant.ico || 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <FileText className="h-4 w-4 text-slate-500" />
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                        {t('merchants.table.contractsCount', { count: merchant.contract_count || 0 })}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Euro className="h-4 w-4 text-emerald-600" />
-                      <span className="font-medium text-emerald-600">
-                        €{(merchant.total_monthly_profit || 0).toFixed(2)}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2 text-slate-600">
-                      <Calendar className="h-4 w-4" />
-                      <span className="text-sm">
-                        {format(new Date(merchant.created_at), 'dd.MM.yyyy')}
-                      </span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+    <DataTable
+      data={merchants || []}
+      columns={columns}
+      title={t('merchants.table.title')}
+      subtitle={t('merchants.table.overview', { count: merchants?.length || 0 })}
+      isLoading={isLoading}
+      error={error}
+      onRowClick={handleRowClick}
+      emptyMessage={t('table.emptyMessage')}
+      emptyIcon={<Building2 className="h-12 w-12 text-slate-400" />}
+    />
   );
 };
 

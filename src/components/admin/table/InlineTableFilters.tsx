@@ -45,16 +45,23 @@ export const InlineTableFilter = ({
     switch (type) {
       case 'text':
         return (
-          <div className="w-60 p-3">
-            <Input
-              placeholder={placeholder}
-              value={(value as string) || ''}
-              onChange={(e) => onValueChange(e.target.value || undefined)}
-              className="mb-3"
-            />
-            <div className="flex justify-end">
-              <Button variant="outline" size="sm" onClick={clearFilter}>
+          <div className="w-64 p-4 space-y-4">
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-2 block">Vyhľadávanie</label>
+              <Input
+                placeholder={placeholder}
+                value={(value as string) || ''}
+                onChange={(e) => onValueChange(e.target.value || undefined)}
+                className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="flex justify-between">
+              <Button variant="outline" size="sm" onClick={clearFilter} className="text-slate-600">
+                <X className="h-3 w-3 mr-1" />
                 Vymazať
+              </Button>
+              <Button size="sm" onClick={() => setIsOpen(false)} className="bg-blue-600 hover:bg-blue-700">
+                Použiť
               </Button>
             </div>
           </div>
@@ -62,26 +69,33 @@ export const InlineTableFilter = ({
 
       case 'select':
         return (
-          <div className="w-60 p-3">
-            <Select 
-              value={(value as string) || 'all'} 
-              onValueChange={(val) => onValueChange(val === 'all' ? undefined : val)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={placeholder} />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="all">Všetky</SelectItem>
-                {options?.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="flex justify-end mt-3">
-              <Button variant="outline" size="sm" onClick={clearFilter}>
-                Vymazať
+          <div className="w-64 p-4 space-y-4">
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-2 block">Výber možnosti</label>
+              <Select 
+                value={(value as string) || 'all'} 
+                onValueChange={(val) => onValueChange(val === 'all' ? undefined : val)}
+              >
+                <SelectTrigger className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+                <SelectContent className="bg-white border border-slate-200 shadow-lg">
+                  <SelectItem value="all" className="text-slate-700">Všetky možnosti</SelectItem>
+                  {options?.map(option => (
+                    <SelectItem key={option.value} value={option.value} className="text-slate-700">
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-between">
+              <Button variant="outline" size="sm" onClick={clearFilter} className="text-slate-600">
+                <X className="h-3 w-3 mr-1" />
+                Vymazać
+              </Button>
+              <Button size="sm" onClick={() => setIsOpen(false)} className="bg-blue-600 hover:bg-blue-700">
+                Použiť
               </Button>
             </div>
           </div>
@@ -90,30 +104,43 @@ export const InlineTableFilter = ({
       case 'date-range':
         const dateValue = value as { from: string; to: string } | undefined;
         return (
-          <div className="w-80 p-3">
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <Input
-                type="date"
-                placeholder="Od"
-                value={dateValue?.from || ''}
-                onChange={(e) => onValueChange({
-                  from: e.target.value,
-                  to: dateValue?.to || ''
-                })}
-              />
-              <Input
-                type="date"
-                placeholder="Do"
-                value={dateValue?.to || ''}
-                onChange={(e) => onValueChange({
-                  from: dateValue?.from || '',
-                  to: e.target.value
-                })}
-              />
+          <div className="w-80 p-4 space-y-4">
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-2 block">Časové obdobie</label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-slate-500 mb-1 block">Od</label>
+                  <Input
+                    type="date"
+                    value={dateValue?.from || ''}
+                    onChange={(e) => onValueChange({
+                      from: e.target.value,
+                      to: dateValue?.to || ''
+                    })}
+                    className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-500 mb-1 block">Do</label>
+                  <Input
+                    type="date"
+                    value={dateValue?.to || ''}
+                    onChange={(e) => onValueChange({
+                      from: dateValue?.from || '',
+                      to: e.target.value
+                    })}
+                    className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
             </div>
-            <div className="flex justify-end">
-              <Button variant="outline" size="sm" onClick={clearFilter}>
+            <div className="flex justify-between">
+              <Button variant="outline" size="sm" onClick={clearFilter} className="text-slate-600">
+                <X className="h-3 w-3 mr-1" />
                 Vymazať
+              </Button>
+              <Button size="sm" onClick={() => setIsOpen(false)} className="bg-blue-600 hover:bg-blue-700">
+                Použiť
               </Button>
             </div>
           </div>
@@ -130,18 +157,21 @@ export const InlineTableFilter = ({
         <Button 
           variant="ghost" 
           size="sm" 
-          className={`h-6 w-6 p-0 hover:bg-slate-100 ${hasActiveFilter ? 'text-blue-600' : 'text-slate-400'}`}
+          className={`h-8 w-8 p-0 hover:bg-slate-100 transition-colors duration-200 ${
+            hasActiveFilter ? 'text-blue-600 bg-blue-50' : 'text-slate-400'
+          }`}
         >
           {hasActiveFilter ? (
-            <Badge variant="secondary" className="h-4 w-4 p-0 flex items-center justify-center">
-              <Filter className="h-3 w-3" />
-            </Badge>
+            <div className="relative">
+              <Filter className="h-4 w-4" />
+              <div className="absolute -top-1 -right-1 h-2 w-2 bg-blue-600 rounded-full"></div>
+            </div>
           ) : (
-            <Filter className="h-3 w-3" />
+            <Filter className="h-4 w-4" />
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 bg-white border border-slate-200" align="start">
+      <PopoverContent className="p-0 bg-white border border-slate-200 shadow-xl" align="start">
         {renderFilterContent()}
       </PopoverContent>
     </Popover>
