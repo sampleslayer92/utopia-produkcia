@@ -2,8 +2,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Minus, Plus, ShoppingCart, ChevronDown, ChevronUp } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { DeviceCard, ServiceCard } from "@/types/onboarding";
 import { BusinessLocation } from "@/types/business";
@@ -35,9 +36,9 @@ const UnifiedProductModal = ({
   businessLocations
 }: UnifiedProductModalProps) => {
   const { t } = useTranslation('forms');
+  const { toast } = useToast();
   const [paymentMethod, setPaymentMethod] = useState<'rental' | 'purchase'>('rental');
-  const [addonsExpanded, setAddonsExpanded] = useState(false);
-  const [specsExpanded, setSpecsExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic');
 
   const {
     formData,
@@ -95,7 +96,12 @@ const UnifiedProductModal = ({
     try {
       // Validate location selection if multiple locations exist
       if (businessLocations.length > 1 && !formData.locationId) {
-        console.error('Location selection is required');
+        toast({
+          title: "Chyba",
+          description: "Musíte vybrať prevádzku",
+          variant: "destructive",
+        });
+        setActiveTab('basic'); // Switch to basic tab to show the error
         return;
       }
 
@@ -113,10 +119,24 @@ const UnifiedProductModal = ({
       });
 
       console.log('Generated card with UUID:', savedCard.id);
+      
+      // Call the onSave callback to actually save the product
       onSave(savedCard);
+      
+      // Show success message
+      toast({
+        title: "Úspech",
+        description: mode === 'add' ? "Produkt bol pridaný do košíka" : "Produkt bol aktualizovaný",
+      });
+      
       onClose();
     } catch (error) {
       console.error('Error saving product:', error);
+      toast({
+        title: "Chyba",
+        description: "Nepodarilo sa uložiť produkt",
+        variant: "destructive",
+      });
     }
   };
 
@@ -153,143 +173,164 @@ const UnifiedProductModal = ({
               <p className="text-muted-foreground mt-2">{formData.description}</p>
             </DialogHeader>
 
-            <div className="flex-1 space-y-6">
-              {/* Basic Product Form */}
-              <ProductForm 
-                formData={formData} 
-                onUpdateField={updateField}
-                businessLocations={businessLocations}
-              />
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="basic">Základné</TabsTrigger>
+                <TabsTrigger value="pricing">Ceny</TabsTrigger>
+                <TabsTrigger value="addons">Doplnky</TabsTrigger>
+                <TabsTrigger value="specs">Špecifikácie</TabsTrigger>
+              </TabsList>
 
-              {/* Quantity Selection */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  {t('deviceSelection.modal.quantity')}
-                </label>
-                <div className="flex items-center space-x-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleQuantityChange(-1)}
-                    disabled={formData.count <= 1}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="text-lg font-semibold min-w-[3rem] text-center">
-                    {formData.count}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleQuantityChange(1)}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+              <div className="flex-1 mt-6">
+                <TabsContent value="basic" className="space-y-6 mt-0">
+                  {/* Basic Information */}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Názov</label>
+                      <p className="text-sm text-muted-foreground">{formData.name}</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Popis</label>
+                      <p className="text-sm text-muted-foreground">{formData.description}</p>
+                    </div>
 
-              {/* Payment Method for devices */}
-              {productType === 'device' && product?.purchasePrice > 0 && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Spôsob platby
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      variant={paymentMethod === 'rental' ? 'default' : 'outline'}
-                      onClick={() => setPaymentMethod('rental')}
-                      className="justify-start"
-                    >
-                      Prenájom
-                    </Button>
-                    <Button
-                      variant={paymentMethod === 'purchase' ? 'default' : 'outline'}
-                      onClick={() => setPaymentMethod('purchase')}
-                      className="justify-start"
-                    >
-                      Kúpa
-                    </Button>
+                    {/* Location Selection */}
+                    {businessLocations.length > 1 && (
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">
+                          Prevádzka <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          value={formData.locationId || ""}
+                          onChange={(e) => updateField('locationId', e.target.value)}
+                          className="w-full p-2 border border-input rounded-md bg-background"
+                        >
+                          <option value="">Vyberte prevádzku</option>
+                          {businessLocations.map((location) => (
+                            <option key={location.id} value={location.id}>
+                              {location.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
+                    {/* Quantity Selection */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        {t('deviceSelection.modal.quantity')}
+                      </label>
+                      <div className="flex items-center space-x-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuantityChange(-1)}
+                          disabled={formData.count <= 1}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="text-lg font-semibold min-w-[3rem] text-center">
+                          {formData.count}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuantityChange(1)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Payment Method for devices */}
+                    {productType === 'device' && product?.purchasePrice > 0 && (
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">
+                          Spôsob platby
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            variant={paymentMethod === 'rental' ? 'default' : 'outline'}
+                            onClick={() => setPaymentMethod('rental')}
+                            className="justify-start"
+                          >
+                            Prenájom
+                          </Button>
+                          <Button
+                            variant={paymentMethod === 'purchase' ? 'default' : 'outline'}
+                            onClick={() => setPaymentMethod('purchase')}
+                            className="justify-start"
+                          >
+                            Kúpa
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                </TabsContent>
 
-              {/* Pricing Information */}
-              <Card>
-                <CardContent className="p-4 space-y-3">
-                   <div className="flex justify-between items-center">
-                     <span className="text-sm text-muted-foreground">Mesačný poplatok za 1 kus:</span>
-                     <span className="font-semibold">€{monthlyFeePerUnit.toFixed(2)}</span>
-                   </div>
-                   
-                   <div className="flex justify-between items-center">
-                     <span className="text-sm text-muted-foreground">Mesačný náklad pre firmu za 1 kus:</span>
-                     <span className="font-semibold">€{companyCostPerUnit.toFixed(2)}</span>
-                   </div>
+                <TabsContent value="pricing" className="space-y-6 mt-0">
+                  <Card>
+                    <CardContent className="p-4 space-y-3">
+                       <div className="flex justify-between items-center">
+                         <span className="text-sm text-muted-foreground">Mesačný poplatok za 1 kus:</span>
+                         <span className="font-semibold">€{monthlyFeePerUnit.toFixed(2)}</span>
+                       </div>
+                       
+                       <div className="flex justify-between items-center">
+                         <span className="text-sm text-muted-foreground">Mesačný náklad pre firmu za 1 kus:</span>
+                         <span className="font-semibold">€{companyCostPerUnit.toFixed(2)}</span>
+                       </div>
 
-                  {paymentMethod === 'purchase' && purchasePrice > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Nákupná cena za 1 kus:</span>
-                      <span className="font-semibold">€{purchasePrice.toFixed(2)}</span>
-                    </div>
-                  )}
+                      {paymentMethod === 'purchase' && purchasePrice > 0 && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">Nákupná cena za 1 kus:</span>
+                          <span className="font-semibold">€{purchasePrice.toFixed(2)}</span>
+                        </div>
+                      )}
 
-                  <hr className="my-3" />
+                      <hr className="my-3" />
 
-                   <div className="flex justify-between items-center text-lg">
-                     <span className="font-semibold">Celkový mesačný poplatok:</span>
-                     <span className="font-bold text-primary">€{finalMonthlyFee.toFixed(2)}</span>
-                   </div>
+                       <div className="flex justify-between items-center text-lg">
+                         <span className="font-semibold">Celkový mesačný poplatok:</span>
+                         <span className="font-bold text-primary">€{finalMonthlyFee.toFixed(2)}</span>
+                       </div>
 
-                   <div className="flex justify-between items-center">
-                     <span className="text-sm text-muted-foreground">Celkový mesačný náklad:</span>
-                     <span className="font-semibold">€{finalCompanyCost.toFixed(2)}</span>
-                   </div>
+                       <div className="flex justify-between items-center">
+                         <span className="text-sm text-muted-foreground">Celkový mesačný náklad:</span>
+                         <span className="font-semibold">€{finalCompanyCost.toFixed(2)}</span>
+                       </div>
 
-                  {paymentMethod === 'purchase' && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Celková nákupná cena:</span>
-                      <span className="font-semibold text-green-600">€{totalPurchasePrice.toFixed(2)}</span>
-                    </div>
-                  )}
+                      {paymentMethod === 'purchase' && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">Celková nákupná cena:</span>
+                          <span className="font-semibold text-green-600">€{totalPurchasePrice.toFixed(2)}</span>
+                        </div>
+                      )}
 
-                   <div className="flex justify-between items-center">
-                     <span className="text-sm text-muted-foreground">Mesačná marža:</span>
-                     <span className={`font-semibold ${(finalMonthlyFee - finalCompanyCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                       €{(finalMonthlyFee - finalCompanyCost).toFixed(2)}
-                     </span>
-                   </div>
-                </CardContent>
-              </Card>
+                       <div className="flex justify-between items-center">
+                         <span className="text-sm text-muted-foreground">Mesačná marža:</span>
+                         <span className={`font-semibold ${(finalMonthlyFee - finalCompanyCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                           €{(finalMonthlyFee - finalCompanyCost).toFixed(2)}
+                         </span>
+                       </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
 
-              {/* Addons Section - Collapsible */}
-              <Collapsible open={addonsExpanded} onOpenChange={setAddonsExpanded}>
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-0 h-auto">
-                    <span className="text-sm font-medium">Doplnky a príslušenstvo</span>
-                    {addonsExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4 mt-4">
+                <TabsContent value="addons" className="space-y-4 mt-0">
                   <EnhancedAddonManager
                     selectedAddons={selectedAddons}
                     onAddAddon={handleAddAddon}
                     onRemoveAddon={handleRemoveAddon}
                     onUpdateAddon={handleUpdateAddon}
                   />
-                </CollapsibleContent>
-              </Collapsible>
+                </TabsContent>
 
-              {/* Specifications - Collapsible */}
-              {displayProduct?.specifications && displayProduct.specifications.length > 0 && (
-                <Collapsible open={specsExpanded} onOpenChange={setSpecsExpanded}>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" className="w-full justify-between p-0 h-auto">
-                      <span className="text-sm font-medium">Špecifikácie</span>
-                      {specsExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="space-y-2 mt-4">
-                    <ul className="text-sm text-muted-foreground space-y-1">
+                <TabsContent value="specs" className="space-y-4 mt-0">
+                  {displayProduct?.specifications && displayProduct.specifications.length > 0 ? (
+                    <ul className="text-sm text-muted-foreground space-y-2">
                       {displayProduct.specifications.map((spec: string, index: number) => (
                         <li key={index} className="flex items-start gap-2">
                           <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
@@ -297,10 +338,12 @@ const UnifiedProductModal = ({
                         </li>
                       ))}
                     </ul>
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
-            </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Žiadne špecifikácie nie sú dostupné.</p>
+                  )}
+                </TabsContent>
+              </div>
+            </Tabs>
 
             {/* Action Buttons */}
             <div className="flex justify-end space-x-3 pt-6 border-t mt-6">
