@@ -53,67 +53,31 @@ export const NotificationDropdown = () => {
         </div>
       </div>
 
-      {/* Category Tabs */}
-      <div className="px-4 pb-2">
-        <Tabs value={filters.category} onValueChange={(value) => updateFilter('category', value as NotificationCategory)}>
-          <TabsList className="grid w-full grid-cols-4 h-8">
-            {notificationCategories.map((category) => {
-              const categoryCount = category.id === 'all' 
-                ? notifications.length 
-                : notifications.filter(n => 
-                    category.types.includes(n.type)
-                  ).length;
-              
-              return (
-                <TabsTrigger 
-                  key={category.id} 
-                  value={category.id}
-                  className="text-xs px-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  <span className="mr-1">{category.icon}</span>
-                  <span className="hidden sm:inline">{category.label}</span>
-                  {categoryCount > 0 && (
-                    <span className="ml-1 text-xs opacity-75">
-                      {categoryCount}
-                    </span>
-                  )}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-        </Tabs>
-      </div>
-
       <Separator />
 
       {/* Notifications List */}
       <ScrollArea className="h-[350px]">
-        {filteredNotifications.length === 0 ? (
+        {notifications.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground">
             <Bell className="h-10 w-10 mx-auto mb-3 opacity-50" />
             <p className="text-sm font-medium mb-1">
-              {filters.category === 'all' ? t('notifications.empty') : t('notifications.noCategoryNotifications')}
+              {t('notifications.empty')}
             </p>
-            {filters.category !== 'all' && (
-              <p className="text-xs opacity-75">
-                {t('notifications.tryDifferentCategory')}
-              </p>
-            )}
           </div>
         ) : (
           <div className="divide-y">
-            {filteredNotifications.slice(0, 8).map((notification) => (
+            {notifications.slice(0, 8).map((notification) => (
               <NotificationItem
                 key={notification.id}
                 notification={notification}
               />
             ))}
-            {filteredNotifications.length > 8 && (
+            {notifications.length > 8 && (
               <div className="p-3 text-center border-t bg-muted/20">
                 <p className="text-xs text-muted-foreground mb-2">
                   {t('notifications.showingCount', { 
                     shown: 8, 
-                    total: filteredNotifications.length 
+                    total: notifications.length 
                   })}
                 </p>
               </div>

@@ -16,7 +16,8 @@ import {
   Network,
   Settings,
   Warehouse,
-  BarChart3
+  BarChart3,
+  Bell
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -281,6 +282,15 @@ const AdminSidebar = () => {
         }
       ]
     }] : []),
+    // Notifications for all roles
+    {
+      id: 'notifications',
+      title: t('navigation.notifications'),
+      icon: Bell,
+      path: "/admin/notifications",
+      active: location.pathname.startsWith("/admin/notifications"),
+      type: 'single' as const
+    },
     // Settings for all roles
     {
       id: 'settings',
