@@ -945,6 +945,51 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          entity_type: Database["public"]["Enums"]["entity_type"] | null
+          id: string
+          is_read: boolean
+          message: string
+          priority: Database["public"]["Enums"]["notification_priority"]
+          read_at: string | null
+          related_entity_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entity_type?: Database["public"]["Enums"]["entity_type"] | null
+          id?: string
+          is_read?: boolean
+          message: string
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          related_entity_id?: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entity_type?: Database["public"]["Enums"]["entity_type"] | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          related_entity_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       organizations: {
         Row: {
           color: string | null
@@ -1308,6 +1353,13 @@ export type Database = {
         | "not_interested"
         | "technical_issues"
         | "other"
+      notification_priority: "low" | "medium" | "high" | "critical"
+      notification_type:
+        | "contract_created"
+        | "contract_status_changed"
+        | "merchant_registered"
+        | "error_occurred"
+        | "system_alert"
       registry_type: "public" | "business" | "other"
       salutation_type: "Pan" | "Pani"
       seasonality_type: "year-round" | "seasonal"
@@ -1476,6 +1528,14 @@ export const Constants = {
         "not_interested",
         "technical_issues",
         "other",
+      ],
+      notification_priority: ["low", "medium", "high", "critical"],
+      notification_type: [
+        "contract_created",
+        "contract_status_changed",
+        "merchant_registered",
+        "error_occurred",
+        "system_alert",
       ],
       registry_type: ["public", "business", "other"],
       salutation_type: ["Pan", "Pani"],

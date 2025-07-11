@@ -1294,5 +1294,19 @@
     "drafts": "Drafts",
     "revenue": "Revenue",
     "merchants": "Merchants"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loading": "Loading notifications...",
+    "empty": "No notifications",
+    "markAllRead": "Mark all as read",
+    "settings": "Notification settings",
+    "types": {
+      "contract_created": "New contract",
+      "contract_status_changed": "Contract status changed",
+      "merchant_registered": "New merchant",
+      "error_occurred": "Application error",
+      "system_alert": "System alert"
+    }
   }
 }

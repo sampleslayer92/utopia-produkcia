@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import MobileActionMenu from "./MobileActionMenu";
 import MobileBreadcrumb from "./MobileBreadcrumb";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 interface AdminHeaderProps {
   title: string;
@@ -95,7 +96,10 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
           </div>
 
           {/* Right Side Actions */}
-          <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">            
+          <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">
+            {/* Notifications */}
+            <NotificationBell />
+            
             {/* Dynamic Actions - Mobile-optimized with overflow menu */}
             <MobileActionMenu singleActionMode={true}>
               {Array.isArray(actions) ? actions : actions ? [actions] : []}

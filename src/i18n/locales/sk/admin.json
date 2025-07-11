@@ -402,9 +402,23 @@
           "turnover": "Obrat",
           "pos": "POS",
           "contract": "Zmluva"
-        }
-      }
     }
+  },
+  "notifications": {
+    "title": "Notifikácie",
+    "loading": "Načítavam notifikácie...",
+    "empty": "Žiadne notifikácie",
+    "markAllRead": "Označiť všetky ako prečítané",
+    "settings": "Nastavenia notifikácií",
+    "types": {
+      "contract_created": "Nová zmluva",
+      "contract_status_changed": "Zmena statusu zmluvy",
+      "merchant_registered": "Nový merchant",
+      "error_occurred": "Chyba aplikácie",
+      "system_alert": "Systémové upozornenie"
+    }
+  }
+}
   },
   "warehouse": {
     "title": "Sklad",
