@@ -234,12 +234,14 @@ export const NotificationCenter = () => {
               </p>
             </div>
           ) : (
-            <div className="space-y-1 border rounded-lg overflow-hidden">
-              {filteredNotifications.map((notification) => (
-                <NotificationItem
-                  key={notification.id}
-                  notification={notification}
-                />
+            <div className="space-y-0 border rounded-lg overflow-hidden bg-card">
+              {filteredNotifications.map((notification, index) => (
+                <div key={notification.id}>
+                  <NotificationItem notification={notification} />
+                  {index < filteredNotifications.length - 1 && (
+                    <div className="border-b border-border/50" />
+                  )}
+                </div>
               ))}
             </div>
           )}
