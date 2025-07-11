@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, LogIn } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import UtopiaLogo from "@/assets/utopia-logo.svg";
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -30,40 +30,38 @@ const Welcome = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 md:px-6 pb-8 md:pb-12">
-        <div className="w-full max-w-6xl">
-          
-           {/* Action Cards */}
-           <div className="max-w-2xl mx-auto space-y-3 md:space-y-4 px-4">
-             <Card className="border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-primary/30 group min-h-touch" onClick={handleLogin}>
-               <CardContent className="p-6 md:p-8">
-                 <div className="flex items-center space-x-4 md:space-x-6">
-                   <div className="h-12 w-12 md:h-16 md:w-16 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                     <LogIn className="h-6 w-6 md:h-8 md:w-8 text-primary-foreground" />
-                   </div>
-                   <div className="flex-1 min-w-0">
-                     <h2 className="text-lg md:text-2xl font-semibold text-foreground mb-1 md:mb-2">{t('welcome.login.title')}</h2>
-                     <p className="text-muted-foreground text-sm md:text-lg">{t('welcome.login.description')}</p>
-                   </div>
-                   <ArrowRight className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 flex-shrink-0" />
-                 </div>
-               </CardContent>
-             </Card>
+        <div className="flex flex-col items-center space-y-8 md:space-y-12">
+          {/* Utopia Logo */}
+          <div className="text-center">
+            <img 
+              src={UtopiaLogo} 
+              alt="Utopia" 
+              className="h-20 md:h-28 w-auto mx-auto mb-4 opacity-90" 
+            />
+          </div>
 
-             <Card className="border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-emerald-500/30 group min-h-touch" onClick={handleNewClient}>
-               <CardContent className="p-6 md:p-8">
-                 <div className="flex items-center space-x-4 md:space-x-6">
-                   <div className="h-12 w-12 md:h-16 md:w-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                     <img src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" alt="Utopia Logo" className="h-6 w-6 md:h-8 md:w-8 object-contain brightness-0 invert" />
-                   </div>
-                   <div className="flex-1 min-w-0">
-                     <h2 className="text-lg md:text-2xl font-semibold text-foreground mb-1 md:mb-2">{t('welcome.onboarding.title')}</h2>
-                     <p className="text-muted-foreground text-sm md:text-lg">{t('welcome.onboarding.description')}</p>
-                   </div>
-                   <ArrowRight className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground group-hover:text-emerald-600 group-hover:translate-x-1 transition-all duration-300 flex-shrink-0" />
-                 </div>
-               </CardContent>
-             </Card>
-           </div>
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 w-full max-w-md">
+            <Button
+              onClick={handleLogin}
+              variant="default"
+              size="lg"
+              className="flex items-center justify-center gap-3 h-12 md:h-14 px-6 md:px-8 font-medium text-base md:text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
+            >
+              <LogIn className="h-4 w-4 md:h-5 md:w-5 group-hover:scale-110 transition-transform duration-300" />
+              {t('welcome.login.title')}
+            </Button>
+
+            <Button
+              onClick={handleNewClient}
+              variant="outline"
+              size="lg"
+              className="flex items-center justify-center gap-3 h-12 md:h-14 px-6 md:px-8 font-medium text-base md:text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:bg-primary hover:text-primary-foreground group border-primary/20 hover:border-primary"
+            >
+              <UserPlus className="h-4 w-4 md:h-5 md:w-5 group-hover:scale-110 transition-transform duration-300" />
+              {t('welcome.onboarding.title')}
+            </Button>
+          </div>
         </div>
       </div>
     </div>;
