@@ -35,6 +35,7 @@ import OrganizationalTeamsPage from "./pages/OrganizationalTeamsPage";
 import OrganizationalStructurePage from "./pages/OrganizationalStructurePage";
 import TeamDetailPage from "./pages/TeamDetailPage";
 import SettingsPage from "./pages/SettingsPage";
+import NotificationCenterPage from "./pages/admin/NotificationCenterPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -190,6 +191,13 @@ const App = () => (
             </ProtectedRoute>
           } />
           
+          {/* Notifications route */}
+          <Route path="/admin/notifications" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <NotificationCenterPage />
+            </ProtectedRoute>
+          } />
+
           {/* Settings routes - for admin and partner */}
           <Route path="/admin/settings" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>

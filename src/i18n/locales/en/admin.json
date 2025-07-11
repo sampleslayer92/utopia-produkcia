@@ -1301,6 +1301,21 @@
     "empty": "No notifications",
     "markAllRead": "Mark all as read",
     "settings": "Notification settings",
+    "viewAll": "View All",
+    "noCategoryNotifications": "No notifications in this category",
+    "tryDifferentCategory": "Try a different category",
+    "showingCount": "Showing {{shown}} of {{total}}",
+    "search": "Search notifications...",
+    "priority": "Priority",
+    "allPriorities": "All Priorities",
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium", 
+    "low": "Low",
+    "center": {
+      "title": "Notification Center",
+      "subtitle": "Manage all notifications"
+    },
     "types": {
       "contract_created": "New contract",
       "contract_status_changed": "Contract status changed",
