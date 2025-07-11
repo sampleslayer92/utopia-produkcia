@@ -410,13 +410,15 @@
     "subtitle": "Správa a prehľad všetkých notifikácií",
     "loading": "Načítavam notifikácie...",
     "empty": "Žiadne notifikácie",
-    "markAllRead": "Označiť všetky ako prečítané",
-    "markAsRead": "Označiť ako prečítané",
+    "emptyDescription": "Všetky notifikácie sa zobrazia tu",
+    "markAllRead": "Označiť všetko",
+    "markAsRead": "Označiť",
     "markAsUnread": "Označiť ako neprečítané",
     "delete": "Vymazať",
-    "settings": "Nastavenia notifikácií",
+    "settings": "Nastavenia",
     "viewAll": "Zobraziť všetky",
-    "showingCount": "Zobrazujem {{shown}} z {{total}} notifikácií",
+    "view": "Zobraziť",
+    "showingCount": "Zobrazuje sa {{shown}} z {{total}}",
     "search": "Hľadať v notifikáciách...",
     "priority": "Priorita",
     "status": "Stav",
@@ -429,10 +431,13 @@
     "medium": "Stredná",
     "low": "Nízka",
     "clearFilters": "Vyčistiť filtre",
+    "noResults": "Nenašli sa žiadne notifikácie",
     "total": "celkom",
     "category": "kategória",
     "noCategoryNotifications": "Žiadne notifikácie v tejto kategórii",
     "tryDifferentCategory": "Skúste inú kategóriu alebo upravte filtre",
+    "refreshed": "Notifikácie boli obnovené",
+    "exported": "Notifikácie boli exportované",
     "center": {
       "title": "Centrum notifikácií",
       "subtitle": "Spravujte všetky vaše notifikácie na jednom mieste"
@@ -441,7 +446,17 @@
       "all": "Všetky",
       "contracts": "Zmluvy", 
       "merchants": "Merchanti",
-      "system": "Systém"
+      "system": "Systém",
+      "errors": "Chyby",
+      "organizations": "Organizácie",
+      "users": "Používatelia",
+      "teams": "Tímy"
+    },
+    "priority": {
+      "low": "Nízka",
+      "medium": "Stredná", 
+      "high": "Vysoká",
+      "critical": "Kritická"
     },
     "priorities": {
       "low": "Nízka",
@@ -455,6 +470,49 @@
       "merchant_registered": "Nový merchant",
       "error_occurred": "Chyba aplikácie",
       "system_alert": "Systémové upozornenie"
+    },
+    "actions": {
+      "refresh": "Obnoviť",
+      "export": "Exportovať",
+      "markAllRead": "Označiť všetko ako prečítané",
+      "settings": "Nastavenia notifikácií",
+      "bulkActions": "Hromadné akcie",
+      "selectAll": "Vybrať všetky",
+      "deselectAll": "Zrušiť výber"
+    },
+    "filters": {
+      "all": "Všetky",
+      "unread": "Neprečítané",
+      "read": "Prečítané",
+      "search": "Hľadať notifikácie...",
+      "priority": "Priorita",
+      "type": "Typ",
+      "clear": "Vymazať filtre",
+      "status": "Status",
+      "dateRange": "Obdobie",
+      "entity": "Entita"
+    },
+    "stats": {
+      "total": "Celkom",
+      "unread": "Neprečítané",
+      "today": "Dnes",
+      "thisWeek": "Tento týždeň",
+      "thisMonth": "Tento mesiac",
+      "high": "Vysoká priorita",
+      "critical": "Kritické"
+    },
+    "timestamps": {
+      "justNow": "Práve teraz",
+      "minuteAgo": "Pred minútou",
+      "minutesAgo": "Pred {{count}} minútami",
+      "hourAgo": "Pred hodinou",
+      "hoursAgo": "Pred {{count}} hodinami",
+      "dayAgo": "Včera",
+      "daysAgo": "Pred {{count}} dňami",
+      "weekAgo": "Pred týždňom",
+      "weeksAgo": "Pred {{count}} týždňami",
+      "monthAgo": "Pred mesiacom",
+      "monthsAgo": "Pred {{count}} mesiacmi"
     }
   }
 }

@@ -23,6 +23,7 @@ type Notification = Database['public']['Tables']['notifications']['Row'];
 
 interface NotificationItemProps {
   notification: Notification;
+  compact?: boolean;
 }
 
 const getNotificationIcon = (type: string) => {
@@ -71,7 +72,7 @@ const getPriorityIconColor = (priority: string) => {
   }
 };
 
-export const NotificationItem = ({ notification }: NotificationItemProps) => {
+export const NotificationItem = ({ notification, compact = false }: NotificationItemProps) => {
   const { i18n, t } = useTranslation('admin');
   const { markAsRead } = useNotifications();
   
@@ -99,15 +100,83 @@ export const NotificationItem = ({ notification }: NotificationItemProps) => {
     // }
   };
 
+  if (compact) {
+    return (
+      <div
+        className={cn(
+          'group relative p-2 hover:bg-accent/50 cursor-pointer transition-all duration-200',
+          !notification.is_read && 'bg-accent/20 border-l border-l-primary'
+        )}
+        onClick={handleClick}
+      >
+        <div className="flex gap-2">
+          {/* Compact Icon */}
+          <div className={cn(
+            'flex-shrink-0 w-5 h-5 rounded flex items-center justify-center transition-colors',
+            getPriorityIconColor(notification.priority),
+            notification.priority === 'critical' && 'bg-red-50 dark:bg-red-900/20',
+            notification.priority === 'high' && 'bg-orange-50 dark:bg-orange-900/20',
+            notification.priority === 'medium' && 'bg-blue-50 dark:bg-blue-900/20',
+            notification.priority === 'low' && 'bg-gray-50 dark:bg-gray-900/20'
+          )}>
+            <Icon className="h-2.5 w-2.5" />
+          </div>
+
+          {/* Compact Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-1 mb-0.5">
+              <h5 className={cn(
+                'text-xs font-medium truncate',
+                !notification.is_read && 'font-semibold text-foreground'
+              )}>
+                {notification.title}
+              </h5>
+              
+              {/* Compact Priority Indicator */}
+              {(notification.priority === 'high' || notification.priority === 'critical') && (
+                <div className={cn(
+                  'w-2 h-2 rounded-full flex-shrink-0 mt-0.5',
+                  notification.priority === 'critical' ? 'bg-red-500' : 'bg-orange-500'
+                )} />
+              )}
+            </div>
+            
+            <p className="text-xs text-muted-foreground mb-1 line-clamp-2 leading-tight">
+              {notification.message}
+            </p>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1 text-xs text-muted-foreground/70">
+                <span>{timeAgo}</span>
+              </div>
+              
+              {/* Compact Action */}
+              {!notification.is_read && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleMarkAsRead}
+                  className="h-4 w-4 p-0 hover:bg-accent opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Check className="h-2.5 w-2.5" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
-        'group relative p-2 hover:bg-accent/50 cursor-pointer transition-all duration-200',
+        'group relative p-3 hover:bg-accent/50 cursor-pointer transition-all duration-200',
         !notification.is_read && 'bg-accent/20 border-l-2 border-l-primary'
       )}
       onClick={handleClick}
     >
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         {/* Enhanced Icon with Category Color */}
           <div className={cn(
             'flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors',
@@ -117,7 +186,7 @@ export const NotificationItem = ({ notification }: NotificationItemProps) => {
             notification.priority === 'medium' && 'bg-blue-50 dark:bg-blue-900/20',
             notification.priority === 'low' && 'bg-gray-50 dark:bg-gray-900/20'
           )}>
-            <Icon className="h-3 w-3" />
+            <Icon className="h-4 w-4" />
           </div>
 
         {/* Enhanced Content */}
@@ -134,7 +203,7 @@ export const NotificationItem = ({ notification }: NotificationItemProps) => {
                 'text-xs px-1.5 py-0.5 shrink-0',
                 getPriorityColor(notification.priority)
               )}>
-                {t(`notifications.priorities.${notification.priority}`)}
+                {t(`notifications.priority.${notification.priority}`)}
               </Badge>
             </div>
             {!notification.is_read && (
