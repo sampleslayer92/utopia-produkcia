@@ -71,9 +71,12 @@ export const useNotifications = () => {
   useEffect(() => {
     fetchNotifications();
 
+    // Create a unique channel name to avoid conflicts
+    const channelName = `notifications-${Date.now()}-${Math.random()}`;
+    
     // Subscribe to realtime notifications
     const channel = supabase
-      .channel('notifications-changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -90,6 +93,8 @@ export const useNotifications = () => {
       .subscribe();
 
     return () => {
+      // Properly cleanup the channel
+      channel.unsubscribe();
       supabase.removeChannel(channel);
     };
   }, []);
