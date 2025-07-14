@@ -4,6 +4,9 @@ import AdminHeader from "./AdminHeader";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import { useChatBot } from "@/hooks/useChatBot";
+import ChatBotFloatingButton from "@/components/chatbot/ChatBotFloatingButton";
+import ChatBotWindow from "@/components/chatbot/ChatBotWindow";
 
 interface AdminLayoutProps {
   title: string;
@@ -15,6 +18,15 @@ interface AdminLayoutProps {
 const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) => {
   const { i18n } = useTranslation();
   const [languageKey, setLanguageKey] = useState(i18n.language);
+  const {
+    messages,
+    isOpen,
+    isLoading,
+    hasNewMessage,
+    sendMessage,
+    toggleChatBot,
+    clearMessages,
+  } = useChatBot();
 
   // Listen for language changes and force re-render
   useEffect(() => {
@@ -46,6 +58,22 @@ const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) =
             {children}
           </main>
         </SidebarInset>
+        
+        {/* ChatBot Components */}
+        <ChatBotFloatingButton
+          isOpen={isOpen}
+          hasNewMessage={hasNewMessage}
+          onClick={toggleChatBot}
+        />
+        
+        {isOpen && (
+          <ChatBotWindow
+            messages={messages}
+            isLoading={isLoading}
+            onSendMessage={sendMessage}
+            onClearMessages={clearMessages}
+          />
+        )}
       </div>
     </SidebarProvider>
   );

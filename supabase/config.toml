@@ -1,1 +1,4 @@
 project_id = "vspjxzbeooknotuxiefk"
+
+[functions.openai-assistant-chat]
+verify_jwt = false
