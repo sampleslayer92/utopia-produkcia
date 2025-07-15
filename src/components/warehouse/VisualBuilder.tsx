@@ -7,6 +7,9 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  useDroppable,
+  DragOverEvent,
+  DragStartEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -44,6 +47,7 @@ interface SortableItemProps {
 }
 
 function SortableItem({ id, item, type }: SortableItemProps) {
+  const navigate = useNavigate();
   const {
     attributes,
     listeners,
@@ -78,11 +82,21 @@ function SortableItem({ id, item, type }: SortableItemProps) {
       ref={setNodeRef}
       style={style}
       className="flex items-center space-x-3 p-3 bg-background border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+      onClick={() => {
+        if (type === 'product') {
+          navigate(`/admin/warehouse/items/${item.id}`);
+        } else if (type === 'category') {
+          navigate(`/admin/warehouse/categories/${item.id}`);
+        } else if (type === 'solution') {
+          navigate(`/admin/warehouse/solutions`);
+        }
+      }}
     >
       <div
         {...attributes}
         {...listeners}
         className="cursor-grab active:cursor-grabbing"
+        onClick={(e) => e.stopPropagation()}
       >
         <GripVertical className="h-4 w-4 text-muted-foreground" />
       </div>
@@ -107,6 +121,50 @@ function SortableItem({ id, item, type }: SortableItemProps) {
   );
 }
 
+interface CategoryDropZoneProps {
+  id: string;
+  title: string;
+  items: any[];
+  color?: string;
+  isActive?: boolean;
+}
+
+function CategoryDropZone({ id, title, items, color = 'bg-muted', isActive = false }: CategoryDropZoneProps) {
+  const { setNodeRef, isOver } = useDroppable({ id });
+
+  return (
+    <Card className={`min-h-[400px] ${isOver ? 'ring-2 ring-primary' : ''}`}>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium flex items-center justify-between">
+          <span>{title}</span>
+          <Badge variant="secondary" className="text-xs">
+            {items.length}
+          </Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent ref={setNodeRef} className="space-y-2">
+        <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
+          {items.map((item) => (
+            <SortableItem
+              key={item.id}
+              id={item.id}
+              item={item}
+              type="product"
+            />
+          ))}
+        </SortableContext>
+        
+        {items.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">Žiadne produkty</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 interface SmartSuggestion {
   id: string;
   title: string;
@@ -117,16 +175,14 @@ interface SmartSuggestion {
 }
 
 export const VisualBuilder = () => {
-  const [selectedTab, setSelectedTab] = useState<'products' | 'categories' | 'solutions'>('products');
+  const [draggedItem, setDraggedItem] = useState<any>(null);
   const navigate = useNavigate();
   
   const { data: products = [] } = useWarehouseItems();
   const { data: categories = [] } = useCategories();
   const { data: solutions = [] } = useSolutions();
   
-  const updateWarehouseItem = useUpdateWarehouseItem();
-  const updateCategory = useUpdateCategory();
-  const updateSolution = useUpdateSolution();
+  const updateWarehouseItemMutation = useUpdateWarehouseItem();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -140,7 +196,7 @@ export const VisualBuilder = () => {
     const suggestions: SmartSuggestion[] = [];
 
     // Category suggestions
-    const uncategorizedProducts = products.filter(p => p.category === 'other' || !p.category);
+    const uncategorizedProducts = products.filter(p => !p.category_id || p.category === 'other');
     if (uncategorizedProducts.length > 3) {
       suggestions.push({
         id: 'categorize',
@@ -182,7 +238,7 @@ export const VisualBuilder = () => {
 
     // Bundle suggestions
     const popularCategories = categories.filter(c => 
-      products.filter(p => p.category === c.name).length >= 3
+      products.filter(p => p.category_id === c.id).length >= 3
     );
     if (popularCategories.length > 0) {
       suggestions.push({
@@ -198,25 +254,71 @@ export const VisualBuilder = () => {
     return suggestions.sort((a, b) => b.confidence - a.confidence);
   };
 
-  const currentItems = () => {
-    switch (selectedTab) {
-      case 'products': return products;
-      case 'categories': return categories;
-      case 'solutions': return solutions;
-      default: return [];
-    }
+  // Group products by category
+  const getProductsByCategory = () => {
+    const productsByCategory: Record<string, any[]> = {};
+    
+    // All products (uncategorized)
+    const uncategorizedProducts = products.filter(p => !p.category_id || p.category === 'other');
+    productsByCategory['all'] = uncategorizedProducts;
+    
+    // Products by category
+    categories.forEach(category => {
+      productsByCategory[category.id] = products.filter(p => p.category_id === category.id);
+    });
+    
+    return productsByCategory;
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const item = products.find(p => p.id === active.id);
+    setDraggedItem(item);
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
+    setDraggedItem(null);
 
-    if (active.id !== over?.id) {
-      // Simple visual feedback for now
-      toast.success('Poradie bolo aktualizované');
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    const productId = active.id as string;
+    const targetCategoryId = over.id as string;
+
+    try {
+      // Find the product being moved
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      // Determine the new category
+      let newCategoryId: string | null = null;
+      let newCategoryName = 'other';
+
+      if (targetCategoryId !== 'all') {
+        const targetCategory = categories.find(c => c.id === targetCategoryId);
+        if (targetCategory) {
+          newCategoryId = targetCategory.id;
+          newCategoryName = targetCategory.name;
+        }
+      }
+
+      // Update the product
+      await updateWarehouseItemMutation.mutateAsync({
+        id: productId,
+        category_id: newCategoryId,
+      });
+
+      toast.success('Produkt bol úspešne presunutý');
+    } catch (error) {
+      console.error('Error updating product category:', error);
+      toast.error('Nepodarilo sa presunúť produkt');
     }
   };
 
   const smartSuggestions = getSmartSuggestions();
+  const productsByCategory = getProductsByCategory();
 
   return (
     <div className="space-y-6">
@@ -283,99 +385,46 @@ export const VisualBuilder = () => {
         </Card>
       )}
 
-      {/* Visual Builder */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Sidebar Navigation */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Kategórie</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Button
-              variant={selectedTab === 'products' ? 'default' : 'outline'}
-              onClick={() => setSelectedTab('products')}
-              className="w-full justify-start"
-            >
-              <Package className="h-4 w-4 mr-2" />
-              Produkty ({products.length})
-            </Button>
-            <Button
-              variant={selectedTab === 'categories' ? 'default' : 'outline'}
-              onClick={() => setSelectedTab('categories')}
-              className="w-full justify-start"
-            >
-              <FolderOpen className="h-4 w-4 mr-2" />
-              Kategórie ({categories.length})
-            </Button>
-            <Button
-              variant={selectedTab === 'solutions' ? 'default' : 'outline'}
-              onClick={() => setSelectedTab('solutions')}
-              className="w-full justify-start"
-            >
-              <Target className="h-4 w-4 mr-2" />
-              Riešenia ({solutions.length})
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Main Drag & Drop Area */}
-        <div className="lg:col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <GripVertical className="h-5 w-5 text-primary" />
-                <span>Drag & Drop Editor</span>
-              </CardTitle>
-              <CardDescription>
-                Potiahnutím zmeňte poradie položiek
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={currentItems().map(item => item.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-3 max-h-96 overflow-y-auto">
-                    {currentItems().map((item) => (
-                      <div
-                        key={item.id}
-                        onClick={() => {
-                          if (selectedTab === 'products') {
-                            navigate(`/admin/warehouse/items/${item.id}`);
-                          } else if (selectedTab === 'categories') {
-                            navigate(`/admin/warehouse/categories/${item.id}`);
-                          } else if (selectedTab === 'solutions') {
-                            navigate(`/admin/warehouse/solutions`);
-                          }
-                        }}
-                        className="cursor-pointer"
-                      >
-                        <SortableItem
-                          id={item.id}
-                          item={item}
-                          type={selectedTab.slice(0, -1) as 'product' | 'category' | 'solution'}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-
-              {currentItems().length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Žiadne položky v tejto kategórii</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      {/* Multi-Column Drag & Drop Area */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <GripVertical className="h-5 w-5 text-primary" />
+            <span>Drag & Drop Editor</span>
+          </CardTitle>
+          <CardDescription>
+            Potiahnutím presuňte produkty medzi kategóriami
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {/* All Products Column */}
+              <CategoryDropZone
+                id="all"
+                title="Všetky produkty"
+                items={productsByCategory['all'] || []}
+              />
+              
+              {/* Category Columns */}
+              {categories.map((category) => (
+                <CategoryDropZone
+                  key={category.id}
+                  id={category.id}
+                  title={category.name}
+                  items={productsByCategory[category.id] || []}
+                  color={category.color}
+                />
+              ))}
+            </div>
+          </DndContext>
+        </CardContent>
+      </Card>
 
       {/* Actions */}
       <Card>
