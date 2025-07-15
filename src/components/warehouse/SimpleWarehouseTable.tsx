@@ -29,7 +29,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Edit, MoreHorizontal, Plus, Search, Trash2, Package, Filter } from 'lucide-react';
+import { Edit, MoreHorizontal, Plus, Search, Trash2, Package, Filter, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useWarehouseItems, useDeleteWarehouseItem, type WarehouseItem } from '@/hooks/useWarehouseItems';
 import { useCategories } from '@/hooks/useCategories';
 import { useItemTypes } from '@/hooks/useItemTypes';
@@ -43,6 +44,7 @@ interface SimpleWarehouseTableProps {
 
 export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps) => {
   const { t } = useTranslation('admin');
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<string>('');
@@ -278,10 +280,16 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
               </TableRow>
             ) : (
               items.map((item) => (
-                <TableRow key={item.id} className="hover:bg-muted/50">
+                <TableRow 
+                  key={item.id} 
+                  className="hover:bg-muted/50 cursor-pointer"
+                  onClick={() => navigate(`/admin/warehouse/items/${item.id}`)}
+                >
                   <TableCell>
                     <div>
-                      <div className="font-medium">{item.name}</div>
+                      <div className="font-medium hover:text-primary transition-colors">
+                        {item.name}
+                      </div>
                       {item.description && (
                         <div className="text-sm text-muted-foreground truncate max-w-xs">
                           {item.description}
@@ -319,17 +327,35 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(item)}>
+                        <DropdownMenuItem onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/admin/warehouse/items/${item.id}`);
+                        }}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          Zobraziť detail
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/admin/warehouse/items/${item.id}`);
+                        }}>
                           <Edit className="mr-2 h-4 w-4" />
                           Upraviť
                         </DropdownMenuItem>
                         <DropdownMenuItem 
-                          onClick={() => setDeleteItem(item)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteItem(item);
+                          }}
                           className="text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />

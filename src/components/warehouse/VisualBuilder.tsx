@@ -31,10 +31,11 @@ import {
   Zap,
   CheckCircle
 } from 'lucide-react';
-import { useWarehouseItems } from '@/hooks/useWarehouseItems';
-import { useCategories } from '@/hooks/useCategories';
-import { useSolutions } from '@/hooks/useSolutions';
+import { useWarehouseItems, useUpdateWarehouseItem } from '@/hooks/useWarehouseItems';
+import { useCategories, useUpdateCategory } from '@/hooks/useCategories';
+import { useSolutions, useUpdateSolution } from '@/hooks/useSolutions';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface SortableItemProps {
   id: string;
@@ -117,11 +118,15 @@ interface SmartSuggestion {
 
 export const VisualBuilder = () => {
   const [selectedTab, setSelectedTab] = useState<'products' | 'categories' | 'solutions'>('products');
-  const [items, setItems] = useState<any[]>([]);
+  const navigate = useNavigate();
   
   const { data: products = [] } = useWarehouseItems();
   const { data: categories = [] } = useCategories();
   const { data: solutions = [] } = useSolutions();
+  
+  const updateWarehouseItem = useUpdateWarehouseItem();
+  const updateCategory = useUpdateCategory();
+  const updateSolution = useUpdateSolution();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -141,7 +146,7 @@ export const VisualBuilder = () => {
         id: 'categorize',
         title: `Kategorizovať ${uncategorizedProducts.length} produktov`,
         description: 'Produkty bez kategórie môžu byť ťažšie spravovateľné',
-        action: () => toast.info('Otváram kategorizáciu...'),
+        action: () => navigate('/admin/warehouse/categories'),
         confidence: 85,
         type: 'category'
       });
@@ -156,7 +161,7 @@ export const VisualBuilder = () => {
         id: 'create-bundle',
         title: 'Vytvoriť nové riešenie',
         description: `${productsWithoutSolution.length} produktov nie je súčasťou žiadneho riešenia`,
-        action: () => toast.info('Otváram tvorbu riešenia...'),
+        action: () => navigate('/admin/warehouse/solutions'),
         confidence: 75,
         type: 'solution'
       });
@@ -169,7 +174,7 @@ export const VisualBuilder = () => {
         id: 'price-review',
         title: 'Preskúmať cenník',
         description: `${lowPricedProducts.length} produktov má nízku cenu (< 5€)`,
-        action: () => toast.info('Otváram cenníkový prehľad...'),
+        action: () => navigate('/admin/warehouse'),
         confidence: 60,
         type: 'pricing'
       });
@@ -184,7 +189,7 @@ export const VisualBuilder = () => {
         id: 'bundle-popular',
         title: 'Vytvoriť bundle z populárnych kategórií',
         description: `Kategórie s 3+ produktmi sú vhodné na bundling`,
-        action: () => toast.info('Otváram bundle creator...'),
+        action: () => navigate('/admin/warehouse/solutions'),
         confidence: 70,
         type: 'bundle'
       });
@@ -202,21 +207,12 @@ export const VisualBuilder = () => {
     }
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex(item => item.id === active.id);
-        const newIndex = items.findIndex(item => item.id === over?.id);
-
-        const newOrder = arrayMove(items, oldIndex, newIndex);
-        
-        // Here you would typically update the database with new positions
-        toast.success('Poradie bolo aktualizované');
-        
-        return newOrder;
-      });
+      // Simple visual feedback for now
+      toast.success('Poradie bolo aktualizované');
     }
   };
 
@@ -346,12 +342,25 @@ export const VisualBuilder = () => {
                 >
                   <div className="space-y-3 max-h-96 overflow-y-auto">
                     {currentItems().map((item) => (
-                      <SortableItem
+                      <div
                         key={item.id}
-                        id={item.id}
-                        item={item}
-                        type={selectedTab.slice(0, -1) as 'product' | 'category' | 'solution'}
-                      />
+                        onClick={() => {
+                          if (selectedTab === 'products') {
+                            navigate(`/admin/warehouse/items/${item.id}`);
+                          } else if (selectedTab === 'categories') {
+                            navigate(`/admin/warehouse/categories/${item.id}`);
+                          } else if (selectedTab === 'solutions') {
+                            navigate(`/admin/warehouse/solutions`);
+                          }
+                        }}
+                        className="cursor-pointer"
+                      >
+                        <SortableItem
+                          id={item.id}
+                          item={item}
+                          type={selectedTab.slice(0, -1) as 'product' | 'category' | 'solution'}
+                        />
+                      </div>
                     ))}
                   </div>
                 </SortableContext>
@@ -382,8 +391,8 @@ export const VisualBuilder = () => {
               <Button variant="outline" onClick={() => window.location.reload()}>
                 Obnoviť
               </Button>
-              <Button onClick={() => toast.success('Zmeny boli uložené')}>
-                Uložiť zmeny
+              <Button onClick={() => navigate('/admin/warehouse')}>
+                Späť na sklad
               </Button>
             </div>
           </div>

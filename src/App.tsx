@@ -30,6 +30,7 @@ import WarehousePage from "./pages/WarehousePage";
 import SolutionsPage from "./pages/SolutionsPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import CategoryDetailPage from "./pages/CategoryDetailPage";
+import ItemDetailPage from "./pages/ItemDetailPage";
 import ItemTypesPage from "./pages/ItemTypesPage";
 import ReportingPage from "./pages/ReportingPage";
 import BusinessLocationsPage from "./pages/BusinessLocationsPage";
@@ -107,6 +108,11 @@ const App = () => (
           <Route path="/admin/warehouse/categories/:id" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <CategoryDetailPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/warehouse/items/:id" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <ItemDetailPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/warehouse/quick-sale" element={

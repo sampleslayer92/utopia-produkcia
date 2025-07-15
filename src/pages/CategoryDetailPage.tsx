@@ -3,10 +3,28 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Package, Edit, Trash2 } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useCategory } from '@/hooks/useCategories';
+import { useDeleteWarehouseItem } from '@/hooks/useWarehouseItems';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { MoreHorizontal, Eye } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
@@ -28,7 +46,9 @@ interface WarehouseItem {
 const CategoryDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [deleteItem, setDeleteItem] = useState<WarehouseItem | null>(null);
   const { data: category, isLoading: categoryLoading } = useCategory(id!);
+  const deleteMutation = useDeleteWarehouseItem();
   
   const { data: items, isLoading: itemsLoading } = useQuery({
     queryKey: ['warehouse-items', id],
@@ -74,6 +94,15 @@ const CategoryDetailPage = () => {
       style: 'currency',
       currency: 'EUR'
     }).format(price);
+  };
+
+  const handleDelete = async (item: WarehouseItem) => {
+    try {
+      await deleteMutation.mutateAsync(item.id);
+      setDeleteItem(null);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
   };
 
   return (
@@ -182,8 +211,13 @@ const CategoryDetailPage = () => {
                 <Card key={item.id} className="hover:shadow-md transition-shadow">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-base">{item.name}</CardTitle>
+                      <div 
+                        className="flex-1 cursor-pointer"
+                        onClick={() => navigate(`/admin/warehouse/items/${item.id}`)}
+                      >
+                        <CardTitle className="text-base hover:text-primary transition-colors">
+                          {item.name}
+                        </CardTitle>
                         <div className="flex items-center space-x-2 mt-1">
                           <Badge 
                             variant={item.item_type === 'device' ? 'default' : 'secondary'}
@@ -196,12 +230,36 @@ const CategoryDetailPage = () => {
                           </Badge>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => navigate(`/admin/warehouse/items/${item.id}`)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Zobraziť detail
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => navigate(`/admin/warehouse/items/${item.id}`)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Upraviť
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => setDeleteItem(item)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Zmazať
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent 
+                    className="cursor-pointer"
+                    onClick={() => navigate(`/admin/warehouse/items/${item.id}`)}
+                  >
                     {item.description && (
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                         {item.description}
@@ -239,6 +297,27 @@ const CategoryDetailPage = () => {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteItem} onOpenChange={() => setDeleteItem(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Potvrdiť vymazanie</AlertDialogTitle>
+            <AlertDialogDescription>
+              Naozaj chcete vymazať položku "{deleteItem?.name}"? Táto akcia sa nedá vrátiť späť.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Zrušiť</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteItem && handleDelete(deleteItem)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Vymazať
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 };
