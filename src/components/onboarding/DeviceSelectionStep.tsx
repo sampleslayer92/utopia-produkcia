@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle } from "lucide-react";
 import { OnboardingData, DeviceCard, ServiceCard } from "@/types/onboarding";
 import SolutionSelectionSection from "./device-selection/SolutionSelectionSection";
-import DeviceCatalogPanel from "./device-selection/DeviceCatalogPanel";
+import DynamicDeviceCatalogPanel from "./device-selection/DynamicDeviceCatalogPanel";
 import LivePreviewPanel from "./device-selection/LivePreviewPanel";
 import UnifiedProductModal from "./components/UnifiedProductModal";
 import { useProductModal } from "./hooks/useProductModal";
@@ -185,7 +185,7 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
       <div className="grid lg:grid-cols-2 gap-6 min-h-[600px]">
         {/* Left Panel - Catalog */}
         <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
-          <DeviceCatalogPanel
+          <DynamicDeviceCatalogPanel
             selectedSolutions={data.deviceSelection.selectedSolutions}
             onAddDevice={addDevice}
             onAddService={addService}

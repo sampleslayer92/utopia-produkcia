@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useSolutionItems, useCreateSolutionItem, useDeleteSolutionItem, useBulkAddSolutionItems } from '@/hooks/useSolutionItems';
+import { useSolutionItems, useCreateSolutionItem, useDeleteSolutionItem, useBulkAddSolutionItems, useUpdateSolutionItem } from '@/hooks/useSolutionItems';
 import { useWarehouseItems } from '@/hooks/useWarehouseItems';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 
@@ -23,6 +23,7 @@ const SolutionProductManager = ({ solutionId }: SolutionProductManagerProps) => 
   const { data: warehouseItems, isLoading: warehouseLoading } = useWarehouseItems();
   const createSolutionItem = useCreateSolutionItem();
   const deleteSolutionItem = useDeleteSolutionItem();
+  const updateSolutionItem = useUpdateSolutionItem();
   const bulkAddItems = useBulkAddSolutionItems();
 
   const assignedItemIds = solutionItems?.map(item => item.warehouse_item_id) || [];
@@ -120,8 +121,13 @@ const SolutionProductManager = ({ solutionId }: SolutionProductManagerProps) => 
                     <Switch
                       checked={item.is_featured}
                       onCheckedChange={(checked) => {
-                        // TODO: Implement featured toggle
-                        console.log('Toggle featured:', checked);
+                        updateSolutionItem.mutate({
+                          id: item.id,
+                          solution_id: item.solution_id,
+                          warehouse_item_id: item.warehouse_item_id,
+                          position: item.position,
+                          is_featured: checked,
+                        });
                       }}
                     />
                     <Button
