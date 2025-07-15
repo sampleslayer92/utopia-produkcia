@@ -1,10 +1,10 @@
 
-import AdminLayout from "@/components/admin/AdminLayout";
+import AdminLayout from '@/components/admin/AdminLayout';
 import { useTranslation } from 'react-i18next';
-import { WarehouseItemsTable } from "@/components/warehouse/WarehouseItemsTable";
-import { WarehouseDashboard } from "@/components/warehouse/WarehouseDashboard";
-import { SolutionWorkflow } from "@/components/solutions/SolutionWorkflow";
-import { VisualBuilder } from "@/components/warehouse/VisualBuilder";
+import { SimpleWarehouseTable } from '@/components/warehouse/SimpleWarehouseTable';
+import { WarehouseDashboard } from '@/components/warehouse/WarehouseDashboard';
+import { SolutionWorkflow } from '@/components/solutions/SolutionWorkflow';
+import { VisualBuilder } from '@/components/warehouse/VisualBuilder';
 import { useLocation } from 'react-router-dom';
 
 const WarehousePage = () => {
@@ -48,9 +48,9 @@ const WarehousePage = () => {
       subtitle={getSubtitle()}
     >
       {showAddForm ? (
-        <WarehouseItemsTable showAddForm />
+        <SimpleWarehouseTable showAddForm />
       ) : showBulkOps ? (
-        <WarehouseItemsTable showBulkOps />
+        <div className="text-center text-muted-foreground">Hromadné operácie budú implementované v ďalšej verzii</div>
       ) : showSolutions ? (
         <SolutionWorkflow />
       ) : showCategories ? (
@@ -62,7 +62,7 @@ const WarehousePage = () => {
       ) : showDashboard ? (
         <WarehouseDashboard />
       ) : (
-        <WarehouseItemsTable />
+        <SimpleWarehouseTable />
       )}
     </AdminLayout>
   );
