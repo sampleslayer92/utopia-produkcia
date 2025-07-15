@@ -797,6 +797,48 @@ export type Database = {
           },
         ]
       }
+      customers: {
+        Row: {
+          address: string | null
+          created_at: string
+          dic: string | null
+          email: string | null
+          ico: string | null
+          id: string
+          is_active: boolean
+          name: string
+          phone: string | null
+          updated_at: string
+          vat_number: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          dic?: string | null
+          email?: string | null
+          ico?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          phone?: string | null
+          updated_at?: string
+          vat_number?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          dic?: string | null
+          email?: string | null
+          ico?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          phone?: string | null
+          updated_at?: string
+          vat_number?: string | null
+        }
+        Relationships: []
+      }
       device_selection: {
         Row: {
           contract_id: string
@@ -1169,6 +1211,122 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quick_sale_items: {
+        Row: {
+          created_at: string
+          id: string
+          item_description: string | null
+          item_name: string
+          line_total: number
+          quantity: number
+          quick_sale_id: string
+          unit_price: number
+          updated_at: string
+          vat_rate: number
+          warehouse_item_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_description?: string | null
+          item_name: string
+          line_total?: number
+          quantity?: number
+          quick_sale_id: string
+          unit_price?: number
+          updated_at?: string
+          vat_rate?: number
+          warehouse_item_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_description?: string | null
+          item_name?: string
+          line_total?: number
+          quantity?: number
+          quick_sale_id?: string
+          unit_price?: number
+          updated_at?: string
+          vat_rate?: number
+          warehouse_item_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quick_sale_items_quick_sale_id_fkey"
+            columns: ["quick_sale_id"]
+            isOneToOne: false
+            referencedRelation: "quick_sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quick_sale_items_warehouse_item_id_fkey"
+            columns: ["warehouse_item_id"]
+            isOneToOne: false
+            referencedRelation: "warehouse_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quick_sales: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          discount_amount: number | null
+          discount_percentage: number | null
+          id: string
+          notes: string | null
+          sale_date: string
+          sale_number: string
+          status: string
+          subtotal: number
+          total_amount: number
+          updated_at: string
+          vat_amount: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          discount_amount?: number | null
+          discount_percentage?: number | null
+          id?: string
+          notes?: string | null
+          sale_date?: string
+          sale_number?: string
+          status?: string
+          subtotal?: number
+          total_amount?: number
+          updated_at?: string
+          vat_amount?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          discount_amount?: number | null
+          discount_percentage?: number | null
+          id?: string
+          notes?: string | null
+          sale_date?: string
+          sale_number?: string
+          status?: string
+          subtotal?: number
+          total_amount?: number
+          updated_at?: string
+          vat_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quick_sales_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
         ]

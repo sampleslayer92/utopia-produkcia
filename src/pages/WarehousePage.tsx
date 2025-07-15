@@ -6,6 +6,7 @@ import { WarehouseDashboard } from '@/components/warehouse/WarehouseDashboard';
 import { SolutionWorkflow } from '@/components/solutions/SolutionWorkflow';
 import { EnhancedVisualBuilder } from '@/components/warehouse/EnhancedVisualBuilder';
 import { BulkOperationsPanel } from '@/components/warehouse/BulkOperationsPanel';
+import { QuickSalePage } from './QuickSalePage';
 import { useLocation } from 'react-router-dom';
 
 const WarehousePage = () => {
@@ -20,6 +21,7 @@ const WarehousePage = () => {
   const showCategories = location.pathname === '/admin/warehouse/categories';
   const showItemTypes = location.pathname === '/admin/warehouse/item-types';
   const showVisualBuilder = location.pathname === '/admin/warehouse/visual-builder';
+  const showQuickSale = location.pathname === '/admin/warehouse/quick-sale';
 
   const getTitle = () => {
     if (showAddForm) return "➕ Pridať položku";
@@ -28,6 +30,7 @@ const WarehousePage = () => {
     if (showCategories) return "📁 Kategórie";
     if (showItemTypes) return "🏷️ Typy položiek";
     if (showVisualBuilder) return "🎨 Visual Builder";
+    if (showQuickSale) return "💰 Rýchly predaj";
     if (showDashboard) return "📊 Dashboard";
     return "📦 " + t('navigation.warehouse');
   };
@@ -39,6 +42,7 @@ const WarehousePage = () => {
     if (showCategories) return "Správa kategórií skladových položiek";
     if (showItemTypes) return "Správa typov skladových položiek";
     if (showVisualBuilder) return "Drag & drop editor pre produkty a riešenia";
+    if (showQuickSale) return "POS systém pre vytváranie faktúr";
     if (showDashboard) return "Prehľad statistík a aktivít";
     return "Prehľadná tabuľka všetkých skladových položiek";
   };
@@ -60,6 +64,8 @@ const WarehousePage = () => {
         <div className="text-center text-muted-foreground">Správa typov položiek bude implementovaná v ďalšej verzii</div>
       ) : showVisualBuilder ? (
         <EnhancedVisualBuilder />
+      ) : showQuickSale ? (
+        <QuickSalePage />
       ) : showDashboard ? (
         <WarehouseDashboard />
       ) : (

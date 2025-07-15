@@ -201,6 +201,11 @@ const AdminSidebar = () => {
           title: "🎨 Visual Builder",
           path: "/admin/warehouse/visual-builder",
           active: isActive("/admin/warehouse/visual-builder")
+        },
+        {
+          title: "💰 Rýchly predaj",
+          path: "/admin/warehouse/quick-sale",
+          active: isActive("/admin/warehouse/quick-sale")
         }
       ]
     }] : []),

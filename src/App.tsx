@@ -109,6 +109,11 @@ const App = () => (
               <CategoryDetailPage />
             </ProtectedRoute>
           } />
+          <Route path="/admin/warehouse/quick-sale" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/warehouse/item-types" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <ItemTypesPage />
