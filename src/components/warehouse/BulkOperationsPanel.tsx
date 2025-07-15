@@ -19,6 +19,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useWarehouseItems } from '@/hooks/useWarehouseItems';
 import { useCategories } from '@/hooks/useCategories';
+import { useBulkUpdateWarehouseItems, useBulkDeleteWarehouseItems, useBulkImportWarehouseItems } from '@/hooks/useBulkWarehouseOperations';
 import { toast } from 'sonner';
 
 export const BulkOperationsPanel = () => {
@@ -29,6 +30,10 @@ export const BulkOperationsPanel = () => {
   
   const { data: items = [] } = useWarehouseItems();
   const { data: categories = [] } = useCategories();
+  
+  const bulkUpdateMutation = useBulkUpdateWarehouseItems();
+  const bulkDeleteMutation = useBulkDeleteWarehouseItems();
+  const bulkImportMutation = useBulkImportWarehouseItems();
 
   const handleSelectAll = () => {
     if (selectedItems.length === items.length) {
@@ -55,34 +60,40 @@ export const BulkOperationsPanel = () => {
     try {
       switch (bulkAction) {
         case 'delete':
-          // Implement bulk delete
-          toast.success(`Zmazané ${selectedItems.length} položiek`);
+          await bulkDeleteMutation.mutateAsync(selectedItems);
           break;
         case 'activate':
-          // Implement bulk activate
-          toast.success(`Aktivované ${selectedItems.length} položiek`);
+          await bulkUpdateMutation.mutateAsync({
+            itemIds: selectedItems,
+            updates: { is_active: true }
+          });
           break;
         case 'deactivate':
-          // Implement bulk deactivate
-          toast.success(`Deaktivované ${selectedItems.length} položiek`);
+          await bulkUpdateMutation.mutateAsync({
+            itemIds: selectedItems,
+            updates: { is_active: false }
+          });
           break;
         case 'change-category':
           if (!bulkCategory) {
             toast.error('Vyberte kategóriu');
             return;
           }
-          // Implement bulk category change
-          toast.success(`Kategória zmenená pre ${selectedItems.length} položiek`);
+          await bulkUpdateMutation.mutateAsync({
+            itemIds: selectedItems,
+            updates: { category_id: bulkCategory }
+          });
           break;
         default:
           toast.error('Neznáma akcia');
+          return;
       }
       
       setSelectedItems([]);
       setBulkAction('');
       setBulkCategory('');
     } catch (error) {
-      toast.error('Chyba pri vykonávaní hromadnej operácie');
+      console.error('Bulk operation error:', error);
     }
   };
 
@@ -241,7 +252,7 @@ export const BulkOperationsPanel = () => {
 
                 <Button 
                   onClick={handleBulkAction}
-                  disabled={!bulkAction || selectedItems.length === 0}
+                  disabled={!bulkAction || selectedItems.length === 0 || bulkUpdateMutation.isPending || bulkDeleteMutation.isPending}
                   variant={bulkAction === 'delete' ? 'destructive' : 'default'}
                 >
                   {bulkAction === 'delete' ? (

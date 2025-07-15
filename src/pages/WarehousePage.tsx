@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { SimpleWarehouseTable } from '@/components/warehouse/SimpleWarehouseTable';
 import { WarehouseDashboard } from '@/components/warehouse/WarehouseDashboard';
 import { SolutionWorkflow } from '@/components/solutions/SolutionWorkflow';
-import { VisualBuilder } from '@/components/warehouse/VisualBuilder';
+import { EnhancedVisualBuilder } from '@/components/warehouse/EnhancedVisualBuilder';
+import { BulkOperationsPanel } from '@/components/warehouse/BulkOperationsPanel';
 import { useLocation } from 'react-router-dom';
 
 const WarehousePage = () => {
@@ -50,7 +51,7 @@ const WarehousePage = () => {
       {showAddForm ? (
         <SimpleWarehouseTable showAddForm />
       ) : showBulkOps ? (
-        <div className="text-center text-muted-foreground">Hromadné operácie budú implementované v ďalšej verzii</div>
+        <BulkOperationsPanel />
       ) : showSolutions ? (
         <SolutionWorkflow />
       ) : showCategories ? (
@@ -58,7 +59,7 @@ const WarehousePage = () => {
       ) : showItemTypes ? (
         <div className="text-center text-muted-foreground">Správa typov položiek bude implementovaná v ďalšej verzii</div>
       ) : showVisualBuilder ? (
-        <VisualBuilder />
+        <EnhancedVisualBuilder />
       ) : showDashboard ? (
         <WarehouseDashboard />
       ) : (
