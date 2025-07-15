@@ -11,6 +11,7 @@ import {
   DragStartEvent,
   Active,
   Over,
+  useDroppable
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -43,7 +44,7 @@ import {
   X
 } from 'lucide-react';
 import { useWarehouseItems } from '@/hooks/useWarehouseItems';
-import { useCategories } from '@/hooks/useCategories';
+import { useCategories, useCreateCategory } from '@/hooks/useCategories';
 import { useSolutions } from '@/hooks/useSolutions';
 import { useUpdateWarehouseItem } from '@/hooks/useWarehouseItems';
 import { useBulkUpdateWarehouseItems } from '@/hooks/useBulkWarehouseOperations';
@@ -268,9 +269,22 @@ interface DropZoneProps {
 
 function CategoryDropZone({ category, items, onItemMove }: DropZoneProps) {
   const categoryItems = items.filter(item => item.category_id === category.id);
+  
+  const { isOver, setNodeRef } = useDroppable({
+    id: `category-${category.id}`,
+  });
+
+  const style = {
+    backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
+    borderColor: isOver ? 'rgb(59, 130, 246)' : undefined,
+  };
 
   return (
-    <Card className="min-h-[200px]">
+    <Card 
+      ref={setNodeRef}
+      className={`min-h-[200px] transition-colors ${isOver ? 'border-primary border-2' : ''}`}
+      style={style}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center space-x-2 text-sm">
           <div 
@@ -295,7 +309,11 @@ function CategoryDropZone({ category, items, onItemMove }: DropZoneProps) {
         {categoryItems.length === 0 && (
           <div className="text-center text-muted-foreground text-sm py-8">
             <FolderOpen className="h-6 w-6 mx-auto mb-2 opacity-50" />
-            Žiadne produkty
+            {isOver ? (
+              <p className="text-primary font-medium">Pustite tu pre pridanie do kategórie</p>
+            ) : (
+              <p>Žiadne produkty</p>
+            )}
           </div>
         )}
       </CardContent>
@@ -307,6 +325,8 @@ export const EnhancedVisualBuilder = () => {
   const [selectedTab, setSelectedTab] = useState<'drag-drop' | 'categories' | 'solutions'>('drag-drop');
   const [draggedItem, setDraggedItem] = useState<DragItem | null>(null);
   const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryDescription, setNewCategoryDescription] = useState('');
   
   const { data: products = [] } = useWarehouseItems();
   const { data: categories = [] } = useCategories();
@@ -314,6 +334,7 @@ export const EnhancedVisualBuilder = () => {
   
   const updateMutation = useUpdateWarehouseItem();
   const bulkUpdateMutation = useBulkUpdateWarehouseItems();
+  const createCategoryMutation = useCreateCategory();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -400,6 +421,32 @@ export const EnhancedVisualBuilder = () => {
         break;
     }
   }, []);
+
+  const handleCreateCategory = useCallback(() => {
+    if (!newCategoryName.trim()) {
+      toast.error('Zadajte názov kategórie');
+      return;
+    }
+
+    const slug = newCategoryName.toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .trim();
+
+    createCategoryMutation.mutate({
+      name: newCategoryName,
+      slug,
+      description: newCategoryDescription,
+      color: '#3B82F6',
+      item_type_filter: 'both'
+    }, {
+      onSuccess: () => {
+        setNewCategoryName('');
+        setNewCategoryDescription('');
+        toast.success('Kategória bola vytvorená');
+      }
+    });
+  }, [newCategoryName, newCategoryDescription, createCategoryMutation]);
 
   const categoryDropZones: CategoryDropZone[] = categories.map(cat => ({
     id: cat.id,
@@ -507,22 +554,17 @@ export const EnhancedVisualBuilder = () => {
             <div className="lg:col-span-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {categoryDropZones.map((category) => (
-                  <div 
+                  <CategoryDropZone
                     key={category.id}
-                    id={`category-${category.id}`}
-                    className="drop-zone"
-                  >
-                    <CategoryDropZone
-                      category={category}
-                      items={products}
-                      onItemMove={(itemId, categoryId) => {
-                        updateMutation.mutate({
-                          id: itemId,
-                          category_id: categoryId
-                        });
-                      }}
-                    />
-                  </div>
+                    category={category}
+                    items={products}
+                    onItemMove={(itemId, categoryId) => {
+                      updateMutation.mutate({
+                        id: itemId,
+                        category_id: categoryId
+                      });
+                    }}
+                  />
                 ))}
               </div>
             </div>
@@ -575,11 +617,32 @@ export const EnhancedVisualBuilder = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <Input placeholder="Názov kategórie" />
-                <Input placeholder="Popis" />
-                <Button className="w-full">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Vytvoriť kategóriu
+                <Input 
+                  placeholder="Názov kategórie" 
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                />
+                <Input 
+                  placeholder="Popis" 
+                  value={newCategoryDescription}
+                  onChange={(e) => setNewCategoryDescription(e.target.value)}
+                />
+                <Button 
+                  className="w-full"
+                  onClick={handleCreateCategory}
+                  disabled={createCategoryMutation.isPending || !newCategoryName.trim()}
+                >
+                  {createCategoryMutation.isPending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                      Vytváram...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Vytvoriť kategóriu
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>
