@@ -43,8 +43,8 @@ export interface WarehouseItem {
 export interface CreateWarehouseItemData {
   name: string;
   description?: string;
-  category: string;
-  item_type: 'device' | 'service';
+  category_id: string;
+  item_type_id: string;
   monthly_fee: number;
   setup_fee: number;
   company_cost: number;
@@ -60,7 +60,9 @@ export interface UpdateWarehouseItemData extends Partial<CreateWarehouseItemData
 
 export const useWarehouseItems = (filters?: {
   item_type?: 'device' | 'service';
+  item_type_id?: string;
   category?: string;
+  category_id?: string;
   search?: string;
   is_active?: boolean;
 }) => {
@@ -69,15 +71,41 @@ export const useWarehouseItems = (filters?: {
     queryFn: async () => {
       let query = supabase
         .from('warehouse_items')
-        .select('*')
+        .select(`
+          *,
+          categories:category_id (
+            id,
+            name,
+            slug,
+            color,
+            icon_name,
+            icon_url
+          ),
+          item_types:item_type_id (
+            id,
+            name,
+            slug,
+            color,
+            icon_name,
+            icon_url
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (filters?.item_type) {
         query = query.eq('item_type', filters.item_type);
       }
 
+      if (filters?.item_type_id) {
+        query = query.eq('item_type_id', filters.item_type_id);
+      }
+
       if (filters?.category) {
         query = query.eq('category', filters.category);
+      }
+
+      if (filters?.category_id) {
+        query = query.eq('category_id', filters.category_id);
       }
 
       if (filters?.is_active !== undefined) {

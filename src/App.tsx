@@ -28,6 +28,8 @@ import DesignSystemPage from "./pages/DesignSystemPage";
 import OverviewPage from "./pages/OverviewPage";
 import WarehousePage from "./pages/WarehousePage";
 import SolutionsPage from "./pages/SolutionsPage";
+import CategoriesPage from "./pages/CategoriesPage";
+import ItemTypesPage from "./pages/ItemTypesPage";
 import ReportingPage from "./pages/ReportingPage";
 import BusinessLocationsPage from "./pages/BusinessLocationsPage";
 import BusinessLocationDetailPage from "./pages/BusinessLocationDetailPage";
@@ -102,10 +104,20 @@ const App = () => (
             </ProtectedRoute>
           } />
           
-          {/* Solutions management */}
+          {/* Solutions and warehouse management */}
           <Route path="/admin/solutions" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <SolutionsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/categories" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <CategoriesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/item-types" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <ItemTypesPage />
             </ProtectedRoute>
           } />
           
