@@ -1331,6 +1331,51 @@ export type Database = {
           },
         ]
       }
+      solution_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          id: string
+          is_featured: boolean
+          position: number
+          solution_id: string
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          id?: string
+          is_featured?: boolean
+          position?: number
+          solution_id: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          id?: string
+          is_featured?: boolean
+          position?: number
+          solution_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "solution_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "solution_categories_solution_id_fkey"
+            columns: ["solution_id"]
+            isOneToOne: false
+            referencedRelation: "solutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       solution_items: {
         Row: {
           category_filters: string[] | null

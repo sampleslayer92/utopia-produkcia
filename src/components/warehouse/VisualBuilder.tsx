@@ -1,44 +1,19 @@
-import { useState } from 'react';
-import { 
-  DndContext, 
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-  useDroppable,
-  DragOverEvent,
-  DragStartEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import {
-  useSortable,
-} from '@dnd-kit/sortable';
+import React, { useState, useEffect } from 'react';
+import { DndContext, DragEndEvent, DragStartEvent, closestCenter, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, useDroppable } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Package, 
-  Target, 
-  FolderOpen, 
-  GripVertical, 
-  ArrowRight,
-  Lightbulb,
-  Zap,
-  CheckCircle
-} from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Package, Lightbulb, ArrowRight, Sparkles, Target, Zap, Plus, Edit, Trash2, Eye, Layers, FolderOpen, GripVertical } from 'lucide-react';
 import { useWarehouseItems, useUpdateWarehouseItem } from '@/hooks/useWarehouseItems';
-import { useCategories, useUpdateCategory } from '@/hooks/useCategories';
-import { useSolutions, useUpdateSolution } from '@/hooks/useSolutions';
-import { toast } from 'sonner';
+import { useCategories } from '@/hooks/useCategories';
+import { useSolutions } from '@/hooks/useSolutions';
+import { useSolutionCategories, useCreateSolutionCategory, useDeleteSolutionCategory } from '@/hooks/useSolutionCategories';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface SortableItemProps {
   id: string;
@@ -175,19 +150,32 @@ interface SmartSuggestion {
 }
 
 export const VisualBuilder = () => {
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<any>(null);
+  const [selectedSolution, setSelectedSolution] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
-  const { data: products = [] } = useWarehouseItems();
-  const { data: categories = [] } = useCategories();
-  const { data: solutions = [] } = useSolutions();
+  const { data: products = [], isLoading: isLoadingProducts } = useWarehouseItems();
+  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
+  const { data: solutions = [], isLoading: isLoadingSolutions } = useSolutions();
+  const { data: solutionCategories = [] } = useSolutionCategories(selectedSolution || undefined);
+  const updateProduct = useUpdateWarehouseItem();
+  const createSolutionCategory = useCreateSolutionCategory();
+  const deleteSolutionCategory = useDeleteSolutionCategory();
   
-  const updateWarehouseItemMutation = useUpdateWarehouseItem();
-
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 8,
+      },
     })
   );
 
@@ -254,199 +242,450 @@ export const VisualBuilder = () => {
     return suggestions.sort((a, b) => b.confidence - a.confidence);
   };
 
-  // Group products by category
   const getProductsByCategory = () => {
-    const productsByCategory: Record<string, any[]> = {};
+    const categorizedProducts = new Map<string, any[]>();
     
-    // All products (uncategorized)
-    const uncategorizedProducts = products.filter(p => !p.category_id || p.category === 'other');
-    productsByCategory['all'] = uncategorizedProducts;
+    // Add "All Products" category
+    categorizedProducts.set('all-products', products);
     
-    // Products by category
+    // Group products by category
     categories.forEach(category => {
-      productsByCategory[category.id] = products.filter(p => p.category_id === category.id);
+      const categoryProducts = products.filter(p => p.category_id === category.id);
+      categorizedProducts.set(category.id, categoryProducts);
     });
     
-    return productsByCategory;
+    return categorizedProducts;
+  };
+
+  const getCategoriesForSolution = () => {
+    if (!selectedSolution) return [];
+    return solutionCategories.map(sc => sc.category).filter(Boolean);
+  };
+
+  const getProductsForCategory = (categoryId: string) => {
+    return products.filter(p => p.category_id === categoryId);
   };
 
   const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
-    const item = products.find(p => p.id === active.id);
-    setDraggedItem(item);
+    setActiveId(event.active.id as string);
+    
+    // Find the dragged item
+    const productItem = products.find(p => p.id === event.active.id);
+    const categoryItem = categories.find(c => c.id === event.active.id);
+    
+    if (productItem) {
+      setDraggedItem(productItem);
+    } else if (categoryItem) {
+      setDraggedItem(categoryItem);
+    }
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    setDraggedItem(null);
-
-    if (!over || active.id === over.id) {
+    
+    if (!over || !active) {
+      setActiveId(null);
+      setDraggedItem(null);
       return;
     }
 
-    const productId = active.id as string;
-    const targetCategoryId = over.id as string;
-
-    try {
-      // Find the product being moved
+    const activeId = active.id as string;
+    const overId = over.id as string;
+    
+    // Handle product being dropped into a category
+    if (activeId.startsWith('product-') && overId.startsWith('category-')) {
+      const productId = activeId.replace('product-', '');
+      const categoryId = overId.replace('category-', '');
+      
       const product = products.find(p => p.id === productId);
-      if (!product) return;
-
-      // Determine the new category
-      let newCategoryId: string | null = null;
-      let newCategoryName = 'other';
-
-      if (targetCategoryId !== 'all') {
-        const targetCategory = categories.find(c => c.id === targetCategoryId);
-        if (targetCategory) {
-          newCategoryId = targetCategory.id;
-          newCategoryName = targetCategory.name;
+      const category = categories.find(c => c.id === categoryId);
+      
+      if (product && category) {
+        try {
+          await updateProduct.mutateAsync({
+            id: productId,
+            category_id: categoryId,
+          });
+          
+          toast({
+            title: 'Success',
+            description: `Product "${product.name}" moved to category "${category.name}"`,
+          });
+        } catch (error) {
+          console.error('Error updating product category:', error);
+          toast({
+            title: 'Error',
+            description: 'Failed to update product category',
+            variant: 'destructive',
+          });
         }
       }
-
-      // Update the product
-      await updateWarehouseItemMutation.mutateAsync({
-        id: productId,
-        category_id: newCategoryId,
-      });
-
-      toast.success('Produkt bol úspešne presunutý');
-    } catch (error) {
-      console.error('Error updating product category:', error);
-      toast.error('Nepodarilo sa presunúť produkt');
     }
+    
+    // Handle product being dropped into "All Products" (remove category)
+    if (activeId.startsWith('product-') && overId === 'all-products') {
+      const productId = activeId.replace('product-', '');
+      const product = products.find(p => p.id === productId);
+      
+      if (product) {
+        try {
+          await updateProduct.mutateAsync({
+            id: productId,
+            category_id: null,
+          });
+          
+          toast({
+            title: 'Success',
+            description: `Product "${product.name}" removed from category`,
+          });
+        } catch (error) {
+          console.error('Error removing product from category:', error);
+          toast({
+            title: 'Error',
+            description: 'Failed to remove product from category',
+            variant: 'destructive',
+          });
+        }
+      }
+    }
+
+    // Handle category being dropped into a solution
+    if (activeId.startsWith('category-') && overId.startsWith('solution-')) {
+      const categoryId = activeId.replace('category-', '');
+      const solutionId = overId.replace('solution-', '');
+      
+      const category = categories.find(c => c.id === categoryId);
+      const solution = solutions.find(s => s.id === solutionId);
+      
+      if (category && solution) {
+        try {
+          await createSolutionCategory.mutateAsync({
+            solution_id: solutionId,
+            category_id: categoryId,
+          });
+          
+          toast({
+            title: 'Success',
+            description: `Category "${category.name}" added to solution "${solution.name}"`,
+          });
+        } catch (error) {
+          console.error('Error adding category to solution:', error);
+          toast({
+            title: 'Error',
+            description: 'Failed to add category to solution',
+            variant: 'destructive',
+          });
+        }
+      }
+    }
+
+    setActiveId(null);
+    setDraggedItem(null);
   };
 
   const smartSuggestions = getSmartSuggestions();
   const productsByCategory = getProductsByCategory();
+  const solutionCategoriesData = getCategoriesForSolution();
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">🎨 Visual Builder</h2>
-          <p className="text-muted-foreground">
-            Drag & drop editor pre produkty, kategórie a riešenia
+    <div className="p-6 bg-gradient-to-br from-background to-muted/30 min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-primary mb-2">
+            Visual Builder
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Hierarchical warehouse management: Solutions → Categories → Products
           </p>
         </div>
-      </div>
 
-      {/* Smart Suggestions */}
-      {smartSuggestions.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Lightbulb className="h-5 w-5 text-yellow-500" />
-              <span>Smart Suggestions</span>
-            </CardTitle>
-            <CardDescription>
-              AI odporúčania na optimalizáciu vášho skladu
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {smartSuggestions.map((suggestion) => (
-                <Card 
-                  key={suggestion.id} 
-                  className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-primary"
-                  onClick={suggestion.action}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Zap className="h-4 w-4 text-primary" />
-                          <h4 className="font-medium">{suggestion.title}</h4>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-3">
-                          {suggestion.description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="outline" className={`
-                            ${suggestion.confidence >= 80 ? 'text-green-600 border-green-600' : ''}
-                            ${suggestion.confidence >= 60 && suggestion.confidence < 80 ? 'text-yellow-600 border-yellow-600' : ''}
-                            ${suggestion.confidence < 60 ? 'text-red-600 border-red-600' : ''}
-                          `}>
-                            {suggestion.confidence}% istota
-                          </Badge>
-                          <Badge variant="secondary">
-                            {suggestion.type}
-                          </Badge>
-                        </div>
-                      </div>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground ml-2" />
+        {/* Smart Suggestions */}
+        <div className="mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                Smart Suggestions
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {smartSuggestions.map((suggestion) => (
+                  <div
+                    key={suggestion.id}
+                    className="p-4 border rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={suggestion.action}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge variant="secondary">{suggestion.type}</Badge>
+                      <Badge variant="outline">{suggestion.confidence}%</Badge>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                    <h3 className="font-semibold mb-1">{suggestion.title}</h3>
+                    <p className="text-sm text-muted-foreground">{suggestion.description}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Multi-Column Drag & Drop Area */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <GripVertical className="h-5 w-5 text-primary" />
-            <span>Drag & Drop Editor</span>
-          </CardTitle>
-          <CardDescription>
-            Potiahnutím presuňte produkty medzi kategóriami
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {/* All Products Column */}
-              <CategoryDropZone
-                id="all"
-                title="Všetky produkty"
-                items={productsByCategory['all'] || []}
-              />
-              
-              {/* Category Columns */}
-              {categories.map((category) => (
-                <CategoryDropZone
-                  key={category.id}
-                  id={category.id}
-                  title={category.name}
-                  items={productsByCategory[category.id] || []}
-                  color={category.color}
-                />
-              ))}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          {/* 3-Level Hierarchy Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Level 1: Solutions */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5" />
+                  Solutions
+                </h2>
+                <Button
+                  size="sm"
+                  onClick={() => navigate('/admin/warehouse/solutions')}
+                  variant="outline"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Solution
+                </Button>
+              </div>
+              <ScrollArea className="h-[600px]">
+                <div className="space-y-2">
+                  {solutions.map((solution) => (
+                    <Card
+                      key={solution.id}
+                      className={`cursor-pointer transition-all hover:shadow-md ${
+                        selectedSolution === solution.id ? 'ring-2 ring-primary' : ''
+                      }`}
+                      onClick={() => setSelectedSolution(solution.id)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                              <Lightbulb className="h-4 w-4 text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="font-medium">{solution.name}</h3>
+                              <p className="text-sm text-muted-foreground">
+                                {solution.subtitle}
+                              </p>
+                            </div>
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </ScrollArea>
             </div>
-          </DndContext>
-        </CardContent>
-      </Card>
 
-      {/* Actions */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-sm text-muted-foreground">
-                Zmeny sa ukladajú automaticky
-              </span>
+            {/* Level 2: Categories for Selected Solution */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <Layers className="h-5 w-5" />
+                  Categories
+                  {selectedSolution && (
+                    <Badge variant="outline" className="ml-2">
+                      {solutions.find(s => s.id === selectedSolution)?.name}
+                    </Badge>
+                  )}
+                </h2>
+                <Button
+                  size="sm"
+                  onClick={() => navigate('/admin/warehouse/categories')}
+                  variant="outline"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Category
+                </Button>
+              </div>
+              <ScrollArea className="h-[600px]">
+                <div className="space-y-2">
+                  {selectedSolution ? (
+                    solutionCategoriesData.map((category) => (
+                      <Card
+                        key={category.id}
+                        className={`cursor-pointer transition-all hover:shadow-md ${
+                          selectedCategory === category.id ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => setSelectedCategory(category.id)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div 
+                                className="w-8 h-8 rounded-full flex items-center justify-center"
+                                style={{ backgroundColor: `${category.color}20` }}
+                              >
+                                <Layers className="h-4 w-4" style={{ color: category.color }} />
+                              </div>
+                              <div>
+                                <h3 className="font-medium">{category.name}</h3>
+                                <p className="text-sm text-muted-foreground">
+                                  {getProductsForCategory(category.id).length} products
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const solutionCategory = solutionCategories.find(
+                                    sc => sc.category?.id === category.id
+                                  );
+                                  if (solutionCategory) {
+                                    deleteSolutionCategory.mutate(solutionCategory.id);
+                                  }
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">
+                        Select a solution to view its categories
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
             </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" onClick={() => window.location.reload()}>
-                Obnoviť
-              </Button>
-              <Button onClick={() => navigate('/admin/warehouse')}>
-                Späť na sklad
-              </Button>
+
+            {/* Level 3: Products for Selected Category */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Products
+                  {selectedCategory && (
+                    <Badge variant="outline" className="ml-2">
+                      {categories.find(c => c.id === selectedCategory)?.name}
+                    </Badge>
+                  )}
+                </h2>
+                <Button
+                  size="sm"
+                  onClick={() => navigate('/admin/warehouse/products')}
+                  variant="outline"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Product
+                </Button>
+              </div>
+              <ScrollArea className="h-[600px]">
+                <div className="space-y-2">
+                  {selectedCategory ? (
+                    getProductsForCategory(selectedCategory).map((product) => (
+                      <Card key={product.id} className="hover:shadow-md transition-all">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center">
+                                <Package className="h-4 w-4 text-secondary" />
+                              </div>
+                              <div>
+                                <h3 className="font-medium">{product.name}</h3>
+                                <p className="text-sm text-muted-foreground">
+                                  €{product.monthly_fee}/month
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => navigate(`/admin/warehouse/items/${product.id}`)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">
+                        Select a category to view its products
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Drag & Drop Areas */}
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold mb-4">Drag & Drop Management</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* All Products */}
+              <CategoryDropZone
+                id="all-products"
+                title="All Products"
+                items={productsByCategory.get('all-products') || []}
+                color="bg-gradient-to-br from-blue-50 to-blue-100"
+                isActive={activeId === 'all-products'}
+              />
+
+              {/* Solutions Drop Zone */}
+              <div className="space-y-2">
+                <h4 className="font-medium">Solutions</h4>
+                {solutions.map((solution) => (
+                  <CategoryDropZone
+                    key={`solution-${solution.id}`}
+                    id={`solution-${solution.id}`}
+                    title={solution.name}
+                    items={solutionCategories.filter(sc => sc.solution_id === solution.id).map(sc => sc.category).filter(Boolean)}
+                    color="bg-gradient-to-br from-purple-50 to-purple-100"
+                    isActive={activeId === `solution-${solution.id}`}
+                  />
+                ))}
+              </div>
+
+              {/* Categories */}
+              <div className="space-y-2">
+                <h4 className="font-medium">Categories</h4>
+                {categories.map((category) => (
+                  <CategoryDropZone
+                    key={`category-${category.id}`}
+                    id={`category-${category.id}`}
+                    title={category.name}
+                    items={productsByCategory.get(category.id) || []}
+                    color={`bg-gradient-to-br from-green-50 to-green-100`}
+                    isActive={activeId === `category-${category.id}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <DragOverlay>
+            {draggedItem && (
+              <div className="bg-card border rounded-lg p-3 shadow-lg">
+                <div className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  <span className="font-medium">{draggedItem.name}</span>
+                </div>
+              </div>
+            )}
+          </DragOverlay>
+        </DndContext>
+      </div>
     </div>
   );
 };
