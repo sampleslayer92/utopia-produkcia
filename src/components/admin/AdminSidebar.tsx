@@ -168,19 +168,34 @@ const AdminSidebar = () => {
       expanded: isExpanded('warehouse'),
       children: [
         {
-          title: t('navigation.allItems'),
+          title: "📦 " + t('navigation.allItems'),
           path: "/admin/warehouse",
           active: isActive("/admin/warehouse")
         },
         {
-          title: t('navigation.devices'),
-          path: "/admin/warehouse/devices",
-          active: isActive("/admin/warehouse/devices")
+          title: "🎯 " + t('navigation.solutions'),
+          path: "/admin/warehouse/solutions",
+          active: isActive("/admin/warehouse/solutions")
         },
         {
-          title: t('navigation.services'),
-          path: "/admin/warehouse/services",
-          active: isActive("/admin/warehouse/services")
+          title: "📁 " + t('navigation.categories'),
+          path: "/admin/warehouse/categories",
+          active: isActive("/admin/warehouse/categories")
+        },
+        {
+          title: "🏷️ " + t('navigation.itemTypes'),
+          path: "/admin/warehouse/item-types",
+          active: isActive("/admin/warehouse/item-types")
+        },
+        {
+          title: "➕ " + t('navigation.addItem'),
+          path: "/admin/warehouse/add-item",
+          active: isActive("/admin/warehouse/add-item")
+        },
+        {
+          title: "🔄 " + t('navigation.bulkOperations'),
+          path: "/admin/warehouse/bulk",
+          active: isActive("/admin/warehouse/bulk")
         }
       ]
     }] : []),

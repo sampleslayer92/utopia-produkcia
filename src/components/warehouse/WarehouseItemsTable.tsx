@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -41,9 +41,11 @@ import { icons } from 'lucide-react';
 
 interface WarehouseItemsTableProps {
   itemType?: 'device' | 'service';
+  showAddForm?: boolean;
+  showBulkOps?: boolean;
 }
 
-export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
+export const WarehouseItemsTable = ({ itemType, showAddForm, showBulkOps }: WarehouseItemsTableProps) => {
   const { t, i18n } = useTranslation('admin');
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
@@ -136,6 +138,40 @@ export const WarehouseItemsTable = ({ itemType }: WarehouseItemsTableProps) => {
           </div>
         </CardContent>
       </Card>
+    );
+  }
+
+  // Show add form if showAddForm is true
+  if (showAddForm) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>➕ Pridať novú položku</CardTitle>
+            <CardDescription>Vyplňte údaje pre novú skladovú položku</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">Formulár na pridanie novej položky bude implementovaný v ďalšej verzii.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show bulk operations if showBulkOps is true
+  if (showBulkOps) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>🔄 Batch operácie</CardTitle>
+            <CardDescription>Hromadné úpravy skladových položiek</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">Funkcionality pre batch operácie budú implementované v ďalšej verzii.</p>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
