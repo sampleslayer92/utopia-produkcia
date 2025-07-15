@@ -59,6 +59,13 @@ export const WarehouseDashboard = () => {
       icon: Tag,
       action: () => navigate("/admin/warehouse/bulk"),
       color: "bg-orange-500"
+    },
+    {
+      title: "Visual Builder",
+      description: "Drag & drop editor",
+      icon: Target,
+      action: () => navigate("/admin/warehouse/visual-builder"),
+      color: "bg-pink-500"
     }
   ];
 
@@ -151,7 +158,7 @@ export const WarehouseDashboard = () => {
           <CardDescription>Najčastejšie používané funkcie</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {quickActions.map((action, index) => (
               <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow" onClick={action.action}>
                 <CardContent className="p-4">

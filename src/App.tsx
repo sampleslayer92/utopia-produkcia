@@ -118,6 +118,16 @@ const App = () => (
               <WarehousePage />
             </ProtectedRoute>
           } />
+          <Route path="/admin/warehouse/visual-builder" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/warehouse/bulk" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
           
           {/* Solutions and warehouse management */}
           <Route path="/admin/solutions" element={

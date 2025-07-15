@@ -196,6 +196,11 @@ const AdminSidebar = () => {
           title: "🔄 " + t('navigation.bulkOperations'),
           path: "/admin/warehouse/bulk",
           active: isActive("/admin/warehouse/bulk")
+        },
+        {
+          title: "🎨 Visual Builder",
+          path: "/admin/warehouse/visual-builder",
+          active: isActive("/admin/warehouse/visual-builder")
         }
       ]
     }] : []),

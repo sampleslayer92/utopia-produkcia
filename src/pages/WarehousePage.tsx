@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { WarehouseItemsTable } from "@/components/warehouse/WarehouseItemsTable";
 import { WarehouseDashboard } from "@/components/warehouse/WarehouseDashboard";
 import { SolutionWorkflow } from "@/components/solutions/SolutionWorkflow";
+import { VisualBuilder } from "@/components/warehouse/VisualBuilder";
 import { useLocation } from 'react-router-dom';
 
 const WarehousePage = () => {
@@ -17,6 +18,7 @@ const WarehousePage = () => {
   const showSolutions = location.pathname === '/admin/warehouse/solutions';
   const showCategories = location.pathname === '/admin/warehouse/categories';
   const showItemTypes = location.pathname === '/admin/warehouse/item-types';
+  const showVisualBuilder = location.pathname === '/admin/warehouse/visual-builder';
 
   const getTitle = () => {
     if (showAddForm) return "➕ Pridať položku";
@@ -24,6 +26,7 @@ const WarehousePage = () => {
     if (showSolutions) return "🎯 Riešenia";
     if (showCategories) return "📁 Kategórie";
     if (showItemTypes) return "🏷️ Typy položiek";
+    if (showVisualBuilder) return "🎨 Visual Builder";
     return "📦 " + t('navigation.warehouse');
   };
 
@@ -33,6 +36,7 @@ const WarehousePage = () => {
     if (showSolutions) return "Spravujte riešenia a produkty";
     if (showCategories) return "Správa kategórií skladových položiek";
     if (showItemTypes) return "Správa typov skladových položiek";
+    if (showVisualBuilder) return "Drag & drop editor pre produkty a riešenia";
     return t('warehouse.subtitle');
   };
 
@@ -53,6 +57,8 @@ const WarehousePage = () => {
         <div className="text-center text-muted-foreground">Správa kategórií bude implementovaná v ďalšej verzii</div>
       ) : showItemTypes ? (
         <div className="text-center text-muted-foreground">Správa typov položiek bude implementovaná v ďalšej verzii</div>
+      ) : showVisualBuilder ? (
+        <VisualBuilder />
       ) : (
         <WarehouseItemsTable />
       )}
