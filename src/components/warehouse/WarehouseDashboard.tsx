@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useWarehouseItems } from "@/hooks/useWarehouseItems";
 import { useCategories } from "@/hooks/useCategories";
 import { useSolutions } from "@/hooks/useSolutions";
+import { OnboardingPreview } from "./OnboardingPreview";
 
 export const WarehouseDashboard = () => {
   const navigate = useNavigate();
@@ -170,7 +171,7 @@ export const WarehouseDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Recent Activity */}
+      {/* Recent Activity and Onboarding Preview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -226,6 +227,9 @@ export const WarehouseDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Onboarding Preview */}
+      <OnboardingPreview />
     </div>
   );
 };

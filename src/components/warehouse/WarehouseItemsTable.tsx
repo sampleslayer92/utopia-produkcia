@@ -37,6 +37,8 @@ import { useWarehouseItems, useDeleteWarehouseItem, type WarehouseItem } from '@
 import { useCategories } from '@/hooks/useCategories';
 import { useItemTypes } from '@/hooks/useItemTypes';
 import { WarehouseItemModal } from './WarehouseItemModal';
+import { AddItemForm } from './AddItemForm';
+import { BulkOperationsPanel } from './BulkOperationsPanel';
 import { icons } from 'lucide-react';
 
 interface WarehouseItemsTableProps {
@@ -143,36 +145,12 @@ export const WarehouseItemsTable = ({ itemType, showAddForm, showBulkOps }: Ware
 
   // Show add form if showAddForm is true
   if (showAddForm) {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>➕ Pridať novú položku</CardTitle>
-            <CardDescription>Vyplňte údaje pre novú skladovú položku</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Formulár na pridanie novej položky bude implementovaný v ďalšej verzii.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <AddItemForm />;
   }
 
   // Show bulk operations if showBulkOps is true
   if (showBulkOps) {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>🔄 Batch operácie</CardTitle>
-            <CardDescription>Hromadné úpravy skladových položiek</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Funkcionality pre batch operácie budú implementované v ďalšej verzii.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <BulkOperationsPanel />;
   }
 
   return (
