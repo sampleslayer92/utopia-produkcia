@@ -11,6 +11,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { useCategories } from '@/hooks/useCategories';
+import { useItemTypes } from '@/hooks/useItemTypes';
 import { useCreateWarehouseItem, type CreateWarehouseItemData } from '@/hooks/useWarehouseItems';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Package, Upload, Zap } from 'lucide-react';
@@ -36,6 +37,7 @@ export const AddItemForm = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: categories = [] } = useCategories();
+  const { data: itemTypes = [] } = useItemTypes();
   const createMutation = useCreateWarehouseItem();
 
   const form = useForm<FormData>({
@@ -58,17 +60,7 @@ export const AddItemForm = () => {
 
   // Get item types based on selected category
   const availableItemTypes = selectedCategory 
-    ? [{ 
-        id: 'device-type', 
-        name: 'Zariadenie', 
-        slug: 'device',
-        description: 'Fyzické zariadenia a hardware'
-      }, { 
-        id: 'service-type', 
-        name: 'Služba', 
-        slug: 'service',
-        description: 'Softvérové riešenia a služby'
-      }].filter(type => 
+    ? itemTypes.filter(type => 
         selectedCategory.item_type_filter === 'both' || 
         selectedCategory.item_type_filter === type.slug
       )
@@ -253,7 +245,9 @@ export const AddItemForm = () => {
                               <SelectItem key={type.id} value={type.id}>
                                 <div>
                                   <div className="font-medium">{type.name}</div>
-                                  <div className="text-sm text-muted-foreground">{type.description}</div>
+                                  {type.description && (
+                                    <div className="text-sm text-muted-foreground">{type.description}</div>
+                                  )}
                                 </div>
                               </SelectItem>
                             ))}

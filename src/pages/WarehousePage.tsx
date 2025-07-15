@@ -11,8 +11,8 @@ const WarehousePage = () => {
   const { t } = useTranslation('admin');
   const location = useLocation();
 
-  // Show dashboard on main warehouse page, form for add-item, table for bulk operations, solutions workflow
-  const showDashboard = location.pathname === '/admin/warehouse';
+  // Show items table on main warehouse page, dashboard in separate section
+  const showDashboard = location.pathname === '/admin/warehouse/dashboard';
   const showAddForm = location.pathname === '/admin/warehouse/add-item';
   const showBulkOps = location.pathname === '/admin/warehouse/bulk';
   const showSolutions = location.pathname === '/admin/warehouse/solutions';
@@ -27,6 +27,7 @@ const WarehousePage = () => {
     if (showCategories) return "📁 Kategórie";
     if (showItemTypes) return "🏷️ Typy položiek";
     if (showVisualBuilder) return "🎨 Visual Builder";
+    if (showDashboard) return "📊 Dashboard";
     return "📦 " + t('navigation.warehouse');
   };
 
@@ -37,7 +38,8 @@ const WarehousePage = () => {
     if (showCategories) return "Správa kategórií skladových položiek";
     if (showItemTypes) return "Správa typov skladových položiek";
     if (showVisualBuilder) return "Drag & drop editor pre produkty a riešenia";
-    return t('warehouse.subtitle');
+    if (showDashboard) return "Prehľad statistík a aktivít";
+    return "Prehľadná tabuľka všetkých skladových položiek";
   };
 
   return (
@@ -45,9 +47,7 @@ const WarehousePage = () => {
       title={getTitle()}
       subtitle={getSubtitle()}
     >
-      {showDashboard ? (
-        <WarehouseDashboard />
-      ) : showAddForm ? (
+      {showAddForm ? (
         <WarehouseItemsTable showAddForm />
       ) : showBulkOps ? (
         <WarehouseItemsTable showBulkOps />
@@ -59,6 +59,8 @@ const WarehousePage = () => {
         <div className="text-center text-muted-foreground">Správa typov položiek bude implementovaná v ďalšej verzii</div>
       ) : showVisualBuilder ? (
         <VisualBuilder />
+      ) : showDashboard ? (
+        <WarehouseDashboard />
       ) : (
         <WarehouseItemsTable />
       )}
