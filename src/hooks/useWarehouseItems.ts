@@ -7,7 +7,9 @@ export interface WarehouseItem {
   name: string;
   description?: string;
   category: string;
+  category_id?: string;
   item_type: 'device' | 'service';
+  item_type_id?: string;
   monthly_fee: number;
   setup_fee: number;
   company_cost: number;
@@ -19,6 +21,23 @@ export interface WarehouseItem {
   created_by?: string;
   created_at: string;
   updated_at: string;
+  // Relations
+  categories?: {
+    id: string;
+    name: string;
+    slug: string;
+    color: string;
+    icon_name?: string;
+    icon_url?: string;
+  };
+  item_types?: {
+    id: string;
+    name: string;
+    slug: string;
+    color: string;
+    icon_name?: string;
+    icon_url?: string;
+  };
 }
 
 export interface CreateWarehouseItemData {

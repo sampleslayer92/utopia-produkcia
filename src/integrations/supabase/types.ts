@@ -236,6 +236,51 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          color: string
+          created_at: string
+          description: string | null
+          icon_name: string | null
+          icon_url: string | null
+          id: string
+          is_active: boolean
+          item_type_filter: string
+          name: string
+          position: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon_name?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          item_type_filter?: string
+          name: string
+          position?: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon_name?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          item_type_filter?: string
+          name?: string
+          position?: number
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       company_info: {
         Row: {
           address_city: string
@@ -832,6 +877,48 @@ export type Database = {
         }
         Relationships: []
       }
+      item_types: {
+        Row: {
+          color: string
+          created_at: string
+          description: string | null
+          icon_name: string | null
+          icon_url: string | null
+          id: string
+          is_active: boolean
+          name: string
+          position: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon_name?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          position?: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon_name?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          position?: number
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kanban_columns: {
         Row: {
           color: string
@@ -1088,27 +1175,33 @@ export type Database = {
       }
       solution_items: {
         Row: {
+          category_filters: string[] | null
           created_at: string
           id: string
           is_featured: boolean
+          item_type_filters: string[] | null
           position: number
           solution_id: string
           updated_at: string
           warehouse_item_id: string
         }
         Insert: {
+          category_filters?: string[] | null
           created_at?: string
           id?: string
           is_featured?: boolean
+          item_type_filters?: string[] | null
           position?: number
           solution_id: string
           updated_at?: string
           warehouse_item_id: string
         }
         Update: {
+          category_filters?: string[] | null
           created_at?: string
           id?: string
           is_featured?: boolean
+          item_type_filters?: string[] | null
           position?: number
           solution_id?: string
           updated_at?: string
@@ -1340,6 +1433,7 @@ export type Database = {
       warehouse_items: {
         Row: {
           category: string
+          category_id: string | null
           company_cost: number
           created_at: string
           created_by: string | null
@@ -1349,6 +1443,7 @@ export type Database = {
           image_url: string | null
           is_active: boolean
           item_type: string
+          item_type_id: string | null
           min_stock: number | null
           monthly_fee: number
           name: string
@@ -1358,6 +1453,7 @@ export type Database = {
         }
         Insert: {
           category?: string
+          category_id?: string | null
           company_cost?: number
           created_at?: string
           created_by?: string | null
@@ -1367,6 +1463,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           item_type?: string
+          item_type_id?: string | null
           min_stock?: number | null
           monthly_fee?: number
           name: string
@@ -1376,6 +1473,7 @@ export type Database = {
         }
         Update: {
           category?: string
+          category_id?: string | null
           company_cost?: number
           created_at?: string
           created_by?: string | null
@@ -1385,6 +1483,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           item_type?: string
+          item_type_id?: string | null
           min_stock?: number | null
           monthly_fee?: number
           name?: string
@@ -1392,7 +1491,22 @@ export type Database = {
           specifications?: Json | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "warehouse_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "warehouse_items_item_type_id_fkey"
+            columns: ["item_type_id"]
+            isOneToOne: false
+            referencedRelation: "item_types"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
