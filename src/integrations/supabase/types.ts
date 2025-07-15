@@ -1086,6 +1086,96 @@ export type Database = {
           },
         ]
       }
+      solution_items: {
+        Row: {
+          created_at: string
+          id: string
+          is_featured: boolean
+          position: number
+          solution_id: string
+          updated_at: string
+          warehouse_item_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_featured?: boolean
+          position?: number
+          solution_id: string
+          updated_at?: string
+          warehouse_item_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_featured?: boolean
+          position?: number
+          solution_id?: string
+          updated_at?: string
+          warehouse_item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "solution_items_solution_id_fkey"
+            columns: ["solution_id"]
+            isOneToOne: false
+            referencedRelation: "solutions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "solution_items_warehouse_item_id_fkey"
+            columns: ["warehouse_item_id"]
+            isOneToOne: false
+            referencedRelation: "warehouse_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      solutions: {
+        Row: {
+          color: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          icon_name: string | null
+          icon_url: string | null
+          id: string
+          is_active: boolean
+          name: string
+          position: number
+          subtitle: string | null
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon_name?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          position?: number
+          subtitle?: string | null
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon_name?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          position?: number
+          subtitle?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       step_analytics: {
         Row: {
           completed_at: string | null

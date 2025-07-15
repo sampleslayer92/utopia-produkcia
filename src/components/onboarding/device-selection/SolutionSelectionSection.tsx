@@ -1,8 +1,10 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreditCard, Monitor, Globe, Smartphone, Zap } from "lucide-react";
+import { CreditCard, Monitor, Globe, Smartphone, Zap, icons } from "lucide-react";
 import SolutionSelectionCard from "../components/SolutionSelectionCard";
 import { useTranslation } from "react-i18next";
+import { useSolutions } from '@/hooks/useSolutions';
+import LoadingSpinner from '@/components/ui/loading-spinner';
 
 interface SolutionSelectionSectionProps {
   selectedSolutions: string[];
@@ -16,39 +18,37 @@ const SolutionSelectionSection = ({
   onNext 
 }: SolutionSelectionSectionProps) => {
   const { t } = useTranslation('forms');
+  const { data: solutions, isLoading } = useSolutions(true); // Only active solutions
 
-  const solutionTypes = [
-    {
-      id: 'terminal',
-      title: t('deviceSelection.solutionSelection.solutions.terminal.title'),
-      description: t('deviceSelection.solutionSelection.solutions.terminal.description'),
-      icon: <CreditCard className="h-8 w-8 text-blue-600" />
-    },
-    {
-      id: 'pos',
-      title: t('deviceSelection.solutionSelection.solutions.pos.title'),
-      description: t('deviceSelection.solutionSelection.solutions.pos.description'),
-      icon: <Monitor className="h-8 w-8 text-green-600" />
-    },
-    {
-      id: 'gateway',
-      title: t('deviceSelection.solutionSelection.solutions.gateway.title'),
-      description: t('deviceSelection.solutionSelection.solutions.gateway.description'),
-      icon: <Globe className="h-8 w-8 text-purple-600" />
-    },
-    {
-      id: 'softpos',
-      title: t('deviceSelection.solutionSelection.solutions.softpos.title'),
-      description: t('deviceSelection.solutionSelection.solutions.softpos.description'),
-      icon: <Smartphone className="h-8 w-8 text-orange-600" />
-    },
-    {
-      id: 'charging',
-      title: t('deviceSelection.solutionSelection.solutions.charging.title'),
-      description: t('deviceSelection.solutionSelection.solutions.charging.description'),
-      icon: <Zap className="h-8 w-8 text-yellow-600" />
+  const renderIcon = (iconName: string | null, iconUrl: string | null, color: string) => {
+    if (iconUrl) {
+      return (
+        <img 
+          src={iconUrl} 
+          alt="Solution icon" 
+          className="h-8 w-8 object-contain"
+        />
+      );
     }
-  ];
+
+    if (iconName && icons[iconName as keyof typeof icons]) {
+      const IconComponent = icons[iconName as keyof typeof icons];
+      return <IconComponent className="h-8 w-8" style={{ color }} />;
+    }
+
+    // Fallback icon
+    return <CreditCard className="h-8 w-8" style={{ color }} />;
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardContent className="py-8">
+          <LoadingSpinner />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
@@ -68,12 +68,12 @@ const SolutionSelectionSection = ({
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {solutionTypes.map((solution) => (
+          {solutions?.map((solution) => (
             <SolutionSelectionCard
               key={solution.id}
-              title={solution.title}
-              description={solution.description}
-              icon={solution.icon}
+              title={solution.name}
+              description={solution.description || solution.subtitle || ''}
+              icon={renderIcon(solution.icon_name, solution.icon_url, solution.color)}
               isSelected={selectedSolutions.includes(solution.id)}
               onClick={() => onToggleSolution(solution.id)}
             />

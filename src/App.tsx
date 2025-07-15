@@ -27,6 +27,7 @@ import AdminOnboardingPage from "./pages/AdminOnboardingPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
 import OverviewPage from "./pages/OverviewPage";
 import WarehousePage from "./pages/WarehousePage";
+import SolutionsPage from "./pages/SolutionsPage";
 import ReportingPage from "./pages/ReportingPage";
 import BusinessLocationsPage from "./pages/BusinessLocationsPage";
 import BusinessLocationDetailPage from "./pages/BusinessLocationDetailPage";
@@ -98,6 +99,13 @@ const App = () => (
           <Route path="/admin/warehouse/services" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <WarehousePage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Solutions management */}
+          <Route path="/admin/solutions" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <SolutionsPage />
             </ProtectedRoute>
           } />
           
