@@ -17,7 +17,13 @@ import {
   Settings,
   Warehouse,
   BarChart3,
-  Bell
+  Bell,
+  Package,
+  Palette,
+  ShoppingCart,
+  MapPin,
+  BarChart2,
+  User
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -48,13 +54,12 @@ const AdminSidebar = () => {
   
   // Helper function to determine which section should be expanded based on current path
   const getActiveSectionId = (pathname: string): string | null => {
-    if (pathname.startsWith('/admin/merchants')) return 'merchants';
-    if (pathname.startsWith('/admin/warehouse')) return 'warehouse';
-    if (pathname.startsWith('/admin/reporting')) return 'reporting';
-    if (pathname.startsWith('/admin/organizations')) return 'organizations';
-    if (pathname.startsWith('/admin/team')) return 'team';
-    if (pathname.startsWith('/admin/tasks')) return 'tasks';
-    if (pathname.startsWith('/admin/settings')) return 'settings';
+    if (pathname.startsWith('/admin/deals') || pathname.startsWith('/admin/requests') || pathname.startsWith('/admin/contracts')) return 'business';
+    if (pathname.startsWith('/admin/merchants')) return 'clients';
+    if (pathname.startsWith('/admin/warehouse')) return 'products';
+    if (pathname.startsWith('/admin/reporting')) return 'analytics';
+    if (pathname.startsWith('/admin/organizations') || pathname.startsWith('/admin/team')) return 'system';
+    if (pathname.startsWith('/admin/notifications') || pathname.startsWith('/admin/settings')) return 'personal';
     return null;
   };
 
@@ -99,6 +104,7 @@ const AdminSidebar = () => {
   };
 
   const menuItems = [
+    // 1. HLAVNÝ DASHBOARD
     {
       id: 'dashboard',
       title: getDashboardTitle(),
@@ -107,40 +113,40 @@ const AdminSidebar = () => {
       active: location.pathname === getDashboardPath(),
       type: 'single'
     },
-    // Only show deals for admin and partner
+
+    // 2. OBCHODNÉ PROCESY - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
-      id: 'overview',
-      title: t('navigation.overview'),
+      id: 'business',
+      title: '📊 Obchodné Procesy',
       icon: Handshake,
-      path: "/admin/deals",
-      active: location.pathname.startsWith("/admin/deals"),
-      type: 'single' as const
+      type: 'expandable' as const,
+      expanded: isExpanded('business'),
+      children: [
+        {
+          title: t('navigation.overview'),
+          path: "/admin/deals",
+          active: location.pathname.startsWith("/admin/deals")
+        },
+        {
+          title: t('navigation.requests'),
+          path: "/admin/requests",
+          active: location.pathname.startsWith("/admin/requests")
+        },
+        {
+          title: t('navigation.contracts'),
+          path: "/admin/contracts",
+          active: location.pathname.startsWith("/admin/contracts")
+        }
+      ]
     }] : []),
-    // Only show requests for admin and partner
+
+    // 3. SPRÁVA KLIENTOV - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
-      id: 'requests',
-      title: t('navigation.requests'),
-      icon: FileQuestion,
-      path: "/admin/requests",
-      active: location.pathname.startsWith("/admin/requests"),
-      type: 'single' as const
-    }] : []),
-    // Only show contracts for admin and partner
-    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
-      id: 'contracts',
-      title: t('navigation.contracts'),
-      icon: FileText,
-      path: "/admin/contracts",
-      active: location.pathname.startsWith("/admin/contracts"),
-      type: 'single' as const
-    }] : []),
-    // Only show merchants for admin and partner
-    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
-      id: 'merchants',
-      title: t('navigation.merchants'),
+      id: 'clients',
+      title: '🏢 Správa Klientov',
       icon: Building2,
       type: 'expandable' as const,
-      expanded: isExpanded('merchants'),
+      expanded: isExpanded('clients'),
       children: [
         {
           title: t('navigation.allMerchants'),
@@ -159,24 +165,32 @@ const AdminSidebar = () => {
         }
       ]
     }] : []),
-    // Only show warehouse for admin and partner
+
+    // 4. PRODUKTOVÝ KATALÓG - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
-      id: 'warehouse',
-      title: t('navigation.warehouse'),
-      icon: Warehouse,
+      id: 'products',
+      title: '📦 Produktový Katalóg',
+      icon: Package,
       type: 'expandable' as const,
-      expanded: isExpanded('warehouse'),
+      expanded: isExpanded('products'),
       children: [
+        // Solutions & Products subsection
+        {
+          title: "🎯 " + t('navigation.solutions'),
+          path: "/admin/warehouse/solutions",
+          active: isActive("/admin/warehouse/solutions")
+        },
         {
           title: "📦 " + t('navigation.allItems'),
           path: "/admin/warehouse",
           active: isActive("/admin/warehouse")
         },
         {
-          title: "🎯 " + t('navigation.solutions'),
-          path: "/admin/warehouse/solutions",
-          active: isActive("/admin/warehouse/solutions")
+          title: "🎨 Visual Builder",
+          path: "/admin/warehouse/visual-builder",
+          active: isActive("/admin/warehouse/visual-builder")
         },
+        // Configuration subsection
         {
           title: "📁 " + t('navigation.categories'),
           path: "/admin/warehouse/categories",
@@ -188,34 +202,31 @@ const AdminSidebar = () => {
           active: isActive("/admin/warehouse/item-types")
         },
         {
-          title: "➕ " + t('navigation.addItem'),
-          path: "/admin/warehouse/add-item",
-          active: isActive("/admin/warehouse/add-item")
-        },
-        {
           title: "🔄 " + t('navigation.bulkOperations'),
           path: "/admin/warehouse/bulk",
           active: isActive("/admin/warehouse/bulk")
         },
-        {
-          title: "🎨 Visual Builder",
-          path: "/admin/warehouse/visual-builder",
-          active: isActive("/admin/warehouse/visual-builder")
-        },
+        // Sales subsection
         {
           title: "💰 Rýchly predaj",
           path: "/admin/warehouse/quick-sale",
           active: isActive("/admin/warehouse/quick-sale")
+        },
+        {
+          title: "➕ " + t('navigation.addItem'),
+          path: "/admin/warehouse/add-item",
+          active: isActive("/admin/warehouse/add-item")
         }
       ]
     }] : []),
-    // Only show reporting for admin and partner
+
+    // 5. ANALÝZY & REPORTING - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
-      id: 'reporting',
-      title: t('navigation.reporting'),
-      icon: BarChart3,
+      id: 'analytics',
+      title: '📈 Analýzy & Reporting',
+      icon: BarChart2,
       type: 'expandable' as const,
-      expanded: isExpanded('reporting'),
+      expanded: isExpanded('analytics'),
       children: [
         {
           title: t('navigation.reportsDashboard'),
@@ -234,13 +245,14 @@ const AdminSidebar = () => {
         }
       ]
     }] : []),
-    // Only show organizations for admins
+
+    // 6. SPRÁVA SYSTÉMU - Only for admin
     ...(userRole?.role === 'admin' ? [{
-      id: 'organizations',
-      title: t('navigation.organizations'),
-      icon: Building,
+      id: 'system',
+      title: '⚙️ Správa Systému',
+      icon: Settings,
       type: 'expandable' as const,
-      expanded: isExpanded('organizations'),
+      expanded: isExpanded('system'),
       children: [
         {
           title: t('navigation.organizationManagement'),
@@ -253,81 +265,30 @@ const AdminSidebar = () => {
           active: isActive("/admin/organizations/teams")
         },
         {
+          title: t('navigation.teamMembers'),
+          path: "/admin/team",
+          active: location.pathname === "/admin/team"
+        },
+        {
           title: t('navigation.organizationalStructure'),
           path: "/admin/organizations/structure",
           active: isActive("/admin/organizations/structure")
         }
       ]
     }] : []),
-    // Only show team management for admins
-    ...(userRole?.role === 'admin' ? [{
-      id: 'team',
-      title: t('navigation.teamManagement'),
-      icon: Users,
-      type: 'expandable' as const,
-      expanded: isExpanded('team'),
-      children: [
-        {
-          title: t('navigation.teamMembers'),
-          path: "/admin/team",
-          active: location.pathname === "/admin/team"
-        },
-        {
-          title: t('navigation.teamPerformance'),
-          path: "/admin/team/performance",
-          active: location.pathname === "/admin/team/performance"
-        }
-      ]
-    }] : []),
-    // Only show tasks for admin and partner (but disabled for now)
-    ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
-      id: 'tasks',
-      title: t('navigation.tasks'),
-      icon: CheckSquare,
-      type: 'expandable' as const,
-      expanded: isExpanded('tasks'),
-      children: [
-        {
-          title: t('navigation.ticketingSystem'),
-          path: "/admin/tasks/tickets",
-          active: isActive("/admin/tasks/tickets"),
-          disabled: true
-        },
-        {
-          title: t('navigation.allTasks'),
-          path: "/admin/tasks",
-          active: isActive("/admin/tasks"),
-          disabled: true
-        },
-        {
-          title: t('navigation.completedTasks'),
-          path: "/admin/tasks/completed",
-          active: isActive("/admin/tasks/completed"),
-          disabled: true
-        }
-      ]
-    }] : []),
-    // Notifications for all roles
+
+    // 7. OSOBNÉ - For all roles
     {
-      id: 'notifications',
-      title: t('navigation.notifications'),
-      icon: Bell,
-      path: "/admin/notifications",
-      active: location.pathname.startsWith("/admin/notifications"),
-      type: 'single' as const
-    },
-    // Settings for all roles
-    {
-      id: 'settings',
-      title: t('navigation.settings'),
-      icon: Settings,
+      id: 'personal',
+      title: '👤 Osobné',
+      icon: User,
       type: 'expandable' as const,
-      expanded: isExpanded('settings'),
+      expanded: isExpanded('personal'),
       children: [
         {
-          title: t('navigation.applicationSettings'),
-          path: "/admin/settings/application",
-          active: isActive("/admin/settings/application")
+          title: t('navigation.notifications'),
+          path: "/admin/notifications",
+          active: location.pathname.startsWith("/admin/notifications")
         },
         {
           title: t('navigation.profileSettings'),
@@ -408,11 +369,10 @@ const AdminSidebar = () => {
                                  child.active 
                                    ? 'bg-gradient-to-r from-blue-400 to-indigo-400 !text-white shadow-md' 
                                    : 'hover:bg-blue-50 hover:text-blue-600'
-                               } ${child.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                               }`}
                             >
                               <button 
                                 onClick={() => navigate(child.path)}
-                                disabled={child.disabled}
                               >
                                 <span className="text-sm font-medium">{child.title}</span>
                               </button>
