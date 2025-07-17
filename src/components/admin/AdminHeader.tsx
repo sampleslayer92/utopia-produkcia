@@ -50,33 +50,31 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-40 border-b border-border">
-      <div className="px-4 py-4">
-        {/* Mobile Breadcrumb */}
-        <MobileBreadcrumb title={title} />
+    <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-40 border-b border-border px-4 py-4">
+      {/* Mobile Breadcrumb */}
+      <MobileBreadcrumb title={title} />
 
-        {/* Header Content */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
-            <SidebarTrigger className="min-h-touch min-w-touch flex-shrink-0" />
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg md:text-2xl font-bold text-foreground truncate">{title}</h1>
-              {subtitle && (
-                <p className="text-xs md:text-sm text-muted-foreground mt-1 truncate">{subtitle}</p>
-              )}
-            </div>
+      {/* Header Content */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
+          <SidebarTrigger className="min-h-touch min-w-touch flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg md:text-2xl font-bold text-foreground truncate">{title}</h1>
+            {subtitle && (
+              <p className="text-xs md:text-sm text-muted-foreground mt-1 truncate">{subtitle}</p>
+            )}
           </div>
+        </div>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">
-            {/* Notifications */}
-            <NotificationBell />
-            
-            {/* Dynamic Actions - Mobile-optimized with overflow menu */}
-            <MobileActionMenu singleActionMode={true}>
-              {Array.isArray(actions) ? actions : actions ? [actions] : []}
-            </MobileActionMenu>
-          </div>
+        {/* Right Side Actions */}
+        <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">
+          {/* Notifications */}
+          <NotificationBell />
+          
+          {/* Dynamic Actions - Mobile-optimized with overflow menu */}
+          <MobileActionMenu singleActionMode={true}>
+            {Array.isArray(actions) ? actions : actions ? [actions] : []}
+          </MobileActionMenu>
         </div>
       </div>
     </header>
