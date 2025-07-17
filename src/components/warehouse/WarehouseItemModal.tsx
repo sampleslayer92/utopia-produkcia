@@ -14,6 +14,7 @@ import { useItemTypes } from '@/hooks/useItemTypes';
 import { useCreateWarehouseItem, useUpdateWarehouseItem, type CreateWarehouseItemData, type WarehouseItem } from '@/hooks/useWarehouseItems';
 import { useSolutions } from '@/hooks/useSolutions';
 import { useCreateSolutionItem, useSolutionItems } from '@/hooks/useSolutionItems';
+import ProductAddonManager from './ProductAddonManager';
 
 const warehouseItemSchema = z.object({
   name: z.string().min(1, 'Názov je povinný'),
@@ -160,7 +161,7 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {item ? 'Upraviť položku' : 'Pridať novú položku'}
@@ -175,20 +176,22 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Názov položky *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Napríklad: PAX A920 PRO" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Column - Basic Info */}
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Názov položky *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Napríklad: PAX A920 PRO" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
               <FormField
                 control={form.control}
@@ -222,22 +225,31 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Popis</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Stručný popis položky a jej funkcií..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Popis</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Stručný popis položky a jej funkcií..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Right Column - Product Addons */}
+              {item && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Doplnky produktu</h3>
+                  <ProductAddonManager parentProductId={item.id} />
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

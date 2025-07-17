@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Plus, Folder, Package, Eye } from 'lucide-react';
+import { Plus, Folder, Package, Eye, Package2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CategoryEditor } from '@/components/admin/categories/CategoryEditor';
@@ -83,10 +83,19 @@ const CategoriesPage = () => {
               Kliknite na kategóriu pre zobrazenie produktov a služieb
             </p>
           </div>
-          <Button onClick={handleCreate}>
-            <Plus className="h-4 w-4 mr-2" />
-            Pridať kategóriu
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/admin/warehouse/addons')}
+            >
+              <Package2 className="h-4 w-4 mr-2" />
+              Správa doplnkov
+            </Button>
+            <Button onClick={handleCreate}>
+              <Plus className="h-4 w-4 mr-2" />
+              Pridať kategóriu
+            </Button>
+          </div>
         </div>
 
         {/* Categories Grid - Folder View */}
