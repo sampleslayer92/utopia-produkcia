@@ -43,8 +43,10 @@ export interface WarehouseItem {
 export interface CreateWarehouseItemData {
   name: string;
   description?: string;
-  category_id: string;
-  item_type_id: string;
+  category?: string;
+  category_id?: string;
+  item_type?: string;
+  item_type_id?: string;
   monthly_fee: number;
   setup_fee: number;
   company_cost: number;
@@ -52,6 +54,7 @@ export interface CreateWarehouseItemData {
   image_url?: string;
   min_stock?: number;
   current_stock?: number;
+  is_active?: boolean;
 }
 
 export interface UpdateWarehouseItemData extends Partial<CreateWarehouseItemData> {

@@ -1,27 +1,31 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
-import { useCreateWarehouseItem, useUpdateWarehouseItem, type WarehouseItem, type CreateWarehouseItemData } from '@/hooks/useWarehouseItems';
-import { useTranslation } from 'react-i18next';
+import { useCategories } from '@/hooks/useCategories';
+import { useItemTypes } from '@/hooks/useItemTypes';
+import { useCreateWarehouseItem, useUpdateWarehouseItem, type CreateWarehouseItemData, type WarehouseItem } from '@/hooks/useWarehouseItems';
+import { useSolutions } from '@/hooks/useSolutions';
+import { useCreateSolutionItem, useSolutionItems } from '@/hooks/useSolutionItems';
 
 const warehouseItemSchema = z.object({
   name: z.string().min(1, 'Názov je povinný'),
   description: z.string().optional(),
+  solution_id: z.string().optional(),
   category: z.string().min(1, 'Kategória je povinná'),
-  item_type: z.enum(['device', 'service']),
-  monthly_fee: z.number().min(0, 'Mesačný poplatok musí byť nezáporný'),
-  setup_fee: z.number().min(0, 'Poplatok za nastavenie musí byť nezáporný'),
-  company_cost: z.number().min(0, 'Náklady spoločnosti musia byť nezáporné'),
+  item_type: z.string().min(1, 'Typ položky je povinný'),
+  monthly_fee: z.number().min(0, 'Mesačný poplatok musí byť kladný'),
+  setup_fee: z.number().min(0, 'Setup poplatok musí byť kladný'),
+  company_cost: z.number().min(0, 'Náklady firmy musia byť kladné'),
+  current_stock: z.number().min(0, 'Zásoby musia byť kladné').optional(),
+  min_stock: z.number().min(0, 'Minimálne zásoby musia byť kladné').optional(),
   image_url: z.string().url().optional().or(z.literal('')),
-  min_stock: z.number().min(0).optional(),
-  current_stock: z.number().min(0).optional(),
   is_active: z.boolean().default(true),
 });
 
@@ -33,60 +37,110 @@ interface WarehouseItemModalProps {
   item?: WarehouseItem;
 }
 
-const CATEGORIES = {
-  device: [
-    { value: 'pos_terminals', label: 'POS Terminály' },
-    { value: 'tablets', label: 'Tablety' },
-    { value: 'accessories', label: 'Príslušenstvo' },
-    { value: 'other', label: 'Ostatné' },
-  ],
-  service: [
-    { value: 'software', label: 'Software' },
-    { value: 'processing', label: 'Spracovanie platieb' },
-    { value: 'support', label: 'Technická podpora' },
-    { value: 'analytics', label: 'Analytika' },
-    { value: 'other', label: 'Ostatné' },
-  ],
-};
-
 export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemModalProps) => {
-  const { t } = useTranslation('admin');
+  const { data: solutions = [] } = useSolutions(true);
+  const { data: categories = [] } = useCategories();
+  const { data: itemTypes = [] } = useItemTypes();
+  const { data: existingSolutionItems = [] } = useSolutionItems();
   const createMutation = useCreateWarehouseItem();
   const updateMutation = useUpdateWarehouseItem();
+  const createSolutionItemMutation = useCreateSolutionItem();
+
+  // Find existing solution assignment for this item
+  const existingSolutionItem = item ? existingSolutionItems.find(si => si.warehouse_item_id === item.id) : null;
 
   const form = useForm<FormData>({
     resolver: zodResolver(warehouseItemSchema),
     defaultValues: {
       name: item?.name || '',
       description: item?.description || '',
+      solution_id: existingSolutionItem?.solution_id || '',
       category: item?.category || '',
-      item_type: item?.item_type || 'device',
+      item_type: item?.item_type || '',
       monthly_fee: item?.monthly_fee || 0,
       setup_fee: item?.setup_fee || 0,
       company_cost: item?.company_cost || 0,
-      image_url: item?.image_url || '',
-      min_stock: item?.min_stock || 0,
       current_stock: item?.current_stock || 0,
+      min_stock: item?.min_stock || 0,
+      image_url: item?.image_url || '',
       is_active: item?.is_active ?? true,
     },
   });
 
-  const watchedType = form.watch('item_type');
-  const isLoading = createMutation.isPending || updateMutation.isPending;
+  const selectedCategorySlug = form.watch('category');
+  const selectedItemTypeSlug = form.watch('item_type');
+  const selectedCategory = categories.find(c => c.slug === selectedCategorySlug);
+  const selectedItemType = itemTypes.find(t => t.slug === selectedItemTypeSlug);
+
+  // Get item types filtered by selected category
+  const availableItemTypes = selectedCategory 
+    ? itemTypes.filter(type => 
+        selectedCategory.item_type_filter === 'both' || 
+        selectedCategory.item_type_filter === type.slug
+      )
+    : itemTypes;
 
   const onSubmit = async (data: FormData) => {
     try {
+      // Find category and item type IDs
+      const categoryData = categories.find(c => c.slug === data.category);
+      const itemTypeData = itemTypes.find(t => t.slug === data.item_type);
+
+      const warehouseData: CreateWarehouseItemData = {
+        name: data.name,
+        description: data.description,
+        category: data.category,
+        category_id: categoryData?.id,
+        item_type: data.item_type,
+        item_type_id: itemTypeData?.id,
+        monthly_fee: data.monthly_fee,
+        setup_fee: data.setup_fee,
+        company_cost: data.company_cost,
+        current_stock: data.current_stock,
+        min_stock: data.min_stock,
+        image_url: data.image_url || undefined,
+        is_active: data.is_active,
+      };
+
       if (item) {
-        await updateMutation.mutateAsync({ id: item.id, ...data });
+        await updateMutation.mutateAsync({ id: item.id, ...warehouseData });
+        
+        // Handle solution assignment for updates
+        if (data.solution_id && categoryData) {
+          // Check if solution item exists, if not create it
+          if (!existingSolutionItem) {
+            await createSolutionItemMutation.mutateAsync({
+              solution_id: data.solution_id,
+              warehouse_item_id: item.id,
+              category_id: categoryData.id,
+              position: 0,
+              is_featured: false,
+            });
+          }
+        }
       } else {
-        await createMutation.mutateAsync(data as CreateWarehouseItemData);
+        const createdItem = await createMutation.mutateAsync(warehouseData);
+        
+        // Handle solution assignment for new items
+        if (data.solution_id && createdItem && categoryData) {
+          await createSolutionItemMutation.mutateAsync({
+            solution_id: data.solution_id,
+            warehouse_item_id: createdItem.id,
+            category_id: categoryData.id,
+            position: 0,
+            is_featured: false,
+          });
+        }
       }
+
       onOpenChange(false);
       form.reset();
     } catch (error) {
       console.error('Error saving warehouse item:', error);
     }
   };
+
+  const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,20 +149,108 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
           <DialogTitle>
             {item ? 'Upraviť položku' : 'Pridať novú položku'}
           </DialogTitle>
+          <DialogDescription>
+            {item 
+              ? 'Upravte údaje skladovej položky a priradenie ku riešeniu' 
+              : 'Vytvorte novú položku a priradenie ku riešeniu pre váš sklad'
+            }
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Názov *</FormLabel>
+                    <FormLabel>Názov položky *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Názov položky" {...field} />
+                      <Input placeholder="Napríklad: PAX A920 PRO" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="solution_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Riešenie (voliteľné)</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Vyberte riešenie" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="">Bez riešenia</SelectItem>
+                        {solutions.map((solution) => (
+                          <SelectItem key={solution.id} value={solution.id}>
+                            <div className="flex items-center space-x-2">
+                              <div 
+                                className="w-3 h-3 rounded-full" 
+                                style={{ backgroundColor: solution.color }}
+                              />
+                              <span>{solution.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Popis</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Stručný popis položky a jej funkcií..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Kategória *</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Vyberte kategóriu" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.slug}>
+                            <div className="flex items-center space-x-2">
+                              <div 
+                                className="w-3 h-3 rounded-full" 
+                                style={{ backgroundColor: category.color }}
+                              />
+                              <span>{category.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -119,16 +261,28 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                 name="item_type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Typ *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel>Typ položky *</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                      disabled={!selectedCategorySlug}
+                    >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Vyberte typ" />
+                          <SelectValue placeholder="Vyberte typ položky" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="device">Zariadenie</SelectItem>
-                        <SelectItem value="service">Služba</SelectItem>
+                        {availableItemTypes.map((type) => (
+                          <SelectItem key={type.id} value={type.slug}>
+                            <div>
+                              <div className="font-medium">{type.name}</div>
+                              {type.description && (
+                                <div className="text-sm text-muted-foreground">{type.description}</div>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -137,46 +291,7 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Kategória *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Vyberte kategóriu" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {CATEGORIES[watchedType].map((category) => (
-                        <SelectItem key={category.value} value={category.value}>
-                          {category.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Popis</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Popis položky" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name="monthly_fee"
@@ -184,8 +299,8 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                   <FormItem>
                     <FormLabel>Mesačný poplatok (€)</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
+                      <Input 
+                        type="number" 
                         step="0.01"
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
@@ -201,10 +316,10 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                 name="setup_fee"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Poplatok za nastavenie (€)</FormLabel>
+                    <FormLabel>Setup poplatok (€)</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
+                      <Input 
+                        type="number" 
                         step="0.01"
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
@@ -220,10 +335,10 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                 name="company_cost"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Náklady spoločnosti (€)</FormLabel>
+                    <FormLabel>Náklady firmy (€)</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
+                      <Input 
+                        type="number" 
                         step="0.01"
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
@@ -235,16 +350,16 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
               />
             </div>
 
-            {watchedType === 'device' && (
-              <div className="grid grid-cols-2 gap-4">
+            {selectedItemType?.slug === 'device' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="min_stock"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Minimálny sklad</FormLabel>
+                      <FormLabel>Minimálne zásoby</FormLabel>
                       <FormControl>
-                        <Input
+                        <Input 
                           type="number"
                           {...field}
                           onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
@@ -260,9 +375,9 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                   name="current_stock"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Aktuálny sklad</FormLabel>
+                      <FormLabel>Aktuálne zásoby</FormLabel>
                       <FormControl>
-                        <Input
+                        <Input 
                           type="number"
                           {...field}
                           onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
@@ -282,7 +397,10 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                 <FormItem>
                   <FormLabel>URL obrázka</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://..." {...field} />
+                    <Input 
+                      placeholder="https://example.com/image.jpg"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -295,9 +413,9 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">Aktívne</FormLabel>
+                    <FormLabel className="text-base">Aktívna položka</FormLabel>
                     <div className="text-sm text-muted-foreground">
-                      Položka je dostupná pre výber v kontraktoch
+                      Aktívne položky sú viditeľné v obchode a onboardingu
                     </div>
                   </div>
                   <FormControl>

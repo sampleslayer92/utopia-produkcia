@@ -8,6 +8,7 @@ export interface SolutionItem {
   id: string;
   solution_id: string;
   warehouse_item_id: string;
+  category_id?: string;
   position: number;
   is_featured: boolean;
   created_at: string;
@@ -18,6 +19,7 @@ export interface SolutionItem {
 export interface CreateSolutionItemData {
   solution_id: string;
   warehouse_item_id: string;
+  category_id?: string;
   position?: number;
   is_featured?: boolean;
 }

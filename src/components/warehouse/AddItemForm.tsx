@@ -13,6 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { useCategories } from '@/hooks/useCategories';
 import { useItemTypes } from '@/hooks/useItemTypes';
 import { useCreateWarehouseItem, type CreateWarehouseItemData } from '@/hooks/useWarehouseItems';
+import { useSolutions } from '@/hooks/useSolutions';
+import { useCreateSolutionItem } from '@/hooks/useSolutionItems';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Package, Upload, Zap } from 'lucide-react';
 import { toast } from 'sonner';
@@ -20,6 +22,7 @@ import { toast } from 'sonner';
 const itemSchema = z.object({
   name: z.string().min(1, 'Názov je povinný'),
   description: z.string().optional(),
+  solution_id: z.string().optional(),
   category_id: z.string().min(1, 'Kategória je povinná'),
   item_type_id: z.string().min(1, 'Typ položky je povinný'),
   monthly_fee: z.number().min(0, 'Mesačný poplatok musí byť kladný'),
@@ -36,9 +39,11 @@ type FormData = z.infer<typeof itemSchema>;
 export const AddItemForm = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: solutions = [] } = useSolutions(true); // Only active solutions
   const { data: categories = [] } = useCategories();
   const { data: itemTypes = [] } = useItemTypes();
   const createMutation = useCreateWarehouseItem();
+  const createSolutionItemMutation = useCreateSolutionItem();
 
   const form = useForm<FormData>({
     resolver: zodResolver(itemSchema),
@@ -55,8 +60,20 @@ export const AddItemForm = () => {
     },
   });
 
+  const selectedSolutionId = form.watch('solution_id');
   const selectedCategoryId = form.watch('category_id');
+  
+  const selectedSolution = solutions.find(s => s.id === selectedSolutionId);
   const selectedCategory = categories.find(c => c.id === selectedCategoryId);
+
+  // Get categories filtered by selected solution (if any)
+  const availableCategories = selectedSolutionId 
+    ? categories.filter(category => {
+        // You can add logic here to filter categories by solution
+        // For now, show all categories but this can be enhanced
+        return category.is_active;
+      })
+    : categories.filter(c => c.is_active);
 
   // Get item types based on selected category
   const availableItemTypes = selectedCategory 
@@ -84,7 +101,18 @@ export const AddItemForm = () => {
         image_url: data.image_url || undefined,
       };
 
-      await createMutation.mutateAsync(createData);
+      const createdItem = await createMutation.mutateAsync(createData);
+      
+      // If solution is selected, also create solution_item record
+      if (data.solution_id && createdItem) {
+        await createSolutionItemMutation.mutateAsync({
+          solution_id: data.solution_id,
+          warehouse_item_id: createdItem.id,
+          category_id: data.category_id,
+          position: 0,
+          is_featured: false,
+        });
+      }
       
       toast.success('Položka bola úspešne vytvorená!');
       navigate('/admin/warehouse');
@@ -195,6 +223,41 @@ export const AddItemForm = () => {
                   
                   <FormField
                     control={form.control}
+                    name="solution_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Riešenie (voliteľné)</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Vyberte riešenie" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="">Bez riešenia</SelectItem>
+                            {solutions.map((solution) => (
+                              <SelectItem key={solution.id} value={solution.id}>
+                                <div className="flex items-center space-x-2">
+                                  <div 
+                                    className="w-3 h-3 rounded-full" 
+                                    style={{ backgroundColor: solution.color }}
+                                  />
+                                  <span>{solution.name}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Priradením ku riešeniu sa položka zobrazí v onboardingu
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
                     name="category_id"
                     render={({ field }) => (
                       <FormItem>
@@ -206,7 +269,7 @@ export const AddItemForm = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {categories.map((category) => (
+                            {availableCategories.map((category) => (
                               <SelectItem key={category.id} value={category.id}>
                                 <div className="flex items-center space-x-2">
                                   <div 
@@ -262,6 +325,21 @@ export const AddItemForm = () => {
                       </FormItem>
                     )}
                   />
+
+                  {selectedSolution && (
+                    <div className="p-3 bg-primary/10 rounded-lg">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: selectedSolution.color }}
+                        />
+                        <span className="font-medium">{selectedSolution.name}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedSolution.description}
+                      </p>
+                    </div>
+                  )}
 
                   {selectedCategory && (
                     <div className="p-3 bg-muted/50 rounded-lg">

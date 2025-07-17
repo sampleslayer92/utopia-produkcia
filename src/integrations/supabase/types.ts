@@ -1379,6 +1379,7 @@ export type Database = {
       solution_items: {
         Row: {
           category_filters: string[] | null
+          category_id: string | null
           created_at: string
           id: string
           is_featured: boolean
@@ -1390,6 +1391,7 @@ export type Database = {
         }
         Insert: {
           category_filters?: string[] | null
+          category_id?: string | null
           created_at?: string
           id?: string
           is_featured?: boolean
@@ -1401,6 +1403,7 @@ export type Database = {
         }
         Update: {
           category_filters?: string[] | null
+          category_id?: string | null
           created_at?: string
           id?: string
           is_featured?: boolean
@@ -1411,6 +1414,13 @@ export type Database = {
           warehouse_item_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "solution_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "solution_items_solution_id_fkey"
             columns: ["solution_id"]
