@@ -296,19 +296,17 @@ const AdminSidebar = () => {
     <Sidebar variant="sidebar" collapsible="icon" className="border-r-0 shadow-lg">
       <SidebarHeader className="border-b border-slate-200/50">
         <div className="flex justify-center px-4 py-4">
-          <div className="p-2">
-            <img 
-              src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
-              alt="Onepos Logo" 
-              className={state === "expanded" ? "h-6 w-auto" : "h-5 w-5"}
-            />
-          </div>
+          <img 
+            src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
+            alt="Onepos Logo" 
+            className={state === "expanded" ? "h-6 w-auto" : "h-5 w-5"}
+          />
         </div>
       </SidebarHeader>
 
       <SidebarContent className="bg-gradient-to-b from-white to-slate-50/50 backdrop-blur-sm">
-        <SidebarGroup className="px-2 py-4">
-          <SidebarMenu className={state === "collapsed" ? "space-y-5 mx-1" : "space-y-3 px-1"}>
+        <SidebarGroup className="px-3 py-4">
+          <SidebarMenu className={state === "collapsed" ? "space-y-4" : "space-y-3 px-1"}>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.id}>
                 {item.type === 'single' ? (
@@ -316,7 +314,7 @@ const AdminSidebar = () => {
                     asChild
                     isActive={item.active}
                     tooltip={state === "collapsed" ? item.title : undefined}
-                      className={`rounded-xl transition-all duration-200 ${state === "collapsed" ? "justify-center items-center p-4 mx-1" : ""} ${
+                      className={`rounded-xl transition-all duration-200 ${state === "collapsed" ? "w-full flex justify-center items-center p-3 mx-auto" : ""} ${
                        item.active 
                          ? 'bg-gradient-to-r from-blue-500 to-indigo-500 !text-white shadow-lg hover:shadow-xl' 
                          : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
@@ -340,7 +338,7 @@ const AdminSidebar = () => {
                         }
                       }}
                       tooltip={state === "collapsed" ? `${item.title} - Kliknite pre navigáciu` : undefined}
-                      className={`rounded-xl transition-all duration-200 ${state === "collapsed" ? "justify-center items-center p-4 mx-1" : ""} ${
+                      className={`rounded-xl transition-all duration-200 ${state === "collapsed" ? "w-full flex justify-center items-center p-3 mx-auto" : ""} ${
                         item.expanded 
                           ? 'bg-blue-50 text-blue-700 shadow-sm' 
                           : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
