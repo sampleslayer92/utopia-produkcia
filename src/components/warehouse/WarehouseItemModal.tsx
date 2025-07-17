@@ -1,3 +1,4 @@
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -46,6 +47,11 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
   const updateMutation = useUpdateWarehouseItem();
   const createSolutionItemMutation = useCreateSolutionItem();
 
+  // Filter out any items with empty or invalid IDs
+  const validSolutions = solutions.filter(s => s.id && s.id.trim() !== '');
+  const validCategories = categories.filter(c => c.slug && c.slug.trim() !== '' && c.is_active);
+  const validItemTypes = itemTypes.filter(t => t.slug && t.slug.trim() !== '' && t.is_active);
+
   // Find existing solution assignment for this item
   const existingSolutionItem = item ? existingSolutionItems.find(si => si.warehouse_item_id === item.id) : null;
 
@@ -70,31 +76,31 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
   const selectedCategorySlug = form.watch('category');
   const selectedItemTypeSlug = form.watch('item_type');
   const selectedSolutionId = form.watch('solution_id');
-  const selectedCategory = categories.find(c => c.slug === selectedCategorySlug);
-  const selectedItemType = itemTypes.find(t => t.slug === selectedItemTypeSlug);
+  const selectedCategory = validCategories.find(c => c.slug === selectedCategorySlug);
+  const selectedItemType = validItemTypes.find(t => t.slug === selectedItemTypeSlug);
 
   // Get item types filtered by selected category
   const availableItemTypes = selectedCategory 
-    ? itemTypes.filter(type => 
+    ? validItemTypes.filter(type => 
         selectedCategory.item_type_filter === 'both' || 
         selectedCategory.item_type_filter === type.slug
       )
-    : itemTypes;
+    : validItemTypes;
 
   // Get categories filtered by selected solution
   const availableCategories = selectedSolutionId && selectedSolutionId !== 'none'
-    ? categories.filter(cat => {
+    ? validCategories.filter(cat => {
         // For now, show all categories when a solution is selected
         // This can be enhanced later with solution-category relationships
         return cat.is_active;
       })
-    : categories.filter(c => c.is_active);
+    : validCategories;
 
   const onSubmit = async (data: FormData) => {
     try {
       // Find category and item type IDs
-      const categoryData = categories.find(c => c.slug === data.category);
-      const itemTypeData = itemTypes.find(t => t.slug === data.item_type);
+      const categoryData = validCategories.find(c => c.slug === data.category);
+      const itemTypeData = validItemTypes.find(t => t.slug === data.item_type);
 
       const warehouseData: CreateWarehouseItemData = {
         name: data.name,
@@ -198,7 +204,7 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="none">Bez riešenia</SelectItem>
-                        {solutions.map((solution) => (
+                        {validSolutions.map((solution) => (
                           <SelectItem key={solution.id} value={solution.id}>
                             <div className="flex items-center space-x-2">
                               <div 

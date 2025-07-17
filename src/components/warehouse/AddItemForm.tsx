@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -67,18 +68,23 @@ export const AddItemForm = () => {
   const selectedSolution = solutions.find(s => s.id === selectedSolutionId);
   const selectedCategory = categories.find(c => c.id === selectedCategoryId);
 
+  // Filter out any items with empty or invalid IDs
+  const validSolutions = solutions.filter(s => s.id && s.id.trim() !== '');
+  const validCategories = categories.filter(c => c.id && c.id.trim() !== '' && c.is_active);
+  const validItemTypes = itemTypes.filter(t => t.id && t.id.trim() !== '' && t.is_active);
+
   // Get categories filtered by selected solution (if any)
   const availableCategories = selectedSolutionId && selectedSolutionId !== 'none'
-    ? categories.filter(category => {
+    ? validCategories.filter(category => {
         // You can add logic here to filter categories by solution
         // For now, show all categories but this can be enhanced
         return category.is_active;
       })
-    : categories.filter(c => c.is_active);
+    : validCategories;
 
   // Get item types based on selected category
   const availableItemTypes = selectedCategory 
-    ? itemTypes.filter(type => 
+    ? validItemTypes.filter(type => 
         selectedCategory.item_type_filter === 'both' || 
         selectedCategory.item_type_filter === type.slug
       )
@@ -236,7 +242,7 @@ export const AddItemForm = () => {
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="none">Bez riešenia</SelectItem>
-                            {solutions.map((solution) => (
+                            {validSolutions.map((solution) => (
                               <SelectItem key={solution.id} value={solution.id}>
                                 <div className="flex items-center space-x-2">
                                   <div 
