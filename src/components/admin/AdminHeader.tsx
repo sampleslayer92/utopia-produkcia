@@ -50,37 +50,8 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-40">
-      {/* Desktop Breadcrumbs Section */}
-      <div className="py-2 px-6 hidden md:block">
-        <Breadcrumb>
-          <BreadcrumbList>
-            {breadcrumbs.map((breadcrumb, index) => (
-              <BreadcrumbItem key={index}>
-                {index === breadcrumbs.length - 1 ? (
-                  <BreadcrumbPage className="text-foreground font-medium">
-                    {breadcrumb.label}
-                  </BreadcrumbPage>
-                ) : (
-                  <>
-                    <BreadcrumbLink
-                      asChild
-                      className="text-muted-foreground hover:text-foreground cursor-pointer"
-                      onClick={() => navigate(breadcrumb.href)}
-                    >
-                      <span>{breadcrumb.label}</span>
-                    </BreadcrumbLink>
-                    <BreadcrumbSeparator />
-                  </>
-                )}
-              </BreadcrumbItem>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
-
-      {/* Main Header Section */}
-      <div className="border-b border-border px-3 md:px-6 py-3 md:py-4">
+    <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-40 border-b border-border">
+      <div className="px-4 py-4">
         {/* Mobile Breadcrumb */}
         <MobileBreadcrumb title={title} />
 

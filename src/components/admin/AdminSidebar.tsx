@@ -308,7 +308,7 @@ const AdminSidebar = () => {
 
       <SidebarContent className="bg-gradient-to-b from-white to-slate-50/50 backdrop-blur-sm">
         <SidebarGroup className="px-3 py-4">
-          <SidebarMenu className="space-y-2">
+          <SidebarMenu className="space-y-3">
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.id}>
                 {item.type === 'single' ? (
@@ -316,11 +316,11 @@ const AdminSidebar = () => {
                     asChild
                     isActive={item.active}
                     tooltip={state === "collapsed" ? item.title : undefined}
-                     className={`rounded-xl transition-all duration-200 ${
-                      item.active 
-                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 !text-white shadow-lg hover:shadow-xl' 
-                        : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
-                    }`}
+                      className={`rounded-xl transition-all duration-200 ${state === "collapsed" ? "justify-center p-3" : ""} ${
+                       item.active 
+                         ? 'bg-gradient-to-r from-blue-500 to-indigo-500 !text-white shadow-lg hover:shadow-xl' 
+                         : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
+                     }`}
                   >
                     <button onClick={() => navigate(item.path!)}>
                       <span className="text-lg">{item.title.split(' ')[0]}</span>
@@ -340,7 +340,7 @@ const AdminSidebar = () => {
                         }
                       }}
                       tooltip={state === "collapsed" ? `${item.title} - Kliknite pre navigáciu` : undefined}
-                      className={`rounded-xl transition-all duration-200 ${
+                      className={`rounded-xl transition-all duration-200 ${state === "collapsed" ? "justify-center p-3" : ""} ${
                         item.expanded 
                           ? 'bg-blue-50 text-blue-700 shadow-sm' 
                           : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
