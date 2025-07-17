@@ -32,7 +32,6 @@ import CategoriesPage from "./pages/CategoriesPage";
 import CategoryDetailPage from "./pages/CategoryDetailPage";
 import ItemDetailPage from "./pages/ItemDetailPage";
 import ItemTypesPage from "./pages/ItemTypesPage";
-import ProductAddonsPage from "./pages/ProductAddonsPage";
 import ReportingPage from "./pages/ReportingPage";
 import BusinessLocationsPage from "./pages/BusinessLocationsPage";
 import BusinessLocationDetailPage from "./pages/BusinessLocationDetailPage";
@@ -126,10 +125,41 @@ const App = () => (
               <ItemTypesPage />
             </ProtectedRoute>
           } />
-          
-          <Route path="/admin/warehouse/addons" element={
+          <Route path="/admin/warehouse/add-item" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
-              <ProductAddonsPage />
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/warehouse/bulk" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/warehouse/visual-builder" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/warehouse/bulk" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <WarehousePage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Solutions and warehouse management */}
+          <Route path="/admin/solutions" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <SolutionsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/categories" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <CategoriesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/item-types" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <ItemTypesPage />
             </ProtectedRoute>
           } />
           

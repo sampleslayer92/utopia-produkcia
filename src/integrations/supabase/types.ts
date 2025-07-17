@@ -1155,54 +1155,6 @@ export type Database = {
         }
         Relationships: []
       }
-      product_addons: {
-        Row: {
-          addon_product_id: string
-          created_at: string
-          display_order: number
-          id: string
-          is_default_selected: boolean
-          is_required: boolean
-          parent_product_id: string
-          updated_at: string
-        }
-        Insert: {
-          addon_product_id: string
-          created_at?: string
-          display_order?: number
-          id?: string
-          is_default_selected?: boolean
-          is_required?: boolean
-          parent_product_id: string
-          updated_at?: string
-        }
-        Update: {
-          addon_product_id?: string
-          created_at?: string
-          display_order?: number
-          id?: string
-          is_default_selected?: boolean
-          is_required?: boolean
-          parent_product_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_product_addons_addon"
-            columns: ["addon_product_id"]
-            isOneToOne: false
-            referencedRelation: "warehouse_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_product_addons_parent"
-            columns: ["parent_product_id"]
-            isOneToOne: false
-            referencedRelation: "warehouse_items"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       profiles: {
         Row: {
           avatar_url: string | null
