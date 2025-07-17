@@ -1,29 +1,8 @@
 
 import { useTranslation } from 'react-i18next';
 import { 
-  LayoutDashboard, 
-  FileText, 
-  FileQuestion,
-  Building2, 
-  CheckSquare,
-  Handshake,
-  Users,
-  UserCog,
-  TrendingUp,
   ChevronDown,
-  ChevronRight,
-  Building,
-  Network,
-  Settings,
-  Warehouse,
-  BarChart3,
-  Bell,
-  Package,
-  Palette,
-  ShoppingCart,
-  MapPin,
-  BarChart2,
-  User
+  ChevronRight
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -103,12 +82,24 @@ const AdminSidebar = () => {
     return t('navigation.dashboard');
   };
 
+  // Helper function to get default route for expandable sections
+  const getDefaultRoute = (sectionId: string): string => {
+    switch (sectionId) {
+      case 'business': return '/admin/deals';
+      case 'clients': return '/admin/merchants';
+      case 'products': return '/admin/warehouse';
+      case 'analytics': return '/admin/reporting';
+      case 'system': return '/admin/organizations';
+      case 'personal': return '/admin/notifications';
+      default: return '/admin';
+    }
+  };
+
   const menuItems = [
     // 1. HLAVNÝ DASHBOARD
     {
       id: 'dashboard',
-      title: getDashboardTitle(),
-      icon: LayoutDashboard,
+      title: '🏠 ' + getDashboardTitle(),
       path: getDashboardPath(),
       active: location.pathname === getDashboardPath(),
       type: 'single'
@@ -117,10 +108,10 @@ const AdminSidebar = () => {
     // 2. OBCHODNÉ PROCESY - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'business',
-      title: '📊 Obchodné Procesy',
-      icon: Handshake,
+      title: '💼 Obchodné Procesy',
       type: 'expandable' as const,
       expanded: isExpanded('business'),
+      defaultRoute: '/admin/deals',
       children: [
         {
           title: t('navigation.overview'),
@@ -143,10 +134,10 @@ const AdminSidebar = () => {
     // 3. SPRÁVA KLIENTOV - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'clients',
-      title: '🏢 Správa Klientov',
-      icon: Building2,
+      title: '👥 Správa Klientov',
       type: 'expandable' as const,
       expanded: isExpanded('clients'),
+      defaultRoute: '/admin/merchants',
       children: [
         {
           title: t('navigation.allMerchants'),
@@ -170,9 +161,9 @@ const AdminSidebar = () => {
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'products',
       title: '📦 Produktový Katalóg',
-      icon: Package,
       type: 'expandable' as const,
       expanded: isExpanded('products'),
+      defaultRoute: '/admin/warehouse',
       children: [
         // Solutions & Products subsection
         {
@@ -223,10 +214,10 @@ const AdminSidebar = () => {
     // 5. ANALÝZY & REPORTING - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'analytics',
-      title: '📈 Analýzy & Reporting',
-      icon: BarChart2,
+      title: '📊 Analýzy & Reporting',
       type: 'expandable' as const,
       expanded: isExpanded('analytics'),
+      defaultRoute: '/admin/reporting',
       children: [
         {
           title: t('navigation.reportsDashboard'),
@@ -250,9 +241,9 @@ const AdminSidebar = () => {
     ...(userRole?.role === 'admin' ? [{
       id: 'system',
       title: '⚙️ Správa Systému',
-      icon: Settings,
       type: 'expandable' as const,
       expanded: isExpanded('system'),
+      defaultRoute: '/admin/organizations',
       children: [
         {
           title: t('navigation.organizationManagement'),
@@ -281,9 +272,9 @@ const AdminSidebar = () => {
     {
       id: 'personal',
       title: '👤 Osobné',
-      icon: User,
       type: 'expandable' as const,
       expanded: isExpanded('personal'),
+      defaultRoute: '/admin/notifications',
       children: [
         {
           title: t('navigation.notifications'),
@@ -332,23 +323,31 @@ const AdminSidebar = () => {
                     }`}
                   >
                     <button onClick={() => navigate(item.path!)}>
-                      <item.icon className={`h-4 w-4 ${item.active ? 'text-white' : 'text-blue-500'}`} />
-                      <span className="font-medium">{item.title}</span>
+                      <span className="text-lg">{item.title.split(' ')[0]}</span>
+                      <span className="font-medium ml-2">{item.title.split(' ').slice(1).join(' ')}</span>
                     </button>
                   </SidebarMenuButton>
                 ) : (
                   <>
                     <SidebarMenuButton
-                      onClick={() => toggleSection(item.id)}
-                      tooltip={state === "collapsed" ? item.title : undefined}
+                      onClick={() => {
+                        if (state === "collapsed") {
+                          // In mini mode, navigate to default route
+                          navigate(item.defaultRoute || getDefaultRoute(item.id));
+                        } else {
+                          // In expanded mode, toggle section
+                          toggleSection(item.id);
+                        }
+                      }}
+                      tooltip={state === "collapsed" ? `${item.title} - Kliknite pre navigáciu` : undefined}
                       className={`rounded-xl transition-all duration-200 ${
                         item.expanded 
                           ? 'bg-blue-50 text-blue-700 shadow-sm' 
                           : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
                       }`}
                     >
-                      <item.icon className="h-4 w-4 text-blue-500" />
-                      <span className="font-medium">{item.title}</span>
+                      <span className="text-lg">{item.title.split(' ')[0]}</span>
+                      <span className="font-medium ml-2">{item.title.split(' ').slice(1).join(' ')}</span>
                       {state === "expanded" && (
                         item.expanded ? (
                           <ChevronDown className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />
