@@ -54,7 +54,7 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
     defaultValues: {
       name: item?.name || '',
       description: item?.description || '',
-      solution_id: existingSolutionItem?.solution_id || '',
+      solution_id: existingSolutionItem?.solution_id || 'none',
       category: item?.category || '',
       item_type: item?.item_type || '',
       monthly_fee: item?.monthly_fee || 0,
@@ -69,6 +69,7 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
 
   const selectedCategorySlug = form.watch('category');
   const selectedItemTypeSlug = form.watch('item_type');
+  const selectedSolutionId = form.watch('solution_id');
   const selectedCategory = categories.find(c => c.slug === selectedCategorySlug);
   const selectedItemType = itemTypes.find(t => t.slug === selectedItemTypeSlug);
 
@@ -79,6 +80,15 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
         selectedCategory.item_type_filter === type.slug
       )
     : itemTypes;
+
+  // Get categories filtered by selected solution
+  const availableCategories = selectedSolutionId && selectedSolutionId !== 'none'
+    ? categories.filter(cat => {
+        // For now, show all categories when a solution is selected
+        // This can be enhanced later with solution-category relationships
+        return cat.is_active;
+      })
+    : categories.filter(c => c.is_active);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -106,7 +116,7 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
         await updateMutation.mutateAsync({ id: item.id, ...warehouseData });
         
         // Handle solution assignment for updates
-        if (data.solution_id && categoryData) {
+        if (data.solution_id && data.solution_id !== 'none' && categoryData) {
           // Check if solution item exists, if not create it
           if (!existingSolutionItem) {
             await createSolutionItemMutation.mutateAsync({
@@ -122,7 +132,7 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
         const createdItem = await createMutation.mutateAsync(warehouseData);
         
         // Handle solution assignment for new items
-        if (data.solution_id && createdItem && categoryData) {
+        if (data.solution_id && data.solution_id !== 'none' && createdItem && categoryData) {
           await createSolutionItemMutation.mutateAsync({
             solution_id: data.solution_id,
             warehouse_item_id: createdItem.id,
@@ -187,7 +197,7 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">Bez riešenia</SelectItem>
+                        <SelectItem value="none">Bez riešenia</SelectItem>
                         {solutions.map((solution) => (
                           <SelectItem key={solution.id} value={solution.id}>
                             <div className="flex items-center space-x-2">
@@ -238,7 +248,7 @@ export const WarehouseItemModal = ({ open, onOpenChange, item }: WarehouseItemMo
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {categories.map((category) => (
+                        {availableCategories.map((category) => (
                           <SelectItem key={category.id} value={category.slug}>
                             <div className="flex items-center space-x-2">
                               <div 

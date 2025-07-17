@@ -50,6 +50,7 @@ export const AddItemForm = () => {
     defaultValues: {
       name: '',
       description: '',
+      solution_id: 'none',
       monthly_fee: 0,
       setup_fee: 0,
       company_cost: 0,
@@ -67,7 +68,7 @@ export const AddItemForm = () => {
   const selectedCategory = categories.find(c => c.id === selectedCategoryId);
 
   // Get categories filtered by selected solution (if any)
-  const availableCategories = selectedSolutionId 
+  const availableCategories = selectedSolutionId && selectedSolutionId !== 'none'
     ? categories.filter(category => {
         // You can add logic here to filter categories by solution
         // For now, show all categories but this can be enhanced
@@ -104,7 +105,7 @@ export const AddItemForm = () => {
       const createdItem = await createMutation.mutateAsync(createData);
       
       // If solution is selected, also create solution_item record
-      if (data.solution_id && createdItem) {
+      if (data.solution_id && data.solution_id !== 'none' && createdItem) {
         await createSolutionItemMutation.mutateAsync({
           solution_id: data.solution_id,
           warehouse_item_id: createdItem.id,
@@ -234,7 +235,7 @@ export const AddItemForm = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">Bez riešenia</SelectItem>
+                            <SelectItem value="none">Bez riešenia</SelectItem>
                             {solutions.map((solution) => (
                               <SelectItem key={solution.id} value={solution.id}>
                                 <div className="flex items-center space-x-2">
