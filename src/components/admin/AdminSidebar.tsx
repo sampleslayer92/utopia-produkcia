@@ -294,7 +294,7 @@ const AdminSidebar = () => {
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="border-r-0 shadow-lg">
       <SidebarHeader className="border-b border-slate-200/50">
-        <div className="flex items-center justify-center px-4 h-[80px]">
+        <div className="flex items-center justify-center px-4 h-[72px]">
           <img 
             src="https://cdn.prod.website-files.com/65bb58bd9feeda1fd2e1b551/65bb58bd9feeda1fd2e1b5ad_logo-header.svg" 
             alt="Onepos Logo" 
