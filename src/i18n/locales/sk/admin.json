@@ -497,6 +497,10 @@
       "dateRange": "Obdobie",
       "entity": "Entita"
     },
+    "markAsRead": "Označiť ako prečítané",
+    "markAllAsRead": "Označiť všetko ako prečítané",
+    "refresh": "Obnoviť",
+    "export": "Exportovať",
     "stats": {
       "total": "Celkom",
       "unread": "Neprečítané",

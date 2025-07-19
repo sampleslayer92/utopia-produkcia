@@ -24,6 +24,7 @@
     "ticketingSystem": "Ticketing System",
     "allTasks": "All Tasks",
     "completedTasks": "Completed Tasks",
+    "notifications": "Notifications",
     "settings": "Settings",
     "applicationSettings": "Application Settings",
     "profileSettings": "Profile Settings"
@@ -1316,6 +1317,10 @@
       "title": "Notification Center",
       "subtitle": "Manage all notifications"
     },
+    "markAsRead": "Mark as read",
+    "markAllAsRead": "Mark all as read",
+    "refresh": "Refresh",
+    "export": "Export",
     "types": {
       "contract_created": "New contract",
       "contract_status_changed": "Contract status changed",

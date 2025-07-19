@@ -1,20 +1,46 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { CheckCheck, Settings, Bell, ExternalLink } from 'lucide-react';
+import { CheckCheck, Settings, Bell, ExternalLink, Loader2 } from 'lucide-react';
 import { NotificationItem } from './NotificationItem';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useNotificationFilters } from '@/hooks/useNotificationFilters';
 import { notificationCategories, NotificationCategory } from './NotificationCategories';
 import { useNavigate } from 'react-router-dom';
 
-export const NotificationDropdown = () => {
+interface NotificationDropdownProps {
+  onClose?: () => void;
+}
+
+export const NotificationDropdown = ({ onClose }: NotificationDropdownProps) => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const { notifications, unreadCount, loading, markAllAsRead } = useNotifications();
   const { filters, filteredNotifications, updateFilter } = useNotificationFilters(notifications);
+  const [isMarkingAllRead, setIsMarkingAllRead] = useState(false);
+
+  const handleMarkAllAsRead = async () => {
+    if (unreadCount === 0) return;
+    
+    setIsMarkingAllRead(true);
+    try {
+      await markAllAsRead();
+      // Close dropdown after marking all as read
+      setTimeout(() => {
+        onClose?.();
+      }, 500);
+    } finally {
+      setIsMarkingAllRead(false);
+    }
+  };
+
+  const handleViewAll = () => {
+    navigate('/admin/notifications');
+    onClose?.();
+  };
 
   if (loading) {
     return (
@@ -43,10 +69,15 @@ export const NotificationDropdown = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={markAllAsRead}
+              onClick={handleMarkAllAsRead}
+              disabled={isMarkingAllRead}
               className="h-6 px-1.5 text-xs hover:bg-accent rounded-sm"
             >
-              <CheckCheck className="h-2.5 w-2.5 mr-1" />
+              {isMarkingAllRead ? (
+                <Loader2 className="h-2.5 w-2.5 mr-1 animate-spin" />
+              ) : (
+                <CheckCheck className="h-2.5 w-2.5 mr-1" />
+              )}
               <span className="text-xs">{t('notifications.markAllRead')}</span>
             </Button>
           )}
@@ -97,7 +128,7 @@ export const NotificationDropdown = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/admin/notifications')}
+            onClick={handleViewAll}
             className="w-full justify-between h-7 px-2 hover:bg-accent text-xs rounded-sm"
           >
             <div className="flex items-center">

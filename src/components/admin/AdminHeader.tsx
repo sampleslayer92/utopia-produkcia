@@ -68,13 +68,13 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
 
         {/* Right Side Actions */}
         <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">
-          {/* Notifications */}
-          <NotificationBell />
-          
           {/* Dynamic Actions - Mobile-optimized with overflow menu */}
           <MobileActionMenu singleActionMode={true}>
             {Array.isArray(actions) ? actions : actions ? [actions] : []}
           </MobileActionMenu>
+          
+          {/* Notifications - moved to the end */}
+          <NotificationBell />
         </div>
       </div>
     </header>
