@@ -1,0 +1,42 @@
+
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "overview": "Overview",
+    "deals": "Deals", 
+    "contracts": "Contracts",
+    "merchants": "Merchants",
+    "users": "Users",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Activity and statistics overview",
+    "newContract": "New Contract",
+    "status": {
+      "online": "Online"
+    }
+  },
+  "overview": {
+    "title": "Overview", 
+    "subtitle": "Kanban view of all contracts"
+  },
+  "merchants": {
+    "title": "Merchants",
+    "subtitle": "Manage and track all merchants", 
+    "newMerchant": "New Merchant",
+    "export": "Export"
+  },
+  "contracts": {
+    "title": "Contracts",
+    "subtitle": "All contracts and their status"
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "User account management"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "System configuration"
+  }
+}

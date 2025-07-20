@@ -38,6 +38,9 @@ const AdminHeader = ({ title, subtitle, actions, isCompact = false }: AdminHeade
     if (pathSegments.includes('contracts')) {
       items.push({ label: t('nav.contracts'), path: '/admin/contracts' });
     }
+    if (pathSegments.includes('merchants')) {
+      items.push({ label: t('nav.merchants'), path: '/admin/merchants' });
+    }
     if (pathSegments.includes('users')) {
       items.push({ label: t('nav.users'), path: '/admin/users' });
     }
@@ -50,8 +53,6 @@ const AdminHeader = ({ title, subtitle, actions, isCompact = false }: AdminHeade
 
   const breadcrumbItems = getBreadcrumbItems();
   const headerPadding = isCompact ? "px-3 py-2" : "px-4 py-3";
-  const titleSize = isCompact ? "text-lg" : "text-xl";
-  const subtitleSize = isCompact ? "text-xs" : "text-sm";
 
   return (
     <header className={`sticky top-0 z-40 flex h-auto shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${headerPadding}`}>
@@ -83,34 +84,22 @@ const AdminHeader = ({ title, subtitle, actions, isCompact = false }: AdminHeade
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* Page Title - Mobile */}
-        <div className="flex flex-col md:hidden min-w-0">
-          <h1 className={`font-semibold ${titleSize} truncate`}>
+        {/* Page Title - Left aligned */}
+        <div className="flex flex-col min-w-0 ml-4">
+          <h1 className={`font-semibold text-left truncate ${isCompact ? 'text-lg' : 'text-xl'}`}>
             {title}
           </h1>
           {subtitle && (
-            <p className={`text-muted-foreground ${subtitleSize} truncate`}>
+            <p className={`text-muted-foreground text-left truncate ${isCompact ? 'text-xs' : 'text-sm'}`}>
               {subtitle}
             </p>
           )}
         </div>
       </div>
 
-      {/* Page Title - Desktop */}
-      <div className="hidden md:flex flex-col items-center flex-1 min-w-0">
-        <h1 className={`font-semibold ${titleSize} text-center truncate w-full`}>
-          {title}
-        </h1>
-        {subtitle && (
-          <p className={`text-muted-foreground ${subtitleSize} text-center truncate w-full`}>
-            {subtitle}
-          </p>
-        )}
-      </div>
-
       {/* Actions */}
       {actions && (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2 ml-4">
           {actions}
         </div>
       )}
