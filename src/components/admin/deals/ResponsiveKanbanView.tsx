@@ -123,37 +123,35 @@ const ResponsiveKanbanView = ({ contracts, columns, onUpdateColumn }: Responsive
   };
 
   return (
-    <div className="h-full">
-      <DndContext 
-        sensors={sensors}
-        collisionDetection={viewport.isMobile ? pointerWithin : closestCorners}
-        onDragStart={handleDragStart} 
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        {viewport.isMobile && <MobileKanbanView {...commonProps} />}
-        {viewport.isTablet && <TabletKanbanView {...commonProps} />}
-        {viewport.isDesktop && <DesktopKanbanView {...commonProps} />}
+    <DndContext 
+      sensors={sensors}
+      collisionDetection={viewport.isMobile ? pointerWithin : closestCorners}
+      onDragStart={handleDragStart} 
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+    >
+      {viewport.isMobile && <MobileKanbanView {...commonProps} />}
+      {viewport.isTablet && <TabletKanbanView {...commonProps} />}
+      {viewport.isDesktop && <DesktopKanbanView {...commonProps} />}
 
-        <DragOverlay 
-          dropAnimation={{ 
-            duration: 300, 
-            easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' 
-          }}
-          style={{ zIndex: 9999 }}
-        >
-          {activeContract ? (
-            <div className="animate-kanban-drag pointer-events-none">
-              <KanbanCard 
-                contract={activeContract} 
-                isDragging 
-                isMobile={viewport.isMobile}
-              />
-            </div>
-          ) : null}
-        </DragOverlay>
-      </DndContext>
-    </div>
+      <DragOverlay 
+        dropAnimation={{ 
+          duration: 300, 
+          easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' 
+        }}
+        style={{ zIndex: 9999 }}
+      >
+        {activeContract ? (
+          <div className="animate-kanban-drag pointer-events-none">
+            <KanbanCard 
+              contract={activeContract} 
+              isDragging 
+              isMobile={viewport.isMobile}
+            />
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 };
 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import {
   DndContext,
@@ -12,6 +11,7 @@ import {
   useSensors,
   closestCorners,
 } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 import { useContractStatusUpdate } from '@/hooks/useContractStatusUpdate';
 import { EnhancedContractData } from '@/hooks/useEnhancedContractsData';
 import { KanbanColumn } from '@/hooks/useKanbanColumns';
@@ -167,14 +167,13 @@ const PipedriveKanbanView = ({
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      {/* Main scrollable container */}
       <div className={`
-        h-full overflow-x-auto overflow-y-hidden
+        flex-1 overflow-auto
+        ${isMobile ? 'p-2' : 'p-4'}
         ${isDragging ? 'select-none' : ''}
-        p-4
       `}>
         <div className={`
-          flex gap-4 h-full pb-4
+          flex gap-4 min-h-full pb-4
           ${isMobile ? 'flex-col' : 'flex-row'}
         `}>
           {columns.map((column) => {
@@ -198,8 +197,7 @@ const PipedriveKanbanView = ({
                 isMobile={isMobile}
                 style={{ 
                   minWidth: isCollapsed ? '60px' : (isMobile ? '100%' : '280px'),
-                  maxWidth: isMobile ? '100%' : '400px',
-                  height: isMobile ? 'auto' : '100%'
+                  maxWidth: isMobile ? '100%' : '400px'
                 }}
               />
             );
