@@ -51,14 +51,18 @@ const DealsKanbanBoard = () => {
   if (preferences.viewMode === 'table') {
     return (
       <div className="h-full flex flex-col">
-        <KanbanToolbar
-          preferences={preferences}
-          onPreferencesChange={updatePreferences}
-          onAddColumn={() => setIsAddColumnModalOpen(true)}
-          onResetToDefault={handleResetToDefault}
-          contractsCount={contracts.length}
-        />
-        <TableView contracts={contracts} isLoading={isLoading} />
+        <div className="sticky top-0 z-30 bg-background border-b">
+          <KanbanToolbar
+            preferences={preferences}
+            onPreferencesChange={updatePreferences}
+            onAddColumn={() => setIsAddColumnModalOpen(true)}
+            onResetToDefault={handleResetToDefault}
+            contractsCount={contracts.length}
+          />
+        </div>
+        <div className="flex-1 overflow-auto">
+          <TableView contracts={contracts} isLoading={isLoading} />
+        </div>
       </div>
     );
   }
@@ -66,11 +70,13 @@ const DealsKanbanBoard = () => {
   if (isLoading || columnsLoading) {
     return (
       <div className="h-full flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-border bg-background/80 backdrop-blur-sm">
-          <Skeleton className="h-10 w-40" />
-          <Skeleton className="h-8 w-24" />
+        <div className="sticky top-0 z-30 bg-background border-b">
+          <div className="flex items-center justify-between p-4">
+            <Skeleton className="h-10 w-40" />
+            <Skeleton className="h-8 w-24" />
+          </div>
         </div>
-        <div className="p-3 md:p-6 flex-1">
+        <div className="flex-1 overflow-auto p-3 md:p-6">
           <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-5">
             {Array.from({ length: 5 }).map((_, i) => (
               <Card key={i} className="p-4">
@@ -89,25 +95,41 @@ const DealsKanbanBoard = () => {
 
   if (error) {
     return (
-      <div className="p-3 md:p-6">
-        <Card className="p-8 text-center">
-          <p className="text-red-600">{t('deals.errors.loadingDeals', { message: error.message })}</p>
-        </Card>
+      <div className="h-full flex flex-col">
+        <div className="sticky top-0 z-30 bg-background border-b">
+          <KanbanToolbar
+            preferences={preferences}
+            onPreferencesChange={updatePreferences}
+            onAddColumn={() => setIsAddColumnModalOpen(true)}
+            onResetToDefault={handleResetToDefault}
+            contractsCount={contracts.length}
+          />
+        </div>
+        <div className="flex-1 overflow-auto p-3 md:p-6">
+          <Card className="p-8 text-center">
+            <p className="text-red-600">{t('deals.errors.loadingDeals', { message: error.message })}</p>
+          </Card>
+        </div>
       </div>
     );
   }
 
-  // Main kanban view
+  // Main kanban view with sticky header
   return (
     <div className="h-full flex flex-col">
-      <KanbanToolbar
-        preferences={preferences}
-        onPreferencesChange={updatePreferences}
-        onAddColumn={() => setIsAddColumnModalOpen(true)}
-        onResetToDefault={handleResetToDefault}
-        contractsCount={contracts.length}
-      />
-      <div className="flex-1">
+      {/* Sticky toolbar */}
+      <div className="sticky top-0 z-30 bg-background border-b">
+        <KanbanToolbar
+          preferences={preferences}
+          onPreferencesChange={updatePreferences}
+          onAddColumn={() => setIsAddColumnModalOpen(true)}
+          onResetToDefault={handleResetToDefault}
+          contractsCount={contracts.length}
+        />
+      </div>
+      
+      {/* Scrollable kanban content */}
+      <div className="flex-1 overflow-hidden">
         <KanbanView
           contracts={contracts}
           columns={columns}

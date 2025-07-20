@@ -1,3 +1,4 @@
+
 import { useDroppable } from '@dnd-kit/core';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -82,113 +83,122 @@ const PipedriveKanbanColumn = ({
   }
 
   return (
-    <Card 
+    <div 
       ref={setNodeRef}
       className={`
-        flex-shrink-0 bg-white border-slate-200/60 transition-all duration-300
-        ${isDropTarget || isOver ? 'ring-2 ring-blue-300 shadow-lg bg-blue-50/30' : ''}
+        flex-shrink-0 flex flex-col transition-all duration-300
+        ${isDropTarget || isOver ? 'ring-2 ring-blue-300 shadow-lg' : ''}
         ${isMobile ? 'mb-4' : ''}
       `}
       style={{ ...style, width }}
     >
-      <CardHeader className="pb-3 pt-3 px-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            {!isMobile && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onToggleCollapse}
-                className="p-1 h-6 w-6"
-              >
-                <ChevronLeft className="h-3 w-3" />
-              </Button>
+      {/* Sticky Column Header - podobne ako v Jira */}
+      <div className={`
+        sticky top-0 z-20 bg-white border border-slate-200/60 rounded-t-lg
+        ${isDropTarget || isOver ? 'bg-blue-50/30' : ''}
+      `}>
+        <CardHeader className="pb-3 pt-3 px-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              {!isMobile && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onToggleCollapse}
+                  className="p-1 h-6 w-6"
+                >
+                  <ChevronLeft className="h-3 w-3" />
+                </Button>
+              )}
+              
+              <EditableKanbanColumnHeader
+                column={column}
+                onUpdate={onUpdateColumn}
+                count={stats.count}
+              />
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                  <MoreHorizontal className="h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Plus className="h-3 w-3 mr-2" />
+                  Add deal
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  Sort by value
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Sort by date
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-red-600">
+                  Delete column
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Column statistics */}
+          <div className="flex items-center gap-4 text-xs text-slate-600 pt-2">
+            <div className="flex items-center gap-1">
+              <Users className="h-3 w-3" />
+              <span>{stats.count} deals</span>
+            </div>
+            {stats.totalValue > 0 && (
+              <div className="flex items-center gap-1">
+                <Euro className="h-3 w-3" />
+                <span>€{stats.totalValue.toLocaleString()}</span>
+              </div>
             )}
-            
-            <EditableKanbanColumnHeader
-              column={column}
-              onUpdate={onUpdateColumn}
-              count={stats.count}
+          </div>
+
+          {/* Progress bar showing column completion */}
+          <div className="w-full bg-slate-200 rounded-full h-1 mt-2">
+            <div 
+              className="bg-blue-500 h-1 rounded-full transition-all duration-300"
+              style={{ 
+                width: `${Math.min(100, (stats.count / Math.max(1, contracts.length)) * 100)}%` 
+              }}
             />
           </div>
+        </CardHeader>
+      </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                <MoreHorizontal className="h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Plus className="h-3 w-3 mr-2" />
-                Add deal
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                Sort by value
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                Sort by date
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600">
-                Delete column
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        {/* Column statistics */}
-        <div className="flex items-center gap-4 text-xs text-slate-600 pt-2">
-          <div className="flex items-center gap-1">
-            <Users className="h-3 w-3" />
-            <span>{stats.count} deals</span>
-          </div>
-          {stats.totalValue > 0 && (
-            <div className="flex items-center gap-1">
-              <Euro className="h-3 w-3" />
-              <span>€{stats.totalValue.toLocaleString()}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Progress bar showing column completion */}
-        <div className="w-full bg-slate-200 rounded-full h-1 mt-2">
-          <div 
-            className="bg-blue-500 h-1 rounded-full transition-all duration-300"
-            style={{ 
-              width: `${Math.min(100, (stats.count / Math.max(1, contracts.length)) * 100)}%` 
-            }}
-          />
-        </div>
-      </CardHeader>
-
-      <CardContent className="p-0 flex-1">
-        <ScrollArea className={`${isMobile ? 'h-auto' : 'h-[calc(100vh-280px)]'} px-3 pb-3`}>
-          <div className="space-y-3 min-h-[100px]">
-            {contracts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-3">
-                  <Plus className="h-6 w-6 text-slate-400" />
+      {/* Scrollable Column Content */}
+      <Card className="flex-1 border-t-0 rounded-t-none bg-white border-slate-200/60">
+        <CardContent className="p-0 h-full">
+          <ScrollArea className={`${isMobile ? 'h-96' : 'h-[calc(100vh-350px)]'} px-3 pb-3`}>
+            <div className="space-y-3 min-h-[100px] pt-3">
+              {contracts.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-3">
+                    <Plus className="h-6 w-6 text-slate-400" />
+                  </div>
+                  <p className="text-sm text-slate-500 mb-2">No deals in this stage</p>
+                  <Button variant="ghost" size="sm" className="text-xs">
+                    Add deal
+                  </Button>
                 </div>
-                <p className="text-sm text-slate-500 mb-2">No deals in this stage</p>
-                <Button variant="ghost" size="sm" className="text-xs">
-                  Add deal
-                </Button>
-              </div>
-            ) : (
-              contracts.map((contract) => (
-                <PipedriveKanbanCard
-                  key={contract.id}
-                  contract={contract}
-                  isMobile={isMobile}
-                />
-              ))
-            )}
-          </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+              ) : (
+                contracts.map((contract) => (
+                  <PipedriveKanbanCard
+                    key={contract.id}
+                    contract={contract}
+                    isMobile={isMobile}
+                  />
+                ))
+              )}
+            </div>
+          </ScrollArea>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
