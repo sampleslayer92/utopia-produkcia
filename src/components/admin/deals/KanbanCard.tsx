@@ -12,9 +12,10 @@ interface KanbanCardProps {
   contract: EnhancedContractData;
   isDragging?: boolean;
   isMobile?: boolean;
+  isCompact?: boolean;
 }
 
-const KanbanCard = ({ contract, isDragging = false, isMobile = false }: KanbanCardProps) => {
+const KanbanCard = ({ contract, isDragging = false, isMobile = false, isCompact = false }: KanbanCardProps) => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   
