@@ -10,6 +10,9 @@ export interface ViewportInfo {
   isMobile: boolean;
   isTablet: boolean;
   isDesktop: boolean;
+  isSmallDesktop: boolean;
+  isMediumDesktop: boolean;
+  isLargeDesktop: boolean;
   orientation: 'portrait' | 'landscape';
 }
 
@@ -23,6 +26,9 @@ export const useViewport = (): ViewportInfo => {
         isMobile: false,
         isTablet: false,
         isDesktop: true,
+        isSmallDesktop: false,
+        isMediumDesktop: false,
+        isLargeDesktop: true,
         orientation: 'landscape'
       };
     }
@@ -38,6 +44,9 @@ export const useViewport = (): ViewportInfo => {
       isMobile: size === 'mobile',
       isTablet: size === 'tablet',
       isDesktop: size === 'desktop',
+      isSmallDesktop: size === 'desktop' && width <= 1366,
+      isMediumDesktop: size === 'desktop' && width > 1366 && width <= 1440,
+      isLargeDesktop: size === 'desktop' && width > 1440,
       orientation: width > height ? 'landscape' : 'portrait'
     };
   });
@@ -55,6 +64,9 @@ export const useViewport = (): ViewportInfo => {
         isMobile: size === 'mobile',
         isTablet: size === 'tablet',
         isDesktop: size === 'desktop',
+        isSmallDesktop: size === 'desktop' && width <= 1366,
+        isMediumDesktop: size === 'desktop' && width > 1366 && width <= 1440,
+        isLargeDesktop: size === 'desktop' && width > 1440,
         orientation: width > height ? 'landscape' : 'portrait'
       });
     };

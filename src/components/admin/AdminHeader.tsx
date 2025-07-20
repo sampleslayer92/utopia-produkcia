@@ -1,82 +1,119 @@
 
-import { useTranslation } from 'react-i18next';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { useNavigate, useLocation } from "react-router-dom";
-
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import MobileActionMenu from "./MobileActionMenu";
-import MobileBreadcrumb from "./MobileBreadcrumb";
-import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { Separator } from "@/components/ui/separator";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Home } from "lucide-react";
 
 interface AdminHeaderProps {
   title: string;
   subtitle?: string;
   actions?: React.ReactNode;
+  isCompact?: boolean;
 }
 
-const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
-  const { t } = useTranslation('admin');
-  const navigate = useNavigate();
+const AdminHeader = ({ title, subtitle, actions, isCompact = false }: AdminHeaderProps) => {
   const location = useLocation();
+  const { t } = useTranslation('admin');
 
-  const getBreadcrumbs = () => {
-    const breadcrumbs = [
-      { label: t('navigation.dashboard'), href: '/admin' }
-    ];
+  const getBreadcrumbItems = () => {
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const items = [];
+    
+    // Home
+    items.push({
+      label: t('nav.dashboard'),
+      path: '/admin',
+      isHome: true
+    });
 
-    if (location.pathname.startsWith('/admin/contracts')) {
-      breadcrumbs.push({ label: t('navigation.contracts'), href: '/admin/contracts' });
+    // Current sections
+    if (pathSegments.includes('deals')) {
+      items.push({ label: t('nav.deals'), path: '/admin/deals' });
+    }
+    if (pathSegments.includes('overview')) {
+      items.push({ label: t('nav.overview'), path: '/admin/overview' });
+    }
+    if (pathSegments.includes('contracts')) {
+      items.push({ label: t('nav.contracts'), path: '/admin/contracts' });
+    }
+    if (pathSegments.includes('users')) {
+      items.push({ label: t('nav.users'), path: '/admin/users' });
+    }
+    if (pathSegments.includes('settings')) {
+      items.push({ label: t('nav.settings'), path: '/admin/settings' });
     }
 
-    if (location.pathname.startsWith('/admin/merchants')) {
-      breadcrumbs.push({ label: t('navigation.merchants'), href: '/admin/merchants' });
-    }
-
-    if (location.pathname.includes('/contract/') && location.pathname.includes('/edit')) {
-      breadcrumbs.push({ label: t('breadcrumbs.editContract'), href: '#' });
-    }
-
-    if (location.pathname.includes('/contract/') && location.pathname.includes('/view')) {
-      breadcrumbs.push({ label: t('breadcrumbs.viewContract'), href: '#' });
-    }
-
-    if (location.pathname.includes('/merchant/') && location.pathname.includes('/view')) {
-      breadcrumbs.push({ label: t('breadcrumbs.viewMerchant'), href: '#' });
-    }
-
-    return breadcrumbs;
+    return items;
   };
 
-  const breadcrumbs = getBreadcrumbs();
+  const breadcrumbItems = getBreadcrumbItems();
+  const headerPadding = isCompact ? "px-3 py-2" : "px-4 py-3";
+  const titleSize = isCompact ? "text-lg" : "text-xl";
+  const subtitleSize = isCompact ? "text-xs" : "text-sm";
 
   return (
-    <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-40 border-b border-border px-4 py-4">
-      {/* Mobile Breadcrumb */}
-      <MobileBreadcrumb title={title} />
+    <header className={`sticky top-0 z-40 flex h-auto shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${headerPadding}`}>
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        
+        {/* Breadcrumb */}
+        <Breadcrumb className="hidden md:flex">
+          <BreadcrumbList>
+            {breadcrumbItems.map((item, index) => (
+              <div key={item.path} className="flex items-center gap-1">
+                {index > 0 && <BreadcrumbSeparator />}
+                <BreadcrumbItem>
+                  {index === breadcrumbItems.length - 1 ? (
+                    <BreadcrumbPage className="flex items-center gap-1">
+                      {item.isHome && <Home className="h-3 w-3" />}
+                      <span className={isCompact ? "text-xs" : "text-sm"}>{item.label}</span>
+                    </BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink href={item.path} className="flex items-center gap-1">
+                      {item.isHome && <Home className="h-3 w-3" />}
+                      <span className={isCompact ? "text-xs" : "text-sm"}>{item.label}</span>
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+              </div>
+            ))}
+          </BreadcrumbList>
+        </Breadcrumb>
 
-      {/* Header Content */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
-          <SidebarTrigger className="min-h-touch min-w-touch flex-shrink-0" />
-          <div className="min-w-0 flex-1">
-            <h1 className="text-lg md:text-2xl font-bold text-foreground truncate">{title}</h1>
-            {subtitle && (
-              <p className="text-xs md:text-sm text-muted-foreground mt-1 truncate">{subtitle}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Right Side Actions */}
-        <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">
-          {/* Dynamic Actions - Mobile-optimized with overflow menu */}
-          <MobileActionMenu singleActionMode={true}>
-            {Array.isArray(actions) ? actions : actions ? [actions] : []}
-          </MobileActionMenu>
-          
-          {/* Notifications - moved to the end */}
-          <NotificationBell />
+        {/* Page Title - Mobile */}
+        <div className="flex flex-col md:hidden min-w-0">
+          <h1 className={`font-semibold ${titleSize} truncate`}>
+            {title}
+          </h1>
+          {subtitle && (
+            <p className={`text-muted-foreground ${subtitleSize} truncate`}>
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
+
+      {/* Page Title - Desktop */}
+      <div className="hidden md:flex flex-col items-center flex-1 min-w-0">
+        <h1 className={`font-semibold ${titleSize} text-center truncate w-full`}>
+          {title}
+        </h1>
+        {subtitle && (
+          <p className={`text-muted-foreground ${subtitleSize} text-center truncate w-full`}>
+            {subtitle}
+          </p>
+        )}
+      </div>
+
+      {/* Actions */}
+      {actions && (
+        <div className="flex items-center gap-1">
+          {actions}
+        </div>
+      )}
     </header>
   );
 };

@@ -18,6 +18,17 @@ const config: Config = {
         "2xl": "1400px",
       },
     },
+    screens: {
+      'xs': '480px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      'sm-desktop': '1366px',
+      'md-desktop': '1440px',
+      '2xl': '1536px',
+      'ultra': '1920px',
+    },
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -78,7 +89,7 @@ const config: Config = {
         "fade-in": {
           "0%": {
             opacity: "0",
-            transform: "translateY(10px)",
+            transform: "translateY(8px)",
           },
           "100%": {
             opacity: "1",
@@ -92,7 +103,7 @@ const config: Config = {
           },
           "100%": {
             opacity: "0",
-            transform: "translateY(10px)",
+            transform: "translateY(8px)",
           },
         },
         "scale-in": {
@@ -125,23 +136,23 @@ const config: Config = {
         },
         "pulse-ring": {
           "0%": { transform: "scale(1)", opacity: "0.5" },
-          "50%": { transform: "scale(1.05)", opacity: "0.3" },
+          "50%": { transform: "scale(1.03)", opacity: "0.3" },
           "100%": { transform: "scale(1)", opacity: "0.5" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.3s ease-out",
-        "fade-out": "fade-out 0.3s ease-out",
-        "scale-in": "scale-in 0.2s ease-out",
-        "scale-out": "scale-out 0.2s ease-out",
-        "slide-in-right": "slide-in-right 0.3s ease-out",
-        "slide-out-right": "slide-out-right 0.3s ease-out",
-        "enter": "fade-in 0.3s ease-out, scale-in 0.2s ease-out",
-        "exit": "fade-out 0.3s ease-out, scale-out 0.2s ease-out",
-        "kanban-drag": "kanban-drag 0.5s ease-in-out infinite",
-        "pulse-ring": "pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "fade-in": "fade-in 0.25s ease-out",
+        "fade-out": "fade-out 0.25s ease-out",
+        "scale-in": "scale-in 0.15s ease-out",
+        "scale-out": "scale-out 0.15s ease-out",
+        "slide-in-right": "slide-in-right 0.25s ease-out",
+        "slide-out-right": "slide-out-right 0.25s ease-out",
+        "enter": "fade-in 0.25s ease-out, scale-in 0.15s ease-out",
+        "exit": "fade-out 0.25s ease-out, scale-out 0.15s ease-out",
+        "kanban-drag": "kanban-drag 0.4s ease-in-out infinite",
+        "pulse-ring": "pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
       spacing: {
         'touch': '44px', // Minimum touch target size
@@ -157,7 +168,9 @@ const config: Config = {
     'snap-mandatory',
     'snap-start',
     'snap-proximity',
-    'scroll-snap-type-none'
+    'scroll-snap-type-none',
+    'sm-desktop:*',
+    'md-desktop:*'
   ],
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

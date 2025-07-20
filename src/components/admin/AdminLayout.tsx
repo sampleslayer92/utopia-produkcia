@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useChatBot } from "@/hooks/useChatBot";
 import ChatBotFloatingButton from "@/components/chatbot/ChatBotFloatingButton";
 import ChatBotWindow from "@/components/chatbot/ChatBotWindow";
+import { useViewport } from "@/hooks/useViewport";
 
 interface AdminLayoutProps {
   title: string;
@@ -18,6 +19,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) => {
   const { i18n } = useTranslation();
   const [languageKey, setLanguageKey] = useState(i18n.language);
+  const viewport = useViewport();
   const {
     messages,
     isOpen,
@@ -46,16 +48,40 @@ const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) =
     };
   }, [i18n]);
 
+  // Responsive classes based on viewport
+  const getResponsiveClasses = () => {
+    if (viewport.width <= 1366) {
+      return "min-h-screen flex w-full bg-gradient-to-br from-blue-50/20 via-indigo-50/15 to-purple-50/20";
+    }
+    if (viewport.width <= 1440) {
+      return "min-h-screen flex w-full bg-gradient-to-br from-blue-50/25 via-indigo-50/18 to-purple-50/25";
+    }
+    return "min-h-screen flex w-full bg-gradient-to-br from-blue-50/30 via-indigo-50/20 to-purple-50/30";
+  };
+
+  const getMainPadding = () => {
+    if (viewport.width <= 1366) return "p-2 sm:p-3";
+    if (viewport.width <= 1440) return "p-3 md:p-4";
+    return "p-3 md:p-6";
+  };
+
   return (
     <SidebarProvider key={languageKey}>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-blue-50/30 via-indigo-50/20 to-purple-50/30 safe-area-inset-top safe-area-inset-bottom">
+      <div className={`${getResponsiveClasses()} safe-area-inset-top safe-area-inset-bottom overflow-hidden`}>
         <AdminSidebar />
         
-        <SidebarInset className="flex flex-col w-full">
-          <AdminHeader title={title} subtitle={subtitle} actions={actions} />
+        <SidebarInset className="flex flex-col w-full min-w-0 overflow-hidden">
+          <AdminHeader 
+            title={title} 
+            subtitle={subtitle} 
+            actions={actions}
+            isCompact={viewport.width <= 1366}
+          />
           
-          <main className="flex-1 p-3 md:p-6 safe-area-inset-left safe-area-inset-right">
-            {children}
+          <main className={`flex-1 ${getMainPadding()} safe-area-inset-left safe-area-inset-right overflow-hidden`}>
+            <div className="h-full overflow-hidden">
+              {children}
+            </div>
           </main>
         </SidebarInset>
         
