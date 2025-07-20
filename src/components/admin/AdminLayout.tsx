@@ -1,6 +1,7 @@
 
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
+import PageBreadcrumbs from "./PageBreadcrumbs";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
@@ -60,9 +61,9 @@ const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) =
   };
 
   const getMainPadding = () => {
-    if (viewport.width <= 1366) return "p-2 sm:p-3";
-    if (viewport.width <= 1440) return "p-3 md:p-4";
-    return "p-3 md:p-6";
+    if (viewport.width <= 1366) return "p-2";
+    if (viewport.width <= 1440) return "p-3";
+    return "p-4 md:p-6";
   };
 
   return (
@@ -77,6 +78,8 @@ const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) =
             actions={actions}
             isCompact={viewport.width <= 1366}
           />
+          
+          <PageBreadcrumbs />
           
           <main className={`flex-1 ${getMainPadding()} safe-area-inset-left safe-area-inset-right overflow-hidden`}>
             <div className="h-full overflow-hidden">
