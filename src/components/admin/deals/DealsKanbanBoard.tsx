@@ -3,9 +3,7 @@ import { useState } from 'react';
 import { useEnhancedContractsData } from '@/hooks/useEnhancedContractsData';
 import { useContractsRealtime } from '@/hooks/useContractsRealtime';
 import { useKanbanColumns } from '@/hooks/useKanbanColumns';
-import { useViewport } from '@/hooks/useViewport';
 import KanbanToolbar from './KanbanToolbar';
-import CompactKanbanToolbar from './CompactKanbanToolbar';
 import KanbanView from './KanbanView';
 import TableView from './TableView';
 import AddColumnModal from './AddColumnModal';
@@ -18,7 +16,6 @@ const DealsKanbanBoard = () => {
   const { t } = useTranslation('admin');
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
   const { data: contracts = [], isLoading, error } = useEnhancedContractsData();
-  const viewport = useViewport();
   const { 
     columns, 
     preferences, 
@@ -50,43 +47,37 @@ const DealsKanbanBoard = () => {
     }
   };
 
-  // Use compact toolbar for smaller screens
-  const useCompactMode = viewport.width <= 1366;
-  const ToolbarComponent = useCompactMode ? CompactKanbanToolbar : KanbanToolbar;
-
   // Show table view if preference is set to table
   if (preferences.viewMode === 'table') {
     return (
-      <div className="h-full flex flex-col overflow-hidden">
-        <ToolbarComponent
+      <div className="h-full flex flex-col">
+        <KanbanToolbar
           preferences={preferences}
           onPreferencesChange={updatePreferences}
           onAddColumn={() => setIsAddColumnModalOpen(true)}
           onResetToDefault={handleResetToDefault}
           contractsCount={contracts.length}
         />
-        <div className="flex-1 overflow-hidden">
-          <TableView contracts={contracts} isLoading={isLoading} />
-        </div>
+        <TableView contracts={contracts} isLoading={isLoading} />
       </div>
     );
   }
 
   if (isLoading || columnsLoading) {
     return (
-      <div className="h-full flex flex-col overflow-hidden">
-        <div className="sticky top-0 z-30 flex items-center justify-between p-3 border-b border-border bg-background/80 backdrop-blur-sm">
-          <Skeleton className="h-8 w-32" />
-          <Skeleton className="h-6 w-16" />
+      <div className="h-full flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-background/80 backdrop-blur-sm">
+          <Skeleton className="h-10 w-40" />
+          <Skeleton className="h-8 w-24" />
         </div>
-        <div className="flex-1 p-3 overflow-hidden">
-          <div className="grid gap-3 grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 h-full">
-            {Array.from({ length: useCompactMode ? 3 : 5 }).map((_, i) => (
-              <Card key={i} className="p-3">
-                <Skeleton className="h-5 w-24 mb-3" />
-                <div className="space-y-2">
-                  <Skeleton className="h-16 w-full" />
-                  <Skeleton className="h-16 w-full" />
+        <div className="p-3 md:p-6 flex-1">
+          <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Card key={i} className="p-4">
+                <Skeleton className="h-6 w-32 mb-4" />
+                <div className="space-y-3">
+                  <Skeleton className="h-20 w-full" />
+                  <Skeleton className="h-20 w-full" />
                 </div>
               </Card>
             ))}
@@ -98,35 +89,25 @@ const DealsKanbanBoard = () => {
 
   if (error) {
     return (
-      <div className="h-full flex flex-col overflow-hidden">
-        <ToolbarComponent
-          preferences={preferences}
-          onPreferencesChange={updatePreferences}
-          onAddColumn={() => setIsAddColumnModalOpen(true)}
-          onResetToDefault={handleResetToDefault}
-          contractsCount={contracts.length}
-        />
-        <div className="flex-1 p-3 overflow-hidden">
-          <Card className="p-6 text-center">
-            <p className="text-red-600">{t('deals.errors.loadingDeals', { message: error.message })}</p>
-          </Card>
-        </div>
+      <div className="p-3 md:p-6">
+        <Card className="p-8 text-center">
+          <p className="text-red-600">{t('deals.errors.loadingDeals', { message: error.message })}</p>
+        </Card>
       </div>
     );
   }
 
   // Main kanban view
   return (
-    <div className="h-full flex flex-col overflow-hidden">
-      <ToolbarComponent
+    <div className="h-full flex flex-col">
+      <KanbanToolbar
         preferences={preferences}
         onPreferencesChange={updatePreferences}
         onAddColumn={() => setIsAddColumnModalOpen(true)}
         onResetToDefault={handleResetToDefault}
         contractsCount={contracts.length}
       />
-      
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1">
         <KanbanView
           contracts={contracts}
           columns={columns}

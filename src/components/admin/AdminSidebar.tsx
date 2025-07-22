@@ -1,19 +1,7 @@
-
 import { useTranslation } from 'react-i18next';
 import { 
   ChevronDown,
-  ChevronRight,
-  Home,
-  ShoppingCart,
-  Users,
-  Package,
-  BarChart3,
-  Settings,
-  Bell,
-  User,
-  FileText,
-  Building2,
-  UserCog
+  ChevronRight
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -26,6 +14,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
@@ -77,6 +66,7 @@ const AdminSidebar = () => {
 
   const isExpanded = (sectionId: string) => expandedSections.includes(sectionId);
   const isActive = (path: string) => location.pathname === path;
+  const isChildActive = (path: string) => location.pathname.startsWith(path) && location.pathname !== path;
 
   // Determine dashboard path based on role
   const getDashboardPath = () => {
@@ -86,8 +76,8 @@ const AdminSidebar = () => {
   };
 
   const getDashboardTitle = () => {
-    if (userRole?.role === 'partner') return t('navigation.dashboard');
-    if (userRole?.role === 'merchant') return t('navigation.dashboard');
+    if (userRole?.role === 'partner') return 'Partner Dashboard';
+    if (userRole?.role === 'merchant') return 'Merchant Dashboard';
     return t('navigation.dashboard');
   };
 
@@ -108,9 +98,8 @@ const AdminSidebar = () => {
     // 1. HLAVNÝ DASHBOARD
     {
       id: 'dashboard',
-      title: getDashboardTitle(),
+      title: '🏠 ' + getDashboardTitle(),
       path: getDashboardPath(),
-      icon: Home,
       active: location.pathname === getDashboardPath(),
       type: 'single'
     },
@@ -118,8 +107,7 @@ const AdminSidebar = () => {
     // 2. OBCHODNÉ PROCESY - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'business',
-      title: t('navigation.businessProcesses'),
-      icon: ShoppingCart,
+      title: '💼 Obchodné Procesy',
       type: 'expandable' as const,
       expanded: isExpanded('business'),
       defaultRoute: '/admin/deals',
@@ -145,8 +133,7 @@ const AdminSidebar = () => {
     // 3. SPRÁVA KLIENTOV - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'clients',
-      title: t('navigation.merchants'),
-      icon: Users,
+      title: '👥 Správa Klientov',
       type: 'expandable' as const,
       expanded: isExpanded('clients'),
       defaultRoute: '/admin/merchants',
@@ -172,44 +159,51 @@ const AdminSidebar = () => {
     // 4. PRODUKTOVÝ KATALÓG - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'products',
-      title: t('navigation.solutions'),
-      icon: Package,
+      title: '📦 Produktový Katalóg',
       type: 'expandable' as const,
       expanded: isExpanded('products'),
       defaultRoute: '/admin/warehouse',
       children: [
+        // Solutions & Products subsection
         {
-          title: t('navigation.solutions'),
+          title: "🎯 " + t('navigation.solutions'),
           path: "/admin/warehouse/solutions",
           active: isActive("/admin/warehouse/solutions")
         },
         {
-          title: t('navigation.allItems'),
+          title: "📦 " + t('navigation.allItems'),
           path: "/admin/warehouse",
           active: isActive("/admin/warehouse")
         },
         {
-          title: "Visual Builder",
+          title: "🎨 Visual Builder",
           path: "/admin/warehouse/visual-builder",
           active: isActive("/admin/warehouse/visual-builder")
         },
+        // Configuration subsection
         {
-          title: t('navigation.categories'),
+          title: "📁 " + t('navigation.categories'),
           path: "/admin/warehouse/categories",
           active: isActive("/admin/warehouse/categories")
         },
         {
-          title: t('navigation.itemTypes'),
+          title: "🏷️ " + t('navigation.itemTypes'),
           path: "/admin/warehouse/item-types",
           active: isActive("/admin/warehouse/item-types")
         },
         {
-          title: t('navigation.bulkOperations'),
+          title: "🔄 " + t('navigation.bulkOperations'),
           path: "/admin/warehouse/bulk",
           active: isActive("/admin/warehouse/bulk")
         },
+        // Sales subsection
         {
-          title: t('navigation.addItem'),
+          title: "💰 Rýchly predaj",
+          path: "/admin/warehouse/quick-sale",
+          active: isActive("/admin/warehouse/quick-sale")
+        },
+        {
+          title: "➕ " + t('navigation.addItem'),
           path: "/admin/warehouse/add-item",
           active: isActive("/admin/warehouse/add-item")
         }
@@ -219,8 +213,7 @@ const AdminSidebar = () => {
     // 5. ANALÝZY & REPORTING - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'analytics',
-      title: t('navigation.reportsDashboard'),
-      icon: BarChart3,
+      title: '📊 Analýzy & Reporting',
       type: 'expandable' as const,
       expanded: isExpanded('analytics'),
       defaultRoute: '/admin/reporting',
@@ -246,8 +239,7 @@ const AdminSidebar = () => {
     // 6. SPRÁVA SYSTÉMU - Only for admin
     ...(userRole?.role === 'admin' ? [{
       id: 'system',
-      title: t('navigation.organizationManagement'),
-      icon: Building2,
+      title: '⚙️ Správa Systému',
       type: 'expandable' as const,
       expanded: isExpanded('system'),
       defaultRoute: '/admin/organizations',
@@ -278,8 +270,7 @@ const AdminSidebar = () => {
     // 7. OSOBNÉ - For all roles
     {
       id: 'personal',
-      title: t('navigation.profileSettings'),
-      icon: User,
+      title: '👤 Osobné',
       type: 'expandable' as const,
       expanded: isExpanded('personal'),
       defaultRoute: '/admin/notifications',
@@ -315,85 +306,81 @@ const AdminSidebar = () => {
       <SidebarContent className="bg-gradient-to-b from-white to-slate-50/50 backdrop-blur-sm">
         <SidebarGroup className="px-3 py-4">
           <SidebarMenu className={state === "collapsed" ? "space-y-4" : "space-y-3 px-1"}>
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              
-              return (
-                <SidebarMenuItem key={item.id}>
-                  {item.type === 'single' ? (
-                    <SidebarMenuButton
-                      asChild
-                      isActive={item.active}
-                      tooltip={state === "collapsed" ? item.title : undefined}
+            {menuItems.map((item) => (
+              <SidebarMenuItem key={item.id}>
+                {item.type === 'single' ? (
+                  <SidebarMenuButton
+                    asChild
+                    isActive={item.active}
+                    tooltip={state === "collapsed" ? item.title : undefined}
                       className={`rounded-xl transition-all duration-200 ${state === "collapsed" ? "w-full flex justify-center items-center p-3 mx-auto" : ""} ${
                        item.active 
                          ? 'bg-gradient-to-r from-blue-500 to-indigo-500 !text-white shadow-lg hover:shadow-xl' 
                          : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
                      }`}
+                  >
+                    <button onClick={() => navigate(item.path!)}>
+                      <span className="text-lg">{item.title.split(' ')[0]}</span>
+                      <span className="font-medium ml-2">{item.title.split(' ').slice(1).join(' ')}</span>
+                    </button>
+                  </SidebarMenuButton>
+                ) : (
+                  <>
+                    <SidebarMenuButton
+                      onClick={() => {
+                        if (state === "collapsed") {
+                          // In mini mode, navigate to default route
+                          navigate(item.defaultRoute || getDefaultRoute(item.id));
+                        } else {
+                          // In expanded mode, toggle section
+                          toggleSection(item.id);
+                        }
+                      }}
+                      tooltip={state === "collapsed" ? `${item.title} - Kliknite pre navigáciu` : undefined}
+                      className={`rounded-xl transition-all duration-200 ${state === "collapsed" ? "w-full flex justify-center items-center p-3 mx-auto" : ""} ${
+                        item.expanded 
+                          ? 'bg-blue-50 text-blue-700 shadow-sm' 
+                          : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
+                      }`}
                     >
-                      <button onClick={() => navigate(item.path!)}>
-                        <Icon className="h-4 w-4" />
-                        <span className="font-medium">{item.title}</span>
-                      </button>
-                    </SidebarMenuButton>
-                  ) : (
-                    <>
-                      <SidebarMenuButton
-                        onClick={() => {
-                          if (state === "collapsed") {
-                            // In mini mode, navigate to default route
-                            navigate(item.defaultRoute || getDefaultRoute(item.id));
-                          } else {
-                            // In expanded mode, toggle section
-                            toggleSection(item.id);
-                          }
-                        }}
-                        tooltip={state === "collapsed" ? `${item.title} - Kliknite pre navigáciu` : undefined}
-                        className={`rounded-xl transition-all duration-200 ${state === "collapsed" ? "w-full flex justify-center items-center p-3 mx-auto" : ""} ${
-                          item.expanded 
-                            ? 'bg-blue-50 text-blue-700 shadow-sm' 
-                            : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
-                        }`}
-                      >
-                        <Icon className="h-4 w-4" />
-                        <span className="font-medium">{item.title}</span>
-                        {state === "expanded" && (
-                          item.expanded ? (
-                            <ChevronDown className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />
-                          ) : (
-                            <ChevronRight className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />
-                          )
-                        )}
-                      </SidebarMenuButton>
-                      
-                      {item.expanded && state === "expanded" && (
-                        <SidebarMenuSub className="ml-4 mt-2 space-y-1 border-l-2 border-blue-100 pl-4">
-                          {item.children?.map((child, index) => (
-                            <SidebarMenuSubItem key={index}>
-                              <SidebarMenuSubButton
-                                asChild
-                                isActive={child.active}
-                                 className={`rounded-lg transition-all duration-200 ${
-                                   child.active 
-                                     ? 'bg-gradient-to-r from-blue-400 to-indigo-400 !text-white shadow-md' 
-                                     : 'hover:bg-blue-50 hover:text-blue-600'
-                                 }`}
-                              >
-                                <button 
-                                  onClick={() => navigate(child.path)}
-                                >
-                                  <span className="text-sm font-medium">{child.title}</span>
-                                </button>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
+                      <span className="text-lg">{item.title.split(' ')[0]}</span>
+                      <span className="font-medium ml-2">{item.title.split(' ').slice(1).join(' ')}</span>
+                      {state === "expanded" && (
+                        item.expanded ? (
+                          <ChevronDown className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />
+                        ) : (
+                          <ChevronRight className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />
+                        )
                       )}
-                    </>
-                  )}
-                </SidebarMenuItem>
-              );
-            })}
+                    </SidebarMenuButton>
+                    
+                    {item.expanded && state === "expanded" && (
+                      <SidebarMenuSub className="ml-4 mt-2 space-y-1 border-l-2 border-blue-100 pl-4">
+                        {item.children?.map((child, index) => (
+                          <SidebarMenuSubItem key={index}>
+                            <SidebarMenuSubButton
+                              asChild
+                              isActive={child.active}
+                               className={`rounded-lg transition-all duration-200 ${
+                                 child.active 
+                                   ? 'bg-gradient-to-r from-blue-400 to-indigo-400 !text-white shadow-md' 
+                                   : 'hover:bg-blue-50 hover:text-blue-600'
+                               }`}
+                            >
+                              <button 
+                                onClick={() => navigate(child.path)}
+                              >
+                                <span className="text-sm font-medium">{child.title}</span>
+                              </button>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    )}
+                  </>
+                )}
+              </SidebarMenuItem>
+            ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
