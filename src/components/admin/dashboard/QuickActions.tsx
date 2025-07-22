@@ -1,80 +1,110 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
-import { Plus, FileText, Building2, Users, BarChart3, Settings } from "lucide-react";
+import { Plus, FileText, Building2, Users, BarChart3 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 const QuickActions = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('admin');
+  const isMobile = useIsMobile();
 
   const actions = [
     {
       title: t('dashboard.quickActions.newContract'),
       description: t('dashboard.quickActions.newContractDesc'),
       icon: Plus,
-      gradient: "bg-action-blue",
+      gradient: "from-blue-500/10 to-blue-600/20",
+      iconBg: "bg-blue-500",
       onClick: () => navigate('/admin/onboarding')
     },
     {
       title: t('dashboard.quickActions.contracts'),
       description: t('dashboard.quickActions.contractsDesc'),
       icon: FileText,
-      gradient: "bg-action-emerald",
+      gradient: "from-emerald-500/10 to-emerald-600/20",
+      iconBg: "bg-emerald-500",
       onClick: () => navigate('/admin/merchants/contracts')
     },
     {
       title: t('dashboard.quickActions.merchants'),
       description: t('dashboard.quickActions.merchantsDesc'),
       icon: Building2,
-      gradient: "bg-action-purple",
+      gradient: "from-purple-500/10 to-purple-600/20",
+      iconBg: "bg-purple-500",
       onClick: () => navigate('/admin/merchants')
     },
     {
       title: t('dashboard.quickActions.locations'),
       description: t('dashboard.quickActions.locationsDesc'),
       icon: BarChart3,
-      gradient: "bg-action-orange",
+      gradient: "from-orange-500/10 to-orange-600/20",
+      iconBg: "bg-orange-500",
       onClick: () => navigate('/admin/merchants/locations')
     },
     {
       title: t('dashboard.quickActions.team'),
       description: t('dashboard.quickActions.teamDesc'),
       icon: Users,
-      gradient: "bg-action-cyan",
+      gradient: "from-cyan-500/10 to-cyan-600/20",
+      iconBg: "bg-cyan-500",
       onClick: () => navigate('/admin/team/performance')
     }
   ];
 
   return (
-    <Card className="border-glass-border bg-glass-bg backdrop-blur-lg shadow-[var(--glass-shadow)] relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-      <CardHeader className="relative">
+    <Card className="border-border bg-card shadow-sm">
+      <CardHeader className="pb-4">
         <CardTitle className="text-foreground font-semibold tracking-tight">
           {t('dashboard.quickActions.title')}
         </CardTitle>
       </CardHeader>
-      <CardContent className="relative">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <CardContent>
+        <div className={cn(
+          "grid gap-3",
+          isMobile 
+            ? "grid-cols-2" 
+            : "grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+        )}>
           {actions.map((action, index) => (
             <Button
               key={index}
               variant="outline"
-              className="h-24 p-4 bg-gradient-to-br from-white to-gray-50/80 border border-gray-200/60 backdrop-blur-md rounded-xl hover:shadow-xl hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300 ease-out group relative overflow-hidden shadow-md"
+              size={isMobile ? "mobile-touch" : "default"}
+              className={cn(
+                "h-auto p-4 bg-gradient-to-br border-border",
+                "hover:shadow-md hover:scale-[1.02] hover:-translate-y-0.5",
+                "transition-all duration-300 ease-out group relative overflow-hidden",
+                "flex-col space-y-3 items-center justify-center text-center",
+                action.gradient
+              )}
               onClick={action.onClick}
             >
-              <div className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300 ${action.gradient}`} />
-              <div className="relative flex flex-col items-center justify-center space-y-2 text-center z-10">
-                <div className={`p-2.5 rounded-lg bg-gradient-to-br from-white to-gray-100 group-hover:scale-110 transition-all duration-300 shadow-sm border border-gray-200/40`}>
-                  <action.icon className="h-5 w-5 text-gray-700" />
+              <div className={cn(
+                "p-3 rounded-lg shadow-sm border border-white/20",
+                "group-hover:scale-110 transition-all duration-300",
+                action.iconBg
+              )}>
+                <action.icon className={cn(
+                  "text-white",
+                  isMobile ? "h-5 w-5" : "h-4 w-4"
+                )} />
+              </div>
+              <div className="space-y-1">
+                <div className={cn(
+                  "font-semibold text-foreground leading-tight",
+                  isMobile ? "text-sm" : "text-xs"
+                )}>
+                  {action.title}
                 </div>
-                <div>
-                  <div className="font-semibold text-xs text-gray-900 leading-tight">
-                    {action.title}
-                  </div>
-                  <div className="text-xs text-gray-600 mt-0.5">
-                    {action.description}
-                  </div>
+                <div className={cn(
+                  "text-muted-foreground leading-tight",
+                  isMobile ? "text-xs" : "text-xs"
+                )}>
+                  {action.description}
                 </div>
               </div>
             </Button>
