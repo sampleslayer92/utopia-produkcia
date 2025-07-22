@@ -14,29 +14,29 @@ const PageBreadcrumbs = () => {
     
     // Home
     items.push({
-      label: t('nav.dashboard'),
+      label: t('navigation.dashboard'),
       path: '/admin',
       isHome: true
     });
 
     // Current sections
     if (pathSegments.includes('deals')) {
-      items.push({ label: t('nav.deals'), path: '/admin/deals' });
+      items.push({ label: t('navigation.businessProcesses'), path: '/admin/deals' });
     }
     if (pathSegments.includes('overview')) {
-      items.push({ label: t('nav.overview'), path: '/admin/overview' });
+      items.push({ label: t('navigation.overview'), path: '/admin/overview' });
     }
     if (pathSegments.includes('contracts')) {
-      items.push({ label: t('nav.contracts'), path: '/admin/contracts' });
+      items.push({ label: t('navigation.contracts'), path: '/admin/contracts' });
     }
     if (pathSegments.includes('merchants')) {
-      items.push({ label: t('nav.merchants'), path: '/admin/merchants' });
+      items.push({ label: t('navigation.merchants'), path: '/admin/merchants' });
     }
     if (pathSegments.includes('users')) {
-      items.push({ label: t('nav.users'), path: '/admin/users' });
+      items.push({ label: t('navigation.users'), path: '/admin/users' });
     }
     if (pathSegments.includes('settings')) {
-      items.push({ label: t('nav.settings'), path: '/admin/settings' });
+      items.push({ label: t('navigation.profileSettings'), path: '/admin/settings' });
     }
 
     return items;

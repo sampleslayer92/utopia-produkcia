@@ -3,6 +3,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "overview": "Prehľad",
+    "businessProcesses": "Obchodné procesy",
     "deals": "Obchody", 
     "requests": "Žiadosti",
     "contracts": "Zmluvy",
@@ -29,22 +30,10 @@
     "notifications": "Upozornenia",
     "profileSettings": "Nastavenia profilu"
   },
-  "nav": {
-    "dashboard": "Dashboard",
-    "overview": "Prehľad",
-    "deals": "Obchody",
-    "contracts": "Zmluvy",
-    "merchants": "Merchanti",
-    "users": "Používatelia",
-    "settings": "Nastavenia"
-  },
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Prehľad aktivít a štatistík",
-    "newContract": "Nová zmluva",
-    "status": {
-      "online": "Online"
-    }
+    "newContract": "Nová zmluva"
   },
   "overview": {
     "title": "Prehľad",

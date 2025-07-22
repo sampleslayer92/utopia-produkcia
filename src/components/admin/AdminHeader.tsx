@@ -2,26 +2,20 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
-import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { Badge } from "@/components/ui/badge";
-import { useTranslation } from "react-i18next";
 
 interface AdminHeaderProps {
   title: string;
   subtitle?: string;
   actions?: React.ReactNode;
   isCompact?: boolean;
-  showOnlineStatus?: boolean;
 }
 
 const AdminHeader = ({ 
   title, 
   subtitle, 
   actions, 
-  isCompact = false,
-  showOnlineStatus = false 
+  isCompact = false 
 }: AdminHeaderProps) => {
-  const { t } = useTranslation('admin');
   const headerPadding = isCompact ? "px-3 py-2" : "px-4 py-3";
 
   return (
@@ -45,21 +39,11 @@ const AdminHeader = ({
 
       {/* Global Actions */}
       <div className="flex items-center gap-2 ml-4">
-        {/* Online Status Badge - only show on dashboard or when explicitly requested */}
-        {showOnlineStatus && (
-          <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-            {t('dashboard.status.online')}
-          </Badge>
-        )}
-        
         {/* Custom Actions */}
         {actions}
         
         {/* Notification Bell */}
         <NotificationBell />
-        
-        {/* Language Switcher */}
-        <LanguageSwitcher />
       </div>
     </header>
   );

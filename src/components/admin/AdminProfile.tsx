@@ -1,8 +1,7 @@
 
-import { useTranslation } from 'react-i18next';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -10,108 +9,127 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { ChevronDown, User, Settings, LogOut, Shield, Languages } from "lucide-react";
-import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { LogOut, Settings, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useSidebar } from "@/components/ui/sidebar";
 
 const AdminProfile = () => {
-  const { t } = useTranslation('ui');
-  const { profile, userRole, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { state } = useSidebar();
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      toast.success(t('profile.signedOutSuccess'));
-      navigate('/auth');
-    } catch (error) {
-      toast.error(t('profile.signOutError'));
-    }
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
   };
 
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'bg-gradient-to-r from-red-500 to-pink-500 text-white border-0';
-      case 'partner':
-        return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-0';
-      case 'merchant':
-        return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0';
-      default:
-        return 'bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0';
-    }
+  const handleProfileClick = () => {
+    navigate('/admin/settings/profile');
   };
 
-  if (!profile) return null;
+  const getInitials = (firstName?: string, lastName?: string) => {
+    if (!firstName && !lastName) return "U";
+    return `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase();
+  };
+
+  if (state === "collapsed") {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={user?.avatar_url || ""} alt="Profile" />
+              <AvatarFallback className="text-xs">
+                {getInitials(user?.first_name, user?.last_name)}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuLabel>
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium">
+                {user?.first_name} {user?.last_name}
+              </p>
+              <p className="text-xs text-muted-foreground">{user?.email}</p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem onClick={handleProfileClick}>
+            <User className="mr-2 h-4 w-4" />
+            Profil
+          </DropdownMenuItem>
+          
+          <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
+            <Settings className="mr-2 h-4 w-4" />
+            Nastavenia
+          </DropdownMenuItem>
+          
+          <DropdownMenuSeparator />
+          
+          <div className="px-2 py-1">
+            <LanguageSwitcher />
+          </div>
+          
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+            <LogOut className="mr-2 h-4 w-4" />
+            Odhlásiť sa
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          className={`w-full p-3 h-auto rounded-xl transition-all duration-200 hover:bg-blue-50/50 hover:shadow-md ${
-            state === "collapsed" ? "justify-center" : "justify-start"
-          }`}
-        >
-          <div className={`flex items-center w-full ${
-            state === "collapsed" ? "justify-center" : "space-x-3"
-          }`}>
-            <Avatar className="h-10 w-10 shadow-lg">
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-sm font-semibold">
-                {profile.first_name?.[0]}{profile.last_name?.[0]}
+        <Button variant="ghost" className="h-auto p-2 justify-start">
+          <div className="flex items-center space-x-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user?.avatar_url || ""} alt="Profile" />
+              <AvatarFallback>
+                {getInitials(user?.first_name, user?.last_name)}
               </AvatarFallback>
             </Avatar>
-            {state === "expanded" && (
-              <>
-                <div className="flex-1 text-left">
-                  <div className="font-medium text-sm">{profile.first_name} {profile.last_name}</div>
-                  <div className="text-xs text-slate-500 truncate">{profile.email}</div>
-                </div>
-                <ChevronDown className="h-4 w-4 text-slate-400" />
-              </>
-            )}
+            <div className="flex flex-col items-start">
+              <span className="text-sm font-medium">
+                {user?.first_name} {user?.last_name}
+              </span>
+              <span className="text-xs text-muted-foreground">{user?.email}</span>
+            </div>
           </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>
-          <div className="flex items-center justify-between">
-            <span>{t('profile.myAccount')}</span>
-            {userRole && (
-              <Badge className={getRoleBadgeColor(userRole.role)} variant="outline">
-                <Shield className="h-3 w-3 mr-1" />
-                {userRole.role.toUpperCase()}
-              </Badge>
-            )}
-          </div>
-        </DropdownMenuLabel>
+        <DropdownMenuLabel>Môj účet</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        
+        <DropdownMenuItem onClick={handleProfileClick}>
           <User className="mr-2 h-4 w-4" />
-          <span>{t('profile.profile')}</span>
+          Profil
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        
+        <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
           <Settings className="mr-2 h-4 w-4" />
-          <span>{t('profile.settings')}</span>
+          Nastavenia
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <div className="flex items-center w-full">
-            <Languages className="mr-2 h-4 w-4" />
-            <span className="mr-2">{t('profile.language')}</span>
-            <div className="ml-auto">
-              <LanguageSwitcher />
-            </div>
-          </div>
-        </DropdownMenuItem>
+        
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+        
+        <div className="px-2 py-1">
+          <LanguageSwitcher />
+        </div>
+        
+        <DropdownMenuSeparator />
+        
+        <DropdownMenuItem onClick={handleLogout} className="text-red-600">
           <LogOut className="mr-2 h-4 w-4" />
-          <span>{t('profile.signOut')}</span>
+          Odhlásiť sa
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

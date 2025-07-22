@@ -3,6 +3,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "overview": "Overview",
+    "businessProcesses": "Business Processes",
     "deals": "Deals", 
     "requests": "Requests",
     "contracts": "Contracts",
@@ -29,22 +30,10 @@
     "notifications": "Notifications",
     "profileSettings": "Profile settings"
   },
-  "nav": {
-    "dashboard": "Dashboard",
-    "overview": "Overview",
-    "deals": "Deals",
-    "contracts": "Contracts",
-    "merchants": "Merchants",
-    "users": "Users",
-    "settings": "Settings"
-  },
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Activity and statistics overview",
-    "newContract": "New Contract",
-    "status": {
-      "online": "Online"
-    }
+    "newContract": "New Contract"
   },
   "overview": {
     "title": "Overview", 
