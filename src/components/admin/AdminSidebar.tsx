@@ -1,3 +1,4 @@
+
 import { useTranslation } from 'react-i18next';
 import { 
   ChevronDown,
@@ -76,8 +77,8 @@ const AdminSidebar = () => {
   };
 
   const getDashboardTitle = () => {
-    if (userRole?.role === 'partner') return 'Partner Dashboard';
-    if (userRole?.role === 'merchant') return 'Merchant Dashboard';
+    if (userRole?.role === 'partner') return t('navigation.dashboard');
+    if (userRole?.role === 'merchant') return t('navigation.dashboard');
     return t('navigation.dashboard');
   };
 
@@ -98,7 +99,7 @@ const AdminSidebar = () => {
     // 1. HLAVNÝ DASHBOARD
     {
       id: 'dashboard',
-      title: '🏠 ' + getDashboardTitle(),
+      title: getDashboardTitle(),
       path: getDashboardPath(),
       active: location.pathname === getDashboardPath(),
       type: 'single'
@@ -107,7 +108,7 @@ const AdminSidebar = () => {
     // 2. OBCHODNÉ PROCESY - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'business',
-      title: '💼 Obchodné Procesy',
+      title: t('navigation.deals'),
       type: 'expandable' as const,
       expanded: isExpanded('business'),
       defaultRoute: '/admin/deals',
@@ -133,7 +134,7 @@ const AdminSidebar = () => {
     // 3. SPRÁVA KLIENTOV - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'clients',
-      title: '👥 Správa Klientov',
+      title: t('navigation.merchants'),
       type: 'expandable' as const,
       expanded: isExpanded('clients'),
       defaultRoute: '/admin/merchants',
@@ -159,51 +160,43 @@ const AdminSidebar = () => {
     // 4. PRODUKTOVÝ KATALÓG - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'products',
-      title: '📦 Produktový Katalóg',
+      title: t('navigation.solutions'),
       type: 'expandable' as const,
       expanded: isExpanded('products'),
       defaultRoute: '/admin/warehouse',
       children: [
-        // Solutions & Products subsection
         {
-          title: "🎯 " + t('navigation.solutions'),
+          title: t('navigation.solutions'),
           path: "/admin/warehouse/solutions",
           active: isActive("/admin/warehouse/solutions")
         },
         {
-          title: "📦 " + t('navigation.allItems'),
+          title: t('navigation.allItems'),
           path: "/admin/warehouse",
           active: isActive("/admin/warehouse")
         },
         {
-          title: "🎨 Visual Builder",
+          title: "Visual Builder",
           path: "/admin/warehouse/visual-builder",
           active: isActive("/admin/warehouse/visual-builder")
         },
-        // Configuration subsection
         {
-          title: "📁 " + t('navigation.categories'),
+          title: t('navigation.categories'),
           path: "/admin/warehouse/categories",
           active: isActive("/admin/warehouse/categories")
         },
         {
-          title: "🏷️ " + t('navigation.itemTypes'),
+          title: t('navigation.itemTypes'),
           path: "/admin/warehouse/item-types",
           active: isActive("/admin/warehouse/item-types")
         },
         {
-          title: "🔄 " + t('navigation.bulkOperations'),
+          title: t('navigation.bulkOperations'),
           path: "/admin/warehouse/bulk",
           active: isActive("/admin/warehouse/bulk")
         },
-        // Sales subsection
         {
-          title: "💰 Rýchly predaj",
-          path: "/admin/warehouse/quick-sale",
-          active: isActive("/admin/warehouse/quick-sale")
-        },
-        {
-          title: "➕ " + t('navigation.addItem'),
+          title: t('navigation.addItem'),
           path: "/admin/warehouse/add-item",
           active: isActive("/admin/warehouse/add-item")
         }
@@ -213,7 +206,7 @@ const AdminSidebar = () => {
     // 5. ANALÝZY & REPORTING - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'analytics',
-      title: '📊 Analýzy & Reporting',
+      title: t('navigation.reportsDashboard'),
       type: 'expandable' as const,
       expanded: isExpanded('analytics'),
       defaultRoute: '/admin/reporting',
@@ -239,7 +232,7 @@ const AdminSidebar = () => {
     // 6. SPRÁVA SYSTÉMU - Only for admin
     ...(userRole?.role === 'admin' ? [{
       id: 'system',
-      title: '⚙️ Správa Systému',
+      title: t('navigation.organizationManagement'),
       type: 'expandable' as const,
       expanded: isExpanded('system'),
       defaultRoute: '/admin/organizations',
@@ -270,7 +263,7 @@ const AdminSidebar = () => {
     // 7. OSOBNÉ - For all roles
     {
       id: 'personal',
-      title: '👤 Osobné',
+      title: t('navigation.profileSettings'),
       type: 'expandable' as const,
       expanded: isExpanded('personal'),
       defaultRoute: '/admin/notifications',
@@ -320,8 +313,7 @@ const AdminSidebar = () => {
                      }`}
                   >
                     <button onClick={() => navigate(item.path!)}>
-                      <span className="text-lg">{item.title.split(' ')[0]}</span>
-                      <span className="font-medium ml-2">{item.title.split(' ').slice(1).join(' ')}</span>
+                      <span className="font-medium">{item.title}</span>
                     </button>
                   </SidebarMenuButton>
                 ) : (
@@ -343,8 +335,7 @@ const AdminSidebar = () => {
                           : 'hover:bg-blue-50 hover:text-blue-700 hover:shadow-md'
                       }`}
                     >
-                      <span className="text-lg">{item.title.split(' ')[0]}</span>
-                      <span className="font-medium ml-2">{item.title.split(' ').slice(1).join(' ')}</span>
+                      <span className="font-medium">{item.title}</span>
                       {state === "expanded" && (
                         item.expanded ? (
                           <ChevronDown className="ml-auto h-4 w-4 text-blue-500 transition-transform duration-200" />

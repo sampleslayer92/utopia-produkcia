@@ -9,6 +9,7 @@ import { useChatBot } from "@/hooks/useChatBot";
 import ChatBotFloatingButton from "@/components/chatbot/ChatBotFloatingButton";
 import ChatBotWindow from "@/components/chatbot/ChatBotWindow";
 import { useViewport } from "@/hooks/useViewport";
+import { useLocation } from "react-router-dom";
 
 interface AdminLayoutProps {
   title: string;
@@ -19,6 +20,7 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) => {
   const { i18n } = useTranslation();
+  const location = useLocation();
   const [languageKey, setLanguageKey] = useState(i18n.language);
   const viewport = useViewport();
   const {
@@ -49,6 +51,9 @@ const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) =
     };
   }, [i18n]);
 
+  // Check if we should show online status (only on dashboard)
+  const showOnlineStatus = location.pathname === '/admin';
+
   // Responsive classes based on viewport
   const getResponsiveClasses = () => {
     if (viewport.width <= 1366) {
@@ -77,6 +82,7 @@ const AdminLayout = ({ title, subtitle, actions, children }: AdminLayoutProps) =
             subtitle={subtitle} 
             actions={actions}
             isCompact={viewport.width <= 1366}
+            showOnlineStatus={showOnlineStatus}
           />
           
           <PageBreadcrumbs />
