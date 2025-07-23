@@ -811,9 +811,11 @@ export type Database = {
           id: string
           is_active: boolean
           is_required: boolean
+          is_template: boolean
           item_type_id: string | null
           updated_at: string
           validation_rules: Json | null
+          warehouse_item_id: string | null
         }
         Insert: {
           category_id?: string | null
@@ -828,9 +830,11 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_required?: boolean
+          is_template?: boolean
           item_type_id?: string | null
           updated_at?: string
           validation_rules?: Json | null
+          warehouse_item_id?: string | null
         }
         Update: {
           category_id?: string | null
@@ -845,9 +849,11 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_required?: boolean
+          is_template?: boolean
           item_type_id?: string | null
           updated_at?: string
           validation_rules?: Json | null
+          warehouse_item_id?: string | null
         }
         Relationships: [
           {
@@ -862,6 +868,13 @@ export type Database = {
             columns: ["item_type_id"]
             isOneToOne: false
             referencedRelation: "item_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_field_definitions_warehouse_item_id_fkey"
+            columns: ["warehouse_item_id"]
+            isOneToOne: false
+            referencedRelation: "warehouse_items"
             referencedColumns: ["id"]
           },
         ]

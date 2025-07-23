@@ -21,6 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Package, Upload, Zap, CheckCircle, Tag, DollarSign, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { DynamicCustomFields } from './DynamicCustomFields';
+import { ProductCustomFieldsManager } from './ProductCustomFieldsManager';
 
 const itemSchema = z.object({
   name: z.string().min(1, 'Názov je povinný'),
@@ -52,6 +53,7 @@ export const EnhancedAddItemForm = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createdItemId, setCreatedItemId] = useState<string | null>(null);
   
   const { data: solutions = [] } = useSolutions(true);
   const { data: categories = [] } = useCategories();
@@ -79,10 +81,17 @@ export const EnhancedAddItemForm = () => {
   const selectedCategoryId = form.watch('category_id');
   const selectedItemTypeId = form.watch('item_type_id');
   
-  // Get custom field definitions for selected category/item type
-  const { data: customFields = [] } = useCustomFieldDefinitions(
+  // Get template custom field definitions for selected category/item type  
+  const { data: templateFields = [] } = useCustomFieldDefinitions(
     selectedCategoryId,
     selectedItemTypeId
+  );
+  
+  // Get product-specific custom fields if item was created
+  const { data: productFields = [], refetch: refetchProductFields } = useCustomFieldDefinitions(
+    undefined,
+    undefined,
+    createdItemId || undefined
   );
 
   const selectedSolution = solutions.find(s => s.id === form.watch('solution_id'));
@@ -112,12 +121,7 @@ export const EnhancedAddItemForm = () => {
       case 3:
         return form.trigger(['monthly_fee', 'setup_fee', 'company_cost', 'current_stock', 'min_stock']);
       case 4:
-        // Validate custom fields if any are required
-        const requiredFields = customFields.filter(f => f.is_required);
-        if (requiredFields.length > 0) {
-          const customFieldKeys = requiredFields.map(f => `custom_fields.${f.field_key}`);
-          return form.trigger(customFieldKeys as any);
-        }
+        // Skip validation for custom fields step - it's now for field management
         return true;
       default:
         return true;
@@ -137,7 +141,7 @@ export const EnhancedAddItemForm = () => {
     }
   };
 
-  const onSubmit = async (data: FormData) => {
+  const createItemAndGoToCustomFields = async (data: FormData) => {
     try {
       setIsSubmitting(true);
       
@@ -152,10 +156,11 @@ export const EnhancedAddItemForm = () => {
         current_stock: data.current_stock,
         min_stock: data.min_stock,
         image_url: data.image_url || undefined,
-        custom_fields: data.custom_fields || {},
+        custom_fields: {},
       };
 
       const createdItem = await createMutation.mutateAsync(createData);
+      setCreatedItemId(createdItem.id);
       
       if (data.solution_id && data.solution_id !== 'none' && createdItem) {
         await createSolutionItemMutation.mutateAsync({
@@ -167,14 +172,19 @@ export const EnhancedAddItemForm = () => {
         });
       }
       
-      toast.success('Položka bola úspešne vytvorená!');
-      navigate('/admin/warehouse');
+      toast.success('Položka bola vytvorená! Teraz môžete nastaviť vlastné polia.');
+      setCurrentStep(4); // Go to custom fields step
     } catch (error) {
       console.error('Error creating item:', error);
       toast.error('Nepodarilo sa vytvoriť položku');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const finishAndNavigate = () => {
+    toast.success('Položka bola úspešne dokončená!');
+    navigate('/admin/warehouse');
   };
 
   const renderStepContent = () => {
@@ -543,10 +553,13 @@ export const EnhancedAddItemForm = () => {
         );
 
       case 4:
-        return customFields.length > 0 ? (
-          <DynamicCustomFields 
-            form={form} 
-            customFields={customFields}
+        return createdItemId ? (
+          <ProductCustomFieldsManager
+            warehouseItemId={createdItemId}
+            customFields={productFields}
+            categoryId={selectedCategoryId}
+            itemTypeId={selectedItemTypeId}
+            onFieldsChange={refetchProductFields}
           />
         ) : (
           <Card>
@@ -556,14 +569,17 @@ export const EnhancedAddItemForm = () => {
                 <span>Vlastné polia</span>
               </CardTitle>
               <CardDescription>
-                Pre túto kategóriu nie sú definované žiadne vlastné polia
+                Najprv je potrebné vytvoriť položku
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
-                <Settings className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Žiadne vlastné polia pre túto kategóriu.</p>
-                <p className="text-sm">Môžete pokračovať na ďalší krok.</p>
+                <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Položka ešte nebola vytvorená.</p>
+                <p className="text-sm mb-4">Pre nastavenie vlastných polí najprv vytvorte položku.</p>
+                <Button onClick={() => createItemAndGoToCustomFields(form.getValues())}>
+                  Vytvoriť položku a pokračovať
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -617,19 +633,15 @@ export const EnhancedAddItemForm = () => {
                 </div>
               </div>
 
-              {customFields.length > 0 && (
+              {productFields.length > 0 && (
                 <div>
                   <h4 className="font-medium mb-2">Vlastné polia</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {customFields.map((field) => {
-                      const value = form.watch(`custom_fields.${field.field_key}`);
-                      return (
-                        <div key={field.id} className="text-sm">
-                          <strong>{field.field_name}:</strong>{' '}
-                          {Array.isArray(value) ? value.join(', ') : value || 'Nezadané'}
-                        </div>
-                      );
-                    })}
+                    {productFields.map((field) => (
+                      <div key={field.id} className="text-sm">
+                        <strong>{field.field_name}:</strong> Nastavené
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -698,7 +710,7 @@ export const EnhancedAddItemForm = () => {
 
       {/* Form */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(finishAndNavigate)} className="space-y-6">
           {renderStepContent()}
 
           {/* Navigation */}
@@ -720,8 +732,13 @@ export const EnhancedAddItemForm = () => {
                     Ďalej
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
+                ) : createdItemId ? (
+                  <Button type="button" onClick={finishAndNavigate}>
+                    Dokončiť
+                    <CheckCircle className="h-4 w-4 ml-2" />
+                  </Button>
                 ) : (
-                  <Button type="submit" disabled={isSubmitting}>
+                  <Button type="button" onClick={() => createItemAndGoToCustomFields(form.getValues())} disabled={isSubmitting}>
                     {isSubmitting ? 'Vytváram...' : 'Vytvoriť položku'}
                     <Zap className="h-4 w-4 ml-2" />
                   </Button>
