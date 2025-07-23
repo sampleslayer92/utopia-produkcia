@@ -47,7 +47,7 @@ export const useBulkCategoryActions = () => {
   };
 
   return useGenericBulkActions({
-    entityName: 'kategóriu',
+    entityName: 'kategórie',
     queryKey: ['categories'],
     bulkDelete,
     bulkActivate,

@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -155,6 +156,17 @@ export const useDeleteCategory = () => {
 
   return useMutation({
     mutationFn: async (id: string) => {
+      // First check if category has warehouse items
+      const { data: itemsCheck } = await supabase
+        .from('warehouse_items')
+        .select('id')
+        .eq('category_id', id)
+        .limit(1);
+
+      if (itemsCheck && itemsCheck.length > 0) {
+        throw new Error('Nemôžete vymazať kategóriu, ktorá má priradenú skladové položky. Najprv presuňte položky do inej kategórie.');
+      }
+
       const { error } = await supabase
         .from('categories')
         .delete()
@@ -166,6 +178,7 @@ export const useDeleteCategory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      queryClient.invalidateQueries({ queryKey: ['category-counts'] });
       toast({
         title: 'Úspech',
         description: 'Kategória bola zmazaná',
