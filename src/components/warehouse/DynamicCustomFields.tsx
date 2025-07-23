@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -5,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { UseFormReturn } from 'react-hook-form';
 import { CustomFieldDefinition } from '@/hooks/useCustomFieldDefinitions';
@@ -285,15 +285,8 @@ export const DynamicCustomFields: React.FC<DynamicCustomFieldsProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <span>⚙️ Vlastné polia</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {customFields.map(renderField)}
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      {customFields.map(renderField)}
+    </div>
   );
 };

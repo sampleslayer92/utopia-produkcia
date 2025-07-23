@@ -16,6 +16,8 @@ import { useItemTypes } from '@/hooks/useItemTypes';
 import { useCreateWarehouseItem, type CreateWarehouseItemData } from '@/hooks/useWarehouseItems';
 import { useSolutions } from '@/hooks/useSolutions';
 import { useCreateSolutionItem } from '@/hooks/useSolutionItems';
+import { useCustomFieldDefinitions } from '@/hooks/useCustomFieldDefinitions';
+import { DynamicCustomFields } from '@/components/warehouse/DynamicCustomFields';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Package, Upload, Zap } from 'lucide-react';
 import { toast } from 'sonner';
@@ -33,6 +35,7 @@ const itemSchema = z.object({
   min_stock: z.number().min(0, 'Minimálne zásoby musia byť kladné').optional(),
   image_url: z.string().url().optional().or(z.literal('')),
   is_active: z.boolean().default(true),
+  custom_fields: z.record(z.any()).optional(),
 });
 
 type FormData = z.infer<typeof itemSchema>;
@@ -40,7 +43,7 @@ type FormData = z.infer<typeof itemSchema>;
 export const AddItemForm = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { data: solutions = [] } = useSolutions(true); // Only active solutions
+  const { data: solutions = [] } = useSolutions(true);
   const { data: categories = [] } = useCategories();
   const { data: itemTypes = [] } = useItemTypes();
   const createMutation = useCreateWarehouseItem();
@@ -59,14 +62,22 @@ export const AddItemForm = () => {
       min_stock: 0,
       image_url: '',
       is_active: true,
+      custom_fields: {},
     },
   });
 
   const selectedSolutionId = form.watch('solution_id');
   const selectedCategoryId = form.watch('category_id');
+  const selectedItemTypeId = form.watch('item_type_id');
   
   const selectedSolution = solutions.find(s => s.id === selectedSolutionId);
   const selectedCategory = categories.find(c => c.id === selectedCategoryId);
+
+  // Get custom field definitions based on selected category and item type
+  const { data: customFields = [] } = useCustomFieldDefinitions(
+    selectedCategoryId || undefined,
+    selectedItemTypeId || undefined
+  );
 
   // Filter out any items with empty or invalid IDs
   const validSolutions = solutions.filter(s => s.id && s.id.trim() !== '');
@@ -75,11 +86,7 @@ export const AddItemForm = () => {
 
   // Get categories filtered by selected solution (if any)
   const availableCategories = selectedSolutionId && selectedSolutionId !== 'none'
-    ? validCategories.filter(category => {
-        // You can add logic here to filter categories by solution
-        // For now, show all categories but this can be enhanced
-        return category.is_active;
-      })
+    ? validCategories.filter(category => category.is_active)
     : validCategories;
 
   // Get item types based on selected category
@@ -106,6 +113,7 @@ export const AddItemForm = () => {
         current_stock: data.current_stock,
         min_stock: data.min_stock,
         image_url: data.image_url || undefined,
+        custom_fields: data.custom_fields,
       };
 
       const createdItem = await createMutation.mutateAsync(createData);
@@ -474,6 +482,21 @@ export const AddItemForm = () => {
                   />
                 </div>
               </div>
+
+              {/* Custom Fields */}
+              {customFields.length > 0 && (
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium mb-4 flex items-center space-x-2">
+                    <span>⚙️ Vlastné polia</span>
+                  </h3>
+                  <div className="space-y-4">
+                    <DynamicCustomFields
+                      form={form}
+                      customFields={customFields}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Settings */}
               <div className="border-t pt-6">
