@@ -1,93 +1,93 @@
-
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useCreateCategory, useUpdateCategory, useDeleteCategory, type Category, type CreateCategoryData, type UpdateCategoryData } from '@/hooks/useCategories';
-import { Trash2 } from 'lucide-react';
-import { CategoryDeleteDialog } from './CategoryDeleteDialog';
-
-const categorySchema = z.object({
-  name: z.string().min(1, 'Názov je povinný'),
-  slug: z.string().min(1, 'Slug je povinný'),
-  description: z.string().optional(),
-  color: z.string().min(1, 'Farba je povinná'),
-  item_type_filter: z.enum(['device', 'service', 'both']),
-  is_active: z.boolean(),
-  position: z.number().min(0),
-});
-
-type CategoryFormData = z.infer<typeof categorySchema>;
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Category, useCreateCategory, useUpdateCategory } from '@/hooks/useCategories';
 
 interface CategoryEditorProps {
-  category?: Category | null;
+  category: Category | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const CategoryEditor: React.FC<CategoryEditorProps> = ({
-  category,
-  isOpen,
-  onClose,
-}) => {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const createMutation = useCreateCategory();
-  const updateMutation = useUpdateCategory();
-  const deleteMutation = useDeleteCategory();
-
-  const form = useForm<CategoryFormData>({
-    resolver: zodResolver(categorySchema),
-    defaultValues: {
-      name: '',
-      slug: '',
-      description: '',
-      color: '#3B82F6',
-      item_type_filter: 'both',
-      is_active: true,
-      position: 0,
-    },
+export const CategoryEditor = ({ category, isOpen, onClose }: CategoryEditorProps) => {
+  const createCategory = useCreateCategory();
+  const updateCategory = useUpdateCategory();
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    slug: '',
+    description: '',
+    icon_name: '',
+    color: '#3B82F6',
+    item_type_filter: 'both' as 'device' | 'service' | 'both',
+    position: 0,
   });
 
   useEffect(() => {
     if (category) {
-      form.reset({
+      setFormData({
         name: category.name,
         slug: category.slug,
         description: category.description || '',
+        icon_name: category.icon_name || '',
         color: category.color,
         item_type_filter: category.item_type_filter,
-        is_active: category.is_active,
         position: category.position,
       });
     } else {
-      form.reset({
+      setFormData({
         name: '',
         slug: '',
         description: '',
+        icon_name: '',
         color: '#3B82F6',
         item_type_filter: 'both',
-        is_active: true,
         position: 0,
       });
     }
-  }, [category, form]);
+  }, [category, isOpen]);
 
-  const onSubmit = async (data: CategoryFormData) => {
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .trim();
+  };
+
+  const handleNameChange = (name: string) => {
+    setFormData(prev => ({
+      ...prev,
+      name,
+      slug: generateSlug(name),
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     try {
       if (category) {
-        await updateMutation.mutateAsync({
-          id: category.id,
-          ...data,
-        } as UpdateCategoryData);
+        await updateCategory.mutateAsync({ ...formData, id: category.id });
       } else {
-        await createMutation.mutateAsync(data as CreateCategoryData);
+        await createCategory.mutateAsync(formData);
       }
       onClose();
     } catch (error) {
@@ -95,201 +95,129 @@ export const CategoryEditor: React.FC<CategoryEditorProps> = ({
     }
   };
 
-  const handleDelete = async () => {
-    if (category) {
-      try {
-        await deleteMutation.mutateAsync(category.id);
-        setShowDeleteDialog(false);
-        onClose();
-      } catch (error) {
-        console.error('Error deleting category:', error);
-      }
-    }
-  };
-
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-  };
+  const isLoading = createCategory.isPending || updateCategory.isPending;
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-2xl">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[500px]">
+        <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
-              {category ? 'Upraviť kategóriu' : 'Vytvoriť kategóriu'}
+              {category ? 'Upraviť kategóriu' : 'Pridať kategóriu'}
             </DialogTitle>
+            <DialogDescription>
+              {category ? 'Upravte údaje kategórie' : 'Vytvorte novú kategóriu pre produkty'}
+            </DialogDescription>
           </DialogHeader>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Názov kategórie</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Názov kategórie"
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          if (!category) {
-                            form.setValue('slug', generateSlug(e.target.value));
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Názov kategórie *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                placeholder="Názov kategórie"
+                required
               />
+            </div>
 
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Slug</FormLabel>
-                    <FormControl>
-                      <Input placeholder="slug-kategorie" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      URL-friendly identifikátor kategórie
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
+            <div className="space-y-2">
+              <Label htmlFor="slug">Slug *</Label>
+              <Input
+                id="slug"
+                value={formData.slug}
+                onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                placeholder="slug-kategorie"
+                required
               />
+            </div>
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Popis</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Popis kategórie..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+            <div className="space-y-2">
+              <Label htmlFor="description">Popis</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Popis kategórie"
+                rows={3}
               />
+            </div>
 
-              <FormField
-                control={form.control}
-                name="color"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Farba</FormLabel>
-                    <FormControl>
-                      <Input type="color" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="icon_name">Ikona</Label>
+                <Input
+                  id="icon_name"
+                  value={formData.icon_name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, icon_name: e.target.value }))}
+                  placeholder="package"
+                />
+              </div>
 
-              <FormField
-                control={form.control}
-                name="item_type_filter"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Filter typov položiek</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Vyberte filter" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="both">Zariadenia aj služby</SelectItem>
-                        <SelectItem value="device">Iba zariadenia</SelectItem>
-                        <SelectItem value="service">Iba služby</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="color">Farba</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="color"
+                    type="color"
+                    value={formData.color}
+                    onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
+                    className="w-12 h-10 p-1"
+                  />
+                  <Input
+                    value={formData.color}
+                    onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
+                    placeholder="#3B82F6"
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+            </div>
 
-              <FormField
-                control={form.control}
-                name="position"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Pozícia</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="is_active"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Aktívna kategória</FormLabel>
-                      <FormDescription>
-                        Neaktívne kategórie sa nezobrazujú vo verejnom katalógu
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <DialogFooter className="gap-2">
-                {category && (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={() => setShowDeleteDialog(true)}
-                    disabled={deleteMutation.isPending}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Vymazať
-                  </Button>
-                )}
-                <Button type="button" variant="outline" onClick={onClose}>
-                  Zrušiť
-                </Button>
-                <Button 
-                  type="submit" 
-                  disabled={createMutation.isPending || updateMutation.isPending}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="item_type_filter">Typ filtra</Label>
+                <Select
+                  value={formData.item_type_filter}
+                  onValueChange={(value: 'device' | 'service' | 'both') => 
+                    setFormData(prev => ({ ...prev, item_type_filter: value }))
+                  }
                 >
-                  {category ? 'Aktualizovať' : 'Vytvoriť'}
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="both">Všetko</SelectItem>
+                    <SelectItem value="device">Zariadenia</SelectItem>
+                    <SelectItem value="service">Služby</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-      <CategoryDeleteDialog
-        category={category}
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-        onConfirm={handleDelete}
-        isLoading={deleteMutation.isPending}
-      />
-    </>
+              <div className="space-y-2">
+                <Label htmlFor="position">Pozícia</Label>
+                <Input
+                  id="position"
+                  type="number"
+                  value={formData.position}
+                  onChange={(e) => setFormData(prev => ({ ...prev, position: parseInt(e.target.value) || 0 }))}
+                  min="0"
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Zrušiť
+            </Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? 'Ukladám...' : (category ? 'Uložiť' : 'Vytvoriť')}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };

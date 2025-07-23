@@ -1,23 +1,13 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Plus, Folder, Package, Eye, Edit, Trash2 } from 'lucide-react';
+import { Plus, Folder, Package, Eye } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
 import { CategoryEditor } from '@/components/admin/categories/CategoryEditor';
-import { CategoryDeleteDialog } from '@/components/admin/categories/CategoryDeleteDialog';
-import { BulkCategoryActions } from '@/components/admin/categories/BulkCategoryActions';
-import { useCategories, useDeleteCategory, type Category } from '@/hooks/useCategories';
+import { useCategories, type Category } from '@/hooks/useCategories';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
@@ -28,9 +18,6 @@ const CategoriesPage = () => {
   const { data: categories, isLoading } = useCategories();
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [deleteCategory, setDeleteCategory] = useState<Category | null>(null);
-  const [showBulkActions, setShowBulkActions] = useState(false);
-  const deleteMutation = useDeleteCategory();
 
   // Get item counts for each category
   const { data: categoryCounts } = useQuery({
@@ -73,17 +60,6 @@ const CategoriesPage = () => {
     navigate(`/admin/warehouse/categories/${category.id}`);
   };
 
-  const handleDelete = async () => {
-    if (deleteCategory) {
-      try {
-        await deleteMutation.mutateAsync(deleteCategory.id);
-        setDeleteCategory(null);
-      } catch (error) {
-        console.error('Error deleting category:', error);
-      }
-    }
-  };
-
   if (isLoading) {
     return (
       <AdminLayout title="Kategórie" subtitle="Správa kategórií produktov">
@@ -107,22 +83,11 @@ const CategoriesPage = () => {
               Kliknite na kategóriu pre zobrazenie produktov a služieb
             </p>
           </div>
-          <div className="flex space-x-2">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowBulkActions(!showBulkActions)}
-            >
-              {showBulkActions ? 'Skryť' : 'Hromadné operácie'}
-            </Button>
-            <Button onClick={handleCreate}>
-              <Plus className="h-4 w-4 mr-2" />
-              Pridať kategóriu
-            </Button>
-          </div>
+          <Button onClick={handleCreate}>
+            <Plus className="h-4 w-4 mr-2" />
+            Pridať kategóriu
+          </Button>
         </div>
-
-        {/* Bulk Actions */}
-        {showBulkActions && <BulkCategoryActions />}
 
         {/* Categories Grid - Folder View */}
         {sortedCategories.length === 0 ? (
@@ -173,50 +138,20 @@ const CategoriesPage = () => {
                           </div>
                         </div>
                       </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={(e) => e.stopPropagation()}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewCategory(category);
-                          }}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Zobraziť detail
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={(e) => {
-                            e.stopPropagation();
-                            handleEdit(category);
-                          }}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Upraviť
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDeleteCategory(category);
-                            }}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Zmazať
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(category);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
                     </div>
                   </CardHeader>
-                  <CardContent 
-                    className="cursor-pointer"
-                    onClick={() => handleViewCategory(category)}
-                  >
+                  <CardContent>
                     <div className="space-y-3">
                       {category.description && (
                         <p className="text-sm text-muted-foreground line-clamp-2">
@@ -251,14 +186,6 @@ const CategoriesPage = () => {
           category={selectedCategory}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-        />
-
-        <CategoryDeleteDialog
-          category={deleteCategory}
-          open={!!deleteCategory}
-          onOpenChange={(open) => !open && setDeleteCategory(null)}
-          onConfirm={handleDelete}
-          isLoading={deleteMutation.isPending}
         />
       </div>
     </AdminLayout>

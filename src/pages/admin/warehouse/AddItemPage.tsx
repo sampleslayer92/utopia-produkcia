@@ -1,6 +1,5 @@
-
-import { AddItemForm } from '@/components/warehouse/AddItemForm';
+import { EnhancedAddItemForm } from '@/components/warehouse/EnhancedAddItemForm';
 
 export default function AddItemPage() {
-  return <AddItemForm />;
+  return <EnhancedAddItemForm />;
 }
