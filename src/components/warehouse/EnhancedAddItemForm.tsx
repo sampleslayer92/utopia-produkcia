@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,7 +21,6 @@ import { useCustomFieldDefinitions } from '@/hooks/useCustomFieldDefinitions';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Package, Upload, Zap, CheckCircle, Tag, DollarSign, Settings } from 'lucide-react';
 import { toast } from 'sonner';
-import { DynamicCustomFields } from './DynamicCustomFields';
 import { ProductCustomFieldsManager } from './ProductCustomFieldsManager';
 
 const itemSchema = z.object({
@@ -54,6 +54,7 @@ export const EnhancedAddItemForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdItemId, setCreatedItemId] = useState<string | null>(null);
+  const [isCreatingItem, setIsCreatingItem] = useState(false);
   
   const { data: solutions = [] } = useSolutions(true);
   const { data: categories = [] } = useCategories();
@@ -110,41 +111,9 @@ export const EnhancedAddItemForm = () => {
 
   const progress = (currentStep / STEPS.length) * 100;
 
-  const validateCurrentStep = async () => {
-    const formData = form.getValues();
-    
-    switch (currentStep) {
-      case 1:
-        return form.trigger(['name', 'description', 'image_url']);
-      case 2:
-        return form.trigger(['category_id', 'item_type_id', 'solution_id']);
-      case 3:
-        return form.trigger(['monthly_fee', 'setup_fee', 'company_cost', 'current_stock', 'min_stock']);
-      case 4:
-        // Skip validation for custom fields step - it's now for field management
-        return true;
-      default:
-        return true;
-    }
-  };
-
-  const nextStep = async () => {
-    const isValid = await validateCurrentStep();
-    if (isValid && currentStep < STEPS.length) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const createItemAndGoToCustomFields = async (data: FormData) => {
+  const createItemFromFormData = async (data: FormData) => {
+    setIsCreatingItem(true);
     try {
-      setIsSubmitting(true);
-      
       const createData: CreateWarehouseItemData = {
         name: data.name,
         description: data.description,
@@ -172,13 +141,55 @@ export const EnhancedAddItemForm = () => {
         });
       }
       
-      toast.success('Položka bola vytvorená! Teraz môžete nastaviť vlastné polia.');
-      setCurrentStep(4); // Go to custom fields step
+      toast.success('Položka bola vytvorená!');
+      return createdItem;
     } catch (error) {
       console.error('Error creating item:', error);
       toast.error('Nepodarilo sa vytvoriť položku');
+      throw error;
     } finally {
-      setIsSubmitting(false);
+      setIsCreatingItem(false);
+    }
+  };
+
+  const validateCurrentStep = async () => {
+    const formData = form.getValues();
+    
+    switch (currentStep) {
+      case 1:
+        return form.trigger(['name', 'description', 'image_url']);
+      case 2:
+        return form.trigger(['category_id', 'item_type_id', 'solution_id']);
+      case 3:
+        return form.trigger(['monthly_fee', 'setup_fee', 'company_cost', 'current_stock', 'min_stock']);
+      case 4:
+        return true; // Custom fields step doesn't need validation
+      default:
+        return true;
+    }
+  };
+
+  const nextStep = async () => {
+    const isValid = await validateCurrentStep();
+    if (!isValid) return;
+
+    // If we're on step 3 (prices) and moving to step 4 (custom fields), create the item
+    if (currentStep === 3 && !createdItemId) {
+      try {
+        await createItemFromFormData(form.getValues());
+      } catch (error) {
+        return; // Don't proceed if item creation failed
+      }
+    }
+
+    if (currentStep < STEPS.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -569,17 +580,13 @@ export const EnhancedAddItemForm = () => {
                 <span>Vlastné polia</span>
               </CardTitle>
               <CardDescription>
-                Najprv je potrebné vytvoriť položku
+                Položka sa vytvára...
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
-                <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Položka ešte nebola vytvorená.</p>
-                <p className="text-sm mb-4">Pre nastavenie vlastných polí najprv vytvorte položku.</p>
-                <Button onClick={() => createItemAndGoToCustomFields(form.getValues())}>
-                  Vytvoriť položku a pokračovať
-                </Button>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p>Vytváram položku...</p>
               </div>
             </CardContent>
           </Card>
@@ -591,13 +598,21 @@ export const EnhancedAddItemForm = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <CheckCircle className="h-5 w-5 text-primary" />
-                <span>Kontrola údajov</span>
+                <span>Dokončenie</span>
               </CardTitle>
               <CardDescription>
-                Skontrolujte všetky údaje pred vytvorením položky
+                Položka bola úspešne vytvorená
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              <div className="text-center py-8">
+                <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">Položka bola úspešne vytvorená!</h3>
+                <p className="text-muted-foreground mb-4">
+                  Všetky údaje boli uložené a položka je pripravená na použitie.
+                </p>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-medium mb-2">Základné informácie</h4>
@@ -638,8 +653,15 @@ export const EnhancedAddItemForm = () => {
                   <h4 className="font-medium mb-2">Vlastné polia</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {productFields.map((field) => (
-                      <div key={field.id} className="text-sm">
-                        <strong>{field.field_name}:</strong> Nastavené
+                      <div key={field.id} className="text-sm p-3 bg-muted/50 rounded-lg">
+                        <div className="flex items-center gap-2 mb-1">
+                          <strong>{field.field_name}</strong>
+                          <Badge variant="outline" className="text-xs">{field.field_type}</Badge>
+                        </div>
+                        <p className="text-muted-foreground">Kľúč: {field.field_key}</p>
+                        {field.help_text && (
+                          <p className="text-muted-foreground text-xs mt-1">{field.help_text}</p>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -728,19 +750,27 @@ export const EnhancedAddItemForm = () => {
                 </Button>
 
                 {currentStep < STEPS.length ? (
-                  <Button type="button" onClick={nextStep}>
-                    Ďalej
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                  <Button 
+                    type="button" 
+                    onClick={nextStep}
+                    disabled={isCreatingItem}
+                  >
+                    {isCreatingItem ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Vytváram položku...
+                      </>
+                    ) : (
+                      <>
+                        Ďalej
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </>
+                    )}
                   </Button>
-                ) : createdItemId ? (
+                ) : (
                   <Button type="button" onClick={finishAndNavigate}>
                     Dokončiť
                     <CheckCircle className="h-4 w-4 ml-2" />
-                  </Button>
-                ) : (
-                  <Button type="button" onClick={() => createItemAndGoToCustomFields(form.getValues())} disabled={isSubmitting}>
-                    {isSubmitting ? 'Vytváram...' : 'Vytvoriť položku'}
-                    <Zap className="h-4 w-4 ml-2" />
                   </Button>
                 )}
               </div>
