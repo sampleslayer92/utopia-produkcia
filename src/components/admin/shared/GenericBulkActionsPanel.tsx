@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Trash2, X, Power, PowerOff, Edit, Download } from 'lucide-react';
-import { BulkDeleteModal } from '../table/BulkDeleteModal';
+import BulkDeleteModal from '../table/BulkDeleteModal';
 
 export interface BulkAction {
   id: string;

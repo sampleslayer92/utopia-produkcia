@@ -9,6 +9,7 @@ export interface BulkActionConfig<T> {
   bulkUpdate?: (ids: string[], updates: Partial<T>) => Promise<void>;
   bulkActivate?: (ids: string[]) => Promise<void>;
   bulkDeactivate?: (ids: string[]) => Promise<void>;
+  bulkExport?: (ids: string[]) => Promise<void>;
 }
 
 export const useGenericBulkActions = <T>(config: BulkActionConfig<T>) => {
@@ -63,16 +64,30 @@ export const useGenericBulkActions = <T>(config: BulkActionConfig<T>) => {
     }
   });
 
+  const bulkExportMutation = useMutation({
+    mutationFn: config.bulkExport || (async () => { throw new Error('Bulk export not implemented'); }),
+    onSuccess: (_, ids) => {
+      toast.success(`${ids.length} ${config.entityName} úspešne exportované`);
+    },
+    onError: (error) => {
+      console.error('Bulk export error:', error);
+      toast.error(`Chyba pri exporte ${config.entityName}`);
+    }
+  });
+
   return {
     bulkDelete: bulkDeleteMutation.mutate,
     bulkUpdate: bulkUpdateMutation.mutate,
     bulkActivate: bulkActivateMutation.mutate,
     bulkDeactivate: bulkDeactivateMutation.mutate,
+    bulkExport: bulkExportMutation.mutate,
     isDeleting: bulkDeleteMutation.isPending,
     isUpdating: bulkUpdateMutation.isPending,
     isActivating: bulkActivateMutation.isPending,
     isDeactivating: bulkDeactivateMutation.isPending,
+    isExporting: bulkExportMutation.isPending,
     isLoading: bulkDeleteMutation.isPending || bulkUpdateMutation.isPending || 
-               bulkActivateMutation.isPending || bulkDeactivateMutation.isPending
+               bulkActivateMutation.isPending || bulkDeactivateMutation.isPending ||
+               bulkExportMutation.isPending
   };
 };
