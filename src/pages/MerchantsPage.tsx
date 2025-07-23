@@ -8,14 +8,12 @@ import StatsCardsSection from "@/components/admin/shared/StatsCardsSection";
 import { useMerchantsStats } from "@/hooks/useAdminStats";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Building2, HandCoins, TrendingUp } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const MerchantsPage = () => {
   const { t } = useTranslation('admin');
   const { data: stats, isLoading: statsLoading } = useMerchantsStats();
   const [showAddMerchantModal, setShowAddMerchantModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const isMobile = useIsMobile();
 
   const statsCards = [
     {
@@ -47,19 +45,15 @@ const MerchantsPage = () => {
 
   const merchantsActions = (
     <>
-      <Button 
-        variant="secondary-action"
-        size={isMobile ? "mobile-touch" : "default"}
-      >
-        <Download className={isMobile ? "h-5 w-5 mr-2" : "h-4 w-4 mr-2"} />
+      <Button variant="outline" className="hover:bg-slate-50 min-h-touch">
+        <Download className="h-4 w-4 mr-2" />
         {t('merchants.export')}
       </Button>
       <Button 
         onClick={() => setShowAddMerchantModal(true)}
-        variant={isMobile ? "mobile-optimized" : "primary-action"}
-        size={isMobile ? "mobile-touch" : "default"}
+        className="bg-blue-600 hover:bg-blue-700 min-h-touch"
       >
-        <Plus className={isMobile ? "h-5 w-5 mr-2" : "h-4 w-4 mr-2"} />
+        <Plus className="h-4 w-4 mr-2" />
         {t('merchants.newMerchant')}
       </Button>
     </>
