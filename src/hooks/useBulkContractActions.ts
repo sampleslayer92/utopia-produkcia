@@ -90,7 +90,7 @@ export const useBulkContractActions = () => {
 
   return {
     bulkUpdate: (params: { contractIds: string[], field: string, value: string }) => {
-      contractActions.bulkUpdate(params.contractIds, params);
+      contractActions.bulkUpdate({ ids: params.contractIds, updates: params });
     },
     bulkDelete: contractActions.bulkDelete,
     bulkExport: contractActions.bulkExport,
