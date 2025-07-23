@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -42,28 +43,34 @@ export const useCustomFieldDefinitions = (categoryId?: string, itemTypeId?: stri
   return useQuery({
     queryKey: ['custom_field_definitions', { categoryId, itemTypeId }],
     queryFn: async () => {
+      console.log('Fetching custom field definitions for:', { categoryId, itemTypeId });
+      
       let query = supabase
         .from('custom_field_definitions')
         .select('*')
         .eq('is_active', true)
         .order('display_order', { ascending: true });
 
-      if (categoryId) {
+      // Only filter if both category and item type are provided
+      if (categoryId && itemTypeId) {
+        query = query.or(`category_id.eq.${categoryId},item_type_id.eq.${itemTypeId}`);
+      } else if (categoryId) {
         query = query.eq('category_id', categoryId);
-      }
-
-      if (itemTypeId) {
+      } else if (itemTypeId) {
         query = query.eq('item_type_id', itemTypeId);
       }
 
       const { data, error } = await query;
 
       if (error) {
+        console.error('Error fetching custom field definitions:', error);
         throw error;
       }
 
+      console.log('Fetched custom field definitions:', data);
       return data as CustomFieldDefinition[];
     },
+    enabled: !!(categoryId || itemTypeId), // Only run if at least one filter is provided
   });
 };
 
