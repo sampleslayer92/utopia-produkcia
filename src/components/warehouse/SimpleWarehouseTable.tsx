@@ -35,7 +35,7 @@ import { useWarehouseItems, useDeleteWarehouseItem, type WarehouseItem } from '@
 import { useCategories } from '@/hooks/useCategories';
 import { useItemTypes } from '@/hooks/useItemTypes';
 import { WarehouseItemModal } from './WarehouseItemModal';
-import { AddItemForm } from './AddItemForm';
+import { EnhancedAddItemForm } from './EnhancedAddItemForm';
 import { icons } from 'lucide-react';
 
 interface SimpleWarehouseTableProps {
@@ -99,7 +99,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
 
   // Show add form if requested
   if (showAddForm) {
-    return <AddItemForm />;
+    return <EnhancedAddItemForm />;
   }
 
   if (error) {

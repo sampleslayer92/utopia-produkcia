@@ -37,7 +37,7 @@ import { useWarehouseItems, useDeleteWarehouseItem, type WarehouseItem } from '@
 import { useCategories } from '@/hooks/useCategories';
 import { useItemTypes } from '@/hooks/useItemTypes';
 import { WarehouseItemModal } from './WarehouseItemModal';
-import { AddItemForm } from './AddItemForm';
+import { EnhancedAddItemForm } from './EnhancedAddItemForm';
 import { BulkOperationsPanel } from './BulkOperationsPanel';
 import { icons } from 'lucide-react';
 
@@ -145,7 +145,7 @@ export const WarehouseItemsTable = ({ itemType, showAddForm, showBulkOps }: Ware
 
   // Show add form if showAddForm is true
   if (showAddForm) {
-    return <AddItemForm />;
+    return <EnhancedAddItemForm />;
   }
 
   // Show bulk operations if showBulkOps is true

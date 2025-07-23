@@ -14,6 +14,7 @@ export interface WarehouseItem {
   setup_fee: number;
   company_cost: number;
   specifications?: any;
+  custom_fields?: any;
   image_url?: string;
   is_active: boolean;
   min_stock?: number;
@@ -51,6 +52,7 @@ export interface CreateWarehouseItemData {
   setup_fee: number;
   company_cost: number;
   specifications?: any;
+  custom_fields?: any;
   image_url?: string;
   min_stock?: number;
   current_stock?: number;

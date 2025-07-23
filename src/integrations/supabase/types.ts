@@ -797,6 +797,75 @@ export type Database = {
           },
         ]
       }
+      custom_field_definitions: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          default_value: string | null
+          display_order: number
+          field_key: string
+          field_name: string
+          field_options: Json | null
+          field_type: string
+          help_text: string | null
+          id: string
+          is_active: boolean
+          is_required: boolean
+          item_type_id: string | null
+          updated_at: string
+          validation_rules: Json | null
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          default_value?: string | null
+          display_order?: number
+          field_key: string
+          field_name: string
+          field_options?: Json | null
+          field_type: string
+          help_text?: string | null
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          item_type_id?: string | null
+          updated_at?: string
+          validation_rules?: Json | null
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          default_value?: string | null
+          display_order?: number
+          field_key?: string
+          field_name?: string
+          field_options?: Json | null
+          field_type?: string
+          help_text?: string | null
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          item_type_id?: string | null
+          updated_at?: string
+          validation_rules?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_field_definitions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_field_definitions_item_type_id_fkey"
+            columns: ["item_type_id"]
+            isOneToOne: false
+            referencedRelation: "item_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
@@ -1699,6 +1768,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           current_stock: number | null
+          custom_fields: Json | null
           description: string | null
           id: string
           image_url: string | null
@@ -1719,6 +1789,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           current_stock?: number | null
+          custom_fields?: Json | null
           description?: string | null
           id?: string
           image_url?: string | null
@@ -1739,6 +1810,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           current_stock?: number | null
+          custom_fields?: Json | null
           description?: string | null
           id?: string
           image_url?: string | null

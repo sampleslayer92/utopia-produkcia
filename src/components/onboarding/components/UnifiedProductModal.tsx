@@ -13,6 +13,8 @@ import { useProductForm } from "./ProductDetailModal/hooks/useProductForm";
 import { createProductCard } from "./ProductDetailModal/utils/productSaveUtils";
 import ProductForm from "./ProductDetailModal/ProductForm";
 import EnhancedAddonManager from "./EnhancedAddonManager";
+import { CustomFieldsDisplay } from "./CustomFieldsDisplay";
+import { useCustomFieldDefinitions } from "@/hooks/useCustomFieldDefinitions";
 
 interface UnifiedProductModalProps {
   isOpen: boolean;
@@ -355,6 +357,16 @@ const UnifiedProductModal = ({
                     </ul>
                   ) : (
                     <p className="text-sm text-muted-foreground">Žiadne špecifikácie nie sú dostupné.</p>
+                  )}
+                  
+                  {/* Custom Fields Display */}
+                  {displayProduct?.custom_fields && (
+                    <div className="mt-6">
+                      <CustomFieldsDisplay 
+                        customFields={displayProduct.custom_fields}
+                        customFieldDefinitions={[]} // Will be populated with actual definitions
+                      />
+                    </div>
                   )}
                 </TabsContent>
               </div>
