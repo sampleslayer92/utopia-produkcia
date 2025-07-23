@@ -14,6 +14,7 @@ import { InlineTableFilter } from "@/components/admin/table/InlineTableFilters";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X, FilterX } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export interface DataTableColumn<T> {
   key: string;
@@ -39,6 +40,12 @@ interface DataTableProps<T> {
   emptyMessage?: string;
   emptyIcon?: React.ReactNode;
   onFiltersChange?: (filters: Record<string, any>) => void;
+  // Bulk selection props
+  selectable?: boolean;
+  selectedItems?: string[];
+  onSelectionChange?: (selectedIds: string[]) => void;
+  onSelectAll?: () => void;
+  bulkActions?: React.ReactNode;
 }
 
 export function DataTable<T extends { id: string }>({
@@ -51,7 +58,12 @@ export function DataTable<T extends { id: string }>({
   onRowClick,
   emptyMessage,
   emptyIcon,
-  onFiltersChange
+  onFiltersChange,
+  selectable = false,
+  selectedItems = [],
+  onSelectionChange,
+  onSelectAll,
+  bulkActions
 }: DataTableProps<T>) {
   const { t } = useTranslation('admin');
   const [filters, setFilters] = useState<Record<string, any>>({});
@@ -67,7 +79,18 @@ export function DataTable<T extends { id: string }>({
     onFiltersChange?.({});
   };
 
+  const handleItemSelect = (itemId: string) => {
+    if (!onSelectionChange) return;
+    
+    const newSelection = selectedItems.includes(itemId)
+      ? selectedItems.filter(id => id !== itemId)
+      : [...selectedItems, itemId];
+    
+    onSelectionChange(newSelection);
+  };
+
   const activeFiltersCount = Object.values(filters).filter(Boolean).length;
+  const isAllSelected = selectedItems.length === data.length && data.length > 0;
 
   if (isLoading) {
     return (
@@ -122,85 +145,108 @@ export function DataTable<T extends { id: string }>({
   }
 
   return (
-    <Card className="border-slate-200/60 bg-white/90 backdrop-blur-sm shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-slate-50/50 to-blue-50/30 border-b border-slate-100">
-        <div className="flex items-center justify-between">
-          <div>
-            {title && <CardTitle className="text-slate-900">{title}</CardTitle>}
-            {subtitle && (
-              <CardDescription className="text-slate-600 mt-1">
-                {subtitle.includes('{count}') 
-                  ? subtitle.replace('{count}', data.length.toString())
-                  : subtitle
-                }
-              </CardDescription>
+    <>
+      <Card className="border-slate-200/60 bg-white/90 backdrop-blur-sm shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-slate-50/50 to-blue-50/30 border-b border-slate-100">
+          <div className="flex items-center justify-between">
+            <div>
+              {title && <CardTitle className="text-slate-900">{title}</CardTitle>}
+              {subtitle && (
+                <CardDescription className="text-slate-600 mt-1">
+                  {subtitle.includes('{count}') 
+                    ? subtitle.replace('{count}', data.length.toString())
+                    : subtitle
+                  }
+                </CardDescription>
+              )}
+            </div>
+            {activeFiltersCount > 0 && (
+              <div className="flex items-center space-x-2">
+                <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
+                  {activeFiltersCount} {activeFiltersCount === 1 ? 'filter' : 'filtrov'}
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearAllFilters}
+                  className="h-8 px-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                >
+                  <FilterX className="h-4 w-4 mr-1" />
+                  Vymazať všetky
+                </Button>
+              </div>
             )}
           </div>
-          {activeFiltersCount > 0 && (
-            <div className="flex items-center space-x-2">
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
-                {activeFiltersCount} {activeFiltersCount === 1 ? 'filter' : 'filtrov'}
-              </Badge>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearAllFilters}
-                className="h-8 px-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-              >
-                <FilterX className="h-4 w-4 mr-1" />
-                Vymazať všetky
-              </Button>
-            </div>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gradient-to-r from-slate-50/80 to-blue-50/50 border-b border-slate-200 hover:bg-slate-50">
-                {columns.map((column) => (
-                  <TableHead key={column.key} className={`font-semibold text-slate-700 ${column.className || ''}`}>
-                    <div className="flex items-center justify-between min-h-[2.5rem]">
-                      <span>{column.header}</span>
-                      {column.filter && (
-                        <InlineTableFilter
-                          type={column.filter.type}
-                          options={column.filter.options}
-                          placeholder={column.filter.placeholder}
-                          value={filters[column.key]}
-                          onValueChange={(value) => handleFilterChange(column.key, value)}
-                          hasActiveFilter={!!filters[column.key]}
-                        />
-                      )}
-                    </div>
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((item, index) => (
-                <TableRow 
-                  key={item.id} 
-                  className={`
-                    hover:bg-gradient-to-r hover:from-slate-50/50 hover:to-blue-50/30 
-                    transition-all duration-200 border-b border-slate-100/50
-                    ${onRowClick ? 'cursor-pointer hover:shadow-sm' : ''}
-                    ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}
-                  `}
-                  onClick={() => onRowClick?.(item)}
-                >
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gradient-to-r from-slate-50/80 to-blue-50/50 border-b border-slate-200 hover:bg-slate-50">
+                  {selectable && (
+                    <TableHead className="w-12">
+                      <Checkbox
+                        checked={isAllSelected}
+                        onCheckedChange={onSelectAll}
+                        aria-label="Select all"
+                      />
+                    </TableHead>
+                  )}
                   {columns.map((column) => (
-                    <TableCell key={column.key} className={`py-4 ${column.className || ''}`}>
-                      {column.accessor(item)}
-                    </TableCell>
+                    <TableHead key={column.key} className={`font-semibold text-slate-700 ${column.className || ''}`}>
+                      <div className="flex items-center justify-between min-h-[2.5rem]">
+                        <span>{column.header}</span>
+                        {column.filter && (
+                          <InlineTableFilter
+                            type={column.filter.type}
+                            options={column.filter.options}
+                            placeholder={column.filter.placeholder}
+                            value={filters[column.key]}
+                            onValueChange={(value) => handleFilterChange(column.key, value)}
+                            hasActiveFilter={!!filters[column.key]}
+                          />
+                        )}
+                      </div>
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {data.map((item, index) => (
+                  <TableRow 
+                    key={item.id} 
+                    className={`
+                      hover:bg-gradient-to-r hover:from-slate-50/50 hover:to-blue-50/30 
+                      transition-all duration-200 border-b border-slate-100/50
+                      ${onRowClick ? 'cursor-pointer hover:shadow-sm' : ''}
+                      ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}
+                      ${selectedItems.includes(item.id) ? 'bg-blue-50/50' : ''}
+                    `}
+                    onClick={() => onRowClick?.(item)}
+                  >
+                    {selectable && (
+                      <TableCell className="py-4" onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedItems.includes(item.id)}
+                          onCheckedChange={() => handleItemSelect(item.id)}
+                          aria-label={`Select ${item.id}`}
+                        />
+                      </TableCell>
+                    )}
+                    {columns.map((column) => (
+                      <TableCell key={column.key} className={`py-4 ${column.className || ''}`}>
+                        {column.accessor(item)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {bulkActions}
+    </>
   );
 }

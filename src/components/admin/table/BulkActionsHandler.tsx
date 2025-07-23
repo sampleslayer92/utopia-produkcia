@@ -2,7 +2,12 @@
 import { useTranslation } from 'react-i18next';
 import { useBulkContractActions } from "@/hooks/useBulkContractActions";
 import { toast } from "sonner";
-import BulkActionsPanel from "./BulkActionsPanel";
+import { GenericBulkActionsPanel, BulkAction } from "@/components/admin/shared/GenericBulkActionsPanel";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Check, Edit } from "lucide-react";
+import { useContractTypeOptions, useSalesPersonOptions } from "@/hooks/useEnhancedContractsData";
 
 interface BulkActionsHandlerProps {
   selectedContracts: string[];
@@ -15,6 +20,12 @@ const BulkActionsHandler = ({
 }: BulkActionsHandlerProps) => {
   const { t } = useTranslation('admin');
   const { bulkUpdate, bulkDelete, isUpdating, isDeleting } = useBulkContractActions();
+  const [contractType, setContractType] = useState('');
+  const [salesPerson, setSalesPerson] = useState('');
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
+
+  const { data: contractTypes } = useContractTypeOptions();
+  const { data: salesPersons } = useSalesPersonOptions();
 
   const handleBulkUpdate = (field: string, value: string) => {
     console.log(`Bulk update: ${field} = ${value} on contracts:`, selectedContracts);
@@ -29,6 +40,9 @@ const BulkActionsHandler = ({
       {
         onSuccess: () => {
           onClearSelection();
+          setContractType('');
+          setSalesPerson('');
+          setShowUpdateForm(false);
         },
         onError: (error) => {
           console.error('Bulk update failed:', error);
@@ -45,24 +59,6 @@ const BulkActionsHandler = ({
       return;
     }
 
-    const getDeleteUnit = (count: number) => {
-      if (count === 1) return t('messages.deleteUnits.single');
-      if (count < 5) return t('messages.deleteUnits.few');
-      return t('messages.deleteUnits.many');
-    };
-
-    const confirmed = window.confirm(
-      t('messages.confirmDelete', { 
-        count: selectedContracts.length, 
-        unit: getDeleteUnit(selectedContracts.length) 
-      })
-    );
-
-    if (!confirmed) {
-      console.log('Bulk delete cancelled by user');
-      return;
-    }
-
     bulkDelete(selectedContracts, {
       onSuccess: () => {
         onClearSelection();
@@ -73,16 +69,85 @@ const BulkActionsHandler = ({
     });
   };
 
+  const customActions: BulkAction[] = [
+    {
+      id: 'update',
+      label: 'Upraviť',
+      icon: <Edit className="h-4 w-4" />,
+      onClick: () => setShowUpdateForm(!showUpdateForm)
+    }
+  ];
+
   if (selectedContracts.length === 0) return null;
 
   return (
-    <BulkActionsPanel
-      selectedCount={selectedContracts.length}
-      onClearSelection={onClearSelection}
-      onBulkUpdate={handleBulkUpdate}
-      onBulkDelete={handleBulkDelete}
-      isLoading={isUpdating || isDeleting}
-    />
+    <>
+      <GenericBulkActionsPanel
+        selectedCount={selectedContracts.length}
+        entityName="zmluvu"
+        entityNamePlural="zmlúv"
+        onClearSelection={onClearSelection}
+        onBulkDelete={handleBulkDelete}
+        customActions={customActions}
+        isLoading={isUpdating || isDeleting}
+      />
+
+      {showUpdateForm && (
+        <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50 bg-white border border-slate-200 rounded-lg shadow-lg p-4 min-w-96">
+          <h3 className="text-lg font-semibold mb-4">Upraviť zmluvy</h3>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Typ zmluvy</label>
+              <div className="flex space-x-2">
+                <Select value={contractType} onValueChange={setContractType}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Vybrať typ" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {contractTypes?.map(type => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  size="sm"
+                  onClick={() => handleBulkUpdate('contractType', contractType)}
+                  disabled={!contractType || isUpdating}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Check className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Obchodník</label>
+              <div className="flex space-x-2">
+                <Select value={salesPerson} onValueChange={setSalesPerson}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Vybrať obchodníka" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {salesPersons?.map(person => (
+                      <SelectItem key={person} value={person}>{person}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  size="sm"
+                  onClick={() => handleBulkUpdate('salesPerson', salesPerson)}
+                  disabled={!salesPerson || isUpdating}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Check className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
