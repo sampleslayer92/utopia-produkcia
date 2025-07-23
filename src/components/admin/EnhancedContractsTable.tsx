@@ -2,8 +2,10 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useContractsData, ContractWithInfo } from "@/hooks/useContractsData";
+import { useGenericBulkSelection } from "@/hooks/useGenericBulkSelection";
 import ContractTableContent from "./enhanced-contracts/ContractTableContent";
 import ContractTableEmptyState from "./enhanced-contracts/ContractTableEmptyState";
+import BulkActionsHandler from "./table/BulkActionsHandler";
 import { useTranslation } from 'react-i18next';
 
 interface EnhancedContractsTableProps {
@@ -46,6 +48,9 @@ const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
     (filters?.merchant && filters.merchant !== "all") || 
     (filters?.source && filters.source !== "all");
 
+  // Initialize bulk selection
+  const bulkSelection = useGenericBulkSelection(filteredContracts);
+
   if (isLoading) {
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
@@ -78,23 +83,33 @@ const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
   }
 
   return (
-    <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
-      <CardHeader>
-        <div>
-          <CardTitle className="text-slate-900">{t('table.contractManagement', { ns: 'ui' })}</CardTitle>
-          <CardDescription className="text-slate-600">
-            {t('table.contractsOverview', { ns: 'ui', filtered: filteredContracts.length, total: contracts?.length || 0 })}
-          </CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {filteredContracts.length === 0 ? (
-          <ContractTableEmptyState hasFilters={hasFilters} />
-        ) : (
-          <ContractTableContent contracts={filteredContracts} />
-        )}
-      </CardContent>
-    </Card>
+    <>
+      <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
+        <CardHeader>
+          <div>
+            <CardTitle className="text-slate-900">{t('table.contractManagement', { ns: 'ui' })}</CardTitle>
+            <CardDescription className="text-slate-600">
+              {t('table.contractsOverview', { ns: 'ui', filtered: filteredContracts.length, total: contracts?.length || 0 })}
+            </CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {filteredContracts.length === 0 ? (
+            <ContractTableEmptyState hasFilters={hasFilters} />
+          ) : (
+            <ContractTableContent 
+              contracts={filteredContracts} 
+              bulkSelection={bulkSelection}
+            />
+          )}
+        </CardContent>
+      </Card>
+      
+      <BulkActionsHandler
+        selectedContracts={bulkSelection.selectedItems}
+        onClearSelection={bulkSelection.clearSelection}
+      />
+    </>
   );
 };
 

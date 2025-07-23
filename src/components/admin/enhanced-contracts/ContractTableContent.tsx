@@ -10,6 +10,7 @@ import {
 import { Calendar, User, Mail, Building } from "lucide-react";
 import { format } from "date-fns";
 import { ContractWithInfo } from "@/hooks/useContractsData";
+import { BulkSelectionState } from "@/hooks/useGenericBulkSelection";
 import ContractActionsDropdown from "../ContractActionsDropdown";
 import ContractStatusBadge from "./ContractStatusBadge";
 import CompletionBadge from "./CompletionBadge";
@@ -20,9 +21,10 @@ import { useTranslation } from 'react-i18next';
 
 interface ContractTableContentProps {
   contracts: ContractWithInfo[];
+  bulkSelection: BulkSelectionState<ContractWithInfo>;
 }
 
-const ContractTableContent = ({ contracts }: ContractTableContentProps) => {
+const ContractTableContent = ({ contracts, bulkSelection }: ContractTableContentProps) => {
   const { t } = useTranslation('admin');
   
   return (
@@ -30,6 +32,14 @@ const ContractTableContent = ({ contracts }: ContractTableContentProps) => {
       <Table>
         <TableHeader>
           <TableRow className="bg-slate-50">
+            <TableHead className="w-12">
+              <input
+                type="checkbox"
+                checked={bulkSelection.isAllSelected}
+                onChange={() => bulkSelection.selectAll(contracts)}
+                className="rounded border-slate-300"
+              />
+            </TableHead>
             <TableHead className="font-medium text-slate-700">{t('contracts.table.contractNumber')}</TableHead>
             <TableHead className="font-medium text-slate-700">{t('contracts.table.client')}</TableHead>
             <TableHead className="font-medium text-slate-700">{t('contracts.table.source')}</TableHead>
@@ -46,8 +56,18 @@ const ContractTableContent = ({ contracts }: ContractTableContentProps) => {
           {contracts.map((contract: ContractWithInfo) => (
             <TableRow 
               key={contract.id} 
-              className="hover:bg-slate-50/50 transition-colors"
+              className={`hover:bg-slate-50/50 transition-colors ${
+                bulkSelection.isItemSelected(contract.id) ? 'bg-blue-50' : ''
+              }`}
             >
+              <TableCell onClick={(e) => e.stopPropagation()}>
+                <input
+                  type="checkbox"
+                  checked={bulkSelection.isItemSelected(contract.id)}
+                  onChange={() => bulkSelection.selectItem(contract.id)}
+                  className="rounded border-slate-300"
+                />
+              </TableCell>
               <TableCell className="font-medium text-slate-900">
                 #{contract.contract_number}
               </TableCell>
@@ -103,7 +123,7 @@ const ContractTableContent = ({ contracts }: ContractTableContentProps) => {
                   </span>
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell onClick={(e) => e.stopPropagation()}>
                 <ContractActionsDropdown 
                   contractId={contract.id} 
                   contractNumber={contract.contract_number}

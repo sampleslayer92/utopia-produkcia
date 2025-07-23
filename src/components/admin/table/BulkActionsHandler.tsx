@@ -19,7 +19,7 @@ const BulkActionsHandler = ({
   onClearSelection
 }: BulkActionsHandlerProps) => {
   const { t } = useTranslation('admin');
-  const { bulkUpdate, bulkDelete, isUpdating, isDeleting } = useBulkContractActions();
+  const { bulkUpdate, bulkDelete, bulkExport, isUpdating, isDeleting, isExporting, isLoading } = useBulkContractActions();
   const [contractType, setContractType] = useState('');
   const [salesPerson, setSalesPerson] = useState('');
   const [showUpdateForm, setShowUpdateForm] = useState(false);
@@ -35,20 +35,11 @@ const BulkActionsHandler = ({
       return;
     }
 
-    bulkUpdate(
-      { contractIds: selectedContracts, field, value },
-      {
-        onSuccess: () => {
-          onClearSelection();
-          setContractType('');
-          setSalesPerson('');
-          setShowUpdateForm(false);
-        },
-        onError: (error) => {
-          console.error('Bulk update failed:', error);
-        }
-      }
-    );
+    bulkUpdate({ contractIds: selectedContracts, field, value });
+    onClearSelection();
+    setContractType('');
+    setSalesPerson('');
+    setShowUpdateForm(false);
   };
 
   const handleBulkDelete = () => {
@@ -59,14 +50,19 @@ const BulkActionsHandler = ({
       return;
     }
 
-    bulkDelete(selectedContracts, {
-      onSuccess: () => {
-        onClearSelection();
-      },
-      onError: (error) => {
-        console.error('Bulk delete failed:', error);
-      }
-    });
+    bulkDelete(selectedContracts);
+    onClearSelection();
+  };
+
+  const handleBulkExport = () => {
+    console.log('Bulk export contracts:', selectedContracts);
+    
+    if (selectedContracts.length === 0) {
+      toast.error('Nie sú vybraté žiadne zmluvy na export');
+      return;
+    }
+
+    bulkExport(selectedContracts);
   };
 
   const customActions: BulkAction[] = [
@@ -84,12 +80,13 @@ const BulkActionsHandler = ({
     <>
       <GenericBulkActionsPanel
         selectedCount={selectedContracts.length}
-        entityName="zmluvu"
+        entityName="zmluva"
         entityNamePlural="zmlúv"
         onClearSelection={onClearSelection}
         onBulkDelete={handleBulkDelete}
+        onBulkExport={handleBulkExport}
         customActions={customActions}
-        isLoading={isUpdating || isDeleting}
+        isLoading={isLoading}
       />
 
       {showUpdateForm && (
