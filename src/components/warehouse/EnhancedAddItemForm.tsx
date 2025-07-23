@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { useCreateWarehouseItem } from '@/hooks/useWarehouseItems';
+import { useCreateWarehouseItem, type CreateWarehouseItemData } from '@/hooks/useWarehouseItems';
 import { useCategories } from '@/hooks/useCategories';
 import { useItemTypes } from '@/hooks/useItemTypes';
 import { useCustomFieldDefinitions } from '@/hooks/useCustomFieldDefinitions';
@@ -101,7 +101,7 @@ export const EnhancedAddItemForm: React.FC = () => {
         min_stock: data.min_stock || null,
       };
 
-      await createMutation.mutateAsync(submissionData);
+      await createMutation.mutateAsync(submissionData as CreateWarehouseItemData);
       navigate('/admin/warehouse');
     } catch (error) {
       console.error('Error creating item:', error);

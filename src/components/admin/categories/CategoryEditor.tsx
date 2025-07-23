@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useCreateCategory, useUpdateCategory, useDeleteCategory, type Category } from '@/hooks/useCategories';
+import { useCreateCategory, useUpdateCategory, useDeleteCategory, type Category, type CreateCategoryData, type UpdateCategoryData } from '@/hooks/useCategories';
 import { Trash2 } from 'lucide-react';
 import { CategoryDeleteDialog } from './CategoryDeleteDialog';
 
@@ -85,9 +85,9 @@ export const CategoryEditor: React.FC<CategoryEditorProps> = ({
         await updateMutation.mutateAsync({
           id: category.id,
           ...data,
-        });
+        } as UpdateCategoryData);
       } else {
-        await createMutation.mutateAsync(data);
+        await createMutation.mutateAsync(data as CreateCategoryData);
       }
       onClose();
     } catch (error) {
