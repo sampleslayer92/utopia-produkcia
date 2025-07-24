@@ -22,7 +22,7 @@ const ModuleSelectionStep = ({ selectedModules, onModulesChange, onNext, onPrev 
   
   // Find "Moduly" category from solution categories
   const modulesCategory = solutionCategories.find(sc => 
-    sc.categories?.name === 'Moduly'
+    sc.category?.name === 'Moduly'
   );
   
   const { data: warehouseItems, isLoading } = useWarehouseItems({

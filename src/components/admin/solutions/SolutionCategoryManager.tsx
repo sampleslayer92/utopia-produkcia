@@ -152,12 +152,12 @@ const SolutionCategoryManager = ({ solutionId }: SolutionCategoryManagerProps) =
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             {renderIcon(
-                              solutionCategory.categories?.icon_name || null,
-                              solutionCategory.categories?.icon_url || null,
-                              solutionCategory.categories?.color || '#3B82F6'
+                              solutionCategory.category?.icon_name || null,
+                              solutionCategory.category?.icon_url || null,
+                              solutionCategory.category?.color || '#3B82F6'
                             )}
                             <CardTitle className="text-lg">
-                              {solutionCategory.categories?.name}
+                              {solutionCategory.category?.name}
                             </CardTitle>
                           </div>
                           <Button
@@ -173,7 +173,7 @@ const SolutionCategoryManager = ({ solutionId }: SolutionCategoryManagerProps) =
                       <CardContent>
                         <div className="space-y-2">
                           <p className="text-sm text-muted-foreground">
-                            {solutionCategory.categories?.description}
+                            {solutionCategory.category?.description}
                           </p>
                           <div className="flex items-center gap-2">
                             <Badge variant={solutionCategory.is_featured ? "default" : "secondary"}>

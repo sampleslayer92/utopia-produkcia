@@ -23,6 +23,7 @@ import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
 import ContractDetailPage from "./pages/ContractDetailPage";
 import MerchantDetailPage from "./pages/MerchantDetailPage";
+import SolutionCategoryManager from "@/components/admin/solutions/SolutionCategoryManager";
 import AdminOnboardingPage from "./pages/AdminOnboardingPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
 import OverviewPage from "./pages/OverviewPage";
@@ -101,6 +102,16 @@ const App = () => (
           <Route path="/admin/warehouse/solutions" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <SolutionsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/warehouse/solutions/categories" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <SolutionCategoryManager />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/warehouse/solutions/:id/categories" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <SolutionCategoryManager />
             </ProtectedRoute>
           } />
           <Route path="/admin/warehouse/categories" element={

@@ -108,23 +108,31 @@ const ProgressiveSelectionFlow = ({ data, updateData, onComplete, onBack }: Prog
       </Card>
 
       {/* Step Content */}
-      {selectionState.currentStep === 'modules' && (
-        <ModuleSelectionStep
-          selectedModules={selectionState.selectedModules}
-          onModulesChange={handleModulesChange}
-          onNext={handleNextStep}
-          onPrev={handlePrevStep}
-        />
-      )}
-
-      {selectionState.currentStep === 'system' && (
-        <SystemSelectionStep
-          selectedSystem={selectionState.selectedSystem}
-          onSystemChange={handleSystemChange}
-          onNext={handleNextStep}
-          onPrev={handlePrevStep}
-        />
-      )}
+        {selectionState.currentStep === 'modules' && (
+          <ModuleSelectionStep
+            selectedModules={selectionState.selectedModules}
+            onModulesChange={handleModulesChange}
+            onNext={handleNextStep}
+            onPrev={handlePrevStep}
+          />
+        )}
+        
+        {selectionState.currentStep === 'system' && (
+          <SystemSelectionStep
+            selectedSystem={selectionState.selectedSystem}
+            onSystemChange={handleSystemChange}
+            onNext={handleNextStep}
+            onPrev={handlePrevStep}
+          />
+        )}
+        
+        {selectionState.currentStep === 'products' && (
+          <ProductCatalogStep
+            selectedSolution={selectionState.selectedSolution}
+            onNext={handleNextStep}
+            onPrev={handlePrevStep}
+          />
+        )}
     </div>
   );
 };

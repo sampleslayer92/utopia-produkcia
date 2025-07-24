@@ -21,7 +21,7 @@ const SystemSelectionStep = ({ selectedSystem, onSystemChange, onNext, onPrev }:
   
   // Find "Pokladničný systém" category from solution categories
   const systemsCategory = solutionCategories.find(sc => 
-    sc.categories?.name === 'Pokladničný systém'
+    sc.category?.name === 'Pokladničný systém'
   );
   
   const { data: warehouseItems, isLoading } = useWarehouseItems({
