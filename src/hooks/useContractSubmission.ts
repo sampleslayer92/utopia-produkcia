@@ -97,7 +97,7 @@ export const useContractSubmission = () => {
           signature_date: onboardingData.consents.signatureDate ? new Date(onboardingData.consents.signatureDate).toISOString() : currentTimestamp,
           signature_ip: await getClientIP()
         })
-        .eq('id', contractId);
+        .eq('id', contractId) as any;
 
       if (statusError) {
         console.error('Contract status update error:', statusError);

@@ -51,12 +51,37 @@ const ProgressiveSelectionFlow = ({ data, updateData, onComplete, onBack }: Prog
     if (selectionState.currentStep === 'modules') {
       setSelectionState(prev => ({ ...prev, currentStep: 'system' }));
     } else if (selectionState.currentStep === 'system') {
-      // Store the selection state and complete
+      // Store the selection state and map to deviceSelection format
       const updatedData = {
         ...data,
         progressiveSelection: {
           selectionFlow: selectionState
-        }
+        },
+        // Map progressive selection to deviceSelection for compatibility
+        deviceSelection: {
+          ...data.deviceSelection,
+          // Add selected modules and systems as devices
+          selectedSolutions: [selectionState.selectedSolution].filter(Boolean) as string[],
+          selectedModules: selectionState.selectedModules.filter(m => m.selected),
+          selectedSystem: selectionState.selectedSystem
+        },
+        // Add products as devices/services
+        devices: [
+          ...data.devices,
+          ...selectionState.selectedModules
+            .filter(m => m.selected)
+            .map(m => ({
+              id: m.id,
+              name: m.name,
+              type: 'device' as const,
+              description: `Module: ${m.name}`,
+              monthlyFee: m.monthlyFee,
+              companyCost: m.companyCost,
+              category: 'module',
+              isSelected: true,
+              count: 1
+            }))
+        ]
       };
       updateData(updatedData);
       onComplete();

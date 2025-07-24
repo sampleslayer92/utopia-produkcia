@@ -235,7 +235,7 @@ export const useEnhancedContractsData = (filters?: {
       if (filters?.status && filters.status !== 'all') {
         const mappedStatus = mapStatusFilter(filters.status);
         if (mappedStatus) {
-          query = query.eq('status', mappedStatus);
+          query = query.eq('status', mappedStatus as any);
         }
       }
 

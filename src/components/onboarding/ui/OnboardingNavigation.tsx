@@ -112,11 +112,11 @@ const OnboardingNavigation = ({
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('common:status.submitting')}
+                  Odosielam žiadosť...
                 </>
               ) : (
                 <>
-                  {t('common:buttons.complete')}
+                  Odoslať žiadosť
                   <Check className="ml-2 h-4 w-4" />
                 </>
               )}
@@ -202,11 +202,11 @@ const OnboardingNavigation = ({
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('common:status.submitting')}
+                  Odosielam žiadosť...
                 </>
               ) : (
                 <>
-                  {t('common:buttons.complete')}
+                  Odoslať žiadosť
                   <Check className="ml-2 h-4 w-4" />
                 </>
               )}

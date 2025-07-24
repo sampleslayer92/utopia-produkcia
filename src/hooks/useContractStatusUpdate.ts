@@ -19,7 +19,7 @@ export const useContractStatusUpdate = () => {
       const { data, error } = await supabase
         .from('contracts')
         .update({ 
-          status: newStatus,
+          status: newStatus as any,
           updated_at: new Date().toISOString()
         })
         .eq('id', contractId)

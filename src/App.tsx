@@ -22,6 +22,7 @@ import PartnerDashboard from "./pages/PartnerDashboard";
 import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
 import ContractDetailPage from "./pages/ContractDetailPage";
+import RequestsManagementPage from "@/pages/RequestsManagementPage";
 import MerchantDetailPage from "./pages/MerchantDetailPage";
 import SolutionCategoryManager from "@/components/admin/solutions/SolutionCategoryManager";
 import AdminOnboardingPage from "./pages/AdminOnboardingPage";

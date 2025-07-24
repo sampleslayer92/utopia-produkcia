@@ -1981,6 +1981,8 @@ export type Database = {
         | "signed"
         | "waiting_for_signature"
         | "lost"
+        | "pending_approval"
+        | "request_draft"
       document_type: "OP" | "Pas"
       entity_type:
         | "contracts"
@@ -2154,6 +2156,8 @@ export const Constants = {
         "signed",
         "waiting_for_signature",
         "lost",
+        "pending_approval",
+        "request_draft",
       ],
       document_type: ["OP", "Pas"],
       entity_type: [

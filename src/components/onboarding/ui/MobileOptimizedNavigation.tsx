@@ -110,11 +110,11 @@ const MobileOptimizedNavigation = ({
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                  {t('common:status.submitting')}
+                  Odosielam žiadosť...
                 </>
               ) : (
                 <>
-                  {t('common:buttons.complete')}
+                  Odoslať žiadosť
                   <Check className="ml-1 h-3 w-3" />
                 </>
               )}
@@ -196,11 +196,11 @@ const MobileOptimizedNavigation = ({
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                  {t('common:status.submitting')}
+                  Odosielam žiadosť...
                 </>
               ) : (
                 <>
-                  {t('common:buttons.complete')}
+                  Odoslať žiadosť
                   <Check className="ml-1 h-3 w-3" />
                 </>
               )}
