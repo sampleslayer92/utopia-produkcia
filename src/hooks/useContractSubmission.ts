@@ -13,6 +13,44 @@ import {
   insertConsents
 } from './contract/useContractSubmissionHandlers';
 
+// Helper function to get client IP (placeholder - would need real implementation)
+const getClientIP = async (): Promise<string> => {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error('Failed to get IP:', error);
+    return 'Unknown';
+  }
+};
+
+// Function to generate contract documents
+const generateContractDocuments = async (contractId: string) => {
+  const { error } = await supabase
+    .from('contract_documents')
+    .insert([
+      {
+        contract_id: contractId,
+        document_type: 'g1',
+        document_name: 'Zmluva o poskytnutí služieb (G1)',
+        status: 'generated',
+        generated_at: new Date().toISOString()
+      },
+      {
+        contract_id: contractId,
+        document_type: 'g2', 
+        document_name: 'Zmluva o akceptácii platieb (G2)',
+        status: 'generated',
+        generated_at: new Date().toISOString()
+      }
+    ]);
+    
+  if (error) {
+    throw error;
+  }
+};
+
 export const useContractSubmission = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -48,12 +86,16 @@ export const useContractSubmission = () => {
       const contractId = onboardingData.contractId;
       console.log('Using existing contract:', contractId);
 
-      // Update contract status to submitted
+      // Update contract status to pending_approval and save signature
+      const currentTimestamp = new Date().toISOString();
       const { error: statusError } = await supabase
         .from('contracts')
         .update({ 
-          status: 'submitted',
-          submitted_at: new Date().toISOString()
+          status: 'pending_approval',
+          submitted_at: currentTimestamp,
+          signature_url: onboardingData.consents.signatureUrl,
+          signature_date: onboardingData.consents.signatureDate ? new Date(onboardingData.consents.signatureDate).toISOString() : currentTimestamp,
+          signature_ip: await getClientIP()
         })
         .eq('id', contractId);
 
@@ -133,8 +175,17 @@ export const useContractSubmission = () => {
 
       console.log('Contract submission completed successfully');
       
-      toast.success('Registrácia úspešne odoslaná!', {
-        description: `Číslo zmluvy: ${contract.contract_number}`
+      // Generate G1 and G2 documents automatically
+      try {
+        await generateContractDocuments(contractId);
+        console.log('Contract documents generated successfully');
+      } catch (docError) {
+        console.error('Failed to generate documents:', docError);
+        // Don't fail the submission if document generation fails
+      }
+      
+      toast.success('Žiadosť úspešne odoslaná!', {
+        description: `Číslo žiadosti: ${contract.contract_number}. Čaká na schválenie administrátorom.`
       });
 
       return {

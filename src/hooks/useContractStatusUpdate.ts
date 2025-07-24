@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 
 interface UpdateContractStatusParams {
   contractId: string;
-  newStatus: 'draft' | 'submitted' | 'approved' | 'rejected' | 'in_progress' | 'sent_to_client' | 'email_viewed' | 'step_completed' | 'contract_generated' | 'signed' | 'waiting_for_signature' | 'lost';
+  newStatus: 'draft' | 'request_draft' | 'pending_approval' | 'approved' | 'rejected' | 'in_progress' | 'sent_to_client' | 'email_viewed' | 'step_completed' | 'contract_generated' | 'signed' | 'waiting_for_signature' | 'lost';
 }
 
 export const useContractStatusUpdate = () => {

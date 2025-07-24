@@ -36,6 +36,6 @@ export interface OnboardingData {
   actualOwners: ActualOwner[];
   consents: Consents;
   submittedAt?: string;
-  status?: 'draft' | 'submitted' | 'approved' | 'rejected';
+  status?: 'draft' | 'request_draft' | 'pending_approval' | 'approved' | 'rejected';
   progressiveSelection?: ProgressiveSelectionData;
 }

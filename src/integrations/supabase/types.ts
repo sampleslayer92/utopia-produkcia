@@ -790,6 +790,9 @@ export type Database = {
           lost_reason: Database["public"]["Enums"]["lost_reason"] | null
           merchant_id: string | null
           notes: string | null
+          signature_date: string | null
+          signature_ip: string | null
+          signature_url: string | null
           signed_at: string | null
           signed_document_url: string | null
           source: Database["public"]["Enums"]["contract_source"] | null
@@ -816,6 +819,9 @@ export type Database = {
           lost_reason?: Database["public"]["Enums"]["lost_reason"] | null
           merchant_id?: string | null
           notes?: string | null
+          signature_date?: string | null
+          signature_ip?: string | null
+          signature_url?: string | null
           signed_at?: string | null
           signed_document_url?: string | null
           source?: Database["public"]["Enums"]["contract_source"] | null
@@ -842,6 +848,9 @@ export type Database = {
           lost_reason?: Database["public"]["Enums"]["lost_reason"] | null
           merchant_id?: string | null
           notes?: string | null
+          signature_date?: string | null
+          signature_ip?: string | null
+          signature_url?: string | null
           signed_at?: string | null
           signed_document_url?: string | null
           source?: Database["public"]["Enums"]["contract_source"] | null

@@ -136,13 +136,17 @@ const extractSingleRecord = (data: any) => {
   return Array.isArray(data) ? null : data;
 };
 
-type DatabaseStatus = 'draft' | 'submitted' | 'approved' | 'rejected' | 'in_progress' | 'sent_to_client' | 'email_viewed' | 'step_completed' | 'contract_generated' | 'signed' | 'waiting_for_signature' | 'lost';
+type DatabaseStatus = 'draft' | 'request_draft' | 'pending_approval' | 'approved' | 'rejected' | 'in_progress' | 'sent_to_client' | 'email_viewed' | 'step_completed' | 'contract_generated' | 'signed' | 'waiting_for_signature' | 'lost';
 
 type DatabaseSource = 'telesales' | 'facebook' | 'web' | 'email' | 'referral' | 'other';
 
 const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
   const statusMap: Record<string, DatabaseStatus> = {
     'draft': 'draft',
+    'request_draft': 'request_draft',
+    'pending_approval': 'pending_approval',
+    'approved': 'approved',
+    'rejected': 'rejected',
     'in_progress': 'in_progress',
     'sent_to_client': 'sent_to_client',
     'email_viewed': 'email_viewed',
@@ -151,9 +155,6 @@ const mapStatusFilter = (uiStatus: string): DatabaseStatus | null => {
     'signed': 'signed',
     'waiting_for_signature': 'waiting_for_signature',
     'lost': 'lost',
-    'submitted': 'submitted',
-    'approved': 'approved',
-    'rejected': 'rejected',
   };
   return statusMap[uiStatus] || null;
 };
