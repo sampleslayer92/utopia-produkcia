@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Circle } from 'lucide-react';
 import ModuleSelectionStep from './ModuleSelectionStep';
 import SystemSelectionStep from './SystemSelectionStep';
-import ProductCatalogStep from './ProductCatalogStep';
 import { ModuleSelection, SelectionFlowState } from '@/types/selection-flow';
 import { OnboardingData } from '@/types/onboarding';
 
@@ -27,9 +26,8 @@ const ProgressiveSelectionFlow = ({ data, updateData, onComplete, onBack }: Prog
   });
 
   const steps = [
-    { id: 'modules', label: 'Moduly', completed: selectionState.selectedModules.length > 0 },
-    { id: 'system', label: 'Systém', completed: !!selectionState.selectedSystem },
-    { id: 'products', label: 'Produkty', completed: false }
+    { id: 'modules', label: 'Moduly & Nastavenia', completed: selectionState.selectedModules.length > 0 },
+    { id: 'system', label: 'Systém & Produkty', completed: !!selectionState.selectedSystem }
   ];
 
   const currentStepIndex = steps.findIndex(step => step.id === selectionState.currentStep);
@@ -53,8 +51,6 @@ const ProgressiveSelectionFlow = ({ data, updateData, onComplete, onBack }: Prog
     if (selectionState.currentStep === 'modules') {
       setSelectionState(prev => ({ ...prev, currentStep: 'system' }));
     } else if (selectionState.currentStep === 'system') {
-      setSelectionState(prev => ({ ...prev, currentStep: 'products' }));
-    } else if (selectionState.currentStep === 'products') {
       // Store the selection state and complete
       const updatedData = {
         ...data,
@@ -68,9 +64,7 @@ const ProgressiveSelectionFlow = ({ data, updateData, onComplete, onBack }: Prog
   };
 
   const handlePrevStep = () => {
-    if (selectionState.currentStep === 'products') {
-      setSelectionState(prev => ({ ...prev, currentStep: 'system' }));
-    } else if (selectionState.currentStep === 'system') {
+    if (selectionState.currentStep === 'system') {
       setSelectionState(prev => ({ ...prev, currentStep: 'modules' }));
     } else if (selectionState.currentStep === 'modules') {
       onBack();
@@ -126,14 +120,6 @@ const ProgressiveSelectionFlow = ({ data, updateData, onComplete, onBack }: Prog
           <SystemSelectionStep
             selectedSystem={selectionState.selectedSystem}
             onSystemChange={handleSystemChange}
-            onNext={handleNextStep}
-            onPrev={handlePrevStep}
-          />
-        )}
-        
-        {selectionState.currentStep === 'products' && (
-          <ProductCatalogStep
-            selectedSolution={selectionState.selectedSolution}
             onNext={handleNextStep}
             onPrev={handlePrevStep}
           />

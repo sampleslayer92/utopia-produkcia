@@ -69,9 +69,9 @@ const ModuleSelectionStep = ({ selectedModules, onModulesChange, onNext, onPrev 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-foreground">Výber modulov pre pokladničný systém</h2>
+        <h2 className="text-3xl font-bold text-foreground">Výber modulov a nastavení</h2>
         <p className="text-muted-foreground text-lg">
-          Vyberte si moduly, ktoré potrebujete pre vašu prevádzku
+          Vyberte si moduly a základné nastavenia pre váš pokladničný systém
         </p>
         {selectedCount > 0 && (
           <Badge variant="secondary" className="text-sm">
@@ -127,7 +127,7 @@ const ModuleSelectionStep = ({ selectedModules, onModulesChange, onNext, onPrev 
           disabled={selectedCount === 0}
           className="flex items-center gap-2"
         >
-          Pokračovať na systémy
+          Pokračovať na výber systému
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>

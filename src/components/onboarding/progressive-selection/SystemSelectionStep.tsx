@@ -2,16 +2,21 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Check, ArrowRight, ArrowLeft, Package } from 'lucide-react';
 import { useWarehouseItems } from '@/hooks/useWarehouseItems';
 import { useSolutionCategories } from '@/hooks/useSolutionCategories';
 import { SystemSelection } from '@/types/selection-flow';
+import CompactProductCard from './CompactProductCard';
 
 interface SystemSelectionStepProps {
   selectedSystem: string | null;
   onSystemChange: (systemId: string) => void;
   onNext: () => void;
   onPrev: () => void;
+}
+
+interface ProductQuantity {
+  [productId: string]: number;
 }
 
 const SystemSelectionStep = ({ selectedSystem, onSystemChange, onNext, onPrev }: SystemSelectionStepProps) => {
@@ -30,6 +35,7 @@ const SystemSelectionStep = ({ selectedSystem, onSystemChange, onNext, onPrev }:
   });
 
   const [systems, setSystems] = useState<SystemSelection[]>([]);
+  const [productQuantities, setProductQuantities] = useState<ProductQuantity>({});
 
   useEffect(() => {
     if (warehouseItems && warehouseItems.length > 0) {
@@ -50,6 +56,32 @@ const SystemSelectionStep = ({ selectedSystem, onSystemChange, onNext, onPrev }:
 
   const selectedSystemData = systems.find(s => s.id === selectedSystem);
 
+  // Get all product categories (except system and modules) for the selected solution
+  const productCategories = solutionCategories.filter(sc => 
+    sc.category?.name !== 'Pokladničný systém' && 
+    sc.category?.name !== 'Moduly'
+  );
+
+  // Get all products from these categories
+  const categoryIds = productCategories.map(sc => sc.category_id).filter(Boolean);
+  const { data: allProducts = [] } = useWarehouseItems({
+    category_id: categoryIds.length > 0 ? categoryIds[0] : undefined, // For now, just use first category
+    is_active: true
+  });
+
+  const handleProductQuantityChange = (productId: string, quantity: number) => {
+    setProductQuantities(prev => ({
+      ...prev,
+      [productId]: quantity
+    }));
+  };
+
+  const totalSelectedProducts = Object.values(productQuantities).reduce((sum, qty) => sum + qty, 0);
+  const totalProductCost = allProducts.reduce((sum, product) => {
+    const quantity = productQuantities[product.id] || 0;
+    return sum + (quantity * Number(product.monthly_fee));
+  }, 0);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -61,55 +93,82 @@ const SystemSelectionStep = ({ selectedSystem, onSystemChange, onNext, onPrev }:
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-foreground">Výber pokladničného systému</h2>
+        <h2 className="text-3xl font-bold text-foreground">Výber systému a produktov</h2>
         <p className="text-muted-foreground text-lg">
-          Vyberte si pokladničný systém, ktorý najlepšie vyhovuje vašim potrebám
+          Dokončite konfiguráciu výberom systému a doplnkových produktov
         </p>
-        {selectedSystemData && (
-          <Badge variant="secondary" className="text-sm">
-            Vybraný systém: {selectedSystemData.name} • {selectedSystemData.monthlyFee.toFixed(2)}€/mesiac
-          </Badge>
-        )}
+        <div className="flex flex-wrap gap-2 justify-center">
+          {selectedSystemData && (
+            <Badge variant="secondary" className="text-sm">
+              Systém: {selectedSystemData.name} • {selectedSystemData.monthlyFee.toFixed(2)}€/mesiac
+            </Badge>
+          )}
+          {totalSelectedProducts > 0 && (
+            <Badge variant="outline" className="text-sm">
+              {totalSelectedProducts} produktov • {totalProductCost.toFixed(2)}€/mesiac
+            </Badge>
+          )}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {systems.map((system) => (
-          <Card 
-            key={system.id} 
-            className={`cursor-pointer transition-all hover:shadow-md ${
-              selectedSystem === system.id ? 'ring-2 ring-primary bg-primary/5' : ''
-            }`}
-            onClick={() => handleSystemSelect(system.id)}
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <CardTitle className="text-xl">{system.name}</CardTitle>
-                {selectedSystem === system.id && (
-                  <div className="bg-primary text-primary-foreground rounded-full p-1">
-                    <Check className="h-4 w-4" />
+      <div className="space-y-8">
+        {/* System Selection */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
+            <Check className="h-5 w-5" />
+            1. Pokladničný systém
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {systems.map((system) => (
+              <Card 
+                key={system.id} 
+                className={`cursor-pointer transition-all hover:shadow-md ${
+                  selectedSystem === system.id ? 'ring-2 ring-primary bg-primary/5' : ''
+                }`}
+                onClick={() => handleSystemSelect(system.id)}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <CardTitle className="text-lg">{system.name}</CardTitle>
+                    {selectedSystem === system.id && (
+                      <div className="bg-primary text-primary-foreground rounded-full p-1">
+                        <Check className="h-4 w-4" />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-primary">
-                    {system.monthlyFee.toFixed(2)}€
-                  </span>
-                  <span className="text-sm text-muted-foreground">/mesiac</span>
-                </div>
-                
-                {selectedSystem === system.id && (
-                  <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-2 rounded">
-                    <Check className="h-4 w-4" />
-                    Vybraný systém
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-primary">
+                      {system.monthlyFee.toFixed(2)}€
+                    </span>
+                    <span className="text-sm text-muted-foreground">/mesiac</span>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Products Selection */}
+        {allProducts.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              2. Doplnkové produkty (voliteľné)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {allProducts.map((product) => (
+                <CompactProductCard
+                  key={product.id}
+                  product={product}
+                  quantity={productQuantities[product.id] || 0}
+                  onQuantityChange={handleProductQuantityChange}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-between pt-6">
@@ -122,8 +181,8 @@ const SystemSelectionStep = ({ selectedSystem, onSystemChange, onNext, onPrev }:
           disabled={!selectedSystem}
           className="flex items-center gap-2"
         >
-          Pokračovať na produkty
-          <ArrowRight className="h-4 w-4" />
+          Dokončiť konfiguráciu
+          <Check className="h-4 w-4" />
         </Button>
       </div>
     </div>
