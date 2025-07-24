@@ -1,4 +1,5 @@
 import DocumentManagement from "../DocumentManagement";
+import ContractDocumentsManager from "../contract-detail/ContractDocumentsManager";
 import SignatureSection from "../contract-detail/SignatureSection";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText } from "lucide-react";
@@ -24,6 +25,13 @@ const ContractDocumentsTab = ({
   const { t } = useTranslation('admin');
   return (
     <div className="space-y-8">
+      {/* Enhanced Contract Documents Management */}
+      <ContractDocumentsManager
+        contractId={contractId}
+        contractNumber={contractNumber}
+      />
+
+      {/* Legacy Document Management for backward compatibility */}
       <DocumentManagement
         contractId={contractId}
         contractNumber={contractNumber}

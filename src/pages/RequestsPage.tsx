@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import AdminLayout from "@/components/admin/AdminLayout";
+import RequestsManagement from "@/components/admin/RequestsManagement";
 import EnhancedContractsTable from "@/components/admin/EnhancedContractsTable";
 import ContractFilters from "@/components/admin/ContractFilters";
 import CollapsibleFilters from "@/components/admin/shared/CollapsibleFilters";
@@ -85,6 +86,8 @@ const RequestsPage = () => {
     >
       <div className="space-y-6">
         <StatsCardsSection stats={statsCards} isLoading={statsLoading} />
+        
+        <RequestsManagement />
         
         <CollapsibleFilters activeFiltersCount={activeFiltersCount}>
           <ContractFilters 
