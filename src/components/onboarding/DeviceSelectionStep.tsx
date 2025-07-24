@@ -8,6 +8,7 @@ import SolutionSelectionSection from "./device-selection/SolutionSelectionSectio
 import DynamicDeviceCatalogPanel from "./device-selection/DynamicDeviceCatalogPanel";
 import LivePreviewPanel from "./device-selection/LivePreviewPanel";
 import UnifiedProductModal from "./components/UnifiedProductModal";
+import ProgressiveSelectionFlow from "./progressive-selection/ProgressiveSelectionFlow";
 import { useProductModal } from "./hooks/useProductModal";
 import { useStepValidation } from "./hooks/useStepValidation";
 import { useTranslation } from "react-i18next";
@@ -24,9 +25,11 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
   const { t } = useTranslation('forms');
   const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
   const stepValidation = useStepValidation(3, data);
+  const [showProgressiveFlow, setShowProgressiveFlow] = useState(false);
 
   const toggleSolution = (solutionId: string) => {
-    const newSelection = data.deviceSelection.selectedSolutions.includes(solutionId)
+    const isSelected = data.deviceSelection.selectedSolutions.includes(solutionId);
+    const newSelection = isSelected
       ? data.deviceSelection.selectedSolutions.filter(id => id !== solutionId)
       : [...data.deviceSelection.selectedSolutions, solutionId];
     
@@ -36,6 +39,13 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
         selectedSolutions: newSelection
       }
     });
+
+    // Check if Pokladňa solution is selected to show progressive flow
+    if (solutionId === 'Pokladňa' && !isSelected) {
+      setShowProgressiveFlow(true);
+    } else if (solutionId === 'Pokladňa' && isSelected) {
+      setShowProgressiveFlow(false);
+    }
   };
 
   const addDevice = (deviceTemplate: any) => {
@@ -145,6 +155,34 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
       }
     });
   };
+
+  const handleProgressiveFlowComplete = () => {
+    setShowProgressiveFlow(false);
+  };
+
+  const handleProgressiveFlowBack = () => {
+    // Remove Pokladňa from selected solutions
+    const updatedSolutions = data.deviceSelection.selectedSolutions.filter(id => id !== 'Pokladňa');
+    updateData({
+      deviceSelection: {
+        ...data.deviceSelection,
+        selectedSolutions: updatedSolutions
+      }
+    });
+    setShowProgressiveFlow(false);
+  };
+
+  // Show progressive flow if Pokladňa is selected
+  if (showProgressiveFlow) {
+    return (
+      <ProgressiveSelectionFlow
+        data={data}
+        updateData={updateData}
+        onComplete={handleProgressiveFlowComplete}
+        onBack={handleProgressiveFlowBack}
+      />
+    );
+  }
 
   // Show solution selection if no solutions are selected
   if (data.deviceSelection.selectedSolutions.length === 0) {
