@@ -98,6 +98,10 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
     }
 
     // Update data with deviceSelection directly
+    console.log('🎯 Calling updateData with deviceSelection:', updatedDeviceSelection);
+    console.log('🎯 Current cart before update:', data.deviceSelection.dynamicCards.length, 'items');
+    console.log('🎯 New cart after update:', updatedDeviceSelection.dynamicCards.length, 'items');
+    
     updateData({
       deviceSelection: updatedDeviceSelection
     });

@@ -201,12 +201,19 @@ export const useOnboardingData = () => {
         ...prev,
         ...data,
         deviceSelection: data.deviceSelection 
-          ? { ...prev.deviceSelection, ...data.deviceSelection }
+          ? { 
+              ...prev.deviceSelection, 
+              ...data.deviceSelection,
+              // Ensure dynamicCards is properly merged 
+              dynamicCards: data.deviceSelection.dynamicCards || prev.deviceSelection.dynamicCards
+            }
           : prev.deviceSelection
       };
       
       console.log('💾 Saving to localStorage:', updated);
-      console.log('📦 Cart items count:', updated.deviceSelection.dynamicCards.length);
+      console.log('📦 Cart items count before save:', prev.deviceSelection.dynamicCards.length);
+      console.log('📦 Cart items count after save:', updated.deviceSelection.dynamicCards.length);
+      console.log('📦 Latest cart contents:', updated.deviceSelection.dynamicCards.map(c => ({ id: c.id, name: c.name, locationId: c.locationId })));
       localStorage.setItem('onboarding_data', JSON.stringify(updated));
       return updated;
     });
