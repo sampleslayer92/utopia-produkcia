@@ -97,9 +97,10 @@ const UnifiedProductModal = ({
 
   const handleSave = () => {
     try {
-      console.log('🎯 HandleSave called with formData:', formData);
+      console.log('🎯 UnifiedProductModal HandleSave called with formData:', formData);
       console.log('🎯 Business locations count:', businessLocations.length);
       console.log('🎯 Current locationId:', formData.locationId);
+      console.log('🎯 Custom fields:', formData.customFields);
       
       // Validate location selection if multiple locations exist
       if (businessLocations.length > 1 && !formData.locationId) {
@@ -132,7 +133,17 @@ const UnifiedProductModal = ({
       }
       if (formData.customFields) {
         savedCard.customFields = formData.customFields;
+        console.log('🔧 Custom fields added to saved card:', formData.customFields);
       }
+
+      console.log('💾 Final saved card:', {
+        id: savedCard.id,
+        name: savedCard.name,
+        locationId: savedCard.locationId,
+        monthlyFee: savedCard.monthlyFee,
+        customFields: savedCard.customFields,
+        warehouseItemId: savedCard.warehouseItemId
+      });
 
       console.log('Generated card with UUID:', savedCard.id);
       

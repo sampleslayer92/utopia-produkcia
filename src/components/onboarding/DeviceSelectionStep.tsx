@@ -50,39 +50,66 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
   };
 
   const handleSaveProduct = async (card: DeviceCard | ServiceCard) => {
-    console.log('Saving product:', card);
+    console.log('🎯 Saving product card:', {
+      id: card.id,
+      name: card.name,
+      locationId: card.locationId,
+      monthlyFee: card.monthlyFee,
+      customFields: card.customFields,
+      mode: modalState.mode
+    });
     
-    let updatedData: OnboardingData;
+    // Validate location if multiple locations exist
+    if (data.businessLocations.length > 1 && !card.locationId) {
+      console.log('❌ Location validation failed for card:', card.name);
+      toast.error('Chyba', {
+        description: 'Musíte vybrať prevádzku pre produkt'
+      });
+      return;
+    }
+
+    // Auto-assign location if only one exists
+    if (data.businessLocations.length === 1 && !card.locationId) {
+      card.locationId = data.businessLocations[0].id;
+      console.log('🔧 Auto-assigned location:', card.locationId);
+    }
+    
+    let updatedDeviceSelection;
     
     if (modalState.mode === 'add') {
-      updatedData = {
-        ...data,
-        deviceSelection: {
-          ...data.deviceSelection,
-          dynamicCards: [...data.deviceSelection.dynamicCards, card]
-        }
+      updatedDeviceSelection = {
+        ...data.deviceSelection,
+        dynamicCards: [...data.deviceSelection.dynamicCards, card]
       };
+      console.log('✅ Added new card to cart, total cards:', updatedDeviceSelection.dynamicCards.length);
     } else if (modalState.mode === 'edit' && modalState.editingCard) {
       const updatedCards = data.deviceSelection.dynamicCards.map(existingCard =>
         existingCard.id === modalState.editingCard!.id ? card : existingCard
       );
       
-      updatedData = {
-        ...data,
-        deviceSelection: {
-          ...data.deviceSelection,
-          dynamicCards: updatedCards
-        }
+      updatedDeviceSelection = {
+        ...data.deviceSelection,
+        dynamicCards: updatedCards
       };
+      console.log('✅ Updated existing card in cart');
     } else {
+      console.log('❌ Invalid save operation');
       return;
     }
 
-    // Update local state
+    // Update data with proper structure
+    const updatedData = {
+      ...data,
+      deviceSelection: updatedDeviceSelection
+    };
+
+    // Update state and localStorage
     updateData(updatedData);
     
-    toast.success('Produkt uložený', {
-      description: 'Zmeny boli úspešne uložené'
+    console.log('💾 Cart updated, localStorage synced');
+    
+    toast.success(modalState.mode === 'add' ? 'Produkt pridaný do košíka' : 'Produkt aktualizovaný', {
+      description: `${card.name} bol úspešne ${modalState.mode === 'add' ? 'pridaný' : 'aktualizovaný'}`
     });
   };
 

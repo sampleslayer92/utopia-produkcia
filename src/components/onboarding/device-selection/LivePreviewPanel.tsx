@@ -36,10 +36,19 @@ const LivePreviewPanel = ({
     return acc;
   }, {} as Record<string, Array<DeviceCard | ServiceCard>>);
 
+  console.log('📊 Live Preview Panel - Cards by location:', {
+    totalCards: dynamicCards.length,
+    cardsByLocation: Object.keys(cardsByLocation).map(locId => ({
+      locationId: locId,
+      cardCount: cardsByLocation[locId].length,
+      locationName: getLocationName(locId)
+    }))
+  });
+
   const getLocationName = (locationId: string) => {
-    if (locationId === 'unassigned') return t('deviceSelection.preview.unassigned');
+    if (locationId === 'unassigned') return 'Nepriradené k prevádzke';
     const location = businessLocations.find(loc => loc.id === locationId);
-    return location?.name || t('deviceSelection.preview.unknownLocation');
+    return location?.name || 'Neznáma prevádzka';
   };
 
   // Group cards within location by type and category
