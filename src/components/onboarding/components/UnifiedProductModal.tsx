@@ -14,7 +14,8 @@ import { createProductCard } from "./ProductDetailModal/utils/productSaveUtils";
 import ProductForm from "./ProductDetailModal/ProductForm";
 import EnhancedAddonManager from "./EnhancedAddonManager";
 import { CustomFieldsDisplay } from "./CustomFieldsDisplay";
-import { useCustomFieldDefinitions } from "@/hooks/useCustomFieldDefinitions";
+import { useProductCustomFields } from "@/hooks/useCustomFieldDefinitions";
+import CustomFieldsEditor from "./ProductDetailModal/CustomFieldsEditor";
 
 interface UnifiedProductModalProps {
   isOpen: boolean;
@@ -70,7 +71,7 @@ const UnifiedProductModal = ({
   }
 
   const displayProduct = mode === 'edit' ? editingCard : product;
-  const productImage = displayProduct?.image || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=400&fit=crop';
+  const productImage = displayProduct?.image || displayProduct?.image_url || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=400&fit=crop';
 
   const handleQuantityChange = (delta: number) => {
     const newQuantity = Math.max(1, formData.count + delta);
@@ -79,11 +80,11 @@ const UnifiedProductModal = ({
 
   // Calculate pricing based on payment method and current form data
   const monthlyFeePerUnit = paymentMethod === 'rental' 
-    ? (product?.rentalPrice || formData.monthlyFee || 0)
+    ? (product?.monthly_fee || formData.monthlyFee || 0)
     : 0;
   
-  const purchasePrice = product?.purchasePrice || 0;
-  const companyCostPerUnit = formData.companyCost || monthlyFeePerUnit * 0.7;
+  const purchasePrice = product?.setup_fee || 0;
+  const companyCostPerUnit = formData.companyCost || product?.company_cost || monthlyFeePerUnit * 0.7;
   
   const totalMonthlyFee = monthlyFeePerUnit * formData.count;
   const totalCompanyCost = companyCostPerUnit * formData.count;
@@ -124,6 +125,14 @@ const UnifiedProductModal = ({
         product: displayProduct,
         editingCard
       });
+
+      // Add warehouse item reference and custom fields
+      if (product?.id) {
+        savedCard.warehouseItemId = product.id;
+      }
+      if (formData.customFields) {
+        savedCard.customFields = formData.customFields;
+      }
 
       console.log('Generated card with UUID:', savedCard.id);
       
@@ -181,9 +190,10 @@ const UnifiedProductModal = ({
             </DialogHeader>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="basic">Základné</TabsTrigger>
                 <TabsTrigger value="pricing">Ceny</TabsTrigger>
+                <TabsTrigger value="custom">Vlastné polia</TabsTrigger>
                 <TabsTrigger value="addons">Doplnky</TabsTrigger>
                 <TabsTrigger value="specs">Špecifikácie</TabsTrigger>
               </TabsList>
@@ -336,6 +346,14 @@ const UnifiedProductModal = ({
                   </Card>
                 </TabsContent>
 
+                <TabsContent value="custom" className="space-y-4 mt-0">
+                  <CustomFieldsEditor
+                    warehouseItemId={product?.id}
+                    values={formData.customFields}
+                    onChange={(customFields) => updateField('customFields', customFields)}
+                  />
+                </TabsContent>
+
                 <TabsContent value="addons" className="space-y-4 mt-0">
                   <EnhancedAddonManager
                     selectedAddons={selectedAddons}
@@ -346,27 +364,20 @@ const UnifiedProductModal = ({
                 </TabsContent>
 
                 <TabsContent value="specs" className="space-y-4 mt-0">
-                  {displayProduct?.specifications && displayProduct.specifications.length > 0 ? (
-                    <ul className="text-sm text-muted-foreground space-y-2">
-                      {displayProduct.specifications.map((spec: string, index: number) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
-                          {spec}
-                        </li>
-                      ))}
-                    </ul>
+                  {displayProduct?.specifications && Object.keys(displayProduct.specifications).length > 0 ? (
+                    <div className="space-y-3">
+                      <h4 className="font-medium">Špecifikácie produktu</h4>
+                      <div className="grid gap-2">
+                        {Object.entries(displayProduct.specifications).map(([key, value]) => (
+                          <div key={key} className="flex justify-between items-center py-1 px-2 bg-muted/50 rounded">
+                            <span className="text-sm font-medium">{key}:</span>
+                            <span className="text-sm text-muted-foreground">{String(value)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">Žiadne špecifikácie nie sú dostupné.</p>
-                  )}
-                  
-                  {/* Custom Fields Display */}
-                  {displayProduct?.custom_fields && (
-                    <div className="mt-6">
-                      <CustomFieldsDisplay 
-                        customFields={displayProduct.custom_fields}
-                        customFieldDefinitions={[]} // Will be populated with actual definitions
-                      />
-                    </div>
                   )}
                 </TabsContent>
               </div>

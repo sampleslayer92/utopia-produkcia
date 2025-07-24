@@ -22,9 +22,11 @@ export interface DeviceCard {
   image?: string;
   addons?: AddonCard[];
   catalogId?: string;
+  warehouseItemId?: string; // Reference to warehouse item
   specifications?: string[];
   simCards?: number;
   locationId?: string; // ID of the business location this device is assigned to
+  customFields?: Record<string, any>; // Custom field values
 }
 
 export interface ServiceCard {
@@ -39,7 +41,9 @@ export interface ServiceCard {
   customValue?: string;
   addons?: AddonCard[];
   catalogId?: string;
+  warehouseItemId?: string; // Reference to warehouse item
   locationId?: string; // ID of the business location this service is assigned to
+  customFields?: Record<string, any>; // Custom field values
 }
 
 export interface DeviceSelection {

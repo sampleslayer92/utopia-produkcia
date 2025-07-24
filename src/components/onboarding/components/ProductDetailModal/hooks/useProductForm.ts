@@ -10,6 +10,7 @@ interface ProductFormData {
   companyCost: number;
   customValue: string;
   locationId: string;
+  customFields: Record<string, any>;
 }
 
 interface UseProductFormProps {
@@ -28,7 +29,8 @@ export const useProductForm = ({ mode, product, editingCard, isOpen, businessLoc
     monthlyFee: 0,
     companyCost: 0,
     customValue: '',
-    locationId: ''
+    locationId: '',
+    customFields: {}
   });
   
   const [selectedAddons, setSelectedAddons] = useState<AddonCard[]>([]);
@@ -42,10 +44,11 @@ export const useProductForm = ({ mode, product, editingCard, isOpen, businessLoc
         name: product.name || '',
         description: product.description || '',
         count: 1,
-        monthlyFee: product.monthlyFee || 0,
-        companyCost: product.companyCost || 0,
+        monthlyFee: product.monthly_fee || 0,
+        companyCost: product.company_cost || 0,
         customValue: '',
-        locationId: defaultLocationId
+        locationId: defaultLocationId,
+        customFields: {}
       });
       setSelectedAddons([]);
       console.log('🔧 useProductForm: Add mode initialized with locationId:', defaultLocationId);
@@ -57,7 +60,8 @@ export const useProductForm = ({ mode, product, editingCard, isOpen, businessLoc
         monthlyFee: editingCard.monthlyFee,
         companyCost: editingCard.companyCost,
         customValue: (editingCard as ServiceCard).customValue || '',
-        locationId: editingCard.locationId || ''
+        locationId: editingCard.locationId || '',
+        customFields: editingCard.customFields || {}
       });
       setSelectedAddons(editingCard.addons || []);
       console.log('🔧 useProductForm: Edit mode initialized with locationId:', editingCard.locationId);
