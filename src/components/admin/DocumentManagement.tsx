@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, Download, FileText, CheckCircle } from 'lucide-react';
 import { useDocumentManager } from '@/hooks/useDocumentManager';
+import { useContractDocuments } from '@/hooks/useContractDocuments';
+import { useContractData } from '@/hooks/useContractData';
 import { useTranslation } from 'react-i18next';
 
 interface DocumentManagementProps {
@@ -25,6 +27,8 @@ const DocumentManagement = ({
 }: DocumentManagementProps) => {
   const [dragActive, setDragActive] = useState(false);
   const { uploadContractDocument, downloadContractDocument, isUploading, isDownloading } = useDocumentManager();
+  const { documents, generateDocuments, downloadDocument } = useContractDocuments(contractId);
+  const contractDataResult = useContractData(contractId);
   const { t } = useTranslation('admin');
 
   const handleFileUpload = async (file: File, type: 'unsigned' | 'signed') => {
@@ -71,6 +75,50 @@ const DocumentManagement = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Generate Documents Section */}
+        <div className="flex justify-between items-center p-4 border rounded-lg bg-blue-50">
+          <div>
+            <h3 className="font-semibold">Generovať G1 a G2 dokumenty</h3>
+            <p className="text-sm text-muted-foreground">Automaticky vygeneruje všetky potrebné dokumenty</p>
+          </div>
+          <Button 
+            onClick={() => contractDataResult.data && generateDocuments({
+              onboardingData: contractDataResult.data.onboardingData,
+              contractNumber
+            })}
+            disabled={!contractDataResult.data}
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            Generovať
+          </Button>
+        </div>
+
+        {/* Contract Documents */}
+        {documents && documents.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="font-semibold">Dokumenty kontraktu</h3>
+            {documents.map((doc) => (
+              <div key={doc.id} className="flex justify-between items-center p-3 border rounded-lg">
+                <div>
+                  <h4 className="font-medium">{doc.document_name}</h4>
+                  <span className="text-sm text-muted-foreground">Status: {doc.status}</span>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => contractDataResult.data && downloadDocument({
+                    documentType: doc.document_type,
+                    onboardingData: contractDataResult.data.onboardingData,
+                    contractNumber
+                  })}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Stiahnuť
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
         {/* Unsigned Document Section */}
         <div className="space-y-3">
           <h3 className="font-medium text-slate-900">{t('documentManagement.unsignedContract')}</h3>

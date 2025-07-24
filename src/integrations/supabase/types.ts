@@ -535,6 +535,56 @@ export type Database = {
           },
         ]
       }
+      contract_documents: {
+        Row: {
+          contract_id: string
+          created_at: string
+          document_name: string
+          document_type: string
+          document_url: string | null
+          generated_at: string | null
+          id: string
+          signed_at: string | null
+          signed_document_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          contract_id: string
+          created_at?: string
+          document_name: string
+          document_type: string
+          document_url?: string | null
+          generated_at?: string | null
+          id?: string
+          signed_at?: string | null
+          signed_document_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          contract_id?: string
+          created_at?: string
+          document_name?: string
+          document_type?: string
+          document_url?: string | null
+          generated_at?: string | null
+          id?: string
+          signed_at?: string | null
+          signed_document_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_documents_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contract_item_addons: {
         Row: {
           addon_id: string
@@ -722,6 +772,8 @@ export type Database = {
       }
       contracts: {
         Row: {
+          admin_approved_at: string | null
+          admin_approved_by: string | null
           contract_generated_at: string | null
           contract_number: string
           created_at: string
@@ -730,6 +782,8 @@ export type Database = {
           document_signed_at: string | null
           document_uploaded_at: string | null
           document_url: string | null
+          documents_generated_at: string | null
+          documents_signed_at: string | null
           email_viewed_at: string | null
           id: string
           lost_notes: string | null
@@ -744,6 +798,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          admin_approved_at?: string | null
+          admin_approved_by?: string | null
           contract_generated_at?: string | null
           contract_number?: string
           created_at?: string
@@ -752,6 +808,8 @@ export type Database = {
           document_signed_at?: string | null
           document_uploaded_at?: string | null
           document_url?: string | null
+          documents_generated_at?: string | null
+          documents_signed_at?: string | null
           email_viewed_at?: string | null
           id?: string
           lost_notes?: string | null
@@ -766,6 +824,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          admin_approved_at?: string | null
+          admin_approved_by?: string | null
           contract_generated_at?: string | null
           contract_number?: string
           created_at?: string
@@ -774,6 +834,8 @@ export type Database = {
           document_signed_at?: string | null
           document_uploaded_at?: string | null
           document_url?: string | null
+          documents_generated_at?: string | null
+          documents_signed_at?: string | null
           email_viewed_at?: string | null
           id?: string
           lost_notes?: string | null
