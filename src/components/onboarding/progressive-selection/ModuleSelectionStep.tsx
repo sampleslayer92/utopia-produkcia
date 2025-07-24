@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useWarehouseItems } from '@/hooks/useWarehouseItems';
+import { useSolutionCategories } from '@/hooks/useSolutionCategories';
 import { ModuleSelection } from '@/types/selection-flow';
 
 interface ModuleSelectionStepProps {
@@ -15,8 +16,17 @@ interface ModuleSelectionStepProps {
 }
 
 const ModuleSelectionStep = ({ selectedModules, onModulesChange, onNext, onPrev }: ModuleSelectionStepProps) => {
+  // Get categories assigned to the "Pokladňa" solution
+  const pokladnaUuid = 'ee043a8f-3699-4c0e-8d21-b71eca1720f0';
+  const { data: solutionCategories = [] } = useSolutionCategories(pokladnaUuid);
+  
+  // Find "Moduly" category from solution categories
+  const modulesCategory = solutionCategories.find(sc => 
+    sc.categories?.name === 'Moduly'
+  );
+  
   const { data: warehouseItems, isLoading } = useWarehouseItems({
-    category: 'Moduly',
+    category_id: modulesCategory?.category_id || undefined,
     is_active: true
   });
 

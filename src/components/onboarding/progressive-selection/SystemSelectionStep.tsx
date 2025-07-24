@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useWarehouseItems } from '@/hooks/useWarehouseItems';
+import { useSolutionCategories } from '@/hooks/useSolutionCategories';
 import { SystemSelection } from '@/types/selection-flow';
 
 interface SystemSelectionStepProps {
@@ -14,8 +15,17 @@ interface SystemSelectionStepProps {
 }
 
 const SystemSelectionStep = ({ selectedSystem, onSystemChange, onNext, onPrev }: SystemSelectionStepProps) => {
+  // Get categories assigned to the "Pokladňa" solution
+  const pokladnaUuid = 'ee043a8f-3699-4c0e-8d21-b71eca1720f0';
+  const { data: solutionCategories = [] } = useSolutionCategories(pokladnaUuid);
+  
+  // Find "Pokladničný systém" category from solution categories
+  const systemsCategory = solutionCategories.find(sc => 
+    sc.categories?.name === 'Pokladničný systém'
+  );
+  
   const { data: warehouseItems, isLoading } = useWarehouseItems({
-    category: 'Pokladničný systém',
+    category_id: systemsCategory?.category_id || undefined,
     is_active: true
   });
 
