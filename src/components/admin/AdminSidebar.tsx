@@ -3,7 +3,8 @@ import {
   ChevronDown,
   ChevronRight
 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
+import { BarChart3, FileText, Users, Package, Settings, Briefcase, Bell, Building, UserCheck, TrendingUp, Archive, PlusCircle, GitBranch, Eye, Tags, ShoppingBag, Users2, MapPin, Layers3, ShoppingCart } from 'lucide-react';
 import { useState, useEffect } from "react";
 import AdminProfile from "./AdminProfile";
 import { useAuth } from '@/contexts/AuthContext';
@@ -384,6 +385,20 @@ const AdminSidebar = () => {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
+      {/* E-shop Section */}
+      <div className="mt-auto p-3 border-t border-slate-200/50">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-200 h-12">
+              <NavLink to="/admin/eshop" className="flex items-center gap-3 p-3 rounded-lg">
+                <ShoppingCart className="h-5 w-5" />
+                <span className="font-medium">E-shop</span>
+              </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </div>
 
       <SidebarFooter className="border-t border-slate-200/50 bg-gradient-to-r from-slate-50 to-blue-50/30 p-3">
         <AdminProfile />

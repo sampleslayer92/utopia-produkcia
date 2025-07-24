@@ -41,6 +41,9 @@ import OrganizationalStructurePage from "./pages/OrganizationalStructurePage";
 import TeamDetailPage from "./pages/TeamDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotificationCenterPage from "./pages/admin/NotificationCenterPage";
+import EshopLayout from "./components/eshop/EshopLayout";
+import EshopPage from "./pages/EshopPage";
+import CartPage from "./pages/CartPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -259,6 +262,16 @@ const App = () => (
               <NotificationCenterPage />
             </ProtectedRoute>
           } />
+
+          {/* E-shop routes */}
+          <Route path="/admin/eshop" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <EshopLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<EshopPage />} />
+            <Route path="cart" element={<CartPage />} />
+          </Route>
 
           {/* Settings routes - for admin and partner */}
           <Route path="/admin/settings" element={
