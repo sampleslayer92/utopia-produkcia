@@ -82,12 +82,19 @@ const OnboardingHeader = ({
                   size="sm"
                   onClick={() => setShowDeleteModal(true)}
                   disabled={isDeleting}
-                  className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                  className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 flex items-center gap-2"
+                  title="Vymazať žiadosť/zmluvu"
                 >
                   {isDeleting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="hidden sm:inline">Mazanie...</span>
+                    </>
                   ) : (
-                    <Trash2 className="h-4 w-4" />
+                    <>
+                      <Trash2 className="h-4 w-4" />
+                      <span className="hidden sm:inline">Vymazať žiadosť</span>
+                    </>
                   )}
                 </Button>
               )}

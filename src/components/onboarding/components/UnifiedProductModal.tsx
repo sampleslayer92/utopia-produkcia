@@ -80,11 +80,11 @@ const UnifiedProductModal = ({
 
   // Calculate pricing based on payment method and current form data
   const monthlyFeePerUnit = paymentMethod === 'rental' 
-    ? (product?.monthly_fee || formData.monthlyFee || 0)
+    ? formData.monthlyFee
     : 0;
   
   const purchasePrice = product?.setup_fee || 0;
-  const companyCostPerUnit = formData.companyCost || product?.company_cost || monthlyFeePerUnit * 0.7;
+  const companyCostPerUnit = formData.companyCost;
   
   const totalMonthlyFee = monthlyFeePerUnit * formData.count;
   const totalCompanyCost = companyCostPerUnit * formData.count;
@@ -310,15 +310,37 @@ const UnifiedProductModal = ({
 
                 <TabsContent value="pricing" className="space-y-6 mt-0">
                   <Card>
-                    <CardContent className="p-4 space-y-3">
-                       <div className="flex justify-between items-center">
-                         <span className="text-sm text-muted-foreground">Mesačný poplatok za 1 kus:</span>
-                         <span className="font-semibold">€{monthlyFeePerUnit.toFixed(2)}</span>
-                       </div>
-                       
-                       <div className="flex justify-between items-center">
-                         <span className="text-sm text-muted-foreground">Mesačný náklad pre firmu za 1 kus:</span>
-                         <span className="font-semibold">€{companyCostPerUnit.toFixed(2)}</span>
+                    <CardContent className="p-4 space-y-4">
+                       <div className="grid grid-cols-2 gap-4">
+                         <div className="space-y-2">
+                           <label className="text-sm font-medium text-muted-foreground">Mesačný poplatok za 1 kus:</label>
+                           <div className="flex items-center space-x-2">
+                             <span>€</span>
+                             <input
+                               type="number"
+                               min="0"
+                               step="0.01"
+                               value={formData.monthlyFee}
+                               onChange={(e) => updateField('monthlyFee', parseFloat(e.target.value) || 0)}
+                               className="flex-1 px-3 py-2 border border-input rounded-md bg-background focus:border-primary focus:outline-none"
+                             />
+                           </div>
+                         </div>
+                         
+                         <div className="space-y-2">
+                           <label className="text-sm font-medium text-muted-foreground">Mesačný náklad pre firmu za 1 kus:</label>
+                           <div className="flex items-center space-x-2">
+                             <span>€</span>
+                             <input
+                               type="number"
+                               min="0"
+                               step="0.01"
+                               value={formData.companyCost}
+                               onChange={(e) => updateField('companyCost', parseFloat(e.target.value) || 0)}
+                               className="flex-1 px-3 py-2 border border-input rounded-md bg-background focus:border-primary focus:outline-none"
+                             />
+                           </div>
+                         </div>
                        </div>
 
                       {paymentMethod === 'purchase' && purchasePrice > 0 && (
