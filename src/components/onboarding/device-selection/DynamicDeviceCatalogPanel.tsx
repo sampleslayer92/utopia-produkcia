@@ -5,10 +5,10 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MinimalDeviceCatalogCard from "../components/MinimalDeviceCatalogCard";
 import MinimalServiceCatalogGroup from "../components/MinimalServiceCatalogGroup";
-import UnifiedProductModal from "../components/UnifiedProductModal";
+
 import { BusinessLocation } from "@/types/business";
 import { useTranslation } from "react-i18next";
-import { DynamicCard } from "@/types/onboarding";
+
 import { useSolutionProducts } from "@/hooks/useSolutionItems";
 import { useCategories } from "@/hooks/useCategories";
 import { useItemTypes } from "@/hooks/useItemTypes";
@@ -30,16 +30,6 @@ const DynamicDeviceCatalogPanel = ({
 }: DynamicDeviceCatalogPanelProps) => {
   const { t } = useTranslation('forms');
   const [openGroups, setOpenGroups] = useState<string[]>([]);
-  const [showcaseModal, setShowcaseModal] = useState<{
-    isOpen: boolean;
-    product: any;
-    type: 'device' | 'service';
-    originalCallback?: (item: any, category?: string) => void;
-  }>({
-    isOpen: false,
-    product: null,
-    type: 'device'
-  });
 
   // Fetch dynamic data
   const { data: solutions, isLoading: solutionsLoading } = useSolutions(true);
@@ -49,38 +39,6 @@ const DynamicDeviceCatalogPanel = ({
 
   const isLoading = solutionsLoading || productsLoading || categoriesLoading || typesLoading;
 
-  const handleDeviceShowcase = (device: any) => {
-    setShowcaseModal({
-      isOpen: true,
-      product: device,
-      type: 'device',
-      originalCallback: onAddDevice
-    });
-  };
-
-  const handleServiceShowcase = (service: any, category: string) => {
-    setShowcaseModal({
-      isOpen: true,
-      product: { ...service, category },
-      type: 'service',
-      originalCallback: (item: any) => onAddService(item, category)
-    });
-  };
-
-  const handleShowcaseClose = () => {
-    setShowcaseModal({
-      isOpen: false,
-      product: null,
-      type: 'device'
-    });
-  };
-
-  const handleShowcaseAdd = (item: DynamicCard) => {
-    if (showcaseModal.originalCallback) {
-      showcaseModal.originalCallback(item);
-    }
-    handleShowcaseClose();
-  };
 
   // Get solution badges
   const getSolutionBadges = () => {
@@ -140,8 +98,7 @@ const DynamicDeviceCatalogPanel = ({
   const solutionBadges = getSolutionBadges();
 
   return (
-    <>
-      <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col">
         {/* Sticky Header */}
         <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b p-4">
           <h3 className="text-lg font-semibold text-slate-900 mb-3">
@@ -221,14 +178,14 @@ const DynamicDeviceCatalogPanel = ({
                                     <MinimalDeviceCatalogCard
                                       key={device.id}
                                       device={device}
-                                      onAdd={() => handleDeviceShowcase(device)}
+                                      onAdd={() => onAddDevice(device)}
                                     />
                                   ))}
                                 </div>
                               ) : (
                                 <MinimalServiceCatalogGroup
                                   services={products}
-                                  onAddService={(service) => handleServiceShowcase(service, categorySlug)}
+                                  onAddService={(service) => onAddService(service, categorySlug)}
                                 />
                               )}
                             </AccordionContent>
@@ -243,18 +200,6 @@ const DynamicDeviceCatalogPanel = ({
           )}
         </div>
       </div>
-
-      {/* Unified Product Modal */}
-      <UnifiedProductModal
-        isOpen={showcaseModal.isOpen}
-        onClose={handleShowcaseClose}
-        mode="add"
-        productType={showcaseModal.type}
-        product={showcaseModal.product}
-        onSave={handleShowcaseAdd}
-        businessLocations={businessLocations}
-      />
-    </>
   );
 };
 
