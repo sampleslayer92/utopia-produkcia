@@ -18,7 +18,7 @@ interface ProgressiveSelectionFlowProps {
 const ProgressiveSelectionFlow = ({ data, updateData, onComplete, onBack }: ProgressiveSelectionFlowProps) => {
   const [selectionState, setSelectionState] = useState<SelectionFlowState>({
     selectedSolution: data.deviceSelection.selectedSolutions[0] || null,
-    requiresModules: data.deviceSelection.selectedSolutions.includes('Pokladňa'),
+    requiresModules: data.deviceSelection.selectedSolutions.includes('ee043a8f-3699-4c0e-8d21-b71eca1720f0'),
     selectedModules: [],
     availableSystems: [],
     selectedSystem: null,

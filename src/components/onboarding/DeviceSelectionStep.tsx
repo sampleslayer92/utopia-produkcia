@@ -40,10 +40,11 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
       }
     });
 
-    // Check if Pokladňa solution is selected to show progressive flow
-    if (solutionId === 'Pokladňa' && !isSelected) {
+    // Check if Pokladňa solution (UUID: ee043a8f-3699-4c0e-8d21-b71eca1720f0) is selected to show progressive flow
+    const pokladnaUuid = 'ee043a8f-3699-4c0e-8d21-b71eca1720f0';
+    if (solutionId === pokladnaUuid && !isSelected) {
       setShowProgressiveFlow(true);
-    } else if (solutionId === 'Pokladňa' && isSelected) {
+    } else if (solutionId === pokladnaUuid && isSelected) {
       setShowProgressiveFlow(false);
     }
   };
@@ -162,7 +163,8 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
 
   const handleProgressiveFlowBack = () => {
     // Remove Pokladňa from selected solutions
-    const updatedSolutions = data.deviceSelection.selectedSolutions.filter(id => id !== 'Pokladňa');
+    const pokladnaUuid = 'ee043a8f-3699-4c0e-8d21-b71eca1720f0';
+    const updatedSolutions = data.deviceSelection.selectedSolutions.filter(id => id !== pokladnaUuid);
     updateData({
       deviceSelection: {
         ...data.deviceSelection,
