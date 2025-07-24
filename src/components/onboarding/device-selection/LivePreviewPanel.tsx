@@ -26,6 +26,13 @@ const LivePreviewPanel = ({
 }: LivePreviewPanelProps) => {
   const { t } = useTranslation('forms');
   
+  // Helper function to get location name - moved up to avoid temporal dead zone
+  const getLocationName = (locationId: string) => {
+    if (locationId === 'unassigned') return 'Nepriradené k prevádzke';
+    const location = businessLocations.find(loc => loc.id === locationId);
+    return location?.name || 'Neznáma prevádzka';
+  };
+  
   // Group cards by location
   const cardsByLocation = dynamicCards.reduce((acc, card) => {
     const locationId = card.locationId || 'unassigned';
@@ -44,12 +51,6 @@ const LivePreviewPanel = ({
       locationName: getLocationName(locId)
     }))
   });
-
-  const getLocationName = (locationId: string) => {
-    if (locationId === 'unassigned') return 'Nepriradené k prevádzke';
-    const location = businessLocations.find(loc => loc.id === locationId);
-    return location?.name || 'Neznáma prevádzka';
-  };
 
   // Group cards within location by type and category
   const getLocationData = (cards: Array<DeviceCard | ServiceCard>) => {
