@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Table, 
@@ -29,11 +30,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Edit, MoreHorizontal, Plus, Search, Trash2, Package, Filter, Eye } from 'lucide-react';
+import { Edit, MoreHorizontal, Plus, Search, Trash2, Package, Filter, Eye, Check, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useWarehouseItems, useDeleteWarehouseItem, type WarehouseItem } from '@/hooks/useWarehouseItems';
 import { useCategories } from '@/hooks/useCategories';
 import { useItemTypes } from '@/hooks/useItemTypes';
+import { useBulkDeleteWarehouseItems, useBulkUpdateWarehouseItems } from '@/hooks/useBulkWarehouseOperations';
 import { WarehouseItemModal } from './WarehouseItemModal';
 import { EnhancedAddItemForm } from './EnhancedAddItemForm';
 import { icons } from 'lucide-react';
@@ -52,6 +54,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
   const [selectedItem, setSelectedItem] = useState<WarehouseItem | undefined>();
   const [showModal, setShowModal] = useState(false);
   const [deleteItem, setDeleteItem] = useState<WarehouseItem | null>(null);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
   // Fetch data
   const { data: categories = [] } = useCategories(true);
@@ -65,6 +68,8 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
   });
 
   const deleteMutation = useDeleteWarehouseItem();
+  const bulkDeleteMutation = useBulkDeleteWarehouseItems();
+  const bulkUpdateMutation = useBulkUpdateWarehouseItems();
 
   const handleEdit = (item: WarehouseItem) => {
     setSelectedItem(item);
@@ -83,6 +88,45 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedItem(undefined);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedItems(new Set(items.map(item => item.id)));
+    } else {
+      setSelectedItems(new Set());
+    }
+  };
+
+  const handleSelectionChange = (itemId: string, selected: boolean) => {
+    const newSelection = new Set(selectedItems);
+    if (selected) {
+      newSelection.add(itemId);
+    } else {
+      newSelection.delete(itemId);
+    }
+    setSelectedItems(newSelection);
+  };
+
+  const handleBulkDelete = () => {
+    bulkDeleteMutation.mutate(Array.from(selectedItems));
+    setSelectedItems(new Set());
+  };
+
+  const handleBulkActivate = () => {
+    bulkUpdateMutation.mutate({
+      itemIds: Array.from(selectedItems),
+      updates: { is_active: true }
+    });
+    setSelectedItems(new Set());
+  };
+
+  const handleBulkDeactivate = () => {
+    bulkUpdateMutation.mutate({
+      itemIds: Array.from(selectedItems),
+      updates: { is_active: false }
+    });
+    setSelectedItems(new Set());
   };
 
   // Helper function to render icons
@@ -184,6 +228,44 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
         </Card>
       </div>
 
+      {/* Bulk Actions Panel */}
+      {selectedItems.size > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">
+                {selectedItems.size} položiek vybratých
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkActivate}
+                className="ml-auto"
+              >
+                <Check className="h-4 w-4 mr-1" />
+                Aktivovať
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkDeactivate}
+              >
+                <X className="h-4 w-4 mr-1" />
+                Deaktivovať
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Zmazať
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filters */}
       <Card>
         <CardContent className="p-4">
@@ -248,6 +330,12 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={selectedItems.size === items.length && items.length > 0}
+                  onCheckedChange={handleSelectAll}
+                />
+              </TableHead>
               <TableHead>Názov</TableHead>
               <TableHead>Typ</TableHead>
               <TableHead>Kategória</TableHead>
@@ -260,7 +348,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={8} className="text-center py-8">
                   <div className="flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                     Načítavam...
@@ -269,7 +357,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
               </TableRow>
             ) : items.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={8} className="text-center py-8">
                   <div className="text-muted-foreground">
                     {search || categoryFilter || typeFilter || statusFilter 
                       ? 'Žiadne položky neboli nájdené podľa zadaných filtrov'
@@ -285,6 +373,12 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                   className="hover:bg-muted/50 cursor-pointer"
                   onClick={() => navigate(`/admin/warehouse/items/${item.id}`)}
                 >
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={selectedItems.has(item.id)}
+                      onCheckedChange={(checked) => handleSelectionChange(item.id, !!checked)}
+                    />
+                  </TableCell>
                   <TableCell>
                     <div>
                       <div className="font-medium hover:text-primary transition-colors">

@@ -193,8 +193,20 @@ export const useOnboardingData = () => {
   }, [applyContractCopy]);
 
   const updateData = (data: Partial<OnboardingData>) => {
+    console.log('🔄 Updating onboarding data:', data);
+    
     setOnboardingData(prev => {
-      const updated = { ...prev, ...data };
+      // Deep merge for nested objects like deviceSelection
+      const updated = {
+        ...prev,
+        ...data,
+        deviceSelection: data.deviceSelection 
+          ? { ...prev.deviceSelection, ...data.deviceSelection }
+          : prev.deviceSelection
+      };
+      
+      console.log('💾 Saving to localStorage:', updated);
+      console.log('📦 Cart items count:', updated.deviceSelection.dynamicCards.length);
       localStorage.setItem('onboarding_data', JSON.stringify(updated));
       return updated;
     });

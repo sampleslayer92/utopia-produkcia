@@ -97,14 +97,10 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelecti
       return;
     }
 
-    // Update data with proper structure
-    const updatedData = {
-      ...data,
+    // Update data with deviceSelection directly
+    updateData({
       deviceSelection: updatedDeviceSelection
-    };
-
-    // Update state and localStorage
-    updateData(updatedData);
+    });
     
     console.log('💾 Cart updated, localStorage synced');
     
