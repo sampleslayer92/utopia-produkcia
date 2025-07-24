@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Circle } from 'lucide-react';
 import ModuleSelectionStep from './ModuleSelectionStep';
 import SystemSelectionStep from './SystemSelectionStep';
+import ProductCatalogStep from './ProductCatalogStep';
 import { ModuleSelection, SelectionFlowState } from '@/types/selection-flow';
 import { OnboardingData } from '@/types/onboarding';
 
@@ -52,7 +53,9 @@ const ProgressiveSelectionFlow = ({ data, updateData, onComplete, onBack }: Prog
     if (selectionState.currentStep === 'modules') {
       setSelectionState(prev => ({ ...prev, currentStep: 'system' }));
     } else if (selectionState.currentStep === 'system') {
-      // Store the selection state and proceed to products
+      setSelectionState(prev => ({ ...prev, currentStep: 'products' }));
+    } else if (selectionState.currentStep === 'products') {
+      // Store the selection state and complete
       const updatedData = {
         ...data,
         progressiveSelection: {
@@ -65,7 +68,9 @@ const ProgressiveSelectionFlow = ({ data, updateData, onComplete, onBack }: Prog
   };
 
   const handlePrevStep = () => {
-    if (selectionState.currentStep === 'system') {
+    if (selectionState.currentStep === 'products') {
+      setSelectionState(prev => ({ ...prev, currentStep: 'system' }));
+    } else if (selectionState.currentStep === 'system') {
       setSelectionState(prev => ({ ...prev, currentStep: 'modules' }));
     } else if (selectionState.currentStep === 'modules') {
       onBack();

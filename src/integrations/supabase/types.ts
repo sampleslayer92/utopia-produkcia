@@ -633,6 +633,13 @@ export type Database = {
             referencedRelation: "contracts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "contract_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "warehouse_items"
+            referencedColumns: ["id"]
+          },
         ]
       }
       contract_statuses: {
@@ -1278,6 +1285,20 @@ export type Database = {
           },
           {
             foreignKeyName: "fk_product_addons_parent"
+            columns: ["parent_product_id"]
+            isOneToOne: false
+            referencedRelation: "warehouse_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_addons_addon_product_id_fkey"
+            columns: ["addon_product_id"]
+            isOneToOne: false
+            referencedRelation: "warehouse_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_addons_parent_product_id_fkey"
             columns: ["parent_product_id"]
             isOneToOne: false
             referencedRelation: "warehouse_items"
