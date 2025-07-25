@@ -4,7 +4,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { useNavigate, useLocation, NavLink } from "react-router-dom";
-import { BarChart3, FileText, Users, Package, Settings, Briefcase, Bell, Building, UserCheck, TrendingUp, Archive, PlusCircle, GitBranch, Eye, Tags, ShoppingBag, Users2, MapPin, Layers3, ShoppingCart } from 'lucide-react';
+import { BarChart3, FileText, Users, Package, Settings, Briefcase, Bell, Building, UserCheck, TrendingUp, Archive, PlusCircle, GitBranch, Eye, Tags, ShoppingBag, Users2, MapPin, Layers3, ShoppingCart, Languages } from 'lucide-react';
 import { useState, useEffect } from "react";
 import AdminProfile from "./AdminProfile";
 import { useAuth } from '@/contexts/AuthContext';
@@ -259,6 +259,11 @@ const AdminSidebar = () => {
           title: t('navigation.teamMembers'),
           path: "/admin/team",
           active: location.pathname === "/admin/team"
+        },
+        {
+          title: "🌐 Preklady",
+          path: "/admin/translations",
+          active: location.pathname === "/admin/translations"
         },
         {
           title: t('navigation.organizationalStructure'),

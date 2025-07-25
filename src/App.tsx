@@ -23,6 +23,7 @@ import MerchantDashboard from "./pages/MerchantDashboard";
 import ContractEditPage from "./pages/ContractEditPage";
 import ContractDetailPage from "./pages/ContractDetailPage";
 import RequestsManagementPage from "@/pages/RequestsManagementPage";
+import { TranslationsManagementPage } from "@/pages/TranslationsManagementPage";
 import MerchantDetailPage from "./pages/MerchantDetailPage";
 import SolutionCategoryManager from "@/components/admin/solutions/SolutionCategoryManager";
 import AdminOnboardingPage from "./pages/AdminOnboardingPage";
@@ -232,6 +233,11 @@ const App = () => (
           } />
           
           {/* Admin-only routes */}
+          <Route path="/admin/translations" element={
+            <ProtectedRoute requiredRole="admin">
+              <TranslationsManagementPage />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/organizations" element={
             <ProtectedRoute requiredRole="admin">
               <OrganizationsPage />

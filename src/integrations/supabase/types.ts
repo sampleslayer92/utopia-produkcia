@@ -1787,6 +1787,42 @@ export type Database = {
           },
         ]
       }
+      translations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_system: boolean
+          key: string
+          language: string
+          namespace: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_system?: boolean
+          key: string
+          language: string
+          namespace: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_system?: boolean
+          key?: string
+          language?: string
+          namespace?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       user_kanban_preferences: {
         Row: {
           auto_refresh: boolean
