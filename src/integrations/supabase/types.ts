@@ -639,11 +639,12 @@ export type Database = {
           custom_value: Json | null
           description: string | null
           id: string
-          item_id: string
+          item_id: string | null
           item_type: string
           monthly_fee: number
           name: string
           updated_at: string
+          warehouse_item_id: string | null
         }
         Insert: {
           category?: string
@@ -654,11 +655,12 @@ export type Database = {
           custom_value?: Json | null
           description?: string | null
           id?: string
-          item_id: string
+          item_id?: string | null
           item_type?: string
           monthly_fee?: number
           name: string
           updated_at?: string
+          warehouse_item_id?: string | null
         }
         Update: {
           category?: string
@@ -669,11 +671,12 @@ export type Database = {
           custom_value?: Json | null
           description?: string | null
           id?: string
-          item_id?: string
+          item_id?: string | null
           item_type?: string
           monthly_fee?: number
           name?: string
           updated_at?: string
+          warehouse_item_id?: string | null
         }
         Relationships: [
           {
@@ -684,8 +687,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "contract_items_item_id_fkey"
-            columns: ["item_id"]
+            foreignKeyName: "contract_items_warehouse_item_id_fkey"
+            columns: ["warehouse_item_id"]
             isOneToOne: false
             referencedRelation: "warehouse_items"
             referencedColumns: ["id"]

@@ -19,6 +19,20 @@ export const useContractItems = (contractId: string) => {
         throw new Error(`Zmluva s ID ${contractId} neexistuje. Prosím obnovte stránku a skúste znova.`);
       }
 
+      // Check if this is a warehouse item or custom onboarding item
+      let warehouseItemId: string | null = null;
+      
+      // Try to find matching warehouse item by catalogId
+      if (item.catalogId) {
+        const { data: warehouseItem } = await supabase
+          .from('warehouse_items')
+          .select('id')
+          .eq('id', item.catalogId)
+          .maybeSingle();
+        
+        warehouseItemId = warehouseItem?.id || null;
+      }
+
       // Check if item with same item_id already exists
       const { data: existingItems, error: checkError } = await supabase
         .from('contract_items')
@@ -42,7 +56,8 @@ export const useContractItems = (contractId: string) => {
             company_cost: item.companyCost || 0,
             name: item.name,
             description: item.description,
-            category: item.category
+            category: item.category,
+            warehouse_item_id: warehouseItemId
           })
           .eq('id', existingItems[0].id)
           .select()
@@ -61,7 +76,8 @@ export const useContractItems = (contractId: string) => {
         .from('contract_items')
         .insert({
           contract_id: contractId,
-          item_id: item.id,
+          item_id: item.id, // Keep the onboarding UUID as item_id
+          warehouse_item_id: warehouseItemId, // Reference to warehouse item if exists
           item_type: item.type,
           category: item.category,
           name: item.name,
