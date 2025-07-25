@@ -9,6 +9,7 @@ import { Languages, Search, Globe, Plus, FileText, Users, Settings, Bell, Shield
 import { useTranslations, useTranslationNamespaces, useTranslationLanguages } from '@/hooks/useTranslations';
 import { TranslationEditor } from '@/components/admin/translations/TranslationEditor';
 import { Separator } from '@/components/ui/separator';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 const namespaceIcons = {
   common: FileText,
@@ -69,28 +70,21 @@ export const TranslationsManagementPage = () => {
 
   if (isLoadingTranslations || isLoadingNamespaces || isLoadingLanguages) {
     return (
-      <div className="container mx-auto py-6">
+      <AdminLayout title="Správa prekladov" subtitle="Spravujte preklady pre všetky jazyky a kategórie v aplikácii">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-muted rounded w-1/3"></div>
           <div className="h-32 bg-muted rounded"></div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Languages className="h-8 w-8" />
-            Správa prekladov
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Spravujte preklady pre všetky jazyky a kategórie v aplikácii
-          </p>
-        </div>
-      </div>
+    <AdminLayout 
+      title="Správa prekladov" 
+      subtitle="Spravujte preklady pre všetky jazyky a kategórie v aplikácii"
+    >
+      <div className="space-y-6">
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
@@ -229,6 +223,7 @@ export const TranslationsManagementPage = () => {
           </Tabs>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
