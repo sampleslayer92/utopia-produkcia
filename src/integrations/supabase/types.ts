@@ -1792,34 +1792,46 @@ export type Database = {
           created_at: string
           created_by: string | null
           id: string
+          is_auto_translated: boolean | null
           is_system: boolean
           key: string
           language: string
+          last_modified_by: string | null
+          metadata: Json | null
           namespace: string
           updated_at: string
           value: string
+          version: number | null
         }
         Insert: {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_auto_translated?: boolean | null
           is_system?: boolean
           key: string
           language: string
+          last_modified_by?: string | null
+          metadata?: Json | null
           namespace: string
           updated_at?: string
           value: string
+          version?: number | null
         }
         Update: {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_auto_translated?: boolean | null
           is_system?: boolean
           key?: string
           language?: string
+          last_modified_by?: string | null
+          metadata?: Json | null
           namespace?: string
           updated_at?: string
           value?: string
+          version?: number | null
         }
         Relationships: []
       }

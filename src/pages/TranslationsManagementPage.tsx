@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Languages, Search, Globe, Plus, FileText, Users, Settings, Bell, ShieldCheck, Layout, HelpCircle } from 'lucide-react';
 import { useTranslations, useTranslationNamespaces, useTranslationLanguages } from '@/hooks/useTranslations';
-import { TranslationEditor } from '@/components/admin/translations/TranslationEditor';
+import { AdvancedTranslationEditor } from '@/components/admin/translations/AdvancedTranslationEditor';
 import { Separator } from '@/components/ui/separator';
 import AdminLayout from '@/components/admin/AdminLayout';
 
@@ -212,11 +212,12 @@ export const TranslationsManagementPage = () => {
 
                 <Separator />
 
-                <TranslationEditor
+                <AdvancedTranslationEditor
                   translations={filteredTranslations}
                   language={language}
                   namespace={selectedNamespace}
                   namespaces={namespaces}
+                  languages={languages}
                 />
               </TabsContent>
             ))}
