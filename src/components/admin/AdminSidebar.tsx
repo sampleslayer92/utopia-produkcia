@@ -37,7 +37,7 @@ const AdminSidebar = () => {
     if (pathname.startsWith('/admin/merchants')) return 'clients';
     if (pathname.startsWith('/admin/warehouse')) return 'products';
     if (pathname.startsWith('/admin/reporting')) return 'analytics';
-    if (pathname.startsWith('/admin/organizations') || pathname.startsWith('/admin/team')) return 'system';
+    if (pathname.startsWith('/admin/organizations') || pathname.startsWith('/admin/team') || pathname.startsWith('/admin/templates')) return 'system';
     if (pathname.startsWith('/admin/notifications') || pathname.startsWith('/admin/settings')) return 'personal';
     return null;
   };
@@ -264,6 +264,11 @@ const AdminSidebar = () => {
           title: "🌐 Preklady",
           path: "/admin/translations",
           active: location.pathname === "/admin/translations"
+        },
+        {
+          title: "📄 Šablóny Zmlúv",
+          path: "/admin/templates",
+          active: location.pathname.startsWith("/admin/templates")
         },
         {
           title: t('navigation.organizationalStructure'),
