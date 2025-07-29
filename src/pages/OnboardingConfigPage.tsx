@@ -37,13 +37,13 @@ export interface OnboardingStep {
 }
 
 export interface OnboardingField {
-  id: string;
+  id?: string;
   fieldKey: string;
   fieldLabel: string;
-  fieldType: 'text' | 'email' | 'phone' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'date' | 'number';
+  fieldType: 'text' | 'email' | 'phone' | 'tel' | 'textarea' | 'select' | 'multiselect' | 'checkbox' | 'radio' | 'date' | 'number';
   isRequired: boolean;
   isEnabled: boolean;
-  position: number;
+  position?: number;
   fieldOptions?: {
     placeholder?: string;
     helpText?: string;

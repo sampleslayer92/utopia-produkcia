@@ -11,7 +11,16 @@ const DEFAULT_STEPS: Partial<OnboardingStep>[] = [
     position: 0,
     isEnabled: true,
     isRequired: true,
-    fields: []
+    fields: [
+      { fieldKey: 'salutation', fieldLabel: 'Oslovenie', fieldType: 'select', isRequired: false, isEnabled: true, position: 0 },
+      { fieldKey: 'firstName', fieldLabel: 'Meno', fieldType: 'text', isRequired: true, isEnabled: true, position: 1 },
+      { fieldKey: 'lastName', fieldLabel: 'Priezvisko', fieldType: 'text', isRequired: true, isEnabled: true, position: 2 },
+      { fieldKey: 'email', fieldLabel: 'Email', fieldType: 'email', isRequired: true, isEnabled: true, position: 3 },
+      { fieldKey: 'phonePrefix', fieldLabel: 'Predvolba', fieldType: 'select', isRequired: true, isEnabled: true, position: 4 },
+      { fieldKey: 'phone', fieldLabel: 'Telefón', fieldType: 'tel', isRequired: true, isEnabled: true, position: 5 },
+      { fieldKey: 'salesNote', fieldLabel: 'Poznámka pre predaj', fieldType: 'textarea', isRequired: false, isEnabled: true, position: 6 },
+      { fieldKey: 'userRoles', fieldLabel: 'Používateľské role', fieldType: 'multiselect', isRequired: false, isEnabled: true, position: 7 }
+    ]
   },
   {
     stepKey: 'company_info',
@@ -20,7 +29,27 @@ const DEFAULT_STEPS: Partial<OnboardingStep>[] = [
     position: 1,
     isEnabled: true,
     isRequired: true,
-    fields: []
+    fields: [
+      { fieldKey: 'companyName', fieldLabel: 'Názov spoločnosti', fieldType: 'text', isRequired: true, isEnabled: true, position: 0 },
+      { fieldKey: 'ico', fieldLabel: 'IČO', fieldType: 'text', isRequired: true, isEnabled: true, position: 1 },
+      { fieldKey: 'dic', fieldLabel: 'DIČ', fieldType: 'text', isRequired: true, isEnabled: true, position: 2 },
+      { fieldKey: 'registryType', fieldLabel: 'Typ registra', fieldType: 'select', isRequired: true, isEnabled: true, position: 3 },
+      { fieldKey: 'isVatPayer', fieldLabel: 'Platca DPH', fieldType: 'checkbox', isRequired: false, isEnabled: true, position: 4 },
+      { fieldKey: 'vatNumber', fieldLabel: 'IČ DPH', fieldType: 'text', isRequired: false, isEnabled: true, position: 5 },
+      { fieldKey: 'court', fieldLabel: 'Súd', fieldType: 'text', isRequired: false, isEnabled: true, position: 6 },
+      { fieldKey: 'section', fieldLabel: 'Oddiel', fieldType: 'text', isRequired: false, isEnabled: true, position: 7 },
+      { fieldKey: 'insertNumber', fieldLabel: 'Vložka číslo', fieldType: 'text', isRequired: false, isEnabled: true, position: 8 },
+      { fieldKey: 'address.street', fieldLabel: 'Ulica a číslo', fieldType: 'text', isRequired: true, isEnabled: true, position: 9 },
+      { fieldKey: 'address.city', fieldLabel: 'Mesto', fieldType: 'text', isRequired: true, isEnabled: true, position: 10 },
+      { fieldKey: 'address.zipCode', fieldLabel: 'PSČ', fieldType: 'text', isRequired: true, isEnabled: true, position: 11 },
+      { fieldKey: 'contactAddressSameAsMain', fieldLabel: 'Korešpondenčná adresa rovnaká', fieldType: 'checkbox', isRequired: false, isEnabled: true, position: 12 },
+      { fieldKey: 'headOfficeEqualsOperatingAddress', fieldLabel: 'Sídlo rovnaké ako prevádzka', fieldType: 'checkbox', isRequired: false, isEnabled: true, position: 13 },
+      { fieldKey: 'contactPerson.firstName', fieldLabel: 'Meno kontaktnej osoby', fieldType: 'text', isRequired: true, isEnabled: true, position: 14 },
+      { fieldKey: 'contactPerson.lastName', fieldLabel: 'Priezvisko kontaktnej osoby', fieldType: 'text', isRequired: true, isEnabled: true, position: 15 },
+      { fieldKey: 'contactPerson.email', fieldLabel: 'Email kontaktnej osoby', fieldType: 'email', isRequired: true, isEnabled: true, position: 16 },
+      { fieldKey: 'contactPerson.phone', fieldLabel: 'Telefón kontaktnej osoby', fieldType: 'tel', isRequired: true, isEnabled: true, position: 17 },
+      { fieldKey: 'contactPerson.isTechnicalPerson', fieldLabel: 'Je technická osoba', fieldType: 'checkbox', isRequired: false, isEnabled: true, position: 18 }
+    ]
   },
   {
     stepKey: 'business_locations',
@@ -29,7 +58,26 @@ const DEFAULT_STEPS: Partial<OnboardingStep>[] = [
     position: 2,
     isEnabled: true,
     isRequired: true,
-    fields: []
+    fields: [
+      { fieldKey: 'name', fieldLabel: 'Názov lokality', fieldType: 'text', isRequired: true, isEnabled: true, position: 0 },
+      { fieldKey: 'hasPOS', fieldLabel: 'Má POS terminál', fieldType: 'checkbox', isRequired: false, isEnabled: true, position: 1 },
+      { fieldKey: 'address.street', fieldLabel: 'Ulica a číslo', fieldType: 'text', isRequired: true, isEnabled: true, position: 2 },
+      { fieldKey: 'address.city', fieldLabel: 'Mesto', fieldType: 'text', isRequired: true, isEnabled: true, position: 3 },
+      { fieldKey: 'address.zipCode', fieldLabel: 'PSČ', fieldType: 'text', isRequired: true, isEnabled: true, position: 4 },
+      { fieldKey: 'iban', fieldLabel: 'IBAN', fieldType: 'text', isRequired: true, isEnabled: true, position: 5 },
+      { fieldKey: 'contactPerson.name', fieldLabel: 'Meno kontaktnej osoby', fieldType: 'text', isRequired: true, isEnabled: true, position: 6 },
+      { fieldKey: 'contactPerson.email', fieldLabel: 'Email kontaktnej osoby', fieldType: 'email', isRequired: true, isEnabled: true, position: 7 },
+      { fieldKey: 'contactPerson.phone', fieldLabel: 'Telefón kontaktnej osoby', fieldType: 'tel', isRequired: true, isEnabled: true, position: 8 },
+      { fieldKey: 'businessSector', fieldLabel: 'Sektor podnikania', fieldType: 'select', isRequired: true, isEnabled: true, position: 9 },
+      { fieldKey: 'businessSubject', fieldLabel: 'Predmet podnikania', fieldType: 'text', isRequired: false, isEnabled: true, position: 10 },
+      { fieldKey: 'mccCode', fieldLabel: 'MCC kód', fieldType: 'text', isRequired: false, isEnabled: true, position: 11 },
+      { fieldKey: 'estimatedTurnover', fieldLabel: 'Odhadovaný obrat', fieldType: 'number', isRequired: true, isEnabled: true, position: 12 },
+      { fieldKey: 'monthlyTurnover', fieldLabel: 'Mesačný obrat', fieldType: 'number', isRequired: false, isEnabled: true, position: 13 },
+      { fieldKey: 'averageTransaction', fieldLabel: 'Priemerná transakcia', fieldType: 'number', isRequired: true, isEnabled: true, position: 14 },
+      { fieldKey: 'openingHours', fieldLabel: 'Otváracie hodiny', fieldType: 'text', isRequired: true, isEnabled: true, position: 15 },
+      { fieldKey: 'seasonality', fieldLabel: 'Sezónnosť', fieldType: 'select', isRequired: true, isEnabled: true, position: 16 },
+      { fieldKey: 'seasonalWeeks', fieldLabel: 'Počet sezónnych týždňov', fieldType: 'number', isRequired: false, isEnabled: true, position: 17 }
+    ]
   },
   {
     stepKey: 'device_selection',
@@ -89,7 +137,10 @@ export const useOnboardingConfig = () => {
       const defaultSteps = DEFAULT_STEPS.map((step, index) => ({
         id: `default_${index}`,
         ...step,
-        fields: []
+        fields: step.fields?.map((field, fieldIndex) => ({
+          id: `field_${index}_${fieldIndex}`,
+          ...field
+        })) || []
       })) as OnboardingStep[];
       
       setSteps(defaultSteps);
@@ -99,7 +150,10 @@ export const useOnboardingConfig = () => {
       const defaultSteps = DEFAULT_STEPS.map((step, index) => ({
         id: `default_${index}`,
         ...step,
-        fields: []
+        fields: step.fields?.map((field, fieldIndex) => ({
+          id: `field_${index}_${fieldIndex}`,
+          ...field
+        })) || []
       })) as OnboardingStep[];
       
       setSteps(defaultSteps);
@@ -183,7 +237,10 @@ export const useOnboardingConfig = () => {
       const defaultSteps = DEFAULT_STEPS.map((step, index) => ({
         id: `default_${index}`,
         ...step,
-        fields: []
+        fields: step.fields?.map((field, fieldIndex) => ({
+          id: `field_${index}_${fieldIndex}`,
+          ...field
+        })) || []
       })) as OnboardingStep[];
       
       setSteps(defaultSteps);
