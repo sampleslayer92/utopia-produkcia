@@ -6,7 +6,7 @@ import { useOnboardingNavigation } from "./hooks/useOnboardingNavigation";
 import { useAutoSave } from "./hooks/useAutoSave";
 import { useProgressTracking } from "./hooks/useProgressTracking";
 import { useStepValidation } from "./hooks/useStepValidation";
-import { useDynamicOnboardingSteps } from "@/hooks/useDynamicOnboardingSteps";
+import { useOnboardingSteps } from "./config/onboardingSteps";
 import OnboardingTopBar from "./ui/OnboardingTopBar";
 import OnboardingNavigation from "./ui/OnboardingNavigation";
 import MobileOptimizedNavigation from "./ui/MobileOptimizedNavigation";
@@ -35,7 +35,7 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
   const { overallProgress } = useProgressTracking(onboardingData, currentStep);
   const stepValidation = useStepValidation(currentStep, onboardingData);
   const isMobile = useIsMobile();
-  const { steps: onboardingSteps, totalSteps: configTotalSteps } = useDynamicOnboardingSteps();
+  const onboardingSteps = useOnboardingSteps();
 
   const isBasicInfoComplete = useMemo(() => {
     const { contactInfo } = onboardingData;
@@ -82,8 +82,7 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
     updateData,
     isBasicInfoComplete,
     handleStepNavigation, // Pass the callback
-    isAdminMode, // Pass admin mode flag
-    configTotalSteps // Pass dynamic total steps
+    isAdminMode // Pass admin mode flag
   );
 
   const handleAutoSave = useCallback(async (data: typeof onboardingData) => {

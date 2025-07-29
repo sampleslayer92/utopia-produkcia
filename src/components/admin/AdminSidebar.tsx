@@ -36,7 +36,6 @@ const AdminSidebar = () => {
     if (pathname.startsWith('/admin/deals') || pathname.startsWith('/admin/requests') || pathname.startsWith('/admin/contracts')) return 'business';
     if (pathname.startsWith('/admin/merchants')) return 'clients';
     if (pathname.startsWith('/admin/warehouse')) return 'products';
-    if (pathname.startsWith('/admin/onboarding')) return 'onboarding';
     if (pathname.startsWith('/admin/reporting')) return 'analytics';
     if (pathname.startsWith('/admin/organizations') || pathname.startsWith('/admin/team') || pathname.startsWith('/admin/templates')) return 'system';
     if (pathname.startsWith('/admin/notifications') || pathname.startsWith('/admin/settings')) return 'personal';
@@ -89,7 +88,6 @@ const AdminSidebar = () => {
       case 'business': return '/admin/deals';
       case 'clients': return '/admin/merchants';
       case 'products': return '/admin/warehouse';
-      case 'onboarding': return '/admin/onboarding';
       case 'analytics': return '/admin/reporting';
       case 'system': return '/admin/organizations';
       case 'personal': return '/admin/notifications';
@@ -213,28 +211,7 @@ const AdminSidebar = () => {
       ]
     }] : []),
 
-    // 5. ONBOARDING KONFIGURÁCIA - Only for admin
-    ...(userRole?.role === 'admin' ? [{
-      id: 'onboarding',
-      title: '🚀 Onboarding',
-      type: 'expandable' as const,
-      expanded: isExpanded('onboarding'),
-      defaultRoute: '/admin/onboarding',
-      children: [
-        {
-          title: "📝 Nová zmluva",
-          path: "/admin/onboarding",
-          active: location.pathname === "/admin/onboarding"
-        },
-        {
-          title: "⚙️ Konfigurácia procesu",
-          path: "/admin/onboarding-editor",
-          active: location.pathname === "/admin/onboarding-editor"
-        }
-      ]
-    }] : []),
-
-    // 6. ANALÝZY & REPORTING - Only for admin and partner
+    // 5. ANALÝZY & REPORTING - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'analytics',
       title: '📊 Analýzy & Reporting',
@@ -260,7 +237,7 @@ const AdminSidebar = () => {
       ]
     }] : []),
 
-    // 7. SPRÁVA SYSTÉMU - Only for admin
+    // 6. SPRÁVA SYSTÉMU - Only for admin
     ...(userRole?.role === 'admin' ? [{
       id: 'system',
       title: '⚙️ Správa Systému',
@@ -301,7 +278,7 @@ const AdminSidebar = () => {
       ]
     }] : []),
 
-    // 8. OSOBNÉ - For all roles
+    // 7. OSOBNÉ - For all roles
     {
       id: 'personal',
       title: '👤 Osobné',
