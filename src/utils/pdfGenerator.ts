@@ -147,6 +147,55 @@ const createTemplateBasedG1 = (data: any, template: any): string => {
             min-height: 20px;
             padding: 2px 0;
           }
+          .table-layout {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+          }
+          .table-layout td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            vertical-align: top;
+            min-height: 20px;
+          }
+          .table-cell.field {
+            background: white;
+          }
+          .table-cell.label {
+            background: #f9f9f9;
+            font-weight: bold;
+          }
+          .table-cell.empty {
+            background: #f5f5f5;
+          }
+          .checkbox-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+          .checkbox {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            display: inline-block;
+            text-align: center;
+            line-height: 10px;
+          }
+          .checkbox.checked::before {
+            content: "✓";
+          }
+          .field-container {
+            width: 100%;
+          }
+          .field-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+          }
+          .label-cell {
+            font-weight: bold;
+            text-align: center;
+          }
         </style>
       </head>
       <body>
@@ -198,8 +247,124 @@ const createTemplateBasedG2 = (data: any, template: any): string => {
 
 const generateSectionsHTML = (data: any, sections: any[]): string => {
   return sections.map(section => {
-    return `<div class="section"><div class="section-title">${section.title}</div></div>`;
+    if (section.type === 'table_layout') {
+      // Handle table layout sections
+      return generateTableLayoutHTML(section, data);
+    } else if (section.type === 'dynamic_form') {
+      // Handle dynamic forms with multiple entries
+      return `
+        <div class="section">
+          <h3>${section.title}</h3>
+          ${section.fields?.map((field: any) => `
+            <div class="form-field">
+              <label>${field.label}${field.required ? ' *' : ''}:</label>
+              <div class="field-value">${data[field.key] || ''}</div>
+            </div>
+          `).join('') || ''}
+        </div>
+      `;
+    } else {
+      // Regular form sections
+      return `
+        <div class="section">
+          <h3>${section.title}</h3>
+          ${section.fields?.map((field: any) => `
+            <div class="form-field">
+              <label>${field.label}${field.required ? ' *' : ''}:</label>
+              <div class="field-value">${data[field.key] || ''}</div>
+            </div>
+          `).join('') || ''}
+        </div>
+      `;
+    }
   }).join('');
+};
+
+const generateTableLayoutHTML = (section: any, data: any): string => {
+  if (!section.table || !section.table.cells) {
+    return `<div class="section"><h3>${section.title}</h3><p>Tabuľka nie je definovaná</p></div>`;
+  }
+
+  const { rows, cols, cells } = section.table;
+  
+  // Create a grid to track occupied cells
+  const grid: (string | null)[][] = Array(rows).fill(null).map(() => Array(cols).fill(null));
+  
+  // Sort cells by row and column
+  const sortedCells = [...cells].sort((a, b) => {
+    if (a.row !== b.row) return a.row - b.row;
+    return a.col - b.col;
+  });
+
+  // Mark occupied cells
+  sortedCells.forEach(cell => {
+    for (let r = cell.row; r < cell.row + cell.rowspan; r++) {
+      for (let c = cell.col; c < cell.col + cell.colspan; c++) {
+        if (r < rows && c < cols) {
+          grid[r][c] = cell.id;
+        }
+      }
+    }
+  });
+
+  const tableHTML = `
+    <div class="section">
+      <h3>${section.title}</h3>
+      <table class="table-layout">
+        <tbody>
+          ${Array.from({ length: rows }, (_, rowIndex) => {
+            return `<tr>
+              ${Array.from({ length: cols }, (_, colIndex) => {
+                // Skip if this cell is part of a colspan/rowspan from previous cell
+                if (grid[rowIndex][colIndex] && 
+                    sortedCells.find(c => c.id === grid[rowIndex][colIndex] && (c.row !== rowIndex || c.col !== colIndex))) {
+                  return '';
+                }
+                
+                const cell = sortedCells.find(c => c.row === rowIndex && c.col === colIndex);
+                if (!cell) return '<td class="empty-cell"></td>';
+                
+                const cellContent = getCellContent(cell, data);
+                return `<td class="table-cell ${cell.type}" colspan="${cell.colspan}" rowspan="${cell.rowspan}">${cellContent}</td>`;
+              }).join('')}
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  return tableHTML;
+};
+
+const getCellContent = (cell: any, data: any): string => {
+  if (cell.type === 'field' && cell.field) {
+    const value = data[cell.field.key] || '';
+    
+    if (cell.field.type === 'checkbox') {
+      return `
+        <div class="checkbox-field">
+          <label class="checkbox-label">${cell.field.label}</label>
+          <div class="checkbox-container">
+            <span class="checkbox ${value === 'true' || value === true ? 'checked' : ''}">☐</span>
+          </div>
+        </div>
+      `;
+    }
+    
+    return `
+      <div class="field-container">
+        <label class="field-label">${cell.field.label}${cell.field.required ? ' *' : ''}:</label>
+        <div class="field-value">${value}</div>
+      </div>
+    `;
+  }
+  
+  if (cell.type === 'label' && cell.content) {
+    return `<div class="label-cell">${cell.content}</div>`;
+  }
+  
+  return '';
 };
 
 const createG1Template = (data: any): string => {
