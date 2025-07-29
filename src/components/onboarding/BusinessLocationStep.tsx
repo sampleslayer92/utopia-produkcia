@@ -17,13 +17,21 @@ interface BusinessLocationStepProps {
   updateData: (data: Partial<OnboardingData>) => void;
   onNext: () => void;
   onPrev: () => void;
+  customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
 }
 
-const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) => {
+const BusinessLocationStep = ({ data, updateData, customFields }: BusinessLocationStepProps) => {
   const { t } = useTranslation('forms');
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [isOpeningHoursModalOpen, setIsOpeningHoursModalOpen] = useState(false);
   const isMobile = useIsMobile();
+
+  // Helper to check if field is enabled in config
+  const isFieldEnabled = (fieldKey: string) => {
+    if (!customFields) return true; // Default behavior when no config
+    const field = customFields.find(f => f.fieldKey === fieldKey);
+    return field ? field.isEnabled : false;
+  };
 
   const {
     expandedLocationId,
@@ -75,6 +83,7 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
             onBankAccountsUpdate={(accounts) => updateBankAccounts(location.id, accounts)}
             onBusinessDetailsUpdate={(field, value) => updateBusinessDetails(location.id, field, value)}
             onOpeningHoursEdit={() => handleOpeningHoursEdit(location.id)}
+            customFields={customFields}
           />
         ))}
       </div>

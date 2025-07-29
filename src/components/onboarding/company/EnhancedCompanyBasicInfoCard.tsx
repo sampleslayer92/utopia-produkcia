@@ -15,18 +15,27 @@ interface EnhancedCompanyBasicInfoCardProps {
   updateCompanyInfo: (field: string, value: any) => void;
   autoFilledFields: Set<string>;
   setAutoFilledFields: (fields: Set<string>) => void;
+  customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
 }
 
 const EnhancedCompanyBasicInfoCard = ({ 
   data, 
   updateCompanyInfo, 
   autoFilledFields, 
-  setAutoFilledFields 
+  setAutoFilledFields,
+  customFields 
 }: EnhancedCompanyBasicInfoCardProps) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
   const { toast } = useToast();
   const { t } = useTranslation('forms');
+
+  // Helper to check if field is enabled in config
+  const isFieldEnabled = (fieldKey: string) => {
+    if (!customFields) return true; // Default behavior when no config
+    const field = customFields.find(f => f.fieldKey === fieldKey);
+    return field ? field.isEnabled : false;
+  };
 
   const handleCompanySelect = useCallback(async (result: CompanyRecognitionResult) => {
     console.log('=== COMPANY SELECT: Starting complete batch update ===');
@@ -299,83 +308,91 @@ const EnhancedCompanyBasicInfoCard = ({
       </div>
 
       {/* Company Name - with search button and wider field */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700">
-          {t('companyInfo.basicInfoCard.companyNameLabel')}
-        </label>
-        <div className="flex gap-2">
-          <OnboardingInput
-            value={data.companyInfo.companyName}
-            onChange={handleCompanyNameChange}
-            placeholder={t('companyInfo.basicInfoCard.companyNamePlaceholder')}
-            className={`flex-1 min-w-0 text-sm transition-all duration-300 ${getFieldClassName('companyName')}`}
-            icon={<Building2 className="h-4 w-4" />}
-            disabled={isAutoFilling}
-          />
-          <CompanySearchButton 
-            onClick={handleOpenSearchModal}
-            disabled={isAutoFilling}
-          />
+      {isFieldEnabled('companyName') && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-700">
+            {t('companyInfo.basicInfoCard.companyNameLabel')}
+          </label>
+          <div className="flex gap-2">
+            <OnboardingInput
+              value={data.companyInfo.companyName}
+              onChange={handleCompanyNameChange}
+              placeholder={t('companyInfo.basicInfoCard.companyNamePlaceholder')}
+              className={`flex-1 min-w-0 text-sm transition-all duration-300 ${getFieldClassName('companyName')}`}
+              icon={<Building2 className="h-4 w-4" />}
+              disabled={isAutoFilling}
+            />
+            <CompanySearchButton 
+              onClick={handleOpenSearchModal}
+              disabled={isAutoFilling}
+            />
+          </div>
+          {getFieldIndicator('companyName')}
         </div>
-        {getFieldIndicator('companyName')}
-      </div>
+      )}
 
       {/* Registry Info Template - Slovak format display */}
       {registryDisplaySection}
 
       {/* IČO and DIČ */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <OnboardingInput
-            label={t('companyInfo.labels.icoRequired')}
-            value={data.companyInfo.ico}
-            onChange={handleIcoChange}
-            placeholder={t('companyInfo.placeholders.ico')}
-            className={`transition-all duration-300 ${getFieldClassName('ico')}`}
-            icon={<Building2 className="h-4 w-4" />}
-            disabled={isAutoFilling}
-          />
-          {getFieldIndicator('ico')}
-        </div>
+        {isFieldEnabled('ico') && (
+          <div className="space-y-2">
+            <OnboardingInput
+              label={t('companyInfo.labels.icoRequired')}
+              value={data.companyInfo.ico}
+              onChange={handleIcoChange}
+              placeholder={t('companyInfo.placeholders.ico')}
+              className={`transition-all duration-300 ${getFieldClassName('ico')}`}
+              icon={<Building2 className="h-4 w-4" />}
+              disabled={isAutoFilling}
+            />
+            {getFieldIndicator('ico')}
+          </div>
+        )}
         
-        <div className="space-y-2">
-          <OnboardingInput
-            label={t('companyInfo.labels.dicRequired')}
-            value={data.companyInfo.dic}
-            onChange={handleDicChange}
-            placeholder={t('companyInfo.placeholders.dic')}
-            className={`transition-all duration-300 ${getFieldClassName('dic')}`}
-            disabled={isAutoFilling}
-          />
-          {getFieldIndicator('dic')}
-        </div>
+        {isFieldEnabled('dic') && (
+          <div className="space-y-2">
+            <OnboardingInput
+              label={t('companyInfo.labels.dicRequired')}
+              value={data.companyInfo.dic}
+              onChange={handleDicChange}
+              placeholder={t('companyInfo.placeholders.dic')}
+              className={`transition-all duration-300 ${getFieldClassName('dic')}`}
+              disabled={isAutoFilling}
+            />
+            {getFieldIndicator('dic')}
+          </div>
+        )}
       </div>
 
       {/* VAT Payer Section */}
-      <div className="space-y-4">
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="isVatPayer"
-            checked={data.companyInfo.isVatPayer}
-            onCheckedChange={handleVatChange}
-            disabled={isAutoFilling}
-          />
-          <label htmlFor="isVatPayer" className="text-sm font-medium text-slate-700">
-            {t('companyInfo.basicInfoCard.vatPayerLabel')}
-          </label>
-          {getFieldIndicator('isVatPayer')}
-        </div>
+      {isFieldEnabled('isVatPayer') && (
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="isVatPayer"
+              checked={data.companyInfo.isVatPayer}
+              onCheckedChange={handleVatChange}
+              disabled={isAutoFilling}
+            />
+            <label htmlFor="isVatPayer" className="text-sm font-medium text-slate-700">
+              {t('companyInfo.basicInfoCard.vatPayerLabel')}
+            </label>
+            {getFieldIndicator('isVatPayer')}
+          </div>
 
-        {data.companyInfo.isVatPayer && (
-          <OnboardingInput
-            label={t('companyInfo.labels.vatNumberRequired')}
-            value={data.companyInfo.vatNumber}
-            onChange={handleVatNumberChange}
-            placeholder={t('companyInfo.placeholders.vatNumber')}
-            disabled={isAutoFilling}
-          />
-        )}
-      </div>
+          {data.companyInfo.isVatPayer && isFieldEnabled('vatNumber') && (
+            <OnboardingInput
+              label={t('companyInfo.labels.vatNumberRequired')}
+              value={data.companyInfo.vatNumber}
+              onChange={handleVatNumberChange}
+              placeholder={t('companyInfo.placeholders.vatNumber')}
+              disabled={isAutoFilling}
+            />
+          )}
+        </div>
+      )}
 
       {/* Court Registry Information - editable fields */}
       <div className="space-y-4 pt-4 border-t border-slate-200">

@@ -19,9 +19,10 @@ interface DeviceSelectionStepProps {
   updateData: (data: Partial<OnboardingData>) => void;
   onNext: () => void;
   onPrev: () => void;
+  customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
 }
 
-const DeviceSelectionStep = ({ data, updateData, onNext, onPrev }: DeviceSelectionStepProps) => {
+const DeviceSelectionStep = ({ data, updateData, onNext, onPrev, customFields }: DeviceSelectionStepProps) => {
   const { t } = useTranslation('forms');
   const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
   const stepValidation = useStepValidation(3, data);

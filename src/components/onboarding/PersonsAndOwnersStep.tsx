@@ -23,9 +23,10 @@ interface PersonsAndOwnersStepProps {
   updateData: (data: Partial<OnboardingData>) => void;
   onNext: () => void;
   onPrev: () => void;
+  customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
 }
 
-const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev }: PersonsAndOwnersStepProps) => {
+const PersonsAndOwnersStep = ({ data, updateData, onNext, onPrev, customFields }: PersonsAndOwnersStepProps) => {
   const { t } = useTranslation(['steps', 'forms', 'common']);
   const { toast } = useToast();
 

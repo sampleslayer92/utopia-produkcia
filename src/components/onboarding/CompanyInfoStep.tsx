@@ -18,12 +18,20 @@ interface CompanyInfoStepProps {
   onNext: () => void;
   onPrev: () => void;
   hideContactPerson?: boolean;
+  customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
 }
 
-const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: CompanyInfoStepProps) => {
+const CompanyInfoStep = ({ data, updateData, hideContactPerson = true, customFields }: CompanyInfoStepProps) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
   const isMobile = useIsMobile();
   const { t } = useTranslation('forms');
+
+  // Helper to check if field is enabled in config
+  const isFieldEnabled = (fieldKey: string) => {
+    if (!customFields) return true; // Default behavior when no config
+    const field = customFields.find(f => f.fieldKey === fieldKey);
+    return field ? field.isEnabled : false;
+  };
 
   const updateCompanyInfo = useCallback((field: string, value: any) => {
     console.log('=== COMPANY INFO STEP: updateCompanyInfo called ===');
@@ -282,25 +290,29 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
             updateCompanyInfo={updateCompanyInfo}
             autoFilledFields={autoFilledFields}
             setAutoFilledFields={setAutoFilledFields}
+            customFields={customFields}
           />
           
           <CompanyAddressCard
             data={data}
             updateCompanyInfo={updateCompanyInfo}
             autoFilledFields={autoFilledFields}
+            customFields={customFields}
           />
           
-          {!data.companyInfo.contactAddressSameAsMain && (
+          {!data.companyInfo.contactAddressSameAsMain && isFieldEnabled('contactAddress.street') && (
             <CompanyContactAddressCard
               data={data}
               updateCompanyInfo={updateCompanyInfo}
+              customFields={customFields}
             />
           )}
           
-          {!hideContactPerson && (
+          {!hideContactPerson && isFieldEnabled('contactPerson.firstName') && (
             <CompanyContactPersonCard
               data={data}
               updateCompanyInfo={updateCompanyInfo}
+              customFields={customFields}
             />
           )}
         </div>
@@ -361,6 +373,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
                     updateCompanyInfo={updateCompanyInfo}
                     autoFilledFields={autoFilledFields}
                     setAutoFilledFields={setAutoFilledFields}
+                    customFields={customFields}
                   />
                 </AccordionContent>
               </AccordionItem>
@@ -375,12 +388,13 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
                     data={data}
                     updateCompanyInfo={updateCompanyInfo}
                     autoFilledFields={autoFilledFields}
+                    customFields={customFields}
                   />
                 </AccordionContent>
               </AccordionItem>
 
               {/* Contact Address - only show if not same as main */}
-              {!data.companyInfo.contactAddressSameAsMain && (
+              {!data.companyInfo.contactAddressSameAsMain && isFieldEnabled('contactAddress.street') && (
                 <AccordionItem value="contact-address" className="border border-slate-200 rounded-lg">
                   <AccordionTrigger className="px-4 py-3 hover:no-underline">
                     <span className="font-medium text-slate-900">{t('companyInfo.contactAddressSection')}</span>
@@ -389,13 +403,14 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
                     <CompanyContactAddressCard
                       data={data}
                       updateCompanyInfo={updateCompanyInfo}
+                      customFields={customFields}
                     />
                   </AccordionContent>
                 </AccordionItem>
               )}
 
               {/* Contact Person - only show if not hidden */}
-              {!hideContactPerson && (
+              {!hideContactPerson && isFieldEnabled('contactPerson.firstName') && (
                 <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
                   <AccordionTrigger className="px-4 py-3 hover:no-underline">
                     <span className="font-medium text-slate-900">{t('companyInfo.contactPersonSection')}</span>
@@ -404,6 +419,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
                     <CompanyContactPersonCard
                       data={data}
                       updateCompanyInfo={updateCompanyInfo}
+                      customFields={customFields}
                     />
                   </AccordionContent>
                 </AccordionItem>

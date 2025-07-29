@@ -7,10 +7,18 @@ import { useTranslation } from "react-i18next";
 interface CompanyContactAddressCardProps {
   data: OnboardingData;
   updateCompanyInfo: (field: string, value: any) => void;
+  customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
 }
 
-const CompanyContactAddressCard = ({ data, updateCompanyInfo }: CompanyContactAddressCardProps) => {
+const CompanyContactAddressCard = ({ data, updateCompanyInfo, customFields }: CompanyContactAddressCardProps) => {
   const { t } = useTranslation('forms');
+
+  // Helper to check if field is enabled in config
+  const isFieldEnabled = (fieldKey: string) => {
+    if (!customFields) return true; // Default behavior when no config
+    const field = customFields.find(f => f.fieldKey === fieldKey);
+    return field ? field.isEnabled : false;
+  };
 
   return (
     <div className="space-y-6">
@@ -26,29 +34,35 @@ const CompanyContactAddressCard = ({ data, updateCompanyInfo }: CompanyContactAd
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <OnboardingInput
-            label={t('address.labels.streetRequired')}
-            value={data.companyInfo.contactAddress?.street || ''}
-            onChange={(e) => updateCompanyInfo('contactAddress.street', e.target.value)}
-            placeholder={t('address.placeholders.street')}
-          />
-        </div>
+        {isFieldEnabled('contactAddress.street') && (
+          <div className="md:col-span-2">
+            <OnboardingInput
+              label={t('address.labels.streetRequired')}
+              value={data.companyInfo.contactAddress?.street || ''}
+              onChange={(e) => updateCompanyInfo('contactAddress.street', e.target.value)}
+              placeholder={t('address.placeholders.street')}
+            />
+          </div>
+        )}
         
-        <OnboardingInput
-          label={t('address.labels.zipCodeRequired')}
-          value={data.companyInfo.contactAddress?.zipCode || ''}
-          onChange={(e) => updateCompanyInfo('contactAddress.zipCode', e.target.value)}
-          placeholder={t('address.placeholders.zipCode')}
-        />
+        {isFieldEnabled('contactAddress.zipCode') && (
+          <OnboardingInput
+            label={t('address.labels.zipCodeRequired')}
+            value={data.companyInfo.contactAddress?.zipCode || ''}
+            onChange={(e) => updateCompanyInfo('contactAddress.zipCode', e.target.value)}
+            placeholder={t('address.placeholders.zipCode')}
+          />
+        )}
       </div>
       
-      <OnboardingInput
-        label={t('address.labels.cityRequired')}
-        value={data.companyInfo.contactAddress?.city || ''}
-        onChange={(e) => updateCompanyInfo('contactAddress.city', e.target.value)}
-        placeholder={t('address.placeholders.city')}
-      />
+      {isFieldEnabled('contactAddress.city') && (
+        <OnboardingInput
+          label={t('address.labels.cityRequired')}
+          value={data.companyInfo.contactAddress?.city || ''}
+          onChange={(e) => updateCompanyInfo('contactAddress.city', e.target.value)}
+          placeholder={t('address.placeholders.city')}
+        />
+      )}
     </div>
   );
 };

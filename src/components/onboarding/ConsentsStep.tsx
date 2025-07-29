@@ -19,9 +19,10 @@ interface ConsentsStepProps {
   onPrev: () => void;
   onComplete: () => void;
   onSaveSignature?: () => void;
+  customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
 }
 
-const ConsentsStep = ({ data, updateData, onSaveSignature }: ConsentsStepProps) => {
+const ConsentsStep = ({ data, updateData, onSaveSignature, customFields }: ConsentsStepProps) => {
   const { t } = useTranslation('forms');
 
   // Automatically set today's date if signature date is empty

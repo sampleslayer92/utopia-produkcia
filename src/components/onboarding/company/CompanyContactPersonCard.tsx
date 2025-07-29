@@ -9,10 +9,17 @@ import { useTranslation } from "react-i18next";
 interface CompanyContactPersonCardProps {
   data: OnboardingData;
   updateCompanyInfo: (field: string, value: any) => void;
+  customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
 }
 
-const CompanyContactPersonCard = ({ data, updateCompanyInfo }: CompanyContactPersonCardProps) => {
+const CompanyContactPersonCard = ({ data, updateCompanyInfo, customFields }: CompanyContactPersonCardProps) => {
   const { t } = useTranslation('forms');
+
+  const isFieldEnabled = (fieldKey: string) => {
+    if (!customFields) return true;
+    const field = customFields.find(f => f.fieldKey === fieldKey);
+    return field ? field.isEnabled : false;
+  };
 
   return (
     <div className="space-y-6">
