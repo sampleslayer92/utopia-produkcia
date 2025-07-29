@@ -131,19 +131,75 @@ export const useOnboardingConfig = () => {
     try {
       setLoading(true);
       
-      // For now, just use default configuration since database tables may not exist yet
-      // In production, this would check the actual onboarding configuration tables
-      
-      const defaultSteps = DEFAULT_STEPS.map((step, index) => ({
-        id: `default_${index}`,
-        ...step,
-        fields: step.fields?.map((field, fieldIndex) => ({
-          id: `field_${index}_${fieldIndex}`,
-          ...field
-        })) || []
-      })) as OnboardingStep[];
-      
-      setSteps(defaultSteps);
+      // Load from database
+      const { data: configs, error: configError } = await supabase
+        .from('onboarding_configurations')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (configError) throw configError;
+
+      const config = configs?.[0];
+      if (!config) {
+        // No active configuration found, use defaults
+        const defaultSteps = DEFAULT_STEPS.map((step, index) => ({
+          id: `default_${index}`,
+          ...step,
+          fields: step.fields?.map((field, fieldIndex) => ({
+            id: `field_${index}_${fieldIndex}`,
+            ...field
+          })) || []
+        })) as OnboardingStep[];
+        
+        setSteps(defaultSteps);
+        return;
+      }
+
+      // Load steps for this configuration
+      const { data: dbSteps, error: stepsError } = await supabase
+        .from('onboarding_steps')
+        .select('*')
+        .eq('configuration_id', config.id)
+        .order('position');
+
+      if (stepsError) throw stepsError;
+
+      // Load fields for all steps
+      const stepIds = dbSteps?.map(step => step.id) || [];
+      const { data: dbFields, error: fieldsError } = await supabase
+        .from('onboarding_fields')
+        .select('*')
+        .in('step_id', stepIds)
+        .order('position');
+
+      if (fieldsError) throw fieldsError;
+
+      // Transform database data to OnboardingStep format
+      const transformedSteps: OnboardingStep[] = (dbSteps || []).map(dbStep => ({
+        id: dbStep.id,
+        stepKey: dbStep.step_key,
+        title: dbStep.title,
+        description: dbStep.description || '',
+        position: dbStep.position,
+        isEnabled: dbStep.is_enabled,
+        isRequired: true, // Default for now
+        fields: (dbFields || [])
+          .filter(field => field.step_id === dbStep.id)
+          .map(dbField => ({
+            id: dbField.id,
+            fieldKey: dbField.field_key,
+            fieldLabel: dbField.field_label,
+            fieldType: dbField.field_type as OnboardingField['fieldType'],
+            isRequired: dbField.is_required,
+            isEnabled: dbField.is_enabled,
+            position: dbField.position,
+            fieldOptions: dbField.field_options || undefined
+          }))
+      }));
+
+      setSteps(transformedSteps);
     } catch (error) {
       console.error('Error loading onboarding configuration:', error);
       // Fallback to default configuration
@@ -215,11 +271,104 @@ export const useOnboardingConfig = () => {
     try {
       setSaving(true);
       
-      // This is a simplified save - in production, you'd save to the database
-      console.log('Saving configuration:', steps);
+      // First, get or create active configuration
+      let { data: configs, error: configError } = await supabase
+        .from('onboarding_configurations')
+        .select('*')
+        .eq('is_active', true)
+        .limit(1);
+
+      if (configError) throw configError;
+
+      let configId: string;
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (configs && configs.length > 0) {
+        configId = configs[0].id;
+      } else {
+        // Create new configuration
+        const { data: newConfig, error: createError } = await supabase
+          .from('onboarding_configurations')
+          .insert({
+            name: 'Custom Onboarding Configuration',
+            description: 'User configured onboarding process',
+            is_active: true,
+            is_default: false
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        configId = newConfig.id;
+      }
+
+      // Delete existing steps and fields for this configuration
+      const { error: deleteFieldsError } = await supabase
+        .from('onboarding_fields')
+        .delete()
+        .in('step_id', 
+          await supabase
+            .from('onboarding_steps')
+            .select('id')
+            .eq('configuration_id', configId)
+            .then(({ data }) => data?.map(step => step.id) || [])
+        );
+
+      const { error: deleteStepsError } = await supabase
+        .from('onboarding_steps')
+        .delete()
+        .eq('configuration_id', configId);
+
+      if (deleteFieldsError) throw deleteFieldsError;
+      if (deleteStepsError) throw deleteStepsError;
+
+      // Insert steps
+      const stepsToInsert = steps.map(step => ({
+        configuration_id: configId,
+        step_key: step.stepKey,
+        title: step.title,
+        description: step.description,
+        position: step.position,
+        is_enabled: step.isEnabled
+      }));
+
+      const { data: insertedSteps, error: stepsInsertError } = await supabase
+        .from('onboarding_steps')
+        .insert(stepsToInsert)
+        .select();
+
+      if (stepsInsertError) throw stepsInsertError;
+
+      // Insert fields
+      const fieldsToInsert = [];
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        const insertedStep = insertedSteps?.find(s => s.position === step.position);
+        if (insertedStep && step.fields) {
+          for (const field of step.fields) {
+            fieldsToInsert.push({
+              step_id: insertedStep.id,
+              field_key: field.fieldKey,
+              field_label: field.fieldLabel,
+              field_type: field.fieldType,
+              is_required: field.isRequired,
+              is_enabled: field.isEnabled,
+              position: field.position || 0,
+              field_options: field.fieldOptions || null
+            });
+          }
+        }
+      }
+
+      if (fieldsToInsert.length > 0) {
+        const { error: fieldsInsertError } = await supabase
+          .from('onboarding_fields')
+          .insert(fieldsToInsert);
+
+        if (fieldsInsertError) throw fieldsInsertError;
+      }
+
+      // Reload configuration from database to sync IDs
+      await loadConfiguration();
       
       return true;
     } catch (error) {
@@ -234,6 +383,7 @@ export const useOnboardingConfig = () => {
     try {
       setSaving(true);
       
+      // Reset local state to defaults
       const defaultSteps = DEFAULT_STEPS.map((step, index) => ({
         id: `default_${index}`,
         ...step,
@@ -244,6 +394,9 @@ export const useOnboardingConfig = () => {
       })) as OnboardingStep[];
       
       setSteps(defaultSteps);
+      
+      // Save the default configuration to database
+      await saveConfiguration();
       
       return true;
     } catch (error) {
