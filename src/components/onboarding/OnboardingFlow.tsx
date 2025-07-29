@@ -206,6 +206,7 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
                 onComplete={handleComplete}
                 onSaveSignature={handleSaveSignature}
                 onStepNavigate={handleStepNavigation}
+                customSteps={isAdminMode ? customSteps : undefined}
               />
             </div>
           </div>
@@ -309,6 +310,7 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
               onComplete={handleComplete}
               onSaveSignature={handleSaveSignature}
               onStepNavigate={handleStepNavigation}
+              customSteps={undefined}
             />
           </div>
         </div>

@@ -19,6 +19,15 @@ interface OnboardingStepRendererProps {
   onComplete: () => void;
   onSaveSignature?: () => void;
   onStepNavigate?: (fromStep: number, toStep: number) => void;
+  customSteps?: Array<{
+    id: string;
+    stepKey: string;
+    title: string;
+    description: string;
+    position: number;
+    isEnabled: boolean;
+    isRequired: boolean;
+  }>;
 }
 
 const OnboardingStepRenderer = ({
@@ -29,7 +38,8 @@ const OnboardingStepRenderer = ({
   onPrev,
   onComplete,
   onSaveSignature,
-  onStepNavigate
+  onStepNavigate,
+  customSteps
 }: OnboardingStepRendererProps) => {
   // Initialize cross-step auto-fill logic (disabled for step 0)
   const {
@@ -113,6 +123,32 @@ const OnboardingStepRenderer = ({
     onNext();
   }, [currentStep, onNext]);
 
+  // Get current step key for dynamic mapping
+  const getCurrentStepKey = () => {
+    if (customSteps && customSteps.length > 0) {
+      const enabledSteps = customSteps
+        .filter(step => step.isEnabled)
+        .sort((a, b) => a.position - b.position);
+      
+      if (enabledSteps[currentStep]) {
+        return enabledSteps[currentStep].stepKey;
+      }
+    }
+    
+    // Default mapping for backward compatibility
+    const defaultMapping = [
+      'contact-info',
+      'company-info', 
+      'business-locations',
+      'device-selection',
+      'fees',
+      'persons-owners',
+      'consents'
+    ];
+    
+    return defaultMapping[currentStep] || null;
+  };
+
   const commonProps = {
     data,
     updateData,
@@ -122,6 +158,10 @@ const OnboardingStepRenderer = ({
 
   console.log('=== OnboardingStepRenderer Debug ===', {
     currentStep,
+    currentStepKey: getCurrentStepKey(),
+    customStepsCount: customSteps?.length || 0,
+    enabledStepsCount: customSteps?.filter(step => step.isEnabled).length || 0,
+    customSteps: customSteps?.map(step => ({ stepKey: step.stepKey, isEnabled: step.isEnabled, position: step.position })),
     companyName: data.companyInfo?.companyName,
     ico: data.companyInfo?.ico,
     address: data.companyInfo?.address,
@@ -135,20 +175,23 @@ const OnboardingStepRenderer = ({
     contactPersonId: data.contactInfo?.personId
   });
 
-  switch (currentStep) {
-    case 0:
+  const currentStepKey = getCurrentStepKey();
+
+  // Dynamic step rendering based on stepKey
+  switch (currentStepKey) {
+    case 'contact-info':
       return <ContactInfoStep {...commonProps} />;
-    case 1:
+    case 'company-info':
       return <CompanyInfoStep {...commonProps} />;
-    case 2:
+    case 'business-locations':
       return <BusinessLocationStep {...commonProps} />;
-    case 3:
+    case 'device-selection':
       return <DeviceSelectionStep {...commonProps} />;
-    case 4:
+    case 'fees':
       return <FeesStep {...commonProps} />;
-    case 5:
+    case 'persons-owners':
       return <PersonsAndOwnersStep {...commonProps} />;
-    case 6:
+    case 'consents':
       return <ConsentsStep {...commonProps} onComplete={onComplete} onSaveSignature={onSaveSignature} />;
     default:
       return null;
