@@ -11,12 +11,11 @@ interface ConsentsStepProps {
   onSaveSignature?: () => void;
 }
 
-const ConsentsStep = ({ data, updateData, onSaveSignature }: ConsentsStepProps) => {
+const ConsentsStep = ({ data, updateData }: ConsentsStepProps) => {
   return (
     <ConsentsFieldRenderer
       data={data}
       updateData={updateData}
-      onSaveSignature={onSaveSignature}
     />
   );
 };

@@ -19,61 +19,145 @@ import { useTranslation } from 'react-i18next';
 interface PersonsOwnersFieldRendererProps {
   data: OnboardingData;
   updateData: (data: Partial<OnboardingData>) => void;
-  // Authorized persons props
-  isAddingPerson: boolean;
-  editingPersonId: string | null;
-  expandedPersons: Record<string, boolean>;
-  onAddPerson: () => void;
-  onCancelAddPerson: () => void;
-  onSavePerson: (person: any) => void;
-  onEditPerson: (id: string) => void;
-  onDeletePerson: (id: string) => void;
-  onTogglePersonExpansion: (personId: string) => void;
-  // Actual owners props
-  isAddingOwner: boolean;
-  editingOwnerId: string | null;
-  expandedOwners: Record<string, boolean>;
-  onAddOwner: () => void;
-  onCancelAddOwner: () => void;
-  onSaveOwner: (owner: any) => void;
-  onEditOwner: (id: string) => void;
-  onRemoveOwner: (id: string) => void;
-  onToggleOwnerExpansion: (ownerId: string) => void;
-  // Auto-fill props
-  contactName: string;
-  canAutoFill: boolean;
-  contactExistsInAuthorized: boolean;
-  contactExistsInActualOwners: boolean;
-  onAutoFill: () => void;
 }
 
 export const PersonsOwnersFieldRenderer: React.FC<PersonsOwnersFieldRendererProps> = ({
   data,
-  updateData,
-  isAddingPerson,
-  editingPersonId,
-  expandedPersons,
-  onAddPerson,
-  onCancelAddPerson,
-  onSavePerson,
-  onEditPerson,
-  onDeletePerson,
-  onTogglePersonExpansion,
-  isAddingOwner,
-  editingOwnerId,
-  expandedOwners,
-  onAddOwner,
-  onCancelAddOwner,
-  onSaveOwner,
-  onEditOwner,
-  onRemoveOwner,
-  onToggleOwnerExpansion,
-  contactName,
-  canAutoFill,
-  contactExistsInAuthorized,
-  contactExistsInActualOwners,
-  onAutoFill
+  updateData
 }) => {
+  const [isAddingPerson, setIsAddingPerson] = React.useState(false);
+  const [editingPersonId, setEditingPersonId] = React.useState<string | null>(null);
+  const [expandedPersons, setExpandedPersons] = React.useState<Record<string, boolean>>({});
+  const [isAddingOwner, setIsAddingOwner] = React.useState(false);
+  const [editingOwnerId, setEditingOwnerId] = React.useState<string | null>(null);
+  const [expandedOwners, setExpandedOwners] = React.useState<Record<string, boolean>>({});
+
+  const contactName = `${data.contactInfo.firstName} ${data.contactInfo.lastName}`.trim();
+  const canAutoFill = !!(data.contactInfo.firstName && data.contactInfo.lastName);
+  const contactExistsInAuthorized = data.authorizedPersons.some(p => 
+    p.firstName === data.contactInfo.firstName && p.lastName === data.contactInfo.lastName
+  );
+  const contactExistsInActualOwners = data.actualOwners.some(o => 
+    o.firstName === data.contactInfo.firstName && o.lastName === data.contactInfo.lastName
+  );
+
+  const onAddPerson = () => setIsAddingPerson(true);
+  const onCancelAddPerson = () => {
+    setIsAddingPerson(false);
+    setEditingPersonId(null);
+  };
+  const onSavePerson = (person: any) => {
+    if (editingPersonId) {
+      updateData({
+        authorizedPersons: data.authorizedPersons.map(p => 
+          p.id === editingPersonId ? { ...person, id: editingPersonId } : p
+        )
+      });
+    } else {
+      updateData({
+        authorizedPersons: [...data.authorizedPersons, { ...person, id: crypto.randomUUID() }]
+      });
+    }
+    setIsAddingPerson(false);
+    setEditingPersonId(null);
+  };
+  const onEditPerson = (id: string) => {
+    setEditingPersonId(id);
+    setIsAddingPerson(true);
+  };
+  const onDeletePerson = (id: string) => {
+    updateData({
+      authorizedPersons: data.authorizedPersons.filter(p => p.id !== id)
+    });
+  };
+  const onTogglePersonExpansion = (personId: string) => {
+    setExpandedPersons(prev => ({ ...prev, [personId]: !prev[personId] }));
+  };
+
+  const onAddOwner = () => setIsAddingOwner(true);
+  const onCancelAddOwner = () => {
+    setIsAddingOwner(false);
+    setEditingOwnerId(null);
+  };
+  const onSaveOwner = (owner: any) => {
+    if (editingOwnerId) {
+      updateData({
+        actualOwners: data.actualOwners.map(o => 
+          o.id === editingOwnerId ? { ...owner, id: editingOwnerId } : o
+        )
+      });
+    } else {
+      updateData({
+        actualOwners: [...data.actualOwners, { ...owner, id: crypto.randomUUID() }]
+      });
+    }
+    setIsAddingOwner(false);
+    setEditingOwnerId(null);
+  };
+  const onEditOwner = (id: string) => {
+    setEditingOwnerId(id);
+    setIsAddingOwner(true);
+  };
+  const onRemoveOwner = (id: string) => {
+    updateData({
+      actualOwners: data.actualOwners.filter(o => o.id !== id)
+    });
+  };
+  const onToggleOwnerExpansion = (ownerId: string) => {
+    setExpandedOwners(prev => ({ ...prev, [ownerId]: !prev[ownerId] }));
+  };
+
+  const onAutoFill = () => {
+    const authorizedPerson = {
+      id: crypto.randomUUID(),
+      firstName: data.contactInfo.firstName,
+      lastName: data.contactInfo.lastName,
+      email: data.contactInfo.email,
+      phone: data.contactInfo.phone,
+      phonePrefix: data.contactInfo.phonePrefix || '+421',
+      maidenName: '',
+      birthDate: '',
+      birthPlace: '',
+      birthNumber: '',
+      permanentAddress: '',
+      position: '',
+      documentType: 'OP' as const,
+      documentNumber: '',
+      documentValidity: '',
+      documentIssuer: '',
+      documentCountry: 'SK',
+      citizenship: 'SK',
+      isPoliticallyExposed: false,
+      isUSCitizen: false,
+      createdFromContact: true
+    };
+
+    const actualOwner = {
+      id: crypto.randomUUID(),
+      firstName: data.contactInfo.firstName,
+      lastName: data.contactInfo.lastName,
+      maidenName: '',
+      birthDate: '',
+      birthPlace: '',
+      birthNumber: '',
+      citizenship: 'SK',
+      permanentAddress: '',
+      isPoliticallyExposed: false,
+      createdFromContact: true
+    };
+    
+    if (!contactExistsInAuthorized) {
+      updateData({
+        authorizedPersons: [...data.authorizedPersons, authorizedPerson]
+      });
+    }
+    
+    if (!contactExistsInActualOwners) {
+      updateData({
+        actualOwners: [...data.actualOwners, actualOwner]
+      });
+    }
+  };
   const { step, isStepEnabled, fields } = useStepConfiguration('persons_and_owners');
   const { t } = useTranslation(['steps', 'forms', 'common']);
 

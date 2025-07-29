@@ -13,22 +13,6 @@ const PersonsOwnersStep = ({ data, updateData }: PersonsOwnersStepProps) => {
     <PersonsOwnersFieldRenderer
       data={data}
       updateData={updateData}
-      // All other props are handled by the field renderer now
-      isAddingPerson={false}
-      editingPersonId={null}
-      onAddPerson={() => {}}
-      onSavePerson={() => {}}
-      onEditPerson={() => {}}
-      onDeletePerson={() => {}}
-      isAddingOwner={false}
-      editingOwnerId={null}
-      onAddOwner={() => {}}
-      onSaveOwner={() => {}}
-      onEditOwner={() => {}}
-      onDeleteOwner={() => {}}
-      contactName=""
-      canAutoFill={false}
-      onAutoFill={() => {}}
     />
   );
 };

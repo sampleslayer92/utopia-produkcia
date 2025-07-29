@@ -12,16 +12,25 @@ import { useTranslation } from 'react-i18next';
 interface ConsentsFieldRendererProps {
   data: OnboardingData;
   updateData: (data: Partial<OnboardingData>) => void;
-  updateConsents: (field: string, value: any) => void;
-  onSaveSignature?: () => void;
 }
 
 export const ConsentsFieldRenderer: React.FC<ConsentsFieldRendererProps> = ({
   data,
-  updateData,
-  updateConsents,
-  onSaveSignature
+  updateData
 }) => {
+  const updateConsents = (field: string, value: any) => {
+    updateData({
+      consents: {
+        ...data.consents,
+        [field]: value
+      }
+    });
+  };
+
+  const onSaveSignature = () => {
+    // Auto-save logic can be handled here if needed
+    console.log('Signature saved');
+  };
   const { step, isStepEnabled, fields } = useStepConfiguration('consents');
   const { t } = useTranslation('forms');
 
