@@ -37,6 +37,7 @@ const AdminSidebar = () => {
     if (pathname.startsWith('/admin/merchants')) return 'clients';
     if (pathname.startsWith('/admin/warehouse')) return 'products';
     if (pathname.startsWith('/admin/reporting')) return 'analytics';
+    if (pathname.startsWith('/admin/onboarding-config')) return 'onboarding';
     if (pathname.startsWith('/admin/organizations') || pathname.startsWith('/admin/team') || pathname.startsWith('/admin/templates')) return 'system';
     if (pathname.startsWith('/admin/notifications') || pathname.startsWith('/admin/settings')) return 'personal';
     return null;
@@ -89,6 +90,7 @@ const AdminSidebar = () => {
       case 'clients': return '/admin/merchants';
       case 'products': return '/admin/warehouse';
       case 'analytics': return '/admin/reporting';
+      case 'onboarding': return '/admin/onboarding-config';
       case 'system': return '/admin/organizations';
       case 'personal': return '/admin/notifications';
       default: return '/admin';
@@ -237,7 +239,33 @@ const AdminSidebar = () => {
       ]
     }] : []),
 
-    // 6. SPRÁVA SYSTÉMU - Only for admin
+    // 6. ONBOARDING SPRÁVA - Only for admin
+    ...(userRole?.role === 'admin' ? [{
+      id: 'onboarding',
+      title: '📋 Správa Onboardingu',
+      type: 'expandable' as const,
+      expanded: isExpanded('onboarding'),
+      defaultRoute: '/admin/onboarding-config',
+      children: [
+        {
+          title: "📝 Konfigurácia krokov",
+          path: "/admin/onboarding-config",
+          active: location.pathname.startsWith("/admin/onboarding-config")
+        },
+        {
+          title: "🎯 Šablóny formulárov",
+          path: "/admin/onboarding-config/templates",
+          active: isActive("/admin/onboarding-config/templates")
+        },
+        {
+          title: "👁️ Náhľad onboardingu",
+          path: "/admin/onboarding",
+          active: isActive("/admin/onboarding")
+        }
+      ]
+    }] : []),
+
+    // 7. SPRÁVA SYSTÉMU - Only for admin
     ...(userRole?.role === 'admin' ? [{
       id: 'system',
       title: '⚙️ Správa Systému',
@@ -278,7 +306,7 @@ const AdminSidebar = () => {
       ]
     }] : []),
 
-    // 7. OSOBNÉ - For all roles
+    // 8. OSOBNÉ - For all roles
     {
       id: 'personal',
       title: '👤 Osobné',

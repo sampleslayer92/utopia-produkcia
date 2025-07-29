@@ -48,6 +48,7 @@ import EshopLayout from "./components/eshop/EshopLayout";
 import EshopPage from "./pages/EshopPage";
 import CartPage from "./pages/CartPage";
 import ContractTemplatesPage from "./pages/ContractTemplatesPage";
+import OnboardingConfigPage from "./pages/OnboardingConfigPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -234,6 +235,16 @@ const App = () => (
           } />
           
           {/* Admin-only routes */}
+          <Route path="/admin/onboarding-config" element={
+            <ProtectedRoute requiredRole="admin">
+              <OnboardingConfigPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/onboarding-config/*" element={
+            <ProtectedRoute requiredRole="admin">
+              <OnboardingConfigPage />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/translations" element={
             <ProtectedRoute requiredRole="admin">
               <TranslationsManagementPage />
