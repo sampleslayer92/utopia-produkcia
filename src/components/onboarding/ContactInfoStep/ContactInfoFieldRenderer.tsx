@@ -7,16 +7,30 @@ import ContactInfoForm from './ContactInfoForm';
 interface ContactInfoFieldRendererProps {
   data: OnboardingData;
   updateData: (data: Partial<OnboardingData>) => void;
-  onPersonDataUpdate: (field: string, value: string) => void;
-  onContactInfoUpdate: (field: string, value: string | boolean | string[]) => void;
 }
 
 export const ContactInfoFieldRenderer: React.FC<ContactInfoFieldRendererProps> = ({
   data,
-  updateData,
-  onPersonDataUpdate,
-  onContactInfoUpdate
+  updateData
 }) => {
+  // Helper functions for updating data
+  const onPersonDataUpdate = (field: string, value: string) => {
+    updateData({
+      contactInfo: {
+        ...data.contactInfo,
+        [field]: value
+      }
+    });
+  };
+
+  const onContactInfoUpdate = (field: string, value: string | boolean | string[]) => {
+    updateData({
+      contactInfo: {
+        ...data.contactInfo,
+        [field]: value
+      }
+    });
+  };
   const { step, isStepEnabled, fields } = useStepConfiguration('contact_info');
 
   // If configuration is available and step is disabled, render nothing

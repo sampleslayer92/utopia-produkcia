@@ -36,10 +36,6 @@ const BusinessLocationStep = ({ data, updateData }: BusinessLocationStepProps) =
     <BusinessLocationFieldRenderer
       data={data}
       updateData={updateData}
-      selectedLocationId={selectedLocationId}
-      isOpeningHoursModalOpen={isOpeningHoursModalOpen}
-      onOpeningHoursEdit={handleOpeningHoursEdit}
-      onOpeningHoursSave={handleOpeningHoursSave}
     />
   );
 };

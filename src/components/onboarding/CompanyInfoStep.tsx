@@ -280,10 +280,6 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
         <CompanyInfoFieldRenderer
           data={data}
           updateData={updateData}
-          updateCompanyInfo={updateCompanyInfo}
-          autoFilledFields={autoFilledFields}
-          setAutoFilledFields={setAutoFilledFields}
-          hideContactPerson={hideContactPerson}
         />
       </MobileOptimizedCard>
     );
@@ -332,10 +328,6 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
             <CompanyInfoFieldRenderer
               data={data}
               updateData={updateData}
-              updateCompanyInfo={updateCompanyInfo}
-              autoFilledFields={autoFilledFields}
-              setAutoFilledFields={setAutoFilledFields}
-              hideContactPerson={hideContactPerson}
             />
           </div>
         </div>

@@ -11,20 +11,24 @@ import { useState, useCallback } from 'react';
 interface CompanyInfoFieldRendererProps {
   data: OnboardingData;
   updateData: (data: Partial<OnboardingData>) => void;
-  updateCompanyInfo: (field: string, value: any) => void;
-  autoFilledFields: Set<string>;
-  setAutoFilledFields: (fields: Set<string>) => void;
-  hideContactPerson?: boolean;
 }
 
 export const CompanyInfoFieldRenderer: React.FC<CompanyInfoFieldRendererProps> = ({
   data,
-  updateData,
-  updateCompanyInfo,
-  autoFilledFields,
-  setAutoFilledFields,
-  hideContactPerson = true
+  updateData
 }) => {
+  const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
+  const hideContactPerson = true;
+
+  // Helper function for updating company info
+  const updateCompanyInfo = (field: string, value: any) => {
+    updateData({
+      companyInfo: {
+        ...data.companyInfo,
+        [field]: value
+      }
+    });
+  };
   const { step, isStepEnabled, fields } = useStepConfiguration('company_info');
 
   // If configuration is available and step is disabled, render nothing

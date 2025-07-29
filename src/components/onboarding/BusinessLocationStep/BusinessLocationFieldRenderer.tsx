@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useStepConfiguration } from '@/hooks/useOnboardingConfiguration';
 import { DynamicFieldRenderer } from '../components/DynamicFieldRenderer';
 import { OnboardingData } from '@/types/onboarding';
@@ -9,20 +9,30 @@ import { useBusinessLocationManager } from './BusinessLocationManager';
 interface BusinessLocationFieldRendererProps {
   data: OnboardingData;
   updateData: (data: Partial<OnboardingData>) => void;
-  selectedLocationId: string | null;
-  isOpeningHoursModalOpen: boolean;
-  onOpeningHoursEdit: (locationId: string) => void;
-  onOpeningHoursSave: (locationId: string, hours: any[]) => void;
 }
 
 export const BusinessLocationFieldRenderer: React.FC<BusinessLocationFieldRendererProps> = ({
   data,
-  updateData,
-  selectedLocationId,
-  isOpeningHoursModalOpen,
-  onOpeningHoursEdit,
-  onOpeningHoursSave
+  updateData
 }) => {
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [isOpeningHoursModalOpen, setIsOpeningHoursModalOpen] = useState(false);
+  
+  // Helper functions for managing opening hours
+  const onOpeningHoursEdit = (locationId: string) => {
+    setSelectedLocationId(locationId);
+    setIsOpeningHoursModalOpen(true);
+  };
+
+  const onOpeningHoursSave = (locationId: string, hours: any[]) => {
+    // Update business location opening hours - convert hours array to string
+    const hoursString = JSON.stringify(hours);
+    const updatedLocations = data.businessLocations.map(location =>
+      location.id === locationId ? { ...location, openingHours: hoursString } : location
+    );
+    updateData({ businessLocations: updatedLocations });
+    setIsOpeningHoursModalOpen(false);
+  };
   const { step, isStepEnabled, fields } = useStepConfiguration('business_locations');
   const { 
     expandedLocationId,

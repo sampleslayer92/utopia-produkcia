@@ -78,8 +78,6 @@ const ContactInfoStep = ({ data, updateData, onNext }: ContactInfoStepProps) => 
         <ContactInfoFieldRenderer
           data={data}
           updateData={updateData}
-          onPersonDataUpdate={handlePersonDataUpdate}
-          onContactInfoUpdate={updateContactInfo}
         />
       </MobileOptimizedCard>
     );
@@ -101,8 +99,6 @@ const ContactInfoStep = ({ data, updateData, onNext }: ContactInfoStepProps) => 
           <ContactInfoFieldRenderer
             data={data}
             updateData={updateData}
-            onPersonDataUpdate={handlePersonDataUpdate}
-            onContactInfoUpdate={updateContactInfo}
           />
         </div>
       </CardContent>
