@@ -54,7 +54,7 @@ export const useContractDocuments = (contractId: string) => {
       try {
         // Create document records in database
         const documentTypes: DocumentType[] = ['g1', 'g2'];
-        const documentNames = {
+        const documentNames: Record<DocumentType, string> = {
           g1: 'G1 - Žádost o akceptaci platebních karet',
           g2: 'G2 - Prohlášení o skutečném majiteli'
         };

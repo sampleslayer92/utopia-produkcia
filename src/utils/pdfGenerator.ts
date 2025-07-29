@@ -211,12 +211,28 @@ const createG2Template = (data: any): string => {
 };
 
 // Legacy exports for backward compatibility
-export type DocumentType = 'G1' | 'G2';
+export type DocumentType = 'g1' | 'g2';
 
-export const generateG1Document = async (contractData: any): Promise<Blob> => {
-  return generateContractPDF(contractData, 'G1');
+export const generateG1Document = async (contractNumber: string, contractData: any, signatureDataUrl?: string): Promise<void> => {
+  const blob = await generateContractPDF(contractData, 'G1');
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `g1-${contractNumber}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
 
-export const generateG2Document = async (contractData: any): Promise<Blob> => {
-  return generateContractPDF(contractData, 'G2');
+export const generateG2Document = async (contractNumber: string, contractData: any, signatureDataUrl?: string): Promise<void> => {
+  const blob = await generateContractPDF(contractData, 'G2');
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `g2-${contractNumber}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
