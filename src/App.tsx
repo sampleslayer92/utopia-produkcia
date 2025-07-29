@@ -27,6 +27,7 @@ import { TranslationsManagementPage } from "@/pages/TranslationsManagementPage";
 import MerchantDetailPage from "./pages/MerchantDetailPage";
 import SolutionCategoryManager from "@/components/admin/solutions/SolutionCategoryManager";
 import AdminOnboardingPage from "./pages/AdminOnboardingPage";
+import AdminOnboardingEditorPage from "./pages/AdminOnboardingEditorPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
 import OverviewPage from "./pages/OverviewPage";
 import WarehousePage from "./pages/WarehousePage";
@@ -215,6 +216,11 @@ const App = () => (
           <Route path="/admin/onboarding" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <AdminOnboardingPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/onboarding-editor" element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminOnboardingEditorPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/contract/:id/edit" element={

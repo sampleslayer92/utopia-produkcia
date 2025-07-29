@@ -1282,6 +1282,133 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_configurations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          is_default: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      onboarding_fields: {
+        Row: {
+          created_at: string
+          field_key: string
+          field_label: string
+          field_options: Json | null
+          field_type: string
+          id: string
+          is_enabled: boolean
+          is_required: boolean
+          position: number
+          step_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          field_key: string
+          field_label: string
+          field_options?: Json | null
+          field_type?: string
+          id?: string
+          is_enabled?: boolean
+          is_required?: boolean
+          position?: number
+          step_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          field_key?: string
+          field_label?: string
+          field_options?: Json | null
+          field_type?: string
+          id?: string
+          is_enabled?: boolean
+          is_required?: boolean
+          position?: number
+          step_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_fields_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_steps: {
+        Row: {
+          configuration_id: string
+          created_at: string
+          description: string | null
+          id: string
+          is_enabled: boolean
+          position: number
+          step_key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          configuration_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_enabled?: boolean
+          position?: number
+          step_key: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          configuration_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_enabled?: boolean
+          position?: number
+          step_key?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_steps_configuration_id_fkey"
+            columns: ["configuration_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_configurations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           color: string | null
