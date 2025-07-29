@@ -7,21 +7,31 @@ import OnboardingSelect from "../ui/OnboardingSelect";
 import OnboardingTextarea from "../ui/OnboardingTextarea";
 import { MCC_CODES } from "../config/mccCodes";
 import { formatTurnoverInput, parseTurnoverInput } from "../utils/formatUtils";
+import { OnboardingField } from "@/pages/OnboardingConfigPage";
 
 interface BusinessDetailsSectionProps {
   businessSubject: string;
   mccCode: string;
   monthlyTurnover: number;
   onUpdate: (field: string, value: string | number) => void;
+  customFields?: OnboardingField[];
 }
 
 const BusinessDetailsSection = ({
   businessSubject,
   mccCode,
   monthlyTurnover,
-  onUpdate
+  onUpdate,
+  customFields
 }: BusinessDetailsSectionProps) => {
   const { t } = useTranslation('forms');
+  
+  // Helper function to check if a field is enabled
+  const isFieldEnabled = (fieldKey: string): boolean => {
+    if (!customFields) return true; // Default behavior if no custom fields
+    const field = customFields.find(f => f.fieldKey === fieldKey || f.fieldKey.endsWith(`.${fieldKey}`));
+    return field ? field.isEnabled : true;
+  };
   // Simple local state for display value
   const [displayValue, setDisplayValue] = useState('');
 
@@ -74,32 +84,38 @@ const BusinessDetailsSection = ({
         {t('businessLocation.businessDetails.title')}
       </h4>
       
-      <OnboardingTextarea
-        label={t('businessLocation.businessDetails.businessSubjectRequired')}
-        value={businessSubject}
-        onChange={(e) => onUpdate('businessSubject', e.target.value)}
-        placeholder={t('businessLocation.businessDetails.businessSubjectPlaceholder')}
-        rows={3}
-      />
+      {isFieldEnabled('businessSubject') && (
+        <OnboardingTextarea
+          label={t('businessLocation.businessDetails.businessSubjectRequired')}
+          value={businessSubject}
+          onChange={(e) => onUpdate('businessSubject', e.target.value)}
+          placeholder={t('businessLocation.businessDetails.businessSubjectPlaceholder')}
+          rows={3}
+        />
+      )}
 
-      <OnboardingSelect
-        label={t('businessLocation.businessDetails.mccCodeRequired')}
-        placeholder={t('businessLocation.businessDetails.mccCodePlaceholder')}
-        value={mccCode}
-        onValueChange={(value) => onUpdate('mccCode', value)}
-        options={mccOptions}
-      />
+      {isFieldEnabled('mccCode') && (
+        <OnboardingSelect
+          label={t('businessLocation.businessDetails.mccCodeRequired')}
+          placeholder={t('businessLocation.businessDetails.mccCodePlaceholder')}
+          value={mccCode}
+          onValueChange={(value) => onUpdate('mccCode', value)}
+          options={mccOptions}
+        />
+      )}
 
-      <OnboardingInput
-        label={t('businessLocation.businessDetails.monthlyTurnoverRequired')}
-        type="text"
-        inputMode="numeric"
-        value={displayValue}
-        onChange={handleTurnoverChange}
-        onFocus={handleTurnoverFocus}
-        onBlur={handleTurnoverBlur}
-        placeholder={t('businessLocation.businessDetails.monthlyTurnoverPlaceholder')}
-      />
+      {isFieldEnabled('monthlyTurnover') && (
+        <OnboardingInput
+          label={t('businessLocation.businessDetails.monthlyTurnoverRequired')}
+          type="text"
+          inputMode="numeric"
+          value={displayValue}
+          onChange={handleTurnoverChange}
+          onFocus={handleTurnoverFocus}
+          onBlur={handleTurnoverBlur}
+          placeholder={t('businessLocation.businessDetails.monthlyTurnoverPlaceholder')}
+        />
+      )}
     </div>
   );
 };

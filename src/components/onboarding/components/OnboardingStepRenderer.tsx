@@ -1,5 +1,6 @@
 
 import { OnboardingData } from "@/types/onboarding";
+import { OnboardingField } from "@/pages/OnboardingConfigPage";
 import ContactInfoStep from "../ContactInfoStep";
 import CompanyInfoStep from "../CompanyInfoStep";
 import BusinessLocationStep from "../BusinessLocationStep";
@@ -173,7 +174,7 @@ const OnboardingStepRenderer = ({
     updateData,
     onNext: enhancedOnNext,
     onPrev,
-    customFields
+    customFields: customFields as OnboardingField[]
   };
 
   console.log('=== OnboardingStepRenderer Debug ===', {

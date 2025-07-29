@@ -8,6 +8,7 @@ import MobileOptimizedCard from "./ui/MobileOptimizedCard";
 import EmptyState from "./BusinessLocationStep/EmptyState";
 import OpeningHoursModal from "./BusinessLocationStep/OpeningHoursModal";
 import { OnboardingData, OpeningHours } from "@/types/onboarding";
+import { OnboardingField } from "@/pages/OnboardingConfigPage";
 import { useBusinessLocationManager } from "./BusinessLocationStep/BusinessLocationManager";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -17,7 +18,7 @@ interface BusinessLocationStepProps {
   updateData: (data: Partial<OnboardingData>) => void;
   onNext: () => void;
   onPrev: () => void;
-  customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
+  customFields?: OnboardingField[];
 }
 
 const BusinessLocationStep = ({ data, updateData, customFields }: BusinessLocationStepProps) => {

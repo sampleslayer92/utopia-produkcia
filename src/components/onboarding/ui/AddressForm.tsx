@@ -2,6 +2,7 @@
 import { MapPin } from "lucide-react";
 import OnboardingInput from "./OnboardingInput";
 import { useTranslation } from "react-i18next";
+import { OnboardingField } from "@/pages/OnboardingConfigPage";
 
 interface AddressData {
   street: string;
@@ -14,10 +15,18 @@ interface AddressFormProps {
   data: AddressData;
   onUpdate: (field: keyof AddressData, value: string) => void;
   className?: string;
+  customFields?: OnboardingField[];
 }
 
-const AddressForm = ({ title, data, onUpdate, className = "" }: AddressFormProps) => {
+const AddressForm = ({ title, data, onUpdate, className = "", customFields }: AddressFormProps) => {
   const { t } = useTranslation('forms');
+  
+  // Helper function to check if a field is enabled
+  const isFieldEnabled = (fieldKey: string): boolean => {
+    if (!customFields) return true; // Default behavior if no custom fields
+    const field = customFields.find(f => f.fieldKey === fieldKey || f.fieldKey.endsWith(`.${fieldKey}`));
+    return field ? field.isEnabled : true;
+  };
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -27,29 +36,35 @@ const AddressForm = ({ title, data, onUpdate, className = "" }: AddressFormProps
       </h4>
       
       <div className="grid md:grid-cols-3 gap-4">
-        <div className="md:col-span-2">
-          <OnboardingInput
-            label={t('address.labels.streetRequired')}
-            value={data.street}
-            onChange={(e) => onUpdate('street', e.target.value)}
-            placeholder={t('address.placeholders.street')}
-          />
-        </div>
+        {isFieldEnabled('street') && (
+          <div className="md:col-span-2">
+            <OnboardingInput
+              label={t('address.labels.streetRequired')}
+              value={data.street}
+              onChange={(e) => onUpdate('street', e.target.value)}
+              placeholder={t('address.placeholders.street')}
+            />
+          </div>
+        )}
         
-        <OnboardingInput
-          label={t('address.labels.zipCodeRequired')}
-          value={data.zipCode}
-          onChange={(e) => onUpdate('zipCode', e.target.value)}
-          placeholder={t('address.placeholders.zipCode')}
-        />
+        {isFieldEnabled('zipCode') && (
+          <OnboardingInput
+            label={t('address.labels.zipCodeRequired')}
+            value={data.zipCode}
+            onChange={(e) => onUpdate('zipCode', e.target.value)}
+            placeholder={t('address.placeholders.zipCode')}
+          />
+        )}
       </div>
       
-      <OnboardingInput
-        label={t('address.labels.cityRequired')}
-        value={data.city}
-        onChange={(e) => onUpdate('city', e.target.value)}
-        placeholder={t('address.placeholders.city')}
-      />
+      {isFieldEnabled('city') && (
+        <OnboardingInput
+          label={t('address.labels.cityRequired')}
+          value={data.city}
+          onChange={(e) => onUpdate('city', e.target.value)}
+          placeholder={t('address.placeholders.city')}
+        />
+      )}
     </div>
   );
 };

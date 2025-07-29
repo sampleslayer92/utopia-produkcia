@@ -4,6 +4,7 @@ import { Store, Trash2, MapPin } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useTranslation } from "react-i18next";
 import { BusinessLocation, OnboardingData } from "@/types/onboarding";
+import { OnboardingField } from "@/pages/OnboardingConfigPage";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import AddressForm from "../ui/AddressForm";
@@ -22,6 +23,7 @@ interface BusinessLocationCardProps {
   onBankAccountsUpdate: (accounts: any[]) => void;
   onBusinessDetailsUpdate: (field: string, value: string | number) => void;
   onOpeningHoursEdit: () => void;
+  customFields?: OnboardingField[];
 }
 
 const BusinessLocationCard = ({
@@ -34,9 +36,17 @@ const BusinessLocationCard = ({
   onUpdate,
   onBankAccountsUpdate,
   onBusinessDetailsUpdate,
-  onOpeningHoursEdit
+  onOpeningHoursEdit,
+  customFields
 }: BusinessLocationCardProps) => {
   const { t } = useTranslation('forms');
+  
+  // Helper function to check if a field is enabled
+  const isFieldEnabled = (fieldKey: string): boolean => {
+    if (!customFields) return true; // Default behavior if no custom fields
+    const field = customFields.find(f => f.fieldKey === fieldKey || f.fieldKey.endsWith(`.${fieldKey}`));
+    return field ? field.isEnabled : true;
+  };
 
   const seasonalityOptions = [
     { value: "year-round", label: t('businessLocation.seasonalityOptions.yearRound') },
@@ -106,35 +116,40 @@ const BusinessLocationCard = ({
               </h4>
               
               <div className="grid md:grid-cols-2 gap-4">
-                <OnboardingInput
-                  label={t('businessLocation.card.locationNameRequired')}
-                  value={location.name}
-                  onChange={(e) => onUpdate('name', e.target.value)}
-                  placeholder={t('businessLocation.card.locationNamePlaceholder')}
-                />
+                {isFieldEnabled('name') && (
+                  <OnboardingInput
+                    label={t('businessLocation.card.locationNameRequired')}
+                    value={location.name}
+                    onChange={(e) => onUpdate('name', e.target.value)}
+                    placeholder={t('businessLocation.card.locationNamePlaceholder')}
+                  />
+                )}
                 
-                <div className="flex items-end h-full pb-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`hasPOS-${location.id}`}
-                      checked={location.hasPOS}
-                      onCheckedChange={(checked) => onUpdate('hasPOS', checked)}
-                    />
-                    <label htmlFor={`hasPOS-${location.id}`} className="text-sm text-slate-700">
-                      {t('businessLocation.card.hasPosLabel')}
-                    </label>
+                {isFieldEnabled('hasPOS') && (
+                  <div className="flex items-end h-full pb-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`hasPOS-${location.id}`}
+                        checked={location.hasPOS}
+                        onCheckedChange={(checked) => onUpdate('hasPOS', checked)}
+                      />
+                      <label htmlFor={`hasPOS-${location.id}`} className="text-sm text-slate-700">
+                        {t('businessLocation.card.hasPosLabel')}
+                      </label>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
             {/* Address - only show if not using head office address */}
-            {!shouldHideAddress && (
+            {!shouldHideAddress && isFieldEnabled('address') && (
               <div className="border-t border-slate-100 pt-6">
                 <AddressForm
                   title={t('businessLocation.card.addressTitle')}
                   data={location.address}
                   onUpdate={(field, value) => onUpdate(`address.${field}`, value)}
+                  customFields={customFields}
                 />
               </div>
             )}
@@ -162,63 +177,76 @@ const BusinessLocationCard = ({
             )}
 
             {/* Bank Accounts */}
-            <div className="border-t border-slate-100 pt-6">
-              <BankAccountsSection
-                bankAccounts={location.bankAccounts || []}
-                onUpdateBankAccounts={onBankAccountsUpdate}
-              />
-            </div>
-
-            {/* Business Details - Use the correct update function */}
-            <div className="border-t border-slate-100 pt-6">
-              <BusinessDetailsSection
-                businessSubject={location.businessSubject || ''}
-                mccCode={location.mccCode || ''}
-                monthlyTurnover={location.monthlyTurnover || 0}
-                onUpdate={onBusinessDetailsUpdate}
-              />
-            </div>
-
-            {/* Additional Business Information */}
-            <div className="border-t border-slate-100 pt-6">
-              <div className="grid md:grid-cols-2 gap-4">
-                <OnboardingInput
-                  label={t('businessLocation.card.averageTransactionRequired')}
-                  type="number"
-                  value={location.averageTransaction || ''}
-                  onChange={(e) => onUpdate('averageTransaction', Number(e.target.value))}
-                  placeholder={t('businessLocation.card.averageTransactionPlaceholder')}
-                />
-                
-                <OnboardingSelect
-                  label={t('businessLocation.card.seasonalityRequired')}
-                  value={location.seasonality}
-                  onValueChange={(value) => onUpdate('seasonality', value)}
-                  options={seasonalityOptions}
+            {isFieldEnabled('bankAccounts') && (
+              <div className="border-t border-slate-100 pt-6">
+                <BankAccountsSection
+                  bankAccounts={location.bankAccounts || []}
+                  onUpdateBankAccounts={onBankAccountsUpdate}
                 />
               </div>
-              
-              {location.seasonality === 'seasonal' && (
-                <OnboardingInput
-                  label={t('businessLocation.card.seasonalWeeksLabel')}
-                  type="number"
-                  value={location.seasonalWeeks || ''}
-                  onChange={(e) => onUpdate('seasonalWeeks', Number(e.target.value))}
-                  placeholder={t('businessLocation.card.seasonalWeeksPlaceholder')}
-                  min="1"
-                  max="52"
-                  className="mt-4"
+            )}
+
+            {/* Business Details - Use the correct update function */}
+            {(isFieldEnabled('businessSubject') || isFieldEnabled('mccCode') || isFieldEnabled('monthlyTurnover')) && (
+              <div className="border-t border-slate-100 pt-6">
+                <BusinessDetailsSection
+                  businessSubject={location.businessSubject || ''}
+                  mccCode={location.mccCode || ''}
+                  monthlyTurnover={location.monthlyTurnover || 0}
+                  onUpdate={onBusinessDetailsUpdate}
+                  customFields={customFields}
                 />
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* Additional Business Information */}
+            {(isFieldEnabled('averageTransaction') || isFieldEnabled('seasonality')) && (
+              <div className="border-t border-slate-100 pt-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  {isFieldEnabled('averageTransaction') && (
+                    <OnboardingInput
+                      label={t('businessLocation.card.averageTransactionRequired')}
+                      type="number"
+                      value={location.averageTransaction || ''}
+                      onChange={(e) => onUpdate('averageTransaction', Number(e.target.value))}
+                      placeholder={t('businessLocation.card.averageTransactionPlaceholder')}
+                    />
+                  )}
+                  
+                  {isFieldEnabled('seasonality') && (
+                    <OnboardingSelect
+                      label={t('businessLocation.card.seasonalityRequired')}
+                      value={location.seasonality}
+                      onValueChange={(value) => onUpdate('seasonality', value)}
+                      options={seasonalityOptions}
+                    />
+                  )}
+                </div>
+                
+                {location.seasonality === 'seasonal' && isFieldEnabled('seasonalWeeks') && (
+                  <OnboardingInput
+                    label={t('businessLocation.card.seasonalWeeksLabel')}
+                    type="number"
+                    value={location.seasonalWeeks || ''}
+                    onChange={(e) => onUpdate('seasonalWeeks', Number(e.target.value))}
+                    placeholder={t('businessLocation.card.seasonalWeeksPlaceholder')}
+                    min="1"
+                    max="52"
+                    className="mt-4"
+                  />
+                )}
+              </div>
+            )}
 
             {/* Opening Hours */}
-            <div className="border-t border-slate-100 pt-6">
-              <OpeningHoursSummary
-                openingHours={location.openingHoursDetailed || []}
-                onEdit={onOpeningHoursEdit}
-              />
-            </div>
+            {isFieldEnabled('openingHours') && (
+              <div className="border-t border-slate-100 pt-6">
+                <OpeningHoursSummary
+                  openingHours={location.openingHoursDetailed || []}
+                  onEdit={onOpeningHoursEdit}
+                />
+              </div>
+            )}
 
             {/* Contact Person - COMPLETELY HIDDEN but data is still saved in background */}
             {/* This section is intentionally removed from the UI */}
