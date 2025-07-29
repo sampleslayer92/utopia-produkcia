@@ -29,6 +29,16 @@ interface OnboardingFlowProps {
     position: number;
     isEnabled: boolean;
     isRequired: boolean;
+    fields: Array<{
+      id?: string;
+      fieldKey: string;
+      fieldLabel: string;
+      fieldType: string;
+      isRequired: boolean;
+      isEnabled: boolean;
+      position?: number;
+      fieldOptions?: any;
+    }>;
   }>;
 }
 

@@ -20,6 +20,16 @@ interface PersonInputGroupProps {
   completedFields: Set<string>;
   forceShowPhonePrefix?: boolean;
   showSalutation?: boolean;
+  customFields?: Array<{
+    id?: string;
+    fieldKey: string;
+    fieldLabel: string;
+    fieldType: string;
+    isRequired: boolean;
+    isEnabled: boolean;
+    position?: number;
+    fieldOptions?: any;
+  }>;
 }
 
 const PersonInputGroup = ({ 
@@ -27,9 +37,24 @@ const PersonInputGroup = ({
   onUpdate, 
   completedFields, 
   forceShowPhonePrefix = false,
-  showSalutation = true 
+  showSalutation = true,
+  customFields
 }: PersonInputGroupProps) => {
   const { t } = useTranslation('forms');
+
+  // Check if field is enabled in customFields configuration
+  const isFieldEnabled = (fieldKey: string) => {
+    if (!customFields) return true; // Default to enabled if no custom config
+    const field = customFields.find(f => f.fieldKey === fieldKey);
+    return field ? field.isEnabled : false;
+  };
+
+  // Check which fields should be shown
+  const showSalutationField = showSalutation && isFieldEnabled('salutation');
+  const showFirstNameField = isFieldEnabled('firstName');
+  const showLastNameField = isFieldEnabled('lastName');
+  const showEmailField = isFieldEnabled('email');
+  const showPhoneField = isFieldEnabled('phone');
 
   const salutationOptions = [
     { value: 'Pan', label: t('contactInfo.salutationOptions.pan') },
@@ -43,7 +68,7 @@ const PersonInputGroup = ({
         <span className="text-sm font-medium">{t('contactInfo.personalData')} *</span>
       </div>
 
-      {showSalutation && (
+      {showSalutationField && (
         <OnboardingSelect
           label={`${t('contactInfo.salutation')} *`}
           placeholder={t('contactInfo.placeholders.selectSalutation')}
@@ -54,48 +79,58 @@ const PersonInputGroup = ({
         />
       )}
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <OnboardingInput
-          label={`${t('contactInfo.firstName')} *`}
-          value={data.firstName}
-          onChange={(e) => onUpdate('firstName', e.target.value)}
-          placeholder={t('contactInfo.placeholders.firstName')}
-          isCompleted={completedFields.has('firstName')}
-        />
+      {(showFirstNameField || showLastNameField) && (
+        <div className="grid md:grid-cols-2 gap-4">
+          {showFirstNameField && (
+            <OnboardingInput
+              label={`${t('contactInfo.firstName')} *`}
+              value={data.firstName}
+              onChange={(e) => onUpdate('firstName', e.target.value)}
+              placeholder={t('contactInfo.placeholders.firstName')}
+              isCompleted={completedFields.has('firstName')}
+            />
+          )}
 
-        <OnboardingInput
-          label={`${t('contactInfo.lastName')} *`}
-          value={data.lastName}
-          onChange={(e) => onUpdate('lastName', e.target.value)}
-          placeholder={t('contactInfo.placeholders.lastName')}
-          isCompleted={completedFields.has('lastName')}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 text-slate-700">
-          <Mail className="h-4 w-4 text-blue-500" />
-          <span className="text-sm font-medium">{t('contactInfo.email')} *</span>
+          {showLastNameField && (
+            <OnboardingInput
+              label={`${t('contactInfo.lastName')} *`}
+              value={data.lastName}
+              onChange={(e) => onUpdate('lastName', e.target.value)}
+              placeholder={t('contactInfo.placeholders.lastName')}
+              isCompleted={completedFields.has('lastName')}
+            />
+          )}
         </div>
-        <OnboardingInput
-          type="email"
-          value={data.email}
-          onChange={(e) => onUpdate('email', e.target.value)}
-          placeholder={t('contactInfo.placeholders.email')}
-          isCompleted={completedFields.has('email')}
-        />
-      </div>
+      )}
 
-      <PhoneNumberInput
-        label={`${t('contactInfo.phone')} *`}
-        phoneValue={data.phone}
-        prefixValue={data.phonePrefix || '+421'}
-        onPhoneChange={(value) => onUpdate('phone', value)}
-        onPrefixChange={(value) => onUpdate('phonePrefix', value)}
-        isCompleted={completedFields.has('phone')}
-        placeholder={t('contactInfo.placeholders.phone')}
-        required={true}
-      />
+      {showEmailField && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-slate-700">
+            <Mail className="h-4 w-4 text-blue-500" />
+            <span className="text-sm font-medium">{t('contactInfo.email')} *</span>
+          </div>
+          <OnboardingInput
+            type="email"
+            value={data.email}
+            onChange={(e) => onUpdate('email', e.target.value)}
+            placeholder={t('contactInfo.placeholders.email')}
+            isCompleted={completedFields.has('email')}
+          />
+        </div>
+      )}
+
+      {showPhoneField && (
+        <PhoneNumberInput
+          label={`${t('contactInfo.phone')} *`}
+          phoneValue={data.phone}
+          prefixValue={data.phonePrefix || '+421'}
+          onPhoneChange={(value) => onUpdate('phone', value)}
+          onPrefixChange={(value) => onUpdate('phonePrefix', value)}
+          isCompleted={completedFields.has('phone')}
+          placeholder={t('contactInfo.placeholders.phone')}
+          required={true}
+        />
+      )}
     </div>
   );
 };

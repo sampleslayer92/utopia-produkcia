@@ -27,6 +27,16 @@ interface OnboardingStepRendererProps {
     position: number;
     isEnabled: boolean;
     isRequired: boolean;
+    fields: Array<{
+      id?: string;
+      fieldKey: string;
+      fieldLabel: string;
+      fieldType: string;
+      isRequired: boolean;
+      isEnabled: boolean;
+      position?: number;
+      fieldOptions?: any;
+    }>;
   }>;
 }
 
@@ -123,15 +133,18 @@ const OnboardingStepRenderer = ({
     onNext();
   }, [currentStep, onNext]);
 
-  // Get current step key for dynamic mapping
-  const getCurrentStepKey = () => {
+  // Get current step key and fields for dynamic mapping
+  const getCurrentStepInfo = () => {
     if (customSteps && customSteps.length > 0) {
       const enabledSteps = customSteps
         .filter(step => step.isEnabled)
         .sort((a, b) => a.position - b.position);
       
       if (enabledSteps[currentStep]) {
-        return enabledSteps[currentStep].stepKey;
+        return {
+          stepKey: enabledSteps[currentStep].stepKey,
+          customFields: enabledSteps[currentStep].fields
+        };
       }
     }
     
@@ -146,22 +159,36 @@ const OnboardingStepRenderer = ({
       'consents'
     ];
     
-    return defaultMapping[currentStep] || null;
+    return {
+      stepKey: defaultMapping[currentStep] || null,
+      customFields: undefined
+    };
   };
+
+  const currentStepInfo = getCurrentStepInfo();
+  const { stepKey: currentStepKey, customFields } = currentStepInfo;
 
   const commonProps = {
     data,
     updateData,
     onNext: enhancedOnNext,
-    onPrev
+    onPrev,
+    customFields
   };
 
   console.log('=== OnboardingStepRenderer Debug ===', {
     currentStep,
-    currentStepKey: getCurrentStepKey(),
+    currentStepKey,
     customStepsCount: customSteps?.length || 0,
     enabledStepsCount: customSteps?.filter(step => step.isEnabled).length || 0,
-    customSteps: customSteps?.map(step => ({ stepKey: step.stepKey, isEnabled: step.isEnabled, position: step.position })),
+    customSteps: customSteps?.map(step => ({ 
+      stepKey: step.stepKey, 
+      isEnabled: step.isEnabled, 
+      position: step.position,
+      fieldsCount: step.fields?.length || 0
+    })),
+    currentStepCustomFields: customFields?.length || 0,
+    enabledFields: customFields?.filter(field => field.isEnabled).length || 0,
     companyName: data.companyInfo?.companyName,
     ico: data.companyInfo?.ico,
     address: data.companyInfo?.address,
@@ -174,8 +201,6 @@ const OnboardingStepRenderer = ({
     userRoles: data.contactInfo?.userRoles,
     contactPersonId: data.contactInfo?.personId
   });
-
-  const currentStepKey = getCurrentStepKey();
 
   // Dynamic step rendering based on stepKey
   switch (currentStepKey) {

@@ -15,9 +15,19 @@ interface ContactInfoStepProps {
   updateData: (data: Partial<OnboardingData>) => void;
   onNext: () => void;
   onPrev: () => void;
+  customFields?: Array<{
+    id?: string;
+    fieldKey: string;
+    fieldLabel: string;
+    fieldType: string;
+    isRequired: boolean;
+    isEnabled: boolean;
+    position?: number;
+    fieldOptions?: any;
+  }>;
 }
 
-const ContactInfoStep = ({ data, updateData, onNext }: ContactInfoStepProps) => {
+const ContactInfoStep = ({ data, updateData, onNext, onPrev, customFields }: ContactInfoStepProps) => {
   const { t } = useTranslation(['forms', 'help']);
   const isMobile = useIsMobile();
   
@@ -74,12 +84,13 @@ const ContactInfoStep = ({ data, updateData, onNext }: ContactInfoStepProps) => 
         icon={<User className="h-4 w-4 text-blue-600" />}
         infoTooltip={infoTooltipData}
       >
-        <ContactInfoForm
-          data={data}
-          completedFields={completedFields}
-          onPersonDataUpdate={handlePersonDataUpdate}
-          onContactInfoUpdate={updateContactInfo}
-        />
+          <ContactInfoForm
+            data={data}
+            completedFields={completedFields}
+            onPersonDataUpdate={handlePersonDataUpdate}
+            onContactInfoUpdate={updateContactInfo}
+            customFields={customFields}
+          />
       </MobileOptimizedCard>
     );
   }
@@ -102,6 +113,7 @@ const ContactInfoStep = ({ data, updateData, onNext }: ContactInfoStepProps) => 
             completedFields={completedFields}
             onPersonDataUpdate={handlePersonDataUpdate}
             onContactInfoUpdate={updateContactInfo}
+            customFields={customFields}
           />
         </div>
       </CardContent>
