@@ -74,18 +74,57 @@ export const TemplateSectionEditor: React.FC<TemplateSectionEditorProps> = ({
           fields: [
             { key: 'company_name', label: 'Název společnosti', type: 'text', required: true },
             { key: 'ico', label: 'IČO', type: 'text', required: true },
-            { key: 'dic', label: 'DIČ', type: 'text', required: false },
-            { key: 'vat_number', label: 'IČ DPH', type: 'text', required: false }
+            { key: 'dic', label: 'DIČ', type: 'text', required: true },
+            { key: 'ic_dph', label: 'IČ DPH', type: 'text', required: false },
+            { key: 'street', label: 'Sídlo - ulice', type: 'text', required: true },
+            { key: 'house_number', label: 'Číslo popisné', type: 'text', required: true },
+            { key: 'city', label: 'Město', type: 'text', required: true },
+            { key: 'postal_code', label: 'PSČ', type: 'text', required: true },
+            { key: 'country', label: 'Země', type: 'text', required: true },
+            { key: 'phone', label: 'Telefon', type: 'text', required: true },
+            { key: 'email', label: 'E-mail', type: 'email', required: true }
           ]
         },
         {
-          id: 'contact_address',
-          title: '2. KONTAKTNÍ ADRESA',
+          id: 'business_contact',
+          title: 'Kontaktní osoba pro obchodní záležitosti',
           type: 'form',
           fields: [
-            { key: 'address_street', label: 'Ulice', type: 'text', required: true },
-            { key: 'address_city', label: 'Město', type: 'text', required: true },
-            { key: 'address_zip', label: 'PSČ', type: 'text', required: true }
+            { key: 'business_contact_name', label: 'Jméno a příjmení', type: 'text', required: true },
+            { key: 'business_contact_phone', label: 'Telefon', type: 'text', required: true },
+            { key: 'business_contact_email', label: 'E-mail', type: 'email', required: true }
+          ]
+        },
+        {
+          id: 'technical_contact',
+          title: 'Kontaktní osoba pro technické záležitosti (pokud je jiná)',
+          type: 'form',
+          fields: [
+            { key: 'technical_contact_name', label: 'Jméno a příjmení', type: 'text', required: false },
+            { key: 'technical_contact_phone', label: 'Telefon', type: 'text', required: false },
+            { key: 'technical_contact_email', label: 'E-mail', type: 'email', required: false }
+          ]
+        },
+        {
+          id: 'business_location',
+          title: '2. ÚDAJE O PROVOZOVNE OBCHODNÍKA',
+          type: 'form',
+          fields: [
+            { key: 'location_name', label: 'Název provozovny', type: 'text', required: true },
+            { key: 'location_street', label: 'Adresa - ulice', type: 'text', required: true },
+            { key: 'location_house_number', label: 'Číslo popisné', type: 'text', required: true },
+            { key: 'location_city', label: 'Město', type: 'text', required: true },
+            { key: 'location_postal_code', label: 'PSČ', type: 'text', required: true },
+            { key: 'location_country', label: 'Země', type: 'text', required: true },
+            { key: 'location_phone', label: 'Telefon', type: 'text', required: true },
+            { key: 'ecommerce', label: 'ECOMMERCE', type: 'checkbox', required: false },
+            { key: 'pos', label: 'POS', type: 'checkbox', required: false },
+            { key: 'website_url', label: 'URL obchodu', type: 'url', required: false },
+            { key: 'currency_czk', label: 'CZK', type: 'checkbox', required: false },
+            { key: 'currency_eur', label: 'EUR', type: 'checkbox', required: false },
+            { key: 'currency_other', label: 'Jiná měna', type: 'text', required: false },
+            { key: 'mcc_code', label: 'MCC kód', type: 'text', required: true },
+            { key: 'business_description', label: 'Popis činnosti', type: 'textarea', required: true }
           ]
         }
       ];
