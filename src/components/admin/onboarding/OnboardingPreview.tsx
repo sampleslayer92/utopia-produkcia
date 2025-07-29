@@ -52,7 +52,10 @@ const OnboardingPreview = ({ steps, onClose }: OnboardingPreviewProps) => {
       <Card className="border-2 border-dashed border-blue-200">
         <CardContent className="p-0">
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg overflow-hidden">
-            <OnboardingFlow isAdminMode={true} />
+            <OnboardingFlow 
+              isAdminMode={true} 
+              customSteps={steps}
+            />
           </div>
         </CardContent>
       </Card>

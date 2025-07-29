@@ -21,9 +21,18 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface OnboardingFlowProps {
   isAdminMode?: boolean;
+  customSteps?: Array<{
+    id: string;
+    stepKey: string;
+    title: string;
+    description: string;
+    position: number;
+    isEnabled: boolean;
+    isRequired: boolean;
+  }>;
 }
 
-const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
+const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProps) => {
   const { t } = useTranslation(['common', 'notifications']);
   const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData();
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
@@ -35,7 +44,23 @@ const OnboardingFlow = ({ isAdminMode = false }: OnboardingFlowProps) => {
   const { overallProgress } = useProgressTracking(onboardingData, currentStep);
   const stepValidation = useStepValidation(currentStep, onboardingData);
   const isMobile = useIsMobile();
-  const onboardingSteps = useOnboardingSteps();
+  const defaultSteps = useOnboardingSteps();
+  
+  // Use custom steps in admin mode if provided, otherwise use default steps
+  const onboardingSteps = useMemo(() => {
+    if (isAdminMode && customSteps) {
+      // Convert custom steps to the format expected by the UI
+      return customSteps
+        .filter(step => step.isEnabled)
+        .sort((a, b) => a.position - b.position)
+        .map((step, index) => ({
+          number: index,
+          title: step.title,
+          description: step.description
+        }));
+    }
+    return defaultSteps;
+  }, [isAdminMode, customSteps, defaultSteps]);
 
   const isBasicInfoComplete = useMemo(() => {
     const { contactInfo } = onboardingData;
