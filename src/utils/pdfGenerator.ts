@@ -159,102 +159,204 @@ const createG1Template = (contractNumber: string, data: OnboardingData, signatur
   const { contactInfo, companyInfo, businessLocations, deviceSelection } = data;
   
   return `
-    <div style="font-family: Arial, sans-serif; padding: 40px; line-height: 1.6; max-width: 210mm;">
-      <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="font-size: 24px; margin-bottom: 10px;">G1 - Žádost o akceptaci platebních karet</h1>
-        <p style="font-size: 14px; color: #666;">Číslo zmluvy: ${contractNumber}</p>
-      </div>
-
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 5px;">Kontaktné údaje</h2>
-        <table style="width: 100%; margin-top: 15px;">
-          <tr>
-            <td style="padding: 8px; font-weight: bold; width: 30%;">Meno a priezvisko:</td>
-            <td style="padding: 8px;">${contactInfo.firstName} ${contactInfo.lastName}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold;">Email:</td>
-            <td style="padding: 8px;">${contactInfo.email}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold;">Telefón:</td>
-            <td style="padding: 8px;">${contactInfo.phonePrefix} ${contactInfo.phone}</td>
-          </tr>
-        </table>
-      </div>
-
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 5px;">Firemné údaje</h2>
-        <table style="width: 100%; margin-top: 15px;">
-          <tr>
-            <td style="padding: 8px; font-weight: bold; width: 30%;">Názov spoločnosti:</td>
-            <td style="padding: 8px;">${companyInfo.companyName}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold;">IČO:</td>
-            <td style="padding: 8px;">${companyInfo.ico}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold;">DIČ:</td>
-            <td style="padding: 8px;">${companyInfo.dic}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold;">Adresa:</td>
-            <td style="padding: 8px;">${companyInfo.address.street}, ${companyInfo.address.city}, ${companyInfo.address.zipCode}</td>
-          </tr>
-        </table>
-      </div>
-
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 5px;">Prevádzkové miesta</h2>
-        ${businessLocations.map((location, index) => `
-          <div style="margin-top: 15px; padding: 15px; border: 1px solid #ddd;">
-            <h3 style="font-size: 16px; margin-bottom: 10px;">Prevádzka ${index + 1}: ${location.name}</h3>
-            <table style="width: 100%;">
-              <tr>
-                <td style="padding: 4px; font-weight: bold; width: 30%;">Adresa:</td>
-                <td style="padding: 4px;">${location.address.street}, ${location.address.city} ${location.address.zipCode}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Sektor:</td>
-                <td style="padding: 4px;">${location.businessSector}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Odhadovaný obrat:</td>
-                <td style="padding: 4px;">€${location.estimatedTurnover}</td>
-              </tr>
-            </table>
+    <div style="font-family: Arial, sans-serif; padding: 0; margin: 0; background: white; width: 210mm; min-height: 297mm;">
+      <!-- Header with logos and blue background -->
+      <div style="background: #1E90FF; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div style="display: flex; align-items: center;">
+          <div style="width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+            <span style="font-weight: bold; color: #1E90FF; font-size: 14px;">ONEPOS</span>
           </div>
-        `).join('')}
+          <div style="color: white;">
+            <h1 style="margin: 0; font-size: 24px; font-weight: bold;">G1 - Žádost o akceptaci platebních karet</h1>
+            <p style="margin: 5px 0 0 0; font-size: 14px;">Číslo zmluvy: ${contractNumber}</p>
+          </div>
+        </div>
+        <div style="width: 120px; height: 40px; background: white; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+          <span style="font-weight: bold; color: #333; font-size: 12px;">Global Payments</span>
+        </div>
       </div>
 
-      <div style="margin-bottom: 40px;">
-        <h2 style="font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 5px;">Výber zariadení a služieb</h2>
-        <div style="margin-top: 15px;">
-          <p style="font-weight: bold; margin-bottom: 10px;">Vybrané riešenia: ${deviceSelection.selectedSolutions.join(', ')}</p>
-          ${deviceSelection.dynamicCards.map((item, index) => `
-            <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #eee;">
-              <strong>${item.name}</strong> (${item.type === 'device' ? 'Zariadenie' : 'Služba'}) - Počet: ${item.count}
-              <br>
-              <small>${item.description}</small>
+      <div style="padding: 0 30px;">
+        <!-- 1. ÚDAJE O SPOLEČNOSTI -->
+        <div style="margin-bottom: 25px;">
+          <h2 style="font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #333;">1. ÚDAJE O SPOLEČNOSTI</h2>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+              <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Obchodní název / název společnosti</label>
+              <div style="border: 1px solid #ddd; padding: 8px; background: #f9f9f9; min-height: 20px;">${companyInfo.companyName}</div>
+            </div>
+            <div>
+              <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">IČO</label>
+              <div style="border: 1px solid #ddd; padding: 8px; background: #f9f9f9; min-height: 20px;">${companyInfo.ico}</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+              <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">DIČ</label>
+              <div style="border: 1px solid #ddd; padding: 8px; background: #f9f9f9; min-height: 20px;">${companyInfo.dic || ''}</div>
+            </div>
+            <div>
+              <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">DPH</label>
+              <div style="border: 1px solid #ddd; padding: 8px; background: #f9f9f9; min-height: 20px;">${companyInfo.vatNumber || ''}</div>
+            </div>
+          </div>
+
+          <!-- Kontaktná adresa -->
+          <h3 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; color: #333;">Kontaktná adresa</h3>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+              <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Ulica a číslo</label>
+              <div style="border: 1px solid #ddd; padding: 8px; background: #f9f9f9; min-height: 20px;">${companyInfo.address.street}</div>
+            </div>
+            <div>
+              <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Mesto</label>
+              <div style="border: 1px solid #ddd; padding: 8px; background: #f9f9f9; min-height: 20px;">${companyInfo.address.city}</div>
+            </div>
+            <div>
+              <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">PSČ</label>
+              <div style="border: 1px solid #ddd; padding: 8px; background: #f9f9f9; min-height: 20px;">${companyInfo.address.zipCode}</div>
+            </div>
+          </div>
+
+          <!-- Kontaktné osoby -->
+          <h3 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; color: #333;">Kontaktné osoby</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+              <h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #333;">Obchodný kontakt</h4>
+              <div style="margin-bottom: 8px;">
+                <label style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">Meno a priezvisko</label>
+                <div style="border: 1px solid #ddd; padding: 6px; background: #f9f9f9; font-size: 12px;">${contactInfo.firstName} ${contactInfo.lastName}</div>
+              </div>
+              <div style="margin-bottom: 8px;">
+                <label style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">Email</label>
+                <div style="border: 1px solid #ddd; padding: 6px; background: #f9f9f9; font-size: 12px;">${contactInfo.email}</div>
+              </div>
+              <div>
+                <label style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">Telefón</label>
+                <div style="border: 1px solid #ddd; padding: 6px; background: #f9f9f9; font-size: 12px;">${contactInfo.phonePrefix} ${contactInfo.phone}</div>
+              </div>
+            </div>
+            <div>
+              <h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #333;">Technický kontakt</h4>
+              <div style="margin-bottom: 8px;">
+                <label style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">Meno a priezvisko</label>
+                <div style="border: 1px solid #ddd; padding: 6px; background: #f9f9f9; font-size: 12px;">${contactInfo.firstName} ${contactInfo.lastName}</div>
+              </div>
+              <div style="margin-bottom: 8px;">
+                <label style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">Email</label>
+                <div style="border: 1px solid #ddd; padding: 6px; background: #f9f9f9; font-size: 12px;">${contactInfo.email}</div>
+              </div>
+              <div>
+                <label style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">Telefón</label>
+                <div style="border: 1px solid #ddd; padding: 6px; background: #f9f9f9; font-size: 12px;">${contactInfo.phonePrefix} ${contactInfo.phone}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. ÚDAJE O PROVOZOVNĚ OBCHODNÍKA -->
+        <div style="margin-bottom: 25px; page-break-inside: avoid;">
+          <h2 style="font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #333;">2. ÚDAJE O PROVOZOVNĚ OBCHODNÍKA</h2>
+          
+          ${businessLocations.map((location, index) => `
+            <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; background: #fafafa;">
+              <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #333;">Prevádzka ${index + 1}: ${location.name}</h3>
+              <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div>
+                  <label style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">Adresa</label>
+                  <div style="border: 1px solid #ccc; padding: 6px; background: white; font-size: 12px;">${location.address.street}, ${location.address.city}</div>
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">PSČ</label>
+                  <div style="border: 1px solid #ccc; padding: 6px; background: white; font-size: 12px;">${location.address.zipCode}</div>
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">MCC kód</label>
+                  <div style="border: 1px solid #ccc; padding: 6px; background: white; font-size: 12px;">${location.mccCode || ''}</div>
+                </div>
+              </div>
+              
+              <!-- Terminály tabuľka -->
+              <h4 style="font-size: 12px; font-weight: bold; margin-bottom: 8px; color: #333;">Terminály</h4>
+              <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                <thead>
+                  <tr style="background: #e9e9e9;">
+                    <th style="border: 1px solid #ccc; padding: 6px; text-align: left;">Typ terminálu</th>
+                    <th style="border: 1px solid #ccc; padding: 6px; text-align: center;">Počet</th>
+                    <th style="border: 1px solid #ccc; padding: 6px; text-align: right;">Mies. poplatok</th>
+                    <th style="border: 1px solid #ccc; padding: 6px; text-align: right;">Celkom</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${deviceSelection.dynamicCards.filter(item => item.type === 'device' && item.locationId === location.id).map(device => `
+                    <tr>
+                      <td style="border: 1px solid #ccc; padding: 6px;">${device.name}</td>
+                      <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${device.count}</td>
+                      <td style="border: 1px solid #ccc; padding: 6px; text-align: right;">€${device.monthlyFee}</td>
+                      <td style="border: 1px solid #ccc; padding: 6px; text-align: right; font-weight: bold;">€${(device.count * device.monthlyFee).toFixed(2)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
             </div>
           `).join('')}
         </div>
-      </div>
 
-      <div style="margin-top: 80px;">
-        <div style="display: flex; justify-content: space-between; align-items: end;">
-          <div style="width: 45%;">
-            <p style="font-size: 14px; margin-bottom: 5px;">Dátum a miesto:</p>
-            <div style="border-bottom: 1px solid #333; height: 20px; margin-bottom: 40px;"></div>
-          </div>
-          <div style="width: 45%; text-align: center;">
-            <p style="font-size: 14px; margin-bottom: 5px;">Podpis žiadateľa:</p>
-            <div id="signature-area" style="border: 1px solid #333; height: 80px; display: flex; align-items: center; justify-content: center;">
-              ${signatureDataUrl ? `<img src="${signatureDataUrl}" style="max-height: 70px; max-width: 100%;" />` : 'Podpis'}
+        <!-- Funkcionality checkboxy -->
+        <div style="margin-bottom: 30px;">
+          <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 15px; color: #333;">Požadované funkcionality</h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            <div>
+              <h4 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">ECOMMERCE</h4>
+              <div style="font-size: 11px; line-height: 1.4;">
+                <div style="margin-bottom: 4px;"><input type="checkbox" style="margin-right: 5px;"> Payment Gateway</div>
+                <div style="margin-bottom: 4px;"><input type="checkbox" style="margin-right: 5px;"> API Integration</div>
+                <div style="margin-bottom: 4px;"><input type="checkbox" style="margin-right: 5px;"> Hosted Payment Page</div>
+              </div>
+            </div>
+            <div>
+              <h4 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">POS</h4>
+              <div style="font-size: 11px; line-height: 1.4;">
+                <div style="margin-bottom: 4px;"><input type="checkbox" style="margin-right: 5px;"> Card Present</div>
+                <div style="margin-bottom: 4px;"><input type="checkbox" style="margin-right: 5px;"> Contactless</div>
+                <div style="margin-bottom: 4px;"><input type="checkbox" style="margin-right: 5px;"> Mobile POS</div>
+              </div>
+            </div>
+            <div>
+              <h4 style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">PAYMENT METHODS</h4>
+              <div style="font-size: 11px; line-height: 1.4;">
+                <div style="margin-bottom: 4px;"><input type="checkbox" style="margin-right: 5px;"> VISA</div>
+                <div style="margin-bottom: 4px;"><input type="checkbox" style="margin-right: 5px;"> Mastercard</div>
+                <div style="margin-bottom: 4px;"><input type="checkbox" style="margin-right: 5px;"> American Express</div>
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- Signature Area -->
+        <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: end;">
+          <div style="width: 40%;">
+            <p style="font-size: 12px; margin-bottom: 5px; color: #666;">Dátum a miesto:</p>
+            <div style="border-bottom: 1px solid #333; height: 25px; margin-bottom: 30px;"></div>
+          </div>
+          <div style="width: 40%; text-align: center;">
+            <p style="font-size: 12px; margin-bottom: 5px; color: #666;">Podpis žiadateľa:</p>
+            <div style="border: 1px solid #333; height: 60px; display: flex; align-items: center; justify-content: center; background: #fafafa;">
+              ${signatureDataUrl ? `<img src="${signatureDataUrl}" style="max-height: 50px; max-width: 90%;" />` : '<span style="color: #999; font-size: 11px;">Podpis</span>'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="position: absolute; bottom: 20px; left: 30px; right: 30px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;">
+        <div style="display: flex; align-items: center;">
+          <div style="width: 20px; height: 20px; background: #1E90FF; border-radius: 50%; margin-right: 8px;"></div>
+          <span style="font-weight: bold;">ONEPOS</span>
+        </div>
+        <span>Strana 1/4</span>
       </div>
     </div>
   `;
@@ -265,101 +367,142 @@ const createG2Template = (contractNumber: string, data: OnboardingData, signatur
   const { authorizedPersons, actualOwners } = data;
   
   return `
-    <div style="font-family: Arial, sans-serif; padding: 40px; line-height: 1.6; max-width: 210mm;">
-      <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="font-size: 24px; margin-bottom: 10px;">G2 - Prohlášení o skutečném majiteli</h1>
-        <p style="font-size: 14px; color: #666;">Číslo zmluvy: ${contractNumber}</p>
+    <div style="font-family: Arial, sans-serif; padding: 0; margin: 0; background: white; width: 210mm; min-height: 297mm;">
+      <!-- Header with logos and blue background -->
+      <div style="background: #1E90FF; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div style="display: flex; align-items: center;">
+          <div style="width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+            <span style="font-weight: bold; color: #1E90FF; font-size: 14px;">ONEPOS</span>
+          </div>
+          <div style="color: white;">
+            <h1 style="margin: 0; font-size: 24px; font-weight: bold;">G2 - Prohlášení o skutečném majiteli</h1>
+            <p style="margin: 5px 0 0 0; font-size: 14px;">Číslo zmluvy: ${contractNumber}</p>
+          </div>
+        </div>
+        <div style="width: 120px; height: 40px; background: white; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+          <span style="font-weight: bold; color: #333; font-size: 12px;">Global Payments</span>
+        </div>
       </div>
 
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 5px;">Oprávnené osoby</h2>
-        ${authorizedPersons.map((person, index) => `
-          <div style="margin-top: 20px; padding: 15px; border: 1px solid #ddd;">
-            <h3 style="font-size: 16px; margin-bottom: 10px;">Oprávnená osoba ${index + 1}</h3>
-            <table style="width: 100%;">
-              <tr>
-                <td style="padding: 4px; font-weight: bold; width: 30%;">Meno a priezvisko:</td>
-                <td style="padding: 4px;">${person.firstName} ${person.lastName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Dátum narodenia:</td>
-                <td style="padding: 4px;">${person.birthDate}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Miesto narodenia:</td>
-                <td style="padding: 4px;">${person.birthPlace}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Trvalá adresa:</td>
-                <td style="padding: 4px;">${person.permanentAddress}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Pozícia:</td>
-                <td style="padding: 4px;">${person.position}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Doklad totožnosti:</td>
-                <td style="padding: 4px;">${person.documentType} ${person.documentNumber}</td>
-              </tr>
-            </table>
-          </div>
-        `).join('')}
-      </div>
+      <div style="padding: 0 30px;">
+        <!-- Oprávnené osoby -->
+        <div style="margin-bottom: 30px;">
+          <h2 style="font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #333;">1. OPRÁVNENÉ OSOBY</h2>
+          ${authorizedPersons.map((person, index) => `
+            <div style="margin-bottom: 25px; padding: 20px; border: 1px solid #ddd; background: #fafafa;">
+              <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 15px; color: #333;">Oprávnená osoba ${index + 1}</h3>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Meno a priezvisko</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${person.firstName} ${person.lastName}</div>
+                </div>
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Pozícia v spoločnosti</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${person.position}</div>
+                </div>
+              </div>
 
-      <div style="margin-bottom: 40px;">
-        <h2 style="font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 5px;">Skutočný majitelia</h2>
-        ${actualOwners.map((owner, index) => `
-          <div style="margin-top: 20px; padding: 15px; border: 1px solid #ddd;">
-            <h3 style="font-size: 16px; margin-bottom: 10px;">Skutočný majiteľ ${index + 1}</h3>
-            <table style="width: 100%;">
-              <tr>
-                <td style="padding: 4px; font-weight: bold; width: 30%;">Meno a priezvisko:</td>
-                <td style="padding: 4px;">${owner.firstName} ${owner.lastName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Dátum narodenia:</td>
-                <td style="padding: 4px;">${owner.birthDate}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Miesto narodenia:</td>
-                <td style="padding: 4px;">${owner.birthPlace}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Trvalá adresa:</td>
-                <td style="padding: 4px;">${owner.permanentAddress}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Rodné číslo:</td>
-                <td style="padding: 4px;">${owner.birthNumber}</td>
-              </tr>
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Štátna príslušnosť:</td>
-                <td style="padding: 4px;">${owner.citizenship}</td>
-              </tr>
-              ${owner.maidenName ? `
-              <tr>
-                <td style="padding: 4px; font-weight: bold;">Rodné priezvisko:</td>
-                <td style="padding: 4px;">${owner.maidenName}</td>
-              </tr>
-              ` : ''}
-            </table>
-          </div>
-        `).join('')}
-      </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Dátum narodenia</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${person.birthDate}</div>
+                </div>
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Miesto narodenia</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${person.birthPlace}</div>
+                </div>
+              </div>
 
-      <div style="margin-top: 80px;">
-        <div style="display: flex; justify-content: space-between; align-items: end;">
-          <div style="width: 45%;">
-            <p style="font-size: 14px; margin-bottom: 5px;">Dátum a miesto:</p>
-            <div style="border-bottom: 1px solid #333; height: 20px; margin-bottom: 40px;"></div>
+              <div style="margin-bottom: 15px;">
+                <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Trvalá adresa</label>
+                <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${person.permanentAddress}</div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Typ dokladu totožnosti</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${person.documentType}</div>
+                </div>
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Číslo dokladu</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${person.documentNumber}</div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Skutočný majitelia -->
+        <div style="margin-bottom: 40px;">
+          <h2 style="font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #333;">2. SKUTOČNÝ MAJITELIA</h2>
+          ${actualOwners.map((owner, index) => `
+            <div style="margin-bottom: 25px; padding: 20px; border: 1px solid #ddd; background: #fafafa;">
+              <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 15px; color: #333;">Skutočný majiteľ ${index + 1}</h3>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Meno a priezvisko</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${owner.firstName} ${owner.lastName}</div>
+                </div>
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Rodné priezvisko</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${owner.maidenName || ''}</div>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Dátum narodenia</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${owner.birthDate}</div>
+                </div>
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Miesto narodenia</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${owner.birthPlace}</div>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 15px;">
+                <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Trvalá adresa</label>
+                <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${owner.permanentAddress}</div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Rodné číslo</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${owner.birthNumber}</div>
+                </div>
+                <div>
+                  <label style="font-size: 12px; color: #666; display: block; margin-bottom: 3px;">Štátna príslušnosť</label>
+                  <div style="border: 1px solid #ccc; padding: 8px; background: white; min-height: 20px; font-size: 12px;">${owner.citizenship}</div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Signature Area -->
+        <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: end;">
+          <div style="width: 40%;">
+            <p style="font-size: 12px; margin-bottom: 5px; color: #666;">Dátum a miesto:</p>
+            <div style="border-bottom: 1px solid #333; height: 25px; margin-bottom: 30px;"></div>
           </div>
-          <div style="width: 45%; text-align: center;">
-            <p style="font-size: 14px; margin-bottom: 5px;">Podpis žiadateľa:</p>
-            <div id="signature-area" style="border: 1px solid #333; height: 80px; display: flex; align-items: center; justify-content: center;">
-              ${signatureDataUrl ? `<img src="${signatureDataUrl}" style="max-height: 70px; max-width: 100%;" />` : 'Podpis'}
+          <div style="width: 40%; text-align: center;">
+            <p style="font-size: 12px; margin-bottom: 5px; color: #666;">Podpis žiadateľa:</p>
+            <div style="border: 1px solid #333; height: 60px; display: flex; align-items: center; justify-content: center; background: #fafafa;">
+              ${signatureDataUrl ? `<img src="${signatureDataUrl}" style="max-height: 50px; max-width: 90%;" />` : '<span style="color: #999; font-size: 11px;">Podpis</span>'}
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="position: absolute; bottom: 20px; left: 30px; right: 30px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #666;">
+        <div style="display: flex; align-items: center;">
+          <div style="width: 20px; height: 20px; background: #1E90FF; border-radius: 50%; margin-right: 8px;"></div>
+          <span style="font-weight: bold;">ONEPOS</span>
+        </div>
+        <span>Strana 1/2</span>
       </div>
     </div>
   `;
