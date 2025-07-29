@@ -1,46 +1,10 @@
 
 import { useTranslation } from 'react-i18next';
+import { useDynamicOnboardingSteps } from '@/hooks/useDynamicOnboardingSteps';
 
 export const useOnboardingSteps = () => {
-  const { t } = useTranslation('steps');
-  
-  return [
-    {
-      number: 0,
-      title: t('titles.contactInfo'),
-      description: t('descriptions.contactInfo')
-    },
-    {
-      number: 1,
-      title: t('titles.companyInfo'),
-      description: t('descriptions.companyInfo')
-    },
-    {
-      number: 2,
-      title: t('titles.businessLocations'),
-      description: t('descriptions.businessLocations')
-    },
-    {
-      number: 3,
-      title: t('titles.deviceSelection'),
-      description: t('descriptions.deviceSelection')
-    },
-    {
-      number: 4,
-      title: t('titles.fees'),
-      description: t('descriptions.fees')
-    },
-    {
-      number: 5,
-      title: t('titles.personsAndOwners'),
-      description: t('descriptions.personsAndOwners')
-    },
-    {
-      number: 6,
-      title: t('titles.consents'),
-      description: t('descriptions.consents')
-    }
-  ];
+  const { steps } = useDynamicOnboardingSteps();
+  return steps;
 };
 
 // Fallback for compatibility - can be removed after all components are updated

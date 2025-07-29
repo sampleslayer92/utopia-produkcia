@@ -16,11 +16,12 @@ export const useOnboardingNavigation = (
   updateData: (data: Partial<OnboardingData>) => void,
   isBasicInfoComplete: boolean,
   onStepNavigate?: (fromStep: number, toStep: number) => void, // New callback for step navigation
-  isAdminMode: boolean = false // New parameter for admin mode
+  isAdminMode: boolean = false, // New parameter for admin mode
+  dynamicTotalSteps?: number // New parameter for dynamic total steps
 ) => {
   const navigate = useNavigate();
   const { userRole } = useAuth();
-  const totalSteps = 7; // Updated from 8 to 7 steps
+  const totalSteps = dynamicTotalSteps || 7; // Use dynamic total steps if provided
   const { submitContract, isSubmitting } = useContractSubmission();
 
   const nextStep = async () => {

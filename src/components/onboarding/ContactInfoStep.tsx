@@ -9,6 +9,7 @@ import MobileOptimizedCard from "./ui/MobileOptimizedCard";
 import { useSimplifiedContactInfoLogic } from "./ContactInfoStep/hooks/useSimplifiedContactInfoLogic";
 import { useContactInfoSync } from "./ContactInfoStep/hooks/useContactInfoSync";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ContactInfoFieldRenderer } from "./ContactInfoStep/ContactInfoFieldRenderer";
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -74,9 +75,9 @@ const ContactInfoStep = ({ data, updateData, onNext }: ContactInfoStepProps) => 
         icon={<User className="h-4 w-4 text-blue-600" />}
         infoTooltip={infoTooltipData}
       >
-        <ContactInfoForm
+        <ContactInfoFieldRenderer
           data={data}
-          completedFields={completedFields}
+          updateData={updateData}
           onPersonDataUpdate={handlePersonDataUpdate}
           onContactInfoUpdate={updateContactInfo}
         />
@@ -97,9 +98,9 @@ const ContactInfoStep = ({ data, updateData, onNext }: ContactInfoStepProps) => 
             contractNumber={data.contractNumber || ''}
           />
           
-          <ContactInfoForm
+          <ContactInfoFieldRenderer
             data={data}
-            completedFields={completedFields}
+            updateData={updateData}
             onPersonDataUpdate={handlePersonDataUpdate}
             onContactInfoUpdate={updateContactInfo}
           />
