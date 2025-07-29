@@ -11,6 +11,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { syncContactPersonData } from "./utils/crossStepAutoFill";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
+import { CompanyInfoFieldRenderer } from "./CompanyInfoStep/CompanyInfoFieldRenderer";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -276,34 +277,14 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
         icon={<Building2 className="h-4 w-4 text-blue-600" />}
         infoTooltip={infoTooltipData}
       >
-        <div className="space-y-4">
-          <EnhancedCompanyBasicInfoCard
-            data={data}
-            updateCompanyInfo={updateCompanyInfo}
-            autoFilledFields={autoFilledFields}
-            setAutoFilledFields={setAutoFilledFields}
-          />
-          
-          <CompanyAddressCard
-            data={data}
-            updateCompanyInfo={updateCompanyInfo}
-            autoFilledFields={autoFilledFields}
-          />
-          
-          {!data.companyInfo.contactAddressSameAsMain && (
-            <CompanyContactAddressCard
-              data={data}
-              updateCompanyInfo={updateCompanyInfo}
-            />
-          )}
-          
-          {!hideContactPerson && (
-            <CompanyContactPersonCard
-              data={data}
-              updateCompanyInfo={updateCompanyInfo}
-            />
-          )}
-        </div>
+        <CompanyInfoFieldRenderer
+          data={data}
+          updateData={updateData}
+          updateCompanyInfo={updateCompanyInfo}
+          autoFilledFields={autoFilledFields}
+          setAutoFilledFields={setAutoFilledFields}
+          hideContactPerson={hideContactPerson}
+        />
       </MobileOptimizedCard>
     );
   }
@@ -348,68 +329,14 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true }: Company
           
           {/* Main form content with accordion */}
           <div className="col-span-1 md:col-span-2 p-6 md:p-8">
-            <Accordion type="multiple" defaultValue={defaultAccordionValues} className="space-y-4">
-              
-              {/* Enhanced Basic Company Info */}
-              <AccordionItem value="basic-info" className="border border-slate-200 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-medium text-slate-900">{t('companyInfo.basicInfo')}</span>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <EnhancedCompanyBasicInfoCard
-                    data={data}
-                    updateCompanyInfo={updateCompanyInfo}
-                    autoFilledFields={autoFilledFields}
-                    setAutoFilledFields={setAutoFilledFields}
-                  />
-                </AccordionContent>
-              </AccordionItem>
-
-              {/* Company Address */}
-              <AccordionItem value="address" className="border border-slate-200 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-medium text-slate-900">{t('companyInfo.addressSection')}</span>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <CompanyAddressCard
-                    data={data}
-                    updateCompanyInfo={updateCompanyInfo}
-                    autoFilledFields={autoFilledFields}
-                  />
-                </AccordionContent>
-              </AccordionItem>
-
-              {/* Contact Address - only show if not same as main */}
-              {!data.companyInfo.contactAddressSameAsMain && (
-                <AccordionItem value="contact-address" className="border border-slate-200 rounded-lg">
-                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                    <span className="font-medium text-slate-900">{t('companyInfo.contactAddressSection')}</span>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-4">
-                    <CompanyContactAddressCard
-                      data={data}
-                      updateCompanyInfo={updateCompanyInfo}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-              )}
-
-              {/* Contact Person - only show if not hidden */}
-              {!hideContactPerson && (
-                <AccordionItem value="contact-person" className="border border-slate-200 rounded-lg">
-                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                    <span className="font-medium text-slate-900">{t('companyInfo.contactPersonSection')}</span>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-4">
-                    <CompanyContactPersonCard
-                      data={data}
-                      updateCompanyInfo={updateCompanyInfo}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-              )}
-
-            </Accordion>
+            <CompanyInfoFieldRenderer
+              data={data}
+              updateData={updateData}
+              updateCompanyInfo={updateCompanyInfo}
+              autoFilledFields={autoFilledFields}
+              setAutoFilledFields={setAutoFilledFields}
+              hideContactPerson={hideContactPerson}
+            />
           </div>
         </div>
       </CardContent>

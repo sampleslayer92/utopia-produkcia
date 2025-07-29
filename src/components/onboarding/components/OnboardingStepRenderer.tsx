@@ -8,6 +8,7 @@ import FeesStep from "../FeesStep";
 import PersonsAndOwnersStep from "../PersonsAndOwnersStep";
 import ConsentsStep from "../ConsentsStep";
 import { useCrossStepAutoFill } from "../hooks/useCrossStepAutoFill";
+import { useDynamicOnboardingSteps } from "@/hooks/useDynamicOnboardingSteps";
 import { useEffect, useCallback } from "react";
 
 interface OnboardingStepRendererProps {
@@ -31,6 +32,7 @@ const OnboardingStepRenderer = ({
   onSaveSignature,
   onStepNavigate
 }: OnboardingStepRendererProps) => {
+  const { steps, isUsingConfiguration } = useDynamicOnboardingSteps();
   // Initialize cross-step auto-fill logic (disabled for step 0)
   const {
     autoFillAuthorizedPerson,
@@ -122,6 +124,9 @@ const OnboardingStepRenderer = ({
 
   console.log('=== OnboardingStepRenderer Debug ===', {
     currentStep,
+    totalSteps: steps.length,
+    currentStepKey: steps[currentStep]?.step_key,
+    isUsingConfiguration,
     companyName: data.companyInfo?.companyName,
     ico: data.companyInfo?.ico,
     address: data.companyInfo?.address,
@@ -135,22 +140,33 @@ const OnboardingStepRenderer = ({
     contactPersonId: data.contactInfo?.personId
   });
 
-  switch (currentStep) {
-    case 0:
+  // Get current step configuration
+  const currentStepConfig = steps[currentStep];
+  if (!currentStepConfig) {
+    console.warn('No step configuration found for step:', currentStep);
+    return null;
+  }
+
+  // Dynamic step mapping based on configuration
+  const stepKey = currentStepConfig.step_key;
+  
+  switch (stepKey) {
+    case 'contact_info':
       return <ContactInfoStep {...commonProps} />;
-    case 1:
+    case 'company_info':
       return <CompanyInfoStep {...commonProps} />;
-    case 2:
+    case 'business_locations':
       return <BusinessLocationStep {...commonProps} />;
-    case 3:
+    case 'device_selection':
       return <DeviceSelectionStep {...commonProps} />;
-    case 4:
+    case 'fees':
       return <FeesStep {...commonProps} />;
-    case 5:
+    case 'persons_and_owners':
       return <PersonsAndOwnersStep {...commonProps} />;
-    case 6:
+    case 'consents':
       return <ConsentsStep {...commonProps} onComplete={onComplete} onSaveSignature={onSaveSignature} />;
     default:
+      console.warn('Unknown step key:', stepKey);
       return null;
   }
 };
