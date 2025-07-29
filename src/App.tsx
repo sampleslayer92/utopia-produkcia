@@ -47,6 +47,7 @@ import NotificationCenterPage from "./pages/admin/NotificationCenterPage";
 import EshopLayout from "./components/eshop/EshopLayout";
 import EshopPage from "./pages/EshopPage";
 import CartPage from "./pages/CartPage";
+import ContractTemplatesPage from "./pages/ContractTemplatesPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -251,6 +252,11 @@ const App = () => (
           <Route path="/admin/organizations/structure" element={
             <ProtectedRoute requiredRole="admin">
               <OrganizationalStructurePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/templates" element={
+            <ProtectedRoute requiredRole="admin">
+              <ContractTemplatesPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/teams/:teamId" element={
