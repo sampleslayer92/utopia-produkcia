@@ -36,7 +36,18 @@ const ConfigurableOnboardingFlow = ({ isAdminMode = false }: ConfigurableOnboard
   const isMobile = useIsMobile();
   
   // Load configuration from database
-  const { steps: configSteps, loading: configLoading } = useOnboardingConfig();
+  const { steps: configSteps, loading: configLoading, loadConfiguration } = useOnboardingConfig();
+  
+  // Force reload configuration when not in admin mode (for live updates)
+  useEffect(() => {
+    if (!isAdminMode) {
+      const interval = setInterval(() => {
+        loadConfiguration();
+      }, 5000); // Reload every 5 seconds in non-admin mode
+      
+      return () => clearInterval(interval);
+    }
+  }, [isAdminMode, loadConfiguration]);
   
   // Convert database steps to UI format
   const onboardingSteps = useMemo(() => {

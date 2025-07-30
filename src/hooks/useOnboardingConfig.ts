@@ -372,6 +372,7 @@ export const useOnboardingConfig = () => {
     steps,
     loading,
     saving,
+    loadConfiguration,
     updateStepOrder,
     updateStep,
     addStep,
