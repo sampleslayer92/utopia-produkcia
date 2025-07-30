@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { X, Play, Eye } from "lucide-react";
-import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
+import ConfigurableOnboardingFlow from "@/components/onboarding/dynamic/ConfigurableOnboardingFlow";
 import type { OnboardingStep } from '@/pages/OnboardingConfigPage';
 
 interface OnboardingPreviewProps {

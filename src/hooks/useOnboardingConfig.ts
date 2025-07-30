@@ -131,8 +131,56 @@ export const useOnboardingConfig = () => {
     try {
       setLoading(true);
       
-      // For now, use default configuration since we need the types to be updated first
-      // The database tables exist but the TypeScript types haven't been regenerated yet
+      // Try to load from database first
+      const { data: configurations } = await supabase
+        .from('onboarding_configurations')
+        .select('id, name, is_active')
+        .eq('is_active', true)
+        .limit(1);
+
+      if (configurations && configurations.length > 0) {
+        const configId = configurations[0].id;
+        
+        // Load steps with their fields
+        const { data: stepsData } = await supabase
+          .from('onboarding_steps')
+          .select(`
+            id, step_key, title, description, position, is_enabled, 
+            onboarding_fields (
+              id, field_key, field_label, field_type, is_required, 
+              is_enabled, position, field_options
+            )
+          `)
+          .eq('configuration_id', configId)
+          .order('position');
+
+        if (stepsData) {
+          const formattedSteps = stepsData.map(step => ({
+            id: step.id,
+            stepKey: step.step_key,
+            title: step.title,
+            description: step.description || '',
+            position: step.position,
+            isEnabled: step.is_enabled,
+            isRequired: false, // Set based on your logic
+            fields: (step.onboarding_fields || []).map(field => ({
+              id: field.id,
+              fieldKey: field.field_key,
+              fieldLabel: field.field_label,
+              fieldType: field.field_type as any,
+              isRequired: field.is_required,
+              isEnabled: field.is_enabled,
+              position: field.position || 0,
+              fieldOptions: field.field_options || {}
+            }))
+          })) as OnboardingStep[];
+          
+          setSteps(formattedSteps);
+          return;
+        }
+      }
+      
+      // Fallback to default configuration
       const defaultSteps = DEFAULT_STEPS.map((step, index) => ({
         id: `default_${index}`,
         ...step,

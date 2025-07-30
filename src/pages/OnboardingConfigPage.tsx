@@ -14,7 +14,8 @@ import {
   Trash2,
   Copy,
   Save,
-  RotateCcw
+  RotateCcw,
+  ExternalLink
 } from "lucide-react";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -128,6 +129,13 @@ const OnboardingConfigPage = () => {
 
   const actions = (
     <div className="flex gap-2">
+      <Button 
+        variant="outline" 
+        onClick={() => window.open('/dynamic-onboarding', '_blank')}
+      >
+        <ExternalLink className="h-4 w-4 mr-2" />
+        Testovať dynamický
+      </Button>
       <Button variant="outline" onClick={() => setIsPreviewMode(!isPreviewMode)}>
         <Eye className="h-4 w-4 mr-2" />
         {isPreviewMode ? 'Ukončiť náhľad' : 'Náhľad'}

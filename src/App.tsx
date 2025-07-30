@@ -11,6 +11,7 @@ import Welcome from "./pages/Welcome";
 import AuthPage from "./pages/AuthPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import OnboardingFlow from "./pages/OnboardingFlow";
+import DynamicOnboardingFlow from "./pages/DynamicOnboardingFlow";
 import AdminDashboard from "./pages/AdminDashboard";
 import ContractsPage from "./pages/ContractsPage";
 import RequestsPage from "./pages/RequestsPage";
@@ -66,6 +67,7 @@ const App = () => (
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
+          <Route path="/dynamic-onboarding" element={<DynamicOnboardingFlow />} />
           <Route path="/design-system" element={<DesignSystemPage />} />
           
           {/* Admin routes - accessible only by admin */}
