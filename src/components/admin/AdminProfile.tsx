@@ -22,7 +22,16 @@ const AdminProfile = () => {
   const { t } = useTranslation('ui');
   const { profile, userRole, signOut } = useAuth();
   const navigate = useNavigate();
-  const { state } = useSidebar();
+  
+  // Handle sidebar context gracefully - it might not exist
+  let sidebarState = "expanded";
+  try {
+    const { state } = useSidebar();
+    sidebarState = state;
+  } catch {
+    // If not within SidebarProvider, default to expanded
+    sidebarState = "expanded";
+  }
 
   const handleSignOut = async () => {
     try {
@@ -55,18 +64,18 @@ const AdminProfile = () => {
         <Button 
           variant="ghost" 
           className={`w-full p-3 h-auto rounded-xl transition-all duration-200 hover:bg-blue-50/50 hover:shadow-md ${
-            state === "collapsed" ? "justify-center" : "justify-start"
+            sidebarState === "collapsed" ? "justify-center" : "justify-start"
           }`}
         >
           <div className={`flex items-center w-full ${
-            state === "collapsed" ? "justify-center" : "space-x-3"
+            sidebarState === "collapsed" ? "justify-center" : "space-x-3"
           }`}>
             <Avatar className="h-10 w-10 shadow-lg">
               <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-sm font-semibold">
                 {profile.first_name?.[0]}{profile.last_name?.[0]}
               </AvatarFallback>
             </Avatar>
-            {state === "expanded" && (
+            {sidebarState === "expanded" && (
               <>
                 <div className="flex-1 text-left">
                   <div className="font-medium text-sm">{profile.first_name} {profile.last_name}</div>
