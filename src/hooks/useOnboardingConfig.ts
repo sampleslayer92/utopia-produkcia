@@ -262,12 +262,77 @@ export const useOnboardingConfig = () => {
     try {
       setSaving(true);
       
-      // For now, just simulate saving since the TypeScript types need to be updated
-      // The database tables exist but we can't use them until types are regenerated
-      console.log('Saving configuration to database:', steps);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Get or create active configuration
+      let configId;
+      const { data: configurations } = await supabase
+        .from('onboarding_configurations')
+        .select('id')
+        .eq('is_active', true)
+        .limit(1);
+
+      if (configurations && configurations.length > 0) {
+        configId = configurations[0].id;
+      } else {
+        // Create new configuration
+        const { data: newConfig, error: configError } = await supabase
+          .from('onboarding_configurations')
+          .insert({
+            name: 'Default Configuration',
+            is_active: true
+          })
+          .select('id')
+          .single();
+
+        if (configError) throw configError;
+        configId = newConfig.id;
+      }
+
+      // Delete existing steps and fields for this configuration
+      await supabase
+        .from('onboarding_steps')
+        .delete()
+        .eq('configuration_id', configId);
+
+      // Insert steps in order
+      for (const step of steps) {
+        const { data: insertedStep, error: stepError } = await supabase
+          .from('onboarding_steps')
+          .insert({
+            configuration_id: configId,
+            step_key: step.stepKey,
+            title: step.title,
+            description: step.description,
+            position: step.position,
+            is_enabled: step.isEnabled
+          })
+          .select('id')
+          .single();
+
+        if (stepError) throw stepError;
+
+        // Insert fields for this step
+        if (step.fields && step.fields.length > 0) {
+          const fieldsToInsert = step.fields.map(field => ({
+            step_id: insertedStep.id,
+            field_key: field.fieldKey,
+            field_label: field.fieldLabel,
+            field_type: field.fieldType,
+            is_required: field.isRequired,
+            is_enabled: field.isEnabled,
+            position: field.position || 0,
+            field_options: field.fieldOptions || {}
+          }));
+
+          const { error: fieldsError } = await supabase
+            .from('onboarding_fields')
+            .insert(fieldsToInsert);
+
+          if (fieldsError) throw fieldsError;
+        }
+      }
+
+      // Reload configuration to get fresh data with IDs
+      await loadConfiguration();
       
       return true;
     } catch (error) {
