@@ -13,6 +13,7 @@ import {
   HelpCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import AdminProfile from "@/components/admin/AdminProfile";
 
 const MerchantDashboard = () => {
   const navigate = useNavigate();
@@ -87,13 +88,7 @@ const MerchantDashboard = () => {
               <Badge className="bg-purple-100 text-purple-700 border-purple-200">
                 Merchant
               </Badge>
-              <Button 
-                onClick={() => navigate('/')}
-                variant="outline"
-                className="border-slate-300"
-              >
-                Back to Home
-              </Button>
+              <AdminProfile />
             </div>
           </div>
         </div>
