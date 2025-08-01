@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ApplicationFlowView from './ApplicationFlowView';
 import { 
   LayoutDashboard, 
   Users, 
@@ -198,175 +200,189 @@ export default function ApplicationView() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Role Filter */}
-      <div className="flex flex-wrap gap-2">
-        <span className="text-sm font-medium text-muted-foreground py-2">Filtrovať podľa role:</span>
-        {Object.entries(ROLE_COLORS).map(([role, colors]) => (
-          <Button
-            key={role}
-            variant={selectedRole === role ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedRole(role)}
-            className="flex items-center gap-2"
-            style={selectedRole === role ? { 
-              backgroundColor: colors.bg, 
-              borderColor: colors.border,
-              color: 'hsl(var(--foreground))'
-            } : {}}
-          >
-            {colors.text}
-          </Button>
-        ))}
+    <Tabs defaultValue="cards" className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Pohľad na Aplikáciu</h2>
+        <TabsList>
+          <TabsTrigger value="cards">Kartový pohľad</TabsTrigger>
+          <TabsTrigger value="diagram">Grafický diagram</TabsTrigger>
+        </TabsList>
       </div>
 
-      {/* Application Sections Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {Object.entries(APPLICATION_SECTIONS).map(([key, section]) => {
-          const filteredSections = filterSectionsByRole(section.sections);
-          const sectionCount = getSectionCount(section.sections);
-          const IconComponent = section.icon;
-
-          if (sectionCount === 0) return null;
-
-          return (
-            <Card 
-              key={key} 
-              className="cursor-pointer transition-all hover:shadow-lg border-2"
-              style={{ borderColor: section.color }}
-              onClick={() => setSelectedSection(selectedSection === key ? null : key)}
+      <TabsContent value="cards" className="space-y-6">
+        {/* Role Filter */}
+        <div className="flex flex-wrap gap-2">
+          <span className="text-sm font-medium text-muted-foreground py-2">Filtrovať podľa role:</span>
+          {Object.entries(ROLE_COLORS).map(([role, colors]) => (
+            <Button
+              key={role}
+              variant={selectedRole === role ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedRole(role)}
+              className="flex items-center gap-2"
+              style={selectedRole === role ? { 
+                backgroundColor: colors.bg, 
+                borderColor: colors.border,
+                color: 'hsl(var(--foreground))'
+              } : {}}
             >
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3">
-                  <div 
-                    className="p-2 rounded-lg"
-                    style={{ backgroundColor: `${section.color}15`, color: section.color }}
-                  >
-                    <IconComponent className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span>{section.title}</span>
-                      <Badge variant="secondary" className="text-xs">
-                        {sectionCount} {sectionCount === 1 ? 'modul' : 'moduly'}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardTitle>
-              </CardHeader>
+              {colors.text}
+            </Button>
+          ))}
+        </div>
 
-              {selectedSection === key && (
-                <CardContent className="pt-0 space-y-4">
-                  {Object.entries(filteredSections).map(([roleKey, roleSection]: [string, any]) => (
-                    <div key={roleKey} className="border rounded-lg p-4 space-y-3">
+        {/* Application Sections Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {Object.entries(APPLICATION_SECTIONS).map(([key, section]) => {
+            const filteredSections = filterSectionsByRole(section.sections);
+            const sectionCount = getSectionCount(section.sections);
+            const IconComponent = section.icon;
+
+            if (sectionCount === 0) return null;
+
+            return (
+              <Card 
+                key={key} 
+                className="cursor-pointer transition-all hover:shadow-lg border-2"
+                style={{ borderColor: section.color }}
+                onClick={() => setSelectedSection(selectedSection === key ? null : key)}
+              >
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3">
+                    <div 
+                      className="p-2 rounded-lg"
+                      style={{ backgroundColor: `${section.color}15`, color: section.color }}
+                    >
+                      <IconComponent className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-sm">{roleSection.title}</h4>
-                        <Badge 
-                          variant="outline"
-                          style={{ 
-                            backgroundColor: ROLE_COLORS[roleKey as keyof typeof ROLE_COLORS]?.bg,
-                            borderColor: ROLE_COLORS[roleKey as keyof typeof ROLE_COLORS]?.border
-                          }}
-                        >
-                          {ROLE_COLORS[roleKey as keyof typeof ROLE_COLORS]?.text || roleKey}
+                        <span>{section.title}</span>
+                        <Badge variant="secondary" className="text-xs">
+                          {sectionCount} {sectionCount === 1 ? 'modul' : 'moduly'}
                         </Badge>
                       </div>
-                      
-                      <p className="text-xs text-muted-foreground">{roleSection.description}</p>
-                      
-                      {/* Features */}
-                      <div>
-                        <span className="text-xs font-medium text-muted-foreground">Hlavné funkcie:</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {roleSection.features.map((feature: string, index: number) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {feature}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Pages */}
-                      <div>
-                        <span className="text-xs font-medium text-muted-foreground">Stránky:</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {roleSection.pages.map((page: string, index: number) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {page}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
                     </div>
-                  ))}
-                </CardContent>
-              )}
-            </Card>
-          );
-        })}
-      </div>
+                  </CardTitle>
+                </CardHeader>
 
-      {/* Summary Statistics */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            Súhrn Aplikácie
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-primary">8</div>
-              <div className="text-sm text-muted-foreground">Hlavných sekcií</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-success">15</div>
-              <div className="text-sm text-muted-foreground">Modulov celkom</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-warning">45+</div>
-              <div className="text-sm text-muted-foreground">Stránok</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-info">3</div>
-              <div className="text-sm text-muted-foreground">Používateľských rolí</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                {selectedSection === key && (
+                  <CardContent className="pt-0 space-y-4">
+                    {Object.entries(filteredSections).map(([roleKey, roleSection]: [string, any]) => (
+                      <div key={roleKey} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-semibold text-sm">{roleSection.title}</h4>
+                          <Badge 
+                            variant="outline"
+                            style={{ 
+                              backgroundColor: ROLE_COLORS[roleKey as keyof typeof ROLE_COLORS]?.bg,
+                              borderColor: ROLE_COLORS[roleKey as keyof typeof ROLE_COLORS]?.border
+                            }}
+                          >
+                            {ROLE_COLORS[roleKey as keyof typeof ROLE_COLORS]?.text || roleKey}
+                          </Badge>
+                        </div>
+                        
+                        <p className="text-xs text-muted-foreground">{roleSection.description}</p>
+                        
+                        {/* Features */}
+                        <div>
+                          <span className="text-xs font-medium text-muted-foreground">Hlavné funkcie:</span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {roleSection.features.map((feature: string, index: number) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {feature}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
 
-      {/* Role Legend */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Legenda Rolí</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: ROLE_COLORS.admin.bg }}>
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ROLE_COLORS.admin.border }}></div>
+                        {/* Pages */}
+                        <div>
+                          <span className="text-xs font-medium text-muted-foreground">Stránky:</span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {roleSection.pages.map((page: string, index: number) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {page}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                )}
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Summary Statistics */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Súhrn Aplikácie
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="font-medium">Admin</div>
-                <div className="text-sm text-muted-foreground">Plný prístup ku všetkým funkciám</div>
+                <div className="text-2xl font-bold text-primary">8</div>
+                <div className="text-sm text-muted-foreground">Hlavných sekcií</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-success">15</div>
+                <div className="text-sm text-muted-foreground">Modulov celkom</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-warning">45+</div>
+                <div className="text-sm text-muted-foreground">Stránok</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-info">3</div>
+                <div className="text-sm text-muted-foreground">Používateľských rolí</div>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: ROLE_COLORS.partner.bg }}>
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ROLE_COLORS.partner.border }}></div>
-              <div>
-                <div className="font-medium">Partner</div>
-                <div className="text-sm text-muted-foreground">Obchodné operácie a inventár</div>
+          </CardContent>
+        </Card>
+
+        {/* Role Legend */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Legenda Rolí</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: ROLE_COLORS.admin.bg }}>
+                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ROLE_COLORS.admin.border }}></div>
+                <div>
+                  <div className="font-medium">Admin</div>
+                  <div className="text-sm text-muted-foreground">Plný prístup ku všetkým funkciám</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: ROLE_COLORS.partner.bg }}>
+                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ROLE_COLORS.partner.border }}></div>
+                <div>
+                  <div className="font-medium">Partner</div>
+                  <div className="text-sm text-muted-foreground">Obchodné operácie a inventár</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: ROLE_COLORS.merchant.bg }}>
+                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ROLE_COLORS.merchant.border }}></div>
+                <div>
+                  <div className="font-medium">Merchant</div>
+                  <div className="text-sm text-muted-foreground">Self-service portál</div>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: ROLE_COLORS.merchant.bg }}>
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ROLE_COLORS.merchant.border }}></div>
-              <div>
-                <div className="font-medium">Merchant</div>
-                <div className="text-sm text-muted-foreground">Self-service portál</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="diagram">
+        <ApplicationFlowView />
+      </TabsContent>
+    </Tabs>
   );
 }
