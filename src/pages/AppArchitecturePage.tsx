@@ -1,282 +1,519 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ReactFlow,
-  addEdge,
   MiniMap,
   Controls,
   Background,
   useNodesState,
   useEdgesState,
-  ConnectionMode,
+  addEdge,
+  Connection,
+  Edge,
+  Node,
+  Position,
 } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Search, Filter, Eye, EyeOff, Info } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useTranslation } from 'react-i18next';
 
-const initialNodes = [
+import '@xyflow/react/dist/style.css';
+
+// Node categories for filtering
+const NODE_CATEGORIES = {
+  AUTH: 'auth',
+  PAGES: 'pages',
+  COMPONENTS: 'components',
+  HOOKS: 'hooks',
+  CONTEXTS: 'contexts',
+  DATABASE: 'database',
+  ROUTING: 'routing'
+} as const;
+
+// Role-based color scheme
+const ROLE_COLORS = {
+  admin: { bg: '#ffebee', border: '#c62828', text: 'Admin Only' },
+  partner: { bg: '#e3f2fd', border: '#1976d2', text: 'Partner Access' },
+  merchant: { bg: '#e8f5e8', border: '#388e3c', text: 'Merchant Access' },
+  public: { bg: '#f5f5f5', border: '#616161', text: 'Public Access' },
+  system: { bg: '#fff3e0', border: '#f57c00', text: 'System Component' }
+};
+
+// Comprehensive nodes data
+const initialNodes: Node[] = [
   // Authentication Layer
   {
     id: 'auth-context',
     type: 'default',
     position: { x: 100, y: 50 },
-    data: { label: 'AuthContext' },
-    style: { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' }
-  },
-  {
-    id: 'protected-route',
-    type: 'default',
-    position: { x: 300, y: 50 },
-    data: { label: 'ProtectedRoute' },
-    style: { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' }
+    data: { 
+      label: 'AuthContext',
+      category: NODE_CATEGORIES.CONTEXTS,
+      role: 'system',
+      description: 'Manages authentication state, user roles, and auth operations'
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
 
-  // Main App Router
-  {
-    id: 'app-router',
-    type: 'default',
-    position: { x: 200, y: 150 },
-    data: { label: 'App Router' },
-    style: { backgroundColor: '#DBEAFE', borderColor: '#3B82F6' }
-  },
-
-  // Dashboard Layer
+  // Main Dashboard Pages
   {
     id: 'admin-dashboard',
     type: 'default',
-    position: { x: 50, y: 250 },
-    data: { label: 'AdminDashboard' },
-    style: { backgroundColor: '#DCFCE7', borderColor: '#22C55E' }
+    position: { x: 300, y: 150 },
+    data: { 
+      label: 'Admin Dashboard',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'admin',
+      description: 'Main admin interface with overview and navigation'
+    },
+    style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
   },
   {
     id: 'partner-dashboard',
     type: 'default',
-    position: { x: 200, y: 250 },
-    data: { label: 'PartnerDashboard' },
-    style: { backgroundColor: '#DCFCE7', borderColor: '#22C55E' }
+    position: { x: 500, y: 150 },
+    data: { 
+      label: 'Partner Dashboard',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'partner',
+      description: 'Partner-specific dashboard with limited admin functions'
+    },
+    style: { backgroundColor: ROLE_COLORS.partner.bg, borderColor: ROLE_COLORS.partner.border }
   },
   {
     id: 'merchant-dashboard',
     type: 'default',
-    position: { x: 350, y: 250 },
-    data: { label: 'MerchantDashboard' },
-    style: { backgroundColor: '#DCFCE7', borderColor: '#22C55E' }
+    position: { x: 700, y: 150 },
+    data: { 
+      label: 'Merchant Dashboard',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'merchant',
+      description: 'Merchant interface for contract and business management'
+    },
+    style: { backgroundColor: ROLE_COLORS.merchant.bg, borderColor: ROLE_COLORS.merchant.border }
   },
 
-  // Contract Management Module
+  // Business Process Pages
   {
     id: 'contracts-page',
     type: 'default',
-    position: { x: 50, y: 350 },
-    data: { label: 'ContractsPage' },
-    style: { backgroundColor: '#F3E8FF', borderColor: '#8B5CF6' }
+    position: { x: 100, y: 300 },
+    data: { 
+      label: 'Contracts Management',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'admin',
+      description: 'Contract creation, editing, and management'
+    },
+    style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
   },
-  {
-    id: 'contract-detail',
-    type: 'default',
-    position: { x: 200, y: 350 },
-    data: { label: 'ContractDetailPage' },
-    style: { backgroundColor: '#F3E8FF', borderColor: '#8B5CF6' }
-  },
-  {
-    id: 'onboarding-flow',
-    type: 'default',
-    position: { x: 350, y: 350 },
-    data: { label: 'OnboardingFlow' },
-    style: { backgroundColor: '#F3E8FF', borderColor: '#8B5CF6' }
-  },
-
-  // Merchant Management Module
   {
     id: 'merchants-page',
     type: 'default',
-    position: { x: 500, y: 250 },
-    data: { label: 'MerchantsPage' },
-    style: { backgroundColor: '#FEE2E2', borderColor: '#EF4444' }
+    position: { x: 300, y: 300 },
+    data: { 
+      label: 'Merchants Management',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'admin',
+      description: 'Merchant profiles, locations, and business data'
+    },
+    style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
   },
-  {
-    id: 'business-locations',
-    type: 'default',
-    position: { x: 500, y: 350 },
-    data: { label: 'BusinessLocationsPage' },
-    style: { backgroundColor: '#FEE2E2', borderColor: '#EF4444' }
-  },
-
-  // Warehouse Management Module
   {
     id: 'warehouse-page',
     type: 'default',
-    position: { x: 650, y: 250 },
-    data: { label: 'WarehousePage' },
-    style: { backgroundColor: '#FFF7ED', borderColor: '#F97316' }
-  },
-  {
-    id: 'item-types-page',
-    type: 'default',
-    position: { x: 650, y: 350 },
-    data: { label: 'ItemTypesPage' },
-    style: { backgroundColor: '#FFF7ED', borderColor: '#F97316' }
+    position: { x: 500, y: 300 },
+    data: { 
+      label: 'Warehouse Management',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'partner',
+      description: 'Product catalog, inventory, and solutions'
+    },
+    style: { backgroundColor: ROLE_COLORS.partner.bg, borderColor: ROLE_COLORS.partner.border }
   },
 
-  // Team Management Module
+  // Onboarding System
   {
-    id: 'team-page',
+    id: 'onboarding-flow',
     type: 'default',
-    position: { x: 800, y: 250 },
-    data: { label: 'TeamPage' },
-    style: { backgroundColor: '#ECFDF5', borderColor: '#10B981' }
+    position: { x: 700, y: 300 },
+    data: { 
+      label: 'Onboarding Flow',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'public',
+      description: 'Multi-step onboarding process for new merchants'
+    },
+    style: { backgroundColor: ROLE_COLORS.public.bg, borderColor: ROLE_COLORS.public.border }
   },
   {
-    id: 'settings-page',
+    id: 'dynamic-onboarding',
     type: 'default',
-    position: { x: 800, y: 350 },
-    data: { label: 'SettingsPage' },
-    style: { backgroundColor: '#ECFDF5', borderColor: '#10B981' }
+    position: { x: 900, y: 300 },
+    data: { 
+      label: 'Dynamic Onboarding',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'admin',
+      description: 'Configurable onboarding process with custom fields'
+    },
+    style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
+  },
+
+  // E-shop System
+  {
+    id: 'eshop-page',
+    type: 'default',
+    position: { x: 100, y: 450 },
+    data: { 
+      label: 'E-shop Interface',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'public',
+      description: 'Product catalog and shopping cart for customers'
+    },
+    style: { backgroundColor: ROLE_COLORS.public.bg, borderColor: ROLE_COLORS.public.border }
+  },
+  {
+    id: 'cart-context',
+    type: 'default',
+    position: { x: 300, y: 450 },
+    data: { 
+      label: 'CartContext',
+      category: NODE_CATEGORIES.CONTEXTS,
+      role: 'system',
+      description: 'Shopping cart state management with persistence'
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
 
   // Database Layer
   {
-    id: 'supabase',
+    id: 'supabase-db',
     type: 'default',
-    position: { x: 400, y: 500 },
-    data: { label: 'Supabase DB' },
-    style: { backgroundColor: '#1F2937', color: '#FFFFFF', borderColor: '#374151' }
+    position: { x: 500, y: 600 },
+    data: { 
+      label: 'Supabase Database',
+      category: NODE_CATEGORIES.DATABASE,
+      role: 'system',
+      description: 'PostgreSQL database with RLS policies'
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
+  },
+  {
+    id: 'contract-tables',
+    type: 'default',
+    position: { x: 200, y: 750 },
+    data: { 
+      label: 'Contract Tables',
+      category: NODE_CATEGORIES.DATABASE,
+      role: 'system',
+      description: 'contracts, contract_items, consents, authorized_persons'
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
+  },
+  {
+    id: 'merchant-tables',
+    type: 'default',
+    position: { x: 400, y: 750 },
+    data: { 
+      label: 'Merchant Tables',
+      category: NODE_CATEGORIES.DATABASE,
+      role: 'system',
+      description: 'merchants, business_locations, organizations'
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
+  },
+  {
+    id: 'warehouse-tables',
+    type: 'default',
+    position: { x: 600, y: 750 },
+    data: { 
+      label: 'Warehouse Tables',
+      category: NODE_CATEGORIES.DATABASE,
+      role: 'system',
+      description: 'warehouse_items, categories, solutions, item_types'
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
+  },
+  {
+    id: 'system-tables',
+    type: 'default',
+    position: { x: 800, y: 750 },
+    data: { 
+      label: 'System Tables',
+      category: NODE_CATEGORIES.DATABASE,
+      role: 'system',
+      description: 'user_roles, profiles, translations, teams'
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
 
-  // Context Layer
+  // Components Layer
   {
-    id: 'cart-context',
+    id: 'admin-layout',
     type: 'default',
-    position: { x: 100, y: 450 },
-    data: { label: 'CartContext' },
-    style: { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' }
+    position: { x: 100, y: 600 },
+    data: { 
+      label: 'AdminLayout',
+      category: NODE_CATEGORIES.COMPONENTS,
+      role: 'system',
+      description: 'Base layout for admin pages with sidebar and header'
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
+  },
+  {
+    id: 'eshop-layout',
+    type: 'default',
+    position: { x: 300, y: 600 },
+    data: { 
+      label: 'EshopLayout',
+      category: NODE_CATEGORIES.COMPONENTS,
+      role: 'system',
+      description: 'E-commerce layout with navigation and cart'
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
 
-  // Hooks Layer
+  // Architecture Page (Self-reference)
   {
-    id: 'custom-hooks',
+    id: 'architecture-page',
     type: 'default',
-    position: { x: 600, y: 450 },
-    data: { label: 'Custom Hooks' },
-    style: { backgroundColor: '#E0E7FF', borderColor: '#6366F1' }
+    position: { x: 1100, y: 300 },
+    data: { 
+      label: 'Architecture Page',
+      category: NODE_CATEGORIES.PAGES,
+      role: 'admin',
+      description: 'This interactive architecture documentation page'
+    },
+    style: { backgroundColor: '#e1f5fe', borderColor: '#0277bd', border: '3px solid' }
   }
 ];
 
-const initialEdges = [
-  // Authentication flow
-  { id: 'e1', source: 'auth-context', target: 'protected-route', type: 'smoothstep' },
-  { id: 'e2', source: 'protected-route', target: 'app-router', type: 'smoothstep' },
+// Comprehensive edges data
+const initialEdges: Edge[] = [
+  // Authentication flows
+  { id: 'auth-admin', source: 'auth-context', target: 'admin-dashboard', label: 'Admin Auth', type: 'smoothstep' },
+  { id: 'auth-partner', source: 'auth-context', target: 'partner-dashboard', label: 'Partner Auth', type: 'smoothstep' },
+  { id: 'auth-merchant', source: 'auth-context', target: 'merchant-dashboard', label: 'Merchant Auth', type: 'smoothstep' },
 
-  // Router to dashboards
-  { id: 'e3', source: 'app-router', target: 'admin-dashboard', type: 'smoothstep' },
-  { id: 'e4', source: 'app-router', target: 'partner-dashboard', type: 'smoothstep' },
-  { id: 'e5', source: 'app-router', target: 'merchant-dashboard', type: 'smoothstep' },
+  // Navigation flows
+  { id: 'admin-contracts', source: 'admin-dashboard', target: 'contracts-page', label: 'Navigate', type: 'smoothstep' },
+  { id: 'admin-merchants', source: 'admin-dashboard', target: 'merchants-page', label: 'Navigate', type: 'smoothstep' },
+  { id: 'admin-warehouse', source: 'admin-dashboard', target: 'warehouse-page', label: 'Navigate', type: 'smoothstep' },
+  { id: 'admin-onboarding', source: 'admin-dashboard', target: 'dynamic-onboarding', label: 'Configure', type: 'smoothstep' },
+  { id: 'admin-architecture', source: 'admin-dashboard', target: 'architecture-page', label: 'Navigate', type: 'smoothstep' },
 
-  // Admin dashboard connections
-  { id: 'e6', source: 'admin-dashboard', target: 'contracts-page', type: 'smoothstep' },
-  { id: 'e7', source: 'admin-dashboard', target: 'merchants-page', type: 'smoothstep' },
-  { id: 'e8', source: 'admin-dashboard', target: 'warehouse-page', type: 'smoothstep' },
-  { id: 'e9', source: 'admin-dashboard', target: 'team-page', type: 'smoothstep' },
-
-  // Contract module connections
-  { id: 'e10', source: 'contracts-page', target: 'contract-detail', type: 'smoothstep' },
-  { id: 'e11', source: 'contracts-page', target: 'onboarding-flow', type: 'smoothstep' },
-
-  // Merchant module connections
-  { id: 'e12', source: 'merchants-page', target: 'business-locations', type: 'smoothstep' },
-
-  // Warehouse module connections
-  { id: 'e13', source: 'warehouse-page', target: 'item-types-page', type: 'smoothstep' },
-
-  // Team module connections
-  { id: 'e14', source: 'team-page', target: 'settings-page', type: 'smoothstep' },
+  // E-shop flows
+  { id: 'eshop-cart', source: 'eshop-page', target: 'cart-context', label: 'Cart Management', type: 'smoothstep' },
+  { id: 'cart-layout', source: 'cart-context', target: 'eshop-layout', label: 'State Update', type: 'smoothstep' },
 
   // Database connections
-  { id: 'e15', source: 'contracts-page', target: 'supabase', type: 'smoothstep' },
-  { id: 'e16', source: 'merchants-page', target: 'supabase', type: 'smoothstep' },
-  { id: 'e17', source: 'warehouse-page', target: 'supabase', type: 'smoothstep' },
-  { id: 'e18', source: 'team-page', target: 'supabase', type: 'smoothstep' },
-  { id: 'e19', source: 'onboarding-flow', target: 'supabase', type: 'smoothstep' },
+  { id: 'db-contracts', source: 'supabase-db', target: 'contract-tables', label: 'Schema', type: 'smoothstep' },
+  { id: 'db-merchants', source: 'supabase-db', target: 'merchant-tables', label: 'Schema', type: 'smoothstep' },
+  { id: 'db-warehouse', source: 'supabase-db', target: 'warehouse-tables', label: 'Schema', type: 'smoothstep' },
+  { id: 'db-system', source: 'supabase-db', target: 'system-tables', label: 'Schema', type: 'smoothstep' },
 
-  // Context connections
-  { id: 'e20', source: 'cart-context', target: 'warehouse-page', type: 'smoothstep' },
+  // Layout connections
+  { id: 'layout-admin', source: 'admin-layout', target: 'admin-dashboard', label: 'Wraps', type: 'smoothstep' },
+  { id: 'layout-eshop', source: 'eshop-layout', target: 'eshop-page', label: 'Wraps', type: 'smoothstep' },
 
-  // Hooks connections
-  { id: 'e21', source: 'custom-hooks', target: 'supabase', type: 'smoothstep' },
-  { id: 'e22', source: 'custom-hooks', target: 'contracts-page', type: 'smoothstep' },
-  { id: 'e23', source: 'custom-hooks', target: 'merchants-page', type: 'smoothstep' }
+  // Data flows
+  { id: 'contracts-db', source: 'contracts-page', target: 'contract-tables', label: 'CRUD Operations', type: 'smoothstep' },
+  { id: 'merchants-db', source: 'merchants-page', target: 'merchant-tables', label: 'CRUD Operations', type: 'smoothstep' },
+  { id: 'warehouse-db', source: 'warehouse-page', target: 'warehouse-tables', label: 'CRUD Operations', type: 'smoothstep' }
 ];
 
 const AppArchitecturePage = () => {
   const { t } = useTranslation('admin');
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedRole, setSelectedRole] = useState<string>('all');
+  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
 
   const onConnect = useCallback(
-    (params: any) => setEdges((eds) => addEdge(params, eds)),
+    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges],
   );
 
+  // Filter nodes based on search and filters
+  const filteredNodes = nodes.filter(node => {
+    const data = node.data as any;
+    const matchesSearch = data.label?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         data.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || data.category === selectedCategory;
+    const matchesRole = selectedRole === 'all' || data.role === selectedRole;
+    const isVisible = !hiddenCategories.has(data.category);
+    
+    return matchesSearch && matchesCategory && matchesRole && isVisible;
+  });
+
+  const toggleCategoryVisibility = (category: string) => {
+    setHiddenCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(category)) {
+        newSet.delete(category);
+      } else {
+        newSet.add(category);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <AdminLayout
-      title="Architektúra aplikácie"
-      subtitle="Interaktívna mapa celej aplikácie a jej komponentov"
+      title="🏗️ Architektúra Aplikácie"
+      subtitle="Komplexná vizualizácia štruktúry aplikácie a dátových tokov"
     >
-      <div className="h-[calc(100vh-12rem)] bg-background rounded-lg border">
+      {/* Controls */}
+      <div className="mb-6 space-y-4">
+        <div className="flex flex-wrap gap-4">
+          <div className="flex-1 min-w-64">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Vyhľadať komponenty, stránky..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+          
+          <select 
+            value={selectedCategory} 
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="px-3 py-2 border rounded-md"
+          >
+            <option value="all">Všetky kategórie</option>
+            <option value={NODE_CATEGORIES.PAGES}>Stránky</option>
+            <option value={NODE_CATEGORIES.COMPONENTS}>Komponenty</option>
+            <option value={NODE_CATEGORIES.CONTEXTS}>Contexty</option>
+            <option value={NODE_CATEGORIES.DATABASE}>Databáza</option>
+          </select>
+
+          <select 
+            value={selectedRole} 
+            onChange={(e) => setSelectedRole(e.target.value)}
+            className="px-3 py-2 border rounded-md"
+          >
+            <option value="all">Všetky roli</option>
+            <option value="admin">Admin</option>
+            <option value="partner">Partner</option>
+            <option value="merchant">Merchant</option>
+            <option value="public">Public</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+
+        {/* Layer Toggle Controls */}
+        <div className="flex flex-wrap gap-2">
+          {Object.values(NODE_CATEGORIES).map(category => (
+            <Button
+              key={category}
+              variant={hiddenCategories.has(category) ? "outline" : "default"}
+              size="sm"
+              onClick={() => toggleCategoryVisibility(category)}
+              className="flex items-center gap-2"
+            >
+              {hiddenCategories.has(category) ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-full h-[800px] bg-background rounded-lg border">
         <ReactFlow
-          nodes={nodes}
+          nodes={filteredNodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          connectionMode={ConnectionMode.Loose}
           fitView
-          attributionPosition="bottom-left"
           className="bg-background"
         >
           <MiniMap 
-            zoomable 
-            pannable 
-            className="bg-background border rounded"
+            nodeColor={(node) => node.style?.borderColor || '#666'}
+            nodeStrokeWidth={3}
+            zoomable
+            pannable
           />
-          <Controls className="bg-background border rounded" />
-          <Background className="bg-muted/20" />
+          <Controls />
+          <Background />
         </ReactFlow>
       </div>
       
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-yellow-100 border border-yellow-400 rounded"></div>
-          <span>Autentifikácia</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-blue-100 border border-blue-500 rounded"></div>
-          <span>Routing</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-green-100 border border-green-500 rounded"></div>
-          <span>Dashboardy</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-purple-100 border border-purple-500 rounded"></div>
-          <span>Zmluvy</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-red-100 border border-red-500 rounded"></div>
-          <span>Merchanti</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-orange-100 border border-orange-500 rounded"></div>
-          <span>Sklad</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-emerald-100 border border-emerald-500 rounded"></div>
-          <span>Tím & Nastavenia</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-gray-800 rounded"></div>
-          <span>Databáza</span>
-        </div>
+      {/* Statistics and Legend */}
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Statistics */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Info className="h-5 w-5" />
+              Štatistiky Architektúry
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="font-medium">Celkom komponentov:</div>
+                <div className="text-2xl font-bold text-primary">{nodes.length}</div>
+              </div>
+              <div>
+                <div className="font-medium">Aktívne zobrazené:</div>
+                <div className="text-2xl font-bold text-green-600">{filteredNodes.length}</div>
+              </div>
+              <div>
+                <div className="font-medium">Prepojenia:</div>
+                <div className="text-2xl font-bold text-blue-600">{edges.length}</div>
+              </div>
+              <div>
+                <div className="font-medium">Skryté vrstvy:</div>
+                <div className="text-2xl font-bold text-orange-600">{hiddenCategories.size}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Legend */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Legenda Rolí</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {Object.entries(ROLE_COLORS).map(([role, colors]) => (
+                <div key={role} className="flex items-center gap-3">
+                  <div 
+                    className="w-6 h-6 rounded border-2" 
+                    style={{ backgroundColor: colors.bg, borderColor: colors.border }}
+                  />
+                  <div className="flex-1">
+                    <div className="font-medium capitalize">{role}</div>
+                    <div className="text-sm text-muted-foreground">{colors.text}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Help Section */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Ako používať diagram</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm">
+          <p><strong>🔍 Vyhľadávanie:</strong> Použite vyhľadávacie pole na nájdenie konkrétnych komponentov</p>
+          <p><strong>🎯 Filtrovanie:</strong> Filtrujte podľa kategórie alebo role pre zameranie na špecifické časti</p>
+          <p><strong>👁️ Vrstvy:</strong> Skryte/zobrazte kategórie pomocou tlačidiel pre lepší prehľad</p>
+          <p><strong>🔗 Prepojenia:</strong> Modré čiary reprezentujú dátové toky a závislosti medzi komponentmi</p>
+          <p><strong>📊 Interakcia:</strong> Diagram je interaktívny - môžete zoomovať, posúvať a reorganizovať</p>
+        </CardContent>
+      </Card>
     </AdminLayout>
   );
 };

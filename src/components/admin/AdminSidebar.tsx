@@ -320,6 +320,11 @@ const AdminSidebar = () => {
           active: location.pathname.startsWith("/admin/notifications")
         },
         {
+          title: "🏗️ Architektúra Aplikácie",
+          path: "/admin/architecture",
+          active: isActive("/admin/architecture")
+        },
+        {
           title: t('navigation.profileSettings'),
           path: "/admin/settings/profile",
           active: isActive("/admin/settings/profile")
