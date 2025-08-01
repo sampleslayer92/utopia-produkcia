@@ -19,9 +19,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Search, Filter, Eye, EyeOff, Info, Plus, Settings, Code, Database, Layers } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Search, Filter, Eye, EyeOff, Info, Plus, Settings, Code, Database, Layers, Monitor, Users as UsersIcon } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useTranslation } from 'react-i18next';
+import ApplicationView from '@/components/architecture/ApplicationView';
 
 import '@xyflow/react/dist/style.css';
 
@@ -544,8 +546,21 @@ const AppArchitecturePage = () => {
       title="🏗️ Architektúra Aplikácie"
       subtitle="Komplexná vizualizácia štruktúry aplikácie a dátových tokov"
     >
-      {/* Controls */}
-      <div className="mb-6 space-y-4">
+      <Tabs defaultValue="technical" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="technical" className="flex items-center gap-2">
+            <Monitor className="h-4 w-4" />
+            Technická Architektúra
+          </TabsTrigger>
+          <TabsTrigger value="application" className="flex items-center gap-2">
+            <UsersIcon className="h-4 w-4" />
+            Aplikácia
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="technical" className="space-y-6">
+          {/* Controls */}
+          <div className="mb-6 space-y-4">
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 min-w-64">
             <div className="relative">
@@ -821,6 +836,12 @@ const AppArchitecturePage = () => {
           <p><strong>📊 Interakcia:</strong> Diagram je interaktívny - môžete zoomovať, posúvať a reorganizovať</p>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="application" className="space-y-6">
+          <ApplicationView />
+        </TabsContent>
+      </Tabs>
     </AdminLayout>
   );
 };
