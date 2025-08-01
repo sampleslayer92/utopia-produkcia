@@ -33,9 +33,9 @@ const APPLICATION_SECTIONS = {
         features: ['Prehľad všetkých procesov', 'Používateľská aktivita', 'Systémové štatistiky', 'Rýchle akcie'],
         pages: ['Admin Overview', 'System Health', 'User Analytics', 'Performance Metrics']
       },
-      partner: {
-        title: 'Partner Dashboard',
-        description: 'Obchodné operácie a inventár',
+      iso: {
+        title: 'ISO Dashboard',
+        description: 'ISO operácie a inventár',
         features: ['Sales Dashboard', 'Inventory Status', 'Customer Insights', 'Performance Reports'],
         pages: ['Sales Overview', 'Warehouse Status', 'Customer Analytics', 'Revenue Reports']
       },
@@ -58,8 +58,8 @@ const APPLICATION_SECTIONS = {
         features: ['Deal Management', 'Contract Lifecycle', 'Document Automation', 'Workflow Configuration'],
         pages: ['Deals Overview', 'Contracts List', 'Document Templates', 'Process Designer']
       },
-      partner: {
-        title: 'Obchodné Operácie',
+      iso: {
+        title: 'ISO Operácie',
         description: 'Každodenné obchodné aktivity',
         features: ['Active Deals', 'Contract Processing', 'Customer Onboarding', 'Revenue Tracking'],
         pages: ['My Deals', 'Contract Pipeline', 'New Customers', 'Sales Reports']
@@ -77,8 +77,8 @@ const APPLICATION_SECTIONS = {
         features: ['Merchant Database', 'Location Management', 'Relationship Tracking', 'Segmentation'],
         pages: ['All Merchants', 'Business Locations', 'Relationship Map', 'Customer Segments']
       },
-      partner: {
-        title: 'Klienti Partnera',
+      iso: {
+        title: 'Klienti ISO',
         description: 'Správa priradených klientov',
         features: ['Assigned Merchants', 'Location Updates', 'Communication History', 'Support Cases'],
         pages: ['My Merchants', 'Location Updates', 'Messages', 'Support Tickets']
@@ -102,7 +102,7 @@ const APPLICATION_SECTIONS = {
         features: ['Product Categories', 'Service Templates', 'Pricing Models', 'Configuration Tools'],
         pages: ['Product Manager', 'Categories', 'Pricing', 'Configuration']
       },
-      partner: {
+      iso: {
         title: 'Produktový Inventár',
         description: 'Správa dostupných produktov a služieb',
         features: ['Available Products', 'Quick Sales', 'Custom Solutions', 'Visual Builder'],
@@ -121,8 +121,8 @@ const APPLICATION_SECTIONS = {
         features: ['System Performance', 'User Analytics', 'Business Intelligence', 'Custom Reports'],
         pages: ['System Reports', 'User Activity', 'BI Dashboard', 'Report Builder']
       },
-      partner: {
-        title: 'Obchodné Analýzy',
+      iso: {
+        title: 'ISO Analýzy',
         description: 'Analýzy výkonnosti a predaja',
         features: ['Sales Analytics', 'Customer Insights', 'Performance Metrics', 'Forecasting'],
         pages: ['Sales Dashboard', 'Customer Analytics', 'Performance', 'Forecasts']
@@ -173,7 +173,7 @@ const APPLICATION_SECTIONS = {
 // Role colors for visual distinction
 const ROLE_COLORS = {
   admin: { bg: 'hsl(var(--destructive) / 0.1)', border: 'hsl(var(--destructive))', text: 'Admin' },
-  partner: { bg: 'hsl(var(--primary) / 0.1)', border: 'hsl(var(--primary))', text: 'Partner' },
+  iso: { bg: 'hsl(var(--primary) / 0.1)', border: 'hsl(var(--primary))', text: 'ISO' },
   merchant: { bg: 'hsl(var(--success) / 0.1)', border: 'hsl(var(--success))', text: 'Merchant' },
   all: { bg: 'hsl(var(--muted) / 0.1)', border: 'hsl(var(--muted-foreground))', text: 'Všetky roly' }
 };
@@ -361,11 +361,11 @@ export default function ApplicationView() {
                   <div className="text-sm text-muted-foreground">Plný prístup ku všetkým funkciám</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: ROLE_COLORS.partner.bg }}>
-                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ROLE_COLORS.partner.border }}></div>
+              <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: ROLE_COLORS.iso.bg }}>
+                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ROLE_COLORS.iso.border }}></div>
                 <div>
-                  <div className="font-medium">Partner</div>
-                  <div className="text-sm text-muted-foreground">Obchodné operácie a inventár</div>
+                  <div className="font-medium">ISO</div>
+                  <div className="text-sm text-muted-foreground">ISO operácie - Admin, Obchodný zástupca, Bežný používateľ</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: ROLE_COLORS.merchant.bg }}>

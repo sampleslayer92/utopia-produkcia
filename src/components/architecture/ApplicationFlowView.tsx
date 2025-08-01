@@ -31,7 +31,7 @@ import {
 // Role colors
 const ROLE_COLORS = {
   admin: 'hsl(var(--destructive))',
-  partner: 'hsl(var(--primary))',
+  iso: 'hsl(var(--primary))',
   merchant: 'hsl(var(--success))',
   shared: 'hsl(var(--muted-foreground))'
 };
@@ -58,18 +58,18 @@ const applicationNodes: Node[] = [
     }
   },
   {
-    id: 'partner-dashboard',
+    id: 'iso-dashboard',
     type: 'default',
     position: { x: 320, y: 50 },
     data: { 
-      label: 'Partner Dashboard',
+      label: 'ISO Dashboard',
       icon: LayoutDashboard,
-      role: 'partner',
-      description: 'Obchodné operácie'
+      role: 'iso',
+      description: 'ISO operácie'
     },
     style: { 
-      backgroundColor: `${ROLE_COLORS.partner}15`,
-      borderColor: ROLE_COLORS.partner,
+      backgroundColor: `${ROLE_COLORS.iso}15`,
+      borderColor: ROLE_COLORS.iso,
       borderWidth: 2,
       width: 180,
       height: 80
@@ -120,12 +120,12 @@ const applicationNodes: Node[] = [
     data: { 
       label: 'Contract Lifecycle',
       icon: FileText,
-      role: 'partner',
+      role: 'iso',
       description: 'Životný cyklus zmlúv'
     },
     style: { 
-      backgroundColor: `${ROLE_COLORS.partner}15`,
-      borderColor: ROLE_COLORS.partner,
+      backgroundColor: `${ROLE_COLORS.iso}15`,
+      borderColor: ROLE_COLORS.iso,
       borderWidth: 2,
       width: 160,
       height: 70
@@ -158,12 +158,12 @@ const applicationNodes: Node[] = [
     data: { 
       label: 'Location Management',
       icon: Users,
-      role: 'partner',
+      role: 'iso',
       description: 'Správa lokácií klientov'
     },
     style: { 
-      backgroundColor: `${ROLE_COLORS.partner}15`,
-      borderColor: ROLE_COLORS.partner,
+      backgroundColor: `${ROLE_COLORS.iso}15`,
+      borderColor: ROLE_COLORS.iso,
       borderWidth: 2,
       width: 160,
       height: 70
@@ -196,12 +196,12 @@ const applicationNodes: Node[] = [
     data: { 
       label: 'Visual Builder',
       icon: Package,
-      role: 'partner',
-      description: 'Tvorba riešений'
+      role: 'iso',
+      description: 'Tvorba riešení'
     },
     style: { 
-      backgroundColor: `${ROLE_COLORS.partner}15`,
-      borderColor: ROLE_COLORS.partner,
+      backgroundColor: `${ROLE_COLORS.iso}15`,
+      borderColor: ROLE_COLORS.iso,
       borderWidth: 2,
       width: 160,
       height: 70
@@ -291,9 +291,9 @@ const applicationEdges: Edge[] = [
   { id: 'e1', source: 'admin-dashboard', target: 'deal-management', type: 'smoothstep' },
   { id: 'e2', source: 'admin-dashboard', target: 'merchant-database', type: 'smoothstep' },
   { id: 'e3', source: 'admin-dashboard', target: 'product-catalog', type: 'smoothstep' },
-  { id: 'e4', source: 'partner-dashboard', target: 'contract-lifecycle', type: 'smoothstep' },
-  { id: 'e5', source: 'partner-dashboard', target: 'location-management', type: 'smoothstep' },
-  { id: 'e6', source: 'partner-dashboard', target: 'visual-builder', type: 'smoothstep' },
+  { id: 'e4', source: 'iso-dashboard', target: 'contract-lifecycle', type: 'smoothstep' },
+  { id: 'e5', source: 'iso-dashboard', target: 'location-management', type: 'smoothstep' },
+  { id: 'e6', source: 'iso-dashboard', target: 'visual-builder', type: 'smoothstep' },
   
   // Business process flows
   { id: 'e7', source: 'deal-management', target: 'contract-lifecycle', type: 'smoothstep' },
@@ -400,15 +400,15 @@ export default function ApplicationFlowView() {
                 Admin
               </Button>
               <Button
-                variant={selectedRole === 'partner' ? 'default' : 'outline'}
+                variant={selectedRole === 'iso' ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => filterByRole('partner')}
+                onClick={() => filterByRole('iso')}
                 style={{ 
-                  backgroundColor: selectedRole === 'partner' ? ROLE_COLORS.partner : undefined,
-                  borderColor: ROLE_COLORS.partner 
+                  backgroundColor: selectedRole === 'iso' ? ROLE_COLORS.iso : undefined,
+                  borderColor: ROLE_COLORS.iso 
                 }}
               >
-                Partner
+                ISO
               </Button>
               <Button
                 variant={selectedRole === 'merchant' ? 'default' : 'outline'}
@@ -439,9 +439,9 @@ export default function ApplicationFlowView() {
               <div className="flex items-center gap-2">
                 <div 
                   className="w-3 h-3 rounded" 
-                  style={{ backgroundColor: ROLE_COLORS.partner }}
+                  style={{ backgroundColor: ROLE_COLORS.iso }}
                 />
-                <span className="text-xs">Partner - Obchodné operácie</span>
+                <span className="text-xs">ISO - ISO operácie (Admin, Obchodný zástupca, Bežný používateľ)</span>
               </div>
               <div className="flex items-center gap-2">
                 <div 

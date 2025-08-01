@@ -44,7 +44,7 @@ const NODE_CATEGORIES = {
 // Role-based color scheme
 const ROLE_COLORS = {
   admin: { bg: '#ffebee', border: '#c62828', text: 'Admin Only' },
-  partner: { bg: '#e3f2fd', border: '#1976d2', text: 'Partner Access' },
+  iso: { bg: '#e3f2fd', border: '#1976d2', text: 'ISO Access' },
   merchant: { bg: '#e8f5e8', border: '#388e3c', text: 'Merchant Access' },
   public: { bg: '#f5f5f5', border: '#616161', text: 'Public Access' },
   system: { bg: '#fff3e0', border: '#f57c00', text: 'System Component' }
@@ -82,17 +82,17 @@ const initialNodes: Node[] = [
     style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
   },
   {
-    id: 'partner-dashboard',
+    id: 'iso-dashboard',
     type: 'default',
     position: { x: 550, y: 100 },
     data: { 
-      label: 'Partner Dashboard',
+      label: 'ISO Dashboard',
       category: NODE_CATEGORIES.PAGES,
-      role: 'partner',
-      description: 'Partner-specific operations center',
+      role: 'iso',
+      description: 'ISO-specific operations center',
       features: ['Inventory management', 'Sales analytics', 'Customer support']
     },
-    style: { backgroundColor: ROLE_COLORS.partner.bg, borderColor: ROLE_COLORS.partner.border }
+    style: { backgroundColor: ROLE_COLORS.iso.bg, borderColor: ROLE_COLORS.iso.border }
   },
   {
     id: 'merchant-dashboard',
@@ -224,11 +224,11 @@ const initialNodes: Node[] = [
     data: { 
       label: 'Warehouse Management',
       category: NODE_CATEGORIES.BUSINESS,
-      role: 'partner',
+      role: 'iso',
       description: 'Complete inventory control system',
       features: ['Item management', 'Categories', 'Solutions', 'Stock tracking']
     },
-    style: { backgroundColor: ROLE_COLORS.partner.bg, borderColor: ROLE_COLORS.partner.border }
+    style: { backgroundColor: ROLE_COLORS.iso.bg, borderColor: ROLE_COLORS.iso.border }
   },
   {
     id: 'quick-sales',
@@ -237,11 +237,11 @@ const initialNodes: Node[] = [
     data: { 
       label: 'Quick Sales',
       category: NODE_CATEGORIES.BUSINESS,
-      role: 'partner',
+      role: 'iso',
       description: 'Fast sales processing system',
       features: ['POS interface', 'Invoice generation', 'Payment tracking']
     },
-    style: { backgroundColor: ROLE_COLORS.partner.bg, borderColor: ROLE_COLORS.partner.border }
+    style: { backgroundColor: ROLE_COLORS.iso.bg, borderColor: ROLE_COLORS.iso.border }
   },
 
   // ========== CUSTOMER MANAGEMENT PLUGIN ==========
@@ -400,13 +400,13 @@ const initialNodes: Node[] = [
 const initialEdges: Edge[] = [
   // ========== AUTHENTICATION FLOWS ==========
   { id: 'auth-admin', source: 'auth-context', target: 'admin-dashboard', label: 'Admin Auth', type: 'smoothstep' },
-  { id: 'auth-partner', source: 'auth-context', target: 'partner-dashboard', label: 'Partner Auth', type: 'smoothstep' },
+  { id: 'auth-iso', source: 'auth-context', target: 'iso-dashboard', label: 'ISO Auth', type: 'smoothstep' },
   { id: 'auth-merchant', source: 'auth-context', target: 'merchant-dashboard', label: 'Merchant Auth', type: 'smoothstep' },
 
   // ========== PLUGIN TO DASHBOARD CONNECTIONS ==========
   { id: 'admin-onboarding-plugin', source: 'admin-dashboard', target: 'onboarding-plugin', label: 'Manage', type: 'smoothstep' },
   { id: 'admin-business-plugin', source: 'admin-dashboard', target: 'business-plugin', label: 'Configure', type: 'smoothstep' },
-  { id: 'partner-warehouse-plugin', source: 'partner-dashboard', target: 'warehouse-plugin', label: 'Operate', type: 'smoothstep' },
+  { id: 'iso-warehouse-plugin', source: 'iso-dashboard', target: 'warehouse-plugin', label: 'Operate', type: 'smoothstep' },
   { id: 'admin-customer-plugin', source: 'admin-dashboard', target: 'customer-plugin', label: 'Oversee', type: 'smoothstep' },
 
   // ========== ONBOARDING PLUGIN FLOWS ==========
@@ -593,7 +593,7 @@ const AppArchitecturePage = () => {
           >
             <option value="all">Všetky roli</option>
             <option value="admin">Admin</option>
-            <option value="partner">Partner</option>
+            <option value="iso">ISO</option>
             <option value="merchant">Merchant</option>
             <option value="public">Public</option>
             <option value="system">System</option>
