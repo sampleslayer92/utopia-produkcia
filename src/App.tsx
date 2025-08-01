@@ -45,6 +45,7 @@ import OrganizationalStructurePage from "./pages/OrganizationalStructurePage";
 import TeamDetailPage from "./pages/TeamDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotificationCenterPage from "./pages/admin/NotificationCenterPage";
+import AppArchitecturePage from "./pages/AppArchitecturePage";
 import EshopLayout from "./components/eshop/EshopLayout";
 import EshopPage from "./pages/EshopPage";
 import CartPage from "./pages/CartPage";
@@ -297,6 +298,13 @@ const App = () => (
           <Route path="/admin/notifications" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <NotificationCenterPage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Architecture documentation route */}
+          <Route path="/admin/architecture" element={
+            <ProtectedRoute requiredRole="admin">
+              <AppArchitecturePage />
             </ProtectedRoute>
           } />
 
