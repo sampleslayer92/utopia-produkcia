@@ -16,7 +16,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, Filter, Eye, EyeOff, Info } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Search, Filter, Eye, EyeOff, Info, Plus, Settings, Code, Database, Layers } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useTranslation } from 'react-i18next';
 
@@ -30,7 +33,10 @@ const NODE_CATEGORIES = {
   HOOKS: 'hooks',
   CONTEXTS: 'contexts',
   DATABASE: 'database',
-  ROUTING: 'routing'
+  ROUTING: 'routing',
+  ONBOARDING: 'onboarding',
+  BUSINESS: 'business',
+  PLUGINS: 'plugins'
 } as const;
 
 // Role-based color scheme
@@ -42,285 +48,400 @@ const ROLE_COLORS = {
   system: { bg: '#fff3e0', border: '#f57c00', text: 'System Component' }
 };
 
-// Comprehensive nodes data
+// Comprehensive nodes data with expanded architecture
 const initialNodes: Node[] = [
-  // Authentication Layer
+  // ========== AUTHENTICATION LAYER ==========
   {
     id: 'auth-context',
     type: 'default',
-    position: { x: 100, y: 50 },
+    position: { x: 50, y: 100 },
     data: { 
       label: 'AuthContext',
       category: NODE_CATEGORIES.CONTEXTS,
       role: 'system',
-      description: 'Manages authentication state, user roles, and auth operations'
+      description: 'Central authentication state management',
+      features: ['JWT handling', 'Role management', 'Session persistence']
     },
     style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
 
-  // Main Dashboard Pages
+  // ========== MAIN DASHBOARDS ==========
   {
     id: 'admin-dashboard',
     type: 'default',
-    position: { x: 300, y: 150 },
+    position: { x: 300, y: 100 },
     data: { 
       label: 'Admin Dashboard',
       category: NODE_CATEGORIES.PAGES,
       role: 'admin',
-      description: 'Main admin interface with overview and navigation'
+      description: 'Central admin control panel',
+      features: ['System overview', 'User management', 'Analytics']
     },
     style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
   },
   {
     id: 'partner-dashboard',
     type: 'default',
-    position: { x: 500, y: 150 },
+    position: { x: 550, y: 100 },
     data: { 
       label: 'Partner Dashboard',
       category: NODE_CATEGORIES.PAGES,
       role: 'partner',
-      description: 'Partner-specific dashboard with limited admin functions'
+      description: 'Partner-specific operations center',
+      features: ['Inventory management', 'Sales analytics', 'Customer support']
     },
     style: { backgroundColor: ROLE_COLORS.partner.bg, borderColor: ROLE_COLORS.partner.border }
   },
   {
     id: 'merchant-dashboard',
     type: 'default',
-    position: { x: 700, y: 150 },
+    position: { x: 800, y: 100 },
     data: { 
       label: 'Merchant Dashboard',
       category: NODE_CATEGORIES.PAGES,
       role: 'merchant',
-      description: 'Merchant interface for contract and business management'
+      description: 'Merchant self-service portal',
+      features: ['Contract status', 'Location management', 'Reports']
     },
     style: { backgroundColor: ROLE_COLORS.merchant.bg, borderColor: ROLE_COLORS.merchant.border }
   },
 
-  // Business Process Pages
+  // ========== ONBOARDING PLUGIN ==========
   {
-    id: 'contracts-page',
+    id: 'onboarding-plugin',
     type: 'default',
-    position: { x: 100, y: 300 },
+    position: { x: 50, y: 250 },
+    data: { 
+      label: '🔌 Onboarding Plugin',
+      category: NODE_CATEGORIES.PLUGINS,
+      role: 'system',
+      description: 'Complete onboarding management system',
+      features: ['Dynamic forms', 'Step configuration', 'Progress tracking']
+    },
+    style: { backgroundColor: '#f3e5f5', borderColor: '#9c27b0', border: '2px solid' }
+  },
+  {
+    id: 'onboarding-config',
+    type: 'default',
+    position: { x: 50, y: 350 },
+    data: { 
+      label: 'Onboarding Config',
+      category: NODE_CATEGORIES.ONBOARDING,
+      role: 'admin',
+      description: 'Configure onboarding steps and fields',
+      features: ['Step management', 'Field customization', 'Validation rules']
+    },
+    style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
+  },
+  {
+    id: 'dynamic-step-renderer',
+    type: 'default',
+    position: { x: 250, y: 350 },
+    data: { 
+      label: 'Dynamic Step Renderer',
+      category: NODE_CATEGORIES.ONBOARDING,
+      role: 'system',
+      description: 'Renders configurable onboarding steps',
+      features: ['Component registry', 'Dynamic loading', 'State management']
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
+  },
+  {
+    id: 'onboarding-wrappers',
+    type: 'default',
+    position: { x: 450, y: 350 },
+    data: { 
+      label: 'Step Wrappers',
+      category: NODE_CATEGORIES.ONBOARDING,
+      role: 'system',
+      description: 'ContactInfo, CompanyInfo, Fees, Consents wrappers',
+      features: ['Form validation', 'Auto-save', 'Progress tracking']
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
+  },
+
+  // ========== BUSINESS PROCESSES PLUGIN ==========
+  {
+    id: 'business-plugin',
+    type: 'default',
+    position: { x: 300, y: 250 },
+    data: { 
+      label: '🔌 Business Plugin',
+      category: NODE_CATEGORIES.PLUGINS,
+      role: 'system',
+      description: 'Core business operations management',
+      features: ['Contract lifecycle', 'Document generation', 'Workflow automation']
+    },
+    style: { backgroundColor: '#e8f5e8', borderColor: '#4caf50', border: '2px solid' }
+  },
+  {
+    id: 'contracts-management',
+    type: 'default',
+    position: { x: 650, y: 350 },
     data: { 
       label: 'Contracts Management',
-      category: NODE_CATEGORIES.PAGES,
+      category: NODE_CATEGORIES.BUSINESS,
       role: 'admin',
-      description: 'Contract creation, editing, and management'
+      description: 'Full contract lifecycle management',
+      features: ['Contract creation', 'Template system', 'Digital signatures', 'Status tracking']
     },
     style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
   },
   {
-    id: 'merchants-page',
+    id: 'merchant-management',
     type: 'default',
-    position: { x: 300, y: 300 },
+    position: { x: 850, y: 350 },
     data: { 
-      label: 'Merchants Management',
-      category: NODE_CATEGORIES.PAGES,
+      label: 'Merchant Management',
+      category: NODE_CATEGORIES.BUSINESS,
       role: 'admin',
-      description: 'Merchant profiles, locations, and business data'
+      description: 'Comprehensive merchant administration',
+      features: ['Profile management', 'Location tracking', 'Business verification']
     },
     style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
   },
+
+  // ========== WAREHOUSE PLUGIN ==========
   {
-    id: 'warehouse-page',
+    id: 'warehouse-plugin',
     type: 'default',
-    position: { x: 500, y: 300 },
+    position: { x: 550, y: 250 },
+    data: { 
+      label: '🔌 Warehouse Plugin',
+      category: NODE_CATEGORIES.PLUGINS,
+      role: 'system',
+      description: 'Inventory and product management system',
+      features: ['Stock management', 'Product catalog', 'Quick sales']
+    },
+    style: { backgroundColor: '#e3f2fd', borderColor: '#2196f3', border: '2px solid' }
+  },
+  {
+    id: 'warehouse-management',
+    type: 'default',
+    position: { x: 1050, y: 350 },
     data: { 
       label: 'Warehouse Management',
-      category: NODE_CATEGORIES.PAGES,
+      category: NODE_CATEGORIES.BUSINESS,
       role: 'partner',
-      description: 'Product catalog, inventory, and solutions'
+      description: 'Complete inventory control system',
+      features: ['Item management', 'Categories', 'Solutions', 'Stock tracking']
+    },
+    style: { backgroundColor: ROLE_COLORS.partner.bg, borderColor: ROLE_COLORS.partner.border }
+  },
+  {
+    id: 'quick-sales',
+    type: 'default',
+    position: { x: 1250, y: 350 },
+    data: { 
+      label: 'Quick Sales',
+      category: NODE_CATEGORIES.BUSINESS,
+      role: 'partner',
+      description: 'Fast sales processing system',
+      features: ['POS interface', 'Invoice generation', 'Payment tracking']
     },
     style: { backgroundColor: ROLE_COLORS.partner.bg, borderColor: ROLE_COLORS.partner.border }
   },
 
-  // Onboarding System
+  // ========== CUSTOMER MANAGEMENT PLUGIN ==========
   {
-    id: 'onboarding-flow',
+    id: 'customer-plugin',
     type: 'default',
-    position: { x: 700, y: 300 },
+    position: { x: 800, y: 250 },
     data: { 
-      label: 'Onboarding Flow',
-      category: NODE_CATEGORIES.PAGES,
-      role: 'public',
-      description: 'Multi-step onboarding process for new merchants'
+      label: '🔌 Customer Plugin',
+      category: NODE_CATEGORIES.PLUGINS,
+      role: 'system',
+      description: 'Customer relationship management',
+      features: ['Profile management', 'Communication tracking', 'Support tickets']
     },
-    style: { backgroundColor: ROLE_COLORS.public.bg, borderColor: ROLE_COLORS.public.border }
-  },
-  {
-    id: 'dynamic-onboarding',
-    type: 'default',
-    position: { x: 900, y: 300 },
-    data: { 
-      label: 'Dynamic Onboarding',
-      category: NODE_CATEGORIES.PAGES,
-      role: 'admin',
-      description: 'Configurable onboarding process with custom fields'
-    },
-    style: { backgroundColor: ROLE_COLORS.admin.bg, borderColor: ROLE_COLORS.admin.border }
+    style: { backgroundColor: '#fff3e0', borderColor: '#ff9800', border: '2px solid' }
   },
 
-  // E-shop System
+  // ========== HOOKS LAYER ==========
   {
-    id: 'eshop-page',
+    id: 'contract-hooks',
     type: 'default',
-    position: { x: 100, y: 450 },
+    position: { x: 50, y: 500 },
     data: { 
-      label: 'E-shop Interface',
-      category: NODE_CATEGORIES.PAGES,
-      role: 'public',
-      description: 'Product catalog and shopping cart for customers'
+      label: 'Contract Hooks',
+      category: NODE_CATEGORIES.HOOKS,
+      role: 'system',
+      description: 'Contract-related business logic',
+      features: ['useContracts', 'useContractForm', 'useContractValidation']
     },
-    style: { backgroundColor: ROLE_COLORS.public.bg, borderColor: ROLE_COLORS.public.border }
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
   {
-    id: 'cart-context',
+    id: 'merchant-hooks',
     type: 'default',
-    position: { x: 300, y: 450 },
+    position: { x: 300, y: 500 },
     data: { 
-      label: 'CartContext',
-      category: NODE_CATEGORIES.CONTEXTS,
+      label: 'Merchant Hooks',
+      category: NODE_CATEGORIES.HOOKS,
       role: 'system',
-      description: 'Shopping cart state management with persistence'
+      description: 'Merchant management logic',
+      features: ['useMerchants', 'useBusinessLocations', 'useMerchantStats']
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
+  },
+  {
+    id: 'warehouse-hooks',
+    type: 'default',
+    position: { x: 550, y: 500 },
+    data: { 
+      label: 'Warehouse Hooks',
+      category: NODE_CATEGORIES.HOOKS,
+      role: 'system',
+      description: 'Inventory management logic',
+      features: ['useWarehouseItems', 'useCategories', 'useQuickSales']
+    },
+    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
+  },
+  {
+    id: 'onboarding-hooks',
+    type: 'default',
+    position: { x: 800, y: 500 },
+    data: { 
+      label: 'Onboarding Hooks',
+      category: NODE_CATEGORIES.HOOKS,
+      role: 'system',
+      description: 'Onboarding flow management',
+      features: ['useOnboardingConfig', 'useStepValidation', 'useAutoSave']
     },
     style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
 
-  // Database Layer
+  // ========== DATABASE LAYER ==========
   {
-    id: 'supabase-db',
+    id: 'supabase-core',
     type: 'default',
-    position: { x: 500, y: 600 },
+    position: { x: 400, y: 650 },
     data: { 
-      label: 'Supabase Database',
+      label: 'Supabase Core',
       category: NODE_CATEGORIES.DATABASE,
       role: 'system',
-      description: 'PostgreSQL database with RLS policies'
+      description: 'Central database management',
+      features: ['PostgreSQL', 'RLS policies', 'Real-time subscriptions']
     },
     style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
   {
-    id: 'contract-tables',
+    id: 'contract-schema',
     type: 'default',
-    position: { x: 200, y: 750 },
+    position: { x: 50, y: 750 },
     data: { 
-      label: 'Contract Tables',
+      label: 'Contract Schema',
       category: NODE_CATEGORIES.DATABASE,
       role: 'system',
-      description: 'contracts, contract_items, consents, authorized_persons'
+      description: 'Contract-related database tables',
+      features: ['contracts', 'contract_items', 'consents', 'authorized_persons', 'actual_owners']
     },
     style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
   {
-    id: 'merchant-tables',
+    id: 'merchant-schema',
     type: 'default',
-    position: { x: 400, y: 750 },
+    position: { x: 300, y: 750 },
     data: { 
-      label: 'Merchant Tables',
+      label: 'Merchant Schema',
       category: NODE_CATEGORIES.DATABASE,
       role: 'system',
-      description: 'merchants, business_locations, organizations'
+      description: 'Merchant and business data',
+      features: ['merchants', 'business_locations', 'organizations', 'teams']
     },
     style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
   {
-    id: 'warehouse-tables',
+    id: 'warehouse-schema',
     type: 'default',
-    position: { x: 600, y: 750 },
+    position: { x: 550, y: 750 },
     data: { 
-      label: 'Warehouse Tables',
+      label: 'Warehouse Schema',
       category: NODE_CATEGORIES.DATABASE,
       role: 'system',
-      description: 'warehouse_items, categories, solutions, item_types'
+      description: 'Product and inventory data',
+      features: ['warehouse_items', 'categories', 'solutions', 'quick_sales']
     },
     style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
   {
-    id: 'system-tables',
+    id: 'onboarding-schema',
     type: 'default',
     position: { x: 800, y: 750 },
     data: { 
-      label: 'System Tables',
+      label: 'Onboarding Schema',
       category: NODE_CATEGORIES.DATABASE,
       role: 'system',
-      description: 'user_roles, profiles, translations, teams'
+      description: 'Onboarding configuration data',
+      features: ['onboarding_configurations', 'onboarding_steps', 'onboarding_fields']
     },
     style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
   },
 
-  // Components Layer
-  {
-    id: 'admin-layout',
-    type: 'default',
-    position: { x: 100, y: 600 },
-    data: { 
-      label: 'AdminLayout',
-      category: NODE_CATEGORIES.COMPONENTS,
-      role: 'system',
-      description: 'Base layout for admin pages with sidebar and header'
-    },
-    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
-  },
-  {
-    id: 'eshop-layout',
-    type: 'default',
-    position: { x: 300, y: 600 },
-    data: { 
-      label: 'EshopLayout',
-      category: NODE_CATEGORIES.COMPONENTS,
-      role: 'system',
-      description: 'E-commerce layout with navigation and cart'
-    },
-    style: { backgroundColor: ROLE_COLORS.system.bg, borderColor: ROLE_COLORS.system.border }
-  },
-
-  // Architecture Page (Self-reference)
+  // ========== ARCHITECTURE PAGE ==========
   {
     id: 'architecture-page',
     type: 'default',
-    position: { x: 1100, y: 300 },
+    position: { x: 1100, y: 100 },
     data: { 
-      label: 'Architecture Page',
+      label: '🏗️ Architecture Hub',
       category: NODE_CATEGORIES.PAGES,
       role: 'admin',
-      description: 'This interactive architecture documentation page'
+      description: 'Interactive architecture documentation and management',
+      features: ['Visual mapping', 'Plugin management', 'Node editing', 'Dependency tracking']
     },
     style: { backgroundColor: '#e1f5fe', borderColor: '#0277bd', border: '3px solid' }
   }
 ];
 
-// Comprehensive edges data
+// Comprehensive edges data with plugin architecture
 const initialEdges: Edge[] = [
-  // Authentication flows
+  // ========== AUTHENTICATION FLOWS ==========
   { id: 'auth-admin', source: 'auth-context', target: 'admin-dashboard', label: 'Admin Auth', type: 'smoothstep' },
   { id: 'auth-partner', source: 'auth-context', target: 'partner-dashboard', label: 'Partner Auth', type: 'smoothstep' },
   { id: 'auth-merchant', source: 'auth-context', target: 'merchant-dashboard', label: 'Merchant Auth', type: 'smoothstep' },
 
-  // Navigation flows
-  { id: 'admin-contracts', source: 'admin-dashboard', target: 'contracts-page', label: 'Navigate', type: 'smoothstep' },
-  { id: 'admin-merchants', source: 'admin-dashboard', target: 'merchants-page', label: 'Navigate', type: 'smoothstep' },
-  { id: 'admin-warehouse', source: 'admin-dashboard', target: 'warehouse-page', label: 'Navigate', type: 'smoothstep' },
-  { id: 'admin-onboarding', source: 'admin-dashboard', target: 'dynamic-onboarding', label: 'Configure', type: 'smoothstep' },
+  // ========== PLUGIN TO DASHBOARD CONNECTIONS ==========
+  { id: 'admin-onboarding-plugin', source: 'admin-dashboard', target: 'onboarding-plugin', label: 'Manage', type: 'smoothstep' },
+  { id: 'admin-business-plugin', source: 'admin-dashboard', target: 'business-plugin', label: 'Configure', type: 'smoothstep' },
+  { id: 'partner-warehouse-plugin', source: 'partner-dashboard', target: 'warehouse-plugin', label: 'Operate', type: 'smoothstep' },
+  { id: 'admin-customer-plugin', source: 'admin-dashboard', target: 'customer-plugin', label: 'Oversee', type: 'smoothstep' },
+
+  // ========== ONBOARDING PLUGIN FLOWS ==========
+  { id: 'onboarding-config-flow', source: 'onboarding-plugin', target: 'onboarding-config', label: 'Configure', type: 'smoothstep' },
+  { id: 'config-renderer', source: 'onboarding-config', target: 'dynamic-step-renderer', label: 'Define Steps', type: 'smoothstep' },
+  { id: 'renderer-wrappers', source: 'dynamic-step-renderer', target: 'onboarding-wrappers', label: 'Load Components', type: 'smoothstep' },
+  { id: 'onboarding-hooks-flow', source: 'onboarding-plugin', target: 'onboarding-hooks', label: 'Business Logic', type: 'smoothstep' },
+
+  // ========== BUSINESS PLUGIN FLOWS ==========
+  { id: 'business-contracts', source: 'business-plugin', target: 'contracts-management', label: 'Contracts', type: 'smoothstep' },
+  { id: 'business-merchants', source: 'business-plugin', target: 'merchant-management', label: 'Merchants', type: 'smoothstep' },
+  { id: 'contract-hooks-flow', source: 'business-plugin', target: 'contract-hooks', label: 'Contract Logic', type: 'smoothstep' },
+  { id: 'merchant-hooks-flow', source: 'business-plugin', target: 'merchant-hooks', label: 'Merchant Logic', type: 'smoothstep' },
+
+  // ========== WAREHOUSE PLUGIN FLOWS ==========
+  { id: 'warehouse-management-flow', source: 'warehouse-plugin', target: 'warehouse-management', label: 'Inventory', type: 'smoothstep' },
+  { id: 'warehouse-quick-sales', source: 'warehouse-plugin', target: 'quick-sales', label: 'POS System', type: 'smoothstep' },
+  { id: 'warehouse-hooks-flow', source: 'warehouse-plugin', target: 'warehouse-hooks', label: 'Warehouse Logic', type: 'smoothstep' },
+
+  // ========== DATABASE CONNECTIONS ==========
+  { id: 'supabase-contract-schema', source: 'supabase-core', target: 'contract-schema', label: 'Tables', type: 'smoothstep' },
+  { id: 'supabase-merchant-schema', source: 'supabase-core', target: 'merchant-schema', label: 'Tables', type: 'smoothstep' },
+  { id: 'supabase-warehouse-schema', source: 'supabase-core', target: 'warehouse-schema', label: 'Tables', type: 'smoothstep' },
+  { id: 'supabase-onboarding-schema', source: 'supabase-core', target: 'onboarding-schema', label: 'Tables', type: 'smoothstep' },
+
+  // ========== HOOKS TO DATABASE FLOWS ==========
+  { id: 'contract-hooks-db', source: 'contract-hooks', target: 'contract-schema', label: 'Data Access', type: 'smoothstep' },
+  { id: 'merchant-hooks-db', source: 'merchant-hooks', target: 'merchant-schema', label: 'Data Access', type: 'smoothstep' },
+  { id: 'warehouse-hooks-db', source: 'warehouse-hooks', target: 'warehouse-schema', label: 'Data Access', type: 'smoothstep' },
+  { id: 'onboarding-hooks-db', source: 'onboarding-hooks', target: 'onboarding-schema', label: 'Data Access', type: 'smoothstep' },
+
+  // ========== ARCHITECTURE HUB CONNECTIONS ==========
   { id: 'admin-architecture', source: 'admin-dashboard', target: 'architecture-page', label: 'Navigate', type: 'smoothstep' },
-
-  // E-shop flows
-  { id: 'eshop-cart', source: 'eshop-page', target: 'cart-context', label: 'Cart Management', type: 'smoothstep' },
-  { id: 'cart-layout', source: 'cart-context', target: 'eshop-layout', label: 'State Update', type: 'smoothstep' },
-
-  // Database connections
-  { id: 'db-contracts', source: 'supabase-db', target: 'contract-tables', label: 'Schema', type: 'smoothstep' },
-  { id: 'db-merchants', source: 'supabase-db', target: 'merchant-tables', label: 'Schema', type: 'smoothstep' },
-  { id: 'db-warehouse', source: 'supabase-db', target: 'warehouse-tables', label: 'Schema', type: 'smoothstep' },
-  { id: 'db-system', source: 'supabase-db', target: 'system-tables', label: 'Schema', type: 'smoothstep' },
-
-  // Layout connections
-  { id: 'layout-admin', source: 'admin-layout', target: 'admin-dashboard', label: 'Wraps', type: 'smoothstep' },
-  { id: 'layout-eshop', source: 'eshop-layout', target: 'eshop-page', label: 'Wraps', type: 'smoothstep' },
-
-  // Data flows
-  { id: 'contracts-db', source: 'contracts-page', target: 'contract-tables', label: 'CRUD Operations', type: 'smoothstep' },
-  { id: 'merchants-db', source: 'merchants-page', target: 'merchant-tables', label: 'CRUD Operations', type: 'smoothstep' },
-  { id: 'warehouse-db', source: 'warehouse-page', target: 'warehouse-tables', label: 'CRUD Operations', type: 'smoothstep' }
+  { id: 'architecture-onboarding', source: 'architecture-page', target: 'onboarding-plugin', label: 'Monitor', type: 'smoothstep' },
+  { id: 'architecture-business', source: 'architecture-page', target: 'business-plugin', label: 'Monitor', type: 'smoothstep' },
+  { id: 'architecture-warehouse', source: 'architecture-page', target: 'warehouse-plugin', label: 'Monitor', type: 'smoothstep' },
+  { id: 'architecture-customer', source: 'architecture-page', target: 'customer-plugin', label: 'Monitor', type: 'smoothstep' }
 ];
 
 const AppArchitecturePage = () => {
@@ -331,6 +452,15 @@ const AppArchitecturePage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [isAddingNode, setIsAddingNode] = useState(false);
+  const [newNodeData, setNewNodeData] = useState({
+    label: '',
+    category: 'components' as string,
+    role: 'system',
+    description: '',
+    features: ''
+  });
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -359,6 +489,54 @@ const AppArchitecturePage = () => {
       }
       return newSet;
     });
+  };
+
+  // Node click handler for details
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    setSelectedNode(node);
+  }, []);
+
+  // Add new node functionality
+  const addNewNode = () => {
+    const id = `custom-${Date.now()}`;
+    const roleColors = ROLE_COLORS[newNodeData.role as keyof typeof ROLE_COLORS] || ROLE_COLORS.system;
+    
+    const newNode: Node = {
+      id,
+      type: 'default',
+      position: { x: Math.random() * 500 + 100, y: Math.random() * 300 + 200 },
+      data: {
+        label: newNodeData.label,
+        category: newNodeData.category,
+        role: newNodeData.role,
+        description: newNodeData.description,
+        features: newNodeData.features.split(',').map(f => f.trim()).filter(Boolean)
+      },
+      style: { 
+        backgroundColor: roleColors.bg, 
+        borderColor: roleColors.border,
+        border: newNodeData.category === NODE_CATEGORIES.PLUGINS ? '2px solid' : '1px solid'
+      }
+    };
+
+    setNodes(prev => [...prev, newNode]);
+    setIsAddingNode(false);
+    setNewNodeData({
+      label: '',
+      category: NODE_CATEGORIES.COMPONENTS,
+      role: 'system',
+      description: '',
+      features: ''
+    });
+  };
+
+  // Plugin statistics
+  const pluginNodes = nodes.filter(node => node.data.category === NODE_CATEGORIES.PLUGINS);
+  const pluginStats = {
+    onboarding: nodes.filter(node => node.data.category === NODE_CATEGORIES.ONBOARDING).length,
+    business: nodes.filter(node => node.data.category === NODE_CATEGORIES.BUSINESS).length,
+    hooks: nodes.filter(node => node.data.category === NODE_CATEGORIES.HOOKS).length,
+    database: nodes.filter(node => node.data.category === NODE_CATEGORIES.DATABASE).length
   };
 
   return (
@@ -405,6 +583,61 @@ const AppArchitecturePage = () => {
             <option value="public">Public</option>
             <option value="system">System</option>
           </select>
+
+          {/* Add Node Button */}
+          <Dialog open={isAddingNode} onOpenChange={setIsAddingNode}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Pridať komponent
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Pridať nový komponent</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Input
+                  placeholder="Názov komponenta"
+                  value={newNodeData.label}
+                  onChange={(e) => setNewNodeData(prev => ({ ...prev, label: e.target.value }))}
+                />
+                <Select value={newNodeData.category} onValueChange={(value) => setNewNodeData(prev => ({ ...prev, category: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Kategória" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(NODE_CATEGORIES).map(([key, value]) => (
+                      <SelectItem key={key} value={value}>{key}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={newNodeData.role} onValueChange={(value) => setNewNodeData(prev => ({ ...prev, role: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Rola" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(ROLE_COLORS).map(role => (
+                      <SelectItem key={role} value={role}>{role}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Textarea
+                  placeholder="Popis komponenta"
+                  value={newNodeData.description}
+                  onChange={(e) => setNewNodeData(prev => ({ ...prev, description: e.target.value }))}
+                />
+                <Input
+                  placeholder="Funkcie (oddelené čiarkami)"
+                  value={newNodeData.features}
+                  onChange={(e) => setNewNodeData(prev => ({ ...prev, features: e.target.value }))}
+                />
+                <Button onClick={addNewNode} className="w-full">
+                  Pridať komponent
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Layer Toggle Controls */}
@@ -431,6 +664,7 @@ const AppArchitecturePage = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onNodeClick={onNodeClick}
           fitView
           className="bg-background"
         >
@@ -444,6 +678,79 @@ const AppArchitecturePage = () => {
           <Background />
         </ReactFlow>
       </div>
+
+      {/* Node Details Dialog */}
+      {selectedNode && (
+        <Dialog open={!!selectedNode} onOpenChange={() => setSelectedNode(null)}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Layers className="h-5 w-5" />
+                {(selectedNode.data as any).label}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Kategória</label>
+                  <Badge variant="secondary">{(selectedNode.data as any).category}</Badge>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Rola</label>
+                  <Badge variant="outline">{(selectedNode.data as any).role}</Badge>
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Popis</label>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {(selectedNode.data as any).description || 'Bez popisu'}
+                </p>
+              </div>
+
+              {(selectedNode.data as any).features && (
+                <div>
+                  <label className="text-sm font-medium">Funkcie</label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {((selectedNode.data as any).features || []).map((feature: string, index: number) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {(selectedNode.data as any).category === NODE_CATEGORIES.PLUGINS && (
+                <div className="border-t pt-4">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Database className="h-4 w-4" />
+                    Plugin Štatistiky
+                  </label>
+                  <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Onboarding komponenty:</span>
+                      <span className="font-medium ml-2">{pluginStats.onboarding}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Business komponenty:</span>
+                      <span className="font-medium ml-2">{pluginStats.business}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Hooks:</span>
+                      <span className="font-medium ml-2">{pluginStats.hooks}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Database schémy:</span>
+                      <span className="font-medium ml-2">{pluginStats.database}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
       
       {/* Statistics and Legend */}
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
