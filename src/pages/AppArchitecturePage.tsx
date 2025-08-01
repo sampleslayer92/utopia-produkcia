@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ReactFlow,
   MiniMap,
@@ -20,7 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Search, Filter, Eye, EyeOff, Info, Plus, Settings, Code, Database, Layers } from 'lucide-react';
-import ArchitectureLayout from '@/components/architecture/ArchitectureLayout';
+import AdminLayout from '@/components/admin/AdminLayout';
 import { useTranslation } from 'react-i18next';
 
 import '@xyflow/react/dist/style.css';
@@ -38,18 +38,6 @@ const NODE_CATEGORIES = {
   BUSINESS: 'business',
   PLUGINS: 'plugins'
 } as const;
-
-// Section to category mapping
-const SECTION_CATEGORIES = {
-  'overview': Object.values(NODE_CATEGORIES) as string[],
-  'business': [NODE_CATEGORIES.BUSINESS, NODE_CATEGORIES.PLUGINS] as string[],
-  'clients': [NODE_CATEGORIES.AUTH, NODE_CATEGORIES.PAGES, NODE_CATEGORIES.COMPONENTS] as string[],
-  'products': [NODE_CATEGORIES.BUSINESS, NODE_CATEGORIES.COMPONENTS, NODE_CATEGORIES.PAGES] as string[],
-  'analytics': [NODE_CATEGORIES.COMPONENTS, NODE_CATEGORIES.DATABASE] as string[],
-  'onboarding': [NODE_CATEGORIES.ONBOARDING, NODE_CATEGORIES.COMPONENTS] as string[],
-  'system': [NODE_CATEGORIES.CONTEXTS, NODE_CATEGORIES.HOOKS, NODE_CATEGORIES.DATABASE] as string[],
-  'personal': [NODE_CATEGORIES.PAGES, NODE_CATEGORIES.COMPONENTS] as string[]
-};
 
 // Role-based color scheme
 const ROLE_COLORS = {
@@ -466,7 +454,6 @@ const AppArchitecturePage = () => {
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [isAddingNode, setIsAddingNode] = useState(false);
-  const [selectedSection, setSelectedSection] = useState<string>("overview");
   const [newNodeData, setNewNodeData] = useState({
     label: '',
     category: 'components' as string,
@@ -480,23 +467,17 @@ const AppArchitecturePage = () => {
     [setEdges],
   );
 
-  // Filter nodes based on search, filters, and selected section
-  const filteredNodes = useMemo(() => {
-    return nodes.filter(node => {
-      const data = node.data as any;
-      const matchesSearch = data.label?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           data.description?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = selectedCategory === 'all' || data.category === selectedCategory;
-      const matchesRole = selectedRole === 'all' || data.role === selectedRole;
-      const isVisible = !hiddenCategories.has(data.category);
-      
-      // Filter by selected section
-      const allowedCategories = SECTION_CATEGORIES[selectedSection as keyof typeof SECTION_CATEGORIES] || [];
-      const matchesSection = selectedSection === "overview" || allowedCategories.includes(data.category as string);
-      
-      return matchesSearch && matchesCategory && matchesRole && isVisible && matchesSection;
-    });
-  }, [nodes, searchTerm, selectedCategory, selectedRole, hiddenCategories, selectedSection]);
+  // Filter nodes based on search and filters
+  const filteredNodes = nodes.filter(node => {
+    const data = node.data as any;
+    const matchesSearch = data.label?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         data.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || data.category === selectedCategory;
+    const matchesRole = selectedRole === 'all' || data.role === selectedRole;
+    const isVisible = !hiddenCategories.has(data.category);
+    
+    return matchesSearch && matchesCategory && matchesRole && isVisible;
+  });
 
   const toggleCategoryVisibility = (category: string) => {
     setHiddenCategories(prev => {
@@ -549,32 +530,6 @@ const AppArchitecturePage = () => {
     });
   };
 
-  // Calculate plugin counts for each section
-  const pluginCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    
-    Object.entries(SECTION_CATEGORIES).forEach(([section, categories]) => {
-      if (section === 'overview') {
-        counts[section] = nodes.length;
-      } else {
-        counts[section] = nodes.filter(node => 
-          categories.includes(node.data.category as string)
-        ).length;
-      }
-    });
-    
-    return counts;
-  }, [nodes]);
-
-  // Handle section change
-  const handleSectionChange = useCallback((section: string) => {
-    setSelectedSection(section);
-    // Reset filters when changing sections
-    setSelectedCategory("all");
-    setSelectedRole("all");
-    setSearchTerm("");
-  }, []);
-
   // Plugin statistics
   const pluginNodes = nodes.filter(node => node.data.category === NODE_CATEGORIES.PLUGINS);
   const pluginStats = {
@@ -584,72 +539,10 @@ const AppArchitecturePage = () => {
     database: nodes.filter(node => node.data.category === NODE_CATEGORIES.DATABASE).length
   };
 
-  const currentSectionTitle = selectedSection === 'overview' 
-    ? 'Prehľad Architektúry' 
-    : `${selectedSection.charAt(0).toUpperCase() + selectedSection.slice(1)} - ${filteredNodes.length} pluginov`;
-
   return (
-    <ArchitectureLayout
+    <AdminLayout
       title="🏗️ Architektúra Aplikácie"
-      subtitle={currentSectionTitle}
-      selectedSection={selectedSection}
-      onSectionChange={handleSectionChange}
-      pluginCounts={pluginCounts}
-      actions={
-        <Dialog open={isAddingNode} onOpenChange={setIsAddingNode}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="bg-blue-500 hover:bg-blue-600">
-              <Plus className="h-4 w-4 mr-2" />
-              Pridať Plugin
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Pridať nový komponent</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                placeholder="Názov komponenta"
-                value={newNodeData.label}
-                onChange={(e) => setNewNodeData(prev => ({ ...prev, label: e.target.value }))}
-              />
-              <Select value={newNodeData.category} onValueChange={(value) => setNewNodeData(prev => ({ ...prev, category: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Kategória" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(NODE_CATEGORIES).map(([key, value]) => (
-                    <SelectItem key={key} value={value}>{key}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={newNodeData.role} onValueChange={(value) => setNewNodeData(prev => ({ ...prev, role: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Rola" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(ROLE_COLORS).map(role => (
-                    <SelectItem key={role} value={role}>{role}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Textarea
-                placeholder="Popis komponenta"
-                value={newNodeData.description}
-                onChange={(e) => setNewNodeData(prev => ({ ...prev, description: e.target.value }))}
-              />
-              <Input
-                placeholder="Funkcie (oddelené čiarkami)"
-                value={newNodeData.features}
-                onChange={(e) => setNewNodeData(prev => ({ ...prev, features: e.target.value }))}
-              />
-              <Button onClick={addNewNode} className="w-full">
-                Pridať komponent
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      }
+      subtitle="Komplexná vizualizácia štruktúry aplikácie a dátových tokov"
     >
       {/* Controls */}
       <div className="mb-6 space-y-4">
@@ -928,7 +821,7 @@ const AppArchitecturePage = () => {
           <p><strong>📊 Interakcia:</strong> Diagram je interaktívny - môžete zoomovať, posúvať a reorganizovať</p>
         </CardContent>
       </Card>
-    </ArchitectureLayout>
+    </AdminLayout>
   );
 };
 
