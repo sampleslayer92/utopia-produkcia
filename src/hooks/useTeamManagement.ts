@@ -209,8 +209,68 @@ export const useTeamManagement = () => {
   };
 
   const deleteTeamMember = async (id: string) => {
-    // Soft delete - just deactivate the user
-    return updateTeamMember(id, { is_active: false });
+    setIsSaving(true);
+    try {
+      // Get current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No active session - please log in again');
+      }
+
+      console.log('Calling delete-team-member Edge Function...');
+
+      // Call Edge Function to permanently delete user
+      const { data, error } = await supabase.functions.invoke('delete-team-member', {
+        body: { userId: id },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      console.log('Delete Edge Function response:', { data, error });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(error.message || 'Network error calling Edge Function');
+      }
+
+      if (!data) {
+        throw new Error('No response from Edge Function');
+      }
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to delete team member');
+      }
+
+      console.log('Team member deleted successfully:', data);
+
+      // Refresh team members list
+      await fetchTeamMembers();
+      
+      toast.success('Člen tímu bol úspešne vymazaný', {
+        description: 'Používateľ bol natrvalo odstránený zo systému'
+      });
+      
+      return { error: null };
+    } catch (error: any) {
+      console.error('Error deleting team member:', error);
+      const errorMessage = error.message || 'Unknown error occurred';
+      
+      // Provide more specific error messages
+      let userMessage = 'Chyba pri mazaní člena tímu';
+      if (errorMessage.includes('admin role required')) {
+        userMessage = 'Nemáte oprávnenie na vymazanie člena tímu';
+      } else if (errorMessage.includes('No active session')) {
+        userMessage = 'Platnosť prihlásenia vypršala, prihláste sa znovu';
+      }
+      
+      toast.error(userMessage, {
+        description: errorMessage
+      });
+      return { error };
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   useEffect(() => {

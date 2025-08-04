@@ -403,13 +403,23 @@ const TeamManagement = () => {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>{t('teamManagement.confirmDelete')}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t('teamManagement.confirmDeleteDescription')}
-                {deletingMember && (
-                  <div className="mt-2 font-medium">
-                    {deletingMember.first_name} {deletingMember.last_name} ({deletingMember.email})
+             <AlertDialogDescription>
+                <div className="space-y-2">
+                  <p>{t('teamManagement.confirmDeleteDescription')}</p>
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-red-800 text-sm font-medium">
+                      ⚠️ UPOZORNENIE: Toto je nevratná operácia!
+                    </p>
+                    <p className="text-red-700 text-sm">
+                      Používateľ bude natrvalo vymazaný zo systému vrátane všetkých jeho dát.
+                    </p>
                   </div>
-                )}
+                  {deletingMember && (
+                    <div className="mt-2 font-medium bg-gray-50 p-2 rounded">
+                      {deletingMember.first_name} {deletingMember.last_name} ({deletingMember.email})
+                    </div>
+                  )}
+                </div>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
