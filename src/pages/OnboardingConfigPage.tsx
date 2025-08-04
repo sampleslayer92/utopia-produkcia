@@ -25,6 +25,7 @@ import OnboardingStepCard from '@/components/admin/onboarding/OnboardingStepCard
 import OnboardingPreview from '@/components/admin/onboarding/OnboardingPreview';
 import FieldsManagement from '@/components/admin/onboarding/FieldsManagement';
 import ConfigurationManagement from '@/components/admin/onboarding/ConfigurationManagement';
+import ModuleManagement from '@/components/admin/onboarding/ModuleManagement';
 import { useOnboardingConfig } from '@/hooks/useOnboardingConfig';
 import { toast } from 'sonner';
 
@@ -63,6 +64,7 @@ const OnboardingConfigPage = () => {
   const { t } = useTranslation(['admin', 'common']);
   const [activeTab, setActiveTab] = useState('steps');
   const [editingStep, setEditingStep] = useState<OnboardingStep | null>(null);
+  const [selectedStepForModules, setSelectedStepForModules] = useState<string | null>(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   
   const {
@@ -174,9 +176,10 @@ const OnboardingConfigPage = () => {
     >
       <div className="space-y-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="steps">Kroky onboardingu</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="steps">Kroky formulárov</TabsTrigger>
             <TabsTrigger value="fields">Polia formulárov</TabsTrigger>
+            <TabsTrigger value="modules">Moduly formulárov</TabsTrigger>
             <TabsTrigger value="settings">Konfigurácie</TabsTrigger>
           </TabsList>
 
@@ -233,6 +236,54 @@ const OnboardingConfigPage = () => {
             <FieldsManagement 
               steps={steps} 
               onUpdateStep={updateStep}
+            />
+          </TabsContent>
+
+          <TabsContent value="modules" className="space-y-4">
+            <div className="mb-4">
+              <h3 className="text-lg font-medium mb-2">Výber kroku pre editáciu modulov</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {steps.map((step) => (
+                  <Card 
+                    key={step.id} 
+                    className={`cursor-pointer transition-colors ${
+                      selectedStepForModules === step.id ? 'border-primary bg-primary/5' : 'hover:bg-accent'
+                    }`}
+                    onClick={() => setSelectedStepForModules(step.id)}
+                  >
+                    <CardContent className="p-4">
+                      <h4 className="font-medium">{step.title}</h4>
+                      <p className="text-sm text-muted-foreground">{step.description}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge variant={step.isEnabled ? "default" : "secondary"}>
+                          {step.isEnabled ? "Aktívny" : "Neaktívny"}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            <ModuleManagement 
+              stepId={selectedStepForModules}
+              stepModules={[]} // TODO: Load actual modules from database
+              onAddModule={(stepId, moduleKey, moduleName, configuration) => {
+                console.log('Adding module:', { stepId, moduleKey, moduleName, configuration });
+                toast.success('Modul bol pridaný do kroku');
+              }}
+              onUpdateModule={(moduleId, updates) => {
+                console.log('Updating module:', { moduleId, updates });
+                toast.success('Modul bol aktualizovaný');
+              }}
+              onDeleteModule={(moduleId) => {
+                console.log('Deleting module:', moduleId);
+                toast.success('Modul bol odstránený');
+              }}
+              onReorderModules={(stepId, reorderedModules) => {
+                console.log('Reordering modules:', { stepId, reorderedModules });
+                toast.success('Poradie modulov bolo zmenené');
+              }}
             />
           </TabsContent>
 
