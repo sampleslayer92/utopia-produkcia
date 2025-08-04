@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from "@/components/ui/badge";
 import { Building2, Calendar, Mail, User, Euro, FileText, MapPin, TrendingUp } from "lucide-react";
@@ -10,6 +11,7 @@ import { useGenericBulkSelection } from "@/hooks/useGenericBulkSelection";
 import { useBulkMerchantActions } from "@/hooks/useBulkMerchantActions";
 import { GenericBulkActionsPanel } from "@/components/admin/shared/GenericBulkActionsPanel";
 import MerchantCard from "./MerchantCard";
+import MerchantDeleteModal from "./table/MerchantDeleteModal";
 
 interface MerchantsTableProps {
   key?: number;
@@ -26,6 +28,7 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
   const { data: merchants, isLoading, error, refetch } = useMerchantsData(filters);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Bulk selection state
   const {
@@ -38,7 +41,7 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
   } = useGenericBulkSelection(merchants);
 
   // Bulk actions
-  const { bulkDelete, bulkExport, isLoading: isBulkLoading } = useBulkMerchantActions();
+  const { bulkDelete, bulkExport, bulkDeleteWithCascade, isLoading: isBulkLoading } = useBulkMerchantActions();
 
   const handleRowClick = (merchant: Merchant) => {
     navigate(`/admin/merchant/${merchant.id}/view`);
@@ -46,7 +49,12 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
 
   const handleBulkDelete = () => {
     if (selectedItems.length === 0) return;
-    bulkDelete(selectedItems);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = (forceCascade: boolean) => {
+    bulkDeleteWithCascade(selectedItems, forceCascade);
+    setIsDeleteModalOpen(false);
     clearSelection();
   };
 
@@ -228,44 +236,54 @@ const MerchantsTable = ({ key, filters }: MerchantsTableProps) => {
 
   // Desktop Table Layout with Bulk Operations
   return (
-    <DataTable
-      data={merchants || []}
-      columns={columns}
-      title={t('merchants.table.title')}
-      subtitle={t('merchants.table.overview', { count: merchants?.length || 0 })}
-      isLoading={isLoading}
-      error={error}
-      onRowClick={handleRowClick}
-      emptyMessage={t('table.emptyMessage')}
-      emptyIcon={<Building2 className="h-12 w-12 text-slate-400" />}
-      selectable={true}
-      selectedItems={selectedItems}
-      onSelectionChange={(selectedIds) => {
-        // Update selection through individual select calls
-        const currentSet = new Set(selectedItems);
-        const newSet = new Set(selectedIds);
-        
-        // Find added and removed items
-        const added = selectedIds.filter(id => !currentSet.has(id));
-        const removed = selectedItems.filter(id => !newSet.has(id));
-        
-        // Apply changes
-        added.forEach(id => selectItem(id));
-        removed.forEach(id => selectItem(id));
-      }}
-      onSelectAll={() => selectAll(merchants || [])}
-      bulkActions={
-        <GenericBulkActionsPanel
-          selectedCount={selectedItems.length}
-          entityName="obchodníka"
-          entityNamePlural="obchodníkov"
-          onClearSelection={clearSelection}
-          onBulkDelete={handleBulkDelete}
-          onBulkExport={handleBulkExport}
-          isLoading={isBulkLoading}
-        />
-      }
-    />
+    <>
+      <DataTable
+        data={merchants || []}
+        columns={columns}
+        title={t('merchants.table.title')}
+        subtitle={t('merchants.table.overview', { count: merchants?.length || 0 })}
+        isLoading={isLoading}
+        error={error}
+        onRowClick={handleRowClick}
+        emptyMessage={t('table.emptyMessage')}
+        emptyIcon={<Building2 className="h-12 w-12 text-slate-400" />}
+        selectable={true}
+        selectedItems={selectedItems}
+        onSelectionChange={(selectedIds) => {
+          // Update selection through individual select calls
+          const currentSet = new Set(selectedItems);
+          const newSet = new Set(selectedIds);
+          
+          // Find added and removed items
+          const added = selectedIds.filter(id => !currentSet.has(id));
+          const removed = selectedItems.filter(id => !newSet.has(id));
+          
+          // Apply changes
+          added.forEach(id => selectItem(id));
+          removed.forEach(id => selectItem(id));
+        }}
+        onSelectAll={() => selectAll(merchants || [])}
+        bulkActions={
+          <GenericBulkActionsPanel
+            selectedCount={selectedItems.length}
+            entityName="obchodníka"
+            entityNamePlural="obchodníkov"
+            onClearSelection={clearSelection}
+            onBulkDelete={handleBulkDelete}
+            onBulkExport={handleBulkExport}
+            isLoading={isBulkLoading}
+          />
+        }
+      />
+      
+      <MerchantDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        selectedMerchantIds={selectedItems}
+        selectedCount={selectedItems.length}
+      />
+    </>
   );
 };
 

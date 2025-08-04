@@ -3,19 +3,32 @@ import { supabase } from '@/integrations/supabase/client';
 import { useGenericBulkActions } from './useGenericBulkActions';
 
 export const useBulkMerchantActions = () => {
-  const bulkDelete = async (merchantIds: string[]) => {
-    console.log('Bulk deleting merchants:', merchantIds);
+  const bulkDelete = async (merchantIds: string[], forceCascade: boolean = false) => {
+    console.log('Bulk deleting merchants:', merchantIds, 'forceCascade:', forceCascade);
     
-    // Check if any merchant has contracts
+    // Get detailed info about what will be deleted
     const { data: contractsCheck } = await supabase
       .from('contracts')
-      .select('id, merchant_id')
+      .select('id, contract_number, merchant_id')
       .in('merchant_id', merchantIds);
     
-    if (contractsCheck && contractsCheck.length > 0) {
-      throw new Error('Nemôžete vymazať obchodníkov, ktorí majú zmluvy. Najprv vymažte zmluvy.');
+    if (contractsCheck && contractsCheck.length > 0 && !forceCascade) {
+      const contractNumbers = contractsCheck.map(c => c.contract_number).join(', ');
+      throw new Error(`Obchodníci majú ${contractsCheck.length} zmlúv (${contractNumbers}). Potvrďte mazanie s cascade delete.`);
     }
     
+    // If force cascade, delete contracts first
+    if (forceCascade && contractsCheck && contractsCheck.length > 0) {
+      const contractIds = contractsCheck.map(c => c.id);
+      const { error: contractError } = await supabase
+        .from('contracts')
+        .delete()
+        .in('id', contractIds);
+      
+      if (contractError) throw new Error(`Chyba pri mazaní zmlúv: ${contractError.message}`);
+    }
+    
+    // Delete merchants
     const { error } = await supabase
       .from('merchants')
       .delete()
@@ -50,10 +63,13 @@ export const useBulkMerchantActions = () => {
     document.body.removeChild(link);
   };
 
-  return useGenericBulkActions({
-    entityName: 'obchodníka',
-    queryKey: ['enhanced-merchants'],
-    bulkDelete,
-    bulkExport
-  });
+  return {
+    ...useGenericBulkActions({
+      entityName: 'obchodníka',
+      queryKey: ['enhanced-merchants'],
+      bulkDelete,
+      bulkExport
+    }),
+    bulkDeleteWithCascade: bulkDelete
+  };
 };

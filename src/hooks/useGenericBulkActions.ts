@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 export interface BulkActionConfig<T> {
   entityName: string;
   queryKey: string[];
-  bulkDelete?: (ids: string[]) => Promise<void>;
+  bulkDelete?: (ids: string[], ...args: any[]) => Promise<void>;
   bulkUpdate?: (ids: string[], updates: Partial<T>) => Promise<void>;
   bulkActivate?: (ids: string[]) => Promise<void>;
   bulkDeactivate?: (ids: string[]) => Promise<void>;
@@ -19,11 +19,12 @@ export const useGenericBulkActions = <T>(config: BulkActionConfig<T>) => {
     mutationFn: config.bulkDelete || (async () => { throw new Error('Bulk delete not implemented'); }),
     onSuccess: (_, ids) => {
       queryClient.invalidateQueries({ queryKey: config.queryKey });
-      toast.success(`${ids.length} ${config.entityName} úspešne vymazané`);
+      toast.success(`${Array.isArray(ids) ? ids.length : 0} ${config.entityName} úspešne vymazané`);
     },
     onError: (error) => {
       console.error('Bulk delete error:', error);
-      toast.error(`Chyba pri mazaní ${config.entityName}`);
+      const errorMessage = error instanceof Error ? error.message : `Chyba pri mazaní ${config.entityName}`;
+      toast.error(errorMessage);
     }
   });
 
