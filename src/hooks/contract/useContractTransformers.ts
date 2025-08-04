@@ -60,7 +60,10 @@ export const transformContractData = (
     email: cleanStringValue(contactInfo.email),
     phone: cleanStringValue(contactInfo.phone),
     phonePrefix: cleanStringValue(contactInfo.phone_prefix) || '+421',
-    salesNote: cleanStringValue(contactInfo.sales_note)
+    salesNote: cleanStringValue(contactInfo.sales_note),
+    userRoles: contactInfo.user_role ? [contactInfo.user_role] : [],
+    userRole: cleanStringValue(contactInfo.user_role) || '',
+    personId: contactInfo.person_id || undefined
   } : {
     salutation: undefined,
     firstName: '',
@@ -68,7 +71,10 @@ export const transformContractData = (
     email: '',
     phone: '',
     phonePrefix: '+421',
-    salesNote: ''
+    salesNote: '',
+    userRoles: [],
+    userRole: '',
+    personId: undefined
   };
 
   // Transform company info
@@ -87,7 +93,11 @@ export const transformContractData = (
       city: cleanStringValue(companyInfo.address_city),
       zipCode: cleanStringValue(companyInfo.address_zip_code)
     },
-    contactAddress: companyInfo.contact_address_same_as_main ? null : {
+    contactAddress: companyInfo.contact_address_same_as_main ? {
+      street: cleanStringValue(companyInfo.address_street),
+      city: cleanStringValue(companyInfo.address_city),
+      zipCode: cleanStringValue(companyInfo.address_zip_code)
+    } : {
       street: cleanStringValue(companyInfo.contact_address_street),
       city: cleanStringValue(companyInfo.contact_address_city),
       zipCode: cleanStringValue(companyInfo.contact_address_zip_code)
@@ -112,7 +122,7 @@ export const transformContractData = (
     section: '',
     insertNumber: '',
     address: { street: '', city: '', zipCode: '' },
-    contactAddress: null,
+    contactAddress: { street: '', city: '', zipCode: '' },
     contactAddressSameAsMain: true,
     headOfficeEqualsOperatingAddress: true,
     contactPerson: {
@@ -256,12 +266,28 @@ export const transformContractData = (
     devices: deviceCards,
     services: serviceCards,
     fees: {
-      regulatedCards: Number(deviceSelection?.mif_regulated_cards) || 0,
-      unregulatedCards: Number(deviceSelection?.mif_unregulated_cards) || 0
+      regulatedCards: Number(deviceSelection?.mif_regulated_cards) || 0.90,
+      unregulatedCards: Number(deviceSelection?.mif_unregulated_cards) || 0.90,
+      calculatorResults: contractCalculations ? {
+        monthlyTurnover: Number(contractCalculations.monthly_turnover) || 0,
+        totalCustomerPayments: Number(contractCalculations.total_customer_payments) || 0,
+        totalCompanyCosts: Number(contractCalculations.total_company_costs) || 0,
+        effectiveRegulated: Number(contractCalculations.effective_regulated) || 0,
+        effectiveUnregulated: Number(contractCalculations.effective_unregulated) || 0,
+        regulatedFee: Number(contractCalculations.regulated_fee) || 0,
+        unregulatedFee: Number(contractCalculations.unregulated_fee) || 0,
+        transactionMargin: Number(contractCalculations.transaction_margin) || 0,
+        serviceMargin: Number(contractCalculations.service_margin) || 0,
+        totalMonthlyProfit: Number(contractCalculations.total_monthly_profit) || 0,
+        customerPaymentBreakdown: contractCalculations.calculation_data?.customerPaymentBreakdown || {},
+        companyCostBreakdown: contractCalculations.calculation_data?.companyCostBreakdown || {}
+      } : undefined
     },
     authorizedPersons: transformedAuthorizedPersons,
     actualOwners: transformedActualOwners,
-    consents: transformedConsents
+    consents: transformedConsents,
+    status: contract?.status || 'draft',
+    submittedAt: contract?.submitted_at || undefined
   };
 
   console.log('Transformed onboarding data:', onboardingData);

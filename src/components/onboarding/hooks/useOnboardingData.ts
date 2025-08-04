@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { OnboardingData, BankAccount, OpeningHours } from "@/types/onboarding";
 import { useContractCopy } from "@/hooks/useContractCopy";
+import { useAdminAutoSave } from "@/hooks/useAdminAutoSave";
+import { useContractData } from "@/hooks/useContractData";
 
 const initialData: OnboardingData = {
   contactInfo: {
@@ -72,7 +74,7 @@ const initialData: OnboardingData = {
   contractNumber: undefined
 };
 
-export const useOnboardingData = () => {
+export const useOnboardingData = (isAdminMode = false) => {
   const { applyContractCopy } = useContractCopy();
   const [onboardingData, setOnboardingData] = useState<OnboardingData>(() => {
     const saved = localStorage.getItem('onboarding_data');
@@ -181,6 +183,61 @@ export const useOnboardingData = () => {
     return initialData;
   });
 
+  // Initialize auto-save for admin mode
+  const autoSave = useAdminAutoSave({ 
+    enabled: isAdminMode,
+    delay: 2000 
+  });
+
+  // Load data from database if contract ID exists (for shared links)
+  const contractDataQuery = useContractData(onboardingData.contractId || '');
+
+  // Merge database data with localStorage data when available
+  useEffect(() => {
+    if (contractDataQuery.data && !contractDataQuery.isLoading) {
+      console.log('🔄 Loading contract data from database for shared link');
+      const dbData = contractDataQuery.data.onboardingData;
+      
+      // Only merge if we have meaningful database data
+      if (dbData.contractId && (
+        dbData.contactInfo.firstName || 
+        dbData.companyInfo.companyName || 
+        dbData.businessLocations.length > 0 ||
+        dbData.authorizedPersons.length > 0 ||
+        dbData.actualOwners.length > 0
+      )) {
+        setOnboardingData(prev => {
+          // In admin mode: prioritize localStorage data over database data (admin is actively editing)
+          // In shared mode: prioritize database data over localStorage data (recipient should see admin's data)
+          const merged = isAdminMode ? {
+            ...dbData,        // Base: database data
+            ...prev,          // Override: localStorage data (admin's current changes)
+            contractId: dbData.contractId || prev.contractId,
+            contractNumber: dbData.contractNumber || prev.contractNumber
+          } : {
+            ...prev,          // Base: localStorage data
+            ...dbData,        // Override: database data (shared data from admin)
+            contractId: dbData.contractId || prev.contractId,
+            contractNumber: dbData.contractNumber || prev.contractNumber
+          };
+          
+          console.log('📊 Data merge strategy:', isAdminMode ? 'Admin mode - localStorage priority' : 'Shared mode - database priority');
+          console.log('📊 Merged data preview:', {
+            contactName: `${merged.contactInfo.firstName} ${merged.contactInfo.lastName}`,
+            companyName: merged.companyInfo.companyName,
+            businessLocationsCount: merged.businessLocations.length,
+            authorizedPersonsCount: merged.authorizedPersons.length,
+            actualOwnersCount: merged.actualOwners.length
+          });
+          
+          // Save merged data to localStorage
+          localStorage.setItem('onboarding_data', JSON.stringify(merged));
+          return merged;
+        });
+      }
+    }
+  }, [contractDataQuery.data, contractDataQuery.isLoading, isAdminMode]);
+
   // Apply contract copy data on mount if available
   useEffect(() => {
     const applyCopyData = async () => {
@@ -215,6 +272,12 @@ export const useOnboardingData = () => {
       console.log('📦 Cart items count after save:', updated.deviceSelection.dynamicCards.length);
       console.log('📦 Latest cart contents:', updated.deviceSelection.dynamicCards.map(c => ({ id: c.id, name: c.name, locationId: c.locationId })));
       localStorage.setItem('onboarding_data', JSON.stringify(updated));
+      
+      // Trigger auto-save in admin mode
+      if (isAdminMode) {
+        autoSave.scheduleAutoSave(updated);
+      }
+      
       return updated;
     });
   };
@@ -240,6 +303,8 @@ export const useOnboardingData = () => {
     onboardingData,
     updateData,
     markStepAsVisited,
-    clearData
+    clearData,
+    forceSave: autoSave.forceSave,
+    isAutoSaving: autoSave.isSaving
   };
 };

@@ -14,7 +14,7 @@ import { useContractCreation } from "@/hooks/useContractCreation";
 const AdminOnboardingPage = () => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
-  const { onboardingData, updateData, clearData } = useOnboardingData();
+  const { onboardingData, updateData, clearData } = useOnboardingData(true); // Enable admin mode
   const [isDeleting, setIsDeleting] = useState(false);
   const [isCreatingContract, setIsCreatingContract] = useState(false);
   const { createContract } = useContractCreation();

@@ -51,7 +51,7 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
   const { t } = useTranslation(['common', 'notifications']);
   const { contractId: urlContractId } = useParams<{ contractId: string }>();
   const { user } = useAuth();
-  const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData();
+  const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData(isAdminMode);
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date>();
