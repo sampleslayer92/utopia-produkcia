@@ -47,7 +47,10 @@ const DynamicStepRenderer = ({
     stepConfig,
     stepKey: stepConfig?.stepKey,
     hasComponent: !!StepComponent,
-    fieldsCount: stepConfig?.fields?.length || 0
+    fieldsCount: stepConfig?.fields?.length || 0,
+    availableStepKeys: stepComponentRegistry.getAllStepKeys(),
+    foundInRegistry: stepComponentRegistry.getComponent(stepConfig?.stepKey || ''),
+    componentName: StepComponent?.name || 'Unknown'
   });
 
   if (!stepConfig || !StepComponent) {
