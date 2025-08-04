@@ -265,26 +265,7 @@ const OnboardingConfigPage = () => {
               </div>
             </div>
 
-            <ModuleManagement 
-              stepId={selectedStepForModules}
-              stepModules={[]} // TODO: Load actual modules from database
-              onAddModule={(stepId, moduleKey, moduleName, configuration) => {
-                console.log('Adding module:', { stepId, moduleKey, moduleName, configuration });
-                toast.success('Modul bol pridaný do kroku');
-              }}
-              onUpdateModule={(moduleId, updates) => {
-                console.log('Updating module:', { moduleId, updates });
-                toast.success('Modul bol aktualizovaný');
-              }}
-              onDeleteModule={(moduleId) => {
-                console.log('Deleting module:', moduleId);
-                toast.success('Modul bol odstránený');
-              }}
-              onReorderModules={(stepId, reorderedModules) => {
-                console.log('Reordering modules:', { stepId, reorderedModules });
-                toast.success('Poradie modulov bolo zmenené');
-              }}
-            />
+            <ModuleManagement stepId={selectedStepForModules} />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4">

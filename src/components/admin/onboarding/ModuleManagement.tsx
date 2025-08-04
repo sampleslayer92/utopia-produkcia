@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Settings, Trash2, GripVertical } from "lucide-react";
 import { moduleComponentRegistry, ModuleDefinition } from '../../../components/onboarding/dynamic/ModuleComponentRegistry';
 import '../../../components/onboarding/dynamic/ModuleRegistration'; // Import to register modules
+import { useOnboardingConfig } from '@/hooks/useOnboardingConfig';
 import {
   DndContext,
   closestCenter,
@@ -42,18 +43,13 @@ interface StepModule {
 
 interface ModuleManagementProps {
   stepId: string | null;
-  stepModules: StepModule[];
-  onAddModule: (stepId: string, moduleKey: string, moduleName: string, configuration: Record<string, any>) => void;
-  onUpdateModule: (moduleId: string, updates: Partial<StepModule>) => void;
-  onDeleteModule: (moduleId: string) => void;
-  onReorderModules: (stepId: string, reorderedModules: StepModule[]) => void;
 }
 
 interface SortableModuleCardProps {
   module: StepModule;
-  moduleDefinition: ModuleDefinition;
-  onUpdate: (updates: Partial<StepModule>) => void;
-  onDelete: () => void;
+  moduleDefinition: ModuleDefinition | undefined;
+  onUpdate: (updates: Partial<StepModule>) => Promise<void>;
+  onDelete: () => Promise<void>;
 }
 
 const SortableModuleCard = ({ module, moduleDefinition, onUpdate, onDelete }: SortableModuleCardProps) => {
@@ -73,9 +69,15 @@ const SortableModuleCard = ({ module, moduleDefinition, onUpdate, onDelete }: So
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [configValues, setConfigValues] = useState(module.configuration);
 
-  const handleConfigSave = () => {
-    onUpdate({ configuration: configValues });
-    setIsConfigOpen(false);
+  if (!moduleDefinition) return null;
+
+  const handleConfigSave = async () => {
+    try {
+      await onUpdate({ configuration: configValues });
+      setIsConfigOpen(false);
+    } catch (error) {
+      console.error('Failed to save configuration:', error);
+    }
   };
 
   const getCategoryColor = (category: string) => {
@@ -114,73 +116,81 @@ const SortableModuleCard = ({ module, moduleDefinition, onUpdate, onDelete }: So
             <div className="flex items-center gap-2">
               <Checkbox
                 checked={module.isEnabled}
-                onCheckedChange={(checked) => onUpdate({ isEnabled: !!checked })}
+                onCheckedChange={async (checked) => {
+                  try {
+                    await onUpdate({ isEnabled: !!checked });
+                  } catch (error) {
+                    console.error('Failed to update module:', error);
+                  }
+                }}
               />
               
-              <Dialog open={isConfigOpen} onOpenChange={setIsConfigOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Konfigurácia modulu: {module.moduleName}</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    {moduleDefinition.configurationSchema?.map((field) => (
-                      <div key={field.field} className="space-y-2">
-                        <Label>{field.label}</Label>
-                        {field.type === 'boolean' ? (
-                          <Checkbox
-                            checked={configValues[field.field] || false}
-                            onCheckedChange={(checked) => 
-                              setConfigValues(prev => ({ ...prev, [field.field]: !!checked }))
-                            }
-                          />
-                        ) : field.type === 'select' ? (
-                          <Select
-                            value={configValues[field.field] || ''}
-                            onValueChange={(value) => 
-                              setConfigValues(prev => ({ ...prev, [field.field]: value }))
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {field.options?.map((option) => (
-                                <SelectItem key={option} value={option}>
-                                  {option}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Input
-                            type={field.type}
-                            value={configValues[field.field] || ''}
-                            onChange={(e) => 
-                              setConfigValues(prev => ({ 
-                                ...prev, 
-                                [field.field]: field.type === 'number' ? Number(e.target.value) : e.target.value 
-                              }))
-                            }
-                          />
-                        )}
+              {moduleDefinition.configurationSchema && moduleDefinition.configurationSchema.length > 0 && (
+                <Dialog open={isConfigOpen} onOpenChange={setIsConfigOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Konfigurácia modulu: {module.moduleName}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      {moduleDefinition.configurationSchema?.map((field) => (
+                        <div key={field.field} className="space-y-2">
+                          <Label>{field.label}</Label>
+                          {field.type === 'boolean' ? (
+                            <Checkbox
+                              checked={configValues[field.field] || false}
+                              onCheckedChange={(checked) => 
+                                setConfigValues(prev => ({ ...prev, [field.field]: !!checked }))
+                              }
+                            />
+                          ) : field.type === 'select' ? (
+                            <Select
+                              value={configValues[field.field] || ''}
+                              onValueChange={(value) => 
+                                setConfigValues(prev => ({ ...prev, [field.field]: value }))
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {field.options?.map((option) => (
+                                  <SelectItem key={option} value={option}>
+                                    {option}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Input
+                              type={field.type}
+                              value={configValues[field.field] || ''}
+                              onChange={(e) => 
+                                setConfigValues(prev => ({ 
+                                  ...prev, 
+                                  [field.field]: field.type === 'number' ? Number(e.target.value) : e.target.value 
+                                }))
+                              }
+                            />
+                          )}
+                        </div>
+                      ))}
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline" onClick={() => setIsConfigOpen(false)}>
+                          Zrušiť
+                        </Button>
+                        <Button onClick={handleConfigSave}>
+                          Uložiť
+                        </Button>
                       </div>
-                    ))}
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" onClick={() => setIsConfigOpen(false)}>
-                        Zrušiť
-                      </Button>
-                      <Button onClick={handleConfigSave}>
-                        Uložiť
-                      </Button>
                     </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
+              )}
 
               <Button variant="ghost" size="sm" onClick={onDelete}>
                 <Trash2 className="h-4 w-4" />
@@ -193,16 +203,17 @@ const SortableModuleCard = ({ module, moduleDefinition, onUpdate, onDelete }: So
   );
 };
 
-const ModuleManagement = ({ 
-  stepId, 
-  stepModules, 
-  onAddModule, 
-  onUpdateModule, 
-  onDeleteModule, 
-  onReorderModules 
-}: ModuleManagementProps) => {
+const ModuleManagement = ({ stepId }: ModuleManagementProps) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  
+  const { 
+    getStepModules, 
+    addStepModule, 
+    updateStepModule, 
+    deleteStepModule, 
+    reorderStepModules 
+  } = useOnboardingConfig();
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -213,15 +224,18 @@ const ModuleManagement = ({
 
   const availableModules = moduleComponentRegistry.getAllModules();
   const categories = ['all', 'selection', 'calculator', 'catalog', 'form', 'other'];
+  const stepModules = stepId ? getStepModules(stepId) : [];
 
   const filteredModules = selectedCategory === 'all' 
     ? availableModules 
     : availableModules.filter(module => module.category === selectedCategory);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
+    if (!stepId) return;
+    
     const { active, over } = event;
 
-    if (active.id !== over?.id && stepId) {
+    if (active.id !== over?.id) {
       const oldIndex = stepModules.findIndex(module => module.id === active.id);
       const newIndex = stepModules.findIndex(module => module.id === over?.id);
       
@@ -230,23 +244,26 @@ const ModuleManagement = ({
         position: index
       }));
       
-      onReorderModules(stepId, reorderedModules);
+      try {
+        await reorderStepModules(stepId, reorderedModules);
+      } catch (error) {
+        console.error('Failed to reorder modules:', error);
+      }
     }
   };
 
-  const handleAddModule = (moduleKey: string) => {
+  const handleAddModule = async (moduleKey: string) => {
     if (!stepId) return;
     
     const moduleDefinition = moduleComponentRegistry.getModule(moduleKey);
     if (!moduleDefinition) return;
 
-    onAddModule(
-      stepId, 
-      moduleKey, 
-      moduleDefinition.name, 
-      moduleDefinition.defaultConfiguration || {}
-    );
-    setIsAddDialogOpen(false);
+    try {
+      await addStepModule(stepId, moduleKey, moduleDefinition.name);
+      setIsAddDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to add module:', error);
+    }
   };
 
   if (!stepId) {
@@ -341,15 +358,26 @@ const ModuleManagement = ({
             ) : (
               stepModules.map((module) => {
                 const moduleDefinition = moduleComponentRegistry.getModule(module.moduleKey);
-                if (!moduleDefinition) return null;
                 
                 return (
                   <SortableModuleCard
                     key={module.id}
                     module={module}
                     moduleDefinition={moduleDefinition}
-                    onUpdate={(updates) => onUpdateModule(module.id, updates)}
-                    onDelete={() => onDeleteModule(module.id)}
+                    onUpdate={async (updates) => {
+                      try {
+                        await updateStepModule(stepId, module.id, updates);
+                      } catch (error) {
+                        console.error('Failed to update module:', error);
+                      }
+                    }}
+                    onDelete={async () => {
+                      try {
+                        await deleteStepModule(stepId, module.id);
+                      } catch (error) {
+                        console.error('Failed to delete module:', error);
+                      }
+                    }}
                   />
                 );
               })

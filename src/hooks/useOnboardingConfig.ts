@@ -117,8 +117,19 @@ const DEFAULT_STEPS: Partial<OnboardingStep>[] = [
   }
 ];
 
+// Step modules interface
+interface StepModule {
+  id: string;
+  moduleKey: string;
+  moduleName: string;
+  position: number;
+  isEnabled: boolean;
+  configuration: Record<string, any>;
+}
+
 export const useOnboardingConfig = () => {
   const [steps, setSteps] = useState<OnboardingStep[]>([]);
+  const [stepModules, setStepModules] = useState<Record<string, StepModule[]>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -161,6 +172,13 @@ export const useOnboardingConfig = () => {
           .eq('configuration_id', configId)
           .order('position');
 
+        // Load modules separately
+        const { data: modulesData } = await supabase
+          .from('step_modules')
+          .select('id, step_id, module_key, module_name, position, is_enabled, configuration')
+          .in('step_id', stepsData?.map(s => s.id) || [])
+          .order('step_id, position');
+
         if (stepsData) {
           const formattedSteps = stepsData.map(step => ({
             id: step.id,
@@ -182,7 +200,26 @@ export const useOnboardingConfig = () => {
             }))
           })) as OnboardingStep[];
           
+          // Format step modules
+          const modulesMap: Record<string, StepModule[]> = {};
+          if (modulesData) {
+            modulesData.forEach(module => {
+              if (!modulesMap[module.step_id]) {
+                modulesMap[module.step_id] = [];
+              }
+              modulesMap[module.step_id].push({
+                id: module.id,
+                moduleKey: module.module_key,
+                moduleName: module.module_name,
+                position: module.position,
+                isEnabled: module.is_enabled,
+                configuration: (module.configuration as Record<string, any>) || {}
+              });
+            });
+          }
+          
           setSteps(formattedSteps);
+          setStepModules(modulesMap);
           return;
         }
       }
@@ -198,6 +235,7 @@ export const useOnboardingConfig = () => {
       })) as OnboardingStep[];
       
       setSteps(defaultSteps);
+      setStepModules({});
     } catch (error) {
       console.error('Error loading onboarding configuration:', error);
       // Fallback to default configuration
@@ -211,6 +249,7 @@ export const useOnboardingConfig = () => {
       })) as OnboardingStep[];
       
       setSteps(defaultSteps);
+      setStepModules({});
     } finally {
       setLoading(false);
     }
@@ -371,8 +410,121 @@ export const useOnboardingConfig = () => {
     }
   };
 
+  // Module management functions
+  const addStepModule = async (stepId: string, moduleKey: string, moduleName: string): Promise<void> => {
+    try {
+      const { data: insertedModule, error } = await supabase
+        .from('step_modules')
+        .insert({
+          step_id: stepId,
+          module_key: moduleKey,
+          module_name: moduleName,
+          position: (stepModules[stepId]?.length || 0),
+          is_enabled: true,
+          configuration: {}
+        })
+        .select('id, module_key, module_name, position, is_enabled, configuration')
+        .single();
+
+      if (error) throw error;
+
+      const newModule: StepModule = {
+        id: insertedModule.id,
+        moduleKey: insertedModule.module_key,
+        moduleName: insertedModule.module_name,
+        position: insertedModule.position,
+        isEnabled: insertedModule.is_enabled,
+        configuration: (insertedModule.configuration as Record<string, any>) || {}
+      };
+
+      setStepModules(prev => ({
+        ...prev,
+        [stepId]: [...(prev[stepId] || []), newModule]
+      }));
+    } catch (error) {
+      console.error('Error adding step module:', error);
+      throw error;
+    }
+  };
+
+  const updateStepModule = async (stepId: string, moduleId: string, updates: Partial<StepModule>): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('step_modules')
+        .update({
+          module_name: updates.moduleName,
+          position: updates.position,
+          is_enabled: updates.isEnabled,
+          configuration: updates.configuration
+        })
+        .eq('id', moduleId);
+
+      if (error) throw error;
+
+      setStepModules(prev => ({
+        ...prev,
+        [stepId]: (prev[stepId] || []).map(module => 
+          module.id === moduleId ? { ...module, ...updates } : module
+        )
+      }));
+    } catch (error) {
+      console.error('Error updating step module:', error);
+      throw error;
+    }
+  };
+
+  const deleteStepModule = async (stepId: string, moduleId: string): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('step_modules')
+        .delete()
+        .eq('id', moduleId);
+
+      if (error) throw error;
+
+      setStepModules(prev => ({
+        ...prev,
+        [stepId]: (prev[stepId] || []).filter(module => module.id !== moduleId)
+      }));
+    } catch (error) {
+      console.error('Error deleting step module:', error);
+      throw error;
+    }
+  };
+
+  const reorderStepModules = async (stepId: string, newOrder: StepModule[]): Promise<void> => {
+    try {
+      // Update positions in database
+      const updates = newOrder.map((module, index) => ({
+        id: module.id,
+        position: index
+      }));
+
+      for (const update of updates) {
+        await supabase
+          .from('step_modules')
+          .update({ position: update.position })
+          .eq('id', update.id);
+      }
+
+      // Update local state
+      setStepModules(prev => ({
+        ...prev,
+        [stepId]: newOrder.map((module, index) => ({ ...module, position: index }))
+      }));
+    } catch (error) {
+      console.error('Error reordering step modules:', error);
+      throw error;
+    }
+  };
+
+  const getStepModules = (stepId: string): StepModule[] => {
+    return stepModules[stepId] || [];
+  };
+
   return {
     steps,
+    stepModules,
     loading,
     saving,
     loadConfiguration,
@@ -382,6 +534,12 @@ export const useOnboardingConfig = () => {
     deleteStep,
     duplicateStep,
     saveConfiguration,
-    resetToDefault
+    resetToDefault,
+    // Module management
+    addStepModule,
+    updateStepModule,
+    deleteStepModule,
+    reorderStepModules,
+    getStepModules
   };
 };

@@ -5,6 +5,7 @@ import { stepComponentRegistry } from './StepComponentRegistry';
 import { moduleComponentRegistry } from './ModuleComponentRegistry';
 import './ModuleRegistration'; // Import to register modules
 import DynamicFieldRenderer from './DynamicFieldRenderer';
+import { useOnboardingConfig } from '@/hooks/useOnboardingConfig';
 
 interface DynamicStepRendererProps {
   currentStep: number;
@@ -16,14 +17,6 @@ interface DynamicStepRendererProps {
   onComplete: () => void;
   onSaveSignature: () => void;
   onStepNavigate: (fromStep: number, toStep: number) => void;
-  stepModules?: Array<{
-    id: string;
-    moduleKey: string;
-    moduleName: string;
-    position: number;
-    isEnabled: boolean;
-    configuration: Record<string, any>;
-  }>;
 }
 
 const DynamicStepRenderer = ({
@@ -35,9 +28,12 @@ const DynamicStepRenderer = ({
   onPrev,
   onComplete,
   onSaveSignature,
-  onStepNavigate,
-  stepModules = []
+  onStepNavigate
 }: DynamicStepRendererProps) => {
+  const { getStepModules } = useOnboardingConfig();
+  
+  // Get modules for current step
+  const stepModules = stepConfig ? getStepModules(stepConfig.id) : [];
   
   // Get the component for this step
   const StepComponent = useMemo(() => {
@@ -61,8 +57,6 @@ const DynamicStepRenderer = ({
     fieldsCount: stepConfig?.fields?.length || 0,
     modulesCount: stepModules?.length || 0
   });
-
-  // Check if we have modules to render
   const enabledModules = stepModules.filter(module => module.isEnabled);
   const hasModules = enabledModules.length > 0;
 
