@@ -413,6 +413,7 @@ export const useOnboardingConfig = () => {
   // Module management functions
   const addStepModule = async (stepId: string, moduleKey: string, moduleName: string): Promise<void> => {
     try {
+      console.log('Adding module:', { stepId, moduleKey, moduleName });
       const { data: insertedModule, error } = await supabase
         .from('step_modules')
         .insert({
@@ -426,7 +427,12 @@ export const useOnboardingConfig = () => {
         .select('id, module_key, module_name, position, is_enabled, configuration')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error adding module:', error);
+        throw error;
+      }
+
+      console.log('Module inserted successfully:', insertedModule);
 
       const newModule: StepModule = {
         id: insertedModule.id,
@@ -441,6 +447,8 @@ export const useOnboardingConfig = () => {
         ...prev,
         [stepId]: [...(prev[stepId] || []), newModule]
       }));
+      
+      console.log('Module added to local state');
     } catch (error) {
       console.error('Error adding step module:', error);
       throw error;

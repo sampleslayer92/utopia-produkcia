@@ -52,6 +52,7 @@ import EshopPage from "./pages/EshopPage";
 import CartPage from "./pages/CartPage";
 import ContractTemplatesPage from "./pages/ContractTemplatesPage";
 import OnboardingConfigPage from "./pages/OnboardingConfigPage";
+import SharedOnboardingPage from "./pages/SharedOnboardingPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -70,6 +71,7 @@ const App = () => (
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route path="/onboarding/:contractId" element={<OnboardingFlow />} />
+          <Route path="/onboarding/shared/:linkId" element={<SharedOnboardingPage />} />
           <Route path="/dynamic-onboarding" element={<DynamicOnboardingFlow />} />
           <Route path="/design-system" element={<DesignSystemPage />} />
           
