@@ -207,18 +207,20 @@ export const useOnboardingData = (isAdminMode = false) => {
         dbData.actualOwners.length > 0
       )) {
         setOnboardingData(prev => {
-          // In admin mode: prioritize localStorage data over database data (admin is actively editing)
           // In shared mode: prioritize database data over localStorage data (recipient should see admin's data)
+          // In admin mode: merge database data as base, but keep localStorage changes for unsaved edits
           const merged = isAdminMode ? {
             ...dbData,        // Base: database data
-            ...prev,          // Override: localStorage data (admin's current changes)
+            ...prev,          // Override: localStorage data (admin's current unsaved changes)
             contractId: dbData.contractId || prev.contractId,
-            contractNumber: dbData.contractNumber || prev.contractNumber
+            contractNumber: dbData.contractNumber || prev.contractNumber,
+            visitedSteps: dbData.visitedSteps || prev.visitedSteps // Always use latest visited steps from DB
           } : {
-            ...prev,          // Base: localStorage data
-            ...dbData,        // Override: database data (shared data from admin)
+            ...prev,          // Base: localStorage data (minimal, might be empty)
+            ...dbData,        // Override: database data (complete data from admin)
             contractId: dbData.contractId || prev.contractId,
-            contractNumber: dbData.contractNumber || prev.contractNumber
+            contractNumber: dbData.contractNumber || prev.contractNumber,
+            visitedSteps: dbData.visitedSteps || prev.visitedSteps // Use database visited steps
           };
           
           console.log('📊 Data merge strategy:', isAdminMode ? 'Admin mode - localStorage priority' : 'Shared mode - database priority');
@@ -290,6 +292,12 @@ export const useOnboardingData = (isAdminMode = false) => {
       }
       const updated = { ...prev, visitedSteps };
       localStorage.setItem('onboarding_data', JSON.stringify(updated));
+      
+      // Trigger auto-save immediately in admin mode for visited steps
+      if (isAdminMode) {
+        autoSave.forceSave(updated);
+      }
+      
       return updated;
     });
   };
