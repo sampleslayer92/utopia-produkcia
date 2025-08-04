@@ -204,6 +204,21 @@ export const useOnboardingData = (isAdminMode = false, urlContractId?: string) =
   // Load data from database if contract ID exists (prioritize urlContractId for shared links)
   const contractDataQuery = useContractData(urlContractId || onboardingData.contractId || '');
 
+  // Deep merge helper function for nested objects
+  const deepMerge = (target: any, source: any): any => {
+    const result = { ...target };
+    
+    Object.keys(source).forEach(key => {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        result[key] = target[key] ? deepMerge(target[key], source[key]) : source[key];
+      } else {
+        result[key] = source[key];
+      }
+    });
+    
+    return result;
+  };
+
   // Merge database data with localStorage data when available
   useEffect(() => {
     if (contractDataQuery.data && !contractDataQuery.isLoading) {
@@ -219,34 +234,52 @@ export const useOnboardingData = (isAdminMode = false, urlContractId?: string) =
         dbData.actualOwners.length > 0
       )) {
         setOnboardingData(prev => {
-          // For shared links (urlContractId exists): Always prioritize database data over localStorage
-          // For admin mode: merge database data as base, but keep localStorage changes for unsaved edits
-          const isSharedLink = Boolean(urlContractId);
+          // Detect shared link: urlContractId exists and user not authenticated (no admin mode context)
+          const isSharedLink = Boolean(urlContractId && !isAdminMode);
           
-          const merged = (isAdminMode && !isSharedLink) ? {
-            ...dbData,        // Base: database data
-            ...prev,          // Override: localStorage data (admin's current unsaved changes)
-            contractId: dbData.contractId || prev.contractId,
-            contractNumber: dbData.contractNumber || prev.contractNumber,
-            visitedSteps: dbData.visitedSteps || prev.visitedSteps // Always use latest visited steps from DB
-          } : {
-            ...prev,          // Base: localStorage data (minimal for shared links)
-            ...dbData,        // Override: database data (complete data for shared links)
-            contractId: dbData.contractId || prev.contractId,
-            contractNumber: dbData.contractNumber || prev.contractNumber,
-            visitedSteps: dbData.visitedSteps || prev.visitedSteps // Use database visited steps
-          };
+          console.log('🔍 Link detection:', {
+            urlContractId: !!urlContractId,
+            isAdminMode,
+            isSharedLink,
+            hasLocalData: prev.contactInfo.firstName || prev.companyInfo.companyName
+          });
+
+          let merged: OnboardingData;
           
-          console.log('📊 Data merge strategy:', isSharedLink ? 'Shared link - database priority' : (isAdminMode ? 'Admin mode - localStorage priority' : 'Database priority'));
-          console.log('📊 Merged data preview:', {
+          if (isSharedLink) {
+            // For shared links: Use database data as complete base, minimal localStorage overlay
+            merged = deepMerge(initialData, dbData);
+            console.log('🔗 Shared link merge: Database data priority');
+          } else if (isAdminMode) {
+            // For admin mode: Keep localStorage changes, merge database as base
+            merged = deepMerge(dbData, prev);
+            console.log('👨‍💼 Admin mode merge: localStorage changes preserved');
+          } else {
+            // Default: Database priority with localStorage backup
+            merged = deepMerge(prev, dbData);
+            console.log('📊 Default merge: Database priority');
+          }
+          
+          // Always preserve these critical fields from database
+          merged.contractId = dbData.contractId || prev.contractId;
+          merged.contractNumber = dbData.contractNumber || prev.contractNumber;
+          merged.visitedSteps = dbData.visitedSteps || prev.visitedSteps;
+          
+          console.log('📊 Merge result preview:', {
+            strategy: isSharedLink ? 'SHARED_LINK' : (isAdminMode ? 'ADMIN_MODE' : 'DEFAULT'),
             contractId: merged.contractId,
             contactName: `${merged.contactInfo.firstName} ${merged.contactInfo.lastName}`,
             companyName: merged.companyInfo.companyName,
+            email: merged.contactInfo.email,
+            phone: merged.contactInfo.phone,
             businessLocationsCount: merged.businessLocations.length,
             authorizedPersonsCount: merged.authorizedPersons.length,
             actualOwnersCount: merged.actualOwners.length,
             visitedStepsCount: merged.visitedSteps.length
           });
+          
+          console.log('💾 Full merged contactInfo:', merged.contactInfo);
+          console.log('💾 Full merged companyInfo:', merged.companyInfo);
           
           // Save merged data to localStorage
           localStorage.setItem('onboarding_data', JSON.stringify(merged));
