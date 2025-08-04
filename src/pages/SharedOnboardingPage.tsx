@@ -23,12 +23,12 @@ const SharedOnboardingPage = () => {
       setLoading(true);
       
       // Verify the shared link
-      const { data: linkData, error: linkError } = await supabase
+      const { data: linkData, error: linkError } = await (supabase as any)
         .from('shareable_onboarding_links')
         .select('*')
         .eq('id', linkId)
         .eq('is_active', true)
-        .single();
+        .maybeSingle();
 
       if (linkError || !linkData) {
         setError('Link nie je platný alebo bol deaktivovaný');

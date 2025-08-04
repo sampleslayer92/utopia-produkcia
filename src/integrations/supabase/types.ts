@@ -1686,6 +1686,47 @@ export type Database = {
           },
         ]
       }
+      shareable_onboarding_links: {
+        Row: {
+          configuration_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          configuration_id: string
+          created_at?: string
+          expires_at?: string | null
+          id: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          configuration_id?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shareable_onboarding_links_configuration_id_fkey"
+            columns: ["configuration_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_configurations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       solution_categories: {
         Row: {
           category_id: string

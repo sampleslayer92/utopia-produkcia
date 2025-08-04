@@ -40,7 +40,7 @@ const TestingLinks = ({ configurationId, isActive }: TestingLinksProps) => {
 
   const loadShareableLinks = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('shareable_onboarding_links')
         .select('*')
         .eq('configuration_id', configurationId)
@@ -65,7 +65,7 @@ const TestingLinks = ({ configurationId, isActive }: TestingLinksProps) => {
       const linkId = `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const url = `${window.location.origin}/onboarding/shared/${linkId}`;
       
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('shareable_onboarding_links')
         .insert({
           id: linkId,
@@ -93,7 +93,7 @@ const TestingLinks = ({ configurationId, isActive }: TestingLinksProps) => {
 
   const toggleLinkStatus = async (linkId: string, isActive: boolean) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('shareable_onboarding_links')
         .update({ is_active: isActive })
         .eq('id', linkId);
@@ -110,7 +110,7 @@ const TestingLinks = ({ configurationId, isActive }: TestingLinksProps) => {
 
   const deleteLink = async (linkId: string) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('shareable_onboarding_links')
         .delete()
         .eq('id', linkId);

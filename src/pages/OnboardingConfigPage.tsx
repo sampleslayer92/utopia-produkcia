@@ -26,6 +26,7 @@ import OnboardingPreview from '@/components/admin/onboarding/OnboardingPreview';
 import FieldsManagement from '@/components/admin/onboarding/FieldsManagement';
 import ConfigurationManagement from '@/components/admin/onboarding/ConfigurationManagement';
 import ModuleManagement from '@/components/admin/onboarding/ModuleManagement';
+import TestingLinks from '@/components/admin/onboarding/TestingLinks';
 import { useOnboardingConfig } from '@/hooks/useOnboardingConfig';
 import { toast } from 'sonner';
 
@@ -176,10 +177,11 @@ const OnboardingConfigPage = () => {
     >
       <div className="space-y-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="steps">Kroky formulárov</TabsTrigger>
             <TabsTrigger value="fields">Polia formulárov</TabsTrigger>
             <TabsTrigger value="modules">Moduly formulárov</TabsTrigger>
+            <TabsTrigger value="testing">Testovanie</TabsTrigger>
             <TabsTrigger value="settings">Konfigurácie</TabsTrigger>
           </TabsList>
 
@@ -263,6 +265,13 @@ const OnboardingConfigPage = () => {
             </div>
 
             <ModuleManagement stepId={selectedStepForModules} />
+          </TabsContent>
+
+          <TabsContent value="testing" className="space-y-4">
+            <TestingLinks 
+              configurationId="default" // TODO: Get actual configuration ID
+              isActive={true}
+            />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4">
