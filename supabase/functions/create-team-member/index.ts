@@ -82,26 +82,63 @@ serve(async (req) => {
 
     console.log('Creating user with data:', { first_name, last_name, email, role })
 
-    // Create user in Supabase Auth using admin client
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password,
-      user_metadata: {
-        first_name,
-        last_name,
-      },
-      email_confirm: true
-    })
+    // Check if user already exists
+    const { data: existingUser, error: existingUserError } = await supabaseAdmin.auth.admin.getUserByEmail(email)
+    
+    let userData = null;
+    
+    if (existingUser && !existingUserError) {
+      console.log('User already exists, updating role and profile...')
+      userData = existingUser.user;
+      
+      // Update existing user's role
+      const { error: deleteRoleError } = await supabaseAdmin
+        .from('user_roles')
+        .delete()
+        .eq('user_id', userData.id)
+      
+      if (deleteRoleError) {
+        console.log('Note: Could not delete existing role:', deleteRoleError.message)
+      }
+      
+      // Insert new role
+      const { error: roleError } = await supabaseAdmin
+        .from('user_roles')
+        .insert({
+          user_id: userData.id,
+          role
+        })
+      
+      if (roleError) {
+        console.error('Role assignment error:', roleError)
+        throw new Error('Failed to assign role: ' + roleError.message)
+      }
+      
+      console.log('Role updated successfully:', role)
+      
+    } else {
+      // Create new user
+      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+        email,
+        password,
+        user_metadata: {
+          first_name,
+          last_name,
+        },
+        email_confirm: true
+      })
 
-    if (authError) {
-      console.error('Auth error:', authError)
-      throw new Error('Failed to create user: ' + authError.message)
+      if (authError) {
+        console.error('Auth error:', authError)
+        throw new Error('Failed to create user: ' + authError.message)
+      }
+      
+      userData = authData.user;
+      console.log('New user created in auth:', userData?.id)
     }
 
-    console.log('User created in auth:', authData.user?.id)
-
-    // Update profile with phone number and team_id if provided
-    if (authData.user && (phone || team_id)) {
+    // Update profile with phone number and team_id if provided (for both new and existing users)
+    if (userData && (phone || team_id)) {
       const updateData: any = {};
       if (phone) updateData.phone = phone;
       if (team_id) updateData.team_id = team_id;
@@ -109,7 +146,7 @@ serve(async (req) => {
       const { error: profileError } = await supabaseAdmin
         .from('profiles')
         .update(updateData)
-        .eq('id', authData.user.id)
+        .eq('id', userData.id)
 
       if (profileError) {
         console.error('Profile update error:', profileError)
@@ -118,12 +155,12 @@ serve(async (req) => {
       }
     }
 
-    // Assign role
-    if (authData.user) {
+    // Assign role only for new users (existing users already had role updated above)
+    if (!existingUser && userData) {
       const { error: roleError } = await supabaseAdmin
         .from('user_roles')
         .insert({
-          user_id: authData.user.id,
+          user_id: userData.id,
           role
         })
 
@@ -133,32 +170,33 @@ serve(async (req) => {
       }
 
       console.log('Role assigned successfully:', role)
+    }
 
-      // If creating a merchant user, update the merchant record with user connection
-      if (role === 'merchant') {
-        console.log('Connecting merchant account to user:', authData.user.email)
-        
-        const { error: merchantUpdateError } = await supabaseAdmin
-          .from('merchants')
-          .update({ 
-            contact_person_email: authData.user.email 
-          })
-          .eq('contact_person_email', authData.user.email)
+    // If creating/updating a merchant user, update the merchant record with user connection
+    if (userData && role === 'merchant') {
+      console.log('Connecting merchant account to user:', userData.email)
+      
+      const { error: merchantUpdateError } = await supabaseAdmin
+        .from('merchants')
+        .update({ 
+          contact_person_email: userData.email 
+        })
+        .eq('contact_person_email', userData.email)
 
-        if (merchantUpdateError) {
-          console.error('Error connecting merchant to user:', merchantUpdateError)
-          // Don't throw error here as user creation was successful
-        } else {
-          console.log('Merchant record connected to user successfully')
-        }
+      if (merchantUpdateError) {
+        console.error('Error connecting merchant to user:', merchantUpdateError)
+        // Don't throw error here as user creation was successful
+      } else {
+        console.log('Merchant record connected to user successfully')
       }
     }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        user: authData.user,
-        message: 'Team member created successfully'
+        user: userData,
+        message: existingUser ? 'User role updated successfully' : 'Team member created successfully',
+        isExistingUser: !!existingUser
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

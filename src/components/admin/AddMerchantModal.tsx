@@ -192,7 +192,7 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
 
       // If account creation is requested, create user account
       if (formData.create_account) {
-        const { error: createUserError } = await supabase.functions.invoke('create-team-member', {
+        const { data: createUserData, error: createUserError } = await supabase.functions.invoke('create-team-member', {
           body: {
             first_name: formData.contact_person_name.split(' ')[0] || formData.contact_person_name,
             last_name: formData.contact_person_name.split(' ').slice(1).join(' ') || '',
@@ -212,6 +212,21 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
             variant: "destructive"
           });
         } else {
+          // Send welcome email
+          try {
+            await supabase.functions.invoke('send-welcome-email', {
+              body: {
+                email: formData.contact_person_email.trim(),
+                firstName: formData.contact_person_name.split(' ')[0] || formData.contact_person_name,
+                lastName: formData.contact_person_name.split(' ').slice(1).join(' ') || '',
+                companyName: formData.company_name.trim(),
+                temporaryPassword: formData.password
+              }
+            });
+          } catch (emailError) {
+            console.error('Error sending welcome email:', emailError);
+          }
+          
           toast({
             title: t('messages.success'),
             description: t('messages.merchantAndAccountCreated')
@@ -420,11 +435,11 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
                     setFormData(prev => ({ ...prev, create_account: !!checked }))
                   }
                 />
-                <label
+                 <label
                   htmlFor="create_account"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  {t('form.labels.createAccount')}
+                  {t('modal.addMerchant.createAccount')}
                 </label>
               </div>
               
@@ -474,8 +489,8 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
                     </div>
                   </div>
                   
-                  <p className="text-sm text-slate-600">
-                    {t('form.descriptions.accountCreation')}
+                   <p className="text-sm text-slate-600">
+                    {t('modal.addMerchant.accountInfo')}
                   </p>
                 </div>
               )}

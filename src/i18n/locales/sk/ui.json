@@ -12,7 +12,15 @@
       "description": "Pridať nového merchanta so základnými údajmi a možnosťou vyhľadania v ORSR",
       "companyInfo": "Informácie o spoločnosti",
       "contactPerson": "Kontaktná osoba",
-      "address": "Adresa"
+      "address": "Adresa",
+      "accountCreation": "Vytvorenie účtu",
+      "createAccount": "Vytvoriť používateľský účet",
+      "accountInfo": "Po vytvorení sa používateľovi pošle email s prihlasovacími údajmi",
+      "password": "Heslo",
+      "confirmPassword": "Potvrdiť heslo",
+      "passwordMismatch": "Heslá sa nezhodujú",
+      "passwordTooShort": "Heslo musí mať aspoň 6 znakov",
+      "accountCreatedSuccess": "Používateľský účet bol úspešne vytvorený a odoslaný welcome email"
     }
   },
   "validation": {
@@ -25,6 +33,9 @@
   "messages": {
     "success": "Úspech",
     "merchantCreated": "Merchant bol úspešne vytvorený",
+    "merchantAndAccountCreated": "Merchant bol vytvorený a používateľský účet bol odoslaný emailom",
+    "partialSuccess": "Čiastočný úspech",
+    "merchantCreatedAccountFailed": "Merchant bol vytvorený, ale používateľský účet sa nepodarilo vytvoriť",
     "errorCreating": "Nastala chyba pri vytváraní merchanta",
     "contractDeleted": "Zmluva bola úspešne zmazaná",
     "errorDeleting": "Chyba pri mazaní zmluvy",
@@ -89,7 +100,13 @@
       "street": "Ulica a číslo",
       "city": "Mesto",
       "zipCode": "PSČ",
-      "address": "Adresa"
+      "address": "Adresa",
+      "createAccount": "Vytvoriť používateľský účet",
+      "password": "Heslo",
+      "confirmPassword": "Potvrdiť heslo"
+    },
+    "descriptions": {
+      "accountCreation": "Po vytvorení sa používateľovi pošle email s prihlasovacími údajmi do merchant portálu"
     },
     "placeholders": {
       "companyName": "Začnite písať názov spoločnosti...",
@@ -101,7 +118,9 @@
       "phone": "+421 900 123 456",
       "street": "Hlavná 123",
       "city": "Bratislava",
-      "zipCode": "12345"
+      "zipCode": "12345",
+      "password": "Minimálne 6 znakov",
+      "confirmPassword": "Zopakujte heslo"
     }
   },
   "navigation": {
