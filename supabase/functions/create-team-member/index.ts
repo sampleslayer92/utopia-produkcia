@@ -133,6 +133,25 @@ serve(async (req) => {
       }
 
       console.log('Role assigned successfully:', role)
+
+      // If creating a merchant user, update the merchant record with user connection
+      if (role === 'merchant') {
+        console.log('Connecting merchant account to user:', authData.user.email)
+        
+        const { error: merchantUpdateError } = await supabaseAdmin
+          .from('merchants')
+          .update({ 
+            contact_person_email: authData.user.email 
+          })
+          .eq('contact_person_email', authData.user.email)
+
+        if (merchantUpdateError) {
+          console.error('Error connecting merchant to user:', merchantUpdateError)
+          // Don't throw error here as user creation was successful
+        } else {
+          console.log('Merchant record connected to user successfully')
+        }
+      }
     }
 
     return new Response(

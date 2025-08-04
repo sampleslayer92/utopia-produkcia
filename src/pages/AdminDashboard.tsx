@@ -2,6 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import AdminLayout from "@/components/admin/AdminLayout";
 import NewDashboardContent from "@/components/admin/dashboard/NewDashboardContent";
+import { MerchantAccountManager } from "@/components/admin/MerchantAccountManager";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +27,10 @@ const AdminDashboard = () => {
       subtitle={t('dashboard.subtitle')}
       actions={dashboardActions}
     >
-      <NewDashboardContent />
+      <div className="space-y-6">
+        <NewDashboardContent />
+        <MerchantAccountManager />
+      </div>
     </AdminLayout>
   );
 };
