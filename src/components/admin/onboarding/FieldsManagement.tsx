@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,12 +13,9 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import type { OnboardingStep, OnboardingField } from '@/pages/OnboardingConfigPage';
-
-interface FieldsManagementProps {
-  steps: OnboardingStep[];
-  onUpdateStep: (stepId: string, updates: Partial<OnboardingStep>) => void;
-}
+import type { OnboardingField } from '@/pages/OnboardingConfigPage';
+import { useOnboardingConfig } from '@/hooks/useOnboardingConfig';
+import { useToast } from '@/hooks/use-toast';
 
 const FIELD_TYPES = [
   { value: 'text', label: 'Text' },
@@ -35,11 +32,12 @@ const FIELD_TYPES = [
 
 const SortableFieldCard = ({ field, onUpdate, onDelete }: {
   field: OnboardingField;
-  onUpdate: (updates: Partial<OnboardingField>) => void;
-  onDelete: () => void;
+  onUpdate: (updates: Partial<OnboardingField>) => Promise<void>;
+  onDelete: () => Promise<void>;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedField, setEditedField] = useState(field);
+  const { toast } = useToast();
 
   const {
     attributes,
@@ -56,14 +54,37 @@ const SortableFieldCard = ({ field, onUpdate, onDelete }: {
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const handleSave = () => {
-    onUpdate(editedField);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      await onUpdate(editedField);
+      setIsEditing(false);
+      toast({ title: "Pole bolo úspešne aktualizované" });
+    } catch (error) {
+      toast({ title: "Chyba pri aktualizácii poľa", variant: "destructive" });
+    }
   };
 
   const handleCancel = () => {
     setEditedField(field);
     setIsEditing(false);
+  };
+
+  const handleToggleEnabled = async (enabled: boolean) => {
+    try {
+      await onUpdate({ isEnabled: enabled });
+      toast({ title: enabled ? "Pole bolo povolené" : "Pole bolo zakázané" });
+    } catch (error) {
+      toast({ title: "Chyba pri zmene stavu poľa", variant: "destructive" });
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await onDelete();
+      toast({ title: "Pole bolo odstránené" });
+    } catch (error) {
+      toast({ title: "Chyba pri odstraňovaní poľa", variant: "destructive" });
+    }
   };
 
   return (
@@ -87,12 +108,12 @@ const SortableFieldCard = ({ field, onUpdate, onDelete }: {
           <div className="flex items-center gap-2">
             <Switch
               checked={field.isEnabled}
-              onCheckedChange={(enabled) => onUpdate({ isEnabled: enabled })}
+              onCheckedChange={handleToggleEnabled}
             />
             <Button variant="ghost" size="sm" onClick={() => setIsEditing(!isEditing)}>
               <Edit className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm" onClick={onDelete}>
+            <Button variant="ghost" size="sm" onClick={handleDelete}>
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
@@ -215,8 +236,17 @@ const SortableFieldCard = ({ field, onUpdate, onDelete }: {
   );
 };
 
-const FieldsManagement = ({ steps, onUpdateStep }: FieldsManagementProps) => {
+const FieldsManagement = () => {
   const [selectedStepId, setSelectedStepId] = useState<string>('');
+  const { toast } = useToast();
+  
+  const { 
+    steps, 
+    addFieldToStep, 
+    updateFieldInStep, 
+    deleteFieldFromStep, 
+    reorderFieldsInStep 
+  } = useOnboardingConfig();
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -227,7 +257,7 @@ const FieldsManagement = ({ steps, onUpdateStep }: FieldsManagementProps) => {
 
   const selectedStep = steps.find(step => step.id === selectedStepId);
 
-  const handleFieldDragEnd = (event: any) => {
+  const handleFieldDragEnd = async (event: any) => {
     if (!selectedStep) return;
     
     const { active, over } = event;
@@ -236,21 +266,25 @@ const FieldsManagement = ({ steps, onUpdateStep }: FieldsManagementProps) => {
       const oldIndex = selectedStep.fields.findIndex((field) => (field.id || field.fieldKey) === active.id);
       const newIndex = selectedStep.fields.findIndex((field) => (field.id || field.fieldKey) === over.id);
       
-      const newFields = arrayMove(selectedStep.fields, oldIndex, newIndex).map((field, index) => ({
+      const reorderedFields = arrayMove(selectedStep.fields, oldIndex, newIndex).map((field, index) => ({
         ...field,
         position: index
       }));
       
-      onUpdateStep(selectedStepId, { fields: newFields });
+      try {
+        await reorderFieldsInStep(selectedStepId, reorderedFields);
+        toast({ title: "Poradie polí bolo zmenené" });
+      } catch (error) {
+        toast({ title: "Chyba pri zmene poradia polí", variant: "destructive" });
+      }
     }
   };
 
-  const addField = () => {
+  const addField = async () => {
     if (!selectedStep) return;
     
-    const newField: OnboardingField = {
-      id: `field_${Date.now()}`,
-      fieldKey: `field_${selectedStep.fields.length + 1}`,
+    const newField: Omit<OnboardingField, 'id'> = {
+      fieldKey: `field_${Date.now()}`,
       fieldLabel: 'Nové pole',
       fieldType: 'text',
       isRequired: false,
@@ -262,27 +296,30 @@ const FieldsManagement = ({ steps, onUpdateStep }: FieldsManagementProps) => {
       }
     };
 
-    onUpdateStep(selectedStepId, { 
-      fields: [...selectedStep.fields, newField] 
-    });
+    try {
+      await addFieldToStep(selectedStepId, newField);
+      toast({ title: "Nové pole bolo pridané" });
+    } catch (error) {
+      toast({ title: "Chyba pri pridávaní poľa", variant: "destructive" });
+    }
   };
 
-  const updateField = (fieldId: string, updates: Partial<OnboardingField>) => {
-    if (!selectedStep) return;
-    
-    onUpdateStep(selectedStepId, {
-      fields: selectedStep.fields.map(field =>
-        (field.id || field.fieldKey) === fieldId ? { ...field, ...updates } : field
-      )
-    });
+  const updateField = async (fieldId: string, updates: Partial<OnboardingField>) => {
+    try {
+      await updateFieldInStep(selectedStepId, fieldId, updates);
+    } catch (error) {
+      console.error('Failed to update field:', error);
+      throw error;
+    }
   };
 
-  const deleteField = (fieldId: string) => {
-    if (!selectedStep) return;
-    
-    onUpdateStep(selectedStepId, {
-      fields: selectedStep.fields.filter(field => (field.id || field.fieldKey) !== fieldId)
-    });
+  const deleteField = async (fieldId: string) => {
+    try {
+      await deleteFieldFromStep(selectedStepId, fieldId);
+    } catch (error) {
+      console.error('Failed to delete field:', error);
+      throw error;
+    }
   };
 
   return (

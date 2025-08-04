@@ -522,6 +522,143 @@ export const useOnboardingConfig = () => {
     return stepModules[stepId] || [];
   };
 
+  // Field management functions
+  const addFieldToStep = async (stepId: string, field: Omit<OnboardingField, 'id'>): Promise<void> => {
+    try {
+      const { data: insertedField, error } = await supabase
+        .from('onboarding_fields')
+        .insert({
+          step_id: stepId,
+          field_key: field.fieldKey,
+          field_label: field.fieldLabel,
+          field_type: field.fieldType,
+          is_required: field.isRequired,
+          is_enabled: field.isEnabled,
+          position: field.position || 0,
+          field_options: field.fieldOptions || {}
+        })
+        .select('id, field_key, field_label, field_type, is_required, is_enabled, position, field_options')
+        .single();
+
+      if (error) throw error;
+
+      // Update local state
+      setSteps(prev => prev.map(step => {
+        if (step.id === stepId) {
+          const newField: OnboardingField = {
+            id: insertedField.id,
+            fieldKey: insertedField.field_key,
+            fieldLabel: insertedField.field_label,
+            fieldType: insertedField.field_type as any,
+            isRequired: insertedField.is_required,
+            isEnabled: insertedField.is_enabled,
+            position: insertedField.position || 0,
+            fieldOptions: (insertedField.field_options as Record<string, any>) || {}
+          };
+          return {
+            ...step,
+            fields: [...step.fields, newField]
+          };
+        }
+        return step;
+      }));
+    } catch (error) {
+      console.error('Error adding field to step:', error);
+      throw error;
+    }
+  };
+
+  const updateFieldInStep = async (stepId: string, fieldId: string, updates: Partial<OnboardingField>): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('onboarding_fields')
+        .update({
+          field_key: updates.fieldKey,
+          field_label: updates.fieldLabel,
+          field_type: updates.fieldType,
+          is_required: updates.isRequired,
+          is_enabled: updates.isEnabled,
+          position: updates.position,
+          field_options: updates.fieldOptions
+        })
+        .eq('id', fieldId);
+
+      if (error) throw error;
+
+      // Update local state
+      setSteps(prev => prev.map(step => {
+        if (step.id === stepId) {
+          return {
+            ...step,
+            fields: step.fields.map(field => 
+              field.id === fieldId ? { ...field, ...updates } : field
+            )
+          };
+        }
+        return step;
+      }));
+    } catch (error) {
+      console.error('Error updating field:', error);
+      throw error;
+    }
+  };
+
+  const deleteFieldFromStep = async (stepId: string, fieldId: string): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('onboarding_fields')
+        .delete()
+        .eq('id', fieldId);
+
+      if (error) throw error;
+
+      // Update local state
+      setSteps(prev => prev.map(step => {
+        if (step.id === stepId) {
+          return {
+            ...step,
+            fields: step.fields.filter(field => field.id !== fieldId)
+          };
+        }
+        return step;
+      }));
+    } catch (error) {
+      console.error('Error deleting field:', error);
+      throw error;
+    }
+  };
+
+  const reorderFieldsInStep = async (stepId: string, reorderedFields: OnboardingField[]): Promise<void> => {
+    try {
+      // Update positions in database
+      const updates = reorderedFields.map((field, index) => ({
+        id: field.id,
+        position: index
+      }));
+
+      for (const update of updates) {
+        await supabase
+          .from('onboarding_fields')
+          .update({ position: update.position })
+          .eq('id', update.id);
+      }
+
+      // Update local state
+      setSteps(prev => prev.map(step => {
+        if (step.id === stepId) {
+          return {
+            ...step,
+            fields: reorderedFields.map((field, index) => ({ ...field, position: index }))
+          };
+        }
+        return step;
+      }));
+    } catch (error) {
+      console.error('Error reordering fields:', error);
+      throw error;
+    }
+  };
+
   return {
     steps,
     stepModules,
@@ -540,6 +677,11 @@ export const useOnboardingConfig = () => {
     updateStepModule,
     deleteStepModule,
     reorderStepModules,
-    getStepModules
+    getStepModules,
+    // Field management
+    addFieldToStep,
+    updateFieldInStep,
+    deleteFieldFromStep,
+    reorderFieldsInStep
   };
 };

@@ -233,10 +233,7 @@ const OnboardingConfigPage = () => {
           </TabsContent>
 
           <TabsContent value="fields" className="space-y-4">
-            <FieldsManagement 
-              steps={steps} 
-              onUpdateStep={updateStep}
-            />
+            <FieldsManagement />
           </TabsContent>
 
           <TabsContent value="modules" className="space-y-4">
