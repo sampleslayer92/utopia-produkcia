@@ -55,15 +55,15 @@ class StepComponentRegistry {
 // Create and configure the registry
 const stepComponentRegistry = new StepComponentRegistry();
 
-// Register all step components with their keys (using hyphens to match database format)
-stepComponentRegistry.register('contact-info', ContactInfoWrapper);
-stepComponentRegistry.register('company-info', CompanyInfoWrapper);
-stepComponentRegistry.register('business-locations', BusinessLocationsWrapper);
-stepComponentRegistry.register('device-selection', DeviceSelectionWrapper);
+// Register all step components with their keys (using underscores to match database format)
+stepComponentRegistry.register('contact_info', ContactInfoWrapper);
+stepComponentRegistry.register('company_info', CompanyInfoWrapper);
+stepComponentRegistry.register('business_locations', BusinessLocationsWrapper);
+stepComponentRegistry.register('device_selection', DeviceSelectionWrapper);
 stepComponentRegistry.register('fees', FeesWrapper);
-stepComponentRegistry.register('persons-owners', PersonsAndOwnersWrapper);
-stepComponentRegistry.register('authorized-persons', PersonsAndOwnersWrapper); // Same wrapper
-stepComponentRegistry.register('actual-owners', PersonsAndOwnersWrapper); // Same wrapper
+stepComponentRegistry.register('persons_and_owners', PersonsAndOwnersWrapper);
+stepComponentRegistry.register('authorized_persons', PersonsAndOwnersWrapper); // Same wrapper
+stepComponentRegistry.register('actual_owners', PersonsAndOwnersWrapper); // Same wrapper
 stepComponentRegistry.register('consents', ConsentsWrapper);
 
 export { stepComponentRegistry };
