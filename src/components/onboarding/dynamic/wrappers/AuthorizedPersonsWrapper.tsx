@@ -1,7 +1,7 @@
-import ConsentsStep from '../../ConsentsStep';
+import AuthorizedPersonsStep from '../../AuthorizedPersonsStep';
 import { ModuleComponentProps } from '../ModuleComponentRegistry';
 
-const ConsentsWrapper = ({ 
+const AuthorizedPersonsWrapper = ({ 
   data, 
   updateData, 
   onNext, 
@@ -10,15 +10,13 @@ const ConsentsWrapper = ({
   isReadOnly = false 
 }: ModuleComponentProps) => {
   return (
-    <ConsentsStep
+    <AuthorizedPersonsStep
       data={data}
       updateData={updateData}
       onNext={onNext}
       onPrev={onPrev}
-      onComplete={() => {}}
-      onSaveSignature={() => {}}
     />
   );
 };
 
-export default ConsentsWrapper;
+export default AuthorizedPersonsWrapper;

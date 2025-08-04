@@ -18,7 +18,7 @@ export interface ModuleDefinition {
   key: string;
   name: string;
   description: string;
-  category: 'selection' | 'calculator' | 'catalog' | 'form' | 'other';
+  category: 'selection' | 'calculator' | 'catalog' | 'form' | 'business' | 'legal' | 'other';
   component: ModuleComponent;
   defaultConfiguration?: Record<string, any>;
   configurationSchema?: {

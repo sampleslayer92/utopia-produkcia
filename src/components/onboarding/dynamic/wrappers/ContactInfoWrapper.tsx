@@ -1,7 +1,14 @@
 import ContactInfoStep from '../../ContactInfoStep';
-import { StepComponentProps } from '../StepComponentRegistry';
+import { ModuleComponentProps } from '../ModuleComponentRegistry';
 
-const ContactInfoWrapper = ({ data, updateData, onNext, onPrev }: StepComponentProps) => {
+const ContactInfoWrapper = ({ 
+  data, 
+  updateData, 
+  onNext, 
+  onPrev, 
+  configuration = {},
+  isReadOnly = false 
+}: ModuleComponentProps) => {
   return (
     <ContactInfoStep
       data={data}

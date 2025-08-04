@@ -1,7 +1,14 @@
 import CompanyInfoStep from '../../CompanyInfoStep';
-import { StepComponentProps } from '../StepComponentRegistry';
+import { ModuleComponentProps } from '../ModuleComponentRegistry';
 
-const CompanyInfoWrapper = ({ data, updateData, onNext, onPrev }: StepComponentProps) => {
+const CompanyInfoWrapper = ({ 
+  data, 
+  updateData, 
+  onNext, 
+  onPrev, 
+  configuration = {},
+  isReadOnly = false 
+}: ModuleComponentProps) => {
   return (
     <CompanyInfoStep
       data={data}
