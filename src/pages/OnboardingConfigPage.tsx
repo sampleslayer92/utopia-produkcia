@@ -23,6 +23,8 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import OnboardingStepEditor from '@/components/admin/onboarding/OnboardingStepEditor';
 import OnboardingStepCard from '@/components/admin/onboarding/OnboardingStepCard';
 import OnboardingPreview from '@/components/admin/onboarding/OnboardingPreview';
+import FieldsManagement from '@/components/admin/onboarding/FieldsManagement';
+import ConfigurationManagement from '@/components/admin/onboarding/ConfigurationManagement';
 import { useOnboardingConfig } from '@/hooks/useOnboardingConfig';
 import { toast } from 'sonner';
 
@@ -73,7 +75,8 @@ const OnboardingConfigPage = () => {
     deleteStep,
     duplicateStep,
     saveConfiguration,
-    resetToDefault
+    resetToDefault,
+    loadConfiguration
   } = useOnboardingConfig();
 
   const sensors = useSensors(
@@ -174,7 +177,7 @@ const OnboardingConfigPage = () => {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="steps">Kroky onboardingu</TabsTrigger>
             <TabsTrigger value="fields">Polia formulárov</TabsTrigger>
-            <TabsTrigger value="settings">Nastavenia</TabsTrigger>
+            <TabsTrigger value="settings">Konfigurácie</TabsTrigger>
           </TabsList>
 
           <TabsContent value="steps" className="space-y-4">
@@ -227,37 +230,18 @@ const OnboardingConfigPage = () => {
           </TabsContent>
 
           <TabsContent value="fields" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Polia formulárov</CardTitle>
-                <CardDescription>
-                  Spravujte polia v jednotlivých krokoch onboarding procesu
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  Vyberte krok z karty "Kroky onboardingu" pre editáciu polí
-                </div>
-              </CardContent>
-            </Card>
+            <FieldsManagement 
+              steps={steps} 
+              onUpdateStep={updateStep}
+            />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Globálne nastavenia</CardTitle>
-                <CardDescription>
-                  Konfigurácia celkového správania onboarding procesu
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-sm text-muted-foreground">
-                    Globálne nastavenia budú dostupné v budúcej verzii.
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ConfigurationManagement 
+              currentSteps={steps}
+              onLoadConfiguration={loadConfiguration}
+              onSaveConfiguration={saveConfiguration}
+            />
           </TabsContent>
         </Tabs>
 

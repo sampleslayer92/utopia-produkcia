@@ -127,19 +127,26 @@ export const useOnboardingConfig = () => {
     loadConfiguration();
   }, []);
 
-  const loadConfiguration = async () => {
+  const loadConfiguration = async (specificConfigId?: string): Promise<void> => {
     try {
       setLoading(true);
       
       // Try to load from database first
-      const { data: configurations } = await supabase
-        .from('onboarding_configurations')
-        .select('id, name, is_active')
-        .eq('is_active', true)
-        .limit(1);
+      let configId = specificConfigId;
+      
+      if (!configId) {
+        const { data: configurations } = await supabase
+          .from('onboarding_configurations')
+          .select('id, name, is_active')
+          .eq('is_active', true)
+          .limit(1);
 
-      if (configurations && configurations.length > 0) {
-        const configId = configurations[0].id;
+        if (configurations && configurations.length > 0) {
+          configId = configurations[0].id;
+        }
+      }
+
+      if (configId) {
         
         // Load steps with their fields
         const { data: stepsData } = await supabase
@@ -258,7 +265,7 @@ export const useOnboardingConfig = () => {
     }
   };
 
-  const saveConfiguration = async () => {
+  const saveConfiguration = async (): Promise<void> => {
     try {
       setSaving(true);
       
@@ -333,8 +340,6 @@ export const useOnboardingConfig = () => {
 
       // Reload configuration to get fresh data with IDs
       await loadConfiguration();
-      
-      return true;
     } catch (error) {
       console.error('Error saving configuration:', error);
       throw error;
@@ -343,7 +348,7 @@ export const useOnboardingConfig = () => {
     }
   };
 
-  const resetToDefault = async () => {
+  const resetToDefault = async (): Promise<void> => {
     try {
       setSaving(true);
       
@@ -358,8 +363,6 @@ export const useOnboardingConfig = () => {
       })) as OnboardingStep[];
       
       setSteps(defaultSteps);
-      
-      return true;
     } catch (error) {
       console.error('Error resetting configuration:', error);
       throw error;
