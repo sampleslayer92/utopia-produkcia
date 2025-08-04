@@ -162,8 +162,8 @@ const AuthPage = () => {
           {/* Logo */}
           <div className="text-center mb-8 animate-fade-in">
             <img 
-              src="https://famouscreative.eu/wp-content/uploads/2025/07/logo_utopia_svg.svg" 
-              alt="Utopia Logo" 
+              src="https://famouscreative.eu/wp-content/uploads/2025/08/logo-veslo.svg" 
+              alt="Veslo Logo" 
               className="h-16 w-auto mx-auto" 
             />
           </div>

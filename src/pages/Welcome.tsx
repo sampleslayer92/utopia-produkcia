@@ -4,7 +4,7 @@ import { LogIn, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
-import UtopiaLogo from "@/assets/utopia-logo.svg";
+import VesloLogo from "@/assets/veslo-logo.svg";
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -34,8 +34,8 @@ const Welcome = () => {
           {/* Utopia Logo */}
           <div className="text-center">
             <img 
-              src={UtopiaLogo} 
-              alt="Utopia" 
+              src={VesloLogo} 
+              alt="Veslo" 
               className="h-20 md:h-28 w-auto mx-auto mb-4 opacity-90" 
             />
           </div>
