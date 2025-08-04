@@ -1,7 +1,7 @@
 
 import { useTranslation } from 'react-i18next';
 import AdminLayout from "@/components/admin/AdminLayout";
-import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
+import ConfigurableOnboardingFlow from "@/components/onboarding/dynamic/ConfigurableOnboardingFlow";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Link, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -157,7 +157,7 @@ const AdminOnboardingPage = () => {
       actions={onboardingActions}
     >
       <div className="bg-white rounded-lg border border-slate-200">
-        <OnboardingFlow isAdminMode={true} />
+        <ConfigurableOnboardingFlow isAdminMode={true} />
       </div>
     </AdminLayout>
   );
