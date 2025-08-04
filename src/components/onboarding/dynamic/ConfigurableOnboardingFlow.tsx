@@ -68,6 +68,14 @@ const ConfigurableOnboardingFlow = ({ isAdminMode = false }: ConfigurableOnboard
   }, [configSteps]);
 
   const currentStepConfig = enabledSteps[currentStep];
+  
+  console.log('=== ConfigurableOnboardingFlow Debug ===', {
+    configStepsLength: configSteps.length,
+    enabledStepsLength: enabledSteps.length,
+    currentStep,
+    currentStepConfig,
+    configLoading
+  });
 
   const isBasicInfoComplete = useMemo(() => {
     const { contactInfo } = onboardingData;
