@@ -21,15 +21,6 @@ export const useAdminAutoSave = ({ enabled, delay = 2000 }: UseAdminAutoSaveOpti
       isSavingRef.current = true;
       console.log('🔄 Auto-saving onboarding data to database:', data.contractId);
 
-      // Update contract with visited steps
-      await supabase
-        .from('contracts')
-        .update({ 
-          visited_steps: data.visitedSteps || []
-        })
-        .eq('id', data.contractId);
-      console.log('✅ Visited steps auto-saved');
-
       // Save contact info if changed
       if (data.contactInfo.firstName || data.contactInfo.lastName || data.contactInfo.email) {
         try {

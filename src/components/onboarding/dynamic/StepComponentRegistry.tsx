@@ -55,7 +55,7 @@ class StepComponentRegistry {
 // Create and configure the registry
 const stepComponentRegistry = new StepComponentRegistry();
 
-// Register all step components with their keys (using underscores to match database format)
+// Register all step components with their keys
 stepComponentRegistry.register('contact_info', ContactInfoWrapper);
 stepComponentRegistry.register('company_info', CompanyInfoWrapper);
 stepComponentRegistry.register('business_locations', BusinessLocationsWrapper);

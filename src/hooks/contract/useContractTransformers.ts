@@ -258,7 +258,7 @@ export const transformContractData = (
     contractId: cleanStringValue(contract?.id),
     contractNumber: cleanStringValue(contract?.contract_number),
     currentStep: 0,
-    visitedSteps: contract?.visited_steps || [],
+    visitedSteps: [],
     contactInfo: transformedContactInfo,
     companyInfo: transformedCompanyInfo,
     businessLocations: transformedBusinessLocations,

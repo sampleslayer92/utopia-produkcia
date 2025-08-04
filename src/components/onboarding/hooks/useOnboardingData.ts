@@ -74,7 +74,7 @@ const initialData: OnboardingData = {
   contractNumber: undefined
 };
 
-export const useOnboardingData = (isAdminMode = false, urlContractId?: string) => {
+export const useOnboardingData = (isAdminMode = false) => {
   const { applyContractCopy } = useContractCopy();
   const [onboardingData, setOnboardingData] = useState<OnboardingData>(() => {
     const saved = localStorage.getItem('onboarding_data');
@@ -189,40 +189,13 @@ export const useOnboardingData = (isAdminMode = false, urlContractId?: string) =
     delay: 2000 
   });
 
-  // Set contractId immediately if provided via URL
-  useEffect(() => {
-    if (urlContractId && !onboardingData.contractId) {
-      console.log('🔗 Setting contractId from URL immediately:', urlContractId);
-      setOnboardingData(prev => {
-        const updated = { ...prev, contractId: urlContractId };
-        localStorage.setItem('onboarding_data', JSON.stringify(updated));
-        return updated;
-      });
-    }
-  }, [urlContractId, onboardingData.contractId]);
-
-  // Load data from database if contract ID exists (prioritize urlContractId for shared links)
-  const contractDataQuery = useContractData(urlContractId || onboardingData.contractId || '');
-
-  // Deep merge helper function for nested objects
-  const deepMerge = (target: any, source: any): any => {
-    const result = { ...target };
-    
-    Object.keys(source).forEach(key => {
-      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-        result[key] = target[key] ? deepMerge(target[key], source[key]) : source[key];
-      } else {
-        result[key] = source[key];
-      }
-    });
-    
-    return result;
-  };
+  // Load data from database if contract ID exists (for shared links)
+  const contractDataQuery = useContractData(onboardingData.contractId || '');
 
   // Merge database data with localStorage data when available
   useEffect(() => {
     if (contractDataQuery.data && !contractDataQuery.isLoading) {
-      console.log('🔄 Loading contract data from database for contract:', contractDataQuery.data.onboardingData.contractId);
+      console.log('🔄 Loading contract data from database for shared link');
       const dbData = contractDataQuery.data.onboardingData;
       
       // Only merge if we have meaningful database data
@@ -234,52 +207,28 @@ export const useOnboardingData = (isAdminMode = false, urlContractId?: string) =
         dbData.actualOwners.length > 0
       )) {
         setOnboardingData(prev => {
-          // Detect shared link: urlContractId exists and user not authenticated (no admin mode context)
-          const isSharedLink = Boolean(urlContractId && !isAdminMode);
+          // In admin mode: prioritize localStorage data over database data (admin is actively editing)
+          // In shared mode: prioritize database data over localStorage data (recipient should see admin's data)
+          const merged = isAdminMode ? {
+            ...dbData,        // Base: database data
+            ...prev,          // Override: localStorage data (admin's current changes)
+            contractId: dbData.contractId || prev.contractId,
+            contractNumber: dbData.contractNumber || prev.contractNumber
+          } : {
+            ...prev,          // Base: localStorage data
+            ...dbData,        // Override: database data (shared data from admin)
+            contractId: dbData.contractId || prev.contractId,
+            contractNumber: dbData.contractNumber || prev.contractNumber
+          };
           
-          console.log('🔍 Link detection:', {
-            urlContractId: !!urlContractId,
-            isAdminMode,
-            isSharedLink,
-            hasLocalData: prev.contactInfo.firstName || prev.companyInfo.companyName
-          });
-
-          let merged: OnboardingData;
-          
-          if (isSharedLink) {
-            // For shared links: Use database data as complete base, minimal localStorage overlay
-            merged = deepMerge(initialData, dbData);
-            console.log('🔗 Shared link merge: Database data priority');
-          } else if (isAdminMode) {
-            // For admin mode: Keep localStorage changes, merge database as base
-            merged = deepMerge(dbData, prev);
-            console.log('👨‍💼 Admin mode merge: localStorage changes preserved');
-          } else {
-            // Default: Database priority with localStorage backup
-            merged = deepMerge(prev, dbData);
-            console.log('📊 Default merge: Database priority');
-          }
-          
-          // Always preserve these critical fields from database
-          merged.contractId = dbData.contractId || prev.contractId;
-          merged.contractNumber = dbData.contractNumber || prev.contractNumber;
-          merged.visitedSteps = dbData.visitedSteps || prev.visitedSteps;
-          
-          console.log('📊 Merge result preview:', {
-            strategy: isSharedLink ? 'SHARED_LINK' : (isAdminMode ? 'ADMIN_MODE' : 'DEFAULT'),
-            contractId: merged.contractId,
+          console.log('📊 Data merge strategy:', isAdminMode ? 'Admin mode - localStorage priority' : 'Shared mode - database priority');
+          console.log('📊 Merged data preview:', {
             contactName: `${merged.contactInfo.firstName} ${merged.contactInfo.lastName}`,
             companyName: merged.companyInfo.companyName,
-            email: merged.contactInfo.email,
-            phone: merged.contactInfo.phone,
             businessLocationsCount: merged.businessLocations.length,
             authorizedPersonsCount: merged.authorizedPersons.length,
-            actualOwnersCount: merged.actualOwners.length,
-            visitedStepsCount: merged.visitedSteps.length
+            actualOwnersCount: merged.actualOwners.length
           });
-          
-          console.log('💾 Full merged contactInfo:', merged.contactInfo);
-          console.log('💾 Full merged companyInfo:', merged.companyInfo);
           
           // Save merged data to localStorage
           localStorage.setItem('onboarding_data', JSON.stringify(merged));
@@ -287,7 +236,7 @@ export const useOnboardingData = (isAdminMode = false, urlContractId?: string) =
         });
       }
     }
-  }, [contractDataQuery.data, contractDataQuery.isLoading, isAdminMode, urlContractId]);
+  }, [contractDataQuery.data, contractDataQuery.isLoading, isAdminMode]);
 
   // Apply contract copy data on mount if available
   useEffect(() => {
@@ -341,12 +290,6 @@ export const useOnboardingData = (isAdminMode = false, urlContractId?: string) =
       }
       const updated = { ...prev, visitedSteps };
       localStorage.setItem('onboarding_data', JSON.stringify(updated));
-      
-      // Trigger auto-save immediately in admin mode for visited steps
-      if (isAdminMode) {
-        autoSave.forceSave(updated);
-      }
-      
       return updated;
     });
   };

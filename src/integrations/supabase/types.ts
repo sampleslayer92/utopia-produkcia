@@ -802,7 +802,6 @@ export type Database = {
           status: Database["public"]["Enums"]["contract_status"]
           submitted_at: string | null
           updated_at: string
-          visited_steps: Json | null
         }
         Insert: {
           admin_approved_at?: string | null
@@ -832,7 +831,6 @@ export type Database = {
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
           updated_at?: string
-          visited_steps?: Json | null
         }
         Update: {
           admin_approved_at?: string | null
@@ -862,7 +860,6 @@ export type Database = {
           status?: Database["public"]["Enums"]["contract_status"]
           submitted_at?: string | null
           updated_at?: string
-          visited_steps?: Json | null
         }
         Relationships: [
           {
