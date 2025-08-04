@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Building2, User, MapPin, Loader2, Phone, Mail, Hash, CreditCard } from "lucide-react";
+import { Building2, User, MapPin, Loader2, Phone, Mail, Hash, CreditCard, Shield, Eye, EyeOff } from "lucide-react";
 import OnboardingInput from "@/components/onboarding/ui/OnboardingInput";
 import CompanyAutocomplete from "@/components/onboarding/ui/CompanyAutocomplete";
 import ORSRSearch from "@/components/onboarding/ui/ORSRSearch";
@@ -28,12 +29,17 @@ interface MerchantFormData {
   address_street: string;
   address_city: string;
   address_zip_code: string;
+  create_account: boolean;
+  password: string;
+  confirm_password: string;
 }
 
 const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalProps) => {
   const { t } = useTranslation('ui');
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const [formData, setFormData] = useState<MerchantFormData>({
     company_name: '',
@@ -45,15 +51,19 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
     contact_person_phone: '',
     address_street: '',
     address_city: '',
-    address_zip_code: ''
+    address_zip_code: '',
+    create_account: false,
+    password: '',
+    confirm_password: ''
   });
 
   const handleInputChange = (field: keyof MerchantFormData) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setFormData(prev => ({
       ...prev,
-      [field]: e.target.value
+      [field]: value
     }));
   };
 
@@ -119,6 +129,36 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
       return false;
     }
     
+    // Account creation validation
+    if (formData.create_account) {
+      if (!formData.password.trim()) {
+        toast({
+          title: t('validation.error'),
+          description: t('validation.passwordRequired'),
+          variant: "destructive"
+        });
+        return false;
+      }
+      
+      if (formData.password.length < 6) {
+        toast({
+          title: t('validation.error'),
+          description: t('validation.passwordTooShort'),
+          variant: "destructive"
+        });
+        return false;
+      }
+      
+      if (formData.password !== formData.confirm_password) {
+        toast({
+          title: t('validation.error'),
+          description: t('validation.passwordsDoNotMatch'),
+          variant: "destructive"
+        });
+        return false;
+      }
+    }
+    
     return true;
   };
 
@@ -130,7 +170,8 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
     setIsLoading(true);
     
     try {
-      const { data, error } = await supabase
+      // First create the merchant
+      const { data: merchantData, error: merchantError } = await supabase
         .from('merchants')
         .insert([{
           company_name: formData.company_name.trim(),
@@ -147,12 +188,41 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
         .select()
         .single();
 
-      if (error) throw error;
+      if (merchantError) throw merchantError;
 
-      toast({
-        title: t('messages.success'),
-        description: t('messages.merchantCreated')
-      });
+      // If account creation is requested, create user account
+      if (formData.create_account) {
+        const { error: createUserError } = await supabase.functions.invoke('create-team-member', {
+          body: {
+            first_name: formData.contact_person_name.split(' ')[0] || formData.contact_person_name,
+            last_name: formData.contact_person_name.split(' ').slice(1).join(' ') || '',
+            email: formData.contact_person_email.trim(),
+            phone: formData.contact_person_phone.trim() || null,
+            password: formData.password,
+            role: 'merchant'
+          }
+        });
+        
+        if (createUserError) {
+          console.error('Error creating user account:', createUserError);
+          // Still show success for merchant creation but warn about account
+          toast({
+            title: t('messages.partialSuccess'),
+            description: t('messages.merchantCreatedAccountFailed'),
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: t('messages.success'),
+            description: t('messages.merchantAndAccountCreated')
+          });
+        }
+      } else {
+        toast({
+          title: t('messages.success'),
+          description: t('messages.merchantCreated')
+        });
+      }
       
       // Reset form
       setFormData({
@@ -165,7 +235,10 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
         contact_person_phone: '',
         address_street: '',
         address_city: '',
-        address_zip_code: ''
+        address_zip_code: '',
+        create_account: false,
+        password: '',
+        confirm_password: ''
       });
       
       onOpenChange(false);
@@ -326,6 +399,86 @@ const AddMerchantModal = ({ open, onOpenChange, onSuccess }: AddMerchantModalPro
                   icon={<Hash className="h-4 w-4" />}
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Account Creation */}
+          <div className="space-y-6 p-6 bg-white/60 rounded-xl border border-slate-200/50 backdrop-blur-sm">
+            <div className="flex items-center gap-3 text-base font-semibold text-slate-800">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Shield className="h-5 w-5 text-purple-600" />
+              </div>
+              {t('modal.addMerchant.accountCreation')}
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="create_account"
+                  checked={formData.create_account}
+                  onCheckedChange={(checked) => 
+                    setFormData(prev => ({ ...prev, create_account: !!checked }))
+                  }
+                />
+                <label
+                  htmlFor="create_account"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  {t('form.labels.createAccount')}
+                </label>
+              </div>
+              
+              {formData.create_account && (
+                <div className="space-y-4 mt-4 pl-6 border-l-2 border-purple-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <OnboardingInput
+                        label={`${t('form.labels.password')} *`}
+                        type={showPassword ? "text" : "password"}
+                        value={formData.password}
+                        onChange={handleInputChange('password')}
+                        placeholder={t('form.placeholders.password')}
+                        icon={<Shield className="h-4 w-4" />}
+                        required
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-2 top-8 h-8 w-8 p-0"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    
+                    <div className="relative">
+                      <OnboardingInput
+                        label={`${t('form.labels.confirmPassword')} *`}
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={formData.confirm_password}
+                        onChange={handleInputChange('confirm_password')}
+                        placeholder={t('form.placeholders.confirmPassword')}
+                        icon={<Shield className="h-4 w-4" />}
+                        required
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-2 top-8 h-8 w-8 p-0"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-slate-600">
+                    {t('form.descriptions.accountCreation')}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

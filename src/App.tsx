@@ -21,6 +21,7 @@ import TeamPage from "./pages/TeamPage";
 import TeamMemberDetailPage from "./pages/TeamMemberDetailPage";
 import PartnerDashboard from "./pages/PartnerDashboard";
 import MerchantDashboard from "./pages/MerchantDashboard";
+import MerchantContractsPage from "./pages/MerchantContractsPage";
 import ContractEditPage from "./pages/ContractEditPage";
 import ContractDetailPage from "./pages/ContractDetailPage";
 import RequestsManagementPage from "@/pages/RequestsManagementPage";
@@ -341,6 +342,11 @@ const App = () => (
           <Route path="/merchant" element={
             <ProtectedRoute requiredRole="merchant">
               <MerchantDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/merchant/contracts" element={
+            <ProtectedRoute requiredRole="merchant">
+              <MerchantContractsPage />
             </ProtectedRoute>
           } />
           

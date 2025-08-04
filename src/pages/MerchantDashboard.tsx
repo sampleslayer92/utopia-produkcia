@@ -10,40 +10,61 @@ import {
   Monitor,
   FileText,
   Settings,
-  HelpCircle
+  HelpCircle,
+  Loader2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminProfile from "@/components/admin/AdminProfile";
+import { useMerchantProfile } from "@/hooks/useMerchantProfile";
+import { useMerchantStats } from "@/hooks/useMerchantStats";
+import { useMerchantContracts } from "@/hooks/useMerchantContracts";
+import { format } from "date-fns";
 
 const MerchantDashboard = () => {
   const navigate = useNavigate();
+  const { data: merchantProfile, isLoading: profileLoading } = useMerchantProfile();
+  const { data: merchantStats, isLoading: statsLoading } = useMerchantStats();
+  const { data: contracts, isLoading: contractsLoading } = useMerchantContracts();
+
+  const isLoading = profileLoading || statsLoading || contractsLoading;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50/30 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-purple-600" />
+          <p className="text-slate-600">Loading merchant dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   const stats = [
     {
-      title: "Today's Sales",
-      value: "$1,247",
-      change: "+15.3%",
-      icon: DollarSign,
-      trend: "up"
+      title: "Total Contracts",
+      value: merchantStats?.totalContracts?.toString() || "0",
+      change: "+0",
+      icon: FileText,
+      trend: "neutral"
     },
     {
-      title: "Transactions",
-      value: "43",
-      change: "+8",
+      title: "Active Contracts",
+      value: merchantStats?.activeContracts?.toString() || "0",
+      change: "+0",
       icon: CreditCard,
       trend: "up"
     },
     {
-      title: "Active Devices",
-      value: "3",
-      change: "0",
-      icon: Monitor,
-      trend: "neutral"
+      title: "Monthly Profit",
+      value: `€${merchantStats?.totalMonthlyProfit?.toFixed(2) || "0.00"}`,
+      change: "+0%",
+      icon: DollarSign,
+      trend: "up"
     },
     {
-      title: "Average Ticket",
-      value: "$29.02",
-      change: "+$2.15",
+      title: "Average Contract",
+      value: `€${merchantStats?.averageContractValue?.toFixed(2) || "0.00"}`,
+      change: "+0%",
       icon: TrendingUp,
       trend: "up"
     }
@@ -81,7 +102,7 @@ const MerchantDashboard = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-slate-900">Merchant Dashboard</h1>
-                <p className="text-sm text-slate-600">Corner Coffee Shop</p>
+                <p className="text-sm text-slate-600">{merchantProfile?.company_name || "Loading..."}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -121,63 +142,80 @@ const MerchantDashboard = () => {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Recent Transactions */}
+          {/* Recent Contracts */}
           <div className="lg:col-span-2">
             <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-slate-900">Recent Transactions</CardTitle>
+                    <CardTitle className="text-slate-900">Recent Contracts</CardTitle>
                     <CardDescription className="text-slate-600">
-                      Latest payment activity
+                      Your latest contract activity
                     </CardDescription>
                   </div>
                   <Button 
                     size="sm"
                     variant="outline"
                     className="border-slate-300"
+                    onClick={() => navigate('/merchant/contracts')}
                   >
                     View All
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {recentTransactions.map((transaction, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                      <div className="flex items-center space-x-4">
-                        <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
-                          transaction.status === 'approved' 
-                            ? 'bg-emerald-100 text-emerald-600'
-                            : transaction.status === 'processed'
-                            ? 'bg-blue-100 text-blue-600'
-                            : 'bg-red-100 text-red-600'
-                        }`}>
-                          <CreditCard className="h-4 w-4" />
+                {contracts?.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FileText className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                    <p className="text-slate-600">No contracts found</p>
+                    <p className="text-sm text-slate-500">Your contracts will appear here once created</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {contracts?.slice(0, 5).map((contract, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                        <div className="flex items-center space-x-4">
+                          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
+                            contract.status === 'signed' 
+                              ? 'bg-emerald-100 text-emerald-600'
+                              : contract.status === 'approved'
+                              ? 'bg-blue-100 text-blue-600'
+                              : contract.status === 'submitted'
+                              ? 'bg-amber-100 text-amber-600'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}>
+                            <FileText className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-slate-900">{contract.contract_number}</p>
+                            <p className="text-sm text-slate-600">
+                              {contract.contract_items_count} items • €{contract.total_monthly_profit.toFixed(2)}/month
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-slate-900">{transaction.amount}</p>
-                          <p className="text-sm text-slate-600">{transaction.type} • {transaction.card}</p>
+                        <div className="text-right">
+                          <p className="text-sm text-slate-600">
+                            {format(new Date(contract.created_at), 'MMM dd, yyyy')}
+                          </p>
+                          <Badge 
+                            variant="outline"
+                            className={
+                              contract.status === 'signed' 
+                                ? 'border-emerald-200 text-emerald-700'
+                                : contract.status === 'approved'
+                                ? 'border-blue-200 text-blue-700'
+                                : contract.status === 'submitted'
+                                ? 'border-amber-200 text-amber-700'
+                                : 'border-slate-200 text-slate-700'
+                            }
+                          >
+                            {contract.status}
+                          </Badge>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm text-slate-600">{transaction.time}</p>
-                        <Badge 
-                          variant="outline"
-                          className={
-                            transaction.status === 'approved' 
-                              ? 'border-emerald-200 text-emerald-700'
-                              : transaction.status === 'processed'
-                              ? 'border-blue-200 text-blue-700'
-                              : 'border-red-200 text-red-700'
-                          }
-                        >
-                          {transaction.status}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
