@@ -74,7 +74,7 @@ const initialData: OnboardingData = {
   contractNumber: undefined
 };
 
-export const useOnboardingData = (isAdminMode = false) => {
+export const useOnboardingData = (isAdminMode = false, urlContractId?: string) => {
   const { applyContractCopy } = useContractCopy();
   const [onboardingData, setOnboardingData] = useState<OnboardingData>(() => {
     const saved = localStorage.getItem('onboarding_data');
@@ -189,13 +189,25 @@ export const useOnboardingData = (isAdminMode = false) => {
     delay: 2000 
   });
 
-  // Load data from database if contract ID exists (for shared links)
-  const contractDataQuery = useContractData(onboardingData.contractId || '');
+  // Set contractId immediately if provided via URL
+  useEffect(() => {
+    if (urlContractId && !onboardingData.contractId) {
+      console.log('🔗 Setting contractId from URL immediately:', urlContractId);
+      setOnboardingData(prev => {
+        const updated = { ...prev, contractId: urlContractId };
+        localStorage.setItem('onboarding_data', JSON.stringify(updated));
+        return updated;
+      });
+    }
+  }, [urlContractId, onboardingData.contractId]);
+
+  // Load data from database if contract ID exists (prioritize urlContractId for shared links)
+  const contractDataQuery = useContractData(urlContractId || onboardingData.contractId || '');
 
   // Merge database data with localStorage data when available
   useEffect(() => {
     if (contractDataQuery.data && !contractDataQuery.isLoading) {
-      console.log('🔄 Loading contract data from database for shared link');
+      console.log('🔄 Loading contract data from database for contract:', contractDataQuery.data.onboardingData.contractId);
       const dbData = contractDataQuery.data.onboardingData;
       
       // Only merge if we have meaningful database data
@@ -207,29 +219,33 @@ export const useOnboardingData = (isAdminMode = false) => {
         dbData.actualOwners.length > 0
       )) {
         setOnboardingData(prev => {
-          // In shared mode: prioritize database data over localStorage data (recipient should see admin's data)
-          // In admin mode: merge database data as base, but keep localStorage changes for unsaved edits
-          const merged = isAdminMode ? {
+          // For shared links (urlContractId exists): Always prioritize database data over localStorage
+          // For admin mode: merge database data as base, but keep localStorage changes for unsaved edits
+          const isSharedLink = Boolean(urlContractId);
+          
+          const merged = (isAdminMode && !isSharedLink) ? {
             ...dbData,        // Base: database data
             ...prev,          // Override: localStorage data (admin's current unsaved changes)
             contractId: dbData.contractId || prev.contractId,
             contractNumber: dbData.contractNumber || prev.contractNumber,
             visitedSteps: dbData.visitedSteps || prev.visitedSteps // Always use latest visited steps from DB
           } : {
-            ...prev,          // Base: localStorage data (minimal, might be empty)
-            ...dbData,        // Override: database data (complete data from admin)
+            ...prev,          // Base: localStorage data (minimal for shared links)
+            ...dbData,        // Override: database data (complete data for shared links)
             contractId: dbData.contractId || prev.contractId,
             contractNumber: dbData.contractNumber || prev.contractNumber,
             visitedSteps: dbData.visitedSteps || prev.visitedSteps // Use database visited steps
           };
           
-          console.log('📊 Data merge strategy:', isAdminMode ? 'Admin mode - localStorage priority' : 'Shared mode - database priority');
+          console.log('📊 Data merge strategy:', isSharedLink ? 'Shared link - database priority' : (isAdminMode ? 'Admin mode - localStorage priority' : 'Database priority'));
           console.log('📊 Merged data preview:', {
+            contractId: merged.contractId,
             contactName: `${merged.contactInfo.firstName} ${merged.contactInfo.lastName}`,
             companyName: merged.companyInfo.companyName,
             businessLocationsCount: merged.businessLocations.length,
             authorizedPersonsCount: merged.authorizedPersons.length,
-            actualOwnersCount: merged.actualOwners.length
+            actualOwnersCount: merged.actualOwners.length,
+            visitedStepsCount: merged.visitedSteps.length
           });
           
           // Save merged data to localStorage
@@ -238,7 +254,7 @@ export const useOnboardingData = (isAdminMode = false) => {
         });
       }
     }
-  }, [contractDataQuery.data, contractDataQuery.isLoading, isAdminMode]);
+  }, [contractDataQuery.data, contractDataQuery.isLoading, isAdminMode, urlContractId]);
 
   // Apply contract copy data on mount if available
   useEffect(() => {

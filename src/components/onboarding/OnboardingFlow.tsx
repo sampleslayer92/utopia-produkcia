@@ -51,7 +51,7 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
   const { t } = useTranslation(['common', 'notifications']);
   const { contractId: urlContractId } = useParams<{ contractId: string }>();
   const { user } = useAuth();
-  const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData(isAdminMode);
+  const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData(isAdminMode, urlContractId);
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date>();
@@ -64,8 +64,8 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
   const isMobile = useIsMobile();
   const defaultSteps = useOnboardingSteps();
   
-  // Load contract data if contractId is provided in URL
-  const contractDataResult = useContractData(urlContractId || '');
+  // Load contract data if contractId is provided in URL - use urlContractId or fallback to onboardingData.contractId
+  const contractDataResult = useContractData(urlContractId || onboardingData.contractId || '');
   
   // Check if user is accessing shared link
   useEffect(() => {
@@ -73,11 +73,20 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
       setIsSharedMode(true);
     }
   }, [urlContractId, user]);
+
+  // Set contractId immediately when URL contains one (for shared links)
+  useEffect(() => {
+    if (urlContractId && !onboardingData.contractId) {
+      console.log('🔗 Setting contractId from URL for shared link:', urlContractId);
+      updateData({ contractId: urlContractId });
+    }
+  }, [urlContractId, onboardingData.contractId, updateData]);
   
   // Load contract data when available
   useEffect(() => {
     if (contractDataResult.data && !contractDataResult.isLoading) {
       const { onboardingData: loadedData } = contractDataResult.data;
+      console.log('📥 Loading contract data from database:', loadedData.contractId);
       updateData(loadedData);
       setCurrentStep(loadedData.currentStep || 0);
     }
