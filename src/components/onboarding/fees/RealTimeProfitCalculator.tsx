@@ -12,9 +12,10 @@ import { useTranslation } from "react-i18next";
 interface RealTimeProfitCalculatorProps {
   data: OnboardingData;
   updateData: (data: Partial<OnboardingData>) => void;
+  isReadOnly?: boolean;
 }
 
-const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculatorProps) => {
+const RealTimeProfitCalculator = ({ data, updateData, isReadOnly = false }: RealTimeProfitCalculatorProps) => {
   const { t } = useTranslation('forms');
   
   // Local state for unified MIF++ rate with debounced updates
@@ -224,7 +225,8 @@ const RealTimeProfitCalculator = ({ data, updateData }: RealTimeProfitCalculator
                 max="100"
                 step="0.01"
                 value={localMifRate}
-                onChange={(e) => handleMifRateChange(e.target.value)}
+                onChange={isReadOnly ? undefined : (e) => handleMifRateChange(e.target.value)}
+                readOnly={isReadOnly}
                 className="border-slate-300 focus:border-green-500"
                 placeholder={t('fees.calculator.inputs.mifRate.placeholder')}
               />

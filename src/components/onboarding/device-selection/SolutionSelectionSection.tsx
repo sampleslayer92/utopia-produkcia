@@ -10,12 +10,14 @@ interface SolutionSelectionSectionProps {
   selectedSolutions: string[];
   onToggleSolution: (solutionId: string) => void;
   onNext: () => void;
+  isReadOnly?: boolean;
 }
 
 const SolutionSelectionSection = ({ 
   selectedSolutions, 
   onToggleSolution, 
-  onNext 
+  onNext,
+  isReadOnly = false
 }: SolutionSelectionSectionProps) => {
   const { t } = useTranslation('forms');
   const { data: solutions, isLoading } = useSolutions(true); // Only active solutions

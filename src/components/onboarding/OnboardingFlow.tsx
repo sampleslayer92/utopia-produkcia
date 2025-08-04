@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { useOnboardingData } from "./hooks/useOnboardingData";
 import { useOnboardingNavigation } from "./hooks/useOnboardingNavigation";
 import { useAutoSave } from "./hooks/useAutoSave";
@@ -18,6 +19,10 @@ import MobileStepper from "./ui/MobileStepper";
 import { useContractCreation } from "@/hooks/useContractCreation";
 import { useContractPersistence } from "@/hooks/useContractPersistence";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useContractData } from "@/hooks/useContractData";
+import { useAuth } from "@/contexts/AuthContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 interface OnboardingFlowProps {
   isAdminMode?: boolean;
@@ -44,10 +49,13 @@ interface OnboardingFlowProps {
 
 const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProps) => {
   const { t } = useTranslation(['common', 'notifications']);
+  const { contractId: urlContractId } = useParams<{ contractId: string }>();
+  const { user } = useAuth();
   const { onboardingData, updateData, markStepAsVisited, clearData } = useOnboardingData();
   const [currentStep, setCurrentStep] = useState(onboardingData.currentStep);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date>();
+  const [isSharedMode, setIsSharedMode] = useState(false);
   
   const { createContract, isCreating } = useContractCreation();
   const { saveContractData } = useContractPersistence();
@@ -55,6 +63,25 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
   const stepValidation = useStepValidation(currentStep, onboardingData);
   const isMobile = useIsMobile();
   const defaultSteps = useOnboardingSteps();
+  
+  // Load contract data if contractId is provided in URL
+  const contractDataResult = useContractData(urlContractId || '');
+  
+  // Check if user is accessing shared link
+  useEffect(() => {
+    if (urlContractId && !user) {
+      setIsSharedMode(true);
+    }
+  }, [urlContractId, user]);
+  
+  // Load contract data when available
+  useEffect(() => {
+    if (contractDataResult.data && !contractDataResult.isLoading) {
+      const { onboardingData: loadedData } = contractDataResult.data;
+      updateData(loadedData);
+      setCurrentStep(loadedData.currentStep || 0);
+    }
+  }, [contractDataResult.data, contractDataResult.isLoading, updateData]);
   
   // Use custom steps in admin mode if provided, otherwise use default steps
   const onboardingSteps = useMemo(() => {
@@ -142,8 +169,12 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
   });
 
   const handleUpdateData = useCallback((data: any) => {
+    // In shared mode, prevent updates to restricted steps
+    if (isSharedMode && (currentStep === 3 || currentStep === 4)) {
+      return; // Prevent updates to Device Selection and Fees steps
+    }
     updateData({ ...data, currentStep });
-  }, [updateData, currentStep]);
+  }, [updateData, currentStep, isSharedMode]);
 
   const handleContractDeleted = useCallback(() => {
     clearData();
@@ -166,6 +197,30 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
   }, [updateData, onboardingData.deviceSelection]);
 
   const currentStepData = onboardingSteps[currentStep];
+  
+  // Show loading while loading contract data
+  if (urlContractId && contractDataResult.isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-slate-600">Načítavam údaje formulára...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show error if contract not found
+  if (urlContractId && contractDataResult.isError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">Formulár nenájdený</h2>
+          <p className="text-slate-600 mb-4">Požadovaný formulár neexistuje alebo bol odstránený.</p>
+        </div>
+      </div>
+    );
+  }
 
   // If in admin mode, render simplified layout
   if (isAdminMode) {
@@ -207,6 +262,16 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
                 </div>
               )}
 
+              {/* Shared mode notification */}
+              {isSharedMode && (
+                <Alert className="mb-6">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    Prezeráte zdieľaný formulár. Kroky "Zariadenia a služby" a "Poplatky" môže upravovať len prihlásený používateľ v portáli.
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <OnboardingStepRenderer
                 currentStep={currentStep}
                 data={onboardingData}
@@ -217,6 +282,7 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
                 onSaveSignature={handleSaveSignature}
                 onStepNavigate={handleStepNavigation}
                 customSteps={isAdminMode ? customSteps : undefined}
+                isReadOnly={isSharedMode && (currentStep === 3 || currentStep === 4)}
               />
             </div>
           </div>
@@ -311,6 +377,16 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
               </div>
             )}
 
+            {/* Shared mode notification */}
+            {isSharedMode && (
+              <Alert className="mb-6">
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  Prezeráte zdieľaný formulár. Kroky "Zariadenia a služby" a "Poplatky" môže upravovať len prihlásený používateľ v portáli.
+                </AlertDescription>
+              </Alert>
+            )}
+
             <OnboardingStepRenderer
               currentStep={currentStep}
               data={onboardingData}
@@ -321,6 +397,7 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
               onSaveSignature={handleSaveSignature}
               onStepNavigate={handleStepNavigation}
               customSteps={undefined}
+              isReadOnly={isSharedMode && (currentStep === 3 || currentStep === 4)}
             />
           </div>
         </div>

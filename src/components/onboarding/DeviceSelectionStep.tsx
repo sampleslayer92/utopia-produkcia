@@ -19,16 +19,19 @@ interface DeviceSelectionStepProps {
   updateData: (data: Partial<OnboardingData>) => void;
   onNext: () => void;
   onPrev: () => void;
+  isReadOnly?: boolean;
   customFields?: Array<{ id?: string; fieldKey: string; fieldLabel: string; fieldType: string; isRequired: boolean; isEnabled: boolean; position?: number; fieldOptions?: any; }>;
 }
 
-const DeviceSelectionStep = ({ data, updateData, onNext, onPrev, customFields }: DeviceSelectionStepProps) => {
+const DeviceSelectionStep = ({ data, updateData, onNext, onPrev, isReadOnly = false, customFields }: DeviceSelectionStepProps) => {
   const { t } = useTranslation('forms');
   const { modalState, openAddModal, openEditModal, closeModal } = useProductModal();
   const stepValidation = useStepValidation(3, data);
   const [showProgressiveFlow, setShowProgressiveFlow] = useState(false);
 
   const toggleSolution = (solutionId: string) => {
+    if (isReadOnly) return;
+    
     const isSelected = data.deviceSelection.selectedSolutions.includes(solutionId);
     const newSelection = isSelected
       ? data.deviceSelection.selectedSolutions.filter(id => id !== solutionId)
@@ -51,11 +54,13 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev, customFields }:
   };
 
   const addDevice = (deviceTemplate: any) => {
+    if (isReadOnly) return;
     console.log('Adding device:', deviceTemplate);
     openAddModal(deviceTemplate, 'device');
   };
 
   const addService = (serviceTemplate: any, category: string) => {
+    if (isReadOnly) return;
     const serviceWithCategory = { ...serviceTemplate, category };
     console.log('Adding service:', serviceWithCategory);
     openAddModal(serviceWithCategory, 'service');
@@ -193,8 +198,9 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev, customFields }:
       <div className="space-y-6">
         <SolutionSelectionSection
           selectedSolutions={data.deviceSelection.selectedSolutions}
-          onToggleSolution={toggleSolution}
+          onToggleSolution={isReadOnly ? () => {} : toggleSolution}
           onNext={() => {}}
+          isReadOnly={isReadOnly}
         />
       </div>
     );
@@ -255,8 +261,8 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev, customFields }:
         <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
           <DynamicDeviceCatalogPanel
             selectedSolutions={data.deviceSelection.selectedSolutions}
-            onAddDevice={addDevice}
-            onAddService={addService}
+            onAddDevice={isReadOnly ? () => {} : addDevice}
+            onAddService={isReadOnly ? () => {} : addService}
             businessLocations={data.businessLocations}
           />
         </Card>
@@ -265,10 +271,10 @@ const DeviceSelectionStep = ({ data, updateData, onNext, onPrev, customFields }:
         <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-sm">
           <LivePreviewPanel
             dynamicCards={data.deviceSelection.dynamicCards}
-            onUpdateCard={updateCard}
-            onRemoveCard={removeCard}
-            onClearAll={clearAllCards}
-            onEditCard={openEditModal}
+            onUpdateCard={isReadOnly ? () => {} : updateCard}
+            onRemoveCard={isReadOnly ? () => {} : removeCard}
+            onClearAll={isReadOnly ? () => {} : clearAllCards}
+            onEditCard={isReadOnly ? () => {} : openEditModal}
             businessLocations={data.businessLocations.map(loc => ({ id: loc.id, name: loc.name }))}
           />
         </Card>

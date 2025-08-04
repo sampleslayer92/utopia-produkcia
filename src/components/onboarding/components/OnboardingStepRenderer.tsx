@@ -20,6 +20,7 @@ interface OnboardingStepRendererProps {
   onComplete: () => void;
   onSaveSignature?: () => void;
   onStepNavigate?: (fromStep: number, toStep: number) => void;
+  isReadOnly?: boolean;
   customSteps?: Array<{
     id: string;
     stepKey: string;
@@ -50,6 +51,7 @@ const OnboardingStepRenderer = ({
   onComplete,
   onSaveSignature,
   onStepNavigate,
+  isReadOnly = false,
   customSteps
 }: OnboardingStepRendererProps) => {
   // Initialize cross-step auto-fill logic (disabled for step 0)
@@ -171,9 +173,10 @@ const OnboardingStepRenderer = ({
 
   const commonProps = {
     data,
-    updateData,
+    updateData: isReadOnly ? () => {} : updateData, // Disable updates if read-only
     onNext: enhancedOnNext,
     onPrev,
+    isReadOnly,
     customFields: customFields as OnboardingField[]
   };
 

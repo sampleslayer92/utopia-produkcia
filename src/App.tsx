@@ -69,6 +69,7 @@ const App = () => (
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
+          <Route path="/onboarding/:contractId" element={<OnboardingFlow />} />
           <Route path="/dynamic-onboarding" element={<DynamicOnboardingFlow />} />
           <Route path="/design-system" element={<DesignSystemPage />} />
           
