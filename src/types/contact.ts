@@ -1,6 +1,7 @@
 
 export interface ContactInfo {
   personId?: string; // Add stable person ID
+  country?: string; // Country code (e.g., 'SK', 'CZ', 'AT')
   salutation?: 'Pan' | 'Pani';
   firstName: string;
   lastName: string;

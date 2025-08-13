@@ -3,9 +3,11 @@ import { useTranslation } from "react-i18next";
 import OnboardingInput from "./OnboardingInput";
 import OnboardingSelect from "./OnboardingSelect";
 import PhoneNumberInput from "./PhoneNumberInput";
-import { User, Mail } from "lucide-react";
+import { User, Mail, Globe } from "lucide-react";
+import CountryFlagSelect from "./CountryFlagSelect";
 
 interface PersonData {
+  country?: string;
   salutation?: string;
   firstName: string;
   lastName: string;
@@ -50,6 +52,7 @@ const PersonInputGroup = ({
   };
 
   // Check which fields should be shown
+  const showCountryField = isFieldEnabled('country');
   const showSalutationField = showSalutation && isFieldEnabled('salutation');
   const showFirstNameField = isFieldEnabled('firstName');
   const showLastNameField = isFieldEnabled('lastName');
@@ -61,8 +64,38 @@ const PersonInputGroup = ({
     { value: 'Pani', label: t('contactInfo.salutationOptions.pani') }
   ];
 
+  const countryOptions = [
+    { value: 'SK', label: 'Slovensko' },
+    { value: 'CZ', label: 'Česká republika' },
+    { value: 'AT', label: 'Rakúsko' },
+    { value: 'HU', label: 'Maďarsko' },
+    { value: 'PL', label: 'Poľsko' },
+    { value: 'DE', label: 'Nemecko' },
+    { value: 'GB', label: 'Veľká Británia' },
+    { value: 'FR', label: 'Francúzsko' },
+    { value: 'IT', label: 'Taliansko' },
+    { value: 'ES', label: 'Španielsko' }
+  ];
+
   return (
     <div className="space-y-4">
+      {showCountryField && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-slate-700">
+            <Globe className="h-4 w-4 text-blue-500" />
+            <span className="text-sm font-medium">Krajina *</span>
+          </div>
+          <OnboardingSelect
+            label=""
+            placeholder="Vyberte krajinu"
+            value={data.country || ''}
+            onValueChange={(value) => onUpdate('country', value)}
+            options={countryOptions}
+            isCompleted={completedFields.has('country')}
+          />
+        </div>
+      )}
+      
       <div className="flex items-center gap-2 text-slate-700 mb-4">
         <User className="h-5 w-5 text-blue-500" />
         <span className="text-sm font-medium">{t('contactInfo.personalData')} *</span>
