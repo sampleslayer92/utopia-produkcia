@@ -1,7 +1,8 @@
 
 import { useState } from "react";
-import { User, Trash2, Mail, Phone, Calendar, MapPin, FileText } from "lucide-react";
+import { User, Trash2, Mail, Phone, Calendar, MapPin, FileText, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { AuthorizedPerson } from "@/types/onboarding";
 
@@ -196,6 +197,55 @@ const EnhancedAuthorizedPersonCard = ({
                   <FileText className="h-3 w-3" />
                   <span className="font-medium">{t('forms:authorizedPersons.sections.document.documentIssuer')}:</span>
                   <span>{person.documentIssuer}</span>
+                </div>
+              </div>
+
+              {/* Document Upload Section */}
+              <div className="mt-6 pt-4 border-t border-slate-100">
+                <h5 className="text-sm font-medium text-slate-700 mb-3">Nahrané dokumenty</h5>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="p-3 border rounded-lg bg-slate-50">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">Predná strana dokladu</span>
+                      {person.documentFrontUrl ? (
+                        <Badge variant="default" className="text-xs bg-green-100 text-green-700">Nahraté</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="text-xs">Nie je nahraté</Badge>
+                      )}
+                    </div>
+                    {person.documentFrontUrl && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(person.documentFrontUrl, '_blank')}
+                        className="w-full"
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        Zobraziť
+                      </Button>
+                    )}
+                  </div>
+                  <div className="p-3 border rounded-lg bg-slate-50">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">Zadná strana dokladu</span>
+                      {person.documentBackUrl ? (
+                        <Badge variant="default" className="text-xs bg-green-100 text-green-700">Nahraté</Badge>
+                      ) : (
+                        <Badge variant="secondary" className="text-xs">Nie je nahraté</Badge>
+                      )}
+                    </div>
+                    {person.documentBackUrl && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(person.documentBackUrl, '_blank')}
+                        className="w-full"
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        Zobraziť
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
 

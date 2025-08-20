@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AuthorizedPerson } from "@/types/onboarding";
+import DocumentUpload from "../ui/DocumentUpload";
+import { v4 as uuidv4 } from 'uuid';
 
 interface AuthorizedPersonFormProps {
   initialData?: Partial<AuthorizedPerson>;
@@ -18,6 +20,7 @@ const AuthorizedPersonForm = ({ initialData = {}, onSave, onCancel }: Authorized
   const { t } = useTranslation(['forms']);
   
   const [formData, setFormData] = useState({
+    id: initialData.id || uuidv4(),
     firstName: initialData.firstName || '',
     lastName: initialData.lastName || '',
     email: initialData.email || '',
@@ -34,6 +37,8 @@ const AuthorizedPersonForm = ({ initialData = {}, onSave, onCancel }: Authorized
     documentValidity: initialData.documentValidity || '',
     documentIssuer: initialData.documentIssuer || '',
     documentCountry: initialData.documentCountry || 'Slovensko',
+    documentFrontUrl: initialData.documentFrontUrl || '',
+    documentBackUrl: initialData.documentBackUrl || '',
     citizenship: initialData.citizenship || 'Slovensko',
     isPoliticallyExposed: initialData.isPoliticallyExposed || false,
     isUSCitizen: initialData.isUSCitizen || false,
@@ -235,6 +240,29 @@ const AuthorizedPersonForm = ({ initialData = {}, onSave, onCancel }: Authorized
               onChange={(e) => handleInputChange('documentIssuer', e.target.value)}
               placeholder={t('forms:authorizedPersons.sections.document.placeholders.documentIssuer')}
               required
+            />
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mt-6">
+          <div>
+            <DocumentUpload
+              label="Predná strana dokladu"
+              value={formData.documentFrontUrl || ''}
+              onChange={(url) => handleInputChange('documentFrontUrl', url)}
+              accept="image/*"
+              personId={formData.id}
+              documentSide="front"
+            />
+          </div>
+          <div>
+            <DocumentUpload
+              label="Zadná strana dokladu"
+              value={formData.documentBackUrl || ''}
+              onChange={(url) => handleInputChange('documentBackUrl', url)}
+              accept="image/*"
+              personId={formData.id}
+              documentSide="back"
             />
           </div>
         </div>
