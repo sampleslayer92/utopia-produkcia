@@ -46,6 +46,9 @@ export interface AuthorizedPerson {
   documentFrontUrl?: string;
   documentBackUrl?: string;
   createdFromContact?: boolean; // Flag to track if created from contact data
+  // ARES-specific fields for tracking function dates
+  functionStartDate?: string;
+  functionEndDate?: string;
 }
 
 export interface ActualOwner {

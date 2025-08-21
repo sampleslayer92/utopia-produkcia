@@ -11,6 +11,8 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { syncContactPersonData } from "./utils/crossStepAutoFill";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
+import { useAresPersons } from "./hooks/useAresPersons";
+import { debounce } from "lodash";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -23,8 +25,10 @@ interface CompanyInfoStepProps {
 
 const CompanyInfoStep = ({ data, updateData, hideContactPerson = true, customFields }: CompanyInfoStepProps) => {
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
+  const [isAutoFetchingPersons, setIsAutoFetchingPersons] = useState(false);
   const isMobile = useIsMobile();
   const { t } = useTranslation('forms');
+  const { autoFetchPersons } = useAresPersons();
 
   // Helper to check if field is enabled in config
   const isFieldEnabled = (fieldKey: string) => {
@@ -251,6 +255,49 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true, customFie
     }
   }, [data.companyInfo.headOfficeEqualsOperatingAddress, updateCompanyInfo]);
 
+  // AUTOMATIC ARES PERSONS FETCHING - Debounced to avoid too many API calls
+  const debouncedAutoFetchPersons = useCallback(
+    debounce(async (ico: string) => {
+      if (!ico?.trim() || ico.length < 5) return; // Basic validation
+      
+      console.log('=== AUTO-FETCH TRIGGER: ICO changed to:', ico);
+      setIsAutoFetchingPersons(true);
+      
+      try {
+        await autoFetchPersons(ico, (persons) => {
+          console.log('=== AUTO-FETCH SUCCESS: Received persons:', persons);
+          
+          // Only auto-fill if no authorized persons exist yet
+          if (data.authorizedPersons.length === 0) {
+            console.log('=== AUTO-FILL: No existing persons, adding ARES persons');
+            updateData({
+              authorizedPersons: persons
+            });
+          } else {
+            console.log('=== AUTO-FILL: Existing persons found, skipping auto-fill. User can manually load in Step 6.');
+          }
+        }, true); // Silent mode - less intrusive notifications
+      } catch (error) {
+        console.error('Auto-fetch persons error:', error);
+      } finally {
+        setIsAutoFetchingPersons(false);
+      }
+    }, 1000), // 1 second debounce
+    [autoFetchPersons, data.authorizedPersons.length, updateData]
+  );
+
+  // Trigger auto-fetch when ICO changes
+  useEffect(() => {
+    if (data.companyInfo.ico?.trim()) {
+      console.log('=== ICO CHANGE DETECTED:', data.companyInfo.ico);
+      debouncedAutoFetchPersons(data.companyInfo.ico);
+    }
+    
+    return () => {
+      debouncedAutoFetchPersons.cancel();
+    };
+  }, [data.companyInfo.ico, debouncedAutoFetchPersons]);
+
   // Determine default accordion values based on whether contact person should be shown and contact address
   const defaultAccordionValues = useMemo(() => {
     const baseValues = ["basic-info", "address"];
@@ -353,6 +400,20 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true, customFie
                 <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800 animate-fade-in">
                   <p className="font-medium mb-1">{t('companyInfo.messages.syncActive')}</p>
                   <p>{t('companyInfo.messages.syncDescription')}</p>
+                </div>
+              )}
+              
+              {isAutoFetchingPersons && (
+                <div className="bg-blue-100/50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800 animate-fade-in">
+                  <p className="font-medium mb-1">🔍 Automatické načítanie osôb</p>
+                  <p>Získavame zoznam oprávnených osôb z ARES registra...</p>
+                </div>
+              )}
+              
+              {data.authorizedPersons.length > 0 && (
+                <div className="bg-green-100/50 border border-green-200 rounded-lg p-4 text-xs text-green-800 animate-fade-in">
+                  <p className="font-medium mb-1">✅ Osoby načítané</p>
+                  <p>Automaticky načítané {data.authorizedPersons.length} osôb. Skontrolujte ich v kroku 6.</p>
                 </div>
               )}
             </div>

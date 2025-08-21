@@ -144,7 +144,47 @@ export const useStepValidation = (
         if (data.authorizedPersons.length === 0) {
           return [{ field: 'authorizedPersons', message: 'Minimálne jedna oprávnená osoba je povinná', severity: 'error' }];
         }
-        return [];
+        
+        // Validate each authorized person - with relaxed requirements for ARES-sourced dates
+        const authorizedPersonErrors: ValidationError[] = [];
+        data.authorizedPersons.forEach((person, index) => {
+          if (!person.firstName?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.firstName`, message: 'Meno je povinné', severity: 'error' });
+          }
+          if (!person.lastName?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.lastName`, message: 'Priezvisko je povinné', severity: 'error' });
+          }
+          if (!person.email?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.email`, message: 'Email je povinný', severity: 'error' });
+          }
+          if (!person.phone?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.phone`, message: 'Telefón je povinný', severity: 'error' });
+          }
+          if (!person.permanentAddress?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.permanentAddress`, message: 'Trvalá adresa je povinná', severity: 'error' });
+          }
+          if (!person.birthPlace?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.birthPlace`, message: 'Miesto narodenia je povinné', severity: 'error' });
+          }
+          if (!person.birthNumber?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.birthNumber`, message: 'Rodné číslo je povinné', severity: 'error' });
+          }
+          if (!person.documentNumber?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.documentNumber`, message: 'Číslo dokladu je povinné', severity: 'error' });
+          }
+          if (!person.documentValidity?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.documentValidity`, message: 'Platnosť dokladu je povinná', severity: 'error' });
+          }
+          if (!person.documentIssuer?.trim()) {
+            authorizedPersonErrors.push({ field: `authorizedPersons.${index}.documentIssuer`, message: 'Vydávateľ dokladu je povinný', severity: 'error' });
+          }
+          
+          // Birth date is NOT required if it came from ARES (can be empty)
+          // Function start/end dates are NOT required (ARES-sourced fields)
+          // Position is usually auto-filled from ARES, so we don't require it to be manually entered
+        });
+        
+        return authorizedPersonErrors;
       case 6:
         if (data.actualOwners.length === 0) {
           return [{ field: 'actualOwners', message: 'Minimálne jeden skutočný majiteľ je povinný', severity: 'error' }];

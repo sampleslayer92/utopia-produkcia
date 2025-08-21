@@ -30,7 +30,10 @@ export const useAresPersons = () => {
       documentCountry: 'SK',
       isPoliticallyExposed: false,
       isUSCitizen: false,
-      createdFromContact: false
+      createdFromContact: false,
+      // ARES-specific fields
+      functionStartDate: aresPerson.functionStart || '',
+      functionEndDate: aresPerson.functionEnd || ''
     };
   };
 
@@ -149,6 +152,74 @@ export const useAresPersons = () => {
 
   return {
     fetchAndFillPersons,
+    autoFetchPersons: async (ico: string, onSuccess: (persons: AuthorizedPerson[]) => void, silent: boolean = false) => {
+      console.log('=== AUTO-FETCH ARES PERSONS ===');
+      console.log('Starting auto-fetch with ICO:', ico);
+      
+      if (!ico?.trim()) {
+        return;
+      }
+
+      setIsLoading(true);
+      
+      try {
+        console.log('Auto-calling fetchCompanyPersons with ICO:', ico.trim());
+        const response = await fetchCompanyPersons(ico.trim());
+        console.log('Auto-fetch received response:', JSON.stringify(response, null, 2));
+        
+        if (!response.success) {
+          console.error('Auto-fetch response indicates failure:', response.error);
+          
+          if (!silent) {
+            toast({
+              title: 'Automatické načítanie neúspešné',
+              description: 'Osoby z ARES sa automaticky nenačítali. Môžete ich pridať manuálne v kroku 6.',
+              variant: 'destructive',
+              duration: 3000
+            });
+          }
+          return;
+        }
+
+        if (!response.data || !response.data.persons || response.data.persons.length === 0) {
+          if (!silent) {
+            toast({
+              title: 'Žiadne osoby nenájdené',
+              description: 'Pre túto spoločnosť neboli nájdené osoby v ARES registri.',
+              duration: 3000
+            });
+          }
+          return;
+        }
+
+        console.log(`Auto-converting ${response.data.persons.length} ARES persons to AuthorizedPersons`);
+        const authorizedPersons = response.data.persons.map(convertAresPersonToAuthorized);
+        console.log('Auto-converted authorized persons:', authorizedPersons);
+        
+        onSuccess(authorizedPersons);
+
+        if (!silent) {
+          toast({
+            title: '✅ Osoby automaticky načítané',
+            description: `Automaticky načítané ${response.data.persons.length} osôb. Skontrolujte ich v kroku 6.`,
+            duration: 4000
+          });
+        }
+
+      } catch (error) {
+        console.error('Error in auto-fetch ARES persons:', error);
+        if (!silent) {
+          toast({
+            title: 'Automatické načítanie neúspešné',
+            description: 'Osoby sa automaticky nenačítali. Môžete ich pridať manuálne v kroku 6.',
+            variant: 'destructive',
+            duration: 3000
+          });
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
     isLoading
   };
 };
