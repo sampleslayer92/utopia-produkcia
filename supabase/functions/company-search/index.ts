@@ -138,11 +138,12 @@ async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null
     
     console.log('Searching ARES REST API v3 by ICO:', cleanIco);
     
-    const searchUrl = `${ARES_API_BASE_URL}/${cleanIco}`;
+    // Try the detailed endpoint first for better registration data
+    const detailUrl = `${ARES_API_BASE_URL}/${cleanIco}`;
     
-    console.log('ARES REST API ICO search URL:', searchUrl);
+    console.log('ARES REST API ICO detail URL:', detailUrl);
 
-    const response = await fetch(searchUrl, {
+    const response = await fetch(detailUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -151,11 +152,17 @@ async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null
     });
 
     if (!response.ok) {
-      console.error('ARES REST API error for ICO:', response.status, response.statusText);
-      return null;
+      console.error('ARES REST API error for ICO detail:', response.status, response.statusText);
+      
+      // Fallback to search endpoint
+      console.log('Trying fallback search for ICO:', cleanIco);
+      return await searchByName(cleanIco);
     }
 
     const data = await response.json();
+    console.log('ICO detail response:', JSON.stringify(data, null, 2));
+    
+    // The detailed endpoint returns a single subject, not an array
     const results = parseAresJsonResponse({ ekonomickeSubjekty: [data] });
     return results.length > 0 ? results[0] : null;
   } catch (error) {
@@ -167,6 +174,7 @@ async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null
 function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
   try {
     console.log('Parsing ARES JSON response...');
+    console.log('Full ARES response structure:', JSON.stringify(data, null, 2));
     
     if (!data || !data.ekonomickeSubjekty) {
       console.log('No ekonomickeSubjekty in response');
@@ -185,13 +193,17 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
 
     for (const subject of subjects) {
       try {
+        console.log('Processing subject:', JSON.stringify(subject, null, 2));
+        
         // Extract basic company data
         const ico = subject.ico || '';
         const obchodniJmeno = subject.obchodniJmeno || '';
         const dic = subject.dic || '';
         
-        // Legal form
-        const pravniForma = subject.pravniForma?.nazev || subject.pravniForma?.kod || '';
+        // Legal form - try multiple paths
+        const pravniForma = subject.pravniForma?.nazev || 
+                          subject.pravniForma?.kod || 
+                          subject.pravniForma || '';
         
         // Address information
         const sidlo = subject.sidlo || {};
@@ -201,13 +213,43 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
         const cisloOrientacni = sidlo.cisloOrientacni || '';
         const psc = sidlo.psc || '';
         
-        // Enhanced registry information extraction with detailed logging
-        const registrace = subject.registrace || {};
-        console.log('Raw registrace data:', JSON.stringify(registrace, null, 2));
+        // Enhanced registry information extraction - try multiple paths
+        let registracniSud = '';
+        let oddil = '';
+        let vlozka = '';
         
-        const registracniSud = registrace.registracniSud?.nazev || '';
-        const oddil = registrace.oddil?.nazev || registrace.oddil?.kod || '';
-        const vlozka = registrace.vlozka || '';
+        // Try different possible locations for registration data
+        if (subject.registrace) {
+          console.log('Found registrace:', JSON.stringify(subject.registrace, null, 2));
+          registracniSud = subject.registrace.registracniSud?.nazev || 
+                          subject.registrace.registracniSud || '';
+          oddil = subject.registrace.oddil?.nazev || 
+                  subject.registrace.oddil?.kod || 
+                  subject.registrace.oddil || '';
+          vlozka = subject.registrace.vlozka || '';
+        }
+        
+        // Try alternative paths for commercial register data
+        if (subject.obchodniRegistry) {
+          console.log('Found obchodniRegistry:', JSON.stringify(subject.obchodniRegistry, null, 2));
+          registracniSud = registracniSud || subject.obchodniRegistry.sud?.nazev || '';
+          oddil = oddil || subject.obchodniRegistry.oddiel || '';
+          vlozka = vlozka || subject.obchodniRegistry.vlozka || '';
+        }
+        
+        // Try direct fields
+        if (subject.sud) {
+          console.log('Found direct sud field:', subject.sud);
+          registracniSud = registracniSud || subject.sud?.nazev || subject.sud || '';
+        }
+        if (subject.oddil) {
+          console.log('Found direct oddil field:', subject.oddil);
+          oddil = oddil || subject.oddil?.nazev || subject.oddil || '';
+        }
+        if (subject.vlozka) {
+          console.log('Found direct vlozka field:', subject.vlozka);
+          vlozka = vlozka || subject.vlozka || '';
+        }
         
         // Extract trade license information for živnostník
         const zivnostensky = subject.zivnostensky || {};
@@ -220,7 +262,7 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
         const registracniCislo = spolky.registracniCislo || '';
         
         // Log extracted values for debugging
-        console.log('Extracted registration data:');
+        console.log('Extracted registration data for', obchodniJmeno + ':');
         console.log('- registracniSud:', registracniSud);
         console.log('- oddil:', oddil);
         console.log('- vlozka:', vlozka);

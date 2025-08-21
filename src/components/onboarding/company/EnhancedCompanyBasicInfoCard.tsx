@@ -297,12 +297,20 @@ const EnhancedCompanyBasicInfoCard = ({
               disabled={isAutoFilling}
             />
           </div>
-          {getFieldIndicator('companyName')}
+      {getFieldIndicator('companyName')}
+      
+      {/* Debug info - show what data we received */}
+      {data.companyInfo.registrationInfo && (
+        <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+          <div className="font-medium text-blue-800 mb-1">Debug - Registration Info:</div>
+          <pre className="text-blue-700">{JSON.stringify(data.companyInfo.registrationInfo, null, 2)}</pre>
         </div>
       )}
+    </div>
+  )}
 
-      {/* Registry Info Template - Slovak format display */}
-      {registryDisplaySection}
+  {/* Registry Info Template - Slovak format display */}
+  {registryDisplaySection}
 
       {/* IČO and DIČ */}
       <div className="grid md:grid-cols-2 gap-6">
