@@ -66,10 +66,65 @@ serve(async (req) => {
 
 async function searchByName(query: string): Promise<CompanyRecognitionResult[]> {
   try {
-    // Try the correct ARES v3 API endpoint structure
+    // Use the correct ARES v3 API endpoint for searching companies
+    const searchUrl = `${ARES_BASE_URL}/vyhledat-ekonomicke-subjekty`;
+    
+    // Prepare search parameters according to ARES API v3 documentation
+    const searchParams = {
+      obchodniJmeno: query,
+      start: 0,
+      pocet: 10,
+      razeni: ['PODLE_OBCHODNIHO_JMENA_ASC']
+    };
+
+    console.log('Searching ARES v3 with POST:', searchUrl);
+    console.log('Search parameters:', JSON.stringify(searchParams, null, 2));
+
+    const response = await fetch(searchUrl, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'Company-Search-Function/1.0'
+      },
+      body: JSON.stringify(searchParams)
+    });
+
+    if (!response.ok) {
+      console.error('ARES API error:', response.status, response.statusText);
+      const errorBody = await response.text();
+      console.error('ARES API error body:', errorBody);
+      
+      // Try fallback with GET method and query parameters
+      console.log('Trying fallback GET method...');
+      return await searchByNameFallback(query);
+    }
+
+    const data = await response.json();
+    console.log('ARES response structure:', Object.keys(data));
+    
+    // Handle the response structure from ARES API v3
+    const companies = data.ekonomickeSubjekty || data.subjekty || data.results || [];
+    
+    if (!Array.isArray(companies)) {
+      console.log('ARES response is not an array:', typeof companies);
+      return [];
+    }
+    
+    console.log('Found companies count:', companies.length);
+    return transformAresResults(companies);
+  } catch (error) {
+    console.error('Error searching by name:', error);
+    // Try fallback method
+    return await searchByNameFallback(query);
+  }
+}
+
+async function searchByNameFallback(query: string): Promise<CompanyRecognitionResult[]> {
+  try {
+    // Fallback to GET method with query parameters
     const searchUrl = `${ARES_BASE_URL}/ekonomicke-subjekty`;
     
-    // Encode the query properly for Czech/Slovak characters
     const encodedQuery = encodeURIComponent(query);
     const params = new URLSearchParams({
       obchodniJmeno: encodedQuery,
@@ -77,7 +132,7 @@ async function searchByName(query: string): Promise<CompanyRecognitionResult[]> 
       pocet: '10'
     });
 
-    console.log('Searching ARES v3:', `${searchUrl}?${params}`);
+    console.log('Fallback search ARES v3:', `${searchUrl}?${params}`);
 
     const response = await fetch(`${searchUrl}?${params}`, {
       method: 'GET',
@@ -89,27 +144,26 @@ async function searchByName(query: string): Promise<CompanyRecognitionResult[]> 
     });
 
     if (!response.ok) {
-      console.error('ARES API error:', response.status, response.statusText);
+      console.error('ARES fallback API error:', response.status, response.statusText);
       const errorBody = await response.text();
-      console.error('ARES API error body:', errorBody);
+      console.error('ARES fallback error body:', errorBody);
       return [];
     }
 
     const data = await response.json();
-    console.log('ARES response structure:', Object.keys(data));
+    console.log('ARES fallback response structure:', Object.keys(data));
     
-    // Handle different possible response structures
-    const companies = data.ekonomickeSubjekty || data.subjekty || data.results || data;
+    const companies = data.ekonomickeSubjekty || data.subjekty || data.results || [];
     
     if (!Array.isArray(companies)) {
-      console.log('ARES response is not an array, trying different approach');
+      console.log('ARES fallback response is not an array');
       return [];
     }
     
-    console.log('Found companies count:', companies.length);
+    console.log('Fallback found companies count:', companies.length);
     return transformAresResults(companies);
   } catch (error) {
-    console.error('Error searching by name:', error);
+    console.error('Error in fallback search:', error);
     return [];
   }
 }
@@ -118,7 +172,9 @@ async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null
   try {
     // Clean ICO (remove spaces, ensure 8 digits)
     const cleanIco = ico.replace(/\s/g, '').padStart(8, '0');
-    const searchUrl = `${ARES_BASE_URL}/ekonomicky-subjekt/${cleanIco}`;
+    
+    // Try the main endpoint for getting entity by ICO
+    const searchUrl = `${ARES_BASE_URL}/najit-ekonomicky-subjekt/${cleanIco}`;
     
     console.log('Searching ARES by ICO:', searchUrl);
 
@@ -135,7 +191,9 @@ async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null
       console.error('ARES API error for ICO:', response.status, response.statusText);
       const errorBody = await response.text();
       console.error('ARES API error body:', errorBody);
-      return null;
+      
+      // Try fallback endpoint
+      return await searchByIcoFallback(cleanIco);
     }
 
     const data = await response.json();
@@ -145,6 +203,38 @@ async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null
     return transformed.length > 0 ? transformed[0] : null;
   } catch (error) {
     console.error('Error searching by ICO:', error);
+    return await searchByIcoFallback(cleanIco);
+  }
+}
+
+async function searchByIcoFallback(cleanIco: string): Promise<CompanyRecognitionResult | null> {
+  try {
+    // Fallback to the previous endpoint structure
+    const searchUrl = `${ARES_BASE_URL}/ekonomicky-subjekt/${cleanIco}`;
+    
+    console.log('Fallback searching ARES by ICO:', searchUrl);
+
+    const response = await fetch(searchUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'Company-Search-Function/1.0'
+      }
+    });
+
+    if (!response.ok) {
+      console.error('ARES fallback API error for ICO:', response.status, response.statusText);
+      return null;
+    }
+
+    const data = await response.json();
+    console.log('ARES fallback ICO response structure:', Object.keys(data));
+
+    const transformed = transformAresResults([data]);
+    return transformed.length > 0 ? transformed[0] : null;
+  } catch (error) {
+    console.error('Error in fallback ICO search:', error);
     return null;
   }
 }
