@@ -47,7 +47,7 @@ serve(async (req) => {
       results = await searchByName(query);
     }
 
-    console.log('ARES search results:', results);
+    console.log('ARES search results count:', results.length);
 
     return new Response(JSON.stringify({ results }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -66,35 +66,48 @@ serve(async (req) => {
 
 async function searchByName(query: string): Promise<CompanyRecognitionResult[]> {
   try {
-    const searchUrl = `${ARES_BASE_URL}/ekonomicke-subjekty/vyhledat`;
+    // Try the correct ARES v3 API endpoint structure
+    const searchUrl = `${ARES_BASE_URL}/ekonomicke-subjekty`;
+    
+    // Encode the query properly for Czech/Slovak characters
+    const encodedQuery = encodeURIComponent(query);
     const params = new URLSearchParams({
-      obchodniJmeno: query,
-      zacitekObchodnihoJmena: 'true',
-      aktivniSubjekt: 'true',
-      razeni: 'PODLE_OBCHODNIHO_JMENA_ASC',
+      obchodniJmeno: encodedQuery,
       start: '0',
       pocet: '10'
     });
 
-    console.log('Searching ARES:', `${searchUrl}?${params}`);
+    console.log('Searching ARES v3:', `${searchUrl}?${params}`);
 
     const response = await fetch(`${searchUrl}?${params}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
+        'Content-Type': 'application/json',
         'User-Agent': 'Company-Search-Function/1.0'
       }
     });
 
     if (!response.ok) {
       console.error('ARES API error:', response.status, response.statusText);
+      const errorBody = await response.text();
+      console.error('ARES API error body:', errorBody);
       return [];
     }
 
     const data = await response.json();
-    console.log('ARES response:', data);
-
-    return transformAresResults(data.ekonomickeSubjekty || []);
+    console.log('ARES response structure:', Object.keys(data));
+    
+    // Handle different possible response structures
+    const companies = data.ekonomickeSubjekty || data.subjekty || data.results || data;
+    
+    if (!Array.isArray(companies)) {
+      console.log('ARES response is not an array, trying different approach');
+      return [];
+    }
+    
+    console.log('Found companies count:', companies.length);
+    return transformAresResults(companies);
   } catch (error) {
     console.error('Error searching by name:', error);
     return [];
@@ -103,7 +116,9 @@ async function searchByName(query: string): Promise<CompanyRecognitionResult[]> 
 
 async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null> {
   try {
-    const searchUrl = `${ARES_BASE_URL}/ekonomicky-subjekt/${ico}`;
+    // Clean ICO (remove spaces, ensure 8 digits)
+    const cleanIco = ico.replace(/\s/g, '').padStart(8, '0');
+    const searchUrl = `${ARES_BASE_URL}/ekonomicky-subjekt/${cleanIco}`;
     
     console.log('Searching ARES by ICO:', searchUrl);
 
@@ -111,17 +126,20 @@ async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null
       method: 'GET',
       headers: {
         'Accept': 'application/json',
+        'Content-Type': 'application/json',
         'User-Agent': 'Company-Search-Function/1.0'
       }
     });
 
     if (!response.ok) {
       console.error('ARES API error for ICO:', response.status, response.statusText);
+      const errorBody = await response.text();
+      console.error('ARES API error body:', errorBody);
       return null;
     }
 
     const data = await response.json();
-    console.log('ARES ICO response:', data);
+    console.log('ARES ICO response structure:', Object.keys(data));
 
     const transformed = transformAresResults([data]);
     return transformed.length > 0 ? transformed[0] : null;

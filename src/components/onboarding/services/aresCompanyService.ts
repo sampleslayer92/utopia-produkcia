@@ -23,13 +23,23 @@ export const searchAresCompanies = async (query: string): Promise<CompanyRecogni
 
     if (error) {
       console.error('ARES search error:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       // Fallback to mock data on error
       const { searchCompanySuggestions } = await import('./mockCompanyRecognition');
       return searchCompanySuggestions(query);
     }
 
     console.log('ARES search response:', data);
-    return data?.results || [];
+    const results = data?.results || [];
+    
+    // If ARES returns empty results, fall back to mock data
+    if (results.length === 0) {
+      console.log('ARES returned no results, falling back to mock data');
+      const { searchCompanySuggestions } = await import('./mockCompanyRecognition');
+      return searchCompanySuggestions(query);
+    }
+    
+    return results;
   } catch (error) {
     console.error('Error calling ARES function:', error);
     // Fallback to mock data on error
