@@ -1,4 +1,3 @@
-
 import { CompanyInfo, CompanyAddress } from "@/types/onboarding";
 
 export interface CompanyRecognitionResult {
@@ -38,6 +37,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "4677/B",
+    registrationInfo: {
+      registrationType: 'commercial_register',
+      court: "Okresný súd Bratislava I",
+      section: "Sa",
+      insertNumber: "4677/B"
+    },
     isVatPayer: true,
     address: {
       street: "Bajkalská 28",
@@ -53,6 +58,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "2988/B",
+    registrationInfo: {
+      registrationType: 'commercial_register',
+      court: "Okresný súd Bratislava I",
+      section: "Sa",
+      insertNumber: "2988/B"
+    },
     isVatPayer: true,
     address: {
       street: "Metodova 8",
@@ -68,6 +79,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "737/B",
+    registrationInfo: {
+      registrationType: 'commercial_register',
+      court: "Okresný súd Bratislava I",
+      section: "Sa",
+      insertNumber: "737/B"
+    },
     isVatPayer: true,
     address: {
       street: "Hodžovo námestie 3",
@@ -83,6 +100,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sro",
     insertNumber: "142250/B",
+    registrationInfo: {
+      registrationType: 'commercial_register',
+      court: "Okresný súd Bratislava I",
+      section: "Sro",
+      insertNumber: "142250/B"
+    },
     isVatPayer: true,
     address: {
       street: "Na Grunte 12888/5",
@@ -98,6 +121,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Košice I",
     section: "Sro",
     insertNumber: "45678/B",
+    registrationInfo: {
+      registrationType: 'commercial_register',
+      court: "Okresný súd Košice I",
+      section: "Sro",
+      insertNumber: "45678/B"
+    },
     isVatPayer: false,
     address: {
       street: "Hlavná ulica 15",
@@ -113,6 +142,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "4534/B",
+    registrationInfo: {
+      registrationType: 'commercial_register',
+      court: "Okresný súd Bratislava I",
+      section: "Sa",
+      insertNumber: "4534/B"
+    },
     isVatPayer: true,
     address: {
       street: "Partizánska cesta 9",
@@ -128,6 +163,11 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Nz",
     insertNumber: "234/B",
+    registrationInfo: {
+      registrationType: 'nonprofit_register',
+      registrationAuthority: "Okresný súd Bratislava I",
+      registrationNumber: "234/B"
+    },
     isVatPayer: false,
     address: {
       street: "Mýtna 1",
@@ -143,6 +183,12 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sro",
     insertNumber: "8756/B",
+    registrationInfo: {
+      registrationType: 'commercial_register',
+      court: "Okresný súd Bratislava I",
+      section: "Sro",
+      insertNumber: "8756/B"
+    },
     isVatPayer: true,
     address: {
       street: "Einsteinova 24",
@@ -158,11 +204,34 @@ const mockCompanyDatabase: Record<string, CompanyRecognitionResult> = {
     court: "Okresný súd Bratislava I",
     section: "Sa",
     insertNumber: "5534/B",
+    registrationInfo: {
+      registrationType: 'commercial_register',
+      court: "Okresný súd Bratislava I",
+      section: "Sa",
+      insertNumber: "5534/B"
+    },
     isVatPayer: true,
     address: {
       street: "Kamenné námestie 1",
       city: "Bratislava - mestská časť Staré Mesto",
       zipCode: "81106"
+    }
+  },
+  "Živnostník Novák": {
+    companyName: "Ján Novák - účtovníctvo",
+    registryType: "Živnosť",
+    ico: "55667788",
+    dic: "1234567890",
+    registrationInfo: {
+      registrationType: 'trade_license',
+      tradeOffice: "Živnostenský úrad Bratislava",
+      tradeLicenseNumber: "ZU-2023-001234"
+    },
+    isVatPayer: true,
+    address: {
+      street: "Hlavné námestie 12",
+      city: "Bratislava - mestská časť Staré Mesto",
+      zipCode: "81000"
     }
   }
 };
@@ -228,6 +297,12 @@ const generateMockSRO = (name: string): CompanyRecognitionResult => ({
   court: "Okresný súd Bratislava I",
   section: "Sro",
   insertNumber: `${Math.floor(Math.random() * 99999)}/B`,
+  registrationInfo: {
+    registrationType: 'commercial_register',
+    court: "Okresný súd Bratislava I",
+    section: "Sro",
+    insertNumber: `${Math.floor(Math.random() * 99999)}/B`
+  },
   isVatPayer: Math.random() > 0.5,
   address: generateMockSlovakAddress()
 });
@@ -240,6 +315,12 @@ const generateMockAS = (name: string): CompanyRecognitionResult => ({
   court: "Okresný súd Bratislava I",
   section: "Sa",
   insertNumber: `${Math.floor(Math.random() * 9999)}/B`,
+  registrationInfo: {
+    registrationType: 'commercial_register',
+    court: "Okresný súd Bratislava I",
+    section: "Sa",
+    insertNumber: `${Math.floor(Math.random() * 9999)}/B`
+  },
   isVatPayer: true,
   address: generateMockSlovakAddress()
 });
@@ -252,6 +333,11 @@ const generateMockNO = (name: string): CompanyRecognitionResult => ({
   court: "Okresný súd Bratislava I",
   section: "Oz",
   insertNumber: `${Math.floor(Math.random() * 9999)}/B`,
+  registrationInfo: {
+    registrationType: 'nonprofit_register',
+    registrationAuthority: "Okresný súd Bratislava I",
+    registrationNumber: `${Math.floor(Math.random() * 9999)}/B`
+  },
   isVatPayer: false,
   address: generateMockSlovakAddress()
 });
@@ -261,6 +347,11 @@ const generateMockZivnost = (name: string): CompanyRecognitionResult => ({
   registryType: "Živnosť",
   ico: generateMockICO(),
   dic: generateMockDIC(),
+  registrationInfo: {
+    registrationType: 'trade_license',
+    tradeOffice: "Živnostenský úrad Bratislava",
+    tradeLicenseNumber: `ZU-${new Date().getFullYear()}-${Math.floor(Math.random() * 999999).toString().padStart(6, '0')}`
+  },
   isVatPayer: Math.random() > 0.7,
   address: generateMockSlovakAddress()
 });

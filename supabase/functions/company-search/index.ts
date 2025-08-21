@@ -201,8 +201,10 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
         const cisloOrientacni = sidlo.cisloOrientacni || '';
         const psc = sidlo.psc || '';
         
-        // Enhanced registry information extraction
+        // Enhanced registry information extraction with detailed logging
         const registrace = subject.registrace || {};
+        console.log('Raw registrace data:', JSON.stringify(registrace, null, 2));
+        
         const registracniSud = registrace.registracniSud?.nazev || '';
         const oddil = registrace.oddil?.nazev || registrace.oddil?.kod || '';
         const vlozka = registrace.vlozka || '';
@@ -217,15 +219,35 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
         const registrujiciOrgán = spolky.registrujiciOrgan?.nazev || '';
         const registracniCislo = spolky.registracniCislo || '';
         
-        // Determine registration type
+        // Log extracted values for debugging
+        console.log('Extracted registration data:');
+        console.log('- registracniSud:', registracniSud);
+        console.log('- oddil:', oddil);
+        console.log('- vlozka:', vlozka);
+        console.log('- pravniForma:', pravniForma);
+        
+        // Determine registration type with improved logic
         let registrationType: 'commercial_register' | 'trade_license' | 'nonprofit_register' | 'other' = 'other';
-        if (registracniSud && (oddil || vlozka)) {
+        
+        // Check for commercial register (s.r.o., a.s.) - be more flexible
+        const isCommercialEntity = pravniForma.toLowerCase().includes('společnost s ručením omezeným') || 
+                                  pravniForma.toLowerCase().includes('s.r.o') ||
+                                  pravniForma.toLowerCase().includes('akciová společnost') ||
+                                  pravniForma.toLowerCase().includes('a.s') ||
+                                  obchodniJmeno.toLowerCase().includes('s.r.o') ||
+                                  obchodniJmeno.toLowerCase().includes('a.s');
+        
+        if (isCommercialEntity || registracniSud) {
           registrationType = 'commercial_register';
-        } else if (zivnostenskyUrad || cislozivnostenskehOlistu) {
+        } else if (zivnostenskyUrad || cislozivnostenskehOlistu || 
+                   pravniForma.toLowerCase().includes('fyzická osoba')) {
           registrationType = 'trade_license';
-        } else if (registrujiciOrgán || registracniCislo) {
+        } else if (registrujiciOrgán || registracniCislo || 
+                   pravniForma.toLowerCase().includes('spolek')) {
           registrationType = 'nonprofit_register';
         }
+        
+        console.log('Determined registration type:', registrationType);
         
         // Create registration info object
         const registrationInfo: RegistrationInfo = {
