@@ -17,6 +17,22 @@ interface CompanyRecognitionResult {
   };
 }
 
+interface AresPersonInfo {
+  firstName: string;
+  lastName: string;
+  position: string;
+  birthDate?: string;
+  citizenship?: string;
+  functionStart?: string;
+  functionEnd?: string;
+}
+
+interface CompanyPersonsResult {
+  companyName: string;
+  ico: string;
+  persons: AresPersonInfo[];
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -32,8 +48,16 @@ serve(async (req) => {
   }
 
   try {
-    const { query, ico } = await req.json();
-    console.log('Company search request:', { query, ico });
+    const { query, ico, fetchPersons } = await req.json();
+    console.log('Company search request:', { query, ico, fetchPersons });
+
+    if (fetchPersons && ico) {
+      // Fetch persons for a specific company
+      const personsResult = await fetchCompanyPersons(ico);
+      return new Response(JSON.stringify(personsResult), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     let results: CompanyRecognitionResult[] = [];
 
@@ -137,6 +161,116 @@ async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null
   } catch (error) {
     console.error('Error searching by ICO:', error);
     return null;
+  }
+}
+
+async function fetchCompanyPersons(ico: string): Promise<{ success: boolean; data?: CompanyPersonsResult; error?: string }> {
+  try {
+    // Clean ICO
+    const cleanIco = ico.replace(/\s/g, '').padStart(8, '0');
+    console.log('Fetching persons for ICO:', cleanIco);
+
+    // Fetch detailed company data from ARES
+    const detailUrl = `${ARES_API_BASE_URL}/${cleanIco}`;
+    console.log('ARES detail URL:', detailUrl);
+
+    const response = await fetch(detailUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Company-Search-Function/1.0',
+      }
+    });
+
+    if (!response.ok) {
+      console.error('ARES API error for persons:', response.status, response.statusText);
+      return { success: false, error: 'Failed to fetch company details from ARES' };
+    }
+
+    const data = await response.json();
+    console.log('ARES detailed response received for persons');
+
+    const persons = parseAresPersons(data);
+    
+    const result: CompanyPersonsResult = {
+      companyName: data.obchodniJmeno || '',
+      ico: cleanIco,
+      persons
+    };
+
+    console.log('Parsed persons count:', persons.length);
+    return { success: true, data: result };
+
+  } catch (error) {
+    console.error('Error fetching company persons:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+function parseAresPersons(data: any): AresPersonInfo[] {
+  try {
+    console.log('Parsing ARES persons data...');
+    
+    const persons: AresPersonInfo[] = [];
+
+    // Check multiple possible locations for person data in ARES response
+    const possiblePersonsPaths = [
+      data.statutarniOrgan?.clenove,
+      data.statutarniOrgan?.funkce,
+      data.dalsiUdaje?.[0]?.statutarniOrgan?.clenove,
+      data.dalsiUdaje?.[0]?.statutarniOrgan?.funkce,
+      data.clenoveStatutarnihoOrganu,
+      data.funkce
+    ];
+
+    for (const personsData of possiblePersonsPaths) {
+      if (Array.isArray(personsData)) {
+        console.log('Found persons array with length:', personsData.length);
+        
+        for (const person of personsData) {
+          try {
+            // Extract person information
+            const osoba = person.osoba || person;
+            const jmeno = osoba.jmeno || '';
+            const prijmeni = osoba.prijmeni || '';
+            const funkce = person.nazevFunkce || person.funkce?.nazev || person.funkce || 'Jednatel';
+            
+            // Extract dates
+            const datumVzniku = person.datumVzniku || person.od || '';
+            const datumZaniku = person.datumZaniku || person.do || '';
+            
+            // Extract birth date if available
+            const narozeni = osoba.narozeni || osoba.datumNarozeni || '';
+            
+            // Extract citizenship
+            const statniPrislusnost = osoba.statniPrislusnost || osoba.statPrislusnost || '';
+
+            if (jmeno && prijmeni) {
+              persons.push({
+                firstName: jmeno,
+                lastName: prijmeni,
+                position: funkce,
+                birthDate: narozeni || undefined,
+                citizenship: statniPrislusnost || undefined,
+                functionStart: datumVzniku || undefined,
+                functionEnd: datumZaniku || undefined
+              });
+              
+              console.log(`Parsed person: ${jmeno} ${prijmeni} - ${funkce}`);
+            }
+          } catch (personError) {
+            console.error('Error parsing individual person:', personError);
+          }
+        }
+      }
+    }
+
+    console.log('Total parsed persons:', persons.length);
+    return persons;
+
+  } catch (error) {
+    console.error('Error parsing ARES persons:', error);
+    return [];
   }
 }
 

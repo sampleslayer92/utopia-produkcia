@@ -2,7 +2,7 @@ import { useState } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Building2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +13,7 @@ import OnboardingSection from "./ui/OnboardingSection";
 import { useContactAutoFill } from "./hooks/useContactAutoFill";
 import AutoFillFromContactButton from "./ui/AutoFillFromContactButton";
 import AuthorizedPersonsSidebar from "./AuthorizedPersonsStep/AuthorizedPersonsSidebar";
+import { useAresPersons } from "./hooks/useAresPersons";
 
 interface AuthorizedPersonsStepProps {
   data: OnboardingData;
@@ -32,6 +33,28 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
     canAutoFill,
     contactExistsInAuthorized
   } = useContactAutoFill({ data, updateData });
+
+  const { fetchAndFillPersons, isLoading: isLoadingAresPersons } = useAresPersons();
+
+  const handleFetchFromAres = () => {
+    const ico = data.companyInfo?.ico;
+    if (!ico) {
+      toast({
+        title: 'Chyba',
+        description: 'ICO spoločnosti nie je zadané',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    fetchAndFillPersons(ico, (aresPersons) => {
+      // Add ARES persons to existing authorized persons
+      const existingPersons = data.authorizedPersons || [];
+      updateData({
+        authorizedPersons: [...existingPersons, ...aresPersons]
+      });
+    });
+  };
 
   const handleAddPerson = () => {
     setIsAdding(true);
@@ -126,18 +149,32 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
         {/* Main Content */}
         <div className="lg:col-span-2">
           <OnboardingSection>
-            {/* Auto-fill suggestion */}
-            {contactName && (
-              <AutoFillFromContactButton
-                contactName={contactName}
-                contactEmail={data.contactInfo.email}
-                onAutoFill={autoFillAuthorizedPerson}
-                canAutoFill={canAutoFill}
-                alreadyExists={contactExistsInAuthorized}
-                stepType="authorized"
-                className="mb-6"
-              />
-            )}
+            <div className="space-y-4 mb-6">
+              {/* Auto-fill suggestion */}
+              {contactName && (
+                <AutoFillFromContactButton
+                  contactName={contactName}
+                  contactEmail={data.contactInfo.email}
+                  onAutoFill={autoFillAuthorizedPerson}
+                  canAutoFill={canAutoFill}
+                  alreadyExists={contactExistsInAuthorized}
+                  stepType="authorized"
+                />
+              )}
+
+              {/* ARES persons fetch button */}
+              {data.companyInfo?.ico && (
+                <Button 
+                  variant="outline" 
+                  onClick={handleFetchFromAres}
+                  disabled={isLoadingAresPersons}
+                  className="w-full"
+                >
+                  <Building2 className="h-4 w-4 mr-2" />
+                  {isLoadingAresPersons ? 'Načítavam z ARES...' : 'Načítaj osoby z ARES'}
+                </Button>
+              )}
+            </div>
 
             {isAdding ? (
               <Card>
