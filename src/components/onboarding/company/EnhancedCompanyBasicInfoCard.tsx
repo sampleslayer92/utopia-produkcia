@@ -6,7 +6,7 @@ import CompanySearchModal from "../ui/CompanySearchModal";
 import CompanySearchButton from "../ui/CompanySearchButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Building2, CheckCircle, Loader2 } from "lucide-react";
-import { CompanyRecognitionResult } from "../services/mockCompanyRecognition";
+import { CompanyRecognitionResult } from "../services/aresCompanyService";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 

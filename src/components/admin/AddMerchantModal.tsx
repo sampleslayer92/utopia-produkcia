@@ -10,7 +10,7 @@ import { Building2, User, MapPin, Loader2, Phone, Mail, Hash, CreditCard, Shield
 import OnboardingInput from "@/components/onboarding/ui/OnboardingInput";
 import CompanyAutocomplete from "@/components/onboarding/ui/CompanyAutocomplete";
 import ORSRSearch from "@/components/onboarding/ui/ORSRSearch";
-import type { CompanyRecognitionResult } from "@/components/onboarding/services/mockCompanyRecognition";
+import type { CompanyRecognitionResult } from "@/components/onboarding/services/aresCompanyService";
 
 interface AddMerchantModalProps {
   open: boolean;

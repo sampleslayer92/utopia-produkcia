@@ -4,7 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Building2, MapPin } from "lucide-react";
-import { searchCompanySuggestions, CompanyRecognitionResult } from "../services/mockCompanyRecognition";
+import { searchCompanySuggestions } from "../services/aresCompanyService";
+import { CompanyRecognitionResult } from "../services/mockCompanyRecognition";
 import { useTranslation } from "react-i18next";
 
 interface CompanySearchModalProps {

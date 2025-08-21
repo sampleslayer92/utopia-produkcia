@@ -31,6 +31,9 @@ port = 54324
 [edge_functions]
 enabled = true
 
+[functions.company-search]
+verify_jwt = false
+
 [functions.openai-assistant-chat]
 verify_jwt = false
 
