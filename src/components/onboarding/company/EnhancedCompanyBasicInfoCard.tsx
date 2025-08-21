@@ -82,6 +82,13 @@ const EnhancedCompanyBasicInfoCard = ({
         fieldsToUpdate.add('isVatPayer');
       }
 
+      if (result.isVatPayer && result.dic) {
+        console.log('Setting vatNumber from dic:', result.dic);
+        updatedCompanyInfo.vatNumber = result.dic;
+        fieldsToUpdate.add('vatNumber');
+      }
+
+      // Enhanced registry information update
       if (result.court) {
         console.log('Setting court:', result.court);
         updatedCompanyInfo.court = result.court;
@@ -100,48 +107,48 @@ const EnhancedCompanyBasicInfoCard = ({
         fieldsToUpdate.add('insertNumber');
       }
 
-      // Handle address as a complete object
       if (result.address) {
-        console.log('Setting complete address:', result.address);
+        console.log('Setting address:', result.address);
         updatedCompanyInfo.address = {
-          street: result.address.street || '',
-          city: result.address.city || '',
-          zipCode: result.address.zipCode || ''
+          street: result.address.street || data.companyInfo.address.street,
+          city: result.address.city || data.companyInfo.address.city,
+          zipCode: result.address.zipCode || data.companyInfo.address.zipCode
         };
-        fieldsToUpdate.add('address.street');
-        fieldsToUpdate.add('address.city');
-        fieldsToUpdate.add('address.zipCode');
+        fieldsToUpdate.add('address');
       }
 
-      console.log('=== APPLYING COMPLETE BATCH UPDATE ===');
-      console.log('Complete updated company info:', updatedCompanyInfo);
+      // Perform the complete batch update
+      console.log('=== Performing batch update with fields:', Array.from(fieldsToUpdate));
+      console.log('Updated company info:', updatedCompanyInfo);
       
-      // Apply all updates in one batch operation
+      // Call the parent update function with complete company info
       updateCompanyInfo('batchUpdate', updatedCompanyInfo);
       
-      // Set auto-filled fields after successful update
-      console.log('Setting auto-filled fields:', Array.from(fieldsToUpdate));
+      // Update auto-filled fields tracking
       setAutoFilledFields(fieldsToUpdate);
+      
+      console.log('=== BATCH UPDATE COMPLETED ===');
       
       // Show success toast
       toast({
-        title: t('companyInfo.notifications.companyDataUpdated'),
-        description: t('companyInfo.notifications.companyDataUpdatedDescription', { companyName: result.companyName }),
+        title: "Údaje spoločnosti načítané",
+        description: `Úspešne načítané údaje pre spoločnosť ${result.companyName}`,
+        duration: 3000,
       });
-      
-      console.log('=== BATCH UPDATE COMPLETED SUCCESSFULLY ===');
-      
+
     } catch (error) {
-      console.error('Error in handleCompanySelect batch update:', error);
+      console.error('Error in company select:', error);
       toast({
-        title: t('companyInfo.notifications.updateError'),
-        description: t('companyInfo.notifications.updateErrorDescription'),
+        title: "Chyba pri načítaní údajov",
+        description: "Nepodarilo sa načítať úplné údaje spoločnosti. Skúste to znova.",
         variant: "destructive",
+        duration: 5000,
       });
     } finally {
       setIsAutoFilling(false);
+      setIsSearchModalOpen(false);
     }
-  }, [data.companyInfo, updateCompanyInfo, setAutoFilledFields, toast, t]);
+   }, [data.companyInfo, updateCompanyInfo, setAutoFilledFields, toast]);
 
   const getFieldClassName = useCallback((fieldName: string) => {
     return autoFilledFields.has(fieldName) ? 'bg-green-50 border-green-200' : '';

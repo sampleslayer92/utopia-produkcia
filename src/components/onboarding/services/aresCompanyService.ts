@@ -8,15 +8,33 @@ export type { CompanyRecognitionResult } from "./mockCompanyRecognition";
 // XML ARES API is now working, so we enable it by default
 const USE_ARES_API = true;
 
-export const searchAresCompanies = async (query: string): Promise<CompanyRecognitionResult[]> => {
+// Cache for ARES results to improve performance
+const searchCache = new Map<string, { results: CompanyRecognitionResult[], timestamp: number }>();
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const searchAresCompanies = async (query: string, retryCount = 0): Promise<CompanyRecognitionResult[]> => {
   if (!USE_ARES_API) {
     // Fallback to mock data
     const { searchCompanySuggestions } = await import('./mockCompanyRecognition');
     return searchCompanySuggestions(query);
   }
 
+  // Check cache first
+  const cacheKey = `search_${query.toLowerCase()}`;
+  const cached = searchCache.get(cacheKey);
+  if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+    console.log('Returning cached ARES results for:', query);
+    return cached.results;
+  }
+
   try {
-    console.log('Searching ARES for:', query);
+    console.log('Searching ARES for:', query, retryCount > 0 ? `(retry ${retryCount})` : '');
 
     const { data, error } = await supabase.functions.invoke('company-search', {
       body: { query }
@@ -25,13 +43,26 @@ export const searchAresCompanies = async (query: string): Promise<CompanyRecogni
     if (error) {
       console.error('ARES search error:', error);
       console.error('Error details:', JSON.stringify(error, null, 2));
-      // Fallback to mock data on error
+      
+      // Retry logic
+      if (retryCount < MAX_RETRIES) {
+        console.log(`Retrying ARES search in ${RETRY_DELAY}ms...`);
+        await sleep(RETRY_DELAY * (retryCount + 1));
+        return searchAresCompanies(query, retryCount + 1);
+      }
+      
+      // Fallback to mock data on error after retries
       const { searchCompanySuggestions } = await import('./mockCompanyRecognition');
       return searchCompanySuggestions(query);
     }
 
     console.log('ARES search response:', data);
     const results = data?.results || [];
+    
+    // Cache successful results
+    if (results.length > 0) {
+      searchCache.set(cacheKey, { results, timestamp: Date.now() });
+    }
     
     // If ARES returns empty results, fall back to mock data
     if (results.length === 0) {
@@ -43,36 +74,82 @@ export const searchAresCompanies = async (query: string): Promise<CompanyRecogni
     return results;
   } catch (error) {
     console.error('Error calling ARES function:', error);
-    // Fallback to mock data on error
+    
+    // Retry logic
+    if (retryCount < MAX_RETRIES) {
+      console.log(`Retrying ARES search in ${RETRY_DELAY}ms...`);
+      await sleep(RETRY_DELAY * (retryCount + 1));
+      return searchAresCompanies(query, retryCount + 1);
+    }
+    
+    // Fallback to mock data on error after retries
     const { searchCompanySuggestions } = await import('./mockCompanyRecognition');
     return searchCompanySuggestions(query);
   }
 };
 
-export const getCompanyByIco = async (ico: string): Promise<CompanyRecognitionResult | null> => {
+export const getCompanyByIco = async (ico: string, retryCount = 0): Promise<CompanyRecognitionResult | null> => {
   if (!USE_ARES_API) {
     // Fallback to mock data
     const { recognizeCompanyFromName } = await import('./mockCompanyRecognition');
     return recognizeCompanyFromName(ico);
   }
 
+  // Validate ICO format
+  const cleanIco = ico.replace(/\s/g, '');
+  if (!/^\d{8}$/.test(cleanIco) && !/^\d{7}$/.test(cleanIco)) {
+    console.warn('Invalid ICO format:', ico);
+    return null;
+  }
+
+  // Check cache first
+  const cacheKey = `ico_${cleanIco}`;
+  const cached = searchCache.get(cacheKey);
+  if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+    console.log('Returning cached ARES result for ICO:', ico);
+    return cached.results.length > 0 ? cached.results[0] : null;
+  }
+
   try {
-    console.log('Getting company by ICO:', ico);
+    console.log('Getting company by ICO:', ico, retryCount > 0 ? `(retry ${retryCount})` : '');
 
     const { data, error } = await supabase.functions.invoke('company-search', {
-      body: { ico }
+      body: { ico: cleanIco }
     });
 
     if (error) {
       console.error('ARES ICO search error:', error);
+      
+      // Retry logic
+      if (retryCount < MAX_RETRIES) {
+        console.log(`Retrying ICO search in ${RETRY_DELAY}ms...`);
+        await sleep(RETRY_DELAY * (retryCount + 1));
+        return getCompanyByIco(ico, retryCount + 1);
+      }
+      
       return null;
     }
 
     console.log('ARES ICO response:', data);
     const results = data?.results || [];
-    return results.length > 0 ? results[0] : null;
+    const result = results.length > 0 ? results[0] : null;
+    
+    // Cache successful result
+    if (result) {
+      searchCache.set(cacheKey, { results: [result], timestamp: Date.now() });
+    }
+    
+    return result;
   } catch (error) {
     console.error('Error calling ARES function for ICO:', error);
+    
+    // Retry logic
+    if (retryCount < MAX_RETRIES) {
+      console.log(`Retrying ICO search in ${RETRY_DELAY}ms...`);
+      await sleep(RETRY_DELAY * (retryCount + 1));
+      return getCompanyByIco(ico, retryCount + 1);
+    }
+    
     return null;
   }
 };

@@ -177,6 +177,12 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
         const cisloOrientacni = sidlo.cisloOrientacni || '';
         const psc = sidlo.psc || '';
         
+        // Enhanced registry information extraction
+        const registrace = subject.registrace || {};
+        const registracniSud = registrace.registracniSud?.nazev || '';
+        const oddil = registrace.oddil?.nazev || registrace.oddil?.kod || '';
+        const vlozka = registrace.vlozka || '';
+        
         // Build full address
         let fullAddress = '';
         const addressParts = [];
@@ -185,28 +191,45 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
         if (cisloOrientacni) addressParts.push(`/${cisloOrientacni}`);
         fullAddress = addressParts.join(' ') || 'Nezadané';
 
-        // Map legal form to our registry types
+        // Enhanced legal form mapping to Slovak registry types
         let registryType: CompanyRecognitionResult['registryType'] = '';
         const lowerPravniForma = pravniForma.toLowerCase();
         
-        if (lowerPravniForma.includes('společnost s ručením omezeným') || lowerPravniForma.includes('s.r.o')) {
+        if (lowerPravniForma.includes('společnost s ručením omezeným') || 
+            lowerPravniForma.includes('s.r.o') || 
+            lowerPravniForma.includes('spol. s r.o')) {
           registryType = 'S.r.o.';
-        } else if (lowerPravniForma.includes('akciová společnost') || lowerPravniForma.includes('a.s')) {
+        } else if (lowerPravniForma.includes('akciová společnost') || 
+                   lowerPravniForma.includes('a.s') ||
+                   lowerPravniForma.includes('akciový spoločnosť')) {
           registryType = 'Akciová spoločnosť';
-        } else if (lowerPravniForma.includes('fyzická osoba') || lowerPravniForma.includes('podnikající')) {
+        } else if (lowerPravniForma.includes('fyzická osoba') || 
+                   lowerPravniForma.includes('podnikající') ||
+                   lowerPravniForma.includes('živnost')) {
           registryType = 'Živnosť';
-        } else if (lowerPravniForma.includes('nezisková') || lowerPravniForma.includes('spolek')) {
+        } else if (lowerPravniForma.includes('nezisková') || 
+                   lowerPravniForma.includes('spolek') ||
+                   lowerPravniForma.includes('občianské združenie')) {
           registryType = 'Nezisková organizácia';
         } else {
           // Try to detect from company name
-          if (obchodniJmeno.toLowerCase().includes('s.r.o') || obchodniJmeno.toLowerCase().includes('spol. s r.o')) {
+          const lowerCompanyName = obchodniJmeno.toLowerCase();
+          if (lowerCompanyName.includes('s.r.o') || lowerCompanyName.includes('spol. s r.o')) {
             registryType = 'S.r.o.';
-          } else if (obchodniJmeno.toLowerCase().includes('a.s') || obchodniJmeno.toLowerCase().includes('akciová')) {
+          } else if (lowerCompanyName.includes('a.s') || lowerCompanyName.includes('akciová')) {
             registryType = 'Akciová spoločnosť';
           } else {
             registryType = '';
           }
         }
+
+        // Validate and clean ICO (must be 8 digits)
+        const cleanIco = ico.replace(/\s/g, '').padStart(8, '0');
+        const validIco = /^\d{8}$/.test(cleanIco) ? cleanIco : ico;
+
+        // Validate DIC
+        const cleanDic = dic ? dic.replace(/\s/g, '') : '';
+        const validDic = cleanDic && /^\d{10}$/.test(cleanDic) ? cleanDic : cleanDic;
 
         // Skip if we don't have essential data
         if (!obchodniJmeno || !ico) {
@@ -217,9 +240,12 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
         const company: CompanyRecognitionResult = {
           companyName: obchodniJmeno,
           registryType,
-          ico: ico,
-          dic: dic || undefined,
-          isVatPayer: !!dic,
+          ico: validIco,
+          dic: validDic || undefined,
+          court: registracniSud || undefined,
+          section: oddil || undefined,
+          insertNumber: vlozka || undefined,
+          isVatPayer: !!validDic,
           address: {
             street: fullAddress,
             city: nazevObce || 'Nezadané',
@@ -229,6 +255,9 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
 
         results.push(company);
         console.log('Parsed company:', company.companyName, 'ICO:', company.ico);
+        if (company.court) {
+          console.log('Registry info - Court:', company.court, 'Section:', company.section, 'Insert:', company.insertNumber);
+        }
 
       } catch (recordError) {
         console.error('Error parsing individual record:', recordError);

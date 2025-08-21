@@ -16,8 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CompanyRecognitionResult } from "../services/mockCompanyRecognition";
-import { searchCompanySuggestions } from "../services/aresCompanyService";
+import { CompanyRecognitionResult, searchCompanySuggestions } from "../services/aresCompanyService";
 
 interface CompanyAutocompleteProps {
   value: string;
