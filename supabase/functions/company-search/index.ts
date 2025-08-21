@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.45/deno-dom-wasm.ts";
 
 interface CompanyRecognitionResult {
   companyName: string;
@@ -22,7 +23,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const ARES_BASE_URL = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest';
+// ARES XML API base URL (working endpoint)
+const ARES_XML_BASE_URL = 'https://wwwinfo.mfcr.cz/ares/ares_es.html.cgi';
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -66,104 +68,67 @@ serve(async (req) => {
 
 async function searchByName(query: string): Promise<CompanyRecognitionResult[]> {
   try {
-    // Use the correct ARES v3 API endpoint for searching companies
-    const searchUrl = `${ARES_BASE_URL}/vyhledat-ekonomicke-subjekty`;
+    console.log('Searching ARES XML API by name:', query);
     
-    // Prepare search parameters according to ARES API v3 documentation
-    const searchParams = {
-      obchodniJmeno: query,
-      start: 0,
-      pocet: 10,
-      razeni: ['PODLE_OBCHODNIHO_JMENA_ASC']
-    };
-
-    console.log('Searching ARES v3 with POST:', searchUrl);
-    console.log('Search parameters:', JSON.stringify(searchParams, null, 2));
+    // Use XML ARES API with proper encoding for Czech/Slovak characters
+    const encodedQuery = encodeURIComponent(query);
+    const searchUrl = `${ARES_XML_BASE_URL}?cestina=cestina&obchodni_jmeno=${encodedQuery}&xml=1`;
+    
+    console.log('ARES XML search URL:', searchUrl);
 
     const response = await fetch(searchUrl, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'User-Agent': 'Company-Search-Function/1.0'
-      },
-      body: JSON.stringify(searchParams)
-    });
-
-    if (!response.ok) {
-      console.error('ARES API error:', response.status, response.statusText);
-      const errorBody = await response.text();
-      console.error('ARES API error body:', errorBody);
-      
-      // Try fallback with GET method and query parameters
-      console.log('Trying fallback GET method...');
-      return await searchByNameFallback(query);
-    }
-
-    const data = await response.json();
-    console.log('ARES response structure:', Object.keys(data));
-    
-    // Handle the response structure from ARES API v3
-    const companies = data.ekonomickeSubjekty || data.subjekty || data.results || [];
-    
-    if (!Array.isArray(companies)) {
-      console.log('ARES response is not an array:', typeof companies);
-      return [];
-    }
-    
-    console.log('Found companies count:', companies.length);
-    return transformAresResults(companies);
-  } catch (error) {
-    console.error('Error searching by name:', error);
-    // Try fallback method
-    return await searchByNameFallback(query);
-  }
-}
-
-async function searchByNameFallback(query: string): Promise<CompanyRecognitionResult[]> {
-  try {
-    // Fallback to GET method with query parameters
-    const searchUrl = `${ARES_BASE_URL}/ekonomicke-subjekty`;
-    
-    const encodedQuery = encodeURIComponent(query);
-    const params = new URLSearchParams({
-      obchodniJmeno: encodedQuery,
-      start: '0',
-      pocet: '10'
-    });
-
-    console.log('Fallback search ARES v3:', `${searchUrl}?${params}`);
-
-    const response = await fetch(`${searchUrl}?${params}`, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'User-Agent': 'Company-Search-Function/1.0'
+        'User-Agent': 'Company-Search-Function/1.0',
+        'Accept': 'application/xml, text/xml',
       }
     });
 
     if (!response.ok) {
-      console.error('ARES fallback API error:', response.status, response.statusText);
+      console.error('ARES XML API error:', response.status, response.statusText);
       const errorBody = await response.text();
-      console.error('ARES fallback error body:', errorBody);
+      console.error('ARES XML API error body:', errorBody);
       return [];
     }
 
-    const data = await response.json();
-    console.log('ARES fallback response structure:', Object.keys(data));
+    const xmlText = await response.text();
+    console.log('ARES XML response received, length:', xmlText.length);
+
+    return parseAresXmlResponse(xmlText);
+  } catch (error) {
+    console.error('Error searching by name:', error);
+    return [];
+  }
+}
+
+async function searchByNameFallback(query: string): Promise<CompanyRecognitionResult[]> {
+  // For XML API, we can try different search parameters
+  try {
+    console.log('Trying ARES XML fallback search...');
     
-    const companies = data.ekonomickeSubjekty || data.subjekty || data.results || [];
+    const encodedQuery = encodeURIComponent(query);
+    // Try searching with different parameters
+    const searchUrl = `${ARES_XML_BASE_URL}?cestina=cestina&nazev=${encodedQuery}&xml=1`;
     
-    if (!Array.isArray(companies)) {
-      console.log('ARES fallback response is not an array');
+    console.log('ARES XML fallback URL:', searchUrl);
+
+    const response = await fetch(searchUrl, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Company-Search-Function/1.0',
+        'Accept': 'application/xml, text/xml',
+      }
+    });
+
+    if (!response.ok) {
+      console.error('ARES XML fallback API error:', response.status, response.statusText);
       return [];
     }
-    
-    console.log('Fallback found companies count:', companies.length);
-    return transformAresResults(companies);
+
+    const xmlText = await response.text();
+    return parseAresXmlResponse(xmlText);
   } catch (error) {
-    console.error('Error in fallback search:', error);
+    console.error('Error in XML fallback search:', error);
     return [];
   }
 }
@@ -173,126 +138,159 @@ async function searchByIco(ico: string): Promise<CompanyRecognitionResult | null
     // Clean ICO (remove spaces, ensure 8 digits)
     const cleanIco = ico.replace(/\s/g, '').padStart(8, '0');
     
-    // Try the main endpoint for getting entity by ICO
-    const searchUrl = `${ARES_BASE_URL}/najit-ekonomicky-subjekt/${cleanIco}`;
+    console.log('Searching ARES XML API by ICO:', cleanIco);
     
-    console.log('Searching ARES by ICO:', searchUrl);
+    const searchUrl = `${ARES_XML_BASE_URL}?cestina=cestina&ico=${cleanIco}&xml=1`;
+    
+    console.log('ARES XML ICO search URL:', searchUrl);
 
     const response = await fetch(searchUrl, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'User-Agent': 'Company-Search-Function/1.0'
+        'User-Agent': 'Company-Search-Function/1.0',
+        'Accept': 'application/xml, text/xml',
       }
     });
 
     if (!response.ok) {
-      console.error('ARES API error for ICO:', response.status, response.statusText);
-      const errorBody = await response.text();
-      console.error('ARES API error body:', errorBody);
-      
-      // Try fallback endpoint
-      return await searchByIcoFallback(cleanIco);
-    }
-
-    const data = await response.json();
-    console.log('ARES ICO response structure:', Object.keys(data));
-
-    const transformed = transformAresResults([data]);
-    return transformed.length > 0 ? transformed[0] : null;
-  } catch (error) {
-    console.error('Error searching by ICO:', error);
-    return await searchByIcoFallback(cleanIco);
-  }
-}
-
-async function searchByIcoFallback(cleanIco: string): Promise<CompanyRecognitionResult | null> {
-  try {
-    // Fallback to the previous endpoint structure
-    const searchUrl = `${ARES_BASE_URL}/ekonomicky-subjekt/${cleanIco}`;
-    
-    console.log('Fallback searching ARES by ICO:', searchUrl);
-
-    const response = await fetch(searchUrl, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'User-Agent': 'Company-Search-Function/1.0'
-      }
-    });
-
-    if (!response.ok) {
-      console.error('ARES fallback API error for ICO:', response.status, response.statusText);
+      console.error('ARES XML API error for ICO:', response.status, response.statusText);
       return null;
     }
 
-    const data = await response.json();
-    console.log('ARES fallback ICO response structure:', Object.keys(data));
-
-    const transformed = transformAresResults([data]);
-    return transformed.length > 0 ? transformed[0] : null;
+    const xmlText = await response.text();
+    const results = parseAresXmlResponse(xmlText);
+    return results.length > 0 ? results[0] : null;
   } catch (error) {
-    console.error('Error in fallback ICO search:', error);
+    console.error('Error searching by ICO:', error);
     return null;
   }
 }
 
-function transformAresResults(aresCompanies: any[]): CompanyRecognitionResult[] {
-  return aresCompanies.map(company => {
-    const basicInfo = company.zakladniUdaje || company;
-    const address = company.sidlo || basicInfo.sidlo;
-    const registryInfo = company.pravniForma || basicInfo.pravniForma;
+async function searchByIcoFallback(cleanIco: string): Promise<CompanyRecognitionResult | null> {
+  // For XML API, ICO search is the same endpoint, so this is just for consistency
+  return null;
+}
 
-    // Map registry type from ARES to our format
-    let registryType: CompanyRecognitionResult['registryType'] = '';
-    const pravniFormaKod = registryInfo?.kodPravniFormy;
+function parseAresXmlResponse(xmlText: string): CompanyRecognitionResult[] {
+  try {
+    console.log('Parsing ARES XML response...');
     
-    switch (pravniFormaKod) {
-      case '112': // s.r.o.
-        registryType = 'S.r.o.';
-        break;
-      case '121': // a.s.
-        registryType = 'Akciová spoločnosť';
-        break;
-      case '701': // Fyzická osoba podnikající
-        registryType = 'Živnosť';
-        break;
-      case '301': // Nezisková organizace
-        registryType = 'Nezisková organizácia';
-        break;
-      default:
-        registryType = '';
+    // Parse XML
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+    
+    if (!xmlDoc) {
+      console.error('Failed to parse XML document');
+      return [];
     }
 
-    // Build address
-    let fullAddress = '';
-    if (address) {
-      const parts = [];
-      if (address.nazevUlice) parts.push(address.nazevUlice);
-      if (address.cisloDomovni) parts.push(address.cisloDomovni);
-      if (address.cisloOrientacni) parts.push(`/${address.cisloOrientacni}`);
-      fullAddress = parts.join(' ') || 'Nezadané';
+    // Look for error in XML
+    const errorElement = xmlDoc.querySelector('E');
+    if (errorElement) {
+      const errorText = errorElement.textContent;
+      console.log('ARES XML API returned error:', errorText);
+      return [];
     }
 
-    const city = address?.nazevObce || address?.nazevMestskeCastiObvodu || 'Nezadané';
-    const zipCode = address?.psc || '00000';
+    // Look for company records (Zaznam elements)
+    const records = xmlDoc.querySelectorAll('Zaznam');
+    console.log('Found XML records count:', records.length);
 
-    return {
-      companyName: basicInfo.obchodniJmeno || basicInfo.nazev || 'Nezadané',
-      registryType,
-      ico: basicInfo.ico,
-      dic: basicInfo.dic,
-      court: company.zapisVRejstriku?.nazevRejstriku,
-      section: company.zapisVRejstriku?.oznaceniOddilu,
-      insertNumber: company.zapisVRejstriku?.vlozkaRejstriku,
-      isVatPayer: !!basicInfo.dic,
-      address: {
-        street: fullAddress,
-        city: city,
-        zipCode: zipCode
+    if (records.length === 0) {
+      console.log('No company records found in XML response');
+      return [];
+    }
+
+    const results: CompanyRecognitionResult[] = [];
+
+    for (const record of records) {
+      try {
+        // Extract company data from XML
+        const ico = record.querySelector('ICO')?.textContent?.trim() || '';
+        const obchodniJmeno = record.querySelector('OF')?.textContent?.trim() || '';
+        const dic = record.querySelector('DIC')?.textContent?.trim() || '';
+        
+        // Address information
+        const ulice = record.querySelector('U')?.textContent?.trim() || '';
+        const cisloDomovni = record.querySelector('CD')?.textContent?.trim() || '';
+        const cisloOrientacni = record.querySelector('CO')?.textContent?.trim() || '';
+        const obec = record.querySelector('N')?.textContent?.trim() || '';
+        const psc = record.querySelector('PSC')?.textContent?.trim() || '';
+        
+        // Legal form
+        const pravniForma = record.querySelector('PF')?.textContent?.trim() || '';
+        
+        // Build full address
+        let fullAddress = '';
+        const addressParts = [];
+        if (ulice) addressParts.push(ulice);
+        if (cisloDomovni) addressParts.push(cisloDomovni);
+        if (cisloOrientacni) addressParts.push(`/${cisloOrientacni}`);
+        fullAddress = addressParts.join(' ') || 'Nezadané';
+
+        // Map legal form codes to our registry types
+        let registryType: CompanyRecognitionResult['registryType'] = '';
+        switch (pravniForma) {
+          case '112':
+          case 'Společnost s ručením omezeným':
+            registryType = 'S.r.o.';
+            break;
+          case '121':
+          case 'Akciová společnost':
+            registryType = 'Akciová spoločnosť';
+            break;
+          case '701':
+          case 'Fyzická osoba podnikající':
+            registryType = 'Živnosť';
+            break;
+          case '301':
+          case 'Nezisková organizace':
+            registryType = 'Nezisková organizácia';
+            break;
+          default:
+            // Try to detect from company name
+            if (obchodniJmeno.toLowerCase().includes('s.r.o') || obchodniJmeno.toLowerCase().includes('spol. s r.o')) {
+              registryType = 'S.r.o.';
+            } else if (obchodniJmeno.toLowerCase().includes('a.s') || obchodniJmeno.toLowerCase().includes('akciová')) {
+              registryType = 'Akciová spoločnosť';
+            } else {
+              registryType = '';
+            }
+        }
+
+        // Skip if we don't have essential data
+        if (!obchodniJmeno || !ico) {
+          console.log('Skipping record with missing essential data');
+          continue;
+        }
+
+        const company: CompanyRecognitionResult = {
+          companyName: obchodniJmeno,
+          registryType,
+          ico: ico,
+          dic: dic || undefined,
+          isVatPayer: !!dic,
+          address: {
+            street: fullAddress,
+            city: obec || 'Nezadané',
+            zipCode: psc || '00000'
+          }
+        };
+
+        results.push(company);
+        console.log('Parsed company:', company.companyName, 'ICO:', company.ico);
+
+      } catch (recordError) {
+        console.error('Error parsing individual record:', recordError);
+        // Continue with other records
       }
-    };
-  });
+    }
+
+    console.log('Successfully parsed companies count:', results.length);
+    return results;
+
+  } catch (error) {
+    console.error('Error parsing ARES XML response:', error);
+    return [];
+  }
 }

@@ -5,6 +5,7 @@ import { CompanyRecognitionResult } from "./mockCompanyRecognition";
 export type { CompanyRecognitionResult } from "./mockCompanyRecognition";
 
 // Configuration flag to switch between ARES and mock data
+// XML ARES API is now working, so we enable it by default
 const USE_ARES_API = true;
 
 export const searchAresCompanies = async (query: string): Promise<CompanyRecognitionResult[]> => {
