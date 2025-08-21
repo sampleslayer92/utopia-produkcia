@@ -108,6 +108,23 @@ const AuthorizedPersonForm = ({ initialData = {}, onSave, onCancel }: Authorized
           </div>
         </div>
 
+        {(formData.salutation === 'Pani' || !formData.salutation) && (
+          <div className="mt-4">
+            <Label htmlFor="maidenName">
+              {t('forms:authorizedPersons.sections.basicInfo.maidenName')}
+              {formData.salutation === 'Pani' && <span className="text-red-500 ml-1">*</span>}
+            </Label>
+            <Input
+              id="maidenName"
+              type="text"
+              value={formData.maidenName}
+              onChange={(e) => handleInputChange('maidenName', e.target.value)}
+              placeholder={t('forms:authorizedPersons.sections.basicInfo.placeholders.maidenName')}
+              required={formData.salutation === 'Pani'}
+            />
+          </div>
+        )}
+
         <div className="grid md:grid-cols-2 gap-4 mt-4">
           <div>
             <Label htmlFor="email">{t('forms:authorizedPersons.sections.basicInfo.email')}</Label>
@@ -132,23 +149,6 @@ const AuthorizedPersonForm = ({ initialData = {}, onSave, onCancel }: Authorized
             />
           </div>
         </div>
-
-        {(formData.salutation === 'Pani' || !formData.salutation) && (
-          <div className="mt-4">
-            <Label htmlFor="maidenName">
-              {t('forms:authorizedPersons.sections.basicInfo.maidenName')}
-              {formData.salutation === 'Pani' && <span className="text-red-500 ml-1">*</span>}
-            </Label>
-            <Input
-              id="maidenName"
-              type="text"
-              value={formData.maidenName}
-              onChange={(e) => handleInputChange('maidenName', e.target.value)}
-              placeholder={t('forms:authorizedPersons.sections.basicInfo.placeholders.maidenName')}
-              required={formData.salutation === 'Pani'}
-            />
-          </div>
-        )}
       </div>
 
       {/* Personal Data */}
