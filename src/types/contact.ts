@@ -23,6 +23,7 @@ export interface ContactPerson {
 
 export interface AuthorizedPerson {
   id: string;
+  salutation?: 'Pan' | 'Pani';
   firstName: string;
   lastName: string;
   email: string;
@@ -49,6 +50,7 @@ export interface AuthorizedPerson {
 
 export interface ActualOwner {
   id: string;
+  salutation?: 'Pan' | 'Pani';
   firstName: string;
   lastName: string;
   maidenName?: string;

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ActualOwner } from "@/types/onboarding";
 
 interface ActualOwnerFormProps {
@@ -17,6 +18,7 @@ const ActualOwnerForm = ({ initialData = {}, onSave, onCancel }: ActualOwnerForm
   const { t } = useTranslation(['forms']);
   
   const [formData, setFormData] = useState({
+    salutation: initialData.salutation || '' as 'Pan' | 'Pani' | '',
     firstName: initialData.firstName || '',
     lastName: initialData.lastName || '',
     maidenName: initialData.maidenName || '',
@@ -38,16 +40,34 @@ const ActualOwnerForm = ({ initialData = {}, onSave, onCancel }: ActualOwnerForm
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    const dataToSave: Partial<ActualOwner> = {
+      ...formData,
+      salutation: formData.salutation === '' ? undefined : (formData.salutation as 'Pan' | 'Pani')
+    };
+    onSave(dataToSave);
   };
 
-  const isValid = formData.firstName && formData.lastName && formData.birthDate && formData.birthPlace && formData.birthNumber && formData.citizenship && formData.permanentAddress;
+  const isValid = formData.salutation && formData.firstName && formData.lastName && formData.birthDate && formData.birthPlace && formData.birthNumber && formData.citizenship && formData.permanentAddress && (formData.salutation === 'Pani' ? formData.maidenName : true);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Information */}
       <div>
         <h3 className="text-lg font-medium mb-4">{t('forms:actualOwners.sections.basicInfo.title')}</h3>
+        
+        <div className="mb-4">
+          <Label htmlFor="salutation">Oslovenie</Label>
+          <Select value={formData.salutation} onValueChange={(value) => handleInputChange('salutation', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Vyberte oslovenie" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Pan">Pán</SelectItem>
+              <SelectItem value="Pani">Pani</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="firstName">{t('forms:actualOwners.sections.basicInfo.firstName')}</Label>
@@ -73,16 +93,22 @@ const ActualOwnerForm = ({ initialData = {}, onSave, onCancel }: ActualOwnerForm
           </div>
         </div>
 
-        <div className="mt-4">
-          <Label htmlFor="maidenName">{t('forms:actualOwners.sections.basicInfo.maidenName')}</Label>
-          <Input
-            id="maidenName"
-            type="text"
-            value={formData.maidenName}
-            onChange={(e) => handleInputChange('maidenName', e.target.value)}
-            placeholder={t('forms:actualOwners.sections.basicInfo.placeholders.maidenName')}
-          />
-        </div>
+        {(formData.salutation === 'Pani' || !formData.salutation) && (
+          <div className="mt-4">
+            <Label htmlFor="maidenName">
+              {t('forms:actualOwners.sections.basicInfo.maidenName')}
+              {formData.salutation === 'Pani' && <span className="text-red-500 ml-1">*</span>}
+            </Label>
+            <Input
+              id="maidenName"
+              type="text"
+              value={formData.maidenName}
+              onChange={(e) => handleInputChange('maidenName', e.target.value)}
+              placeholder={t('forms:actualOwners.sections.basicInfo.placeholders.maidenName')}
+              required={formData.salutation === 'Pani'}
+            />
+          </div>
+        )}
       </div>
 
       {/* Personal Data */}

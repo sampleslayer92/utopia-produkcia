@@ -21,6 +21,7 @@ const AuthorizedPersonForm = ({ initialData = {}, onSave, onCancel }: Authorized
   
   const [formData, setFormData] = useState({
     id: initialData.id || uuidv4(),
+    salutation: initialData.salutation || '' as 'Pan' | 'Pani' | '',
     firstName: initialData.firstName || '',
     lastName: initialData.lastName || '',
     email: initialData.email || '',
@@ -54,16 +55,34 @@ const AuthorizedPersonForm = ({ initialData = {}, onSave, onCancel }: Authorized
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    const dataToSave: Partial<AuthorizedPerson> = {
+      ...formData,
+      salutation: formData.salutation === '' ? undefined : (formData.salutation as 'Pan' | 'Pani')
+    };
+    onSave(dataToSave);
   };
 
-  const isValid = formData.firstName && formData.lastName && formData.email && formData.birthDate && formData.birthPlace && formData.birthNumber && formData.permanentAddress && formData.position;
+  const isValid = formData.salutation && formData.firstName && formData.lastName && formData.email && formData.birthDate && formData.birthPlace && formData.birthNumber && formData.permanentAddress && formData.position && (formData.salutation === 'Pani' ? formData.maidenName : true);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Information */}
       <div>
         <h3 className="text-lg font-medium mb-4">{t('forms:authorizedPersons.sections.basicInfo.title')}</h3>
+        
+        <div className="mb-4">
+          <Label htmlFor="salutation">Oslovenie</Label>
+          <Select value={formData.salutation} onValueChange={(value) => handleInputChange('salutation', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Vyberte oslovenie" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Pan">Pán</SelectItem>
+              <SelectItem value="Pani">Pani</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="firstName">{t('forms:authorizedPersons.sections.basicInfo.firstName')}</Label>
@@ -114,16 +133,22 @@ const AuthorizedPersonForm = ({ initialData = {}, onSave, onCancel }: Authorized
           </div>
         </div>
 
-        <div className="mt-4">
-          <Label htmlFor="maidenName">{t('forms:authorizedPersons.sections.basicInfo.maidenName')}</Label>
-          <Input
-            id="maidenName"
-            type="text"
-            value={formData.maidenName}
-            onChange={(e) => handleInputChange('maidenName', e.target.value)}
-            placeholder={t('forms:authorizedPersons.sections.basicInfo.placeholders.maidenName')}
-          />
-        </div>
+        {(formData.salutation === 'Pani' || !formData.salutation) && (
+          <div className="mt-4">
+            <Label htmlFor="maidenName">
+              {t('forms:authorizedPersons.sections.basicInfo.maidenName')}
+              {formData.salutation === 'Pani' && <span className="text-red-500 ml-1">*</span>}
+            </Label>
+            <Input
+              id="maidenName"
+              type="text"
+              value={formData.maidenName}
+              onChange={(e) => handleInputChange('maidenName', e.target.value)}
+              placeholder={t('forms:authorizedPersons.sections.basicInfo.placeholders.maidenName')}
+              required={formData.salutation === 'Pani'}
+            />
+          </div>
+        )}
       </div>
 
       {/* Personal Data */}

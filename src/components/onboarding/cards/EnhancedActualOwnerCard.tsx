@@ -41,7 +41,7 @@ const EnhancedActualOwnerCard = ({
           <div>
             <h3 className="font-medium text-slate-900">
               {owner.firstName && owner.lastName 
-                ? `${owner.firstName} ${owner.lastName}`
+                ? `${owner.salutation ? owner.salutation + ' ' : ''}${owner.firstName} ${owner.lastName}`
                 : `${t('forms:actualOwners.title')} ${index + 1}`
               }
             </h3>
@@ -93,7 +93,14 @@ const EnhancedActualOwnerCard = ({
                 {t('forms:actualOwners.sections.basicInfo.title')}
               </h4>
               
-              <div className="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
+               <div className="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
+                {owner.salutation && (
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="h-3 w-3" />
+                    <span className="font-medium">Oslovenie:</span>
+                    <span>{owner.salutation}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <UserCheck className="h-3 w-3" />
                   <span className="font-medium">{t('forms:actualOwners.sections.basicInfo.firstName')}:</span>

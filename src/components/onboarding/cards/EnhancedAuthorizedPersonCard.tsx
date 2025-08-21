@@ -42,7 +42,7 @@ const EnhancedAuthorizedPersonCard = ({
           <div>
             <h3 className="font-medium text-slate-900">
               {person.firstName && person.lastName 
-                ? `${person.firstName} ${person.lastName}`
+                ? `${person.salutation ? person.salutation + ' ' : ''}${person.firstName} ${person.lastName}`
                 : `${t('forms:authorizedPersons.title')} ${index + 1}`
               }
             </h3>
@@ -92,7 +92,14 @@ const EnhancedAuthorizedPersonCard = ({
                 {t('forms:authorizedPersons.sections.basicInfo.title')}
               </h4>
               
-              <div className="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
+               <div className="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
+                {person.salutation && (
+                  <div className="flex items-center gap-2">
+                    <User className="h-3 w-3" />
+                    <span className="font-medium">Oslovenie:</span>
+                    <span>{person.salutation}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <User className="h-3 w-3" />
                   <span className="font-medium">{t('forms:authorizedPersons.sections.basicInfo.firstName')}:</span>
