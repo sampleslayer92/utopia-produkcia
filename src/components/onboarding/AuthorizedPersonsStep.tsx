@@ -99,7 +99,13 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
   };
 
   const canFetchFromAres = () => {
-    return !!(data.companyInfo?.ico && data.companyInfo?.ico.length >= 7);
+    const ico = data.companyInfo?.ico?.trim();
+    const canFetch = !!(ico && ico.length >= 8); // Slovak ICO should be 8 digits
+    console.log('=== CAN FETCH FROM ARES CHECK ===');
+    console.log('ICO:', ico);
+    console.log('ICO length:', ico?.length);
+    console.log('Can fetch:', canFetch);
+    return canFetch;
   };
 
   const handleAddPerson = () => {
@@ -174,6 +180,14 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
 
   const contactName = `${data.contactInfo.firstName} ${data.contactInfo.lastName}`.trim();
 
+  // Debug current state in Step 6
+  console.log('=== AUTHORIZED PERSONS STEP DEBUG ===');
+  console.log('Company ICO:', data.companyInfo?.ico);
+  console.log('ICO length:', data.companyInfo?.ico?.length);
+  console.log('Can fetch from ARES:', canFetchFromAres());
+  console.log('Current authorized persons:', data.authorizedPersons.length);
+  console.log('Company info:', data.companyInfo);
+
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
@@ -222,8 +236,8 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
               )}
 
               {/* ARES persons fetch button */}
-              {canFetchFromAres() && (
-                <div className="space-y-2">
+              <div className="space-y-2">
+                {canFetchFromAres() ? (
                   <Button 
                     variant="outline" 
                     onClick={handleFetchFromAres}
@@ -238,14 +252,26 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
                         : `Načítaj osoby z ARES (${getSubjectTypeFromCompany(data.companyInfo)})`
                     }
                   </Button>
-                  
-                  {!canFetchFromAres() && data.companyInfo?.ico && (
-                    <p className="text-xs text-muted-foreground text-center">
-                      ICO musí mať minimálne 7 číslic
+                ) : data.companyInfo?.ico ? (
+                  <div className="text-center p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p className="text-sm text-yellow-700 font-medium">
+                      ARES načítanie nie je dostupné
                     </p>
-                  )}
-                </div>
-              )}
+                    <p className="text-xs text-yellow-600 mt-1">
+                      ICO "{data.companyInfo.ico}" musí mať presne 8 číslic
+                    </p>
+                  </div>
+                ) : (
+                  <div className="text-center p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p className="text-sm text-gray-600">
+                      ICO firmy nie je zadané
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Zadajte ICO v kroku 2 pre automatické načítanie osôb z ARES
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {isAdding ? (

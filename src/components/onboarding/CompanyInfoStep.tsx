@@ -260,9 +260,13 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true, customFie
   // AUTOMATIC ARES PERSONS FETCHING - Debounced to avoid too many API calls
   const debouncedAutoFetchPersons = useCallback(
     debounce(async (ico: string) => {
-      if (!ico?.trim() || ico.length < 5) return; // Basic validation
+      if (!ico?.trim() || ico.length < 8) {
+        console.log('=== AUTO-FETCH SKIPPED: Invalid ICO length:', ico?.length);
+        return; 
+      }
       
       console.log('=== AUTO-FETCH TRIGGER: ICO changed to:', ico);
+      console.log('=== AUTO-FETCH: Current authorized persons count:', data.authorizedPersons.length);
       setIsAutoFetchingPersons(true);
       
       try {
@@ -281,6 +285,14 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true, customFie
               title: 'Osoby načítané z ARES',
               description: `Automaticky načítané ${persons.length} osoba/osôb z registra ARES. Môžete ich upraviť v kroku 6.`,
               duration: 4000
+            });
+          } else {
+            console.log('=== AUTO-FETCH: No persons returned from ARES');
+            toast({
+              title: 'ARES načítanie',
+              description: 'Pre toto ICO neboli v ARES registri nájdené žiadne osoby.',
+              variant: 'default',
+              duration: 3000
             });
           }
         }, true); // Silent mode for auto-fetch errors
