@@ -7,7 +7,7 @@ export const isBusinessLocationComplete = (location: any): boolean => {
   
   const hasValidAddress = location.address?.street?.trim() && 
                          location.address?.city?.trim() && 
-                         location.address?.zipCode?.trim();
+                         location.address?.zipCode && String(location.address.zipCode).trim();
                          
   // Fixed: Check firstName and lastName instead of name, and made phone optional
   const hasValidContactPerson = location.contactPerson?.firstName?.trim() && 
