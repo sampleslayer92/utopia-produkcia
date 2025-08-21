@@ -80,3 +80,41 @@ export const formatCurrencyDisplay = (amount: number): string => {
     maximumFractionDigits: 2
   }).format(amount);
 };
+
+// IBAN conversion utilities for Slovak IBANs
+export const convertIbanToAccountNumber = (iban: string): { cisloUctu: string; kodBanky: string } | null => {
+  // Remove spaces and convert to uppercase
+  const cleanIban = iban.replace(/\s/g, '').toUpperCase();
+  
+  // Check if it's a valid Slovak IBAN format
+  if (!cleanIban.startsWith('SK') || cleanIban.length !== 24) {
+    return null;
+  }
+  
+  // Extract bank code (positions 4-8) and account number (positions 8-24)
+  const kodBanky = cleanIban.substring(4, 8);
+  const cisloUctu = cleanIban.substring(8, 24).replace(/^0+/, ''); // Remove leading zeros
+  
+  return { cisloUctu, kodBanky };
+};
+
+export const convertAccountNumberToIban = (cisloUctu: string, kodBanky: string): string | null => {
+  if (!cisloUctu || !kodBanky) {
+    return null;
+  }
+  
+  // Pad account number with zeros to 16 digits
+  const paddedAccount = cisloUctu.padStart(16, '0');
+  
+  // Calculate check digits using mod-97 algorithm
+  const rearranged = kodBanky + paddedAccount + '532900'; // SK = 2729, move to end
+  let checksum = 0;
+  
+  for (let i = 0; i < rearranged.length; i++) {
+    checksum = (checksum * 10 + parseInt(rearranged[i])) % 97;
+  }
+  
+  const checkDigits = (98 - checksum).toString().padStart(2, '0');
+  
+  return `SK${checkDigits}${kodBanky}${paddedAccount}`;
+};

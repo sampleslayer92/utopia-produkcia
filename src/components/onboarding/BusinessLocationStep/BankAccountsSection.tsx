@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import { BankAccount } from "@/types/onboarding";
-import { formatIBAN, validateIBAN } from "../utils/formatUtils";
+import { formatIBAN, validateIBAN, convertIbanToAccountNumber, convertAccountNumberToIban } from "../utils/formatUtils";
 
 interface BankAccountsSectionProps {
   bankAccounts: BankAccount[];
@@ -55,13 +55,34 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
       if (account.id === id) {
         const updatedAccount = { ...account, [field]: value };
         
-        // Clear fields based on format selection
+        // Handle format conversion when format changes
         if (field === 'format') {
-          if (value === 'IBAN') {
+          if (value === 'IBAN' && account.cisloUctu && account.kodBanky) {
+            // Convert from account number to IBAN
+            const convertedIban = convertAccountNumberToIban(account.cisloUctu, account.kodBanky);
+            if (convertedIban) {
+              updatedAccount.iban = convertedIban;
+            }
+            // Clear account number and bank code fields
             updatedAccount.cisloUctu = '';
             updatedAccount.kodBanky = '';
-          } else {
+          } else if (value === 'CisloUctuKodBanky' && account.iban) {
+            // Convert from IBAN to account number
+            const convertedAccount = convertIbanToAccountNumber(account.iban);
+            if (convertedAccount) {
+              updatedAccount.cisloUctu = convertedAccount.cisloUctu;
+              updatedAccount.kodBanky = convertedAccount.kodBanky;
+            }
+            // Clear IBAN field
             updatedAccount.iban = '';
+          } else {
+            // No conversion possible, just clear opposite fields
+            if (value === 'IBAN') {
+              updatedAccount.cisloUctu = '';
+              updatedAccount.kodBanky = '';
+            } else {
+              updatedAccount.iban = '';
+            }
           }
         }
         
@@ -134,7 +155,7 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
                 </div>
                 <div>
                   <h5 className="font-medium text-slate-900">
-                    {t('businessLocation.bankAccounts.accountTitle', { index: index + 1 })}
+                    {t('businessLocation.bankAccounts.accountTitle')} {index + 1}
                   </h5>
                   <p className="text-xs text-slate-500">
                     {account.format === 'IBAN' ? 
