@@ -113,7 +113,7 @@ export const useStepValidation = (
         validationErrors.push({ field: `businessLocations.${index}.name`, message: 'Názov prevádzky je povinný', severity: 'error' });
       }
       
-      if (!location.address?.street?.trim() || !location.address?.city?.trim() || !location.address?.zipCode?.trim()) {
+      if (!location.address?.street?.trim() || !location.address?.city?.trim() || !location.address?.zipCode?.toString()?.trim()) {
         validationErrors.push({ field: `businessLocations.${index}.address`, message: 'Kompletná adresa je povinná', severity: 'error' });
       }
     });
