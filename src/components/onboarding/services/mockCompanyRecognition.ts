@@ -6,9 +6,24 @@ export interface CompanyRecognitionResult {
   registryType: CompanyInfo['registryType'];
   ico?: string;
   dic?: string;
+  
+  // Legacy fields (kept for backward compatibility)
   court?: string;
   section?: string;
   insertNumber?: string;
+  
+  // New registration info structure
+  registrationInfo?: {
+    registrationType?: 'commercial_register' | 'trade_license' | 'nonprofit_register' | 'other';
+    court?: string;
+    section?: string;
+    insertNumber?: string;
+    tradeOffice?: string;
+    tradeLicenseNumber?: string;
+    registrationAuthority?: string;
+    registrationNumber?: string;
+  };
+  
   isVatPayer?: boolean;
   address?: CompanyAddress;
 }

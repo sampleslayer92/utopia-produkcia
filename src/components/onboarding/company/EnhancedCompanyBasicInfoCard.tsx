@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useMemo } from "react";
 import { OnboardingData } from "@/types/onboarding";
 import OnboardingInput from "../ui/OnboardingInput";
@@ -6,9 +5,10 @@ import CompanySearchModal from "../ui/CompanySearchModal";
 import CompanySearchButton from "../ui/CompanySearchButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Building2, CheckCircle, Loader2 } from "lucide-react";
-import { CompanyRecognitionResult } from "../services/aresCompanyService";
-import { useToast } from "@/hooks/use-toast";
+import { CompanyRecognitionResultExtended } from "../services/aresCompanyService";
+import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { RegistrationFieldsDisplay } from "./RegistrationFieldsDisplay";
 
 interface EnhancedCompanyBasicInfoCardProps {
   data: OnboardingData;
@@ -27,128 +27,110 @@ const EnhancedCompanyBasicInfoCard = ({
 }: EnhancedCompanyBasicInfoCardProps) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
-  const { toast } = useToast();
   const { t } = useTranslation('forms');
 
   // Helper to check if field is enabled in config
-  const isFieldEnabled = (fieldKey: string) => {
+  const isFieldEnabled = useCallback((fieldKey: string) => {
     if (!customFields) return true; // Default behavior when no config
     const field = customFields.find(f => f.fieldKey === fieldKey);
     return field ? field.isEnabled : false;
-  };
+  }, [customFields]);
 
-  const handleCompanySelect = useCallback(async (result: CompanyRecognitionResult) => {
-    console.log('=== COMPANY SELECT: Starting complete batch update ===');
-    console.log('Selected company data:', result);
-    
+  const handleCompanySelect = useCallback(async (company: CompanyRecognitionResultExtended) => {
     setIsAutoFilling(true);
     
     try {
-      // Build complete company info object with all updates
-      const updatedCompanyInfo = {
-        ...data.companyInfo
-      };
-
       const fieldsToUpdate = new Set<string>();
-
-      // Update all fields at once
-      if (result.companyName) {
-        console.log('Setting companyName:', result.companyName);
-        updatedCompanyInfo.companyName = result.companyName;
+      
+      // Basic company info
+      if (company.companyName) {
+        updateCompanyInfo('companyName', company.companyName);
         fieldsToUpdate.add('companyName');
       }
-
-      if (result.registryType) {
-        console.log('Setting registryType:', result.registryType);
-        updatedCompanyInfo.registryType = result.registryType;
-        fieldsToUpdate.add('registryType');
-      }
-
-      if (result.ico) {
-        console.log('Setting ico:', result.ico);
-        updatedCompanyInfo.ico = result.ico;
+      
+      if (company.ico) {
+        updateCompanyInfo('ico', company.ico);
         fieldsToUpdate.add('ico');
       }
-
-      if (result.dic) {
-        console.log('Setting dic:', result.dic);
-        updatedCompanyInfo.dic = result.dic;
+      
+      if (company.dic) {
+        updateCompanyInfo('dic', company.dic);
         fieldsToUpdate.add('dic');
       }
-
-      if (result.isVatPayer !== undefined) {
-        console.log('Setting isVatPayer:', result.isVatPayer);
-        updatedCompanyInfo.isVatPayer = result.isVatPayer;
+      
+      if (company.registryType) {
+        updateCompanyInfo('registryType', company.registryType);
+        fieldsToUpdate.add('registryType');
+      }
+      
+      if (company.isVatPayer !== undefined) {
+        updateCompanyInfo('isVatPayer', company.isVatPayer);
         fieldsToUpdate.add('isVatPayer');
+        
+        if (company.isVatPayer && company.dic) {
+          updateCompanyInfo('vatNumber', `SK${company.dic}`);
+          fieldsToUpdate.add('vatNumber');
+        }
       }
-
-      if (result.isVatPayer && result.dic) {
-        console.log('Setting vatNumber from dic:', result.dic);
-        updatedCompanyInfo.vatNumber = result.dic;
-        fieldsToUpdate.add('vatNumber');
-      }
-
-      // Enhanced registry information update
-      if (result.court) {
-        console.log('Setting court:', result.court);
-        updatedCompanyInfo.court = result.court;
-        fieldsToUpdate.add('court');
-      }
-
-      if (result.section) {
-        console.log('Setting section:', result.section);
-        updatedCompanyInfo.section = result.section;
-        fieldsToUpdate.add('section');
-      }
-
-      if (result.insertNumber) {
-        console.log('Setting insertNumber:', result.insertNumber);
-        updatedCompanyInfo.insertNumber = result.insertNumber;
-        fieldsToUpdate.add('insertNumber');
-      }
-
-      if (result.address) {
-        console.log('Setting address:', result.address);
-        updatedCompanyInfo.address = {
-          street: result.address.street || data.companyInfo.address.street,
-          city: result.address.city || data.companyInfo.address.city,
-          zipCode: result.address.zipCode || data.companyInfo.address.zipCode
-        };
+      
+      // Address info
+      if (company.address) {
+        updateCompanyInfo('address', {
+          street: company.address.street || '',
+          city: company.address.city || '',
+          zipCode: company.address.zipCode || ''
+        });
         fieldsToUpdate.add('address');
       }
-
-      // Perform the complete batch update
-      console.log('=== Performing batch update with fields:', Array.from(fieldsToUpdate));
-      console.log('Updated company info:', updatedCompanyInfo);
       
-      // Call the parent update function with complete company info
-      updateCompanyInfo('batchUpdate', updatedCompanyInfo);
+      // Enhanced registration info handling
+      if (company.registrationInfo) {
+        // Update new structured registration info
+        updateCompanyInfo('registrationInfo', company.registrationInfo);
+        fieldsToUpdate.add('registrationInfo');
+        
+        // Also update legacy fields for backward compatibility
+        if (company.registrationInfo.court) {
+          updateCompanyInfo('court', company.registrationInfo.court);
+          fieldsToUpdate.add('court');
+        }
+        if (company.registrationInfo.section) {
+          updateCompanyInfo('section', company.registrationInfo.section);
+          fieldsToUpdate.add('section');
+        }
+        if (company.registrationInfo.insertNumber) {
+          updateCompanyInfo('insertNumber', company.registrationInfo.insertNumber);
+          fieldsToUpdate.add('insertNumber');
+        }
+      } else {
+        // Fallback to legacy fields
+        if (company.court) {
+          updateCompanyInfo('court', company.court);
+          fieldsToUpdate.add('court');
+        }
+        if (company.section) {
+          updateCompanyInfo('section', company.section);
+          fieldsToUpdate.add('section');
+        }
+        if (company.insertNumber) {
+          updateCompanyInfo('insertNumber', company.insertNumber);
+          fieldsToUpdate.add('insertNumber');
+        }
+      }
       
       // Update auto-filled fields tracking
-      setAutoFilledFields(fieldsToUpdate);
+      setAutoFilledFields(new Set(fieldsToUpdate));
       
-      console.log('=== BATCH UPDATE COMPLETED ===');
+      setIsSearchModalOpen(false);
+      toast.success("Údaje spoločnosti boli úspešne doplnené z ARES registra");
       
-      // Show success toast
-      toast({
-        title: "Údaje spoločnosti načítané",
-        description: `Úspešne načítané údaje pre spoločnosť ${result.companyName}`,
-        duration: 3000,
-      });
-
     } catch (error) {
-      console.error('Error in company select:', error);
-      toast({
-        title: "Chyba pri načítaní údajov",
-        description: "Nepodarilo sa načítať úplné údaje spoločnosti. Skúste to znova.",
-        variant: "destructive",
-        duration: 5000,
-      });
+      console.error('Error auto-filling company data:', error);
+      toast.error("Nastala chyba pri dopĺňaní údajov spoločnosti");
     } finally {
       setIsAutoFilling(false);
-      setIsSearchModalOpen(false);
     }
-   }, [data.companyInfo, updateCompanyInfo, setAutoFilledFields, toast]);
+  }, [updateCompanyInfo, setAutoFilledFields, setIsSearchModalOpen]);
 
   const getFieldClassName = useCallback((fieldName: string) => {
     return autoFilledFields.has(fieldName) ? 'bg-green-50 border-green-200' : '';
@@ -184,14 +166,17 @@ const EnhancedCompanyBasicInfoCard = ({
       case 'isVatPayer':
         hasValue = data.companyInfo.isVatPayer !== undefined;
         break;
-      case 'address.street':
-        hasValue = !!data.companyInfo.address?.street?.trim();
+      case 'tradeOffice':
+        hasValue = !!data.companyInfo.registrationInfo?.tradeOffice?.trim();
         break;
-      case 'address.city':
-        hasValue = !!data.companyInfo.address?.city?.trim();
+      case 'tradeLicenseNumber':
+        hasValue = !!data.companyInfo.registrationInfo?.tradeLicenseNumber?.trim();
         break;
-      case 'address.zipCode':
-        hasValue = !!data.companyInfo.address?.zipCode?.toString()?.trim();
+      case 'registrationAuthority':
+        hasValue = !!data.companyInfo.registrationInfo?.registrationAuthority?.trim();
+        break;
+      case 'registrationNumber':
+        hasValue = !!data.companyInfo.registrationInfo?.registrationNumber?.trim();
         break;
       default:
         hasValue = false;
@@ -209,33 +194,23 @@ const EnhancedCompanyBasicInfoCard = ({
   }, [autoFilledFields, data.companyInfo, t]);
 
   const handleOpenSearchModal = useCallback(() => {
-    console.log('=== ENHANCED CARD: Opening search modal ===');
-    console.log('Current company name for search:', data.companyInfo.companyName);
     setIsSearchModalOpen(true);
-  }, [data.companyInfo.companyName]);
+  }, []);
 
   const handleCompanyNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    // Prevent changes during auto-filling process
-    if (isAutoFilling) {
-      console.log('Ignoring manual change during auto-fill process');
-      return;
-    }
+    if (isAutoFilling) return;
 
     const newValue = e.target.value;
-    console.log('=== ENHANCED CARD: Manual company name change ===');
-    console.log('From:', data.companyInfo.companyName);
-    console.log('To:', newValue);
     
     // If user manually changes the name, remove it from auto-filled fields
     if (autoFilledFields.has('companyName')) {
       const newAutoFilledFields = new Set(autoFilledFields);
       newAutoFilledFields.delete('companyName');
       setAutoFilledFields(newAutoFilledFields);
-      console.log('Removed companyName from auto-filled fields');
     }
     
     updateCompanyInfo('companyName', newValue);
-  }, [isAutoFilling, data.companyInfo.companyName, autoFilledFields, setAutoFilledFields, updateCompanyInfo]);
+  }, [isAutoFilling, autoFilledFields, setAutoFilledFields, updateCompanyInfo]);
 
   const handleVatChange = useCallback((checked: boolean) => {
     updateCompanyInfo('isVatPayer', checked);
@@ -251,18 +226,6 @@ const EnhancedCompanyBasicInfoCard = ({
 
   const handleVatNumberChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     updateCompanyInfo('vatNumber', e.target.value);
-  }, [updateCompanyInfo]);
-
-  const handleCourtChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateCompanyInfo('court', e.target.value);
-  }, [updateCompanyInfo]);
-
-  const handleSectionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateCompanyInfo('section', e.target.value);
-  }, [updateCompanyInfo]);
-
-  const handleInsertNumberChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateCompanyInfo('insertNumber', e.target.value);
   }, [updateCompanyInfo]);
 
   // Memoized registry display section
@@ -314,7 +277,7 @@ const EnhancedCompanyBasicInfoCard = ({
         )}
       </div>
 
-      {/* Company Name - with search button and wider field */}
+      {/* Company Name - with search button */}
       {isFieldEnabled('companyName') && (
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700">
@@ -401,47 +364,15 @@ const EnhancedCompanyBasicInfoCard = ({
         </div>
       )}
 
-      {/* Court Registry Information - editable fields */}
-      <div className="space-y-4 pt-4 border-t border-slate-200">
-        <h4 className="text-md font-medium text-slate-900">{t('companyInfo.basicInfoCard.registryDataTitle')}</h4>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="space-y-2">
-            <OnboardingInput
-              label={t('companyInfo.labels.courtLabel')}
-              value={data.companyInfo.court}
-              onChange={handleCourtChange}
-              placeholder={t('companyInfo.placeholders.court')}
-              className={`transition-all duration-300 ${getFieldClassName('court')}`}
-              disabled={isAutoFilling}
-            />
-            {getFieldIndicator('court')}
-          </div>
-          
-          <div className="space-y-2">
-            <OnboardingInput
-              label={t('companyInfo.labels.sectionLabel')}
-              value={data.companyInfo.section}
-              onChange={handleSectionChange}
-              placeholder={t('companyInfo.placeholders.section')}
-              className={`transition-all duration-300 ${getFieldClassName('section')}`}
-              disabled={isAutoFilling}
-            />
-            {getFieldIndicator('section')}
-          </div>
-          
-          <div className="space-y-2">
-            <OnboardingInput
-              label={t('companyInfo.labels.insertNumberLabel')}
-              value={data.companyInfo.insertNumber}
-              onChange={handleInsertNumberChange}
-              placeholder={t('companyInfo.placeholders.insertNumber')}
-              className={`transition-all duration-300 ${getFieldClassName('insertNumber')}`}
-              disabled={isAutoFilling}
-            />
-            {getFieldIndicator('insertNumber')}
-          </div>
-        </div>
-      </div>
+      {/* Registration Fields - Dynamic based on company type */}
+      <RegistrationFieldsDisplay
+        companyInfo={data.companyInfo}
+        updateCompanyInfo={updateCompanyInfo}
+        autoFilledFields={autoFilledFields}
+        getFieldClassName={getFieldClassName}
+        getFieldIndicator={getFieldIndicator}
+        isFieldEnabled={isFieldEnabled}
+      />
 
       {/* Company Search Modal */}
       <CompanySearchModal

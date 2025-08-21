@@ -1,14 +1,38 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
+interface RegistrationInfo {
+  // For S.r.o./a.s. (Obchodný register)
+  court?: string;
+  section?: string;
+  insertNumber?: string;
+  
+  // For Živnostník (Živnostenský úrad)
+  tradeOffice?: string;
+  tradeLicenseNumber?: string;
+  
+  // For Nezisková organizácia
+  registrationAuthority?: string;
+  registrationNumber?: string;
+  
+  // General registration type
+  registrationType?: 'commercial_register' | 'trade_license' | 'nonprofit_register' | 'other';
+}
+
 interface CompanyRecognitionResult {
   companyName: string;
   registryType: 'Živnosť' | 'S.r.o.' | 'Nezisková organizácia' | 'Akciová spoločnosť' | '';
   ico?: string;
   dic?: string;
+  
+  // Legacy fields (kept for backward compatibility)
   court?: string;
   section?: string;
   insertNumber?: string;
+  
+  // New registration info structure
+  registrationInfo?: RegistrationInfo;
+  
   isVatPayer?: boolean;
   address?: {
     street: string;
@@ -183,6 +207,50 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
         const oddil = registrace.oddil?.nazev || registrace.oddil?.kod || '';
         const vlozka = registrace.vlozka || '';
         
+        // Extract trade license information for živnostník
+        const zivnostensky = subject.zivnostensky || {};
+        const zivnostenskyUrad = zivnostensky.zivnostenskyUrad?.nazev || '';
+        const cislozivnostenskehOlistu = zivnostensky.cisloZivnostenskehoListu || '';
+        
+        // Extract nonprofit registration info
+        const spolky = subject.spolky || {};
+        const registrujiciOrgán = spolky.registrujiciOrgan?.nazev || '';
+        const registracniCislo = spolky.registracniCislo || '';
+        
+        // Determine registration type
+        let registrationType: 'commercial_register' | 'trade_license' | 'nonprofit_register' | 'other' = 'other';
+        if (registracniSud && (oddil || vlozka)) {
+          registrationType = 'commercial_register';
+        } else if (zivnostenskyUrad || cislozivnostenskehOlistu) {
+          registrationType = 'trade_license';
+        } else if (registrujiciOrgán || registracniCislo) {
+          registrationType = 'nonprofit_register';
+        }
+        
+        // Create registration info object
+        const registrationInfo: RegistrationInfo = {
+          registrationType,
+          // Commercial register info (S.r.o., a.s.)
+          court: registracniSud || undefined,
+          section: oddil || undefined,
+          insertNumber: vlozka || undefined,
+          // Trade license info (Živnostník)
+          tradeOffice: zivnostenskyUrad || undefined,
+          tradeLicenseNumber: cislozivnostenskehOlistu || undefined,
+          // Nonprofit info
+          registrationAuthority: registrujiciOrgán || undefined,
+          registrationNumber: registracniCislo || undefined,
+        };
+        
+        // Only include registrationInfo if it has meaningful data
+        const hasRegistrationInfo = registrationInfo.court || registrationInfo.tradeOffice || registrationInfo.registrationAuthority;
+        
+        console.log('Registration details for', obchodniJmeno + ':');
+        console.log('- Type:', registrationType);
+        if (registrationInfo.court) console.log('- Court:', registrationInfo.court);
+        if (registrationInfo.tradeOffice) console.log('- Trade Office:', registrationInfo.tradeOffice);
+        if (registrationInfo.registrationAuthority) console.log('- Registration Authority:', registrationInfo.registrationAuthority);
+        
         // Build full address
         let fullAddress = '';
         const addressParts = [];
@@ -242,9 +310,15 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
           registryType,
           ico: validIco,
           dic: validDic || undefined,
+          
+          // Legacy fields (for backward compatibility)
           court: registracniSud || undefined,
           section: oddil || undefined,
           insertNumber: vlozka || undefined,
+          
+          // New structured registration info
+          registrationInfo: hasRegistrationInfo ? registrationInfo : undefined,
+          
           isVatPayer: !!validDic,
           address: {
             street: fullAddress,
@@ -255,8 +329,11 @@ function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
 
         results.push(company);
         console.log('Parsed company:', company.companyName, 'ICO:', company.ico);
-        if (company.court) {
-          console.log('Registry info - Court:', company.court, 'Section:', company.section, 'Insert:', company.insertNumber);
+        if (company.registrationInfo?.court) {
+          console.log('Registry info - Court:', company.registrationInfo.court, 'Section:', company.registrationInfo.section, 'Insert:', company.registrationInfo.insertNumber);
+        }
+        if (company.registrationInfo?.tradeOffice) {
+          console.log('Trade info - Office:', company.registrationInfo.tradeOffice, 'License:', company.registrationInfo.tradeLicenseNumber);
         }
 
       } catch (recordError) {
