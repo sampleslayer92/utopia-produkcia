@@ -4,20 +4,6 @@ import { CompanyRecognitionResult } from "./mockCompanyRecognition";
 // Re-export for convenience
 export type { CompanyRecognitionResult } from "./mockCompanyRecognition";
 
-// Update the interface to match the new Edge Function response
-export interface CompanyRecognitionResultExtended extends CompanyRecognitionResult {
-  registrationInfo?: {
-    registrationType?: 'commercial_register' | 'trade_license' | 'nonprofit_register' | 'other';
-    court?: string;
-    section?: string;
-    insertNumber?: string;
-    tradeOffice?: string;
-    tradeLicenseNumber?: string;
-    registrationAuthority?: string;
-    registrationNumber?: string;
-  };
-}
-
 // Configuration flag to switch between ARES and mock data
 // XML ARES API is now working, so we enable it by default
 const USE_ARES_API = true;
