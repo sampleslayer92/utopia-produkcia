@@ -7,6 +7,7 @@ import OnboardingInput from "../ui/OnboardingInput";
 import OnboardingSelect from "../ui/OnboardingSelect";
 import { BankAccount } from "@/types/onboarding";
 import { formatIBAN, validateIBAN, convertIbanToAccountNumber, convertAccountNumberToIban } from "../utils/formatUtils";
+import BankSelect from "../ui/BankSelect";
 
 interface BankAccountsSectionProps {
   bankAccounts: BankAccount[];
@@ -227,12 +228,17 @@ const BankAccountsSection = ({ bankAccounts, onUpdateBankAccounts }: BankAccount
                         onChange={(e) => updateBankAccount(account.id, 'cisloUctu', e.target.value)}
                         placeholder={t('businessLocation.bankAccounts.accountNumberPlaceholder')}
                       />
-                      <OnboardingInput
-                        label={t('businessLocation.bankAccounts.bankCodeRequired')}
-                        value={account.kodBanky || ''}
-                        onChange={(e) => updateBankAccount(account.id, 'kodBanky', e.target.value)}
-                        placeholder={t('businessLocation.bankAccounts.bankCodePlaceholder')}
-                      />
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          {t('businessLocation.bankAccounts.bankCodeRequired')}
+                        </label>
+                        <BankSelect
+                          value={account.kodBanky || ''}
+                          onValueChange={(value) => updateBankAccount(account.id, 'kodBanky', value)}
+                          placeholder={t('businessLocation.bankAccounts.bankCodePlaceholder')}
+                          className="w-full"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>

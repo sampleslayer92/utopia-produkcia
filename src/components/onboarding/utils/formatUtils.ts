@@ -118,3 +118,8 @@ export const convertAccountNumberToIban = (cisloUctu: string, kodBanky: string):
   
   return `SK${checkDigits}${kodBanky}${paddedAccount}`;
 };
+
+// Bank code validation
+export const validateBankCode = (code: string): boolean => {
+  return /^\d{4}$/.test(code);
+};
