@@ -40,6 +40,10 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
     const ico = data.companyInfo?.ico;
     const companyName = data.companyInfo?.companyName;
     
+    console.log('=== MANUAL FETCH FROM ARES in Step 6 ===');
+    console.log('ICO:', ico);
+    console.log('Current authorized persons count:', data.authorizedPersons.length);
+    
     if (!ico) {
       toast({
         title: 'Chyba',
@@ -64,11 +68,18 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
     });
 
     fetchAndFillPersons(ico, (aresPersons) => {
-      // Add ARES persons to existing authorized persons
-      const existingPersons = data.authorizedPersons || [];
+      console.log('=== MANUAL FETCH SUCCESS: Received persons:', aresPersons);
+      // Replace existing persons with ARES persons (not append)
       updateData({
-        authorizedPersons: [...existingPersons, ...aresPersons]
+        authorizedPersons: aresPersons
       });
+      
+      if (aresPersons.length > 0) {
+        toast({
+          title: 'Osoby načítané z ARES',
+          description: `Úspešne načítané ${aresPersons.length} osoba/osôb z registra ARES.`,
+        });
+      }
     });
   };
 
@@ -185,6 +196,19 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
         <div className="lg:col-span-2">
           <OnboardingSection>
             <div className="space-y-4 mb-6">
+              {/* Status message for auto-loaded persons */}
+              {data.authorizedPersons.length > 0 && 
+               data.authorizedPersons.some(p => p.functionStartDate || p.functionEndDate) && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <p className="text-sm text-blue-700 font-medium">
+                    ✓ Osoby boli automaticky načítané z ARES registra
+                  </p>
+                  <p className="text-xs text-blue-600 mt-1">
+                    Skontrolujte a doplňte chýbajúce údaje (email, telefón, adresa, doklady)
+                  </p>
+                </div>
+              )}
+              
               {/* Auto-fill suggestion */}
               {contactName && (
                 <AutoFillFromContactButton
@@ -209,7 +233,9 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
                     <Building2 className="h-4 w-4 mr-2" />
                     {isLoadingAresPersons 
                       ? 'Načítavam z ARES...' 
-                      : `Načítaj osoby z ARES (${getSubjectTypeFromCompany(data.companyInfo)})`
+                      : data.authorizedPersons.length > 0
+                        ? `Znovu načítať z ARES (${getSubjectTypeFromCompany(data.companyInfo)})`
+                        : `Načítaj osoby z ARES (${getSubjectTypeFromCompany(data.companyInfo)})`
                     }
                   </Button>
                   

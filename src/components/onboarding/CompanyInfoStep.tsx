@@ -13,6 +13,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
 import { useAresPersons } from "./hooks/useAresPersons";
 import { debounce } from "lodash";
+import { useToast } from "@/hooks/use-toast";
 
 interface CompanyInfoStepProps {
   data: OnboardingData;
@@ -29,6 +30,7 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true, customFie
   const isMobile = useIsMobile();
   const { t } = useTranslation('forms');
   const { autoFetchPersons } = useAresPersons();
+  const { toast } = useToast();
 
   // Helper to check if field is enabled in config
   const isFieldEnabled = (fieldKey: string) => {
@@ -266,17 +268,22 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true, customFie
       try {
         await autoFetchPersons(ico, (persons) => {
           console.log('=== AUTO-FETCH SUCCESS: Received persons:', persons);
+          console.log('=== AUTO-FILL: Adding/replacing ARES persons. Previous count:', data.authorizedPersons.length);
           
-          // Only auto-fill if no authorized persons exist yet
-          if (data.authorizedPersons.length === 0) {
-            console.log('=== AUTO-FILL: No existing persons, adding ARES persons');
-            updateData({
-              authorizedPersons: persons
+          // Always auto-fill with ARES persons when ICO is entered in Step 2
+          updateData({
+            authorizedPersons: persons
+          });
+          
+          // Show success notification if persons were loaded
+          if (persons.length > 0) {
+            toast({
+              title: 'Osoby načítané z ARES',
+              description: `Automaticky načítané ${persons.length} osoba/osôb z registra ARES. Môžete ich upraviť v kroku 6.`,
+              duration: 4000
             });
-          } else {
-            console.log('=== AUTO-FILL: Existing persons found, skipping auto-fill. User can manually load in Step 6.');
           }
-        }, true); // Silent mode - less intrusive notifications
+        }, true); // Silent mode for auto-fetch errors
       } catch (error) {
         console.error('Auto-fetch persons error:', error);
       } finally {
