@@ -100,12 +100,13 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
 
   const canFetchFromAres = () => {
     const ico = data.companyInfo?.ico?.trim();
-    const canFetch = !!(ico && ico.length >= 8); // Slovak ICO should be 8 digits
+    const isValidIco = !!(ico && /^\d{8}$/.test(ico)); // Slovak ICO must be exactly 8 digits
     console.log('=== CAN FETCH FROM ARES CHECK ===');
     console.log('ICO:', ico);
     console.log('ICO length:', ico?.length);
-    console.log('Can fetch:', canFetch);
-    return canFetch;
+    console.log('ICO is valid (8 digits):', isValidIco);
+    console.log('Can fetch:', isValidIco);
+    return isValidIco;
   };
 
   const handleAddPerson = () => {
@@ -252,13 +253,13 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
                         : `Načítaj osoby z ARES (${getSubjectTypeFromCompany(data.companyInfo)})`
                     }
                   </Button>
-                ) : data.companyInfo?.ico ? (
+                 ) : data.companyInfo?.ico ? (
                   <div className="text-center p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-sm text-yellow-700 font-medium">
                       ARES načítanie nie je dostupné
                     </p>
                     <p className="text-xs text-yellow-600 mt-1">
-                      ICO "{data.companyInfo.ico}" musí mať presne 8 číslic
+                      ICO "{data.companyInfo.ico}" musí mať presne 8 číslic (iba číslice)
                     </p>
                   </div>
                 ) : (

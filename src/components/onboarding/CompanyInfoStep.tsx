@@ -260,8 +260,8 @@ const CompanyInfoStep = ({ data, updateData, hideContactPerson = true, customFie
   // AUTOMATIC ARES PERSONS FETCHING - Debounced to avoid too many API calls
   const debouncedAutoFetchPersons = useCallback(
     debounce(async (ico: string) => {
-      if (!ico?.trim() || ico.length < 8) {
-        console.log('=== AUTO-FETCH SKIPPED: Invalid ICO length:', ico?.length);
+      if (!ico?.trim() || !/^\d{8}$/.test(ico.trim())) {
+        console.log('=== AUTO-FETCH SKIPPED: Invalid ICO format:', ico, 'Length:', ico?.length);
         return; 
       }
       
