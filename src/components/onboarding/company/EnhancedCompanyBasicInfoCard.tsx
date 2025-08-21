@@ -184,7 +184,7 @@ const EnhancedCompanyBasicInfoCard = ({
         hasValue = !!data.companyInfo.address?.city?.trim();
         break;
       case 'address.zipCode':
-        hasValue = !!data.companyInfo.address?.zipCode?.trim();
+        hasValue = !!data.companyInfo.address?.zipCode?.toString()?.trim();
         break;
       default:
         hasValue = false;

@@ -78,7 +78,7 @@ export const useStepValidation = (
     if (!companyInfo.address?.city?.trim()) {
       validationErrors.push({ field: 'address.city', message: 'Mesto je povinné', severity: 'error' });
     }
-    if (!companyInfo.address?.zipCode?.trim()) {
+    if (!companyInfo.address?.zipCode?.toString()?.trim()) {
       validationErrors.push({ field: 'address.zipCode', message: 'PSČ je povinné', severity: 'error' });
     }
     if (!companyInfo.contactPerson?.firstName?.trim()) {
