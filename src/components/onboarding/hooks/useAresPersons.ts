@@ -35,7 +35,11 @@ export const useAresPersons = () => {
   };
 
   const fetchAndFillPersons = async (ico: string, onSuccess: (persons: AuthorizedPerson[]) => void) => {
+    console.log('=== ARES PERSONS HOOK ===');
+    console.log('Starting fetch with ICO:', ico);
+    
     if (!ico?.trim()) {
+      console.error('ICO is empty or not provided');
       toast({
         title: 'Chyba',
         description: 'ICO spoločnosti nie je zadané',
@@ -47,9 +51,12 @@ export const useAresPersons = () => {
     setIsLoading(true);
     
     try {
+      console.log('Calling fetchCompanyPersons with ICO:', ico.trim());
       const response = await fetchCompanyPersons(ico.trim());
+      console.log('Received response:', JSON.stringify(response, null, 2));
       
-      if (!response.success || !response.data) {
+      if (!response.success) {
+        console.error('Response indicates failure:', response.error);
         toast({
           title: 'Chyba',
           description: response.error || 'Nepodarilo sa načítať osoby z ARES',
@@ -58,9 +65,21 @@ export const useAresPersons = () => {
         return;
       }
 
+      if (!response.data) {
+        console.error('Response success but no data');
+        toast({
+          title: 'Chyba',
+          description: 'Žiadne dáta neboli vrátené z ARES',
+          variant: 'destructive'
+        });
+        return;
+      }
+
       const { persons } = response.data;
+      console.log('Extracted persons from response:', persons);
       
-      if (persons.length === 0) {
+      if (!persons || persons.length === 0) {
+        console.log('No persons found in response');
         toast({
           title: 'Informácia',
           description: 'Pre túto spoločnosť neboli v ARES nájdené žiadne osoby',
@@ -69,7 +88,10 @@ export const useAresPersons = () => {
         return;
       }
 
+      console.log(`Converting ${persons.length} ARES persons to AuthorizedPersons`);
       const authorizedPersons = persons.map(convertAresPersonToAuthorized);
+      console.log('Converted authorized persons:', authorizedPersons);
+      
       onSuccess(authorizedPersons);
 
       toast({
