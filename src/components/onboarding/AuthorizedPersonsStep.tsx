@@ -38,6 +38,8 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
 
   const handleFetchFromAres = () => {
     const ico = data.companyInfo?.ico;
+    const companyName = data.companyInfo?.companyName;
+    
     if (!ico) {
       toast({
         title: 'Chyba',
@@ -47,6 +49,20 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
       return;
     }
 
+    // Determine subject type from company info
+    const subjectType = getSubjectTypeFromCompany(data.companyInfo);
+    const expectedPersonsMessage = subjectType === 'S.r.o.' 
+      ? 'Načítajú sa údaje o jednateli a prokúristoch...'
+      : subjectType === 'Živnosť' 
+        ? 'Načítajú sa údaje o podnikateľovi...'
+        : 'Načítajú sa údaje o osobách...';
+
+    toast({
+      title: 'Načítavam z ARES',
+      description: expectedPersonsMessage,
+      variant: 'default'
+    });
+
     fetchAndFillPersons(ico, (aresPersons) => {
       // Add ARES persons to existing authorized persons
       const existingPersons = data.authorizedPersons || [];
@@ -54,6 +70,25 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
         authorizedPersons: [...existingPersons, ...aresPersons]
       });
     });
+  };
+
+  const getSubjectTypeFromCompany = (companyInfo: any): string => {
+    if (!companyInfo) return 'Neznámy';
+    
+    const registryType = companyInfo.registryType || '';
+    const companyName = companyInfo.companyName || '';
+    
+    if (registryType.includes('S.r.o.') || companyName.includes('s.r.o.')) {
+      return 'S.r.o.';
+    } else if (registryType.includes('Živnosť') || registryType === 'Fyzická osoba') {
+      return 'Živnosť';
+    }
+    
+    return registryType || 'Neznámy';
+  };
+
+  const canFetchFromAres = () => {
+    return !!(data.companyInfo?.ico && data.companyInfo?.ico.length >= 7);
   };
 
   const handleAddPerson = () => {
@@ -163,16 +198,27 @@ const AuthorizedPersonsStep = ({ data, updateData, onNext, onPrev }: AuthorizedP
               )}
 
               {/* ARES persons fetch button */}
-              {data.companyInfo?.ico && (
-                <Button 
-                  variant="outline" 
-                  onClick={handleFetchFromAres}
-                  disabled={isLoadingAresPersons}
-                  className="w-full"
-                >
-                  <Building2 className="h-4 w-4 mr-2" />
-                  {isLoadingAresPersons ? 'Načítavam z ARES...' : 'Načítaj osoby z ARES'}
-                </Button>
+              {canFetchFromAres() && (
+                <div className="space-y-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleFetchFromAres}
+                    disabled={isLoadingAresPersons}
+                    className="w-full"
+                  >
+                    <Building2 className="h-4 w-4 mr-2" />
+                    {isLoadingAresPersons 
+                      ? 'Načítavam z ARES...' 
+                      : `Načítaj osoby z ARES (${getSubjectTypeFromCompany(data.companyInfo)})`
+                    }
+                  </Button>
+                  
+                  {!canFetchFromAres() && data.companyInfo?.ico && (
+                    <p className="text-xs text-muted-foreground text-center">
+                      ICO musí mať minimálne 7 číslic
+                    </p>
+                  )}
+                </div>
               )}
             </div>
 

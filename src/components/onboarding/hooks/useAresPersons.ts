@@ -57,9 +57,22 @@ export const useAresPersons = () => {
       
       if (!response.success) {
         console.error('Response indicates failure:', response.error);
+        
+        // Enhanced error messages based on the error type
+        let errorMessage = response.error || 'Nepodarilo sa načítať osoby z ARES';
+        let errorTitle = 'Chyba pri načítavaní z ARES';
+        
+        if (response.error?.includes('404') || response.error?.includes('not found')) {
+          errorTitle = 'Spoločnosť nenájdená';
+          errorMessage = 'Spoločnosť s týmto ICO nebola v ARES nájdená. Skontrolujte, prosím, správnosť ICO.';
+        } else if (response.error?.includes('500') || response.error?.includes('API error')) {
+          errorTitle = 'Problém so službou ARES';
+          errorMessage = 'Služba ARES je momentálne nedostupná. Skúste to neskôr alebo pridajte osoby manuálne.';
+        }
+        
         toast({
-          title: 'Chyba',
-          description: response.error || 'Nepodarilo sa načítať osoby z ARES',
+          title: errorTitle,
+          description: errorMessage,
           variant: 'destructive'
         });
         return;
@@ -80,9 +93,20 @@ export const useAresPersons = () => {
       
       if (!persons || persons.length === 0) {
         console.log('No persons found in response');
+        
+        // Determine company type for better messaging
+        const companyName = response.data.companyName || '';
+        let noPersonsMessage = 'Pre túto spoločnosť neboli v ARES nájdené žiadne osoby.';
+        
+        if (companyName.includes('s.r.o.')) {
+          noPersonsMessage = 'Pre túto s.r.o. neboli v ARES nájdení žiadni jednateľia alebo prokúristi. Môžete ich pridať manuálne.';
+        } else if (!companyName.includes('s.r.o.') && persons?.length === 0) {
+          noPersonsMessage = 'Pre túto živnosť neboli v ARES nájdené osobné údaje podnikateľa. Môžete ich pridať manuálne.';
+        }
+        
         toast({
           title: 'Informácia',
-          description: 'Pre túto spoločnosť neboli v ARES nájdené žiadne osoby',
+          description: noPersonsMessage,
           variant: 'default'
         });
         return;
@@ -94,17 +118,28 @@ export const useAresPersons = () => {
       
       onSuccess(authorizedPersons);
 
+      // Enhanced success message with person count and type
+      const personTypes = persons.map(p => p.position).join(', ');
       toast({
         title: 'Úspech',
-        description: `Načítané ${persons.length} osôb z ARES. Skontrolujte a doplňte chýbajúce údaje.`,
+        description: `Načítané ${persons.length} osôb z ARES: ${personTypes}. Skontrolujte a doplňte chýbajúce údaje.`,
         variant: 'default'
       });
 
     } catch (error) {
       console.error('Error fetching ARES persons:', error);
+      
+      let errorMessage = 'Nastala neočakávaná chyba pri načítavaní osôb z ARES';
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorMessage = 'Problém s pripojením k službe ARES. Skontrolujte internetové pripojenie.';
+      } else if (error instanceof Error) {
+        errorMessage = `Chyba: ${error.message}`;
+      }
+      
       toast({
         title: 'Chyba',
-        description: 'Nastala neočakávaná chyba pri načítavaní osôb z ARES',
+        description: errorMessage,
         variant: 'destructive'
       });
     } finally {

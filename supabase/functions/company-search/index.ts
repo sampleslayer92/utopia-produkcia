@@ -195,9 +195,15 @@ async function fetchCompanyPersons(ico: string): Promise<{ success: boolean; dat
     console.log('=== ARES DETAILED RESPONSE ===');
     console.log('Response keys:', Object.keys(data));
     console.log('Company name:', data.obchodniJmeno);
+    console.log('Legal form:', data.pravniForma);
+    
+    // Detect subject type
+    const subjectType = detectSubjectType(data);
+    console.log('Detected subject type:', subjectType);
+    
     console.log('Full response structure:', JSON.stringify(data, null, 2));
 
-    const persons = parseAresPersons(data);
+    const persons = parseAresPersons(data, subjectType);
     
     const result: CompanyPersonsResult = {
       companyName: data.obchodniJmeno || '',
@@ -207,6 +213,7 @@ async function fetchCompanyPersons(ico: string): Promise<{ success: boolean; dat
 
     console.log('=== FINAL RESULT ===');
     console.log('Parsed persons count:', persons.length);
+    console.log('Subject type:', subjectType);
     console.log('Final result:', JSON.stringify(result, null, 2));
     
     return { success: true, data: result };
@@ -217,14 +224,48 @@ async function fetchCompanyPersons(ico: string): Promise<{ success: boolean; dat
   }
 }
 
-function parseAresPersons(data: any): AresPersonInfo[] {
+function detectSubjectType(data: any): 'sro' | 'zivnost' | 'other' {
+  const pravniForma = data.pravniForma || '';
+  const obchodniJmeno = data.obchodniJmeno || '';
+  
+  console.log('=== SUBJECT TYPE DETECTION ===');
+  console.log('Legal form:', pravniForma);
+  console.log('Business name:', obchodniJmeno);
+  
+  // Check for s.r.o. (limited liability company)
+  if (pravniForma.includes('společnost s ručením omezeným') || 
+      obchodniJmeno.includes('s.r.o.') || 
+      obchodniJmeno.includes('s. r. o.') ||
+      pravniForma.includes('112')) {
+    return 'sro';
+  }
+  
+  // Check for sole proprietorship (živnost)
+  if (pravniForma.includes('fyzická osoba podnikající') ||
+      pravniForma.includes('fyzická osoba') ||
+      pravniForma.includes('101') ||
+      data.ico?.length === 8 && !obchodniJmeno.includes('s.r.o.')) {
+    return 'zivnost';
+  }
+  
+  return 'other';
+}
+
+function parseAresPersons(data: any, subjectType: 'sro' | 'zivnost' | 'other' = 'other'): AresPersonInfo[] {
   try {
     console.log('=== PARSING ARES PERSONS ===');
     console.log('Input data keys:', Object.keys(data || {}));
+    console.log('Subject type:', subjectType);
     
     const persons: AresPersonInfo[] = [];
 
-    // Check multiple possible locations for person data in ARES response
+    // Different parsing strategies based on subject type
+    if (subjectType === 'zivnost') {
+      // For sole proprietorships, add the owner as a person
+      return parseZivnostPersons(data);
+    }
+
+    // Check multiple possible locations for person data in ARES response (for s.r.o. and others)
     const possiblePersonsPaths = [
       { path: data.statutarniOrgan?.clenove, name: 'data.statutarniOrgan.clenove' },
       { path: data.statutarniOrgan?.funkce, name: 'data.statutarniOrgan.funkce' },
@@ -233,7 +274,8 @@ function parseAresPersons(data: any): AresPersonInfo[] {
       { path: data.clenoveStatutarnihoOrganu, name: 'data.clenoveStatutarnihoOrganu' },
       { path: data.funkce, name: 'data.funkce' },
       { path: data.organy, name: 'data.organy' },
-      { path: data.osoby, name: 'data.osoby' }
+      { path: data.osoby, name: 'data.osoby' },
+      { path: data.statutarniOrgan, name: 'data.statutarniOrgan' }
     ];
 
     console.log(`Checking ${possiblePersonsPaths.length} possible paths for persons...`);
@@ -339,6 +381,64 @@ function parseAresPersons(data: any): AresPersonInfo[] {
     console.error('Error stack:', error.stack);
     return [];
   }
+}
+
+function parseZivnostPersons(data: any): AresPersonInfo[] {
+  console.log('=== PARSING ŽIVNOST PERSONS ===');
+  
+  const persons: AresPersonInfo[] = [];
+  
+  try {
+    // For sole proprietorships, the main person is usually in the basic company data
+    const obchodniJmeno = data.obchodniJmeno || '';
+    
+    // Extract owner name from company name (common pattern: "Meno Priezvisko - názov živnosti")
+    let jmeno = '';
+    let prijmeni = '';
+    
+    // Try to extract from company name
+    if (obchodniJmeno.includes(' - ')) {
+      const namePart = obchodniJmeno.split(' - ')[0].trim();
+      const nameParts = namePart.split(/\s+/);
+      if (nameParts.length >= 2) {
+        jmeno = nameParts[0];
+        prijmeni = nameParts.slice(1).join(' ');
+      }
+    } else {
+      // Try other patterns or look in other fields
+      const nameParts = obchodniJmeno.split(/\s+/);
+      if (nameParts.length >= 2 && !obchodniJmeno.includes('s.r.o.')) {
+        jmeno = nameParts[0];
+        prijmeni = nameParts.slice(1).join(' ');
+      }
+    }
+    
+    // Also check if there's person data in other fields
+    const adresa = data.adresaSidla || data.sidlo || {};
+    
+    if (jmeno && prijmeni) {
+      const personInfo: AresPersonInfo = {
+        firstName: jmeno,
+        lastName: prijmeni,
+        position: 'Podnikateľ',
+        birthDate: undefined,
+        citizenship: 'SK',
+        functionStart: data.datumVzniku || undefined,
+        functionEnd: undefined
+      };
+      
+      persons.push(personInfo);
+      console.log(`✅ Added sole proprietor: ${jmeno} ${prijmeni}`);
+    } else {
+      console.log('❌ Could not extract proprietor name from company data');
+      console.log('Company name:', obchodniJmeno);
+    }
+    
+  } catch (error) {
+    console.error('Error parsing sole proprietorship persons:', error);
+  }
+  
+  return persons;
 }
 
 function parseAresJsonResponse(data: any): CompanyRecognitionResult[] {
