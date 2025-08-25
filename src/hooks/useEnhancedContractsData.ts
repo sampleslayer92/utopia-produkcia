@@ -50,6 +50,17 @@ interface ContractFilters {
   salesPerson?: string;
 }
 
+// Define valid enum values for type safety
+const VALID_STATUSES = [
+  'draft', 'submitted', 'approved', 'rejected', 'in_progress', 
+  'sent_to_client', 'email_viewed', 'step_completed', 'contract_generated', 
+  'signed', 'waiting_for_signature', 'lost', 'pending_approval', 'request_draft'
+] as const;
+
+const VALID_SOURCES = [
+  'email', 'other', 'telesales', 'facebook', 'web', 'referral'
+] as const;
+
 export const useEnhancedContractsData = (filters?: ContractFilters) => {
   return useQuery({
     queryKey: ['enhanced-contracts', filters],
@@ -85,12 +96,18 @@ export const useEnhancedContractsData = (filters?: ContractFilters) => {
           )
         `);
 
-      // Apply filters with proper type casting
+      // Apply filters with proper type casting and validation
       if (filters?.status && filters.status !== 'all') {
-        query = query.eq('status', filters.status);
+        // Only apply filter if it's a valid status
+        if (VALID_STATUSES.includes(filters.status as any)) {
+          query = query.eq('status', filters.status);
+        }
       }
       if (filters?.source && filters.source !== 'all') {
-        query = query.eq('source', filters.source);
+        // Only apply filter if it's a valid source
+        if (VALID_SOURCES.includes(filters.source as any)) {
+          query = query.eq('source', filters.source);
+        }
       }
       if (filters?.search) {
         query = query.or(`contract_number.ilike.%${filters.search}%`);
