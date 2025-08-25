@@ -85,11 +85,11 @@ export const useEnhancedContractsData = (filters?: ContractFilters) => {
           )
         `);
 
-      // Apply filters
-      if (filters?.status) {
+      // Apply filters with proper type casting
+      if (filters?.status && filters.status !== 'all') {
         query = query.eq('status', filters.status);
       }
-      if (filters?.source) {
+      if (filters?.source && filters.source !== 'all') {
         query = query.eq('source', filters.source);
       }
       if (filters?.search) {
@@ -165,6 +165,52 @@ export const useEnhancedContractsData = (filters?: ContractFilters) => {
 
       console.log('Enhanced contracts data fetched and transformed:', transformedData);
       return transformedData;
+    },
+  });
+};
+
+// Add the missing option hooks
+export const useContractTypeOptions = () => {
+  return useQuery({
+    queryKey: ['contract-type-options'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('contracts')
+        .select('id')
+        .limit(1);
+      
+      // Return static options since we derive contract types
+      return ['Standard', 'Premium', 'Enterprise'];
+    },
+  });
+};
+
+export const useSalesPersonOptions = () => {
+  return useQuery({
+    queryKey: ['sales-person-options'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('first_name, last_name')
+        .not('first_name', 'is', null)
+        .not('last_name', 'is', null);
+      
+      return data?.map(profile => `${profile.first_name} ${profile.last_name}`) || [];
+    },
+  });
+};
+
+export const useContractSourceOptions = () => {
+  return useQuery({
+    queryKey: ['contract-source-options'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('contracts')
+        .select('source')
+        .not('source', 'is', null);
+      
+      const uniqueSources = [...new Set(data?.map(item => item.source).filter(Boolean))];
+      return uniqueSources;
     },
   });
 };

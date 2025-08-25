@@ -1,48 +1,50 @@
 
-import { useState } from "react";
+import { useState } from 'react';
+import { EnhancedContractData } from './useEnhancedContractsData';
+
+interface InlineFilters {
+  dateRange: {
+    from?: string;
+    to?: string;
+  };
+  contractNumber: string;
+  client: string;
+  source: string;
+  contractType: string;
+  status: string;
+  salesPerson: string;
+}
 
 export const useEnhancedAdminTableState = () => {
   const [selectedContracts, setSelectedContracts] = useState<string[]>([]);
-  const [filters, setFilters] = useState({
-    status: 'all',
-    contractType: 'all',
-    source: 'all',
-    salesPerson: 'all',
-    dateFrom: '',
-    dateTo: '',
-    search: ''
-  });
-
-  // Inline table filters
-  const [inlineFilters, setInlineFilters] = useState({
+  const [filters, setFilters] = useState<any>({});
+  const [inlineFilters, setInlineFilters] = useState<InlineFilters>({
+    dateRange: {},
     contractNumber: '',
     client: '',
-    source: '',
-    contractType: '',
-    status: '',
-    salesPerson: '',
-    dateRange: { from: '', to: '' }
+    source: 'all',
+    contractType: 'all',
+    status: 'all',
+    salesPerson: 'all',
   });
 
-  const handleInlineFiltersChange = (newInlineFilters: any) => {
-    console.log('Inline filters changed:', newInlineFilters);
-    setInlineFilters(newInlineFilters);
+  const handleInlineFiltersChange = (newFilters: Partial<InlineFilters>) => {
+    setInlineFilters(prev => ({ ...prev, ...newFilters }));
   };
 
   const handleSelectContract = (contractId: string) => {
     setSelectedContracts(prev => 
-      prev.includes(contractId) 
+      prev.includes(contractId)
         ? prev.filter(id => id !== contractId)
         : [...prev, contractId]
     );
   };
 
-  const handleSelectAll = (filteredContracts: any[]) => {
-    if (selectedContracts.length === filteredContracts?.length) {
-      setSelectedContracts([]);
-    } else {
-      setSelectedContracts(filteredContracts?.map(c => c.id) || []);
-    }
+  const handleSelectAll = (contracts: EnhancedContractData[]) => {
+    const allIds = contracts.map(c => c.id);
+    setSelectedContracts(
+      selectedContracts.length === allIds.length ? [] : allIds
+    );
   };
 
   const clearSelection = () => {
@@ -53,10 +55,10 @@ export const useEnhancedAdminTableState = () => {
     selectedContracts,
     filters,
     inlineFilters,
-    setFilters,
     handleInlineFiltersChange,
     handleSelectContract,
     handleSelectAll,
-    clearSelection
+    clearSelection,
+    setFilters,
   };
 };
