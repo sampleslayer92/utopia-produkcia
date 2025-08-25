@@ -18,11 +18,11 @@ interface ContractRequest {
     first_name: string;
     last_name: string;
     email: string;
-  };
+  } | null;
   company_info: {
     company_name: string;
     ico: string;
-  };
+  } | null;
   documents_generated_at?: string;
   documents_signed_at?: string;
 }
@@ -36,6 +36,7 @@ const RequestsManagement = () => {
   const { data: requests, isLoading } = useQuery({
     queryKey: ['contract-requests'],
     queryFn: async () => {
+      console.log('Fetching contract requests...');
       const { data, error } = await supabase
         .from('contracts')
         .select(`
@@ -48,15 +49,52 @@ const RequestsManagement = () => {
           contact_info(first_name, last_name, email),
           company_info(company_name, ico)
         `)
-        .in('status', ['submitted', 'waiting_for_signature', 'signed'])
+        .in('status', ['submitted', 'waiting_for_signature', 'signed', 'pending_approval'])
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return data?.map(item => ({
-        ...item,
-        contact_info: Array.isArray(item.contact_info) ? item.contact_info[0] : item.contact_info,
-        company_info: Array.isArray(item.company_info) ? item.company_info[0] : item.company_info
-      })) as ContractRequest[];
+      if (error) {
+        console.error('Error fetching contract requests:', error);
+        throw error;
+      }
+
+      console.log('Raw contract requests data:', data);
+
+      // Properly transform the data to handle nested arrays from Supabase
+      const transformedData = data?.map(item => {
+        console.log('Transforming item:', item);
+        
+        // Handle contact_info - it might be an array, object, or null
+        let contactInfo = null;
+        if (item.contact_info) {
+          if (Array.isArray(item.contact_info)) {
+            contactInfo = item.contact_info.length > 0 ? item.contact_info[0] : null;
+          } else {
+            contactInfo = item.contact_info;
+          }
+        }
+
+        // Handle company_info - it might be an array, object, or null
+        let companyInfo = null;
+        if (item.company_info) {
+          if (Array.isArray(item.company_info)) {
+            companyInfo = item.company_info.length > 0 ? item.company_info[0] : null;
+          } else {
+            companyInfo = item.company_info;
+          }
+        }
+
+        console.log('Transformed contact_info:', contactInfo);
+        console.log('Transformed company_info:', companyInfo);
+
+        return {
+          ...item,
+          contact_info: contactInfo,
+          company_info: companyInfo
+        };
+      }) as ContractRequest[];
+
+      console.log('Final transformed requests:', transformedData);
+      return transformedData;
     }
   });
 
@@ -117,6 +155,7 @@ const RequestsManagement = () => {
       case 'signed': return 'bg-green-100 text-green-800';
       case 'approved': return 'bg-emerald-100 text-emerald-800';
       case 'rejected': return 'bg-red-100 text-red-800';
+      case 'pending_approval': return 'bg-amber-100 text-amber-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -128,6 +167,7 @@ const RequestsManagement = () => {
       case 'signed': return 'Podpísané';
       case 'approved': return 'Schválené';
       case 'rejected': return 'Zamietnuté';
+      case 'pending_approval': return 'Čaká na schválenie';
       default: return status;
     }
   };
@@ -178,22 +218,30 @@ const RequestsManagement = () => {
                         </div>
                         
                         <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-                          <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            <span>
-                              {request.contact_info.first_name} {request.contact_info.last_name}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4 text-muted-foreground" />
-                            <span>{request.company_info.company_name}</span>
-                          </div>
-                          <div className="text-muted-foreground">
-                            <span className="font-medium">Email:</span> {request.contact_info.email}
-                          </div>
-                          <div className="text-muted-foreground">
-                            <span className="font-medium">IČO:</span> {request.company_info.ico}
-                          </div>
+                          {request.contact_info && (
+                            <div className="flex items-center gap-2">
+                              <User className="h-4 w-4 text-muted-foreground" />
+                              <span>
+                                {request.contact_info.first_name} {request.contact_info.last_name}
+                              </span>
+                            </div>
+                          )}
+                          {request.company_info && (
+                            <div className="flex items-center gap-2">
+                              <Building2 className="h-4 w-4 text-muted-foreground" />
+                              <span>{request.company_info.company_name}</span>
+                            </div>
+                          )}
+                          {request.contact_info?.email && (
+                            <div className="text-muted-foreground">
+                              <span className="font-medium">Email:</span> {request.contact_info.email}
+                            </div>
+                          )}
+                          {request.company_info?.ico && (
+                            <div className="text-muted-foreground">
+                              <span className="font-medium">IČO:</span> {request.company_info.ico}
+                            </div>
+                          )}
                         </div>
 
                         <div className="text-sm text-muted-foreground mb-4">
@@ -224,15 +272,27 @@ const RequestsManagement = () => {
                                     <div>
                                       <h4 className="font-semibold mb-2">Kontaktné údaje</h4>
                                       <div className="space-y-1 text-sm">
-                                        <p><span className="font-medium">Meno:</span> {selectedRequest.contact_info.first_name} {selectedRequest.contact_info.last_name}</p>
-                                        <p><span className="font-medium">Email:</span> {selectedRequest.contact_info.email}</p>
+                                        {selectedRequest.contact_info ? (
+                                          <>
+                                            <p><span className="font-medium">Meno:</span> {selectedRequest.contact_info.first_name} {selectedRequest.contact_info.last_name}</p>
+                                            <p><span className="font-medium">Email:</span> {selectedRequest.contact_info.email}</p>
+                                          </>
+                                        ) : (
+                                          <p className="text-muted-foreground">Kontaktné údaje nie sú dostupné</p>
+                                        )}
                                       </div>
                                     </div>
                                     <div>
                                       <h4 className="font-semibold mb-2">Firemné údaje</h4>
                                       <div className="space-y-1 text-sm">
-                                        <p><span className="font-medium">Názov:</span> {selectedRequest.company_info.company_name}</p>
-                                        <p><span className="font-medium">IČO:</span> {selectedRequest.company_info.ico}</p>
+                                        {selectedRequest.company_info ? (
+                                          <>
+                                            <p><span className="font-medium">Názov:</span> {selectedRequest.company_info.company_name}</p>
+                                            <p><span className="font-medium">IČO:</span> {selectedRequest.company_info.ico}</p>
+                                          </>
+                                        ) : (
+                                          <p className="text-muted-foreground">Firemné údaje nie sú dostupné</p>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
@@ -261,7 +321,7 @@ const RequestsManagement = () => {
                             </DialogContent>
                           </Dialog>
 
-                          {request.status === 'signed' && (
+                          {(request.status === 'signed' || request.status === 'pending_approval') && (
                             <>
                               <Button
                                 size="sm"
