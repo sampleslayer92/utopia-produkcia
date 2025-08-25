@@ -99,7 +99,7 @@ const EnhancedAdminTable = () => {
         <CardHeader>
           <CardTitle className="text-slate-900">{t('table.title')}</CardTitle>
           <CardDescription className="text-slate-600">
-            Načítavam zmluvy...
+            {t('status.loading')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -117,7 +117,7 @@ const EnhancedAdminTable = () => {
         <CardHeader>
           <CardTitle className="text-slate-900">{t('table.title')}</CardTitle>
           <CardDescription className="text-red-600">
-            Chyba pri načítavaní zmlúv: {error.message}
+            {t('status.error')}
           </CardDescription>
         </CardHeader>
       </Card>

@@ -6,19 +6,21 @@ import { useContractData } from "@/hooks/useContractData";
 import { useDisplayValue } from "@/utils/displayUtils";
 import { User, Building } from "lucide-react";
 import ContractHeader from "./contract-view/ContractHeader";
+import { useTranslation } from 'react-i18next';
 
 const ContractViewPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const contractDataResult = useContractData(id!);
   const displayValue = useDisplayValue();
+  const { t } = useTranslation('common');
 
   if (contractDataResult.isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="flex items-center space-x-2">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600"></div>
-          <span>Načítavam zmluvu...</span>
+          <span>{t('status.loading')}</span>
         </div>
       </div>
     );
@@ -153,7 +155,7 @@ const ContractViewPage = () => {
                 </div>
               ) : (
                 <p className="text-slate-600 text-center py-4">
-                  Žiadne zariadenia neboli vybrané
+                  {t('status.none')}
                 </p>
               )}
             </CardContent>

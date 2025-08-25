@@ -14,6 +14,7 @@ import { onboardingSteps } from "@/components/onboarding/config/onboardingSteps"
 import { OnboardingData } from "@/types/onboarding";
 import { Database } from "@/integrations/supabase/types";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from 'react-i18next';
 
 type ContractStatus = Database['public']['Enums']['contract_status'];
 
@@ -21,6 +22,7 @@ const ContractEditPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation('common');
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState<ContractStatus>("draft");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -114,7 +116,7 @@ const ContractEditPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Načítavam zmluvu...</span>
+          <span>{t('status.loading')}</span>
         </div>
       </div>
     );
@@ -196,7 +198,7 @@ const ContractEditPage = () => {
                 {updateContract.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Ukladám...
+                    {t('status.saving')}
                   </>
                 ) : (
                   <>

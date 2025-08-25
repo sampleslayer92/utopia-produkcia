@@ -28,6 +28,7 @@ import {
 import { Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ConfirmDeleteModal from '@/components/admin/contract-detail/ConfirmDeleteModal';
+import { useTranslation } from 'react-i18next';
 
 interface CategoryEditorProps {
   category: Category | null;
@@ -40,6 +41,7 @@ export const CategoryEditor = ({ category, isOpen, onClose }: CategoryEditorProp
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
   const { toast } = useToast();
+  const { t } = useTranslation('common');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -258,7 +260,7 @@ export const CategoryEditor = ({ category, isOpen, onClose }: CategoryEditorProp
                   Zrušiť
                 </Button>
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading ? 'Ukladám...' : (category ? 'Uložiť' : 'Vytvoriť')}
+                  {isLoading ? t('status.saving') : (category ? 'Uložiť' : 'Vytvoriť')}
                 </Button>
               </div>
             </DialogFooter>

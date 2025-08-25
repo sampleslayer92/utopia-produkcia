@@ -37,7 +37,14 @@
     "completed": "Completed",
     "inProgress": "In Progress",
     "next": "Next",
-    "partiallyComplete": "Partially Complete"
+    "partiallyComplete": "Partially Complete",
+    "active": "Active",
+    "inactive": "Inactive",
+    "none": "None",
+    "unknown": "Unknown",
+    "notSpecified": "Not specified",
+    "noResults": "No results",
+    "noData": "No data"
   },
   "validation": {
     "required": "This field is required",

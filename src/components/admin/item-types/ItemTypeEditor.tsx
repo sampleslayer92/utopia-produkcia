@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { ItemType, useCreateItemType, useUpdateItemType } from '@/hooks/useItemTypes';
+import { useTranslation } from 'react-i18next';
 
 interface ItemTypeEditorProps {
   itemType: ItemType | null;
@@ -22,6 +23,7 @@ interface ItemTypeEditorProps {
 export const ItemTypeEditor = ({ itemType, isOpen, onClose }: ItemTypeEditorProps) => {
   const createItemType = useCreateItemType();
   const updateItemType = useUpdateItemType();
+  const { t } = useTranslation('common');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -182,7 +184,7 @@ export const ItemTypeEditor = ({ itemType, isOpen, onClose }: ItemTypeEditorProp
               Zrušiť
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Ukladám...' : (itemType ? 'Uložiť' : 'Vytvoriť')}
+              {isLoading ? t('status.saving') : (itemType ? 'Uložiť' : 'Vytvoriť')}
             </Button>
           </DialogFooter>
         </form>

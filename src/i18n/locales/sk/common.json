@@ -39,7 +39,12 @@
     "next": "Nasledujúci",
     "partiallyComplete": "Čiastočne vyplnené",
     "active": "Aktívny",
-    "inactive": "Neaktívny"
+    "inactive": "Neaktívny",
+    "none": "Žiadne",
+    "unknown": "Neznámy",
+    "notSpecified": "Nezadané",
+    "noResults": "Žiadne výsledky",
+    "noData": "Žiadne údaje"
   },
   "validation": {
     "required": "Toto pole je povinné",

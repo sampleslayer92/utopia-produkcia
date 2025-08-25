@@ -394,6 +394,27 @@
           "contract": "Contract"
     }
   },
+  "requests": {
+    "title": "Requests",
+    "subtitle": "Management of requests that are not yet signed",
+    "stats": {
+      "pendingRequests": "Pending Requests",
+      "awaitingReview": "Awaiting Review",
+      "inProgress": "In Progress",
+      "beingProcessed": "Being Processed",
+      "waitingForSignature": "Waiting for Signature",
+      "readyToSign": "Ready to Sign",
+      "totalValue": "Total Value",
+      "estimatedValue": "Estimated Value"
+    },
+    "actions": {
+      "newRequest": "New Request",
+      "export": "Export"
+    },
+    "filters": {
+      "title": "Request Filters"
+    }
+  },
   "warehouse": {
     "subtitle": "Manage devices and services inventory",
     "totalItems": "Total Items",

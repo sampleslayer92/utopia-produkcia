@@ -17,6 +17,7 @@ import { useBusinessLocationDetail } from "@/hooks/useBusinessLocationDetail";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from 'react-i18next';
 
 interface BusinessLocationDetailProps {
   locationId: string;
@@ -25,6 +26,7 @@ interface BusinessLocationDetailProps {
 const BusinessLocationDetail = ({ locationId }: BusinessLocationDetailProps) => {
   const { data: location, isLoading, error } = useBusinessLocationDetail(locationId);
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
 
   if (isLoading) {
     return (
@@ -44,7 +46,7 @@ const BusinessLocationDetail = ({ locationId }: BusinessLocationDetailProps) => 
     return (
       <Card className="border-slate-200/60 bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-red-600">Chyba</CardTitle>
+          <CardTitle className="text-red-600">{t('status.error')}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-slate-600">
