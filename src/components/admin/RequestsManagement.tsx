@@ -114,12 +114,12 @@ const RequestsManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contract-requests'] });
-      toast.success('Žiadosť bola schválená');
+      toast.success(t('requests.toast.requestApproved'));
       setSelectedRequest(null);
     },
     onError: (error) => {
       console.error('Error approving request:', error);
-      toast.error('Chyba pri schvaľovaní žiadosti');
+      toast.error(t('requests.toast.errorApproving'));
     }
   });
 
@@ -139,12 +139,12 @@ const RequestsManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contract-requests'] });
-      toast.success('Žiadosť bola zamietnutá');
+      toast.success(t('requests.toast.requestRejected'));
       setSelectedRequest(null);
     },
     onError: (error) => {
       console.error('Error rejecting request:', error);
-      toast.error('Chyba pri zamietaní žiadosti');
+      toast.error(t('requests.toast.errorRejecting'));
     }
   });
 
@@ -161,15 +161,7 @@ const RequestsManagement = () => {
   };
 
   const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'submitted': return 'Odoslané';
-      case 'waiting_for_signature': return 'Čaká na podpis';
-      case 'signed': return 'Podpísané';
-      case 'approved': return 'Schválené';
-      case 'rejected': return 'Zamietnuté';
-      case 'pending_approval': return 'Čaká na schválenie';
-      default: return status;
-    }
+    return t(`requests.status.${status}`, status);
   };
 
   if (isLoading) {
@@ -190,7 +182,7 @@ const RequestsManagement = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Správa žiadostí
+            {t('requests.management.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -198,7 +190,7 @@ const RequestsManagement = () => {
             <div className="text-center py-8">
               <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <p className="text-muted-foreground">
-                Žiadne žiadosti na spracovanie
+                {t('requests.management.noRequests')}
               </p>
             </div>
           ) : (
@@ -245,7 +237,7 @@ const RequestsManagement = () => {
                         </div>
 
                         <div className="text-sm text-muted-foreground mb-4">
-                          <span className="font-medium">Vytvorené:</span>{' '}
+                          <span className="font-medium">{t('requests.management.created')}:</span>{' '}
                           {new Date(request.created_at).toLocaleString('sk-SK')}
                         </div>
 
@@ -257,41 +249,41 @@ const RequestsManagement = () => {
                                 size="sm"
                                 onClick={() => setSelectedRequest(request)}
                               >
-                                Zobraziť detail
+                                {t('requests.management.viewDetail')}
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-2xl">
                               <DialogHeader>
                                 <DialogTitle>
-                                  Detail žiadosti {selectedRequest?.contract_number}
+                                  {t('requests.management.requestDetail')} {selectedRequest?.contract_number}
                                 </DialogTitle>
                               </DialogHeader>
                               {selectedRequest && (
                                 <div className="space-y-6">
                                   <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                      <h4 className="font-semibold mb-2">Kontaktné údaje</h4>
+                                      <h4 className="font-semibold mb-2">{t('requests.management.contactInfo')}</h4>
                                       <div className="space-y-1 text-sm">
                                         {selectedRequest.contact_info ? (
                                           <>
-                                            <p><span className="font-medium">Meno:</span> {selectedRequest.contact_info.first_name} {selectedRequest.contact_info.last_name}</p>
-                                            <p><span className="font-medium">Email:</span> {selectedRequest.contact_info.email}</p>
+                                            <p><span className="font-medium">{t('requests.management.name')}:</span> {selectedRequest.contact_info.first_name} {selectedRequest.contact_info.last_name}</p>
+                                            <p><span className="font-medium">{t('requests.management.email')}:</span> {selectedRequest.contact_info.email}</p>
                                           </>
                                         ) : (
-                                          <p className="text-muted-foreground">Kontaktné údaje nie sú dostupné</p>
+                                          <p className="text-muted-foreground">{t('requests.management.contactUnavailable')}</p>
                                         )}
                                       </div>
                                     </div>
                                     <div>
-                                      <h4 className="font-semibold mb-2">Firemné údaje</h4>
+                                      <h4 className="font-semibold mb-2">{t('requests.management.companyInfo')}</h4>
                                       <div className="space-y-1 text-sm">
                                         {selectedRequest.company_info ? (
                                           <>
-                                            <p><span className="font-medium">Názov:</span> {selectedRequest.company_info.company_name}</p>
-                                            <p><span className="font-medium">IČO:</span> {selectedRequest.company_info.ico}</p>
+                                            <p><span className="font-medium">{t('requests.management.companyName')}:</span> {selectedRequest.company_info.company_name}</p>
+                                            <p><span className="font-medium">{t('requests.management.ico')}:</span> {selectedRequest.company_info.ico}</p>
                                           </>
                                         ) : (
-                                          <p className="text-muted-foreground">Firemné údaje nie sú dostupné</p>
+                                          <p className="text-muted-foreground">{t('requests.management.companyUnavailable')}</p>
                                         )}
                                       </div>
                                     </div>
@@ -303,18 +295,18 @@ const RequestsManagement = () => {
                                       onClick={() => rejectMutation.mutate(selectedRequest.id)}
                                       disabled={rejectMutation.isPending}
                                       className="text-red-600 hover:text-red-700"
-                                    >
-                                      <XCircle className="h-4 w-4 mr-2" />
-                                      Zamietnuť
-                                    </Button>
+                                      >
+                                        <XCircle className="h-4 w-4 mr-2" />
+                                        {t('requests.management.reject')}
+                                      </Button>
                                     <Button
                                       onClick={() => approveMutation.mutate(selectedRequest.id)}
                                       disabled={approveMutation.isPending}
                                       className="bg-green-600 hover:bg-green-700"
-                                    >
-                                      <CheckCircle className="h-4 w-4 mr-2" />
-                                      Schváliť
-                                    </Button>
+                                      >
+                                        <CheckCircle className="h-4 w-4 mr-2" />
+                                        {t('requests.management.approve')}
+                                      </Button>
                                   </div>
                                 </div>
                               )}
@@ -328,20 +320,20 @@ const RequestsManagement = () => {
                                 onClick={() => approveMutation.mutate(request.id)}
                                 disabled={approveMutation.isPending}
                                 className="bg-green-600 hover:bg-green-700"
-                              >
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Schváliť
-                              </Button>
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-2" />
+                                  {t('requests.management.approve')}
+                                </Button>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => rejectMutation.mutate(request.id)}
                                 disabled={rejectMutation.isPending}
                                 className="text-red-600 hover:text-red-700"
-                              >
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Zamietnuť
-                              </Button>
+                                >
+                                  <XCircle className="h-4 w-4 mr-2" />
+                                  {t('requests.management.reject')}
+                                </Button>
                             </>
                           )}
                         </div>

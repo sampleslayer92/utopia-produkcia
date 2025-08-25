@@ -413,6 +413,37 @@
     },
     "filters": {
       "title": "Request Filters"
+    },
+    "management": {
+      "title": "Request Management",
+      "noRequests": "No requests to process",
+      "viewDetail": "View Detail",
+      "requestDetail": "Request Detail",
+      "contactInfo": "Contact Information",
+      "companyInfo": "Company Information",
+      "contactUnavailable": "Contact information is not available",
+      "companyUnavailable": "Company information is not available",
+      "created": "Created",
+      "approve": "Approve",
+      "reject": "Reject",
+      "name": "Name",
+      "email": "Email",
+      "companyName": "Company Name",
+      "ico": "Company ID"
+    },
+    "status": {
+      "submitted": "Submitted",
+      "waiting_for_signature": "Waiting for signature",
+      "signed": "Signed",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending_approval": "Pending approval"
+    },
+    "toast": {
+      "requestApproved": "Request has been approved",
+      "requestRejected": "Request has been rejected",
+      "errorApproving": "Error approving request",
+      "errorRejecting": "Error rejecting request"
     }
   },
   "warehouse": {

@@ -329,6 +329,37 @@
     },
     "filters": {
       "title": "Filtre žiadostí"
+    },
+    "management": {
+      "title": "Správa žiadostí",
+      "noRequests": "Žiadne žiadosti na spracovanie",
+      "viewDetail": "Zobraziť detail",
+      "requestDetail": "Detail žiadosti",
+      "contactInfo": "Kontaktné údaje",
+      "companyInfo": "Firemné údaje",
+      "contactUnavailable": "Kontaktné údaje nie sú dostupné",
+      "companyUnavailable": "Firemné údaje nie sú dostupné",
+      "created": "Vytvorené",
+      "approve": "Schváliť",
+      "reject": "Zamietnuť",
+      "name": "Meno",
+      "email": "Email",
+      "companyName": "Názov",
+      "ico": "IČO"
+    },
+    "status": {
+      "submitted": "Odoslané",
+      "waiting_for_signature": "Čaká na podpis",
+      "signed": "Podpísané",
+      "approved": "Schválené",
+      "rejected": "Zamietnuté",
+      "pending_approval": "Čaká na schválenie"
+    },
+    "toast": {
+      "requestApproved": "Žiadosť bola schválená",
+      "requestRejected": "Žiadosť bola zamietnutá",
+      "errorApproving": "Chyba pri schvaľovaní žiadosti",
+      "errorRejecting": "Chyba pri zamietaní žiadosti"
     }
   },
   "merchants": {
