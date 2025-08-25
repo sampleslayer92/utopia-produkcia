@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -61,6 +60,9 @@ const VALID_SOURCES = [
   'email', 'other', 'telesales', 'facebook', 'web', 'referral'
 ] as const;
 
+type ValidStatus = typeof VALID_STATUSES[number];
+type ValidSource = typeof VALID_SOURCES[number];
+
 export const useEnhancedContractsData = (filters?: ContractFilters) => {
   return useQuery({
     queryKey: ['enhanced-contracts', filters],
@@ -99,14 +101,14 @@ export const useEnhancedContractsData = (filters?: ContractFilters) => {
       // Apply filters with proper type casting and validation
       if (filters?.status && filters.status !== 'all') {
         // Only apply filter if it's a valid status
-        if (VALID_STATUSES.includes(filters.status as any)) {
-          query = query.eq('status', filters.status);
+        if (VALID_STATUSES.includes(filters.status as ValidStatus)) {
+          query = query.eq('status', filters.status as ValidStatus);
         }
       }
       if (filters?.source && filters.source !== 'all') {
         // Only apply filter if it's a valid source
-        if (VALID_SOURCES.includes(filters.source as any)) {
-          query = query.eq('source', filters.source);
+        if (VALID_SOURCES.includes(filters.source as ValidSource)) {
+          query = query.eq('source', filters.source as ValidSource);
         }
       }
       if (filters?.search) {
