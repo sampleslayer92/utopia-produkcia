@@ -94,3 +94,61 @@ export const useContractsStats = () => {
     },
   });
 };
+
+export const useMerchantsStats = () => {
+  return useQuery({
+    queryKey: ['merchants-stats'],
+    queryFn: async () => {
+      console.log('Fetching merchants page statistics...');
+      
+      const [merchantsResponse, calculationsResponse, contractsResponse] = await Promise.all([
+        supabase.from('merchants').select('id, created_at'),
+        supabase.from('contract_calculations').select('total_monthly_profit'),
+        supabase.from('contracts').select('merchant_id, status')
+      ]);
+
+      if (merchantsResponse.error) throw merchantsResponse.error;
+      if (calculationsResponse.error) throw calculationsResponse.error;
+      if (contractsResponse.error) throw contractsResponse.error;
+
+      const merchants = merchantsResponse.data;
+      const calculations = calculationsResponse.data;
+      const contracts = contractsResponse.data;
+
+      const totalMerchants = merchants.length;
+      const totalValue = calculations.reduce((sum, calc) => sum + (calc.total_monthly_profit || 0), 0);
+      const activeMerchants = new Set(contracts.filter(c => c.status === 'signed').map(c => c.merchant_id)).size;
+
+      return {
+        totalMerchants,
+        activeMerchants,
+        totalValue
+      };
+    },
+  });
+};
+
+export const useBusinessLocationsStats = () => {
+  return useQuery({
+    queryKey: ['business-locations-stats'],
+    queryFn: async () => {
+      console.log('Fetching business locations statistics...');
+      
+      const { data: locations, error } = await supabase
+        .from('business_locations')
+        .select('id, monthly_turnover, created_at');
+
+      if (error) throw error;
+
+      const totalLocations = locations.length;
+      const totalTurnover = locations.reduce((sum, loc) => sum + (loc.monthly_turnover || 0), 0);
+      const averageTurnover = totalLocations > 0 ? totalTurnover / totalLocations : 0;
+
+      return {
+        totalLocations,
+        totalTurnover,
+        averageTurnover
+      };
+    },
+  });
+};

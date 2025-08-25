@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye, Users } from "lucide-react";
 import { useEnhancedContractsData } from "@/hooks/useEnhancedContractsData";
-import { useEnhancedAdminTableState } from "@/hooks/useEnhancedAdminTableState";
 import ContractTableContent from "./enhanced-contracts/ContractTableContent";
 import { useGenericBulkSelection } from "@/hooks/useGenericBulkSelection";
 
@@ -80,12 +79,12 @@ const EnhancedContractsTable = ({ filters }: EnhancedContractsTableProps) => {
   return (
     <div className="space-y-4">
       {/* Bulk actions bar */}
-      {bulkSelection.selectedItems.size > 0 && (
+      {bulkSelection.selectedItems.length > 0 && (
         <Card className="p-4 border-blue-200 bg-blue-50/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Badge variant="secondary">
-                {bulkSelection.selectedItems.size} {t('table.selectedContracts')}
+                {bulkSelection.selectedItems.length} {t('table.selectedContracts')}
               </Badge>
             </div>
             <div className="flex items-center space-x-2">

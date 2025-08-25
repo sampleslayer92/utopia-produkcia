@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 export interface BulkSelectionState<T extends { id: string }> {
-  selectedItems: Set<string>;
+  selectedItems: string[];
   isItemSelected: (id: string) => boolean;
   selectItem: (id: string) => void;
   selectAll: (items: T[]) => void;
@@ -13,33 +13,31 @@ export interface BulkSelectionState<T extends { id: string }> {
 export const useGenericBulkSelection = <T extends { id: string }>(
   items: T[] = []
 ): BulkSelectionState<T> => {
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-  const isItemSelected = (id: string) => selectedItems.has(id);
+  const isItemSelected = (id: string) => selectedItems.includes(id);
 
   const selectItem = (id: string) => {
-    const newSelected = new Set(selectedItems);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter(item => item !== id));
     } else {
-      newSelected.add(id);
+      setSelectedItems([...selectedItems, id]);
     }
-    setSelectedItems(newSelected);
   };
 
   const selectAll = (itemsToSelect: T[]) => {
-    if (selectedItems.size === itemsToSelect.length) {
-      setSelectedItems(new Set());
+    if (selectedItems.length === itemsToSelect.length) {
+      setSelectedItems([]);
     } else {
-      setSelectedItems(new Set(itemsToSelect.map(item => item.id)));
+      setSelectedItems(itemsToSelect.map(item => item.id));
     }
   };
 
   const clearSelection = () => {
-    setSelectedItems(new Set());
+    setSelectedItems([]);
   };
 
-  const isAllSelected = selectedItems.size === items.length && items.length > 0;
+  const isAllSelected = selectedItems.length === items.length && items.length > 0;
 
   return {
     selectedItems,
