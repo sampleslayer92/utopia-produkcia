@@ -37,7 +37,21 @@
     "notifications": "Notifikácie",
     "settings": "Nastavenia",
     "applicationSettings": "Nastavenia aplikácie",
-    "profileSettings": "Nastavenia profilu"
+    "profileSettings": "Nastavenia profilu",
+    "businessProcesses": "Obchodné Procesy",
+    "clientManagement": "Správa Klientov",
+    "productCatalog": "Produktový Katalóg",
+    "analyticsReporting": "Analýzy & Reporting",
+    "onboardingManagement": "Správa Onboardingu",
+    "systemManagement": "Správa Systému",
+    "personal": "Osobné",
+    "quickSale": "Rýchly predaj",
+    "stepConfiguration": "Konfigurácia krokov",
+    "formTemplates": "Šablóny formulárov",
+    "onboardingPreview": "Náhľad onboardingu",
+    "translations": "Preklady",
+    "contractTemplates": "Šablóny Zmlúv",
+    "applicationArchitecture": "Architektúra Aplikácie"
   },
   "settings": {
     "description": "Spravujte nastavenia aplikácie a vášho profilu"

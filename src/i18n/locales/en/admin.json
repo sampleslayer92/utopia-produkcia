@@ -27,7 +27,21 @@
     "notifications": "Notifications",
     "settings": "Settings",
     "applicationSettings": "Application Settings",
-    "profileSettings": "Profile Settings"
+    "profileSettings": "Profile Settings",
+    "businessProcesses": "Business Processes",
+    "clientManagement": "Client Management",
+    "productCatalog": "Product Catalog",
+    "analyticsReporting": "Analytics & Reporting",
+    "onboardingManagement": "Onboarding Management",
+    "systemManagement": "System Management",
+    "personal": "Personal",
+    "quickSale": "Quick Sale",
+    "stepConfiguration": "Step Configuration",
+    "formTemplates": "Form Templates",
+    "onboardingPreview": "Onboarding Preview",
+    "translations": "Translations",
+    "contractTemplates": "Contract Templates",
+    "applicationArchitecture": "Application Architecture"
   },
   "settings": {
     "description": "Manage application settings and your profile"

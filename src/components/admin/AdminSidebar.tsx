@@ -110,7 +110,7 @@ const AdminSidebar = () => {
     // 2. OBCHODNÉ PROCESY - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'business',
-      title: '💼 Obchodné Procesy',
+      title: '💼 ' + t('navigation.businessProcesses'),
       type: 'expandable' as const,
       expanded: isExpanded('business'),
       defaultRoute: '/admin/deals',
@@ -136,7 +136,7 @@ const AdminSidebar = () => {
     // 3. SPRÁVA KLIENTOV - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'clients',
-      title: '👥 Správa Klientov',
+      title: '👥 ' + t('navigation.clientManagement'),
       type: 'expandable' as const,
       expanded: isExpanded('clients'),
       defaultRoute: '/admin/merchants',
@@ -162,7 +162,7 @@ const AdminSidebar = () => {
     // 4. PRODUKTOVÝ KATALÓG - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'products',
-      title: '📦 Produktový Katalóg',
+      title: '📦 ' + t('navigation.productCatalog'),
       type: 'expandable' as const,
       expanded: isExpanded('products'),
       defaultRoute: '/admin/warehouse',
@@ -201,7 +201,7 @@ const AdminSidebar = () => {
         },
         // Sales subsection
         {
-          title: "💰 Rýchly predaj",
+          title: "💰 " + t('navigation.quickSale'),
           path: "/admin/warehouse/quick-sale",
           active: isActive("/admin/warehouse/quick-sale")
         },
@@ -216,7 +216,7 @@ const AdminSidebar = () => {
     // 5. ANALÝZY & REPORTING - Only for admin and partner
     ...(userRole?.role === 'admin' || userRole?.role === 'partner' ? [{
       id: 'analytics',
-      title: '📊 Analýzy & Reporting',
+      title: '📊 ' + t('navigation.analyticsReporting'),
       type: 'expandable' as const,
       expanded: isExpanded('analytics'),
       defaultRoute: '/admin/reporting',
@@ -242,23 +242,23 @@ const AdminSidebar = () => {
     // 6. ONBOARDING SPRÁVA - Only for admin
     ...(userRole?.role === 'admin' ? [{
       id: 'onboarding',
-      title: '📋 Správa Onboardingu',
+      title: '📋 ' + t('navigation.onboardingManagement'),
       type: 'expandable' as const,
       expanded: isExpanded('onboarding'),
       defaultRoute: '/admin/onboarding-config',
       children: [
         {
-          title: "📝 Konfigurácia krokov",
+          title: "📝 " + t('navigation.stepConfiguration'),
           path: "/admin/onboarding-config",
           active: location.pathname.startsWith("/admin/onboarding-config")
         },
         {
-          title: "🎯 Šablóny formulárov",
+          title: "🎯 " + t('navigation.formTemplates'),
           path: "/admin/onboarding-config/templates",
           active: isActive("/admin/onboarding-config/templates")
         },
         {
-          title: "👁️ Náhľad onboardingu",
+          title: "👁️ " + t('navigation.onboardingPreview'),
           path: "/admin/onboarding",
           active: isActive("/admin/onboarding")
         }
@@ -268,7 +268,7 @@ const AdminSidebar = () => {
     // 7. SPRÁVA SYSTÉMU - Only for admin
     ...(userRole?.role === 'admin' ? [{
       id: 'system',
-      title: '⚙️ Správa Systému',
+      title: '⚙️ ' + t('navigation.systemManagement'),
       type: 'expandable' as const,
       expanded: isExpanded('system'),
       defaultRoute: '/admin/organizations',
@@ -289,12 +289,12 @@ const AdminSidebar = () => {
           active: location.pathname === "/admin/team"
         },
         {
-          title: "🌐 Preklady",
+          title: "🌐 " + t('navigation.translations'),
           path: "/admin/translations",
           active: location.pathname === "/admin/translations"
         },
         {
-          title: "📄 Šablóny Zmlúv",
+          title: "📄 " + t('navigation.contractTemplates'),
           path: "/admin/templates",
           active: location.pathname.startsWith("/admin/templates")
         },
@@ -309,7 +309,7 @@ const AdminSidebar = () => {
     // 8. OSOBNÉ - For all roles
     {
       id: 'personal',
-      title: '👤 Osobné',
+      title: '👤 ' + t('navigation.personal'),
       type: 'expandable' as const,
       expanded: isExpanded('personal'),
       defaultRoute: '/admin/notifications',
@@ -320,7 +320,7 @@ const AdminSidebar = () => {
           active: location.pathname.startsWith("/admin/notifications")
         },
         {
-          title: "🏗️ Architektúra Aplikácie",
+          title: "🏗️ " + t('navigation.applicationArchitecture'),
           path: "/admin/architecture",
           active: isActive("/admin/architecture")
         },
