@@ -7,7 +7,7 @@ import ContractFilters from "@/components/admin/ContractFilters";
 import MerchantTestingPanel from "@/components/admin/MerchantTestingPanel";
 import CollapsibleFilters from "@/components/admin/shared/CollapsibleFilters";
 import StatsCardsSection from "@/components/admin/shared/StatsCardsSection";
-import { useContractsStats } from "@/hooks/useAdminStats";
+import { useContractStats } from "@/hooks/useAdminStats";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, FileText, Euro, Clock, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,7 @@ import { useContractMerchantFix } from "@/hooks/useContractMerchantFix";
 const ContractsPage = () => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
-  const { data: stats, isLoading: statsLoading } = useContractsStats();
+  const { data: stats, isLoading: statsLoading } = useContractStats();
   const { fixAllContractsWithoutMerchants, isFixing } = useContractMerchantFix();
   const [filters, setFilters] = useState({
     search: '',

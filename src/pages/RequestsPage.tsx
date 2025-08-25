@@ -6,7 +6,7 @@ import EnhancedContractsTable from "@/components/admin/EnhancedContractsTable";
 import ContractFilters from "@/components/admin/ContractFilters";
 import CollapsibleFilters from "@/components/admin/shared/CollapsibleFilters";
 import StatsCardsSection from "@/components/admin/shared/StatsCardsSection";
-import { useContractsStats } from "@/hooks/useAdminStats";
+import { useContractStats } from "@/hooks/useAdminStats";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, FileQuestion, Euro, Clock, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,7 @@ const RequestsPage = () => {
   });
 
   // Get stats but filter for non-signed contracts only
-  const { data: stats, isLoading: statsLoading } = useContractsStats();
+  const { data: stats, isLoading: statsLoading } = useContractStats();
 
   // Calculate active filters count
   const activeFiltersCount = Object.values(filters).filter(value => value !== '' && value !== 'all').length;
