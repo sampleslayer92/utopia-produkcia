@@ -1,53 +1,52 @@
 
 import { useState } from 'react';
 
-export interface BulkSelectionState<T> {
-  selectedItems: string[];
-  isAllSelected: boolean;
-  selectItem: (itemId: string) => void;
+export interface BulkSelectionState<T extends { id: string }> {
+  selectedItems: Set<string>;
+  isItemSelected: (id: string) => boolean;
+  selectItem: (id: string) => void;
   selectAll: (items: T[]) => void;
   clearSelection: () => void;
-  isItemSelected: (itemId: string) => boolean;
+  isAllSelected: boolean;
 }
 
 export const useGenericBulkSelection = <T extends { id: string }>(
   items: T[] = []
 ): BulkSelectionState<T> => {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
-  const selectItem = (itemId: string) => {
-    setSelectedItems(prev => 
-      prev.includes(itemId) 
-        ? prev.filter(id => id !== itemId)
-        : [...prev, itemId]
-    );
+  const isItemSelected = (id: string) => selectedItems.has(id);
+
+  const selectItem = (id: string) => {
+    const newSelected = new Set(selectedItems);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedItems(newSelected);
   };
 
-  const selectAll = (items: T[]) => {
-    const allItemIds = items.map(item => item.id);
-    if (selectedItems.length === allItemIds.length) {
-      setSelectedItems([]);
+  const selectAll = (itemsToSelect: T[]) => {
+    if (selectedItems.size === itemsToSelect.length) {
+      setSelectedItems(new Set());
     } else {
-      setSelectedItems(allItemIds);
+      setSelectedItems(new Set(itemsToSelect.map(item => item.id)));
     }
   };
 
   const clearSelection = () => {
-    setSelectedItems([]);
+    setSelectedItems(new Set());
   };
 
-  const isItemSelected = (itemId: string) => {
-    return selectedItems.includes(itemId);
-  };
-
-  const isAllSelected = selectedItems.length === items.length && items.length > 0;
+  const isAllSelected = selectedItems.size === items.length && items.length > 0;
 
   return {
     selectedItems,
-    isAllSelected,
+    isItemSelected,
     selectItem,
     selectAll,
     clearSelection,
-    isItemSelected
+    isAllSelected
   };
 };
