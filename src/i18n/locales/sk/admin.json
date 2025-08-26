@@ -477,7 +477,30 @@
       "dealMoved": "Obchod presunutý do {{columnTitle}}",
       "failedToUpdate": "Nepodarilo sa aktualizovať stav obchodu"
     },
+    "toolbar": {
+      "kanban": "Kanban",
+      "table": "Tabuľka",
+      "itemsCount": "položiek",
+      "searchPlaceholder": "Hľadať obchody a zmluvy...",
+      "filters": "Filtre",
+      "advancedFilters": "Pokročilé filtre",
+      "clearAll": "Vymazať všetko",
+      "addColumn": "Pridať stĺpec",
+      "statuses": "Stavy",
+      "reset": "Resetovať",
+      "settings": "Nastavenia"
+    },
+    "entityTypes": {
+      "both": "Všetko",
+      "requests": "Žiadosti",
+      "contracts": "Zmluvy"
+    },
     "filters": {
+      "status": "Stav",
+      "dateRange": "Dátumový rozsah",
+      "valueRange": "Rozsah hodnôt",
+      "merchant": "Obchodník",
+      "source": "Zdroj",
       "presets": {
         "title": "Prednastavené filtre",
         "saveCurrentFilters": "Uložiť aktuálne filtre",

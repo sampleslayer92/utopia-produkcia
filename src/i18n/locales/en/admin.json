@@ -470,7 +470,30 @@
       "dealMoved": "Deal moved to {{columnTitle}}",
       "failedToUpdate": "Failed to update deal status"
     },
+    "toolbar": {
+      "kanban": "Kanban",
+      "table": "Table",
+      "itemsCount": "items",
+      "searchPlaceholder": "Search deals and contracts...",
+      "filters": "Filters",
+      "advancedFilters": "Advanced Filters",
+      "clearAll": "Clear All",
+      "addColumn": "Add Column",
+      "statuses": "Statuses",
+      "reset": "Reset",
+      "settings": "Settings"
+    },
+    "entityTypes": {
+      "both": "All",
+      "requests": "Requests",
+      "contracts": "Contracts"
+    },
     "filters": {
+      "status": "Status",
+      "dateRange": "Date Range",
+      "valueRange": "Value Range",
+      "merchant": "Merchant",
+      "source": "Source",
       "presets": {
         "title": "Filter Presets",
         "saveCurrentFilters": "Save Current Filters",
