@@ -1603,19 +1603,6 @@
   "overview": {
     "title": "Prehľad",
     "subtitle": "Komplexný prehľad všetkých žiadostí a zmlúv",
-    "toolbar": {
-      "kanban": "Kanban",
-      "table": "Tabuľka",
-      "itemsCount": "položiek",
-      "searchPlaceholder": "Hľadať žiadosti a zmluvy...",
-      "filters": "Filtre",
-      "advancedFilters": "Pokročilé filtre",
-      "clearAll": "Vymazať všetko",
-      "addColumn": "Pridať stĺpec",
-      "statuses": "Stavy",
-      "reset": "Reset",
-      "settings": "Nastavenia"
-    },
     "entityTypes": {
       "both": "Všetko",
       "requests": "Žiadosti", 
@@ -1626,21 +1613,68 @@
       "dateRange": "Dátumový rozsah",
       "valueRange": "Hodnota",
       "merchant": "Obchodník",
-      "source": "Zdroj"
+      "source": "Zdroj",
+      "presets": {
+        "title": "Predvolby filtrov",
+        "presetsLabel": "Predvolby",
+        "hotLeads": {
+          "title": "Horúce príležitosti",
+          "description": "Zmluvy vo finálnej fáze"
+        },
+        "newRequests": {
+          "title": "Nové žiadosti", 
+          "description": "Nedávno prijaté žiadosti"
+        },
+        "needsAttention": {
+          "title": "Vyžaduje pozornosť",
+          "description": "Zmluvy čakajúce na akciu"
+        }
+      }
     },
+    "column": {
+      "actions": {
+        "addDeal": "Pridať obchod",
+        "sortByValue": "Zoradiť podľa hodnoty",
+        "sortByDate": "Zoradiť podľa dátumu", 
+        "deleteColumn": "Odstrániť stĺpec"
+      },
+      "stats": {
+        "deals": "obchodov"
+      },
+      "emptyState": {
+        "title": "Žiadne obchody v tomto štádiu",
+        "description": "Pridať obchod"
+      }
+    },
+    "card": {
+      "actions": {
+        "call": "Zavolať",
+        "email": "Email",
+        "edit": "Upraviť", 
+        "detail": "Detail"
+      },
+      "labels": {
+        "value": "Hodnota",
+        "progress": "Postup"
+      }
+    }
     "stats": {
       "totalPipelineValue": "Celková hodnota",
       "conversionRate": "Úspešnosť",
-      "avgDealValue": "Priemerná hodnota",
+      "avgDealValue": "Priemerná hodnota", 
       "activePipeline": "Aktívne",
       "signedDeals": "Podpísané",
       "lostDeals": "Neúspešné",
       "deals": "dealy",
-      "converted": "konvertované",
+      "converted": "konvertované", 
       "perSignedDeal": "na podpísanú zmluvu",
       "inProgress": "prebieha",
       "completed": "dokončené",
       "unsuccessful": "neúspešné"
+    },
+    "kanban": {
+      "dealMoved": "Obchod presunutý do {{columnTitle}}",
+      "failedToUpdate": "Nepodarilo sa aktualizovať stav obchodu"
     },
     "success": {
       "columnAdded": "Stĺpec bol úspešne pridaný",
@@ -1651,5 +1685,19 @@
       "resettingColumns": "Chyba pri obnovovaní stĺpcov",
       "loadingDeals": "Chyba pri načítavaní dát: {{message}}"
     }
+  },
+  "status": {
+    "draft": "Koncept",
+    "submitted": "Odoslané",
+    "in_progress": "Rozpracované", 
+    "sent_to_client": "Odoslané klientovi",
+    "email_viewed": "Email zobrazený",
+    "contract_generated": "Zmluva vygenerovaná",
+    "waiting_for_signature": "Čaká na podpis",
+    "signed": "Podpísané",
+    "approved": "Schválené",
+    "rejected": "Zamietnuté",
+    "lost": "Stratené",
+    "pending_approval": "Čaká na schválenie"
   }
 }

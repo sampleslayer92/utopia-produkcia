@@ -558,8 +558,13 @@
   },
   "status": {
     "draft": "Draft",
+    "submitted": "Submitted",
     "pending": "Pending",
     "in_progress": "In Progress", 
+    "sent_to_client": "Sent to Client",
+    "email_viewed": "Email Viewed",
+    "contract_generated": "Contract Generated",
+    "waiting_for_signature": "Waiting for Signature",
     "review": "Review",
     "approved": "Approved",
     "signed": "Signed",
@@ -568,6 +573,7 @@
     "cancelled": "Cancelled",
     "rejected": "Rejected",
     "lost": "Lost",
+    "pending_approval": "Pending Approval",
     "on_hold": "On Hold",
     "expired": "Expired"
   },
@@ -1246,18 +1252,9 @@
     "noData": "No organizational data available",
     "comingSoon": "Advanced organizational structure visualization coming soon"
   },
-  "deals": {
+    "deals": {
     "title": "Deals",
     "subtitle": "Manage deals using Kanban board",
-    "toolbar": {
-      "kanban": "Kanban",
-      "table": "Table",
-      "addColumn": "Add Column",
-      "statuses": "Statuses", 
-      "reset": "Reset",
-      "settings": "Settings",
-      "dealsCount": "deals"
-    },
     "kanban": {
       "emptyColumn": {
         "title": "No deals",
