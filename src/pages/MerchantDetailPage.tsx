@@ -53,14 +53,14 @@ const MerchantDetailPage = () => {
         <Card className="max-w-md mx-auto">
           <CardHeader>
             <CardTitle className="text-destructive">
-              {error ? t('ui:table.error') : "Merchant not found"}
+              {error ? t('ui:table.error') : t('admin:merchants.detail.messages.merchantNotFound')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">
               {error 
                 ? `${t('ui:table.error')}. ${error.message}`
-                : `Merchant with ID ${id} does not exist.`
+                : t('admin:merchants.detail.messages.merchantNotFoundDesc', { id })
               }
             </p>
             <Button onClick={() => navigate('/admin/merchants')} variant="outline">

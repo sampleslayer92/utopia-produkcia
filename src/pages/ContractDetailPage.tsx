@@ -117,7 +117,7 @@ const ContractDetailPage = () => {
     >
       <ArrowLeft className="h-4 w-4 mr-2" />
       <span className="hidden sm:inline">{t('contracts.detail.actions.backToList')}</span>
-      <span className="sm:hidden">Späť</span>
+      <span className="sm:hidden">{t('contracts.detail.actions.backToList')}</span>
     </Button>,
     <Button 
       key="export"
@@ -145,7 +145,7 @@ const ContractDetailPage = () => {
           <>
             <FileText className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">{t('contracts.detail.actions.saveChanges')}</span>
-            <span className="sm:hidden">Uložiť</span>
+            <span className="sm:hidden">{t('contracts.detail.actions.saveChanges')}</span>
           </>
         )}
       </Button>
@@ -160,13 +160,13 @@ const ContractDetailPage = () => {
         <>
           <ArrowLeft className="h-4 w-4 mr-2" />
           <span className="hidden sm:inline">{t('contracts.detail.actions.cancelEdit')}</span>
-          <span className="sm:hidden">Zrušiť</span>
+          <span className="sm:hidden">{t('contracts.detail.actions.cancelEdit')}</span>
         </>
       ) : (
         <>
           <Edit className="h-4 w-4 mr-2" />
           <span className="hidden sm:inline">{t('contracts.detail.actions.edit')}</span>
-          <span className="sm:hidden">Upraviť</span>
+          <span className="sm:hidden">{t('contracts.detail.actions.edit')}</span>
         </>
       )}
     </Button>
@@ -185,32 +185,32 @@ const ContractDetailPage = () => {
               <TabsTrigger value="overview" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <FileText className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.overview')}</span>
-                <span className="sm:hidden">Prehľad</span>
+                <span className="sm:hidden">{t('contracts.detail.tabs.overview')}</span>
               </TabsTrigger>
               <TabsTrigger value="client" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <User className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.client')}</span>
-                <span className="sm:hidden">Klient</span>
+                <span className="sm:hidden">{t('contracts.detail.tabs.client')}</span>
               </TabsTrigger>
               <TabsTrigger value="devices" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <Settings className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.devices')}</span>
-                <span className="sm:hidden">Zariadenia</span>
+                <span className="sm:hidden">{t('contracts.detail.tabs.devices')}</span>
               </TabsTrigger>
               <TabsTrigger value="finance" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <Calculator className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.finance')}</span>
-                <span className="sm:hidden">Financie</span>
+                <span className="sm:hidden">{t('contracts.detail.tabs.finance')}</span>
               </TabsTrigger>
               <TabsTrigger value="documents" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <FolderOpen className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.documents')}</span>
-                <span className="sm:hidden">Dokumenty</span>
+                <span className="sm:hidden">{t('contracts.detail.tabs.documents')}</span>
               </TabsTrigger>
               <TabsTrigger value="history" className="flex items-center space-x-1 md:space-x-2 px-2 md:px-3 py-2 text-sm whitespace-nowrap min-h-touch">
                 <Clock className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{t('contracts.detail.tabs.history')}</span>
-                <span className="sm:hidden">História</span>
+                <span className="sm:hidden">{t('contracts.detail.tabs.history')}</span>
               </TabsTrigger>
             </TabsList>
           </div>

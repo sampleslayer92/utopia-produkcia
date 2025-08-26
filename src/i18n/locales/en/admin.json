@@ -1567,12 +1567,137 @@
     "markAllAsRead": "Mark all as read",
     "refresh": "Refresh",
     "export": "Export",
-    "types": {
-      "contract_created": "New contract",
-      "contract_status_changed": "Contract status changed",
-      "merchant_registered": "New merchant",
-      "error_occurred": "Application error",
-      "system_alert": "System alert"
-    }
-  }
-}
+     "types": {
+       "contract_created": "New contract",
+       "contract_status_changed": "Contract status changed",
+       "merchant_registered": "New merchant",
+       "error_occurred": "Application error",
+       "system_alert": "System alert"
+     }
+   },
+   "onboarding": {
+     "newContract": "New Contract",
+     "newContractSubtitle": "Creating new contract and merchant",
+     "contract": "Contract",
+     "copyLink": "Copy Link",
+     "deleteRequest": "Delete Request",
+     "creating": "Creating...",
+     "deleting": "Deleting...",
+     "messages": {
+       "contractCreated": "Contract Created!",
+       "contractCreatedDesc": "Contract Number: {{number}}",
+       "contractCreationFailed": "Contract creation failed",
+       "contractCreationFailedDesc": "Please try again",
+       "contractNotCreated": "Contract not yet created",
+       "contractNotCreatedDesc": "Please fill in basic information first",
+       "linkCopied": "Link copied!",
+       "linkCopiedDesc": "Form sharing link has been copied to clipboard",
+       "noDraftToDelete": "No draft request to delete",
+       "draftDeleted": "Draft request deleted",
+       "draftDeletedDesc": "All data has been removed",
+       "deleteFailed": "Deletion failed",
+       "deleteFailedDesc": "Could not delete draft request",
+       "loadingFormData": "Loading form data...",
+       "formNotFound": "Form not found",
+       "formNotFoundDesc": "The requested form does not exist or has been removed.",
+       "sharedFormNotice": "You are viewing a shared form. The \"Devices and Services\" and \"Fees\" steps can only be modified by a logged-in user in the portal."
+     }
+   },
+   "merchants": {
+     "title": "Merchant Management",
+     "subtitle": "Overview and management of all merchants in the system",
+     "export": "Export",
+     "newMerchant": "New Merchant",
+     "stats": {
+       "totalCount": "Total Count",
+       "allRegistered": "All registered",
+       "activeWithContracts": "Active with contracts",
+       "haveSignedContracts": "Have signed contracts",
+       "averageProfit": "Average Profit",
+       "monthlyPerMerchant": "Monthly per merchant"
+     },
+     "filters": {
+       "search": "Search",
+       "searchPlaceholder": "Name, Company ID, contact person...",
+       "city": "City",
+       "allCities": "All Cities",
+       "contracts": "Contracts",
+       "allMerchants": "All Merchants",
+       "withContracts": "With contracts",
+       "withoutContracts": "Without contracts",
+       "monthlyProfit": "Monthly Profit",
+       "allValues": "All Values",
+       "clearFilters": "Clear Filters"
+     },
+     "table": {
+       "title": "Merchants List",
+       "overview": "Overview of all merchants in the system ({{count}} total) - click on row for details",
+       "company": "Company",
+       "contactPerson": "Contact Person",
+       "contracts": "Contracts",
+       "monthlyProfit": "Monthly Profit",
+       "created": "Created",
+       "contractsCount": "{{count}} contracts"
+     },
+     "detail": {
+       "title": "Merchant Detail",
+       "basicInfo": "Basic Information",
+       "recentActivity": "Recent Activity",
+       "latestContracts": "Latest Contracts",
+       "topLocations": "Top Locations",
+       "financialOverview": "Financial Overview",
+       "trends": "Trends",
+       "analysis": "Charts and analytics will be available soon",
+       "activityHistory": "Activity history will be available soon",
+       "tabs": {
+         "overview": "Overview",
+         "locations": "Locations",
+         "contracts": "Contracts",
+         "finance": "Finance",
+         "activity": "Activity"
+       },
+       "stats": {
+         "totalContracts": "Total Contracts",
+         "monthlyProfit": "Monthly Profit",
+         "totalDevices": "Total Devices",
+         "avgContractValue": "Avg. Contract Value",
+         "locations": "Locations",
+         "plannedTurnover": "Planned Turnover",
+         "withPosTerminal": "with POS terminal",
+         "fromAllLocations": "from all business locations"
+       },
+       "contracts": {
+         "title": "Contracts",
+         "noContracts": "No contracts",
+         "table": {
+           "contractNumber": "Contract Number",
+           "status": "Status",
+           "devices": "Devices",
+           "monthlyProfit": "Monthly Profit",
+           "created": "Created"
+         }
+       },
+       "locations": {
+         "title": "Locations",
+         "noLocations": "No locations",
+         "summary": {
+           "totalLocations": "Total business locations",
+           "withPos": "With POS terminal",
+           "totalPlannedTurnover": "Total planned turnover"
+         },
+         "table": {
+           "locationName": "Location Name",
+           "address": "Address",
+           "sector": "Sector",
+           "turnover": "Turnover",
+           "pos": "POS",
+           "contract": "Contract"
+         }
+       },
+       "messages": {
+         "merchantNotFound": "Merchant not found",
+         "merchantNotFoundDesc": "Merchant with ID {{id}} does not exist."
+       }
+     }
+   }
+ }

@@ -1717,8 +1717,36 @@
     "waiting_for_signature": "Čaká na podpis",
     "signed": "Podpísané",
     "approved": "Schválené",
-    "rejected": "Zamietnuté",
-    "lost": "Stratené",
-    "pending_approval": "Čaká na schválenie"
-  }
-}
+     "rejected": "Zamietnuté",
+     "lost": "Stratené",
+     "pending_approval": "Čaká na schválenie"
+   },
+   "onboarding": {
+     "newContract": "Nová zmluva",
+     "newContractSubtitle": "Vytvorenie novej zmluvy a merchanta",
+     "contract": "Zmluva",
+     "copyLink": "Kopírovať odkaz",
+     "deleteRequest": "Vymazať žiadosť",
+     "creating": "Vytvára sa...",
+     "deleting": "Mazanie...",
+     "messages": {
+       "contractCreated": "Zmluva vytvorená!",
+       "contractCreatedDesc": "Číslo zmluvy: {{number}}",
+       "contractCreationFailed": "Chyba pri vytváraní zmluvy",
+       "contractCreationFailedDesc": "Skúste to prosím znova",
+       "contractNotCreated": "Zmluva ešte nebola vytvorená",
+       "contractNotCreatedDesc": "Najprv vyplňte základné informácie",
+       "linkCopied": "Odkaz skopírovaný!",
+       "linkCopiedDesc": "Odkaz na zdieľanie formulára bol skopírovaný do schránky",
+       "noDraftToDelete": "Žiadna rozpracovaná žiadosť na vymazanie",
+       "draftDeleted": "Rozpracovaná žiadosť vymazaná",
+       "draftDeletedDesc": "Všetky údaje boli odstránené",
+       "deleteFailed": "Chyba pri mazaní",
+       "deleteFailedDesc": "Nepodarilo sa vymazať rozpracovanú žiadosť",
+       "loadingFormData": "Načítavam údaje formulára...",
+       "formNotFound": "Formulár nenájdený",
+       "formNotFoundDesc": "Požadovaný formulár neexistuje alebo bol odstránený.",
+       "sharedFormNotice": "Prezeráte zdieľaný formulár. Kroky \"Zariadenia a služby\" a \"Poplatky\" môže upravovať len prihlásený používateľ v portáli."
+     }
+   }
+ }

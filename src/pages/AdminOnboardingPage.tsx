@@ -30,15 +30,15 @@ const AdminOnboardingPage = () => {
               contractId: result.contractId,
               contractNumber: result.contractNumber?.toString()
             });
-            toast.success('Zmluva vytvorená!', {
-              description: `Číslo zmluvy: ${result.contractNumber}`
+            toast.success(t('onboarding.messages.contractCreated'), {
+              description: t('onboarding.messages.contractCreatedDesc', { number: result.contractNumber })
             });
           }
         })
         .catch((error) => {
           console.error('Failed to create contract:', error);
-          toast.error('Chyba pri vytváraní zmluvy', {
-            description: 'Skúste to prosím znova'
+          toast.error(t('onboarding.messages.contractCreationFailed'), {
+            description: t('onboarding.messages.contractCreationFailedDesc')
           });
         })
         .finally(() => {
@@ -49,8 +49,8 @@ const AdminOnboardingPage = () => {
 
   const handleCopyLink = async () => {
     if (!onboardingData.contractId) {
-      toast.error('Zmluva ešte nebola vytvorená', {
-        description: 'Najprv vyplňte základné informácie'
+      toast.error(t('onboarding.messages.contractNotCreated'), {
+        description: t('onboarding.messages.contractNotCreatedDesc')
       });
       return;
     }
@@ -59,8 +59,8 @@ const AdminOnboardingPage = () => {
     
     try {
       await navigator.clipboard.writeText(shareUrl);
-      toast.success('Odkaz skopírovaný!', {
-        description: 'Odkaz na zdieľanie formulára bol skopírovaný do schránky'
+      toast.success(t('onboarding.messages.linkCopied'), {
+        description: t('onboarding.messages.linkCopiedDesc')
       });
     } catch (error) {
       // Fallback for older browsers
@@ -71,15 +71,15 @@ const AdminOnboardingPage = () => {
       document.execCommand('copy');
       document.body.removeChild(textArea);
       
-      toast.success('Odkaz skopírovaný!', {
-        description: 'Odkaz na zdieľanie formulára bol skopírovaný do schránky'
+      toast.success(t('onboarding.messages.linkCopied'), {
+        description: t('onboarding.messages.linkCopiedDesc')
       });
     }
   };
 
   const handleDeleteDraft = async () => {
     if (!onboardingData.contractId) {
-      toast.error('Žiadna rozpracovaná žiadosť na vymazanie');
+      toast.error(t('onboarding.messages.noDraftToDelete'));
       return;
     }
 
@@ -93,14 +93,14 @@ const AdminOnboardingPage = () => {
       if (error) throw error;
 
       clearData();
-      toast.success('Rozpracovaná žiadosť vymazaná', {
-        description: 'Všetky údaje boli odstránené'
+      toast.success(t('onboarding.messages.draftDeleted'), {
+        description: t('onboarding.messages.draftDeletedDesc')
       });
       navigate('/admin');
     } catch (error) {
       console.error('Error deleting draft:', error);
-      toast.error('Chyba pri mazaní', {
-        description: 'Nepodarilo sa vymazať rozpracovanú žiadosť'
+      toast.error(t('onboarding.messages.deleteFailed'), {
+        description: t('onboarding.messages.deleteFailedDesc')
       });
     } finally {
       setIsDeleting(false);
@@ -112,7 +112,7 @@ const AdminOnboardingPage = () => {
       {/* Show contract number if available */}
       {onboardingData.contractNumber && (
         <span className="text-sm text-slate-600 bg-slate-100 px-2 py-1 rounded">
-          Zmluva: {onboardingData.contractNumber}
+          {t('onboarding.contract')}: {onboardingData.contractNumber}
         </span>
       )}
       
@@ -126,7 +126,7 @@ const AdminOnboardingPage = () => {
             className="hover:bg-slate-50"
           >
             <Link className="h-4 w-4 mr-2" />
-            {isCreatingContract ? 'Vytvára sa...' : 'Kopírovať odkaz'}
+            {isCreatingContract ? t('onboarding.creating') : t('onboarding.copyLink')}
           </Button>
           <Button 
             variant="outline"
@@ -135,7 +135,7 @@ const AdminOnboardingPage = () => {
             className="hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            {isDeleting ? 'Mazanie...' : 'Vymazať žiadosť'}
+            {isDeleting ? t('onboarding.deleting') : t('onboarding.deleteRequest')}
           </Button>
         </>
       )}
@@ -152,8 +152,8 @@ const AdminOnboardingPage = () => {
 
   return (
     <AdminLayout 
-      title="Nová zmluva" 
-      subtitle="Vytvorenie novej zmluvy a merchanta"
+      title={t('onboarding.newContract')} 
+      subtitle={t('onboarding.newContractSubtitle')}
       actions={onboardingActions}
     >
       <div className="bg-white rounded-lg border border-slate-200">

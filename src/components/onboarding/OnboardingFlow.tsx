@@ -204,7 +204,7 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-slate-600">Načítavam údaje formulára...</p>
+          <p className="text-slate-600">{t('admin:onboarding.messages.loadingFormData')}</p>
         </div>
       </div>
     );
@@ -215,8 +215,8 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center max-w-md">
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">Formulár nenájdený</h2>
-          <p className="text-slate-600 mb-4">Požadovaný formulár neexistuje alebo bol odstránený.</p>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">{t('admin:onboarding.messages.formNotFound')}</h2>
+          <p className="text-slate-600 mb-4">{t('admin:onboarding.messages.formNotFoundDesc')}</p>
         </div>
       </div>
     );
@@ -267,7 +267,7 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
                 <Alert className="mb-6">
                   <Info className="h-4 w-4" />
                   <AlertDescription>
-                    Prezeráte zdieľaný formulár. Kroky "Zariadenia a služby" a "Poplatky" môže upravovať len prihlásený používateľ v portáli.
+                    {t('admin:onboarding.messages.sharedFormNotice')}
                   </AlertDescription>
                 </Alert>
               )}
@@ -382,7 +382,7 @@ const OnboardingFlow = ({ isAdminMode = false, customSteps }: OnboardingFlowProp
               <Alert className="mb-6">
                 <Info className="h-4 w-4" />
                 <AlertDescription>
-                  Prezeráte zdieľaný formulár. Kroky "Zariadenia a služby" a "Poplatky" môže upravovať len prihlásený používateľ v portáli.
+                  {t('admin:onboarding.messages.sharedFormNotice')}
                 </AlertDescription>
               </Alert>
             )}
