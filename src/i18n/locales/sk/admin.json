@@ -534,6 +534,21 @@
       "addingColumn": "Chyba pri pridávaní stĺpca",
       "resettingColumns": "Chyba pri resetovaní stĺpcov",
       "loadingDeals": "Chyba pri načítavaní obchodov: {{message}}"
+    },
+    "stats": {
+      "totalPipelineValue": "Celková hodnota",
+      "deals": "obchodov",
+      "conversionRate": "Úspešnosť",
+      "converted": "konvertovaných",
+      "avgDealValue": "Priemerná hodnota",
+      "perSignedDeal": "na podpísaný obchod",
+      "activePipeline": "Aktívny pipeline",
+      "inProgress": "prebieha",
+      "signedDeals": "Podpísané obchody",
+      "completed": "dokončených",
+      "lostDeals": "Stratené obchody",
+      "unsuccessful": "neúspešných",
+      "trendGood": "Dobré"
     }
   },
   "notifications": {

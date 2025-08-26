@@ -527,6 +527,21 @@
       "addingColumn": "Error adding column",
       "resettingColumns": "Error resetting columns",
       "loadingDeals": "Error loading deals: {{message}}"
+    },
+    "stats": {
+      "totalPipelineValue": "Total Pipeline Value",
+      "deals": "deals",
+      "conversionRate": "Conversion Rate",
+      "converted": "converted",
+      "avgDealValue": "Avg Deal Value",
+      "perSignedDeal": "per signed deal",
+      "activePipeline": "Active Pipeline",
+      "inProgress": "in progress",
+      "signedDeals": "Signed Deals",
+      "completed": "completed",
+      "lostDeals": "Lost Deals",
+      "unsuccessful": "unsuccessful",
+      "trendGood": "Good"
     }
   },
   "warehouse": {
