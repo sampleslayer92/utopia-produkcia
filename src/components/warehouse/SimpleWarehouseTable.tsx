@@ -1,342 +1,502 @@
-
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWarehouseItems } from '@/hooks/useWarehouseItems';
-import { useCategories } from '@/hooks/useCategories';
-import { useItemTypes } from '@/hooks/useItemTypes';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
 } from '@/components/ui/table';
-import {
+import { 
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Package, Plus, Search, Filter, MoreHorizontal, Eye, Edit, Trash2 } from 'lucide-react';
-import { WarehouseItemModal } from './WarehouseItemModal';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Edit, MoreHorizontal, Plus, Search, Trash2, Package, Filter, Eye, Check, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import LoadingSpinner from '@/components/ui/loading-spinner';
+import { useWarehouseItems, useDeleteWarehouseItem, type WarehouseItem } from '@/hooks/useWarehouseItems';
+import { useCategories } from '@/hooks/useCategories';
+import { useItemTypes } from '@/hooks/useItemTypes';
+import { useBulkDeleteWarehouseItems, useBulkUpdateWarehouseItems } from '@/hooks/useBulkWarehouseOperations';
+import { WarehouseItemModal } from './WarehouseItemModal';
+import { EnhancedAddItemForm } from './EnhancedAddItemForm';
+import { icons } from 'lucide-react';
 
 interface SimpleWarehouseTableProps {
   showAddForm?: boolean;
 }
 
-export const SimpleWarehouseTable = ({ showAddForm = false }: SimpleWarehouseTableProps) => {
+export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps) => {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedType, setSelectedType] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [showAddModal, setShowAddModal] = useState(showAddForm);
-  const [editingItem, setEditingItem] = useState<any>(null);
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [typeFilter, setTypeFilter] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [selectedItem, setSelectedItem] = useState<WarehouseItem | undefined>();
+  const [showModal, setShowModal] = useState(false);
+  const [deleteItem, setDeleteItem] = useState<WarehouseItem | null>(null);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
-  // Filters for the API query
-  const filters = useMemo(() => {
-    const apiFilters: any = {};
-    
-    if (selectedCategory !== 'all') {
-      apiFilters.category_id = selectedCategory;
-    }
-    
-    if (selectedType !== 'all') {
-      apiFilters.item_type_id = selectedType;
-    }
-    
-    if (selectedStatus !== 'all') {
-      apiFilters.is_active = selectedStatus === 'active';
-    }
-    
-    if (searchTerm.trim()) {
-      apiFilters.search = searchTerm.trim();
-    }
-    
-    return apiFilters;
-  }, [selectedCategory, selectedType, selectedStatus, searchTerm]);
+  // Fetch data
+  const { data: categories = [] } = useCategories(true);
+  const { data: itemTypes = [] } = useItemTypes(true);
+  
+  const { data: items = [], isLoading, error } = useWarehouseItems({
+    category_id: categoryFilter || undefined,
+    item_type_id: typeFilter || undefined,
+    search: search || undefined,
+    is_active: statusFilter === 'active' ? true : statusFilter === 'inactive' ? false : undefined,
+  });
 
-  const { data: items = [], isLoading, error } = useWarehouseItems(filters);
-  const { data: categories = [] } = useCategories();
-  const { data: itemTypes = [] } = useItemTypes();
+  const deleteMutation = useDeleteWarehouseItem();
+  const bulkDeleteMutation = useBulkDeleteWarehouseItems();
+  const bulkUpdateMutation = useBulkUpdateWarehouseItems();
 
-  const stats = useMemo(() => {
-    if (!items.length) return { total: 0, active: 0, devices: 0, services: 0 };
-    
-    return {
-      total: items.length,
-      active: items.filter(item => item.is_active).length,
-      devices: items.filter(item => item.item_type === 'device').length,
-      services: items.filter(item => item.item_type === 'service').length,
-    };
-  }, [items]);
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('sk-SK', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(price);
+  const handleEdit = (item: WarehouseItem) => {
+    setSelectedItem(item);
+    setShowModal(true);
   };
 
-  if (isLoading) {
-    return <LoadingSpinner />;
+  const handleDelete = async (item: WarehouseItem) => {
+    try {
+      await deleteMutation.mutateAsync(item.id);
+      setDeleteItem(null);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedItem(undefined);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedItems(new Set(items.map(item => item.id)));
+    } else {
+      setSelectedItems(new Set());
+    }
+  };
+
+  const handleSelectionChange = (itemId: string, selected: boolean) => {
+    const newSelection = new Set(selectedItems);
+    if (selected) {
+      newSelection.add(itemId);
+    } else {
+      newSelection.delete(itemId);
+    }
+    setSelectedItems(newSelection);
+  };
+
+  const handleBulkDelete = () => {
+    bulkDeleteMutation.mutate(Array.from(selectedItems));
+    setSelectedItems(new Set());
+  };
+
+  const handleBulkActivate = () => {
+    bulkUpdateMutation.mutate({
+      itemIds: Array.from(selectedItems),
+      updates: { is_active: true }
+    });
+    setSelectedItems(new Set());
+  };
+
+  const handleBulkDeactivate = () => {
+    bulkUpdateMutation.mutate({
+      itemIds: Array.from(selectedItems),
+      updates: { is_active: false }
+    });
+    setSelectedItems(new Set());
+  };
+
+  // Helper function to render icons
+  const renderIcon = (iconName: string | null, iconUrl: string | null, color: string) => {
+    if (iconUrl) {
+      return <img src={iconUrl} alt="Icon" className="h-4 w-4 object-contain" />;
+    }
+    if (iconName && icons[iconName as keyof typeof icons]) {
+      const IconComponent = icons[iconName as keyof typeof icons];
+      return <IconComponent className="h-4 w-4" style={{ color }} />;
+    }
+    return <div className="h-4 w-4 rounded-full" style={{ backgroundColor: color }} />;
+  };
+
+  // Show add form if requested
+  if (showAddForm) {
+    return <EnhancedAddItemForm />;
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <Package className="h-16 w-16 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold">{t('warehouse.table.empty.title')}</h3>
-        <p className="text-muted-foreground mb-6">{error.message}</p>
-      </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center text-destructive">
+            Chyba pri načítaní údajov: {error.message}
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">{t('warehouse.title')}</h1>
-          <p className="text-muted-foreground">{t('warehouse.subtitle')}</p>
+          <h1 className="text-3xl font-bold">Skladové položky</h1>
+          <p className="text-muted-foreground">
+            Prehľad všetkých skladových položiek
+          </p>
         </div>
-        <Button onClick={() => setShowAddModal(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          {t('warehouse.addItem')}
+        <Button onClick={() => setShowModal(true)} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Pridať položku
         </Button>
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <Package className="h-5 w-5 text-muted-foreground" />
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('warehouse.stats.total')}</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
+                <p className="text-sm font-medium text-muted-foreground">Celkovo</p>
+                <p className="text-2xl font-bold">{items.length}</p>
               </div>
+              <Package className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <div className="h-5 w-5 rounded-full bg-green-500" />
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('warehouse.stats.active')}</p>
-                <p className="text-2xl font-bold">{stats.active}</p>
+                <p className="text-sm font-medium text-muted-foreground">Aktívne</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {items.filter(item => item.is_active).length}
+                </p>
               </div>
+              <Package className="h-8 w-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <div className="h-5 w-5 rounded-full bg-blue-500" />
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('warehouse.stats.devices')}</p>
-                <p className="text-2xl font-bold">{stats.devices}</p>
+                <p className="text-sm font-medium text-muted-foreground">Zariadenia</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {items.filter(item => item.item_type === 'device').length}
+                </p>
               </div>
+              <Package className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <div className="h-5 w-5 rounded-full bg-purple-500" />
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('warehouse.stats.services')}</p>
-                <p className="text-2xl font-bold">{stats.services}</p>
+                <p className="text-sm font-medium text-muted-foreground">Služby</p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {items.filter(item => item.item_type === 'service').length}
+                </p>
               </div>
+              <Package className="h-8 w-8 text-purple-600" />
             </div>
           </CardContent>
         </Card>
       </div>
 
+      {/* Bulk Actions Panel */}
+      {selectedItems.size > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">
+                {selectedItems.size} položiek vybratých
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkActivate}
+                className="ml-auto"
+              >
+                <Check className="h-4 w-4 mr-1" />
+                Aktivovať
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkDeactivate}
+              >
+                <X className="h-4 w-4 mr-1" />
+                Deaktivovať
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Zmazať
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filters */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Filter className="h-5 w-5" />
-            <span>{t('warehouse.table.filters.search')}</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t('warehouse.table.filters.search')}</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder={t('warehouse.searchPlaceholder')}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Hľadať položky..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10"
+              />
             </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t('warehouse.table.filters.category')}</label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('warehouse.allCategories')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('warehouse.allCategories')}</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t('warehouse.table.filters.type')}</label>
-              <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('warehouse.allTypes')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('warehouse.allTypes')}</SelectItem>
-                  {itemTypes.map((type) => (
-                    <SelectItem key={type.id} value={type.id}>
-                      {type.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t('warehouse.table.filters.status')}</label>
-              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('warehouse.table.filters.status')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('overview.filter.all')}</SelectItem>
-                  <SelectItem value="active">{t('warehouse.itemDetail.active')}</SelectItem>
-                  <SelectItem value="inactive">{t('warehouse.itemDetail.inactive')}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Select value={categoryFilter || 'all'} onValueChange={(val) => setCategoryFilter(val === 'all' ? '' : val)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Kategória" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Všetky kategórie</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    <div className="flex items-center gap-2">
+                      {renderIcon(category.icon_name, category.icon_url, category.color)}
+                      <span>{category.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={typeFilter || 'all'} onValueChange={(val) => setTypeFilter(val === 'all' ? '' : val)}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Typ" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Všetky typy</SelectItem>
+                {itemTypes.map((type) => (
+                  <SelectItem key={type.id} value={type.id}>
+                    <div className="flex items-center gap-2">
+                      {renderIcon(type.icon_name, type.icon_url, type.color)}
+                      <span>{type.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter || 'all'} onValueChange={(val) => setStatusFilter(val === 'all' ? '' : val)}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Stav" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Všetky</SelectItem>
+                <SelectItem value="active">Aktívne</SelectItem>
+                <SelectItem value="inactive">Neaktívne</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
 
-      {/* Table */}
+      {/* Items Table */}
       <Card>
-        <CardContent className="p-0">
-          {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Package className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold">{t('warehouse.table.empty.title')}</h3>
-              <p className="text-muted-foreground mb-6">{t('warehouse.table.empty.description')}</p>
-              <Button onClick={() => setShowAddModal(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                {t('warehouse.table.empty.addFirst')}
-              </Button>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('warehouse.table.headers.name')}</TableHead>
-                  <TableHead>{t('warehouse.table.headers.category')}</TableHead>
-                  <TableHead>{t('warehouse.table.headers.type')}</TableHead>
-                  <TableHead>{t('warehouse.table.headers.monthlyFee')}</TableHead>
-                  <TableHead>{t('warehouse.table.headers.setupFee')}</TableHead>
-                  <TableHead>{t('warehouse.table.headers.status')}</TableHead>
-                  <TableHead className="w-[70px]">{t('warehouse.table.headers.actions')}</TableHead>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={selectedItems.size === items.length && items.length > 0}
+                  onCheckedChange={handleSelectAll}
+                />
+              </TableHead>
+              <TableHead>Názov</TableHead>
+              <TableHead>Typ</TableHead>
+              <TableHead>Kategória</TableHead>
+              <TableHead>Mesačný poplatok</TableHead>
+              <TableHead>Jednorazový poplatok</TableHead>
+              <TableHead>Stav</TableHead>
+              <TableHead className="w-[50px]">Akcie</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    Načítavam...
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : items.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8">
+                  <div className="text-muted-foreground">
+                    {search || categoryFilter || typeFilter || statusFilter 
+                      ? 'Žiadne položky neboli nájdené podľa zadaných filtrov'
+                      : 'Zatiaľ neboli pridané žiadne položky'
+                    }
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              items.map((item) => (
+                <TableRow 
+                  key={item.id} 
+                  className="hover:bg-muted/50 cursor-pointer"
+                  onClick={() => navigate(`/admin/warehouse/items/${item.id}`)}
+                >
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={selectedItems.has(item.id)}
+                      onCheckedChange={(checked) => handleSelectionChange(item.id, !!checked)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium hover:text-primary transition-colors">
+                        {item.name}
+                      </div>
+                      {item.description && (
+                        <div className="text-sm text-muted-foreground truncate max-w-xs">
+                          {item.description}
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {item.item_types && renderIcon(
+                        item.item_types.icon_name, 
+                        item.item_types.icon_url, 
+                        item.item_types.color
+                      )}
+                      <span>{item.item_types?.name || item.item_type}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {item.categories && renderIcon(
+                        item.categories.icon_name, 
+                        item.categories.icon_url, 
+                        item.categories.color
+                      )}
+                      <span>{item.categories?.name || item.category}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-mono">{item.monthly_fee.toFixed(2)}€</TableCell>
+                  <TableCell className="font-mono">{item.setup_fee.toFixed(2)}€</TableCell>
+                  <TableCell>
+                    <Badge variant={item.is_active ? "default" : "secondary"}>
+                      {item.is_active ? 'Aktívne' : 'Neaktívne'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/admin/warehouse/items/${item.id}`);
+                        }}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          Zobraziť detail
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/admin/warehouse/items/${item.id}`);
+                        }}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Upraviť
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteItem(item);
+                          }}
+                          className="text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Zmazať
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((item) => (
-                  <TableRow key={item.id} className="cursor-pointer hover:bg-muted/50">
-                    <TableCell className="font-medium">{item.name}</TableCell>
-                    <TableCell>
-                      {categories.find(c => c.id === item.category_id)?.name || t('warehouse.itemDetail.other')}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={item.item_type === 'device' ? 'default' : 'secondary'}>
-                        {item.item_type === 'device' ? t('warehouse.itemDetail.device') : t('warehouse.itemDetail.service')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{formatPrice(item.monthly_fee)}</TableCell>
-                    <TableCell>{formatPrice(item.setup_fee)}</TableCell>
-                    <TableCell>
-                      <Badge variant={item.is_active ? 'default' : 'destructive'}>
-                        {item.is_active ? t('warehouse.itemDetail.active') : t('warehouse.itemDetail.inactive')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => navigate(`/admin/warehouse/items/${item.id}`)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            {t('warehouse.table.actions.view')}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setEditingItem(item)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            {t('warehouse.table.actions.edit')}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            {t('warehouse.table.actions.delete')}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </Card>
 
-      {/* Add/Edit Modal */}
-      {(showAddModal || editingItem) && (
+      {/* Edit Modal */}
+      {showModal && (
         <WarehouseItemModal
-          item={editingItem}
-          open={showAddModal || !!editingItem}
+          item={selectedItem}
+          open={showModal}
           onOpenChange={(open) => {
-            if (!open) {
-              setShowAddModal(false);
-              setEditingItem(null);
-            }
+            setShowModal(open);
+            if (!open) handleCloseModal();
           }}
         />
       )}
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteItem} onOpenChange={() => setDeleteItem(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Potvrdiť vymazanie</AlertDialogTitle>
+            <AlertDialogDescription>
+              Naozaj chcete vymazať položku "{deleteItem?.name}"? Táto akcia sa nedá vrátiť späť.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Zrušiť</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteItem && handleDelete(deleteItem)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Vymazať
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
