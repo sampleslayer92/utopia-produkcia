@@ -24,27 +24,27 @@ const WarehousePage = () => {
   const showQuickSale = location.pathname === '/admin/warehouse/quick-sale';
 
   const getTitle = () => {
-    if (showAddForm) return "➕ Pridať položku";
-    if (showBulkOps) return "🔄 Batch operácie";
-    if (showSolutions) return "🎯 Riešenia";
-    if (showCategories) return "📁 Kategórie";
-    if (showItemTypes) return "🏷️ Typy položiek";
-    if (showVisualBuilder) return "🎨 Visual Builder";
-    if (showQuickSale) return "💰 Rýchly predaj";
-    if (showDashboard) return "📊 Dashboard";
-    return "📦 " + t('navigation.warehouse');
+    if (showAddForm) return t('warehouse.addItemTitle');
+    if (showBulkOps) return t('warehouse.bulkOperationsTitle');
+    if (showSolutions) return t('warehouse.solutionsTitle');
+    if (showCategories) return t('warehouse.categoriesTitle');
+    if (showItemTypes) return t('warehouse.itemTypesTitle');
+    if (showVisualBuilder) return t('warehouse.visualBuilderTitle');
+    if (showQuickSale) return t('warehouse.quickSaleTitle');
+    if (showDashboard) return t('warehouse.dashboardTitle');
+    return t('warehouse.itemsTitle');
   };
 
   const getSubtitle = () => {
-    if (showAddForm) return "Pridajte novú položku do skladu";
-    if (showBulkOps) return "Hromadné úpravy skladových položiek";
-    if (showSolutions) return "Spravujte riešenia a produkty";
-    if (showCategories) return "Správa kategórií skladových položiek";
-    if (showItemTypes) return "Správa typov skladových položiek";
-    if (showVisualBuilder) return "Drag & drop editor pre produkty a riešenia";
-    if (showQuickSale) return "POS systém pre vytváranie faktúr";
-    if (showDashboard) return "Prehľad statistík a aktivít";
-    return "Prehľadná tabuľka všetkých skladových položiek";
+    if (showAddForm) return t('warehouse.addItemSubtitle');
+    if (showBulkOps) return t('warehouse.bulkOperationsSubtitle');
+    if (showSolutions) return t('warehouse.solutionsSubtitle');
+    if (showCategories) return t('warehouse.categoriesSubtitle');
+    if (showItemTypes) return t('warehouse.itemTypesSubtitle');
+    if (showVisualBuilder) return t('warehouse.visualBuilderSubtitle');
+    if (showQuickSale) return t('warehouse.quickSaleSubtitle');
+    if (showDashboard) return t('warehouse.dashboardSubtitle');
+    return t('warehouse.itemsSubtitle');
   };
 
   return (
@@ -59,9 +59,9 @@ const WarehousePage = () => {
       ) : showSolutions ? (
         <SolutionWorkflow />
       ) : showCategories ? (
-        <div className="text-center text-muted-foreground">Správa kategórií bude implementovaná v ďalšej verzii</div>
+        <div className="text-center text-muted-foreground">{t('warehouse.categoriesSubtitle')}</div>
       ) : showItemTypes ? (
-        <div className="text-center text-muted-foreground">Správa typov položiek bude implementovaná v ďalšej verzii</div>
+        <div className="text-center text-muted-foreground">{t('warehouse.itemTypesSubtitle')}</div>
       ) : showVisualBuilder ? (
         <EnhancedVisualBuilder />
       ) : showQuickSale ? (

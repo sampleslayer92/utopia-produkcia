@@ -1,1703 +1,193 @@
 
 {
+  "title": "Admin Panel",
+  "subtitle": "Spravujte svoju aplikáciu",
   "navigation": {
     "dashboard": "Dashboard",
-    "overview": "Prehľad",
-    "merchants": "Merchanti",
-    "allMerchants": "Všetci merchanti",
-    "locations": "Lokality",
-    "requests": "Žiadosti",
-    "contracts": "Zmluvy",
-    "myContracts": "Moje zmluvy",
-    "oldContracts": "Staré zmluvy",
-    "myOldContracts": "Moje staré zmluvy",
     "warehouse": "Sklad",
-    "allItems": "Všetky položky",
+    "deals": "Obchody",
+    "requests": "Požiadavky",
+    "customers": "Zákazníci",
+    "projects": "Projekty",
+    "analytics": "Analytika",
+    "settings": "Nastavenia",
+    "addItem": "Pridať položku",
+    "bulkOperations": "Batch operácie",
     "solutions": "Riešenia",
     "categories": "Kategórie",
     "itemTypes": "Typy položiek",
-    "addItem": "Pridať položku",
-    "bulkOperations": "Batch operácie",
-    "devices": "Zariadenia",
-    "services": "Služby",
-    "reporting": "Reporting",
-    "reportsDashboard": "Dashboard reportov",
-    "businessReports": "Obchodné reporty",
-    "technicalReports": "Technické reporty",
-    "organizations": "Organizácie",
-    "organizationManagement": "Správa organizácií",
-    "teamManagement": "Správa tímov",
-    "organizationalStructure": "Organizačná štruktúra",
-    "teamMembers": "Členovia tímu",
-    "teamPerformance": "Výkonnosť tímu",
-    "tasks": "Úlohy",
-    "ticketingSystem": "Ticketový systém",
-    "allTasks": "Všetky úlohy",
-    "completedTasks": "Dokončené úlohy",
-    "notifications": "Notifikácie",
-    "settings": "Nastavenia",
-    "applicationSettings": "Nastavenia aplikácie",
-    "profileSettings": "Nastavenia profilu",
-    "businessProcesses": "Obchodné Procesy",
-    "clientManagement": "Správa Klientov",
-    "productCatalog": "Produktový Katalóg",
-    "analyticsReporting": "Analýzy & Reporting",
-    "onboardingManagement": "Správa Onboardingu",
-    "systemManagement": "Správa Systému",
-    "personal": "Osobné",
-    "quickSale": "Rýchly predaj",
-    "stepConfiguration": "Konfigurácia krokov",
-    "formTemplates": "Šablóny formulárov",
-    "onboardingPreview": "Náhľad onboardingu",
-    "translations": "Preklady",
-    "contractTemplates": "Šablóny Zmlúv",
-    "applicationArchitecture": "Architektúra Aplikácie"
-  },
-  "settings": {
-    "description": "Spravujte nastavenia aplikácie a vášho profilu"
-  },
-  "breadcrumbs": {
-    "editContract": "Editácia zmluvy",
-    "viewContract": "Detail zmluvy",
-    "viewMerchant": "Detail merchanta",
-    "teamMember": "Detail člena tímu"
-  },
-  "dashboard": {
-    "title": "Administratívny dashboard",
-    "subtitle": "Prehľad všetkých aktivít a štatistík",
-    "newContract": "Nová zmluva",
-    "status": {
-      "online": "Online"
-    },
-    "revenue": {
-      "title": "Príjmy",
-      "monthlyTrend": "Mesačný vývoj príjmov",
-      "profitByMonth": "Zisk podľa mesiacov",
-      "revenue": "Príjmy",
-      "profit": "Zisk"
-    },
-    "metrics": {
-      "monthlyRevenue": "Mesačné príjmy",
-      "monthlyTransactions": "Mesačné transakcie",
-      "averageProfit": "Priemerný zisk",
-      "activeClients": "Aktívni klienti",
-      "fromLastMonth": "oproti minulému mesiacu",
-      "totalRevenue": "Celkový príjem",
-      "activeContracts": "Aktívne zmluvy",
-      "totalTurnover": "Celkový obrat",
-      "totalMerchants": "Počet merchantov",
-      "fromPreviousMonth": "z minulého mesiaca"
-    },
-    "team": {
-      "title": "Výkonnosť tímu",
-      "viewAll": "Zobraziť všetko",
-      "excellent": "Výborný",
-      "good": "Dobrý",
-      "average": "Priemerný", 
-      "needsImprovement": "Potrebuje zlepšenie",
-      "contractsThisMonth": "Zmluvy tento mesiac",
-      "target": "Cieľ",
-      "topPerformers": "Najlepší v tíme"
-    },
-    "merchantOverview": {
-      "topMerchants": "Top Merchanti",
-      "viewAllMerchants": "Zobraziť všetkých",
-      "geographicDistribution": "Geografické rozloženie",
-      "contracts": "zmlúv",
-      "efficiency": "Efektivita",
-      "noMerchants": "Zatiaľ žiadni merchanti",
-      "noLocationData": "Žiadne údaje o lokalitách",
-      "totalMerchants": "Celkom merchantov",
-      "totalLocations": "Prevádzok"
-    },
-    "quickActions": {
-      "title": "Rýchle akcie",
-      "newContract": "Nová zmluva",
-      "newContractDesc": "Spustiť onboarding proces",
-      "contracts": "Zmluvy",
-      "contractsDesc": "Spravovať všetky zmluvy",
-      "merchants": "Merchanti",
-      "merchantsDesc": "Prehľad partnerov",
-      "locations": "Prevádzky",
-      "locationsDesc": "Správa lokácií",
-      "team": "Tím",
-      "teamDesc": "Členovia tímu"
-    }
-  },
-  "contracts": {
-    "title": "Správa zmlúv",
-    "subtitle": "Prehľad a správa všetkých zmlúv v systéme",
-    "export": "Exportovať",
-    "newContract": "Nová zmluva",
-    "new": "Nová zmluva",
-    "stats": {
-      "activeContracts": "Aktívne zmluvy",
-      "signedContracts": "Podpísané zmluvy", 
-      "totalValue": "Celková hodnota",
-      "expiringContracts": "Expirujúce",
-      "approvedSigned": "Schválené a podpísané",
-      "fullyExecuted": "Plne vykonané",
-      "monthlyIncome": "Mesačný príjem",
-      "olderThan11Months": "Staršie ako 11 mesiacov"
-    },
-    "actions": {
-      "fixMerchants": "Opraviť merchantov",
-      "fixing": "Opravujem..."
-    },
-    "table": {
-      "contractNumber": "Číslo zmluvy",
-      "client": "Klient",
-      "source": "Zdroj",
-      "contractType": "Typ zmluvy",
-      "monthlyValue": "Mesačná hodnota",
-      "status": "Stav",
-      "completion": "Dokončenosť",
-      "salesPerson": "Obchodný zástupca",
-      "created": "Vytvorené",
-      "actions": "Akcie",
-      "company": "Spoločnosť",
-      "contactPerson": "Kontaktná osoba",
-      "contracts": "Zmluvy",
-      "monthlyProfit": "Mesačný zisk",
-      "contractsCount": "{{count}} zmlúv"
-    },
-    "statusOptions": {
-      "draft": "Koncept",
-      "submitted": "Odoslané",
-      "approved": "Schválené",
-      "rejected": "Zamietnuté",
-      "in_progress": "Rozpracované",
-      "sent_to_client": "Odoslané klientovi",
-      "signed": "Podpísané",
-      "lost": "Stratené"
-    },
-    "sourceOptions": {
-      "web": "Web",
-      "partner": "Partner",
-      "direct": "Priamy kontakt",
-      "referral": "Odporúčanie"
-    },
-    "detail": {
-      "title": "Detail zmluvy",
-      "loading": "Načítavam...",
-      "loadingDetail": "Načítavam detail zmluvy...",
-      "error": "Chyba",
-      "errorLoading": "Chyba pri načítavaní",
-      "contractNotFound": "Zmluva nenájdená",
-      "errorMessage": "Nepodarilo sa načítať detail zmluvy.",
-      "contractNotExists": "Zmluva s ID {{id}} neexistuje.",
-      "backToList": "Späť na zoznam",
-      "unknownClient": "Neznámy klient",
-      "completed": "dokončené",
-      "exportPdf": "Export PDF",
-      "saveChanges": "Uložiť zmeny",
-      "saving": "Ukladám...",
-      "edit": "Upraviť",
-      "cancelEdit": "Zrušiť úpravy",
-      "tabs": {
-        "overview": "Prehľad",
-        "client": "Klient",
-        "devices": "Zariadenia",
-        "finance": "Financie",
-        "documents": "Dokumenty",
-        "history": "História"
-      },
-      "overview": {
-        "monthlyProfit": "Mesačný zisk",
-        "completion": "Dokončenosť",
-        "devices": "Zariadenia",
-        "services": "Služby",
-        "basicInfo": "Základné informácie",
-        "contractNumber": "Číslo zmluvy",
-        "status": "Stav",
-        "source": "Zdroj",
-        "created": "Vytvorené",
-        "submitted": "Odoslané",
-        "signed": "Podpísané",
-        "clientInfo": "Informácie o klientovi",
-        "clientName": "Meno klienta",
-        "ico": "IČO",
-        "email": "Email",
-        "phone": "Telefón",
-        "businessLocationsCount": "Prevádzky",
-        "quickActions": "Rýchle akcie",
-        "generatePdf": "Generovať PDF",
-        "sendToClient": "Odoslať klientovi",
-        "recalculate": "Prepočítať",
-        "progressStatus": "Stav postupu",
-        "progress": "Postup",
-        "stepOf": "Krok {{current}} z {{total}}",
-        "unknown": "Neznáme"
-      },
-      "client": {
-        "title": "Informácie o klientovi",
-        "companyInfo": "Firemné údaje",
-        "companyName": "Názov spoločnosti",
-        "ico": "IČO",
-        "dic": "DIČ",
-        "vatNumber": "IČ DPH",
-        "notVatPayer": "Nie je platca DPH",
-        "notSpecified": "Neuvedené",
-        "address": "Adresa",
-        "streetPlaceholder": "Ulica a číslo",
-        "cityPlaceholder": "Mesto",
-        "zipPlaceholder": "PSČ",
-        "contactPerson": "Kontaktná osoba",
-        "firstName": "Meno",
-        "lastName": "Priezvisko",
-        "email": "Email",
-        "phone": "Telefón",
-        "businessLocations": "Prevádzky",
-        "addLocation": "Pridať prevádzku",
-        "locationName": "Názov prevádzky",
-        "locationAddress": "Adresa prevádzky",
-        "iban": "IBAN",
-        "businessSector": "Sektor podnikania",
-        "estimatedTurnover": "Odhadovaný obrat",
-        "perMonth": "€/mesiac",
-        "averageTransaction": "Priemerná transakcia",
-        "euroCurrency": "€",
-        "contactPersonAtLocation": "Kontaktná osoba v prevádzke",
-        "modal": {
-          "addLocationTitle": "Pridať novú prevádzku",
-          "locationName": "Názov prevádzky",
-          "locationAddress": "Adresa",
-          "streetPlaceholder": "Ulica a číslo",
-          "city": "Mesto",
-          "cityPlaceholder": "Mesto",
-          "zipCode": "PSČ",
-          "zipPlaceholder": "PSČ",
-          "iban": "IBAN",
-          "ibanPlaceholder": "IBAN účet",
-          "businessSector": "MCC sektor",
-          "sectorPlaceholder": "Sektor podnikania",
-          "cancel": "Zrušiť",
-          "addLocation": "Pridať prevádzku",
-          "adding": "Pridávam...",
-          "emptyMessage": "Neboli pridané žiadne prevádzky",
-          "addFirstLocation": "Pridať prvú prevádzku"
-        }
-      },
-      "actions": {
-        "backToList": "Späť na zoznam",
-        "exportPdf": "Exportovať PDF",
-        "edit": "Upraviť",
-        "cancelEdit": "Zrušiť úpravy",
-        "saveChanges": "Uložiť zmeny",
-        "saving": "Ukladám..."
-      },
-      "history": {
-        "title": "História zmien",
-        "historyComingSoon": "História zmien bude dostupná čoskoro",
-        "userActivity": "Aktivita používateľov",
-        "activityComingSoon": "Aktivita používateľov bude dostupná čoskoro",
-        "timeline": "Časová os udalostí",
-        "timelineComingSoon": "Časová os udalostí bude dostupná čoskoro"
-      },
-      "status": {
-        "completed": "dokončené"
-      }
-    },
-    "filters": {
-      "search": "Hľadať",
-      "searchPlaceholder": "Číslo zmluvy, meno, email...",
-      "merchant": "Merchant",
-      "status": "Stav",
-      "source": "Zdroj",
-      "allMerchants": "Všetci merchanti",
-      "allStatuses": "Všetky stavy",
-      "allSources": "Všetky zdroje",
-      "clearFilters": "Vyčistiť filtre"
-    }
-  },
-  "requests": {
-    "title": "Žiadosti",
-    "subtitle": "Správa žiadostí ktoré ešte nie sú podpísané",
-    "stats": {
-      "pendingRequests": "Čakajúce žiadosti",
-      "awaitingReview": "Čakajú na kontrolu",
-      "inProgress": "V procese",
-      "beingProcessed": "Spracovávajú sa",
-      "waitingForSignature": "Čakajú podpis",
-      "readyToSign": "Pripravené na podpis",
-      "totalValue": "Celková hodnota",
-      "estimatedValue": "Odhadovaná hodnota"
-    },
-    "actions": {
-      "newRequest": "Nová žiadosť",
-      "export": "Exportovať"
-    },
-    "filters": {
-      "title": "Filtre žiadostí"
-    },
-    "management": {
-      "title": "Správa žiadostí",
-      "noRequests": "Žiadne žiadosti na spracovanie",
-      "viewDetail": "Zobraziť detail",
-      "requestDetail": "Detail žiadosti",
-      "contactInfo": "Kontaktné údaje",
-      "companyInfo": "Firemné údaje",
-      "contactUnavailable": "Kontaktné údaje nie sú dostupné",
-      "companyUnavailable": "Firemné údaje nie sú dostupné",
-      "created": "Vytvorené",
-      "approve": "Schváliť",
-      "reject": "Zamietnuť",
-      "name": "Meno",
-      "email": "Email",
-      "companyName": "Názov",
-      "ico": "IČO"
-    },
-    "status": {
-      "submitted": "Odoslané",
-      "waiting_for_signature": "Čaká na podpis",
-      "signed": "Podpísané",
-      "approved": "Schválené",
-      "rejected": "Zamietnuté",
-      "pending_approval": "Čaká na schválenie"
-    },
-    "toast": {
-      "requestApproved": "Žiadosť bola schválená",
-      "requestRejected": "Žiadosť bola zamietnutá",
-      "errorApproving": "Chyba pri schvaľovaní žiadosti",
-      "errorRejecting": "Chyba pri zamietaní žiadosti"
-    }
-  },
-  "merchants": {
-    "title": "Správa merchantov",
-    "subtitle": "Prehľad a správa všetkých merchantov v systéme",
-    "export": "Exportovať",
-    "add": "Pridať",
-    "newMerchant": "Nový merchant",
-    "stats": {
-      "totalCount": "Celkový počet",
-      "allRegistered": "Všetci registrovaní",
-      "activeWithContracts": "Aktívni so zmluvami",
-      "haveSignedContracts": "Majú podpísané zmluvy",
-      "averageProfit": "Priemerný zisk",
-      "monthlyPerMerchant": "Mesačne na merchanta"
-    },
-    "filters": {
-      "search": "Hľadať",
-      "searchPlaceholder": "Názov, IČO, kontaktná osoba...",
-      "city": "Mesto",
-      "allCities": "Všetky mestá",
-      "contracts": "Zmluvy",
-      "allMerchants": "Všetci merchanti",
-      "withContracts": "So zmluvami",
-      "withoutContracts": "Bez zmlúv",
-      "monthlyProfit": "Mesačný zisk",
-      "allValues": "Všetky hodnoty",
-      "clearFilters": "Vyčistiť filtre"
-    },
-    "table": {
-      "title": "Zoznam merchantov",
-      "overview": "Prehľad všetkých merchantov v systéme ({{count}} celkom) - kliknite na riadok pre detail",
-      "company": "Spoločnosť",
-      "contactPerson": "Kontaktná osoba",
-      "contracts": "Zmluvy",
-      "monthlyProfit": "Mesačný zisk",
-      "created": "Vytvorený",
-      "contractsCount": "{{count}} zmlúv"
-    },
-    "detail": {
-      "title": "Detail merchanta",
-      "basicInfo": "Základné informácie",
-      "recentActivity": "História aktivít",
-      "latestContracts": "Najnovšie zmluvy",
-      "topLocations": "Top prevádzky",
-      "financialOverview": "Finančný prehľad",
-      "trends": "Trendy",
-      "activity": "Aktivita",
-      "analysis": "Grafy a analýzy budú dostupné čoskoro",
-      "activityHistory": "História aktivít bude dostupná čoskoro",
-      "tabs": {
-        "overview": "Prehľad",
-        "locations": "Prevádzky",
-        "contracts": "Zmluvy",
-        "finance": "Financie",
-        "activity": "Aktivita"
-      },
-      "stats": {
-        "totalContracts": "Celkom zmlúv",
-        "monthlyProfit": "Mesačný zisk",
-        "totalDevices": "Celkom zariadení",
-        "avgContractValue": "Priem. hodnota zmluvy",
-        "locations": "Prevádzky",
-        "plannedTurnover": "Plánovaný obrat",
-        "withPosTerminal": "s POS terminálom",
-        "fromAllLocations": "zo všetkých prevádzkových miest"
-      },
-      "contracts": {
-        "title": "Zmluvy",
-        "noContracts": "Žiadne zmluvy",
-        "table": {
-          "contractNumber": "Číslo zmluvy",
-          "status": "Stav",
-          "devices": "Zariadenia",
-          "monthlyProfit": "Mesačný zisk",
-          "created": "Vytvorená"
-        }
-      },
-      "locations": {
-        "title": "Prevádzky",
-        "noLocations": "Žiadne prevádzky",
-        "summary": {
-          "totalLocations": "Celkom prevádzkových miest",
-          "withPos": "S POS terminálom",
-          "totalPlannedTurnover": "Celkový plánovaný obrat"
-        },
-        "table": {
-          "locationName": "Názov prevádzky",
-          "address": "Adresa",
-          "sector": "Sektor",
-          "turnover": "Obrat",
-          "pos": "POS",
-          "contract": "Zmluva"
-    }
-  },
-  "overview": {
-    "title": "Prehľad", 
-    "subtitle": "Komplexný prehľad všetkých žiadostí a zmlúv",
-    "stats": {
-      "totalPipelineValue": "Celková hodnota",
-      "deals": "dealy",
-      "conversionRate": "Úspešnosť",
-      "converted": "konvertované",
-      "avgDealValue": "Priemerná hodnota",
-      "perSignedDeal": "na podpísanú zmluvu",
-      "activePipeline": "Aktívne",
-      "inProgress": "prebieha",
-      "signedDeals": "Podpísané",
-      "completed": "dokončené",
-      "lostDeals": "Stratené obchody",
-      "unsuccessful": "neúspešné",
-      "trendGood": "Dobrá"
-    },
-    "kanban": {
-      "dealMoved": "Obchod presunutý do {{columnTitle}}",
-      "failedToUpdate": "Nepodarilo sa aktualizovať stav obchodu"
-    },
-    "toolbar": {
-      "kanban": "Kanban",
-      "table": "Tabuľka",
-      "itemsCount": "položiek",
-      "searchPlaceholder": "Hľadať obchody a zmluvy...",
-      "filters": "Filtre",
-      "advancedFilters": "Pokročilé filtre",
-      "clearAll": "Vymazať všetko",
-      "addColumn": "Pridať stĺpec",
-      "statuses": "Stavy",
-      "reset": "Resetovať",
-      "settings": "Nastavenia"
-    },
-    "entityTypes": {
-      "both": "Všetko",
-      "requests": "Žiadosti",
-      "contracts": "Zmluvy"
-    },
-    "filters": {
-      "status": "Stav",
-      "dateRange": "Dátumový rozsah",
-      "valueRange": "Rozsah hodnôt",
-      "merchant": "Obchodník",
-      "source": "Zdroj",
-      "presets": {
-        "title": "Prednastavené filtre",
-        "presetsLabel": "Prednastavenia",
-        "hotLeads": {
-          "name": "Horúce leady",
-          "description": "Vysoká hodnota, pripravené na uzavretie"
-        },
-        "newRequests": {
-          "name": "Nové žiadosti",
-          "description": "Nedávno odoslané"
-        },
-        "pendingReview": {
-          "name": "Čakajú na kontrolu",
-          "description": "Čakajú na schválenie"
-        },
-        "thisMonth": {
-          "name": "Tento mesiac",
-          "description": "Vytvorené tento mesiac"
-        },
-        "highValue": {
-          "name": "Vysoká hodnota",
-          "description": "Nad €50,000"
-        }
-      }
-    },
-    "success": {
-      "columnAdded": "Stĺpec bol úspešne pridaný",
-      "columnsReset": "Stĺpce boli úspešne resetované na predvolené"
-    },
-    "errors": {
-      "addingColumn": "Chyba pri pridávaní stĺpca",
-      "resettingColumns": "Chyba pri resetovaní stĺpcov",
-      "loadingDeals": "Chyba pri načítavaní obchodov: {{message}}"
-    },
-    "column": {
-      "actions": {
-        "addDeal": "Pridať obchod",
-        "sortByValue": "Zoradiť podľa hodnoty",
-        "sortByDate": "Zoradiť podľa dátumu", 
-        "deleteColumn": "Vymazať stĺpec"
-      },
-      "emptyState": {
-        "noDeals": "Žiadne obchody v tejto fáze",
-        "addDeal": "Pridať obchod"
-      },
-      "stats": {
-        "deals": "obchodov"
-      }
-    },
-    "card": {
-      "actions": {
-        "call": "Zavolať",
-        "email": "Email",
-        "edit": "Upraviť", 
-        "detail": "Detail"
-      },
-      "labels": {
-        "value": "Hodnota",
-        "progress": "Priebeh"
-      }
-    }
-  },
-  "status": {
-    "draft": "Koncept",
-    "pending": "Čakajúce",
-    "in_progress": "V spracovaní",
-    "review": "Na kontrolu", 
-    "approved": "Schválené",
-    "signed": "Podpísané",
-    "active": "Aktívne",
-    "completed": "Dokončené",
-    "cancelled": "Zrušené",
-    "rejected": "Zamietnuté",
-    "lost": "Stratené",
-    "on_hold": "Pozastavené",
-    "expired": "Vypršané"
-  },
-  "notifications": {
-    "title": "Notifikácie",
-    "subtitle": "Správa a prehľad všetkých notifikácií",
-    "loading": "Načítavam notifikácie...",
-    "empty": "Žiadne notifikácie",
-    "emptyDescription": "Všetky notifikácie sa zobrazia tu",
-    "markAllRead": "Označiť všetko",
-    "markAsRead": "Označiť",
-    "markAsUnread": "Označiť ako neprečítané",
-    "delete": "Vymazať",
-    "settings": "Nastavenia",
-    "viewAll": "Zobraziť všetky",
-    "view": "Zobraziť",
-    "showingCount": "Zobrazuje sa {{shown}} z {{total}}",
-    "search": "Hľadať v notifikáciách...",
-    "priority": "Priorita",
-    "status": "Stav",
-    "allPriorities": "Všetky priority",
-    "allStatus": "Všetky stavy",
-    "read": "Prečítané",
-    "unread": "Neprečítané",
-    "critical": "Kritická",
-    "high": "Vysoká",
-    "medium": "Stredná",
-    "low": "Nízka",
-    "clearFilters": "Vyčistiť filtre",
-    "noResults": "Nenašli sa žiadne notifikácie",
-    "total": "celkom",
-    "category": "kategória",
-    "noCategoryNotifications": "Žiadne notifikácie v tejto kategórii",
-    "tryDifferentCategory": "Skúste inú kategóriu alebo upravte filtre",
-    "refreshed": "Notifikácie boli obnovené",
-    "exported": "Notifikácie boli exportované",
-    "center": {
-      "title": "Centrum notifikácií",
-      "subtitle": "Spravujte všetky vaše notifikácie na jednom mieste"
-    },
-    "categories": {
-      "all": "Všetky",
-      "contracts": "Zmluvy", 
-      "merchants": "Merchanti",
-      "system": "Systém",
-      "errors": "Chyby",
-      "organizations": "Organizácie",
-      "users": "Používatelia",
-      "teams": "Tímy"
-    },
-    "priority": {
-      "low": "Nízka",
-      "medium": "Stredná", 
-      "high": "Vysoká",
-      "critical": "Kritická"
-    },
-    "priorities": {
-      "low": "Nízka",
-      "medium": "Stredná", 
-      "high": "Vysoká",
-      "critical": "Kritická"
-    },
-    "types": {
-      "contract_created": "Nová zmluva",
-      "contract_status_changed": "Zmena statusu zmluvy",
-      "merchant_registered": "Nový merchant",
-      "error_occurred": "Chyba aplikácie",
-      "system_alert": "Systémové upozornenie"
-    },
-    "actions": {
-      "refresh": "Obnoviť",
-      "export": "Exportovať",
-      "markAllRead": "Označiť všetko ako prečítané",
-      "settings": "Nastavenia notifikácií",
-      "bulkActions": "Hromadné akcie",
-      "selectAll": "Vybrať všetky",
-      "deselectAll": "Zrušiť výber"
-    },
-    "filters": {
-      "all": "Všetky",
-      "unread": "Neprečítané",
-      "read": "Prečítané",
-      "search": "Hľadať notifikácie...",
-      "priority": "Priorita",
-      "type": "Typ",
-      "clear": "Vymazať filtre",
-      "status": "Status",
-      "dateRange": "Obdobie",
-      "entity": "Entita"
-    },
-    "markAsRead": "Označiť ako prečítané",
-    "markAllAsRead": "Označiť všetko ako prečítané",
-    "refresh": "Obnoviť",
-    "export": "Exportovať",
-    "stats": {
-      "total": "Celkom",
-      "unread": "Neprečítané",
-      "today": "Dnes",
-      "thisWeek": "Tento týždeň",
-      "thisMonth": "Tento mesiac",
-      "high": "Vysoká priorita",
-      "critical": "Kritické"
-    },
-    "timestamps": {
-      "justNow": "Práve teraz",
-      "minuteAgo": "Pred minútou",
-      "minutesAgo": "Pred {{count}} minútami",
-      "hourAgo": "Pred hodinou",
-      "hoursAgo": "Pred {{count}} hodinami",
-      "dayAgo": "Včera",
-      "daysAgo": "Pred {{count}} dňami",
-      "weekAgo": "Pred týždňom",
-      "weeksAgo": "Pred {{count}} týždňami",
-      "monthAgo": "Pred mesiacom",
-      "monthsAgo": "Pred {{count}} mesiacmi"
-    }
-  }
-}
+    "visualBuilder": "Visual Builder",
+    "quickSale": "Rýchly predaj"
   },
   "warehouse": {
     "title": "Sklad",
-    "subtitle": "Spravujte zariadenia a služby v sklade",
-    "totalItems": "Celkom položiek",
-    "devices": "Zariadenia",
-    "services": "Služby",
-    "allItems": "Všetky položky",
-    "device": "Zariadenie",
-    "service": "Služba",
-    "searchItems": "Hľadať položky...",
+    "subtitle": "Prehľad všetkých skladových položiek",
     "addItem": "Pridať položku",
-    "editItem": "Upraviť položku",
-    "deleteItem": "Vymazať položku",
-    "itemDetails": "Detaily položky",
-    "category": "Kategória",
-    "monthlyFee": "Mesačný poplatok",
-    "setupFee": "Poplatok za nastavenie",
-    "companyCost": "Náklady spoločnosti",
-    "stock": "Sklad",
-    "minStock": "Minimálny sklad",
-    "currentStock": "Aktuálny sklad",
-    "active": "Aktívne",
-    "inactive": "Neaktívne",
-    "status": "Status",
-    "specifications": "Špecifikácie",
-    "image": "Obrázok",
-    "actions": "Akcie",
-    "noItemsFound": "Neboli nájdené žiadne položky",
-    "loading": "Načítavam...",
-    "creating": "Vytváram...",
-    "updating": "Aktualizujem...",
-    "deleting": "Mažem...",
-    "confirmDelete": "Potvrdiť vymazanie",
-    "confirmDeleteMessage": "Ste si istí, že chcete vymazať túto položku? Táto akcia sa nedá vrátiť späť.",
-    "itemCreated": "Položka bola úspešne vytvorená",
-    "itemUpdated": "Položka bola úspešne aktualizovaná",
-    "itemDeleted": "Položka bola úspešne vymazaná",
-    "errorCreating": "Chyba pri vytváraní položky",
-    "errorUpdating": "Chyba pri aktualizácii položky",
-    "errorDeleting": "Chyba pri mazaní položky",
-    "errorLoading": "Chyba pri načítavaní",
-    "name": "Názov",
-    "description": "Popis",
-    "table": {
-      "name": "Názov",
-      "type": "Typ",
-      "category": "Kategória",
-      "monthlyFee": "Mesačný poplatok",
-      "setupFee": "Poplatok za nastavenie",
-      "companyCost": "Náklady spoločnosti",
-      "stock": "Sklad",
-      "status": "Status",
-      "actions": "Akcie"
-    },
-    "filters": {
-      "all": "Všetky",
+    "searchPlaceholder": "Hľadať položky...",
+    "allCategories": "Všetky kategórie",
+    "allTypes": "Všetky typy",
+    "addItemTitle": "➕ Pridať položku",
+    "addItemSubtitle": "Pridajte novú položku do skladu",
+    "bulkOperationsTitle": "🔄 Batch operácie",
+    "bulkOperationsSubtitle": "Hromadné úpravy skladových položiek",
+    "solutionsTitle": "🎯 Riešenia",
+    "solutionsSubtitle": "Spravujte riešenia a produkty",
+    "categoriesTitle": "📁 Kategórie",
+    "categoriesSubtitle": "Správa kategórií skladových položiek",
+    "itemTypesTitle": "🏷️ Typy položiek",
+    "itemTypesSubtitle": "Správa typov skladových položiek",
+    "visualBuilderTitle": "🎨 Visual Builder",
+    "visualBuilderSubtitle": "Drag & drop editor pre produkty a riešenia",
+    "quickSaleTitle": "💰 Rýchly predaj",
+    "quickSaleSubtitle": "POS systém pre vytváranie faktúr",
+    "dashboardTitle": "📊 Dashboard",
+    "dashboardSubtitle": "Prehľad statistík a aktivít",
+    "itemsTitle": "📦 Sklad",
+    "itemsSubtitle": "Prehľadná tabuľka všetkých skladových položiek",
+    "stats": {
+      "total": "Celkovo",
+      "active": "Aktívne",
       "devices": "Zariadenia",
       "services": "Služby"
     },
-    "categories": {
-      "payment_cards": "Platobné karty",
-      "pos_terminals": "POS terminály",
-      "software": "Softvér",
-      "hardware": "Hardvér",
-      "accessories": "Príslušenstvo",
-      "other": "Ostatné"
-    }
-  },
-  "reporting": {
-    "subtitle": "Analytika a reporty naprieč aplikáciou",
-    "dashboard": "Dashboard reportov",
-    "dashboardDesc": "Prehľad kľúčových metrík a ukazovateľov výkonnosti",
-    "dateRange": "Dátumový rozsah",
-    "export": "Export",
-    "overview": "Prehľad",
-    "business": "Obchodné",
-    "technical": "Technické",
-    "totalContracts": "Celkový počet zmlúv",
-    "activeContracts": "Aktívne zmluvy",
-    "totalMerchants": "Celkový počet merchantov",
-    "conversionRate": "Miera konverzie",
-    "allTimeTotal": "Celkový počet za všetky časy",
-    "signedAndActive": "Podpísané a aktívne",
-    "registeredMerchants": "Registrovaní merchanti",
-    "draftToSigned": "Návrh na podpísané",
-    "contractsOverview": "Prehľad zmlúv",
-    "contractsOverviewDesc": "Detailná analýza životného cyklu zmlúv",
-    "merchantsAnalysis": "Analýza merchantov",
-    "merchantsAnalysisDesc": "Výkonnosť a štatistiky merchantov",
-    "performanceMetrics": "Metriky výkonnosti",
-    "performanceMetricsDesc": "Kľúčové ukazovatele výkonnosti a trendy",
-    "pendingContracts": "Čakajúce zmluvy",
-    "totalLocations": "Celkový počet lokalít",
-    "avgLocationsPerMerchant": "Priem. lokalít/merchant",
-    "draftContracts": "Návrhy zmlúv",
-    "completionRate": "Miera dokončenia",
-    "viewDetails": "Zobraziť detaily",
-    "businessReports": "Obchodné reporty",
-    "businessReportsDesc": "Komerčná analytika a prehľady",
-    "technicalReports": "Technické reporty",
-    "technicalReportsDesc": "Výkonnosť systému a technické metriky",
-    "contractsReport": "Report zmlúv",
-    "merchantsReport": "Report merchantov",
-    "revenueReport": "Report príjmov",
-    "performanceReport": "Report výkonnosti",
-    "systemLogs": "Systémové logy",
-    "usageAnalytics": "Analytika používania",
-    "errorReports": "Reporty chýb",
-    "userActivity": "Aktivita používateľov",
-    "monthlyRevenue": "Mesačné príjmy",
-    "fromActiveContracts": "Z aktívnych kontraktov",
-    "contractStatusDistribution": "Rozdelenie kontraktov podľa statusu",
-    "monthlyRevenueChart": "Mesačné príjmy (€)",
-    "merchantGrowthChart": "Rast počtu obchodníkov",
-    "signed": "Podpísané",
-    "pending": "Čakajúce",
-    "drafts": "Koncepty",
-    "revenue": "Príjmy",
-    "merchants": "Obchodníci"
-  },
-  "contractActions": {
-    "quickSummary": "Rýchly prehľad",
-    "contractNumber": "Číslo zmluvy",
-    "client": "Klient",
-    "monthlyRevenue": "Mesačný príjem",
-    "deviceCount": "Počet zariadení",
-    "mainActions": "Hlavné akcie",
-    "previewContract": "Náhľad zmluvy",
-    "exportPdf": "Exportovať PDF",
-    "generatingPdf": "Generujem PDF...",
-    "sendEmail": "Odoslať emailom",
-    "markAsSigned": "Označiť ako podpísanú",
-    "duplicateContract": "Duplikovať zmluvu",
-    "additionalActions": "Ďalšie akcie",
-    "changeHistory": "História zmien",
-    "downloadAttachments": "Stiahnuť prílohy",
-    "deleteContract": "Vymazať zmluvu",
-    "deleting": "Mazanie...",
-    "statusInfo": "Informácie o stave",
-    "lastModified": "Posledná úprava",
-    "submitted": "Odoslané",
-    "version": "Verzia",
-    "notSpecified": "Neuvedené"
-  },
-  "stats": {
-    "totalContracts": "Celkový počet zmlúv",
-    "submittedContracts": "Odoslané zmluvy",
-    "approvedContracts": "Schválené zmluvy",
-    "drafts": "Koncepty",
-    "recentChange": "{{count}} za posledný týždeň",
-    "waitingApproval": "Čakajú na schválenie",
-    "activeContracts": "Aktívne zmluvy",
-    "incomplete": "Nedokončené"
-  },
-  "team": {
-    "title": "Môj tím",
-    "subtitle": "Prehľad výkonnosti a správa tímu",
-    "member": "Člen tímu",
-    "performance": "Výkonnosť",
-    "contracts": "Zmluvy",
-    "revenue": "Príjmy",
-    "target": "Cieľ",
-    "thisMonth": "Tento mesiac",
-    "lastMonth": "Minulý mesiac",
-    "yearToDate": "Od začiatku roka",
-    "contactInfo": "Kontaktné informácie",
-    "joinedDate": "Dátum nástupu",
-    "role": "Pozícia",
-    "email": "Email",
-    "phone": "Telefón",
-    "statistics": "Štatistiky",
-    "recentActivity": "Nedávna aktivita",
-    "contractHistory": "História zmlúv",
-    "performanceHistory": "História výkonnosti",
-    "goals": "Ciele a targety",
-    "achievements": "Úspechy"
-  },
-  "teamManagement": {
-    "title": "Správa tímu",
-    "subtitle": "Spravujte členov vášho tímu a ich oprávnenia",
-    "loading": "Načítava sa...",
-    "addMember": "Pridať člena",
-    "roleManagement": "Správa rolí a používateľov",
-    "roles": {
-      "admin": "Admin",
-      "partner": "Partner", 
-      "merchant": "Merchant",
-      "adminDescription": "Plný prístup k systému, správa tímu, všetky zmluvy",
-      "partnerDescription": "Vytváranie zmlúv, správa vlastných obchodníkov",
-      "merchantDescription": "Zobrazenie vlastných zmlúv a údajov"
-    },
-    "member": "Člen",
-    "email": "Email",
-    "role": "Rola",
-    "status": "Stav",
-    "created": "Vytvorený",
-    "actions": "Akcie",
-    "active": "Aktívny",
-    "inactive": "Neaktívny",
-    "phone": "Telefón",
-    "firstName": "Meno",
-    "lastName": "Priezvisko",
-    "temporaryPassword": "Dočasné heslo",
-    "selectRole": "Vyberte rolu",
-    "cancel": "Zrušiť",
-    "create": "Vytvoriť",
-    "creating": "Vytvára sa...",
-    "edit": "Upraviť",
-    "delete": "Vymazať",
-    "activate": "Aktivovať",
-    "deactivate": "Deaktivovať",
-    "resetPassword": "Zmeniť heslo",
-    "testLogin": "Test prihlásenie",
-    "resetPasswordTooltip": "Zmeniť heslo",
-    "testLoginTooltip": "Test prihlásenie ako tento používateľ",
-    "confirmDelete": "Naozaj chcete vymazať tohto člena tímu?",
-    "confirmDeleteDescription": "Táto akcia sa nedá vrátiť späť. Člen tímu bude úplne odstránený zo systému.",
-    "newMember": {
-      "title": "Pridať nového člena tímu",
-      "description": "Vytvorte nový účet pre člena vášho tímu. Prihlasovacie údaje budú zobrazené po vytvorení.",
-      "enterTemporaryPassword": "Zadajte dočasné heslo"
-    },
-    "editMember": {
-      "title": "Upraviť člena tímu",
-      "description": "Upravte informácie o členovi tímu",
-      "save": "Uložiť",
-      "saving": "Ukladám..."
-    },
-    "resetPasswordDialog": {
-      "title": "Zmeniť heslo",
-      "description": "Zadajte nové dočasné heslo pre člena tímu",
-      "newPassword": "Nové heslo",
-      "enterNewPassword": "Zadajte nové heslo",
-      "change": "Zmeniť",
-      "changing": "Mením..."
-    },
-    "credentials": {
-      "title": "Prihlasovacie údaje",
-      "description": "Nový člen tímu bol úspešne vytvorený. Tieto údaje použite pre prihlásenie:",
-      "copyNote": "Skopírujte a bezpečne uložte tieto prihlasovacie údaje. Nezabudnite ich odovzdať novému členovi tímu.",
-      "email": "Email:",
-      "password": "Heslo:",
-      "close": "Zavrieť"
-    },
-    "testLoginConfirm": "Chcete sa dočasne prihlásiť ako {{name}}? Budete odhlásený zo súčasnej session.",
-    "messages": {
-      "memberDeleted": "Člen tímu bol úspešne vymazaný",
-      "passwordChanged": "Heslo bolo úspešne zmenené",
-      "emailCopied": "Email skopírovaný do schránky",
-      "passwordCopied": "Heslo skopírované do schránky",
-      "loggedOut": "Odhlásený. Teraz sa môžete prihlásiť ako testovací používateľ.",
-      "logoutError": "Chyba pri odhlásení"
-    }
-  },
-  "table": {
-    "title": "Zoznam zmlúv",
-    "subtitle": "Zobrazené {{filtered}} z {{total}} zmlúv - kliknite na riadok pre zobrazenie detailu",
-    "emptySubtitle": "Zatiaľ nie sú vytvorené žiadne zmluvy",
-    "emptyMessage": "Žiadne zmluvy",
-    "loading": "Načítavam zmluvy...",
-    "error": "Chyba pri načítavaní zmlúv: {{message}}",
-    "columns": {
-      "contractNumber": "Číslo zmluvy",
-      "contact": "Kontakt",
-      "company": "Spoločnosť",
-      "ico": "IČO",
-      "status": "Stav",
-      "created": "Vytvorené",
-      "client": "Klient",
-      "contractType": "Typ zmluvy",
-      "monthlyValue": "Mesačná hodnota",
-      "completion": "Dokončenosť",
-      "salesPerson": "Obchodník",
-      "source": "Zdroj"
-    },
-    "search": "Vyhľadať zmluvu (číslo, meno, email, spoločnosť, IČO)...",
-    "filters": {
-      "status": "Filter stavu",
-      "contractType": "Typ zmluvy",
-      "salesPerson": "Obchodný zástupca",
-      "dateRange": "Časové obdobie",
-      "source": "Zdroj",
-      "allStatuses": "Všetky stavy",
-      "allTypes": "Všetky typy",
-      "allSalespeople": "Všetci obchodní zástupcovia",
-      "allSources": "Všetky zdroje"
-    },
-    "noResults": {
-      "title": "Žiadne výsledky",
-      "subtitle": "Skúste zmeniť kritériá vyhľadávania alebo filtra."
-    },
-    "export": "Exportovať",
-    "newContract": "Nová zmluva",
-    "clickHint": "Kliknite na riadok pre zobrazenie detailu"
-  },
-  "status": {
-    "draft": "Neodoslané",
-    "in_progress": "Rozpracovaná",
-    "sent_to_client": "Odoslaná žiadosť",
-    "email_viewed": "Email zobrazený",
-    "step_completed": "Vyplnený krok",
-    "contract_generated": "Vygenerovaná zmluva",
-    "signed": "Podpísal",
-    "waiting_for_signature": "Čaká na podpis",
-    "lost": "Stratené",
-    "submitted": "Odoslané",
-    "approved": "Schválené",
-    "rejected": "Zamietnuté"
-  },
-  "source": {
-    "telesales": "Telesales",
-    "facebook": "Facebook",
-    "web": "Web",
-    "email": "Email",
-    "referral": "Odporúčanie",
-    "other": "Iné"
-  },
-  "lostReason": {
-    "no_response": "Bez odpovede",
-    "price_too_high": "Vysoká cena",
-    "competitor_chosen": "Vybrali konkurenciu",
-    "not_interested": "Nezáujem",
-    "technical_issues": "Technické problémy",
-    "other": "Iné"
-  },
-  "contractDetail": {
-    "backToList": "Späť na zoznam",
-    "edit": "Upraviť",
-    "cancelEdit": "Zrušiť úpravy",
-    "save": "Uložiť",
-    "saving": "Ukladám...",
-    "unsavedChanges": "Neuložené zmeny",
-    "unknownClient": "Neznámy klient",
-    "created": "Vytvorené",
-    "submitted": "Odoslané"
-  },
-  "businessLocation": {
-    "detail": {
-      "title": "Detail prevádzky",
-      "subtitle": "Informácie o prevádzkových miestach",
-      "backToLocations": "Späť na prevádzky",
-      "editLocation": "Upraviť prevádzku"
-    }
-  },
-  "clientOperations": {
-    "title": "Informácie o klientovi",
-    "companyInfo": "Firemné údaje",
-    "contactInfo": "Kontaktné údaje",
-    "businessLocations": "Prevádzky",
-    "edit": "Upraviť",
-    "save": "Uložiť",
-    "cancel": "Zrušiť",
-    "saving": "Ukladám...",
-    "companyName": "Názov spoločnosti",
-    "ico": "IČO",
-    "dic": "DIČ",
-    "vatNumber": "IČ DPH",
-    "address": "Adresa",
-    "contactPerson": "Kontaktná osoba",
-    "email": "Email",
-    "phone": "Telefón",
-    "noData": "Žiadne údaje",
-    "loadingError": "Chyba pri načítavaní údajov"
-  },
-  "devicesServices": {
-    "title": "Zariadenia a služby",
-    "devicesTitle": "Vybrané zariadenia",
-    "servicesTitle": "Vybrané služby",
-    "addonsTitle": "Doplnkové služby",
-    "noDevices": "Žiadne zariadenia",
-    "noServices": "Žiadne služby",
-    "device": "Zariadenie",
-    "service": "Služba",
-    "professionalDevice": "Profesionálne zariadenie",
-    "quantity": "Množstvo",
-    "paymentType": "Typ platby",
-    "rental": "Prenájom",
-    "monthlyFee": "Mesačný poplatok",
-    "monthlyFeePerPiece": "Mesačný poplatok za kus",
-    "companyCostPerPiece": "Náklady spoločnosti za kus",
-    "setupFee": "Poplatok za nastavenie",
-    "total": "Celkom",
-    "costSummary": "Súhrn nákladov",
-    "mainItem": "Hlavná položka",
-    "addons": "Doplnky",
-    "customerSubtotal": "Medzisúčet zákazníka",
-    "companyCost": "Náklady spoločnosti",
-    "margin": "Marža",
-    "addonsAndAccessories": "Doplnky a príslušenstvo",
-    "addAddon": "Pridať doplnok",
-    "noDevicesSelected": "Nie sú vybrané žiadne zariadenia",
-    "addFirstDevice": "Pridať prvé zariadenie",
-    "confirmDelete": "Potvrdiť vymazanie",
-    "addItem": "Pridať položku",
-    "edit": "Upraviť",
-    "save": "Uložiť",
-    "cancel": "Zrušiť",
-    "saving": "Ukladám...",
-    "addDevice": "Pridať zariadenie",
-    "addService": "Pridať službu",
-    "remove": "Odstrániť"
-  },
-  "calculations": {
-    "title": "Kalkulácie a poplatky",
-    "monthlyFees": "Mesačné poplatky",
-    "setupFees": "Poplatky za nastavenie",
-    "totalMonthlyFee": "Celkový mesačný poplatok",
-    "totalSetupFee": "Celkový poplatok za nastavenie",
-    "profit": "Zisk",
-    "monthlyProfit": "Mesačný zisk",
-    "margin": "Marža",
-    "revenue": "Príjem",
-    "costs": "Náklady",
-    "vatIncluded": "Vrátane DPH",
-    "vatExcluded": "Bez DPH",
-    "calculation": "Kalkulácia",
-    "breakdown": "Rozpis",
-    "summary": "Súhrn",
-    "businessData": "Obchodné údaje",
-    "estimatedTurnover": "Odhadovaný obrat",
-    "averageTransaction": "Priemerná transakcia",
-    "transactionsPerMonth": "Transakcií za mesiac",
-    "mifFees": "MIF poplatky",
-    "regulatedCards": "Regulované karty",
-    "unregulatedCards": "Neregulované karty",
-    "totalMif": "Celkový MIF",
-    "profitabilitySummary": "Súhrn ziskovosti",
-    "monthlyIncome": "Mesačný príjem",
-    "monthlyCosts": "Mesačné náklady",
-    "annualProfit": "Ročný zisk",
-    "detailedBreakdown": "Detailný rozpis",
-    "devicesAndServices": "Zariadenia a služby",
-    "pieces": "ks",
-    "subtotalDevices": "Medzisúčet zariadení",
-    "transactionFees": "Transakčné poplatky",
-    "mifRegulated": "MIF regulované",
-    "mifUnregulated": "MIF neregulované",
-    "subtotalTransactions": "Medzisúčet transakcií"
-  },
-  "authorizedPersons": {
-    "title": "Oprávnené osoby",
-    "addPerson": "Pridať osobu",
-    "editPerson": "Upraviť osobu",
-    "removePerson": "Odstrániť osobu",
-    "noPersons": "Žiadne oprávnené osoby",
-    "firstName": "Meno",
-    "lastName": "Priezvisko",
-    "position": "Pozícia",
-    "email": "Email",
-    "phone": "Telefón",
-    "birthDate": "Dátum narodenia",
-    "birthPlace": "Miesto narodenia",
-    "citizenship": "Občianstvo",
-    "address": "Adresa",
-    "documentType": "Typ dokladu",
-    "documentNumber": "Číslo dokladu",
-    "documentIssuer": "Vydávateľ",
-    "documentValidity": "Platnosť do",
-    "isPoliticallyExposed": "Politicky exponovaná osoba",
-    "isUsCitizen": "Občan USA",
-    "save": "Uložiť",
-    "cancel": "Zrušiť",
-    "saving": "Ukladám...",
-    "edit": "Upraviť",
-    "personalData": "Osobné údaje",
-    "identityDocument": "Doklad totožnosti",
-    "validUntil": "Platnosť do",
-    "issuer": "Vydávateľ",
-    "pepPerson": "PEP osoba",
-    "usCitizen": "Občan USA",
-    "thisPerson": "Táto osoba",
-    "idCard": "Občiansky preukaz",
-    "passport": "Pas",
-    "drivingLicense": "Vodičský preukaz"
-  },
-  "actualOwners": {
-    "title": "Skutoční vlastníci",
-    "addOwner": "Pridať vlastníka",
-    "editOwner": "Upraviť vlastníka",
-    "removeOwner": "Odstrániť vlastníka",
-    "noOwners": "Žiadni skutoční vlastníci",
-    "firstName": "Meno",
-    "lastName": "Priezvisko",
-    "maidenName": "Rodné priezvisko",
-    "birthDate": "Dátum narodenia",
-    "birthPlace": "Miesto narodenia",
-    "birthNumber": "Rodné číslo",
-    "citizenship": "Občianstvo",
-    "address": "Adresa",
-    "isPoliticallyExposed": "Politicky exponovaná osoba",
-    "ownershipPercentage": "Podiel vlastníctva",
-    "save": "Uložiť",
-    "cancel": "Zrušiť",
-    "saving": "Ukladám...",
-    "edit": "Upraviť",
-    "basicData": "Základné údaje",
-    "additionalData": "Dodatočné údaje",
-    "politicallyExposed": "Politicky exponovaná osoba",
-    "yesPep": "Áno, je PEP",
-    "no": "Nie",
-    "addFirstOwner": "Pridať prvého vlastníka",
-    "permanentAddress": "Trvalá adresa"
-  },
-  "contractNotes": {
-    "title": "Poznámky k zmluve",
-    "addNote": "Pridať poznámku",
-    "editNote": "Upraviť poznámku",
-    "removeNote": "Odstrániť poznámku",
-    "noNotes": "Žiadne poznámky",
-    "note": "Poznámka",
-    "author": "Autor",
-    "created": "Vytvorené",
-    "updated": "Upravené",
-    "save": "Uložiť",
-    "cancel": "Zrušiť",
-    "saving": "Ukladám...",
-    "edit": "Upraviť",
-    "internalNotes": "Interné poznámky",
-    "clientNotes": "Poznámky pre klienta",
-    "placeholder": "Zadajte poznámku..."
-  },
-  "signature": {
-    "title": "Podpis a súhlasy",
-    "signatureStatus": "Stav podpisu",
-    "signed": "Podpísané",
-    "notSigned": "Nepodpísané",
-    "signedBy": "Podpísal",
-    "signedDate": "Dátum podpisu",
-    "consents": "Súhlasy",
-    "gdprConsent": "Súhlas so spracovaním osobných údajov",
-    "termsConsent": "Súhlas s obchodnými podmienkami",
-    "electronicCommunicationConsent": "Súhlas s elektronickou komunikáciou",
-    "signatureRequired": "Vyžaduje sa podpis",
-    "allConsentsRequired": "Všetky súhlasy sú povinné",
-    "requestSignature": "Požiadať o podpis",
-    "downloadDocument": "Stiahnuť dokument",
-    "uploadSignedDocument": "Nahrať podpísaný dokument"
-  },
-  "documentManagement": {
-    "title": "Správa dokumentov",
-    "description": "Nahrávanie a správa zmluvných dokumentov pre zmluvu",
-    "unsignedContract": "Nepodpísaná zmluva",
-    "signedContract": "Podpísaná zmluva",
-    "documentUploaded": "Dokument nahraný",
-    "signedDocumentUploaded": "Podpísaný dokument nahraný",
-    "download": "Stiahnuť",
-    "dragDropHere": "Pretiahnite súbor sem alebo kliknite na tlačidlo",
-    "selectFile": "Vybrať súbor",
-    "uploading": "Nahráva sa...",
-    "uploadSignedContract": "Nahrať podpísanú zmluva"
-  },
-  "contractCopyModal": {
-    "title": "Nová zmluva pre merchanta",
-    "selectContract": "Vyberte zmluvu na kopírovanie (voliteľné)",
-    "selectSegments": "Vyberte segmenty na kopírovanie",
-    "selectAllSegments": "Vybrať všetko",
-    "deselectAllSegments": "Zrušiť výber všetkých",
-    "segmentsSelected": "{{count}} z {{total}} vybraných",
-    "previewTitle": "Náhľad kopírovania",
-    "previewDescription": "Skopíruje sa {{count}} segmentov zo zmluvy {{contractNumber}}:",
-    "startClean": "Začať s čistou zmluvou",
-    "copySelected": "Kopírovať vybrané údaje",
-    "segments": {
-      "contactInfo": {
-        "label": "Kontaktné údaje",
-        "description": "Meno, email, telefón, tituly"
+    "table": {
+      "headers": {
+        "name": "Názov",
+        "category": "Kategória",
+        "type": "Typ",
+        "monthlyFee": "Mesačný poplatok",
+        "setupFee": "Jednorazový poplatok",
+        "status": "Stav",
+        "actions": "Akcie"
       },
-      "companyInfo": {
-        "label": "Údaje o spoločnosti",
-        "description": "IČO, DIČ, názov, adresa, registre"
+      "actions": {
+        "view": "Zobraziť detail",
+        "edit": "Upraviť",
+        "delete": "Zmazať",
+        "activate": "Aktivovať",
+        "deactivate": "Deaktivovať"
       },
-      "businessLocations": {
-        "label": "Prevádzky",
-        "description": "Prevádzkovacie miesta a ich údaje"
+      "bulkActions": {
+        "selectAll": "Vybrať všetko",
+        "deselectAll": "Zrušiť výber",
+        "deleteSelected": "Zmazať vybrané",
+        "activateSelected": "Aktivovať vybrané",
+        "deactivateSelected": "Deaktivovať vybrané",
+        "editSelected": "Upraviť vybrané"
       },
-      "deviceSelection": {
-        "label": "Zariadenia a služby",
-        "description": "Vybraté zariadenia, služby, doplnky"
+      "filters": {
+        "category": "Kategória",
+        "type": "Typ",
+        "status": "Stav",
+        "search": "Hľadať"
       },
-      "fees": {
-        "label": "Poplatky",
-        "description": "Nastavenia poplatkov a sadzieb"
-      },
-      "personsAndOwners": {
-        "label": "Osoby a vlastníci",
-        "description": "Oprávnené osoby a skutoční vlastníci"
+      "empty": {
+        "title": "Žiadne položky",
+        "description": "Žiadne skladové položky nevyhovujú vašim filtrom.",
+        "addFirst": "Pridajte svoju prvú položku."
       }
     },
-    "contractDetails": {
-      "created": "Vytvorená:",
-      "monthly": "mesačne"
-    },
-    "validation": {
-      "selectContractAndSegments": "Vyberte zmluvu a aspoň jeden segment na kopírovanie"
-    },
-    "success": {
-      "copyingSegments": "Kopírujem {{count}} segmentov z zmluvy {{contractNumber}}",
-      "startingClean": "Začínam s novou čistou zmluvou"
-    }
-  },
-  "organizations": {
-    "title": "Správa organizácií",
-    "subtitle": "Spravujte organizácie a ich štruktúru",
-    "createOrganization": "Vytvoriť organizáciu",
-    "export": "Exportovať organizácie",
-    "noResults": "Žiadne organizácie nevyhovujú filtrom",
-    "form": {
-      "name": "Názov organizácie",
-      "namePlaceholder": "Zadajte názov organizácie",
-      "description": "Popis",
-      "descriptionPlaceholder": "Zadajte popis organizácie",
-      "color": "Farba"
-    },
-    "filters": {
-      "search": "Hľadať",
-      "searchPlaceholder": "Hľadať organizácie...",
-      "status": "Stav",
-      "selectStatus": "Vyberte stav",
-      "allStatuses": "Všetky stavy"
-    },
-    "stats": {
-      "totalOrganizations": "Celkový počet organizácií",
-      "activeOrganizations": "Aktívne organizácie",
-      "totalTeams": "Celkový počet tímov",
-      "totalMembers": "Celkový počet členov",
-      "allRegistered": "všetky registrované",
-      "currentlyActive": "momentálne aktívne",
-      "acrossAllOrgs": "vo všetkých organizáciách",
-      "hierarchyLevels": "hierarchické úrovne"
-    },
-    "teams": "tímy",
-    "members": "členovia"
-  },
-  "teams": {
-    "title": "Správa tímov",
-    "subtitle": "Spravujte tímy a ich členov",
-    "createTeam": "Vytvoriť tím",
-    "export": "Exportovať tímy",
-    "noResults": "Žiadne tímy nevyhovujú filtrom",
-    "noTeamsInOrganization": "V tejto organizácii nie sú žiadne tímy",
-    "viewDetail": "Zobraziť detail",
-    "loading": "Načítava sa...",
-    "notFound": "Tím nenájdený",
-    "backToTeams": "Späť na tímy",
-    "editTeam": "Upraviť tím",
-    "teamDetail": "Detail tímu",
-    "tabs": {
-      "overview": "Prehľad",
-      "members": "Členovia",
-      "stats": "Štatistiky",
-      "settings": "Nastavenia"
-    },
-    "overview": {
-      "members": "Členovia",
-      "activeMembersCount": "aktívnych členov",
-      "organization": "Organizácia",
-      "noOrganization": "Bez organizácie",
-      "parentOrganization": "nadradená organizácia",
-      "teamLeader": "Vedúci tímu",
-      "noLeader": "Bez vedúceho",
-      "assignLeader": "priradiť vedúceho",
-      "status": "Stav",
-      "since": "od",
-      "teamInformation": "Informácie o tíme",
-      "description": "Popis",
-      "noDescription": "Žiadny popis",
-      "createdAt": "Vytvorené",
-      "lastUpdated": "Posledná úprava",
-      "organizationDetails": "Detail organizácie"
-    },
-    "members": {
-      "title": "Členovia tímu",
-      "subtitle": "Správa členov tohto tímu",
-      "addMember": "Pridať člena",
-      "addMemberDescription": "Pridanie nového člena do tímu",
-      "noMembers": "Žiadni členovia v tíme"
-    },
-    "stats": {
-      "performanceScore": "Skóre výkonu",
-      "lastMonth": "posledný mesiac",
-      "completedTasks": "Dokončené úlohy",
-      "thisWeek": "tento týždeň",
-      "averageTime": "Priemerný čas",
-      "perTask": "na úlohu",
-      "efficiency": "Efektivita",
-      "overall": "celkovo",
-      "performanceChart": "Graf výkonu",
-      "chartPlaceholder": "Graf výkonu tímu",
-      "comingSoon": "Čoskoro k dispozícii"
-    },
-    "settings": {
-      "basicSettings": "Základné nastavenia",
-      "teamName": "Názov tímu",
-      "description": "Popis",
-      "descriptionPlaceholder": "Zadajte popis tímu...",
-      "activeStatus": "Aktívny stav",
-      "activeStatusDescription": "Povoliť alebo zakázať tím",
-      "teamLeader": "Vedúci tímu",
-      "selectTeamLeader": "Vybrať vedúceho tímu",
-      "selectTeamLeaderPlaceholder": "Vyberte vedúceho...",
-      "noLeader": "Bez vedúceho",
-      "teamLeaderDescription": "Vedúci tímu má rozšírené oprávnenia",
-      "organization": "Organizácia",
-      "selectOrganization": "Vybrať organizáciu",
-      "selectOrganizationPlaceholder": "Vyberte organizáciu...",
-      "organizationDescription": "Určuje, do ktorej organizácie tím patrí",
-      "dangerZone": "Nebezpečná zóna",
-      "deleteTeam": "Vymazať tím",
-      "deleteTeamDescription": "Trvalo vymazať tím a všetky súvisiace dáta"
-    },
-    "form": {
-      "name": "Názov tímu",
-      "namePlaceholder": "Zadajte názov tímu",
-      "description": "Popis",
-      "descriptionPlaceholder": "Zadajte popis tímu",
-      "organization": "Organizácia",
-      "selectOrganization": "Vyberte organizáciu"
-    },
-    "filters": {
-      "search": "Hľadať",
-      "searchPlaceholder": "Hľadať tímy...",
-      "status": "Stav",
-      "selectStatus": "Vyberte stav",
-      "allStatuses": "Všetky stavy",
-      "organization": "Organizácia",
-      "selectOrganization": "Vyberte organizáciu",
-      "allOrganizations": "Všetky organizácie"
-    },
-    "stats": {
-      "totalTeams": "Celkový počet tímov",
-      "activeTeams": "Aktívne tímy",
-      "totalMembers": "Celkový počet členov",
-      "teamsWithLeaders": "Tímy s vedúcimi",
-      "allRegistered": "všetky registrované",
-      "currentlyActive": "momentálne aktívne",
-      "haveAssignedLeaders": "majú priradených vedúcich",
-      "acrossAllOrgs": "vo všetkých organizáciách"
-    },
-    "members": "členovia",
-    "teams": "tímy"
-  },
-  "organizationalStructure": {
-    "title": "Organizačná štruktúra",
-    "subtitle": "Prehľad organizačnej štruktúry a hierarchie",
-    "totalMembers": "Celkový počet členov",
-    "activeUsers": "aktívni používatelia",
-    "visualization": "Vizualizácia štruktúry",
-    "exportStructure": "Exportovať štruktúru",
-    "downloadChart": "Stiahnuť diagram",
-    "noData": "Žiadne organizačné dáta nie sú k dispozícii",
-    "comingSoon": "Pokročilá vizualizácia organizačnej štruktúry bude čoskoro dostupná"
-  },
-  "deals": {
-    "title": "Dealy",
-    "subtitle": "Správa deals pomocou Kanban dosky",
-    "toolbar": {
-      "kanban": "Kanban",
-      "table": "Tabuľka",
-      "addColumn": "Pridať stĺpec",
-      "statuses": "Statusy", 
-      "reset": "Reset",
-      "settings": "Nastavenia",
-      "dealsCount": "deals"
-    },
-    "kanban": {
-      "emptyColumn": {
-        "title": "Žiadne deals",
-        "description": "Karty presunuté sem sa zobrazia tu"
-      },
-      "card": {
-        "viewDetail": "Zobraziť detail"
-      },
-      "columnHeader": {
-        "clickToEdit": "Kliknite pre úpravu"
-      }
-    },
-    "columnTitles": {
-      "newRequests": "Nové žiadosti",
-      "inProgress": "V spracovaní",
-      "pendingApproval": "Na schválenie", 
-      "completed": "Dokončené",
-      "stopped": "Zastavené"
-    },
-    "addColumnModal": {
-      "title": "Pridať nový stĺpec",
-      "columnNameLabel": "Názov stĺpca", 
-      "columnNamePlaceholder": "Napríklad: Na kontrole",
-      "columnColorLabel": "Farba stĺpca",
-      "statusesLabel": "Statusy (vyberte aspoň jeden)",
-      "loadingStatuses": "Načítavam statusy...",
-      "used": "Použité",
-      "selected": "Vybrané:",
-      "cancel": "Zrušiť",
-      "adding": "Pridávam...",
-      "addColumn": "Pridať stĺpec"
-    },
-    "errors": {
-      "loadingDeals": "Chyba pri načítavaní deals: {{message}}",
-      "addingColumn": "Chyba pri pridávaní stĺpca",
-      "resettingColumns": "Chyba pri resetovaní stĺpcov"
-    },
-    "success": {
-      "columnAdded": "Stĺpec bol úspešne pridaný",
-      "columnsReset": "Stĺpce boli resetované na predvolené"
-    }
-  },
-  "settings": {
-    "title": "Nastavenia",
-    "description": "Konfigurácia nastavení aplikácie a správa vášho profilu",
-    "applicationSettings": {
-      "title": "Správa Statusov",
-      "description": "Spravujte statusy pre rôzne entity v systéme",
-      "entityType": "Typ entity:",
-      "addStatus": "Pridať Status",
-      "refresh": "Obnoviť",
-      "systemName": "Názov (systémový)",
-      "displayLabel": "Označenie (zobrazované)",
-      "description": "Popis",
-      "category": "Kategória",
-      "color": "Farba",
-      "save": "Uložiť",
-      "cancel": "Zrušiť",
+    "itemDetail": {
+      "loading": "Načítavam...",
+      "loadingSubtitle": "Načítavam detail položky",
+      "notFound": "Položka nenájdená",
+      "notFoundDescription": "Požadovaná položka neexistuje alebo bola zmazaná.",
+      "backToWarehouse": "Späť na sklad",
       "edit": "Upraviť",
       "delete": "Zmazať",
-      "systemStatus": "Systémový",
-      "placeholders": {
-        "systemName": "napr. waiting_review",
-        "displayLabel": "napr. Čaká na kontrolu",
-        "description": "Popis statusu..."
-      },
-      "categories": {
-        "general": "Všeobecné",
-        "in_progress": "V procese", 
-        "completed": "Dokončené",
-        "cancelled": "Zrušené"
-      },
-      "entityTypes": {
-        "contracts": "Zmluvy",
-        "merchants": "Merchanti",
-        "organizations": "Organizácie",
-        "users": "Užívatelia",
-        "teams": "Tímy"
-      },
-      "futureSettings": {
-        "title": "Ďalšie nastavenia aplikácie",
-        "description": "Budúce nastavenia systému, integrácie a konfiguracie",
-        "comingSoon": "Ďalšie nastavenia budú pridané v budúcich verziách"
-      }
-    },
-    "profileSettings": {
-      "title": "Nastavenia Profilu",
-      "description": "Spravujte svoje osobné informácie a preferencie účtu",
-      "personalInfo": {
-        "title": "Osobné Informácie",
-        "firstName": "Krstné Meno",
-        "lastName": "Priezvisko", 
-        "email": "Emailová Adresa",
-        "phone": "Telefónne Číslo",
-        "position": "Pozícia/Rola",
-        "department": "Oddelenie",
-        "saveChanges": "Uložiť Zmeny"
-      },
-      "security": {
-        "title": "Bezpečnosť a Heslo",
-        "currentPassword": "Aktuálne Heslo",
-        "newPassword": "Nové Heslo",
-        "confirmPassword": "Potvrdiť Nové Heslo",
-        "changePassword": "Zmeniť Heslo",
-        "twoFactor": "Dvojfaktorová Autentifikácia",
-        "enable2FA": "Povoliť 2FA",
-        "disable2FA": "Zakázať 2FA"
-      },
-      "preferences": {
-        "title": "Preferencie",
-        "language": "Jazyk",
-        "timezone": "Časové Pásmo",
-        "notifications": "Emailové Notifikácie",
-        "darkMode": "Tmavý Režim",
-        "autoSave": "Automatické ukladanie zmien"
-      },
-      "account": {
-        "title": "Správa Účtu",
-        "deleteAccount": "Zmazať Účet",
-        "exportData": "Exportovať Moje Dáta",
-        "downloadData": "Stiahnuť Dáta Účtu"
-      }
-    },
-    "validation": {
-      "nameRequired": "Názov a označenie sú povinné",
-      "deleteConfirm": "Naozaj chcete zmazať tento status?"
-    },
-    "success": {
-      "statusCreated": "Status bol úspešne vytvorený",
-      "statusUpdated": "Status bol aktualizovaný", 
-      "statusDeleted": "Status bol zmazaný",
-      "profileUpdated": "Profil bol aktualizovaný",
-      "passwordChanged": "Heslo bolo zmenené"
-    },
-    "errors": {
-      "statusCreate": "Chyba pri vytváraní statusu",
-      "statusUpdate": "Chyba pri aktualizácii",
-      "statusDelete": "Chyba pri mazaní statusu",
-      "profileUpdate": "Chyba pri aktualizácii profilu",
-      "passwordChange": "Chyba pri zmene hesla"
-    }
-  },
-  "overview": {
-    "title": "Prehľad",
-    "subtitle": "Komplexný prehľad všetkých žiadostí a zmlúv",
-    "entityTypes": {
-      "both": "Všetko",
-      "requests": "Žiadosti", 
-      "contracts": "Zmluvy"
-    },
-    "filters": {
+      "basicInfo": "Základné informácie",
+      "type": "Typ",
+      "category": "Kategória",
       "status": "Stav",
-      "dateRange": "Dátumový rozsah",
-      "valueRange": "Hodnota",
-      "merchant": "Obchodník",
-      "source": "Zdroj",
-      "presets": {
-        "title": "Predvolby filtrov",
-        "presetsLabel": "Predvolby",
-        "hotLeads": {
-          "title": "Horúce príležitosti",
-          "description": "Zmluvy vo finálnej fáze"
-        },
-        "newRequests": {
-          "title": "Nové žiadosti", 
-          "description": "Nedávno prijaté žiadosti"
-        },
-        "needsAttention": {
-          "title": "Vyžaduje pozornosť",
-          "description": "Zmluvy čakajúce na akciu"
-        }
-      }
-    },
-    "column": {
-      "actions": {
-        "addDeal": "Pridať obchod",
-        "sortByValue": "Zoradiť podľa hodnoty",
-        "sortByDate": "Zoradiť podľa dátumu", 
-        "deleteColumn": "Odstrániť stĺpec"
-      },
-      "stats": {
-        "deals": "obchodov"
-      },
-      "emptyState": {
-        "title": "Žiadne obchody v tomto štádiu",
-        "description": "Pridať obchod"
-      }
-    },
-    "card": {
-      "actions": {
-        "call": "Zavolať",
-        "email": "Email",
-        "edit": "Upraviť", 
-        "detail": "Detail"
-      },
-      "labels": {
-        "value": "Hodnota",
-        "progress": "Postup"
-      }
-    },
-    "stats": {
-      "totalPipelineValue": "Celková hodnota",
-      "conversionRate": "Úspešnosť",
-      "avgDealValue": "Priemerná hodnota", 
-      "activePipeline": "Aktívne",
-      "signedDeals": "Podpísané",
-      "lostDeals": "Neúspešné",
-      "deals": "dealy",
-      "converted": "konvertované", 
-      "perSignedDeal": "na podpísanú zmluvu",
-      "inProgress": "prebieha",
-      "completed": "dokončené",
-      "unsuccessful": "neúspešné"
-    },
-    "kanban": {
-      "dealMoved": "Obchod presunutý do {{columnTitle}}",
-      "failedToUpdate": "Nepodarilo sa aktualizovať stav obchodu"
-    },
-    "success": {
-      "columnAdded": "Stĺpec bol úspešne pridaný",
-      "columnsReset": "Stĺpce boli obnovené na predvolené"
-    },
-    "errors": {
-      "addingColumn": "Chyba pri pridávaní stĺpca",
-      "resettingColumns": "Chyba pri obnovovaní stĺpcov",
-      "loadingDeals": "Chyba pri načítavaní dát: {{message}}"
+      "active": "Aktívne",
+      "inactive": "Neaktívne",
+      "pricing": "Cenník",
+      "monthlyFee": "Mesačný poplatok",
+      "setupFee": "Jednorazový poplatok",
+      "companyCost": "Náklady firmy",
+      "margin": "Marža",
+      "inventory": "Skladové hospodárstvo",
+      "currentStock": "Aktuálny stav",
+      "minStock": "Minimálny stav",
+      "created": "Vytvorené",
+      "detailedInfo": "Detailné informácie",
+      "overview": "Prehľad",
+      "specifications": "Špecifikácie",
+      "history": "História",
+      "description": "Popis",
+      "noDescription": "Žiadny popis nie je k dispozícii.",
+      "image": "Obrázok",
+      "technicalSpecs": "Technické špecifikácie",
+      "noSpecs": "Žiadne špecifikácie nie sú definované.",
+      "changeHistory": "História zmien",
+      "itemCreated": "Položka vytvorená",
+      "lastUpdate": "Posledná aktualizácia",
+      "system": "Systém",
+      "confirmDelete": "Potvrdiť vymazanie",
+      "confirmDeleteDescription": "Naozaj chcete vymazať položku \"{name}\"? Táto akcia sa nedá vrátiť späť.",
+      "cancel": "Zrušiť",
+      "device": "Zariadenie",
+      "service": "Služba",
+      "other": "Iné"
     }
   },
   "status": {
-    "draft": "Koncept",
-    "submitted": "Odoslané",
-    "in_progress": "Rozpracované", 
-    "sent_to_client": "Odoslané klientovi",
-    "email_viewed": "Email zobrazený",
-    "contract_generated": "Zmluva vygenerovaná",
-    "waiting_for_signature": "Čaká na podpis",
-    "signed": "Podpísané",
-    "approved": "Schválené",
-    "rejected": "Zamietnuté",
-    "lost": "Stratené",
-    "pending_approval": "Čaká na schválenie"
+    "new": "Nový",
+    "inProgress": "V procese",
+    "completed": "Dokončený",
+    "cancelled": "Zrušený",
+    "pending": "Čakajúci",
+    "approved": "Schválený",
+    "rejected": "Odmietnutý",
+    "active": "Aktívny",
+    "inactive": "Neaktívny",
+    "draft": "Návrh",
+    "published": "Publikovaný"
+  },
+  "overview": {
+    "column": {
+      "client": "Klient",
+      "value": "Hodnota",
+      "status": "Stav",
+      "deadline": "Termín",
+      "progress": "Postup",
+      "actions": "Akcie"
+    },
+    "card": {
+      "totalDeals": "Celkovo obchodov",
+      "activeDeals": "Aktívne obchody",
+      "completedDeals": "Dokončené obchody",
+      "totalValue": "Celková hodnota",
+      "totalRequests": "Celkovo požiadaviek",
+      "pendingRequests": "Čakajúce požiadavky",
+      "approvedRequests": "Schválené požiadavky"
+    },
+    "filter": {
+      "all": "Všetky",
+      "active": "Aktívne",
+      "completed": "Dokončené",
+      "cancelled": "Zrušené"
+    },
+    "search": {
+      "placeholder": "Hľadať...",
+      "noResults": "Žiadne výsledky"
+    },
+    "actions": {
+      "view": "Zobraziť",
+      "edit": "Upraviť",
+      "delete": "Zmazať"
+    },
+    "pagination": {
+      "previous": "Predchádzajúca",
+      "next": "Ďalšia",
+      "page": "Strana",
+      "of": "z"
+    }
+  },
+  "stats": {
+    "totalPipelineValue": "Celková hodnota",
+    "conversionRate": "Úspešnosť",
+    "avgDealSize": "Priemerná veľkosť obchodu",
+    "monthlyGrowth": "Mesačný rast"
   }
 }

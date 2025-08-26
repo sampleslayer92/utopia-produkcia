@@ -1,1552 +1,193 @@
+
 {
+  "title": "Admin Panel",
+  "subtitle": "Manage your application",
   "navigation": {
     "dashboard": "Dashboard",
-    "overview": "Overview", 
-    "requests": "Requests",
-    "merchants": "Merchants",
-    "allMerchants": "All Merchants",
-    "locations": "Locations",
-    "contracts": "Contracts",
-    "myContracts": "My Contracts",
     "warehouse": "Warehouse",
-    "allItems": "All Items",
-    "devices": "Devices",
-    "services": "Services",
-    "reporting": "Reporting",
-    "reportsDashboard": "Reports Dashboard",
-    "businessReports": "Business Reports",
-    "technicalReports": "Technical Reports",
-    "organizations": "Organizations",
-    "organizationManagement": "Organization Management",
-    "teamManagement": "Team Management",
-    "organizationalStructure": "Organizational Structure",
-    "teamMembers": "Team Members",
-    "teamPerformance": "Team Performance",
-    "tasks": "Tasks",
-    "ticketingSystem": "Ticketing System",
-    "allTasks": "All Tasks",
-    "completedTasks": "Completed Tasks",
-    "notifications": "Notifications",
+    "deals": "Deals",
+    "requests": "Requests",
+    "customers": "Customers",
+    "projects": "Projects",
+    "analytics": "Analytics",
     "settings": "Settings",
-    "applicationSettings": "Application Settings",
-    "profileSettings": "Profile Settings",
-    "businessProcesses": "Business Processes",
-    "clientManagement": "Client Management",
-    "productCatalog": "Product Catalog",
-    "analyticsReporting": "Analytics & Reporting",
-    "onboardingManagement": "Onboarding Management",
-    "systemManagement": "System Management",
-    "personal": "Personal",
-    "quickSale": "Quick Sale",
-    "stepConfiguration": "Step Configuration",
-    "formTemplates": "Form Templates",
-    "onboardingPreview": "Onboarding Preview",
-    "translations": "Translations",
-    "contractTemplates": "Contract Templates",
-    "applicationArchitecture": "Application Architecture"
-  },
-  "settings": {
-    "description": "Manage application settings and your profile"
-  },
-  "breadcrumbs": {
-    "editContract": "Edit Contract",
-    "viewContract": "Contract Detail",
-    "viewMerchant": "Merchant Detail",
-    "teamMember": "Team Member Detail"
-  },
-  "dashboard": {
-    "title": "Administrative Dashboard",
-    "subtitle": "Overview of all activities and statistics",
-    "newContract": "New Contract",
-    "status": {
-      "online": "Online"
-    },
-    "revenue": {
-      "title": "Revenue",
-      "monthlyTrend": "Monthly Revenue Trend",
-      "profitByMonth": "Profit by Month",
-      "revenue": "Revenue",
-      "profit": "Profit"
-    },
-    "metrics": {
-      "monthlyRevenue": "Monthly Revenue",
-      "monthlyTransactions": "Monthly Transactions",
-      "averageProfit": "Average Profit",
-      "activeClients": "Active Clients",
-      "fromLastMonth": "from last month",
-      "totalRevenue": "Total Revenue",
-      "activeContracts": "Active Contracts",
-      "totalTurnover": "Total Turnover",
-      "totalMerchants": "Number of Merchants",
-      "fromPreviousMonth": "from previous month"
-    },
-    "team": {
-      "title": "Team Performance",
-      "viewAll": "View All",
-      "excellent": "Excellent",
-      "good": "Good", 
-      "average": "Average",
-      "needsImprovement": "Needs Improvement",
-      "contractsThisMonth": "Contracts this month",
-      "target": "Target",
-      "topPerformers": "Top Performers"
-    },
-    "merchantOverview": {
-      "topMerchants": "Top Merchants",
-      "viewAllMerchants": "View All",
-      "geographicDistribution": "Geographic Distribution",
-      "contracts": "contracts",
-      "efficiency": "Efficiency",
-      "noMerchants": "No merchants yet",
-      "noLocationData": "No location data",
-      "totalMerchants": "Total Merchants",
-      "totalLocations": "Locations"
-    },
-    "quickActions": {
-      "title": "Quick Actions",
-      "newContract": "New Contract",
-      "newContractDesc": "Start onboarding process",
-      "contracts": "Contracts",
-      "contractsDesc": "Manage all contracts",
-      "merchants": "Merchants",
-      "merchantsDesc": "Partner overview",
-      "locations": "Locations",
-      "locationsDesc": "Location management",
-      "team": "Team",
-      "teamDesc": "Team members"
-    }
-  },
-  "contracts": {
-    "title": "Contract Management",
-    "subtitle": "Overview and management of all contracts in the system",
-    "export": "Export",
-    "newContract": "New Contract",
-    "new": "New Contract",
-    "stats": {
-      "activeContracts": "Active Contracts",
-      "totalValue": "Total Value",
-      "expiringContracts": "Expiring",
-      "approvedSigned": "Approved and signed",
-      "monthlyIncome": "Monthly income",
-      "olderThan11Months": "Older than 11 months"
-    },
-    "actions": {
-      "fixMerchants": "Fix Merchants",
-      "fixing": "Fixing..."
-    },
-    "table": {
-      "contractNumber": "Contract Number",
-      "client": "Client",
-      "source": "Source",
-      "contractType": "Contract Type",
-      "monthlyValue": "Monthly Value",
-      "status": "Status",
-      "completion": "Completion",
-      "salesPerson": "Sales Person",
-      "created": "Created",
-      "actions": "Actions",
-      "company": "Company",
-      "contactPerson": "Contact Person",
-      "contracts": "Contracts",
-      "monthlyProfit": "Monthly Profit",
-      "contractsCount": "{{count}} contracts"
-    },
-    "statusOptions": {
-      "draft": "Draft",
-      "submitted": "Submitted",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "in_progress": "In Progress",
-      "sent_to_client": "Sent to Client",
-      "signed": "Signed",
-      "lost": "Lost"
-    },
-    "sourceOptions": {
-      "web": "Web",
-      "partner": "Partner",
-      "direct": "Direct Contact",
-      "referral": "Referral"
-    },
-    "detail": {
-      "title": "Contract Detail",
-      "loading": "Loading...",
-      "loadingDetail": "Loading contract detail...",
-      "error": "Error",
-      "errorLoading": "Error loading",
-      "contractNotFound": "Contract not found",
-      "errorMessage": "Failed to load contract detail.",
-      "contractNotExists": "Contract with ID {{id}} does not exist.",
-      "backToList": "Back to list",
-      "unknownClient": "Unknown client",
-      "completed": "completed",
-      "exportPdf": "Export PDF",
-      "saveChanges": "Save changes",
-      "saving": "Saving...",
-      "edit": "Edit",
-      "cancelEdit": "Cancel editing",
-      "tabs": {
-        "overview": "Overview",
-        "client": "Client",
-        "devices": "Devices",
-        "finance": "Finance",
-        "documents": "Documents",
-        "history": "History"
-      },
-      "overview": {
-        "monthlyProfit": "Monthly Profit",
-        "completion": "Completion",
-        "devices": "Devices",
-        "services": "Services",
-        "basicInfo": "Basic Information",
-        "contractNumber": "Contract Number",
-        "status": "Status",
-        "source": "Source",
-        "created": "Created",
-        "submitted": "Submitted",
-        "signed": "Signed",
-        "clientInfo": "Client Information",
-        "clientName": "Client Name",
-        "ico": "Company ID",
-        "email": "Email",
-        "phone": "Phone",
-        "businessLocationsCount": "Business Locations",
-        "quickActions": "Quick Actions",
-        "generatePdf": "Generate PDF",
-        "sendToClient": "Send to Client",
-        "recalculate": "Recalculate",
-        "progressStatus": "Progress Status",
-        "progress": "Progress",
-        "stepOf": "Step {{current}} of {{total}}",
-        "unknown": "Unknown"
-      },
-      "actions": {
-        "backToList": "Back to List",
-        "exportPdf": "Export PDF",
-        "edit": "Edit",
-        "cancelEdit": "Cancel Edit",
-        "saveChanges": "Save Changes",
-        "saving": "Saving..."
-      },
-      "client": {
-        "title": "Client Information",
-        "companyInfo": "Company Information",
-        "companyName": "Company Name",
-        "ico": "Company ID",
-        "dic": "Tax ID",
-        "vatNumber": "VAT Number",
-        "notVatPayer": "Not VAT payer",
-        "address": "Address",
-        "streetPlaceholder": "Street and number",
-        "cityPlaceholder": "City",
-        "zipPlaceholder": "ZIP code",
-        "contactPerson": "Contact Person",
-        "firstName": "First Name",
-        "lastName": "Last Name",
-        "email": "Email",
-        "phone": "Phone",
-        "businessLocations": "Business Locations",
-        "locationName": "Location Name",
-        "locationAddress": "Location Address",
-        "iban": "IBAN",
-        "businessSector": "Business Sector",
-        "estimatedTurnover": "Estimated Turnover",
-        "averageTransaction": "Average Transaction",
-        "contactPersonAtLocation": "Contact Person at Location",
-        "addLocation": "Add Location",
-        "notSpecified": "Not specified",
-        "perMonth": "€/month",
-        "euroCurrency": "€",
-        "modal": {
-          "addLocationTitle": "Add New Location",
-          "locationName": "Location Name",
-          "locationAddress": "Address",
-          "streetPlaceholder": "Street and number",
-          "city": "City",
-          "cityPlaceholder": "City",
-          "zipCode": "ZIP Code",
-          "zipPlaceholder": "ZIP code",
-          "iban": "IBAN",
-          "ibanPlaceholder": "IBAN account",
-          "businessSector": "MCC Sector",
-          "sectorPlaceholder": "Business sector",
-          "cancel": "Cancel",
-          "addLocation": "Add Location",
-          "adding": "Adding...",
-          "emptyMessage": "No locations have been added",
-          "addFirstLocation": "Add first location"
-        }
-      },
-      "history": {
-        "title": "Change History",
-        "userActivity": "User Activity",
-        "timeline": "Event Timeline",
-        "historyComingSoon": "Change history will be available soon",
-        "activityComingSoon": "User activity will be available soon",
-        "timelineComingSoon": "Event timeline will be available soon"
-      },
-      "documents": {
-        "signatureSection": "Signature Section",
-        "signaturePlaceholder": "Digital signature functionality will be available soon"
-      },
-      "status": {
-        "completed": "completed"
-      }
-    },
-    "filters": {
-      "search": "Search",
-      "searchPlaceholder": "Contract number, name, email...",
-      "merchant": "Merchant",
-      "status": "Status",
-      "source": "Source",
-      "allMerchants": "All Merchants",
-      "allStatuses": "All Statuses",
-      "allSources": "All Sources",
-      "clearFilters": "Clear Filters"
-    }
-  },
-  "merchants": {
-    "title": "Merchant Management",
-    "subtitle": "Overview and management of all merchants in the system",
-    "export": "Export",
-    "newMerchant": "New Merchant",
-    "stats": {
-      "totalCount": "Total Count",
-      "allRegistered": "All registered",
-      "activeWithContracts": "Active with contracts",
-      "haveSignedContracts": "Have signed contracts",
-      "averageProfit": "Average Profit",
-      "monthlyPerMerchant": "Monthly per merchant"
-    },
-    "filters": {
-      "search": "Search",
-      "searchPlaceholder": "Name, Company ID, contact person...",
-      "city": "City",
-      "allCities": "All Cities",
-      "contracts": "Contracts",
-      "allMerchants": "All Merchants",
-      "withContracts": "With contracts",
-      "withoutContracts": "Without contracts",
-      "monthlyProfit": "Monthly Profit",
-      "allValues": "All Values",
-      "clearFilters": "Clear Filters"
-    },
-    "table": {
-      "title": "Merchants List",
-      "overview": "Overview of all merchants in the system ({{count}} total) - click on row for details",
-      "company": "Company",
-      "contactPerson": "Contact Person",
-      "contracts": "Contracts",
-      "monthlyProfit": "Monthly Profit",
-      "created": "Created",
-      "contractsCount": "{{count}} contracts"
-    },
-    "detail": {
-      "title": "Merchant Detail",
-      "basicInfo": "Basic Information",
-      "recentActivity": "Recent Activity",
-      "latestContracts": "Latest Contracts",
-      "topLocations": "Top Locations",
-      "financialOverview": "Financial Overview",
-      "trends": "Trends",
-      "activity": "Activity",
-      "analysis": "Charts and analytics will be available soon",
-      "activityHistory": "Activity history will be available soon",
-      "tabs": {
-        "overview": "Overview",
-        "locations": "Locations",
-        "contracts": "Contracts",
-        "finance": "Finance",
-        "activity": "Activity"
-      },
-      "stats": {
-        "totalContracts": "Total Contracts",
-        "monthlyProfit": "Monthly Profit",
-        "totalDevices": "Total Devices",
-        "avgContractValue": "Avg. Contract Value",
-        "locations": "Locations",
-        "plannedTurnover": "Planned Turnover",
-        "withPosTerminal": "with POS terminal",
-        "fromAllLocations": "from all business locations"
-      },
-      "contracts": {
-        "title": "Contracts",
-        "noContracts": "No contracts",
-        "table": {
-          "contractNumber": "Contract Number",
-          "status": "Status",
-          "devices": "Devices",
-          "monthlyProfit": "Monthly Profit",
-          "created": "Created"
-        }
-      },
-      "locations": {
-        "title": "Locations",
-        "noLocations": "No locations",
-        "summary": {
-          "totalLocations": "Total business locations",
-          "withPos": "With POS terminal",
-          "totalPlannedTurnover": "Total planned turnover"
-        },
-        "table": {
-          "locationName": "Location Name",
-          "address": "Address",
-          "sector": "Sector",
-          "turnover": "Turnover",
-          "pos": "POS",
-          "contract": "Contract"
-    }
-  },
-  "requests": {
-    "title": "Requests",
-    "subtitle": "Management of requests that are not yet signed",
-    "stats": {
-      "pendingRequests": "Pending Requests",
-      "awaitingReview": "Awaiting Review",
-      "inProgress": "In Progress",
-      "beingProcessed": "Being Processed",
-      "waitingForSignature": "Waiting for Signature",
-      "readyToSign": "Ready to Sign",
-      "totalValue": "Total Value",
-      "estimatedValue": "Estimated Value"
-    },
-    "actions": {
-      "newRequest": "New Request",
-      "export": "Export"
-    },
-    "filters": {
-      "title": "Request Filters"
-    },
-    "management": {
-      "title": "Request Management",
-      "noRequests": "No requests to process",
-      "viewDetail": "View Detail",
-      "requestDetail": "Request Detail",
-      "contactInfo": "Contact Information",
-      "companyInfo": "Company Information",
-      "contactUnavailable": "Contact information is not available",
-      "companyUnavailable": "Company information is not available",
-      "created": "Created",
-      "approve": "Approve",
-      "reject": "Reject",
-      "name": "Name",
-      "email": "Email",
-      "companyName": "Company Name",
-      "ico": "Company ID"
-    },
-    "status": {
-      "submitted": "Submitted",
-      "waiting_for_signature": "Waiting for signature",
-      "signed": "Signed",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "pending_approval": "Pending approval"
-    },
-    "toast": {
-      "requestApproved": "Request has been approved",
-      "requestRejected": "Request has been rejected",
-      "errorApproving": "Error approving request",
-      "errorRejecting": "Error rejecting request"
-    }
-  },
-  "overview": {
-    "title": "Overview",
-    "subtitle": "Comprehensive overview of all requests and contracts",
-    "stats": {
-      "totalPipelineValue": "Total Value",
-      "deals": "deals",
-      "conversionRate": "Success Rate",
-      "converted": "converted",
-      "avgDealValue": "Average Value",
-      "perSignedDeal": "per signed deal",
-      "activePipeline": "Active",
-      "inProgress": "in progress",
-      "signedDeals": "Signed",
-      "completed": "completed",
-      "lostDeals": "Unsuccessful",
-      "unsuccessful": "unsuccessful",
-      "trendGood": "Good"
-    },
-    "kanban": {
-      "dealMoved": "Deal moved to {{columnTitle}}",
-      "failedToUpdate": "Failed to update deal status"
-    },
-    "toolbar": {
-      "kanban": "Kanban",
-      "table": "Table",
-      "itemsCount": "items",
-      "searchPlaceholder": "Search deals and contracts...",
-      "filters": "Filters",
-      "advancedFilters": "Advanced Filters",
-      "clearAll": "Clear All",
-      "addColumn": "Add Column",
-      "statuses": "Statuses",
-      "reset": "Reset",
-      "settings": "Settings"
-    },
-    "entityTypes": {
-      "both": "All",
-      "requests": "Requests",
-      "contracts": "Contracts"
-    },
-    "filters": {
-      "status": "Status",
-      "dateRange": "Date Range",
-      "valueRange": "Value Range",
-      "merchant": "Merchant",
-      "source": "Source",
-      "presets": {
-        "title": "Filter Presets",
-        "presetsLabel": "Presets",
-        "hotLeads": {
-          "name": "Hot Leads",
-          "description": "High value, ready to close"
-        },
-        "newRequests": {
-          "name": "New Requests",
-          "description": "Recently submitted"
-        },
-        "pendingReview": {
-          "name": "Pending Review",
-          "description": "Awaiting approval"
-        },
-        "thisMonth": {
-          "name": "This Month",
-          "description": "Created this month"
-        },
-        "highValue": {
-          "name": "High Value",
-          "description": "Above €50,000"
-        }
-      }
-    },
-    "success": {
-      "columnAdded": "Column added successfully",
-      "columnsReset": "Columns reset to default successfully"
-    },
-    "errors": {
-      "addingColumn": "Error adding column",
-      "resettingColumns": "Error resetting columns",
-      "loadingDeals": "Error loading deals: {{message}}"
-    },
-    "column": {
-      "actions": {
-        "addDeal": "Add deal",
-        "sortByValue": "Sort by value", 
-        "sortByDate": "Sort by date",
-        "deleteColumn": "Delete column"
-      },
-      "emptyState": {
-        "noDeals": "No deals in this stage",
-        "addDeal": "Add deal"
-      },
-      "stats": {
-        "deals": "deals"
-      }
-    },
-    "card": {
-      "actions": {
-        "call": "Call",
-        "email": "Email", 
-        "edit": "Edit",
-        "detail": "Detail"
-      },
-      "labels": {
-        "value": "Value",
-        "progress": "Progress"
-      }
-    }
-  },
-  "status": {
-    "draft": "Draft",
-    "submitted": "Submitted",
-    "pending": "Pending",
-    "in_progress": "In Progress", 
-    "sent_to_client": "Sent to Client",
-    "email_viewed": "Email Viewed",
-    "contract_generated": "Contract Generated",
-    "waiting_for_signature": "Waiting for Signature",
-    "review": "Review",
-    "approved": "Approved",
-    "signed": "Signed",
-    "active": "Active",
-    "completed": "Completed",
-    "cancelled": "Cancelled",
-    "rejected": "Rejected",
-    "lost": "Lost",
-    "pending_approval": "Pending Approval",
-    "on_hold": "On Hold",
-    "expired": "Expired"
-  },
-  "warehouse": {
-    "subtitle": "Manage devices and services inventory",
-    "totalItems": "Total Items",
-    "devices": "Devices",
-    "services": "Services",
-    "allItems": "All Items",
-    "device": "Device",
-    "service": "Service",
-    "searchItems": "Search items...",
-    "addItem": "Add Item"
-  },
-  "reporting": {
-    "subtitle": "Analytics and reports across the application",
-    "dashboard": "Reports Dashboard",
-    "dashboardDesc": "Overview of key metrics and performance indicators",
-    "dateRange": "Date Range",
-    "export": "Export",
-    "overview": "Overview",
-    "business": "Business",
-    "technical": "Technical",
-    "totalContracts": "Total Contracts",
-    "activeContracts": "Active Contracts",
-    "totalMerchants": "Total Merchants",
-    "conversionRate": "Conversion Rate",
-    "allTimeTotal": "All time total",
-    "signedAndActive": "Signed and active",
-    "registeredMerchants": "Registered merchants",
-    "draftToSigned": "Draft to signed",
-    "contractsOverview": "Contracts Overview",
-    "contractsOverviewDesc": "Detailed analysis of contract lifecycle",
-    "merchantsAnalysis": "Merchants Analysis",
-    "merchantsAnalysisDesc": "Merchant performance and statistics",
-    "performanceMetrics": "Performance Metrics",
-    "performanceMetricsDesc": "Key performance indicators and trends",
-    "pendingContracts": "Pending Contracts",
-    "totalLocations": "Total Locations",
-    "avgLocationsPerMerchant": "Avg. Locations/Merchant",
-    "draftContracts": "Draft Contracts",
-    "completionRate": "Completion Rate",
-    "viewDetails": "View Details",
-    "businessReports": "Business Reports",
-    "businessReportsDesc": "Commercial analytics and insights",
-    "technicalReports": "Technical Reports",
-    "technicalReportsDesc": "System performance and technical metrics",
-    "contractsReport": "Contracts Report",
-    "merchantsReport": "Merchants Report",
-    "revenueReport": "Revenue Report",
-    "performanceReport": "Performance Report",
-    "systemLogs": "System Logs",
-    "usageAnalytics": "Usage Analytics",
-    "errorReports": "Error Reports",
-    "userActivity": "User Activity"
-  }
-}
-  },
-  "contractActions": {
-    "quickSummary": "Quick Summary",
-    "contractNumber": "Contract Number",
-    "client": "Client",
-    "monthlyRevenue": "Monthly Revenue",
-    "deviceCount": "Device Count",
-    "mainActions": "Main Actions",
-    "previewContract": "Preview Contract",
-    "exportPdf": "Export PDF",
-    "generatingPdf": "Generating PDF...",
-    "sendEmail": "Send Email",
-    "markAsSigned": "Mark as Signed",
-    "duplicateContract": "Duplicate Contract",
-    "additionalActions": "Additional Actions",
-    "changeHistory": "Change History",
-    "downloadAttachments": "Download Attachments",
-    "deleteContract": "Delete Contract",
-    "deleting": "Deleting...",
-    "statusInfo": "Status Information",
-    "lastModified": "Last Modified",
-    "submitted": "Submitted",
-    "version": "Version",
-    "notSpecified": "Not Specified"
-  },
-  "stats": {
-    "totalContracts": "Total Contracts",
-    "submittedContracts": "Submitted Contracts",
-    "approvedContracts": "Approved Contracts",
-    "drafts": "Drafts",
-    "recentChange": "{{count}} in recent week",
-    "waitingApproval": "Waiting for approval",
-    "activeContracts": "Active contracts",
-    "incomplete": "Incomplete"
-  },
-  "team": {
-    "title": "My Team",
-    "subtitle": "Team performance overview and management",
-    "member": "Team Member",
-    "performance": "Performance",
-    "contracts": "Contracts",
-    "revenue": "Revenue",
-    "target": "Target",
-    "thisMonth": "This Month",
-    "lastMonth": "Last Month",
-    "yearToDate": "Year to Date",
-    "contactInfo": "Contact Information",
-    "joinedDate": "Joined Date",
-    "role": "Role",
-    "email": "Email",
-    "phone": "Phone",
-    "statistics": "Statistics",
-    "recentActivity": "Recent Activity",
-    "contractHistory": "Contract History",
-    "performanceHistory": "Performance History",
-    "goals": "Goals and Targets",
-    "achievements": "Achievements"
-  },
-  "table": {
-    "title": "Contract List",
-    "subtitle": "Showing {{filtered}} of {{total}} contracts - click on row to view details",
-    "emptySubtitle": "No contracts have been created yet",
-    "emptyMessage": "No contracts",
-    "loading": "Loading contracts...",
-    "error": "Error loading contracts: {{message}}",
-    "columns": {
-      "contractNumber": "Contract Number",
-      "contact": "Contact",
-      "company": "Company",
-      "ico": "Company ID",
-      "status": "Status",
-      "created": "Created",
-      "client": "Client",
-      "contractType": "Contract Type",
-      "monthlyValue": "Monthly Value",
-      "completion": "Completion",
-      "salesPerson": "Sales Person",
-      "source": "Source"
-    },
-    "search": "Search contract (number, name, email, company, ID)...",
-    "filters": {
-      "status": "Status Filter",
-      "contractType": "Contract Type",
-      "salesPerson": "Sales Person",
-      "dateRange": "Date Range",
-      "source": "Source",
-      "allStatuses": "All Statuses",
-      "allTypes": "All Types",
-      "allSalespeople": "All Salespeople",
-      "allSources": "All Sources"
-    },
-    "noResults": {
-      "title": "No Results",
-      "subtitle": "Try changing your search criteria or filters."
-    },
-    "export": "Export",
-    "newContract": "New Contract",
-    "clickHint": "Click on row to view details"
-  },
-  "status": {
-    "draft": "Not Sent",
-    "in_progress": "In Progress",
-    "sent_to_client": "Request Sent",
-    "email_viewed": "Email Viewed",
-    "step_completed": "Step Completed",
-    "contract_generated": "Contract Generated",
-    "signed": "Signed",
-    "waiting_for_signature": "Waiting for Signature",
-    "lost": "Lost",
-    "submitted": "Submitted",
-    "approved": "Approved",
-    "rejected": "Rejected"
-  },
-  "source": {
-    "telesales": "Telesales",
-    "facebook": "Facebook",
-    "web": "Web",
-    "email": "Email",
-    "referral": "Referral",
-    "other": "Other"
-  },
-  "lostReason": {
-    "no_response": "No Response",
-    "price_too_high": "Price Too High",
-    "competitor_chosen": "Competitor Chosen",
-    "not_interested": "Not Interested",
-    "technical_issues": "Technical Issues",
-    "other": "Other"
-  },
-  "contractDetail": {
-    "backToList": "Back to List",
-    "edit": "Edit",
-    "cancelEdit": "Cancel Edit",
-    "save": "Save",
-    "saving": "Saving...",
-    "unsavedChanges": "Unsaved Changes",
-    "unknownClient": "Unknown Client",
-    "created": "Created",
-    "submitted": "Submitted"
-  },
-  "teamManagement": {
-    "title": "Team Management",
-    "subtitle": "Manage your team members and their permissions",
-    "loading": "Loading...",
-    "addMember": "Add Member",
-    "roleManagement": "Role and User Management",
-    "roles": {
-      "admin": "Admin",
-      "partner": "Partner",
-      "merchant": "Merchant",
-      "adminDescription": "Full system access, team management, all contracts",
-      "partnerDescription": "Create contracts, manage own merchants",
-      "merchantDescription": "View own contracts and data"
-    },
-    "member": "Member",
-    "email": "Email",
-    "role": "Role",
-    "status": "Status",
-    "created": "Created",
-    "actions": "Actions",
-    "active": "Active",
-    "inactive": "Inactive",
-    "phone": "Phone",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "temporaryPassword": "Temporary Password",
-    "selectRole": "Select role",
-    "cancel": "Cancel",
-    "create": "Create",
-    "creating": "Creating...",
-    "edit": "Edit",
-    "delete": "Delete",
-    "activate": "Activate",
-    "deactivate": "Deactivate",
-    "resetPassword": "Reset Password",
-    "testLogin": "Test Login",
-    "resetPasswordTooltip": "Reset Password",
-    "testLoginTooltip": "Test login as this user",
-    "confirmDelete": "Are you sure you want to delete this team member?",
-    "confirmDeleteDescription": "This action cannot be undone. The team member will be completely removed from the system.",
-    "newMember": {
-      "title": "Add New Team Member",
-      "description": "Create a new account for your team member. Login credentials will be displayed after creation.",
-      "enterTemporaryPassword": "Enter temporary password"
-    },
-    "editMember": {
-      "title": "Edit Team Member",
-      "description": "Edit team member information",
-      "save": "Save",
-      "saving": "Saving..."
-    },
-    "resetPasswordDialog": {
-      "title": "Reset Password",
-      "description": "Enter new temporary password for team member",
-      "newPassword": "New Password",
-      "enterNewPassword": "Enter new password",
-      "change": "Change",
-      "changing": "Changing..."
-    },
-    "credentials": {
-      "title": "Login Credentials",
-      "description": "New team member has been successfully created. Use these credentials for login:",
-      "copyNote": "Copy and securely store these login credentials. Don't forget to provide them to the new team member.",
-      "email": "Email:",
-      "password": "Password:",
-      "close": "Close"
-    },
-    "testLoginConfirm": "Do you want to temporarily log in as {{name}}? You will be logged out from current session.",
-    "messages": {
-      "memberDeleted": "Team member has been successfully deleted",
-      "passwordChanged": "Password has been successfully changed",
-      "emailCopied": "Email copied to clipboard",
-      "passwordCopied": "Password copied to clipboard",
-      "loggedOut": "Logged out. You can now log in as the test user.",
-      "logoutError": "Error during logout"
-    }
-  },
-  "businessLocation": {
-    "detail": {
-      "title": "Location Detail",
-      "subtitle": "Business location information",
-      "backToLocations": "Back to locations",
-      "editLocation": "Edit location"
-    }
-  },
-  "clientOperations": {
-    "title": "Client Information",
-    "companyInfo": "Company Information",
-    "contactInfo": "Contact Information",
-    "businessLocations": "Business Locations",
-    "edit": "Edit",
-    "save": "Save",
-    "cancel": "Cancel",
-    "saving": "Saving...",
-    "companyName": "Company Name",
-    "ico": "Company ID",
-    "dic": "Tax ID",
-    "vatNumber": "VAT Number",
-    "address": "Address",
-    "contactPerson": "Contact Person",
-    "email": "Email",
-    "phone": "Phone",
-    "noData": "No data",
-    "loadingError": "Error loading data"
-  },
-  "devicesServices": {
-    "title": "Devices and Services",
-    "devicesTitle": "Selected Devices",
-    "servicesTitle": "Selected Services",
-    "addonsTitle": "Additional Services",
-    "noDevices": "No devices",
-    "noServices": "No services",
-    "device": "Device",
-    "service": "Service",
-    "quantity": "Quantity",
-    "monthlyFee": "Monthly Fee",
-    "setupFee": "Setup Fee",
-    "total": "Total",
-    "edit": "Edit",
-    "save": "Save",
-    "cancel": "Cancel",
-    "saving": "Saving...",
-    "addDevice": "Add Device",
-    "addService": "Add Service",
-    "remove": "Remove"
-  },
-  "calculations": {
-    "title": "Calculations and Fees",
-    "monthlyFees": "Monthly Fees",
-    "setupFees": "Setup Fees",
-    "totalMonthlyFee": "Total Monthly Fee",
-    "totalSetupFee": "Total Setup Fee",
-    "profit": "Profit",
-    "monthlyProfit": "Monthly Profit",
-    "margin": "Margin",
-    "revenue": "Revenue",
-    "costs": "Costs",
-    "vatIncluded": "VAT Included",
-    "vatExcluded": "VAT Excluded",
-    "calculation": "Calculation",
-    "breakdown": "Breakdown",
-    "summary": "Summary",
-    "businessData": "Business Data",
-    "estimatedTurnover": "Estimated Turnover",
-    "averageTransaction": "Average Transaction",
-    "transactionsPerMonth": "Transactions per Month",
-    "mifFees": "MIF Fees",
-    "regulatedCards": "Regulated Cards",
-    "unregulatedCards": "Unregulated Cards",
-    "totalMif": "Total MIF",
-    "profitabilitySummary": "Profitability Summary",
-    "monthlyIncome": "Monthly Income",
-    "monthlyCosts": "Monthly Costs",
-    "annualProfit": "Annual Profit",
-    "detailedBreakdown": "Detailed Breakdown",
-    "devicesAndServices": "Devices and Services",
-    "pieces": "pcs",
-    "subtotalDevices": "Subtotal Devices",
-    "transactionFees": "Transaction Fees",
-    "mifRegulated": "MIF Regulated",
-    "mifUnregulated": "MIF Unregulated",
-    "subtotalTransactions": "Subtotal Transactions"
-  },
-  "authorizedPersons": {
-    "title": "Authorized Persons",
-    "addPerson": "Add Person",
-    "editPerson": "Edit Person",
-    "removePerson": "Remove Person",
-    "noPersons": "No authorized persons",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "position": "Position",
-    "email": "Email",
-    "phone": "Phone",
-    "birthDate": "Birth Date",
-    "birthPlace": "Birth Place",
-    "citizenship": "Citizenship",
-    "address": "Address",
-    "documentType": "Document Type",
-    "documentNumber": "Document Number",
-    "documentIssuer": "Issuer",
-    "documentValidity": "Valid Until",
-    "isPoliticallyExposed": "Politically Exposed Person",
-    "isUsCitizen": "US Citizen",
-    "save": "Save",
-    "cancel": "Cancel",
-    "saving": "Saving...",
-    "edit": "Edit",
-    "personalData": "Personal Data",
-    "identityDocument": "Identity Document",
-    "validUntil": "Valid Until",
-    "issuer": "Issuer",
-    "pepPerson": "PEP Person",
-    "usCitizen": "US Citizen",
-    "thisPerson": "This Person",
-    "idCard": "ID Card",
-    "passport": "Passport",
-    "drivingLicense": "Driving License"
-  },
-  "actualOwners": {
-    "title": "Actual Owners",
-    "addOwner": "Add Owner",
-    "editOwner": "Edit Owner",
-    "removeOwner": "Remove Owner",
-    "noOwners": "No actual owners",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "maidenName": "Maiden Name",
-    "birthDate": "Birth Date",
-    "birthPlace": "Birth Place",
-    "birthNumber": "Birth Number",
-    "citizenship": "Citizenship",
-    "address": "Address",
-    "isPoliticallyExposed": "Politically Exposed Person",
-    "ownershipPercentage": "Ownership Percentage",
-    "save": "Save",
-    "cancel": "Cancel",
-    "saving": "Saving...",
-    "edit": "Edit",
-    "basicData": "Basic Data",
-    "additionalData": "Additional Data",
-    "politicallyExposed": "Politically Exposed Person",
-    "yesPep": "Yes, is PEP",
-    "no": "No",
-    "addFirstOwner": "Add First Owner",
-    "permanentAddress": "Permanent Address"
-  },
-  "contractNotes": {
-    "title": "Contract Notes",
-    "addNote": "Add Note",
-    "editNote": "Edit Note",
-    "removeNote": "Remove Note",
-    "noNotes": "No notes",
-    "note": "Note",
-    "author": "Author",
-    "created": "Created",
-    "updated": "Updated",
-    "save": "Save",
-    "cancel": "Cancel",
-    "saving": "Saving...",
-    "edit": "Edit",
-    "internalNotes": "Internal Notes",
-    "clientNotes": "Client Notes",
-    "placeholder": "Enter note..."
-  },
-  "signature": {
-    "title": "Signature and Consents",
-    "signatureStatus": "Signature Status",
-    "signed": "Signed",
-    "notSigned": "Not Signed",
-    "signedBy": "Signed By",
-    "signedDate": "Signed Date",
-    "consents": "Consents",
-    "gdprConsent": "GDPR Consent",
-    "termsConsent": "Terms and Conditions Consent",
-    "electronicCommunicationConsent": "Electronic Communication Consent",
-    "signatureRequired": "Signature Required",
-    "allConsentsRequired": "All consents are required",
-    "requestSignature": "Request Signature",
-    "downloadDocument": "Download Document",
-    "uploadSignedDocument": "Upload Signed Document"
-  },
-  "documentManagement": {
-    "title": "Document Management",
-    "description": "Upload and manage contract documents for contract",
-    "unsignedContract": "Unsigned Contract",
-    "signedContract": "Signed Contract",
-    "documentUploaded": "Document uploaded",
-    "signedDocumentUploaded": "Signed document uploaded",
-    "download": "Download",
-    "dragDropHere": "Drag file here or click the button",
-    "selectFile": "Select File",
-    "uploading": "Uploading...",
-    "uploadSignedContract": "Upload signed contract"
-  },
-  "status": {
-    "draft": "Draft",
-    "submitted": "Submitted",
-    "approved": "Approved", 
-    "rejected": "Rejected",
-    "signed": "Signed"
-  },
-  "contractCopyModal": {
-    "title": "New Contract for Merchant",
-    "selectContract": "Select Contract to Copy (Optional)",
-    "selectSegments": "Select Segments to Copy",
-    "selectAllSegments": "Select All",
-    "deselectAllSegments": "Deselect All",
-    "segmentsSelected": "{{count}} of {{total}} selected",
-    "previewTitle": "Copy Preview",
-    "previewDescription": "Will copy {{count}} segments from contract {{contractNumber}}:",
-    "startClean": "Start with Clean Contract",
-    "copySelected": "Copy Selected Data",
-    "segments": {
-      "contactInfo": {
-        "label": "Contact Information",
-        "description": "Name, email, phone, titles"
-      },
-      "companyInfo": {
-        "label": "Company Information", 
-        "description": "ICO, DIC, name, address, registries"
-      },
-      "businessLocations": {
-        "label": "Business Locations",
-        "description": "Operating locations and their data"
-      },
-      "deviceSelection": {
-        "label": "Devices and Services",
-        "description": "Selected devices, services, add-ons"
-      },
-      "fees": {
-        "label": "Fees",
-        "description": "Fee settings and rates"
-      },
-      "personsAndOwners": {
-        "label": "Persons and Owners",
-        "description": "Authorized persons and actual owners"
-      }
-    },
-    "contractDetails": {
-      "created": "Created:",
-      "monthly": "monthly"
-    },
-    "validation": {
-      "selectContractAndSegments": "Select a contract and at least one segment to copy"
-    },
-    "success": {
-      "copyingSegments": "Copying {{count}} segments from contract {{contractNumber}}",
-      "startingClean": "Starting with a new clean contract"
-    }
-  },
-  "organizations": {
-    "title": "Organization Management",
-    "subtitle": "Overview and management of all organizations in the system",
-    "createOrganization": "Create Organization",
-    "teams": "teams",
-    "members": "members",
-    "export": "Export Organizations",
-    "noResults": "No organizations match the filters",
-    "form": {
-      "name": "Organization Name",
-      "namePlaceholder": "Enter organization name",
-      "description": "Description",
-      "descriptionPlaceholder": "Enter organization description",
-      "color": "Color"
-    },
-    "filters": {
-      "search": "Search",
-      "searchPlaceholder": "Search organizations...",
-      "status": "Status",
-      "selectStatus": "Select status",
-      "allStatuses": "All statuses"
-    },
-    "stats": {
-      "totalOrganizations": "Total Organizations",
-      "activeOrganizations": "Active Organizations",
-      "totalTeams": "Total Teams",
-      "totalMembers": "Total Members",
-      "allRegistered": "all registered",
-      "currentlyActive": "currently active",
-      "acrossAllOrgs": "across all organizations",
-      "hierarchyLevels": "hierarchy levels"
-    },
-    "teams": "teams",
-    "members": "members"
-  },
-  "teams": {
-    "title": "Team Management",
-    "subtitle": "Manage teams and their members",
-    "createTeam": "Create Team",
-    "export": "Export Teams",
-    "noResults": "No teams match the filters",
-    "noTeamsInOrganization": "No teams in this organization",
-    "viewDetail": "View Detail",
-    "loading": "Loading...",
-    "notFound": "Team not found",
-    "backToTeams": "Back to Teams",
-    "editTeam": "Edit Team",
-    "teamDetail": "Team Detail",
-    "tabs": {
-      "overview": "Overview",
-      "members": "Members",
-      "stats": "Statistics",
-      "settings": "Settings"
-    },
-    "overview": {
-      "members": "Members",
-      "activeMembersCount": "active members",
-      "organization": "Organization",
-      "noOrganization": "No organization",
-      "parentOrganization": "parent organization",
-      "teamLeader": "Team Leader",
-      "noLeader": "No leader",
-      "assignLeader": "assign leader",
-      "status": "Status",
-      "since": "since",
-      "teamInformation": "Team Information",
-      "description": "Description",
-      "noDescription": "No description",
-      "createdAt": "Created",
-      "lastUpdated": "Last Updated",
-      "organizationDetails": "Organization Details"
-    },
-    "members": {
-      "title": "Team Members",
-      "subtitle": "Manage members of this team",
-      "addMember": "Add Member",
-      "addMemberDescription": "Add a new member to the team",
-      "noMembers": "No members in this team"
-    },
-    "stats": {
-      "performanceScore": "Performance Score",
-      "lastMonth": "last month",
-      "completedTasks": "Completed Tasks",
-      "thisWeek": "this week",
-      "averageTime": "Average Time",
-      "perTask": "per task",
-      "efficiency": "Efficiency",
-      "overall": "overall",
-      "performanceChart": "Performance Chart",
-      "chartPlaceholder": "Team performance chart",
-      "comingSoon": "Coming soon"
-    },
-    "settings": {
-      "basicSettings": "Basic Settings",
-      "teamName": "Team Name",
-      "description": "Description",
-      "descriptionPlaceholder": "Enter team description...",
-      "activeStatus": "Active Status",
-      "activeStatusDescription": "Enable or disable the team",
-      "teamLeader": "Team Leader",
-      "selectTeamLeader": "Select Team Leader",
-      "selectTeamLeaderPlaceholder": "Select leader...",
-      "noLeader": "No leader",
-      "teamLeaderDescription": "Team leader has extended permissions",
-      "dangerZone": "Danger Zone",
-      "deleteTeam": "Delete Team",
-      "deleteTeamDescription": "Permanently delete the team and all related data"
-    },
-    "form": {
-      "name": "Team Name",
-      "namePlaceholder": "Enter team name",
-      "description": "Description",
-      "descriptionPlaceholder": "Enter team description",
-      "organization": "Organization",
-      "selectOrganization": "Select organization"
-    },
-    "filters": {
-      "search": "Search",
-      "searchPlaceholder": "Search teams...",
-      "status": "Status",
-      "selectStatus": "Select status",
-      "allStatuses": "All statuses",
-      "organization": "Organization",
-      "selectOrganization": "Select organization",
-      "allOrganizations": "All organizations"
-    },
-    "stats": {
-      "totalTeams": "Total Teams",
-      "activeTeams": "Active Teams",
-      "totalMembers": "Total Members",
-      "teamsWithLeaders": "Teams with Leaders",
-      "allRegistered": "all registered",
-      "currentlyActive": "currently active",
-      "haveAssignedLeaders": "have assigned leaders",
-      "acrossAllOrgs": "across all organizations"
-    },
-    "members": "members",
-    "teams": "teams"
-  },
-  "organizationalStructure": {
-    "title": "Organizational Structure",
-    "subtitle": "Overview of organizational structure and hierarchy",
-    "totalMembers": "Total Members",
-    "activeUsers": "active users",
-    "visualization": "Structure Visualization",
-    "exportStructure": "Export Structure",
-    "downloadChart": "Download Chart",
-    "noData": "No organizational data available",
-    "comingSoon": "Advanced organizational structure visualization coming soon"
-  },
-    "deals": {
-    "title": "Deals",
-    "subtitle": "Manage deals using Kanban board",
-    "kanban": {
-      "emptyColumn": {
-        "title": "No deals",
-        "description": "Cards moved here will appear here"
-      },
-      "card": {
-        "viewDetail": "View detail"
-      },
-      "columnHeader": {
-        "clickToEdit": "Click to edit"
-      }
-    },
-    "columnTitles": {
-      "newRequests": "New Requests",
-      "inProgress": "In Progress", 
-      "pendingApproval": "Pending Approval",
-      "completed": "Completed",
-      "stopped": "Stopped"
-    },
-    "addColumnModal": {
-      "title": "Add New Column",
-      "columnNameLabel": "Column Name", 
-      "columnNamePlaceholder": "e.g.: Under Review",
-      "columnColorLabel": "Column Color",
-      "statusesLabel": "Statuses (select at least one)",
-      "loadingStatuses": "Loading statuses...",
-      "used": "Used",
-      "selected": "Selected:",
-      "cancel": "Cancel",
-      "adding": "Adding...",
-      "addColumn": "Add Column"
-    },
-    "errors": {
-      "loadingDeals": "Error loading deals: {{message}}",
-      "addingColumn": "Error adding column",
-      "resettingColumns": "Error resetting columns"
-    },
-    "success": {
-      "columnAdded": "Column added successfully",
-      "columnsReset": "Columns reset to default"
-    }
-  },
-  "settings": {
-    "title": "Settings",
-    "description": "Configure application settings and manage your profile",
-    "applicationSettings": {
-      "title": "Status Management",
-      "description": "Manage statuses for different entities in the system",
-      "entityType": "Entity type:",
-      "addStatus": "Add Status",
-      "refresh": "Refresh",
-      "systemName": "System name",
-      "displayLabel": "Display label (shown to users)",
-      "description": "Description",
-      "category": "Category",
-      "color": "Color",
-      "save": "Save",
-      "cancel": "Cancel",
-      "edit": "Edit",
-      "delete": "Delete",
-      "systemStatus": "System",
-      "placeholders": {
-        "systemName": "e.g. waiting_review",
-        "displayLabel": "e.g. Waiting for review",
-        "description": "Status description..."
-      },
-      "categories": {
-        "general": "General",
-        "in_progress": "In Progress", 
-        "completed": "Completed",
-        "cancelled": "Cancelled"
-      },
-      "entityTypes": {
-        "contracts": "Contracts",
-        "merchants": "Merchants",
-        "organizations": "Organizations",
-        "users": "Users",
-        "teams": "Teams"
-      },
-      "futureSettings": {
-        "title": "Additional application settings",
-        "description": "Future system settings, integrations and configurations",
-        "comingSoon": "Additional settings will be added in future versions"
-      }
-    },
-    "profileSettings": {
-      "title": "Profile Settings",
-      "description": "Manage your personal information and account preferences",
-      "personalInfo": {
-        "title": "Personal Information",
-        "firstName": "First Name",
-        "lastName": "Last Name", 
-        "email": "Email Address",
-        "phone": "Phone Number",
-        "position": "Position/Role",
-        "department": "Department",
-        "saveChanges": "Save Changes"
-      },
-      "security": {
-        "title": "Security & Password",
-        "currentPassword": "Current Password",
-        "newPassword": "New Password",
-        "confirmPassword": "Confirm New Password",
-        "changePassword": "Change Password",
-        "twoFactor": "Two-Factor Authentication",
-        "enable2FA": "Enable 2FA",
-        "disable2FA": "Disable 2FA"
-      },
-      "preferences": {
-        "title": "Preferences",
-        "language": "Language",
-        "timezone": "Timezone",
-        "notifications": "Email Notifications",
-        "darkMode": "Dark Mode",
-        "autoSave": "Auto-save changes"
-      },
-      "account": {
-        "title": "Account Management",
-        "deleteAccount": "Delete Account",
-        "exportData": "Export My Data",
-        "downloadData": "Download Account Data"
-      }
-    },
-    "validation": {
-      "nameRequired": "Name and label are required",
-      "deleteConfirm": "Are you sure you want to delete this status?"
-    },
-    "success": {
-      "statusCreated": "Status created successfully",
-      "statusUpdated": "Status updated successfully", 
-      "statusDeleted": "Status deleted successfully",
-      "profileUpdated": "Profile updated successfully",
-      "passwordChanged": "Password changed successfully"
-    },
-    "errors": {
-      "statusCreate": "Error creating status",
-      "statusUpdate": "Error updating status",
-      "statusDelete": "Error deleting status",
-      "profileUpdate": "Error updating profile",
-      "passwordChange": "Error changing password"
-    }
+    "addItem": "Add Item",
+    "bulkOperations": "Bulk Operations",
+    "solutions": "Solutions",
+    "categories": "Categories",
+    "itemTypes": "Item Types",
+    "visualBuilder": "Visual Builder",
+    "quickSale": "Quick Sale"
   },
   "warehouse": {
     "title": "Warehouse",
-    "subtitle": "Manage warehouse devices and services",
-    "totalItems": "Total Items",
-    "devices": "Devices",
-    "services": "Services",
-    "allItems": "All Items",
-    "device": "Device",
-    "service": "Service",
-    "searchItems": "Search items...",
+    "subtitle": "Overview of all warehouse items",
     "addItem": "Add Item",
-    "editItem": "Edit Item",
-    "deleteItem": "Delete Item",
-    "itemDetails": "Item Details",
-    "category": "Category",
-    "monthlyFee": "Monthly Fee",
-    "setupFee": "Setup Fee",
-    "companyCost": "Company Cost",
-    "stock": "Stock",
-    "minStock": "Minimum Stock",
-    "currentStock": "Current Stock",
-    "active": "Active",
-    "inactive": "Inactive",
-    "status": "Status",
-    "specifications": "Specifications",
-    "image": "Image",
-    "actions": "Actions",
-    "noItemsFound": "No items found",
-    "loading": "Loading...",
-    "creating": "Creating...",
-    "updating": "Updating...",
-    "deleting": "Deleting...",
-    "confirmDelete": "Confirm Delete",
-    "confirmDeleteMessage": "Are you sure you want to delete this item? This action cannot be undone.",
-    "itemCreated": "Item successfully created",
-    "itemUpdated": "Item successfully updated",
-    "itemDeleted": "Item successfully deleted",
-    "errorCreating": "Error creating item",
-    "errorUpdating": "Error updating item",
-    "errorDeleting": "Error deleting item",
-    "name": "Name",
-    "description": "Description",
-    "table": {
-      "name": "Name",
-      "type": "Type",
-      "category": "Category",
-      "monthlyFee": "Monthly Fee",
-      "setupFee": "Setup Fee",
-      "companyCost": "Company Cost",
-      "stock": "Stock",
-      "status": "Status",
-      "actions": "Actions"
-    },
-    "filters": {
-      "all": "All",
+    "searchPlaceholder": "Search items...",
+    "allCategories": "All Categories",
+    "allTypes": "All Types",
+    "addItemTitle": "➕ Add Item",
+    "addItemSubtitle": "Add new item to warehouse",
+    "bulkOperationsTitle": "🔄 Bulk Operations",
+    "bulkOperationsSubtitle": "Bulk edit warehouse items",
+    "solutionsTitle": "🎯 Solutions", 
+    "solutionsSubtitle": "Manage solutions and products",
+    "categoriesTitle": "📁 Categories",
+    "categoriesSubtitle": "Manage warehouse item categories",
+    "itemTypesTitle": "🏷️ Item Types",
+    "itemTypesSubtitle": "Manage warehouse item types",
+    "visualBuilderTitle": "🎨 Visual Builder",
+    "visualBuilderSubtitle": "Drag & drop editor for products and solutions",
+    "quickSaleTitle": "💰 Quick Sale",
+    "quickSaleSubtitle": "POS system for creating invoices",
+    "dashboardTitle": "📊 Dashboard",
+    "dashboardSubtitle": "Overview of statistics and activities",
+    "itemsTitle": "📦 Warehouse",
+    "itemsSubtitle": "Clear table of all warehouse items",
+    "stats": {
+      "total": "Total",
+      "active": "Active", 
       "devices": "Devices",
       "services": "Services"
     },
-    "categories": {
-      "payment_cards": "Payment Cards",
-      "pos_terminals": "POS Terminals",
-      "software": "Software",
-      "hardware": "Hardware",
-      "accessories": "Accessories",
+    "table": {
+      "headers": {
+        "name": "Name",
+        "category": "Category",
+        "type": "Type",
+        "monthlyFee": "Monthly Fee",
+        "setupFee": "Setup Fee",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View Detail",
+        "edit": "Edit",
+        "delete": "Delete",
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "bulkActions": {
+        "selectAll": "Select All",
+        "deselectAll": "Deselect All",
+        "deleteSelected": "Delete Selected",
+        "activateSelected": "Activate Selected", 
+        "deactivateSelected": "Deactivate Selected",
+        "editSelected": "Edit Selected"
+      },
+      "filters": {
+        "category": "Category",
+        "type": "Type",
+        "status": "Status",
+        "search": "Search"
+      },
+      "empty": {
+        "title": "No items found",
+        "description": "No warehouse items match your current filters.",
+        "addFirst": "Add your first item to get started."
+      }
+    },
+    "itemDetail": {
+      "loading": "Loading...",
+      "loadingSubtitle": "Loading item details",
+      "notFound": "Item not found",
+      "notFoundDescription": "The requested item does not exist or has been deleted.",
+      "backToWarehouse": "Back to warehouse",
+      "edit": "Edit",
+      "delete": "Delete", 
+      "basicInfo": "Basic Information",
+      "type": "Type",
+      "category": "Category",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "pricing": "Pricing",
+      "monthlyFee": "Monthly Fee",
+      "setupFee": "Setup Fee",
+      "companyCost": "Company Cost",
+      "margin": "Margin",
+      "inventory": "Inventory Management",
+      "currentStock": "Current Stock",
+      "minStock": "Minimum Stock",
+      "created": "Created",
+      "detailedInfo": "Detailed Information",
+      "overview": "Overview",
+      "specifications": "Specifications", 
+      "history": "History",
+      "description": "Description",
+      "noDescription": "No description available.",
+      "image": "Image",
+      "technicalSpecs": "Technical Specifications",
+      "noSpecs": "No specifications defined.",
+      "changeHistory": "Change History",
+      "itemCreated": "Item created",
+      "lastUpdate": "Last update",
+      "system": "System",
+      "confirmDelete": "Confirm deletion",
+      "confirmDeleteDescription": "Are you sure you want to delete item \"{name}\"? This action cannot be undone.",
+      "cancel": "Cancel",
+      "device": "Device",
+      "service": "Service",
       "other": "Other"
     }
   },
-  "reporting": {
-    "subtitle": "Analytics and reports across the application",
-    "dashboard": "Reports Dashboard",
-    "dashboardDesc": "Overview of key metrics and performance indicators",
-    "dateRange": "Date Range",
-    "export": "Export",
-    "overview": "Overview",
-    "business": "Business",
-    "technical": "Technical",
-    "totalContracts": "Total Contracts",
-    "activeContracts": "Active Contracts",
-    "totalMerchants": "Total Merchants",
-    "conversionRate": "Conversion Rate",
-    "allTimeTotal": "All time total",
-    "signedAndActive": "Signed and active",
-    "registeredMerchants": "Registered merchants",
-    "draftToSigned": "Draft to signed",
-    "contractsOverview": "Contracts Overview",
-    "contractsOverviewDesc": "Detailed analysis of contract lifecycle",
-    "merchantsAnalysis": "Merchants Analysis",
-    "merchantsAnalysisDesc": "Merchant performance and statistics",
-    "performanceMetrics": "Performance Metrics",
-    "performanceMetricsDesc": "Key performance indicators and trends",
-    "pendingContracts": "Pending Contracts",
-    "totalLocations": "Total Locations",
-    "avgLocationsPerMerchant": "Avg. Locations/Merchant",
-    "draftContracts": "Draft Contracts",
-    "completionRate": "Completion Rate",
-    "viewDetails": "View Details",
-    "businessReports": "Business Reports",
-    "businessReportsDesc": "Commercial analytics and insights",
-    "technicalReports": "Technical Reports",
-    "technicalReportsDesc": "System performance and technical metrics",
-    "contractsReport": "Contracts Report",
-    "merchantsReport": "Merchants Report",
-    "revenueReport": "Revenue Report",
-    "performanceReport": "Performance Report",
-    "systemLogs": "System Logs",
-    "usageAnalytics": "Usage Analytics",
-    "errorReports": "Error Reports",
-    "userActivity": "User Activity",
-    "monthlyRevenue": "Monthly Revenue",
-    "fromActiveContracts": "From active contracts",
-    "contractStatusDistribution": "Contract Status Distribution",
-    "monthlyRevenueChart": "Monthly Revenue (€)",
-    "merchantGrowthChart": "Merchant Growth",
-    "signed": "Signed",
+  "status": {
+    "new": "New",
+    "inProgress": "In Progress", 
+    "completed": "Completed",
+    "cancelled": "Cancelled",
     "pending": "Pending",
-    "drafts": "Drafts",
-    "revenue": "Revenue",
-    "merchants": "Merchants"
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "active": "Active",
+    "inactive": "Inactive",
+    "draft": "Draft",
+    "published": "Published"
   },
-  "notifications": {
-    "title": "Notifications",
-    "loading": "Loading notifications...",
-    "empty": "No notifications",
-    "markAllRead": "Mark all as read",
-    "settings": "Notification settings",
-    "viewAll": "View All",
-    "noCategoryNotifications": "No notifications in this category",
-    "tryDifferentCategory": "Try a different category",
-    "showingCount": "Showing {{shown}} of {{total}}",
-    "search": "Search notifications...",
-    "priority": "Priority",
-    "allPriorities": "All Priorities",
-    "critical": "Critical",
-    "high": "High",
-    "medium": "Medium", 
-    "low": "Low",
-    "center": {
-      "title": "Notification Center",
-      "subtitle": "Manage all notifications"
+  "overview": {
+    "column": {
+      "client": "Client",
+      "value": "Value", 
+      "status": "Status",
+      "deadline": "Deadline",
+      "progress": "Progress",
+      "actions": "Actions"
     },
-    "markAsRead": "Mark as read",
-    "markAllAsRead": "Mark all as read",
-    "refresh": "Refresh",
-    "export": "Export",
-    "types": {
-      "contract_created": "New contract",
-      "contract_status_changed": "Contract status changed",
-      "merchant_registered": "New merchant",
-      "error_occurred": "Application error",
-      "system_alert": "System alert"
+    "card": {
+      "totalDeals": "Total Deals",
+      "activeDeals": "Active Deals", 
+      "completedDeals": "Completed Deals",
+      "totalValue": "Total Value",
+      "totalRequests": "Total Requests",
+      "pendingRequests": "Pending Requests",
+      "approvedRequests": "Approved Requests"
+    },
+    "filter": {
+      "all": "All",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "search": {
+      "placeholder": "Search...",
+      "noResults": "No results found"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit", 
+      "delete": "Delete"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
     }
+  },
+  "stats": {
+    "totalPipelineValue": "Total Pipeline Value",
+    "conversionRate": "Conversion Rate",
+    "avgDealSize": "Average Deal Size",
+    "monthlyGrowth": "Monthly Growth"
   }
 }
