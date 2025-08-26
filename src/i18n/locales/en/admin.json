@@ -450,19 +450,19 @@
   },
   "overview": {
     "title": "Overview",
-    "subtitle": "Business processes overview and management",
+    "subtitle": "Comprehensive overview of all requests and contracts",
     "stats": {
-      "totalPipelineValue": "Total Pipeline Value",
+      "totalPipelineValue": "Total Value",
       "deals": "deals",
-      "conversionRate": "Conversion Rate",
+      "conversionRate": "Success Rate",
       "converted": "converted",
-      "avgDealValue": "Avg Deal Value", 
+      "avgDealValue": "Average Value",
       "perSignedDeal": "per signed deal",
-      "activePipeline": "Active Pipeline",
+      "activePipeline": "Active",
       "inProgress": "in progress",
-      "signedDeals": "Signed Deals",
+      "signedDeals": "Signed",
       "completed": "completed",
-      "lostDeals": "Lost Deals",
+      "lostDeals": "Unsuccessful",
       "unsuccessful": "unsuccessful",
       "trendGood": "Good"
     },
@@ -527,21 +527,6 @@
       "addingColumn": "Error adding column",
       "resettingColumns": "Error resetting columns",
       "loadingDeals": "Error loading deals: {{message}}"
-    },
-    "stats": {
-      "totalPipelineValue": "Total Pipeline Value",
-      "deals": "deals",
-      "conversionRate": "Conversion Rate",
-      "converted": "converted",
-      "avgDealValue": "Avg Deal Value",
-      "perSignedDeal": "per signed deal",
-      "activePipeline": "Active Pipeline",
-      "inProgress": "in progress",
-      "signedDeals": "Signed Deals",
-      "completed": "completed",
-      "lostDeals": "Lost Deals",
-      "unsuccessful": "unsuccessful",
-      "trendGood": "Good"
     }
   },
   "warehouse": {
