@@ -451,6 +451,21 @@
   "overview": {
     "title": "Overview",
     "subtitle": "Business processes overview and management",
+    "stats": {
+      "totalPipelineValue": "Total Pipeline Value",
+      "deals": "deals",
+      "conversionRate": "Conversion Rate",
+      "converted": "converted",
+      "avgDealValue": "Avg Deal Value", 
+      "perSignedDeal": "per signed deal",
+      "activePipeline": "Active Pipeline",
+      "inProgress": "in progress",
+      "signedDeals": "Signed Deals",
+      "completed": "completed",
+      "lostDeals": "Lost Deals",
+      "unsuccessful": "unsuccessful",
+      "trendGood": "Good"
+    },
     "kanban": {
       "dealMoved": "Deal moved to {{columnTitle}}",
       "failedToUpdate": "Failed to update deal status"
@@ -1191,6 +1206,13 @@
       "columnHeader": {
         "clickToEdit": "Click to edit"
       }
+    },
+    "columnTitles": {
+      "newRequests": "New Requests",
+      "inProgress": "In Progress", 
+      "pendingApproval": "Pending Approval",
+      "completed": "Completed",
+      "stopped": "Stopped"
     },
     "addColumnModal": {
       "title": "Add New Column",

@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Edit2, Check, X, Palette, GripVertical } from 'lucide-react';
 import { KanbanColumn } from '@/hooks/useKanbanColumns';
 import { useTranslation } from 'react-i18next';
+import { getTranslatedColumnTitle, hasColumnTitleTranslation } from '@/utils/columnTitleMapping';
 
 interface EditableKanbanColumnHeaderProps {
   column: KanbanColumn;
@@ -35,6 +36,9 @@ const EditableKanbanColumnHeader = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(column.title);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+
+  // Get translated title for display
+  const displayTitle = getTranslatedColumnTitle(column.title, t);
 
   const handleSave = async () => {
     if (editValue.trim() && editValue !== column.title) {
@@ -108,7 +112,7 @@ const EditableKanbanColumnHeader = ({
             onClick={() => setIsEditing(true)}
             title={t('deals.kanban.columnHeader.clickToEdit')}
           >
-            {column.title}
+            {displayTitle}
           </h3>
         )}
       </div>

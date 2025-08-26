@@ -59,7 +59,7 @@ const OverviewStatsPanel = ({ contracts, isLoading = false }: OverviewStatsPanel
       subtitle: `${signedContracts}/${totalContracts} ${t('overview.stats.converted')}`,
       icon: TrendingUp,
       iconColor: 'bg-blue-500',
-      trend: conversionRate > 20 ? { value: 'Dobrá', isPositive: true } : null
+      trend: conversionRate > 20 ? { value: t('overview.stats.trendGood'), isPositive: true } : null
     },
     {
       title: t('overview.stats.avgDealValue'),
