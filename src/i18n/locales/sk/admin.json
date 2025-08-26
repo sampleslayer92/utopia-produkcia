@@ -455,6 +455,51 @@
           "contract": "Zmluva"
     }
   },
+  "overview": {
+    "title": "Prehľad",
+    "subtitle": "Prehľad a správa obchodných procesov",
+    "kanban": {
+      "dealMoved": "Obchod presunutý do {{columnTitle}}",
+      "failedToUpdate": "Nepodarilo sa aktualizovať stav obchodu"
+    },
+    "filters": {
+      "presets": {
+        "title": "Prednastavené filtre",
+        "saveCurrentFilters": "Uložiť aktuálne filtre",
+        "clearPreset": "Vymazať prednastavenie",
+        "presetsLabel": "Prednastavenia",
+        "hotLeads": {
+          "name": "Horúce leady",
+          "description": "Vysoká hodnota, pripravené na uzavretie"
+        },
+        "newRequests": {
+          "name": "Nové žiadosti",
+          "description": "Nedávno odoslané"
+        },
+        "pendingReview": {
+          "name": "Čakajú na kontrolu",
+          "description": "Čakajú na schválenie"
+        },
+        "thisMonth": {
+          "name": "Tento mesiac",
+          "description": "Vytvorené tento mesiac"
+        },
+        "highValue": {
+          "name": "Vysoká hodnota",
+          "description": "Nad €50,000"
+        }
+      }
+    },
+    "success": {
+      "columnAdded": "Stĺpec bol úspešne pridaný",
+      "columnsReset": "Stĺpce boli úspešne resetované na predvolené"
+    },
+    "errors": {
+      "addingColumn": "Chyba pri pridávaní stĺpca",
+      "resettingColumns": "Chyba pri resetovaní stĺpcov",
+      "loadingDeals": "Chyba pri načítavaní obchodov: {{message}}"
+    }
+  },
   "notifications": {
     "title": "Notifikácie",
     "subtitle": "Správa a prehľad všetkých notifikácií",

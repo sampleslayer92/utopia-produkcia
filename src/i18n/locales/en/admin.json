@@ -1,6 +1,8 @@
 {
   "navigation": {
     "dashboard": "Dashboard",
+    "overview": "Overview", 
+    "requests": "Requests",
     "merchants": "Merchants",
     "allMerchants": "All Merchants",
     "locations": "Locations",
@@ -444,6 +446,51 @@
       "requestRejected": "Request has been rejected",
       "errorApproving": "Error approving request",
       "errorRejecting": "Error rejecting request"
+    }
+  },
+  "overview": {
+    "title": "Overview",
+    "subtitle": "Business processes overview and management",
+    "kanban": {
+      "dealMoved": "Deal moved to {{columnTitle}}",
+      "failedToUpdate": "Failed to update deal status"
+    },
+    "filters": {
+      "presets": {
+        "title": "Filter Presets",
+        "saveCurrentFilters": "Save Current Filters",
+        "clearPreset": "Clear Preset",
+        "presetsLabel": "Presets",
+        "hotLeads": {
+          "name": "Hot Leads",
+          "description": "High value, ready to close"
+        },
+        "newRequests": {
+          "name": "New Requests",
+          "description": "Recently submitted"
+        },
+        "pendingReview": {
+          "name": "Pending Review",
+          "description": "Awaiting approval"
+        },
+        "thisMonth": {
+          "name": "This Month",
+          "description": "Created this month"
+        },
+        "highValue": {
+          "name": "High Value",
+          "description": "Above €50,000"
+        }
+      }
+    },
+    "success": {
+      "columnAdded": "Column added successfully",
+      "columnsReset": "Columns reset to default successfully"
+    },
+    "errors": {
+      "addingColumn": "Error adding column",
+      "resettingColumns": "Error resetting columns",
+      "loadingDeals": "Error loading deals: {{message}}"
     }
   },
   "warehouse": {

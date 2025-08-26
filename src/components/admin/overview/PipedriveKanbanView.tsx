@@ -12,6 +12,7 @@ import {
   closestCorners,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { useTranslation } from 'react-i18next';
 import { useContractStatusUpdate } from '@/hooks/useContractStatusUpdate';
 import { EnhancedContractData } from '@/hooks/useEnhancedContractsData';
 import { KanbanColumn } from '@/hooks/useKanbanColumns';
@@ -40,6 +41,7 @@ const PipedriveKanbanView = ({
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
   const [collapsedColumns, setCollapsedColumns] = useState<Set<string>>(new Set());
   
+  const { t } = useTranslation('admin');
   const updateContractStatus = useContractStatusUpdate();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -122,7 +124,7 @@ const PipedriveKanbanView = ({
         newStatus: newStatus as any
       }, {
         onSuccess: () => {
-          toast.success(`Deal moved to ${targetColumn.title}`);
+          toast.success(t('overview.kanban.dealMoved', { columnTitle: targetColumn.title }));
           
           // Success haptic feedback on mobile
           if (isMobile && 'vibrate' in navigator) {
@@ -130,7 +132,7 @@ const PipedriveKanbanView = ({
           }
         },
         onError: (error) => {
-          toast.error('Failed to update deal status');
+          toast.error(t('overview.kanban.failedToUpdate'));
           console.error('Error updating contract status:', error);
         }
       });
