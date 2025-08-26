@@ -496,8 +496,6 @@
       "source": "Source",
       "presets": {
         "title": "Filter Presets",
-        "saveCurrentFilters": "Save Current Filters",
-        "clearPreset": "Clear Preset",
         "presetsLabel": "Presets",
         "hotLeads": {
           "name": "Hot Leads",

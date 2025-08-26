@@ -503,8 +503,6 @@
       "source": "Zdroj",
       "presets": {
         "title": "Prednastavené filtre",
-        "saveCurrentFilters": "Uložiť aktuálne filtre",
-        "clearPreset": "Vymazať prednastavenie",
         "presetsLabel": "Prednastavenia",
         "hotLeads": {
           "name": "Horúce leady",
