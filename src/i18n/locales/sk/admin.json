@@ -534,7 +534,49 @@
       "addingColumn": "Chyba pri pridávaní stĺpca",
       "resettingColumns": "Chyba pri resetovaní stĺpcov",
       "loadingDeals": "Chyba pri načítavaní obchodov: {{message}}"
+    },
+    "column": {
+      "actions": {
+        "addDeal": "Pridať obchod",
+        "sortByValue": "Zoradiť podľa hodnoty",
+        "sortByDate": "Zoradiť podľa dátumu", 
+        "deleteColumn": "Vymazať stĺpec"
+      },
+      "emptyState": {
+        "noDeals": "Žiadne obchody v tejto fáze",
+        "addDeal": "Pridať obchod"
+      },
+      "stats": {
+        "deals": "obchodov"
+      }
+    },
+    "card": {
+      "actions": {
+        "call": "Zavolať",
+        "email": "Email",
+        "edit": "Upraviť", 
+        "detail": "Detail"
+      },
+      "labels": {
+        "value": "Hodnota",
+        "progress": "Priebeh"
+      }
     }
+  },
+  "status": {
+    "draft": "Koncept",
+    "pending": "Čakajúce",
+    "in_progress": "V spracovaní",
+    "review": "Na kontrolu", 
+    "approved": "Schválené",
+    "signed": "Podpísané",
+    "active": "Aktívne",
+    "completed": "Dokončené",
+    "cancelled": "Zrušené",
+    "rejected": "Zamietnuté",
+    "lost": "Stratené",
+    "on_hold": "Pozastavené",
+    "expired": "Vypršané"
   },
   "notifications": {
     "title": "Notifikácie",

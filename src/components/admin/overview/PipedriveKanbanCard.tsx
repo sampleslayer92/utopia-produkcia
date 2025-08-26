@@ -147,20 +147,20 @@ const PipedriveKanbanCard = ({ contract, isDragging = false, isMobile = false }:
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem onClick={(e) => handleQuickAction('call', e)}>
                 <Phone className="h-3 w-3 mr-2" />
-                Zavolať
+                {t('overview.card.actions.call')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={(e) => handleQuickAction('email', e)}>
                 <Mail className="h-3 w-3 mr-2" />
-                Email
+                {t('overview.card.actions.email')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={(e) => handleQuickAction('edit', e)}>
                 <Edit className="h-3 w-3 mr-2" />
-                Upraviť
+                {t('overview.card.actions.edit')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleViewContract}>
                 <Eye className="h-3 w-3 mr-2" />
-                Detail
+                {t('overview.card.actions.detail')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -191,7 +191,7 @@ const PipedriveKanbanCard = ({ contract, isDragging = false, isMobile = false }:
           <div className="flex items-center justify-between bg-slate-50 rounded-md p-2">
             <div className="flex items-center gap-1">
               <Euro className="h-3 w-3 text-slate-500" />
-              <span className="text-xs text-slate-600">Hodnota</span>
+              <span className="text-xs text-slate-600">{t('overview.card.labels.value')}</span>
             </div>
             <span className="font-bold text-sm text-slate-900">
               €{contract.contractValue.toLocaleString()}
@@ -202,7 +202,7 @@ const PipedriveKanbanCard = ({ contract, isDragging = false, isMobile = false }:
         {/* Progress indicator */}
         <div className="space-y-1">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-600">Progress</span>
+            <span className="text-slate-600">{t('overview.card.labels.progress')}</span>
             <span className="text-slate-500">
               {new Date(contract.created_at).toLocaleDateString('sk-SK')}
             </span>
@@ -229,7 +229,7 @@ const PipedriveKanbanCard = ({ contract, isDragging = false, isMobile = false }:
             className="h-6 text-xs flex-1 hover:bg-blue-50 hover:text-blue-700"
           >
             <Eye className="h-3 w-3 mr-1" />
-            Detail
+            {t('overview.card.actions.detail')}
           </Button>
           <Button
             variant="ghost"

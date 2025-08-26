@@ -527,7 +527,49 @@
       "addingColumn": "Error adding column",
       "resettingColumns": "Error resetting columns",
       "loadingDeals": "Error loading deals: {{message}}"
+    },
+    "column": {
+      "actions": {
+        "addDeal": "Add deal",
+        "sortByValue": "Sort by value", 
+        "sortByDate": "Sort by date",
+        "deleteColumn": "Delete column"
+      },
+      "emptyState": {
+        "noDeals": "No deals in this stage",
+        "addDeal": "Add deal"
+      },
+      "stats": {
+        "deals": "deals"
+      }
+    },
+    "card": {
+      "actions": {
+        "call": "Call",
+        "email": "Email", 
+        "edit": "Edit",
+        "detail": "Detail"
+      },
+      "labels": {
+        "value": "Value",
+        "progress": "Progress"
+      }
     }
+  },
+  "status": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "in_progress": "In Progress", 
+    "review": "Review",
+    "approved": "Approved",
+    "signed": "Signed",
+    "active": "Active",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "rejected": "Rejected",
+    "lost": "Lost",
+    "on_hold": "On Hold",
+    "expired": "Expired"
   },
   "warehouse": {
     "subtitle": "Manage devices and services inventory",

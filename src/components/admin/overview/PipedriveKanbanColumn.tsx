@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from 'react-i18next';
 
 interface PipedriveKanbanColumnProps {
   id: string;
@@ -43,6 +44,7 @@ const PipedriveKanbanColumn = ({
   isMobile,
   style
 }: PipedriveKanbanColumnProps) => {
+  const { t } = useTranslation('admin');
   const { isOver, setNodeRef } = useDroppable({
     id: id,
   });
@@ -121,18 +123,18 @@ const PipedriveKanbanColumn = ({
             <DropdownMenuContent align="end">
               <DropdownMenuItem>
                 <Plus className="h-3 w-3 mr-2" />
-                Add deal
+                {t('overview.column.actions.addDeal')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                Sort by value
+                {t('overview.column.actions.sortByValue')}
               </DropdownMenuItem>
               <DropdownMenuItem>
-                Sort by date
+                {t('overview.column.actions.sortByDate')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600">
-                Delete column
+                {t('overview.column.actions.deleteColumn')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -142,7 +144,7 @@ const PipedriveKanbanColumn = ({
         <div className="flex items-center gap-4 text-xs text-slate-600 pt-2">
           <div className="flex items-center gap-1">
             <Users className="h-3 w-3" />
-            <span>{stats.count} deals</span>
+            <span>{stats.count} {t('overview.column.stats.deals')}</span>
           </div>
           {stats.totalValue > 0 && (
             <div className="flex items-center gap-1">
@@ -171,9 +173,9 @@ const PipedriveKanbanColumn = ({
                 <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-3">
                   <Plus className="h-6 w-6 text-slate-400" />
                 </div>
-                <p className="text-sm text-slate-500 mb-2">No deals in this stage</p>
+                <p className="text-sm text-slate-500 mb-2">{t('overview.column.emptyState.noDeals')}</p>
                 <Button variant="ghost" size="sm" className="text-xs">
-                  Add deal
+                  {t('overview.column.emptyState.addDeal')}
                 </Button>
               </div>
             ) : (
