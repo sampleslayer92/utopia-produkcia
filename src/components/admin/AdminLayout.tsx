@@ -1,5 +1,5 @@
 
-import { AdminSidebar } from "./AdminSidebar";
+import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useTranslation } from "react-i18next";
