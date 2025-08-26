@@ -1380,6 +1380,31 @@
       "settings": "Nastavenia",
       "dealsCount": "deals"
     },
+    "kanban": {
+      "emptyColumn": {
+        "title": "Žiadne deals",
+        "description": "Karty presunuté sem sa zobrazia tu"
+      },
+      "card": {
+        "viewDetail": "Zobraziť detail"
+      },
+      "columnHeader": {
+        "clickToEdit": "Kliknite pre úpravu"
+      }
+    },
+    "addColumnModal": {
+      "title": "Pridať nový stĺpec",
+      "columnNameLabel": "Názov stĺpca", 
+      "columnNamePlaceholder": "Napríklad: Na kontrole",
+      "columnColorLabel": "Farba stĺpca",
+      "statusesLabel": "Statusy (vyberte aspoň jeden)",
+      "loadingStatuses": "Načítavam statusy...",
+      "used": "Použité",
+      "selected": "Vybrané:",
+      "cancel": "Zrušiť",
+      "adding": "Pridávam...",
+      "addColumn": "Pridať stĺpec"
+    },
     "errors": {
       "loadingDeals": "Chyba pri načítavaní deals: {{message}}",
       "addingColumn": "Chyba pri pridávaní stĺpca",

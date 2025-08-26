@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Edit2, Check, X, Palette, GripVertical } from 'lucide-react';
 import { KanbanColumn } from '@/hooks/useKanbanColumns';
+import { useTranslation } from 'react-i18next';
 
 interface EditableKanbanColumnHeaderProps {
   column: KanbanColumn;
@@ -30,6 +31,7 @@ const EditableKanbanColumnHeader = ({
   count, 
   isDragHandle = false 
 }: EditableKanbanColumnHeaderProps) => {
+  const { t } = useTranslation('admin');
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(column.title);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
@@ -104,7 +106,7 @@ const EditableKanbanColumnHeader = ({
           <h3 
             className="font-semibold text-foreground text-sm flex-1 min-w-0 truncate cursor-pointer hover:text-primary transition-colors"
             onClick={() => setIsEditing(true)}
-            title="Click to edit"
+            title={t('deals.kanban.columnHeader.clickToEdit')}
           >
             {column.title}
           </h3>

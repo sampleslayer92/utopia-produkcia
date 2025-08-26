@@ -6,6 +6,7 @@ import KanbanCard from './KanbanCard';
 import EditableKanbanColumnHeader from './EditableKanbanColumnHeader';
 import { EnhancedContractData } from '@/hooks/useEnhancedContractsData';
 import { KanbanColumn as KanbanColumnType } from '@/hooks/useKanbanColumns';
+import { useTranslation } from 'react-i18next';
 
 interface KanbanColumnProps {
   id: string;
@@ -16,6 +17,7 @@ interface KanbanColumnProps {
 }
 
 const KanbanColumn = ({ id, column, contracts, isDropTarget = false, onUpdateColumn }: KanbanColumnProps) => {
+  const { t } = useTranslation('admin');
   const { setNodeRef, isOver } = useDroppable({
     id,
   });
@@ -63,8 +65,8 @@ const KanbanColumn = ({ id, column, contracts, isDropTarget = false, onUpdateCol
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <p className="text-sm font-medium">Žiadne deals</p>
-              <p className="text-xs text-center mt-1">Karty presunuté sem sa zobrazia tu</p>
+              <p className="text-sm font-medium">{t('deals.kanban.emptyColumn.title')}</p>
+              <p className="text-xs text-center mt-1">{t('deals.kanban.emptyColumn.description')}</p>
             </div>
           )}
         </div>

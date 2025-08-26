@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { KanbanColumn } from '@/hooks/useKanbanColumns';
 import { useContractStatuses } from '@/hooks/useContractStatuses';
+import { useTranslation } from 'react-i18next';
 
 interface AddColumnModalProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ const COLOR_PALETTE = [
 ];
 
 const AddColumnModal = ({ isOpen, onClose, onAddColumn, existingColumns }: AddColumnModalProps) => {
+  const { t } = useTranslation('admin');
   const [title, setTitle] = useState('');
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedColor, setSelectedColor] = useState(COLOR_PALETTE[0]);
@@ -84,23 +86,23 @@ const AddColumnModal = ({ isOpen, onClose, onAddColumn, existingColumns }: AddCo
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Pridať nový stĺpec</DialogTitle>
+          <DialogTitle>{t('deals.addColumnModal.title')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title">Názov stĺpca</Label>
+            <Label htmlFor="title">{t('deals.addColumnModal.columnNameLabel')}</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Napríklad: Na kontrole"
+              placeholder={t('deals.addColumnModal.columnNamePlaceholder')}
               required
             />
           </div>
 
           <div className="space-y-3">
-            <Label>Farba stĺpca</Label>
+            <Label>{t('deals.addColumnModal.columnColorLabel')}</Label>
             <div className="flex gap-2">
               {COLOR_PALETTE.map((color) => (
                 <button
@@ -119,10 +121,10 @@ const AddColumnModal = ({ isOpen, onClose, onAddColumn, existingColumns }: AddCo
           </div>
 
           <div className="space-y-3">
-            <Label>Statusy (vyberte aspoň jeden)</Label>
+            <Label>{t('deals.addColumnModal.statusesLabel')}</Label>
             {statusesLoading ? (
               <div className="border rounded-md p-3 text-center text-muted-foreground">
-                Načítavam statusy...
+                {t('deals.addColumnModal.loadingStatuses')}
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border rounded-md p-3">
@@ -153,7 +155,7 @@ const AddColumnModal = ({ isOpen, onClose, onAddColumn, existingColumns }: AddCo
                       )}
                       {isUsed && !isSelected && (
                         <Badge variant="outline" className="ml-2 text-xs">
-                          Použité
+                          {t('deals.addColumnModal.used')}
                         </Badge>
                       )}
                     </div>
@@ -163,7 +165,7 @@ const AddColumnModal = ({ isOpen, onClose, onAddColumn, existingColumns }: AddCo
             )}
             {selectedStatuses.length > 0 && (
               <div className="flex flex-wrap gap-1">
-                <span className="text-sm text-muted-foreground">Vybrané:</span>
+                <span className="text-sm text-muted-foreground">{t('deals.addColumnModal.selected')}</span>
                 {selectedStatuses.map(statusName => {
                   const status = availableStatuses.find(s => s.name === statusName);
                   return (
@@ -185,13 +187,13 @@ const AddColumnModal = ({ isOpen, onClose, onAddColumn, existingColumns }: AddCo
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose}>
-              Zrušiť
+              {t('deals.addColumnModal.cancel')}
             </Button>
             <Button 
               type="submit" 
               disabled={!title.trim() || selectedStatuses.length === 0 || isLoading}
             >
-              {isLoading ? 'Pridávam...' : 'Pridať stĺpec'}
+              {isLoading ? t('deals.addColumnModal.adding') : t('deals.addColumnModal.addColumn')}
             </Button>
           </DialogFooter>
         </form>

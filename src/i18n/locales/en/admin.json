@@ -1180,6 +1180,31 @@
       "settings": "Settings",
       "dealsCount": "deals"
     },
+    "kanban": {
+      "emptyColumn": {
+        "title": "No deals",
+        "description": "Cards moved here will appear here"
+      },
+      "card": {
+        "viewDetail": "View detail"
+      },
+      "columnHeader": {
+        "clickToEdit": "Click to edit"
+      }
+    },
+    "addColumnModal": {
+      "title": "Add New Column",
+      "columnNameLabel": "Column Name", 
+      "columnNamePlaceholder": "e.g.: Under Review",
+      "columnColorLabel": "Column Color",
+      "statusesLabel": "Statuses (select at least one)",
+      "loadingStatuses": "Loading statuses...",
+      "used": "Used",
+      "selected": "Selected:",
+      "cancel": "Cancel",
+      "adding": "Adding...",
+      "addColumn": "Add Column"
+    },
     "errors": {
       "loadingDeals": "Error loading deals: {{message}}",
       "addingColumn": "Error adding column",

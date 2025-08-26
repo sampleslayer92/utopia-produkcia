@@ -151,7 +151,7 @@ const KanbanCard = ({ contract, isDragging = false, isMobile = false }: KanbanCa
             className={`w-full ${isMobile ? 'h-10 text-xs' : 'h-7 text-xs'} hover:bg-accent/50 transition-colors group-hover:bg-accent/80`}
           >
             <Eye className={`${isMobile ? 'h-4 w-4' : 'h-3 w-3'} mr-1`} />
-            <span className={isMobile ? 'text-xs' : 'text-xs'}>Zobraziť detail</span>
+            <span className={isMobile ? 'text-xs' : 'text-xs'}>{t('deals.kanban.card.viewDetail')}</span>
           </Button>
         </div>
       </div>
