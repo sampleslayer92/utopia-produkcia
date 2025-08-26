@@ -78,8 +78,8 @@ const DocumentManagement = ({
         {/* Generate Documents Section */}
         <div className="flex justify-between items-center p-4 border rounded-lg bg-blue-50">
           <div>
-            <h3 className="font-semibold">Generovať G1 a G2 dokumenty</h3>
-            <p className="text-sm text-muted-foreground">Automaticky vygeneruje všetky potrebné dokumenty</p>
+            <h3 className="font-semibold">{t('documentManagement.generateDocuments')}</h3>
+            <p className="text-sm text-muted-foreground">{t('documentManagement.generateDescription')}</p>
           </div>
           <Button 
             onClick={() => contractDataResult.data && generateDocuments({
@@ -89,19 +89,19 @@ const DocumentManagement = ({
             disabled={!contractDataResult.data}
           >
             <FileText className="h-4 w-4 mr-2" />
-            Generovať
+            {t('documentManagement.generate')}
           </Button>
         </div>
 
         {/* Contract Documents */}
         {documents && documents.length > 0 && (
           <div className="space-y-4">
-            <h3 className="font-semibold">Dokumenty kontraktu</h3>
+            <h3 className="font-semibold">{t('documentManagement.contractDocuments')}</h3>
             {documents.map((doc) => (
               <div key={doc.id} className="flex justify-between items-center p-3 border rounded-lg">
                 <div>
                   <h4 className="font-medium">{doc.document_name}</h4>
-                  <span className="text-sm text-muted-foreground">Status: {doc.status}</span>
+                  <span className="text-sm text-muted-foreground">{t('documentManagement.status')}: {doc.status}</span>
                 </div>
                 <Button 
                   variant="outline" 
@@ -113,7 +113,7 @@ const DocumentManagement = ({
                   })}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Stiahnuť
+                  {t('documentManagement.download')}
                 </Button>
               </div>
             ))}

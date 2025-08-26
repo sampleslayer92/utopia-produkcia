@@ -1259,7 +1259,12 @@
     "dragDropHere": "Pretiahnite súbor sem alebo kliknite na tlačidlo",
     "selectFile": "Vybrať súbor",
     "uploading": "Nahráva sa...",
-    "uploadSignedContract": "Nahrať podpísanú zmluva"
+    "uploadSignedContract": "Nahrať podpísanú zmluva",
+    "generateDocuments": "Generovať G1 a G2 dokumenty",
+    "generateDescription": "Automaticky vygeneruje všetky potrebné dokumenty",
+    "generate": "Generovať",
+    "contractDocuments": "Dokumenty kontraktu",
+    "status": "Status"
   },
   "contractCopyModal": {
     "title": "Nová zmluva pre merchanta",

@@ -1050,7 +1050,12 @@
     "dragDropHere": "Drag file here or click the button",
     "selectFile": "Select File",
     "uploading": "Uploading...",
-    "uploadSignedContract": "Upload signed contract"
+    "uploadSignedContract": "Upload signed contract",
+    "generateDocuments": "Generate G1 and G2 Documents",
+    "generateDescription": "Automatically generates all necessary documents",
+    "generate": "Generate",
+    "contractDocuments": "Contract Documents",
+    "status": "Status"
   },
   "status": {
     "draft": "Draft",

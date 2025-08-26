@@ -151,7 +151,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
       <Card>
         <CardContent className="p-6">
           <div className="text-center text-destructive">
-            Chyba pri načítaní údajov: {error.message}
+            {t('warehouse.errorLoading')}: {error.message}
           </div>
         </CardContent>
       </Card>
@@ -163,14 +163,14 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Skladové položky</h1>
+          <h1 className="text-3xl font-bold">{t('warehouse.items')}</h1>
           <p className="text-muted-foreground">
-            Prehľad všetkých skladových položiek
+            {t('warehouse.itemsDescription')}
           </p>
         </div>
         <Button onClick={() => setShowModal(true)} className="gap-2">
           <Plus className="h-4 w-4" />
-          Pridať položku
+          {t('warehouse.addItem')}
         </Button>
       </div>
 
@@ -180,7 +180,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Celkovo</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('warehouse.total')}</p>
                 <p className="text-2xl font-bold">{items.length}</p>
               </div>
               <Package className="h-8 w-8 text-muted-foreground" />
@@ -191,7 +191,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Aktívne</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('warehouse.active')}</p>
                 <p className="text-2xl font-bold text-green-600">
                   {items.filter(item => item.is_active).length}
                 </p>
@@ -204,7 +204,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Zariadenia</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('warehouse.devices')}</p>
                 <p className="text-2xl font-bold text-blue-600">
                   {items.filter(item => item.item_type === 'device').length}
                 </p>
@@ -217,7 +217,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Služby</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('warehouse.services')}</p>
                 <p className="text-2xl font-bold text-purple-600">
                   {items.filter(item => item.item_type === 'service').length}
                 </p>
@@ -234,7 +234,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">
-                {selectedItems.size} položiek vybratých
+                {selectedItems.size} {t('warehouse.itemsSelected')}
               </span>
               <Button
                 variant="outline"
@@ -243,7 +243,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                 className="ml-auto"
               >
                 <Check className="h-4 w-4 mr-1" />
-                Aktivovať
+                {t('warehouse.activate')}
               </Button>
               <Button
                 variant="outline"
@@ -251,7 +251,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                 onClick={handleBulkDeactivate}
               >
                 <X className="h-4 w-4 mr-1" />
-                Deaktivovať
+                {t('warehouse.deactivate')}
               </Button>
               <Button
                 variant="destructive"
@@ -259,7 +259,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                 onClick={handleBulkDelete}
               >
                 <Trash2 className="h-4 w-4 mr-1" />
-                Zmazať
+                {t('warehouse.delete')}
               </Button>
             </div>
           </CardContent>
@@ -273,7 +273,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Hľadať položky..."
+                placeholder={t('warehouse.searchPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10"
@@ -281,10 +281,10 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
             </div>
             <Select value={categoryFilter || 'all'} onValueChange={(val) => setCategoryFilter(val === 'all' ? '' : val)}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Kategória" />
+                <SelectValue placeholder={t('warehouse.category')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Všetky kategórie</SelectItem>
+                <SelectItem value="all">{t('warehouse.allCategories')}</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     <div className="flex items-center gap-2">
@@ -297,10 +297,10 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
             </Select>
             <Select value={typeFilter || 'all'} onValueChange={(val) => setTypeFilter(val === 'all' ? '' : val)}>
               <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Typ" />
+                <SelectValue placeholder={t('warehouse.type')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Všetky typy</SelectItem>
+                <SelectItem value="all">{t('warehouse.allTypes')}</SelectItem>
                 {itemTypes.map((type) => (
                   <SelectItem key={type.id} value={type.id}>
                     <div className="flex items-center gap-2">
@@ -313,12 +313,12 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
             </Select>
             <Select value={statusFilter || 'all'} onValueChange={(val) => setStatusFilter(val === 'all' ? '' : val)}>
               <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Stav" />
+                <SelectValue placeholder={t('warehouse.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Všetky</SelectItem>
-                <SelectItem value="active">Aktívne</SelectItem>
-                <SelectItem value="inactive">Neaktívne</SelectItem>
+                <SelectItem value="all">{t('warehouse.all')}</SelectItem>
+                <SelectItem value="active">{t('warehouse.active')}</SelectItem>
+                <SelectItem value="inactive">{t('warehouse.inactive')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -336,13 +336,13 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
-              <TableHead>Názov</TableHead>
-              <TableHead>Typ</TableHead>
-              <TableHead>Kategória</TableHead>
-              <TableHead>Mesačný poplatok</TableHead>
-              <TableHead>Jednorazový poplatok</TableHead>
-              <TableHead>Stav</TableHead>
-              <TableHead className="w-[50px]">Akcie</TableHead>
+              <TableHead>{t('warehouse.name')}</TableHead>
+              <TableHead>{t('warehouse.type')}</TableHead>
+              <TableHead>{t('warehouse.category')}</TableHead>
+              <TableHead>{t('warehouse.monthlyFee')}</TableHead>
+              <TableHead>{t('warehouse.setupFee')}</TableHead>
+              <TableHead>{t('warehouse.status')}</TableHead>
+              <TableHead className="w-[50px]">{t('warehouse.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -351,7 +351,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                 <TableCell colSpan={8} className="text-center py-8">
                   <div className="flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                    Načítavam...
+                    {t('warehouse.loading')}
                   </div>
                 </TableCell>
               </TableRow>
@@ -360,8 +360,8 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                 <TableCell colSpan={8} className="text-center py-8">
                   <div className="text-muted-foreground">
                     {search || categoryFilter || typeFilter || statusFilter 
-                      ? 'Žiadne položky neboli nájdené podľa zadaných filtrov'
-                      : 'Zatiaľ neboli pridané žiadne položky'
+                      ? t('warehouse.noItemsFound')
+                      : t('warehouse.noItemsYet')
                     }
                   </div>
                 </TableCell>
@@ -415,7 +415,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                   <TableCell className="font-mono">{item.setup_fee.toFixed(2)}€</TableCell>
                   <TableCell>
                     <Badge variant={item.is_active ? "default" : "secondary"}>
-                      {item.is_active ? 'Aktívne' : 'Neaktívne'}
+                      {item.is_active ? t('warehouse.active') : t('warehouse.inactive')}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -436,14 +436,14 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                           navigate(`/admin/warehouse/items/${item.id}`);
                         }}>
                           <Eye className="mr-2 h-4 w-4" />
-                          Zobraziť detail
+                          {t('warehouse.viewDetail')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={(e) => {
                           e.stopPropagation();
                           navigate(`/admin/warehouse/items/${item.id}`);
                         }}>
                           <Edit className="mr-2 h-4 w-4" />
-                          Upraviť
+                          {t('warehouse.edit')}
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           onClick={(e) => {
@@ -453,7 +453,7 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
                           className="text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Zmazať
+                          {t('warehouse.delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -481,18 +481,18 @@ export const SimpleWarehouseTable = ({ showAddForm }: SimpleWarehouseTableProps)
       <AlertDialog open={!!deleteItem} onOpenChange={() => setDeleteItem(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Potvrdiť vymazanie</AlertDialogTitle>
+            <AlertDialogTitle>{t('warehouse.confirmDelete')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Naozaj chcete vymazať položku "{deleteItem?.name}"? Táto akcia sa nedá vrátiť späť.
+              {t('warehouse.confirmDeleteDescription', { name: deleteItem?.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Zrušiť</AlertDialogCancel>
+            <AlertDialogCancel>{t('warehouse.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteItem && handleDelete(deleteItem)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Vymazať
+              {t('warehouse.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

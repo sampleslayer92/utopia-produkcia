@@ -22,9 +22,11 @@ import {
 } from '@/components/ui/alert-dialog';
 import { WarehouseItemModal } from '@/components/warehouse/WarehouseItemModal';
 import LoadingSpinner from '@/components/ui/loading-spinner';
+import { useTranslation } from 'react-i18next';
 import { icons } from 'lucide-react';
 
 const ItemDetailPage = () => {
+  const { t } = useTranslation('admin');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
@@ -37,7 +39,7 @@ const ItemDetailPage = () => {
 
   if (isLoading) {
     return (
-      <AdminLayout title="Načítavam..." subtitle="Načítavam detail položky">
+      <AdminLayout title={t('warehouse.loading')} subtitle={t('warehouse.loadingItemDetail')}>
         <LoadingSpinner />
       </AdminLayout>
     );
@@ -45,14 +47,14 @@ const ItemDetailPage = () => {
 
   if (error || !item) {
     return (
-      <AdminLayout title="Položka nenájdená" subtitle="Požadovaná položka neexistuje">
+      <AdminLayout title={t('warehouse.itemNotFound')} subtitle={t('warehouse.requestedItemNotExist')}>
         <div className="flex flex-col items-center justify-center py-12">
           <Package className="h-16 w-16 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold">Položka nenájdená</h3>
-          <p className="text-muted-foreground mb-6">Požadovaná položka neexistuje alebo bola zmazaná.</p>
+          <h3 className="text-lg font-semibold">{t('warehouse.itemNotFound')}</h3>
+          <p className="text-muted-foreground mb-6">{t('warehouse.itemNotFoundDescription')}</p>
           <Button onClick={() => navigate('/admin/warehouse')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Späť na sklad
+            {t('warehouse.backToWarehouse')}
           </Button>
         </div>
       </AdminLayout>
@@ -93,7 +95,7 @@ const ItemDetailPage = () => {
   return (
     <AdminLayout 
       title={item.name}
-      subtitle={`Detail skladovej položky • ${item.item_type === 'device' ? 'Zariadenie' : 'Služba'}`}
+      subtitle={`${t('warehouse.itemDetailSubtitle')} • ${item.item_type === 'device' ? t('warehouse.device') : t('warehouse.service')}`}
     >
       <div className="space-y-6">
         {/* Header with navigation */}
@@ -105,10 +107,10 @@ const ItemDetailPage = () => {
               className="shrink-0"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Späť na sklad
+              {t('warehouse.backToWarehouse')}
             </Button>
             <div className="text-sm text-muted-foreground">
-              Sklad → {category?.name || 'Kategória'} → {item.name}
+              {t('warehouse.breadcrumb', { category: category?.name || t('warehouse.category'), item: item.name })}
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -117,7 +119,7 @@ const ItemDetailPage = () => {
               onClick={() => setShowEditModal(true)}
             >
               <Edit className="h-4 w-4 mr-2" />
-              Upraviť
+              {t('warehouse.edit')}
             </Button>
             <Button 
               variant="outline" 
@@ -125,7 +127,7 @@ const ItemDetailPage = () => {
               className="text-destructive hover:text-destructive"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Zmazať
+              {t('warehouse.delete')}
             </Button>
           </div>
         </div>
@@ -136,30 +138,30 @@ const ItemDetailPage = () => {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center space-x-2">
                 <Package className="h-5 w-5" />
-                <span>Základné informácie</span>
+                <span>{t('warehouse.basicInfo')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Typ:</span>
+                <span className="text-sm text-muted-foreground">{t('warehouse.type')}:</span>
                 <div className="flex items-center space-x-2">
                   {itemType && renderIcon(itemType.icon_name, itemType.icon_url, itemType.color)}
                   <Badge variant={item.item_type === 'device' ? 'default' : 'secondary'}>
-                    {item.item_type === 'device' ? 'Zariadenie' : 'Služba'}
+                    {item.item_type === 'device' ? t('warehouse.device') : t('warehouse.service')}
                   </Badge>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Kategória:</span>
+                <span className="text-sm text-muted-foreground">{t('warehouse.category')}:</span>
                 <div className="flex items-center space-x-2">
                   {category && renderIcon(category.icon_name, category.icon_url, category.color)}
-                  <span className="text-sm">{category?.name || 'Iné'}</span>
+                  <span className="text-sm">{category?.name || t('warehouse.other')}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Stav:</span>
+                <span className="text-sm text-muted-foreground">{t('warehouse.status')}:</span>
                 <Badge variant={item.is_active ? 'default' : 'destructive'}>
-                  {item.is_active ? 'Aktívne' : 'Neaktívne'}
+                  {item.is_active ? t('warehouse.active') : t('warehouse.inactive')}
                 </Badge>
               </div>
             </CardContent>
@@ -169,25 +171,25 @@ const ItemDetailPage = () => {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center space-x-2">
                 <DollarSign className="h-5 w-5" />
-                <span>Cenník</span>
+                <span>{t('warehouse.pricing')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Mesačný poplatok:</span>
+                <span className="text-sm text-muted-foreground">{t('warehouse.monthlyFee')}:</span>
                 <span className="font-medium">{formatPrice(item.monthly_fee)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Jednorazový poplatok:</span>
+                <span className="text-sm text-muted-foreground">{t('warehouse.setupFee')}:</span>
                 <span className="font-medium">{formatPrice(item.setup_fee)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Náklady firmy:</span>
+                <span className="text-sm text-muted-foreground">{t('warehouse.companyCost')}:</span>
                 <span className="font-medium">{formatPrice(item.company_cost)}</span>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Marža:</span>
+                <span className="text-sm text-muted-foreground">{t('warehouse.margin')}:</span>
                 <span className="font-medium text-green-600">
                   {formatPrice(item.monthly_fee - item.company_cost)}
                 </span>
@@ -199,26 +201,26 @@ const ItemDetailPage = () => {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center space-x-2">
                 <Settings className="h-5 w-5" />
-                <span>Skladové hospodárstvo</span>
+                <span>{t('warehouse.inventory')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {item.current_stock !== null && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Aktuálny stav:</span>
+                  <span className="text-sm text-muted-foreground">{t('warehouse.currentStock')}:</span>
                   <span className={`font-medium ${item.current_stock < 5 ? 'text-destructive' : 'text-success'}`}>
-                    {item.current_stock} ks
+                    {item.current_stock} {t('warehouse.pieces')}
                   </span>
                 </div>
               )}
               {item.min_stock !== null && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Minimálny stav:</span>
-                  <span className="font-medium">{item.min_stock} ks</span>
+                  <span className="text-sm text-muted-foreground">{t('warehouse.minStock')}:</span>
+                  <span className="font-medium">{item.min_stock} {t('warehouse.pieces')}</span>
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Vytvorené:</span>
+                <span className="text-sm text-muted-foreground">{t('warehouse.created')}:</span>
                 <span className="text-sm">
                   {new Date(item.created_at).toLocaleDateString('sk-SK')}
                 </span>
@@ -230,27 +232,27 @@ const ItemDetailPage = () => {
         {/* Detailed Info */}
         <Card>
           <CardHeader>
-            <CardTitle>Detailné informácie</CardTitle>
+            <CardTitle>{t('warehouse.detailedInfo')}</CardTitle>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="overview" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="overview">Prehľad</TabsTrigger>
-                <TabsTrigger value="specifications">Špecifikácie</TabsTrigger>
-                <TabsTrigger value="history">História</TabsTrigger>
+                <TabsTrigger value="overview">{t('warehouse.overview')}</TabsTrigger>
+                <TabsTrigger value="specifications">{t('warehouse.specifications')}</TabsTrigger>
+                <TabsTrigger value="history">{t('warehouse.history')}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="overview" className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-2">Popis</h4>
+                  <h4 className="font-medium mb-2">{t('warehouse.description')}</h4>
                   <p className="text-muted-foreground">
-                    {item.description || 'Žiadny popis nie je k dispozícii.'}
+                    {item.description || t('warehouse.noDescriptionAvailable')}
                   </p>
                 </div>
                 
                 {item.image_url && (
                   <div>
-                    <h4 className="font-medium mb-2">Obrázok</h4>
+                    <h4 className="font-medium mb-2">{t('warehouse.image')}</h4>
                     <img 
                       src={item.image_url} 
                       alt={item.name}
@@ -262,7 +264,7 @@ const ItemDetailPage = () => {
               
               <TabsContent value="specifications" className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-2">Technické špecifikácie</h4>
+                  <h4 className="font-medium mb-2">{t('warehouse.technicalSpecs')}</h4>
                   {item.specifications && typeof item.specifications === 'object' && Object.keys(item.specifications).length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {Object.entries(item.specifications).map(([key, value]) => (
@@ -273,32 +275,32 @@ const ItemDetailPage = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">Žiadne špecifikácie nie sú definované.</p>
+                    <p className="text-muted-foreground">{t('warehouse.noSpecificationsDefined')}</p>
                   )}
                 </div>
               </TabsContent>
               
               <TabsContent value="history" className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-2">História zmien</h4>
+                  <h4 className="font-medium mb-2">{t('warehouse.changeHistory')}</h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                       <div>
-                        <p className="text-sm font-medium">Položka vytvorená</p>
+                        <p className="text-sm font-medium">{t('warehouse.itemCreated')}</p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(item.created_at).toLocaleString('sk-SK')}
                         </p>
                       </div>
-                      <Badge variant="outline">Systém</Badge>
+                      <Badge variant="outline">{t('warehouse.system')}</Badge>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                       <div>
-                        <p className="text-sm font-medium">Posledná aktualizácia</p>
+                        <p className="text-sm font-medium">{t('warehouse.lastUpdate')}</p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(item.updated_at).toLocaleString('sk-SK')}
                         </p>
                       </div>
-                      <Badge variant="outline">Systém</Badge>
+                      <Badge variant="outline">{t('warehouse.system')}</Badge>
                     </div>
                   </div>
                 </div>
@@ -321,18 +323,18 @@ const ItemDetailPage = () => {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Potvrdiť vymazanie</AlertDialogTitle>
+            <AlertDialogTitle>{t('warehouse.confirmDelete')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Naozaj chcete vymazať položku "{item.name}"? Táto akcia sa nedá vrátiť späť.
+              {t('warehouse.confirmDeleteDescription', { name: item.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Zrušiť</AlertDialogCancel>
+            <AlertDialogCancel>{t('warehouse.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Vymazať
+              {t('warehouse.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
