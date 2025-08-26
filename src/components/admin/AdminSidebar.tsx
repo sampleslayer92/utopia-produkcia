@@ -179,7 +179,7 @@ const AdminSidebar = () => {
           active: isActive("/admin/warehouse")
         },
         {
-          title: "🎨 Visual Builder",
+          title: "🎨 " + t('navigation.visualBuilder'),
           path: "/admin/warehouse/visual-builder",
           active: isActive("/admin/warehouse/visual-builder")
         },

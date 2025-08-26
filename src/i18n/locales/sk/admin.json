@@ -18,6 +18,7 @@
     "itemTypes": "Typy položiek",
     "addItem": "Pridať položku",
     "bulkOperations": "Batch operácie",
+    "visualBuilder": "Visual Builder",
     "devices": "Zariadenia",
     "services": "Služby",
     "reporting": "Reporting",
@@ -737,6 +738,21 @@
     "errorLoading": "Chyba pri načítavaní",
     "name": "Názov",
     "description": "Popis",
+    "subtitles": {
+      "addItem": "Pridajte novú položku do skladu",
+      "bulkOperations": "Hromadné úpravy skladových položiek",
+      "solutions": "Spravujte riešenia a produkty",
+      "categories": "Správa kategórií skladových položiek",
+      "itemTypes": "Správa typov skladových položiek",
+      "visualBuilder": "Drag & drop editor pre produkty a riešenia",
+      "quickSale": "POS systém pre vytváranie faktúr",
+      "dashboard": "Prehľad statistík a aktivít",
+      "allItems": "Prehľadná tabuľka všetkých skladových položiek"
+    },
+    "comingSoon": {
+      "categories": "Správa kategórií bude implementovaná v ďalšej verzii",
+      "itemTypes": "Správa typov položiek bude implementovaná v ďalšej verzii"
+    },
     "table": {
       "name": "Názov",
       "type": "Typ",

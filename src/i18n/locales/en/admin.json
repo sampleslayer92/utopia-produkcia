@@ -10,6 +10,12 @@
     "myContracts": "My Contracts",
     "warehouse": "Warehouse",
     "allItems": "All Items",
+    "solutions": "Solutions",
+    "categories": "Categories",
+    "itemTypes": "Item Types",
+    "addItem": "Add Item",
+    "bulkOperations": "Bulk Operations",
+    "visualBuilder": "Visual Builder",
     "devices": "Devices",
     "services": "Services",
     "reporting": "Reporting",
@@ -1439,6 +1445,21 @@
     "errorDeleting": "Error deleting item",
     "name": "Name",
     "description": "Description",
+    "subtitles": {
+      "addItem": "Add new item to warehouse",
+      "bulkOperations": "Bulk edit warehouse items",
+      "solutions": "Manage solutions and products",
+      "categories": "Manage warehouse item categories",
+      "itemTypes": "Manage warehouse item types",
+      "visualBuilder": "Drag & drop editor for products and solutions",
+      "quickSale": "POS system for creating invoices",
+      "dashboard": "Overview of statistics and activities",
+      "allItems": "Comprehensive table of all warehouse items"
+    },
+    "comingSoon": {
+      "categories": "Category management will be implemented in the next version",
+      "itemTypes": "Item type management will be implemented in the next version"
+    },
     "table": {
       "name": "Name",
       "type": "Type",
