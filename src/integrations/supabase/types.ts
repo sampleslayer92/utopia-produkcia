@@ -1448,6 +1448,116 @@ export type Database = {
         }
         Relationships: []
       }
+      person_roles: {
+        Row: {
+          contract_id: string
+          created_at: string
+          id: string
+          person_id: string
+          role_type: Database["public"]["Enums"]["person_role_type"]
+          updated_at: string
+        }
+        Insert: {
+          contract_id: string
+          created_at?: string
+          id?: string
+          person_id: string
+          role_type: Database["public"]["Enums"]["person_role_type"]
+          updated_at?: string
+        }
+        Update: {
+          contract_id?: string
+          created_at?: string
+          id?: string
+          person_id?: string
+          role_type?: Database["public"]["Enums"]["person_role_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "person_roles_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "persons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      persons: {
+        Row: {
+          birth_date: string | null
+          birth_number: string | null
+          birth_place: string | null
+          citizenship: string | null
+          created_at: string
+          document_country: string | null
+          document_issuer: string | null
+          document_number: string | null
+          document_type: Database["public"]["Enums"]["document_type"] | null
+          document_validity: string | null
+          email: string | null
+          first_name: string
+          id: string
+          is_politically_exposed: boolean | null
+          is_predefined: boolean | null
+          is_us_citizen: boolean | null
+          last_name: string
+          maiden_name: string | null
+          permanent_address: string | null
+          phone: string | null
+          position: string | null
+          updated_at: string
+        }
+        Insert: {
+          birth_date?: string | null
+          birth_number?: string | null
+          birth_place?: string | null
+          citizenship?: string | null
+          created_at?: string
+          document_country?: string | null
+          document_issuer?: string | null
+          document_number?: string | null
+          document_type?: Database["public"]["Enums"]["document_type"] | null
+          document_validity?: string | null
+          email?: string | null
+          first_name: string
+          id?: string
+          is_politically_exposed?: boolean | null
+          is_predefined?: boolean | null
+          is_us_citizen?: boolean | null
+          last_name: string
+          maiden_name?: string | null
+          permanent_address?: string | null
+          phone?: string | null
+          position?: string | null
+          updated_at?: string
+        }
+        Update: {
+          birth_date?: string | null
+          birth_number?: string | null
+          birth_place?: string | null
+          citizenship?: string | null
+          created_at?: string
+          document_country?: string | null
+          document_issuer?: string | null
+          document_number?: string | null
+          document_type?: Database["public"]["Enums"]["document_type"] | null
+          document_validity?: string | null
+          email?: string | null
+          first_name?: string
+          id?: string
+          is_politically_exposed?: boolean | null
+          is_predefined?: boolean | null
+          is_us_citizen?: boolean | null
+          last_name?: string
+          maiden_name?: string | null
+          permanent_address?: string | null
+          phone?: string | null
+          position?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_addons: {
         Row: {
           addon_product_id: string
@@ -2262,6 +2372,11 @@ export type Database = {
         | "merchant_registered"
         | "error_occurred"
         | "system_alert"
+      person_role_type:
+        | "contact_person"
+        | "authorized_person"
+        | "actual_owner"
+        | "statutory_representative"
       registry_type: "public" | "business" | "other"
       salutation_type: "Pan" | "Pani"
       seasonality_type: "year-round" | "seasonal"
@@ -2440,6 +2555,12 @@ export const Constants = {
         "merchant_registered",
         "error_occurred",
         "system_alert",
+      ],
+      person_role_type: [
+        "contact_person",
+        "authorized_person",
+        "actual_owner",
+        "statutory_representative",
       ],
       registry_type: ["public", "business", "other"],
       salutation_type: ["Pan", "Pani"],

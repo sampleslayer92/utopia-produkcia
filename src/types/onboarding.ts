@@ -15,6 +15,7 @@ import { Consents } from './consent';
 import { Fees } from './calculations';
 import { DeviceCard, ServiceCard, AddonCard, DeviceSelection } from './products';
 import { ProgressiveSelectionData } from './selection-flow';
+import { PersonWithRoles, PersonRole } from './person';
 
 // Alias types for backward compatibility
 export type DynamicCard = DeviceCard | ServiceCard;
@@ -34,6 +35,8 @@ export interface OnboardingData {
   fees: Fees;
   authorizedPersons: AuthorizedPerson[];
   actualOwners: ActualOwner[];
+  persons?: PersonWithRoles[]; // New person-role system
+  personRoles?: PersonRole[]; // New person-role system
   consents: Consents;
   submittedAt?: string;
   status?: 'draft' | 'request_draft' | 'pending_approval' | 'approved' | 'rejected';
