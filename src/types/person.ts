@@ -16,7 +16,7 @@ export interface Person {
   permanent_address?: string;
   citizenship?: string;
   maiden_name?: string;
-  document_type?: 'OP' | 'Pas' | 'ID';
+  document_type?: 'OP' | 'Pas';
   document_number?: string;
   document_issuer?: string;
   document_country?: string;
