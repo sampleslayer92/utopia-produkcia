@@ -52,6 +52,7 @@ import EshopPage from "./pages/EshopPage";
 import CartPage from "./pages/CartPage";
 import ContractTemplatesPage from "./pages/ContractTemplatesPage";
 import OnboardingConfigPage from "./pages/OnboardingConfigPage";
+import OnboardingUserflowPage from "./pages/OnboardingUserflowPage";
 import SharedOnboardingPage from "./pages/SharedOnboardingPage";
 import NotFound from "./pages/NotFound";
 
@@ -223,6 +224,11 @@ const App = () => (
           <Route path="/admin/onboarding" element={
             <ProtectedRoute allowedRoles={['admin', 'partner']}>
               <AdminOnboardingPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/onboarding-userflow" element={
+            <ProtectedRoute allowedRoles={['admin', 'partner']}>
+              <OnboardingUserflowPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/contract/:id/edit" element={

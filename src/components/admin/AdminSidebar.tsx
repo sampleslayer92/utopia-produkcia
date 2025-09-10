@@ -261,6 +261,11 @@ const AdminSidebar = () => {
           title: "👁️ " + t('navigation.onboardingPreview'),
           path: "/admin/onboarding",
           active: isActive("/admin/onboarding")
+        },
+        {
+          title: "🔄 Userflow diagram",
+          path: "/admin/onboarding-userflow",
+          active: isActive("/admin/onboarding-userflow")
         }
       ]
     }] : []),
