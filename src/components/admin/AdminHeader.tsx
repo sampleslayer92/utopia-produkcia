@@ -70,7 +70,10 @@ const AdminHeader = ({ title, subtitle, actions }: AdminHeaderProps) => {
         <div className="flex items-center space-x-1 md:space-x-3 flex-shrink-0">
           {/* Dynamic Actions - Mobile-optimized with overflow menu */}
           <MobileActionMenu singleActionMode={true}>
-            {Array.isArray(actions) ? actions : actions ? [actions] : []}
+            {Array.isArray(actions) 
+              ? actions.map((action, index) => <div key={index}>{action}</div>) 
+              : actions ? [<div key="single-action">{actions}</div>] : []
+            }
           </MobileActionMenu>
           
           {/* Notifications - moved to the end */}
