@@ -1,8 +1,33 @@
 import { useTranslation } from 'react-i18next';
 import AdminLayout from "@/components/admin/AdminLayout";
+import { ArrowDown, ArrowRight } from 'lucide-react';
 
 const OnboardingUserflowPage = () => {
   const { t } = useTranslation();
+
+  const FlowStep = ({ icon, title, description, variant = 'default' }: { 
+    icon: string; 
+    title: string; 
+    description?: string;
+    variant?: 'default' | 'decision' | 'success' | 'error';
+  }) => {
+    const getVariantStyle = () => {
+      switch (variant) {
+        case 'decision': return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+        case 'success': return 'bg-green-50 border-green-200 text-green-800';
+        case 'error': return 'bg-red-50 border-red-200 text-red-800';
+        default: return 'bg-blue-50 border-blue-200 text-blue-800';
+      }
+    };
+
+    return (
+      <div className={`rounded-lg p-4 border-2 text-center min-w-[200px] ${getVariantStyle()}`}>
+        <div className="text-2xl mb-2">{icon}</div>
+        <div className="font-semibold text-sm">{title}</div>
+        {description && <div className="text-xs mt-1 opacity-80">{description}</div>}
+      </div>
+    );
+  };
 
   return (
     <AdminLayout 
@@ -19,110 +44,109 @@ const OnboardingUserflowPage = () => {
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-100">
-            <div className="mermaid-diagram">
-              <pre className="mermaid bg-white p-4 rounded-lg shadow-sm">
-{`graph TD
-    A["🏠 Start - Úvodná stránka"] --> B{"Typ užívateľa"}
-    
-    B -->|"Admin"| C["📋 Admin Dashboard"]
-    B -->|"Partner"| D["🤝 Partner Dashboard"] 
-    B -->|"Nový contract"| E["📝 Vytvorenie nového contractu"]
-    
-    C --> F["➕ Nový onboarding"]
-    D --> F
-    E --> G["📊 Krok 1: Základné informácie"]
-    
-    F --> G
-    
-    G --> H{"Validácia údajov"}
-    H -->|"❌ Chyba"| G
-    H -->|"✅ OK"| I["👥 Krok 2: Osoby a vlastníci"]
-    
-    I --> J{"Pridať osobu"}
-    J -->|"➕ Áno"| K["📝 Formulár osoby"]
-    K --> L{"Typ osoby"}
-    L -->|"👤 Kontaktná osoba"| M["✅ Nastavenie roly: Kontakt"]
-    L -->|"📋 Oprávnená osoba"| N["✅ Nastavenie roly: Oprávnená"]
-    L -->|"👑 Skutočný vlastník"| O["✅ Nastavenie roly: Vlastník"]
-    
-    M --> P["💾 Uloženie osoby"]
-    N --> P
-    O --> P
-    
-    P --> Q{"Pridať ďalšiu osobu?"}
-    Q -->|"✅ Áno"| J
-    Q -->|"❌ Nie"| R{"Validácia rolí"}
-    
-    R -->|"❌ Chýbajú povinné roly"| I
-    R -->|"✅ Všetky roly OK"| S["🏢 Krok 3: Obchodné miesto"]
-    
-    J -->|"❌ Nie"| R
-    
-    S --> T{"Validácia adresy"}
-    T -->|"❌ Chyba"| S
-    T -->|"✅ OK"| U["📄 Krok 4: Dokumenty"]
-    
-    U --> V{"Nahrať dokumenty"}
-    V -->|"📤 Nahrať"| W["☁️ Upload do Supabase Storage"]
-    W --> X{"Upload úspešný?"}
-    X -->|"❌ Chyba"| V
-    X -->|"✅ OK"| Y["📝 Krok 5: Podpis"]
-    
-    V -->|"⏭️ Preskočiť"| Y
-    
-    Y --> Z{"Spôsob podpisu"}
-    Z -->|"✍️ Digitálny podpis"| AA["🖊️ Canvas podpis"]
-    Z -->|"📤 Upload podpisu"| BB["📁 Nahratie súboru"]
-    
-    AA --> CC["💾 Uloženie podpisu"]
-    BB --> CC
-    
-    CC --> DD{"Podpis uložený?"}
-    DD -->|"❌ Chyba"| Y
-    DD -->|"✅ OK"| EE["🎯 Krok 6: Progresívna selekcia"]
-    
-    EE --> FF{"Výber modulov"}
-    FF --> GG["☑️ Označenie vybraných modulov"]
-    GG --> HH{"Výber systému"}
-    HH --> II["🖥️ Označenie vybraného systému"]
-    II --> JJ["📋 Krok 7: Zhrnutie"]
-    
-    JJ --> KK{"Kontrola údajov"}
-    KK -->|"❌ Chyba"| LL{"Ktorý krok opraviť?"}
-    LL --> G
-    LL --> I  
-    LL --> S
-    LL --> U
-    LL --> Y
-    LL --> EE
-    
-    KK -->|"✅ Všetko OK"| MM["✅ Dokončenie onboardingu"]
-    
-    MM --> NN["📧 Odoslanie notifikácie"]
-    NN --> OO["📊 Aktualizácia štatistík"]
-    OO --> PP["🎉 Úspešné dokončenie"]
-    
-    PP --> QQ{"Ďalšie akcie"}
-    QQ -->|"🔗 Zdieľať link"| RR["📋 Kopírovanie linku"]
-    QQ -->|"🗑️ Zmazať draft"| SS["❌ Vymazanie draftu"]
-    QQ -->|"📋 Správa contractov"| TT["📊 Prechod na zoznam"]
-    
-    RR --> PP
-    SS --> C
-    TT --> UU["📋 Zoznam contractov"]
-
-    style A fill:#e1f5fe
-    style PP fill:#c8e6c9
-    style G fill:#fff3e0
-    style I fill:#fff3e0  
-    style S fill:#fff3e0
-    style U fill:#fff3e0
-    style Y fill:#fff3e0
-    style EE fill:#fff3e0
-    style JJ fill:#fff3e0
-    style MM fill:#a5d6a7`}
-              </pre>
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-100 overflow-x-auto">
+            {/* Start */}
+            <div className="flex flex-col items-center space-y-4">
+              <FlowStep icon="🏠" title="Štart" description="Úvodná stránka" />
+              <ArrowDown className="text-blue-500" />
+              
+              {/* User Type Decision */}
+              <FlowStep icon="👤" title="Typ užívateľa" variant="decision" />
+              <div className="flex items-center space-x-8">
+                <div className="flex flex-col items-center space-y-2">
+                  <ArrowDown className="text-blue-500" />
+                  <FlowStep icon="👨‍💼" title="Admin" />
+                </div>
+                <div className="flex flex-col items-center space-y-2">
+                  <ArrowDown className="text-blue-500" />
+                  <FlowStep icon="🤝" title="Partner" />
+                </div>
+                <div className="flex flex-col items-center space-y-2">
+                  <ArrowDown className="text-blue-500" />
+                  <FlowStep icon="📝" title="Nový contract" />
+                </div>
+              </div>
+              
+              {/* Merge to Onboarding */}
+              <ArrowDown className="text-blue-500" />
+              <FlowStep icon="➕" title="Nový onboarding" />
+              <ArrowDown className="text-blue-500" />
+              
+              {/* Step 1 */}
+              <FlowStep icon="📊" title="Krok 1" description="Základné informácie" />
+              <ArrowDown className="text-blue-500" />
+              <FlowStep icon="✅" title="Validácia údajov" variant="decision" />
+              <ArrowDown className="text-blue-500" />
+              
+              {/* Step 2 */}
+              <FlowStep icon="👥" title="Krok 2" description="Osoby a vlastníci" />
+              <ArrowDown className="text-blue-500" />
+              
+              {/* Person Management Loop */}
+              <div className="bg-white rounded-lg p-4 border-2 border-dashed border-purple-300">
+                <h4 className="font-semibold text-purple-800 mb-4 text-center">Správa osôb</h4>
+                <div className="flex flex-col items-center space-y-2">
+                  <FlowStep icon="➕" title="Pridať osobu" variant="decision" />
+                  <ArrowDown className="text-purple-500" />
+                  <FlowStep icon="📝" title="Formulár osoby" />
+                  <ArrowDown className="text-purple-500" />
+                  <div className="flex items-center space-x-4">
+                    <FlowStep icon="👤" title="Kontakt" />
+                    <FlowStep icon="📋" title="Oprávnená" />
+                    <FlowStep icon="👑" title="Vlastník" />
+                  </div>
+                  <ArrowDown className="text-purple-500" />
+                  <FlowStep icon="💾" title="Uloženie" />
+                </div>
+              </div>
+              
+              <ArrowDown className="text-blue-500" />
+              <FlowStep icon="🔍" title="Validácia rolí" variant="decision" />
+              <ArrowDown className="text-blue-500" />
+              
+              {/* Step 3 */}
+              <FlowStep icon="🏢" title="Krok 3" description="Obchodné miesto" />
+              <ArrowDown className="text-blue-500" />
+              
+              {/* Step 4 */}
+              <FlowStep icon="📄" title="Krok 4" description="Dokumenty" />
+              <ArrowDown className="text-blue-500" />
+              <FlowStep icon="📤" title="Upload dokumentov" variant="decision" />
+              <ArrowDown className="text-blue-500" />
+              
+              {/* Step 5 */}
+              <FlowStep icon="📝" title="Krok 5" description="Podpis" />
+              <ArrowDown className="text-blue-500" />
+              <div className="flex items-center space-x-8">
+                <FlowStep icon="🖊️" title="Canvas podpis" />
+                <FlowStep icon="📁" title="Upload súboru" />
+              </div>
+              <ArrowDown className="text-blue-500" />
+              
+              {/* Step 6 */}
+              <FlowStep icon="🎯" title="Krok 6" description="Progresívna selekcia" />
+              <ArrowDown className="text-blue-500" />
+              
+              {/* Step 7 */}
+              <FlowStep icon="📋" title="Krok 7" description="Zhrnutie" />
+              <ArrowDown className="text-blue-500" />
+              <FlowStep icon="✅" title="Kontrola údajov" variant="decision" />
+              <ArrowDown className="text-blue-500" />
+              
+              {/* Final Steps */}
+              <FlowStep icon="🎉" title="Dokončenie" variant="success" />
+              <ArrowDown className="text-green-500" />
+              <FlowStep icon="📧" title="Notifikácia" variant="success" />
+              <ArrowDown className="text-green-500" />
+              <FlowStep icon="📊" title="Štatistiky" variant="success" />
+              
+              {/* Final Actions */}
+              <ArrowDown className="text-blue-500" />
+              <div className="flex items-center space-x-8">
+                <FlowStep icon="🔗" title="Zdieľať link" />
+                <FlowStep icon="🗑️" title="Zmazať draft" />
+                <FlowStep icon="📋" title="Správa contractov" />
+              </div>
             </div>
           </div>
 
