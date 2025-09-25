@@ -498,10 +498,30 @@
     },
     "filters": {
       "status": "Stav",
-      "dateRange": "Dátumový rozsah",
+      "dateRange": "Dátumový rozsah", 
       "valueRange": "Rozsah hodnôt",
       "merchant": "Obchodník",
       "source": "Zdroj",
+      "statusSelect": {
+        "placeholder": "Vyberte stavy...",
+        "search": "Hľadať stavy...",
+        "noResults": "Stav nenájdený.",
+        "selectAll": "Vybrať všetko",
+        "clearAll": "Vymazať všetko",
+        "selected": "vybratých"
+      },
+      "dateRange": {
+        "placeholder": "Vyberte dátumový rozsah",
+        "from": "Od",
+        "until": "Do",
+        "clear": "Vymazať"
+      },
+      "merchant": {
+        "placeholder": "Vyberte obchodníka...",
+        "search": "Hľadať obchodníkov...",
+        "noResults": "Obchodník nenájdený.",
+        "allMerchants": "Všetci obchodníci"
+      },
       "presets": {
         "title": "Prednastavené filtre",
         "presetsLabel": "Prednastavenia",
@@ -527,6 +547,23 @@
         },
         "saveCurrentFilters": "Uložiť aktuálne filtre",
         "clearPreset": "Vymazať predvoľbu"
+      },
+      "source": {
+        "placeholder": "Vyberte zdroje...",
+        "search": "Hľadať zdroje...",
+        "noResults": "Zdroj nenájdený.",
+        "telesales": "Telesales",
+        "facebook": "Facebook",
+        "email": "Email",
+        "other": "Ostatné"
+      },
+      "valueRange": {
+        "min": "Min €",
+        "max": "Max €",
+        "under5k": "Pod 5K",
+        "5k20k": "5K-20K",
+        "20k50k": "20K-50K",
+        "50kPlus": "50K+"
       }
     },
     "success": {
@@ -579,7 +616,11 @@
     "rejected": "Zamietnuté",
     "lost": "Stratené",
     "on_hold": "Pozastavené",
-    "expired": "Vypršané"
+    "expired": "Vypršané",
+    "submitted": "Odoslané",
+    "email_viewed": "Email zobrazený",
+    "step_completed": "Krok dokončený",
+    "contract_generated": "Zmluva vygenerovaná"
   },
   "notifications": {
     "title": "Notifikácie",

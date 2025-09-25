@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from 'react-i18next';
 
 interface ValueRangeSliderProps {
   value: { min: number | null; max: number | null };
@@ -11,6 +12,7 @@ interface ValueRangeSliderProps {
 const ValueRangeSlider = ({ value, onChange }: ValueRangeSliderProps) => {
   const [minInput, setMinInput] = useState(value.min?.toString() || '');
   const [maxInput, setMaxInput] = useState(value.max?.toString() || '');
+  const { t } = useTranslation('admin');
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -52,7 +54,7 @@ const ValueRangeSlider = ({ value, onChange }: ValueRangeSliderProps) => {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <Label htmlFor="min-value" className="text-xs">Min €</Label>
+          <Label htmlFor="min-value" className="text-xs">{t('overview.filters.valueRange.min')}</Label>
           <Input
             id="min-value"
             type="number"
@@ -63,7 +65,7 @@ const ValueRangeSlider = ({ value, onChange }: ValueRangeSliderProps) => {
           />
         </div>
         <div>
-          <Label htmlFor="max-value" className="text-xs">Max €</Label>
+          <Label htmlFor="max-value" className="text-xs">{t('overview.filters.valueRange.max')}</Label>
           <Input
             id="max-value"
             type="number"
@@ -82,7 +84,7 @@ const ValueRangeSlider = ({ value, onChange }: ValueRangeSliderProps) => {
           onClick={() => setPreset(null, 5000)}
           className="text-xs h-6"
         >
-          Under 5K
+          {t('overview.filters.valueRange.under5k')}
         </Button>
         <Button
           variant="outline"
@@ -90,7 +92,7 @@ const ValueRangeSlider = ({ value, onChange }: ValueRangeSliderProps) => {
           onClick={() => setPreset(5000, 20000)}
           className="text-xs h-6"
         >
-          5K-20K
+          {t('overview.filters.valueRange.5k20k')}
         </Button>
         <Button
           variant="outline"
@@ -98,7 +100,7 @@ const ValueRangeSlider = ({ value, onChange }: ValueRangeSliderProps) => {
           onClick={() => setPreset(20000, 50000)}
           className="text-xs h-6"
         >
-          20K-50K
+          {t('overview.filters.valueRange.20k50k')}
         </Button>
         <Button
           variant="outline"
@@ -106,7 +108,7 @@ const ValueRangeSlider = ({ value, onChange }: ValueRangeSliderProps) => {
           onClick={() => setPreset(50000, null)}
           className="text-xs h-6"
         >
-          50K+
+          {t('overview.filters.valueRange.50kPlus')}
         </Button>
       </div>
       
@@ -117,7 +119,7 @@ const ValueRangeSlider = ({ value, onChange }: ValueRangeSliderProps) => {
           onClick={clearRange}
           className="w-full text-xs h-6"
         >
-          Clear
+          {t('overview.filters.dateRange.clear')}
         </Button>
       )}
     </div>

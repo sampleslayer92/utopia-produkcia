@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Building2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Popover,
   PopoverContent,
@@ -16,8 +17,8 @@ import {
 } from "@/components/ui/command";
 
 // Mock merchant data - replace with actual data from your API
-const merchants = [
-  { id: 'all', name: 'All Merchants' },
+const getMerchants = (t: any) => [
+  { id: 'all', name: t('overview.filters.merchant.allMerchants') },
   { id: '1', name: 'ABC Company s.r.o.' },
   { id: '2', name: 'XYZ Business Ltd.' },
   { id: '3', name: 'Tech Solutions Inc.' },
@@ -32,7 +33,9 @@ interface MerchantSelectProps {
 
 const MerchantSelect = ({ value, onChange }: MerchantSelectProps) => {
   const [open, setOpen] = useState(false);
-
+  const { t } = useTranslation('admin');
+  
+  const merchants = getMerchants(t);
   const selectedMerchant = merchants.find(merchant => merchant.id === value);
 
   return (
@@ -47,7 +50,7 @@ const MerchantSelect = ({ value, onChange }: MerchantSelectProps) => {
           <div className="flex items-center gap-2 flex-1 truncate">
             <Building2 className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <span className="truncate">
-              {selectedMerchant?.name || 'Select merchant...'}
+              {selectedMerchant?.name || t('overview.filters.merchant.placeholder')}
             </span>
           </div>
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -55,9 +58,9 @@ const MerchantSelect = ({ value, onChange }: MerchantSelectProps) => {
       </PopoverTrigger>
       <PopoverContent className="w-full p-0" align="start">
         <Command>
-          <CommandInput placeholder="Search merchants..." />
+          <CommandInput placeholder={t('overview.filters.merchant.search')} />
           <CommandList>
-            <CommandEmpty>No merchant found.</CommandEmpty>
+            <CommandEmpty>{t('overview.filters.merchant.noResults')}</CommandEmpty>
             <CommandGroup>
               {merchants.map((merchant) => (
                 <CommandItem

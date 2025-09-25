@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, ChevronDown, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Popover,
   PopoverContent,
@@ -16,13 +17,15 @@ import {
   CommandList,
 } from "@/components/ui/command";
 
-const sources = [
-  { value: 'web', label: 'Web', icon: '🌐' },
-  { value: 'telesales', label: 'Telesales', icon: '📞' },
-  { value: 'facebook', label: 'Facebook', icon: '📘' },
-  { value: 'email', label: 'Email', icon: '📧' },
-  { value: 'referral', label: 'Referral', icon: '👥' },
-  { value: 'other', label: 'Other', icon: '📄' }
+const getSourceConfig = (t: any) => [
+  { value: 'web', label: t('contracts.sourceOptions.web'), icon: '🌐' },
+  { value: 'telesales', label: t('overview.filters.source.telesales'), icon: '📞' },
+  { value: 'facebook', label: t('overview.filters.source.facebook'), icon: '📘' },
+  { value: 'email', label: t('overview.filters.source.email'), icon: '📧' },
+  { value: 'referral', label: t('contracts.sourceOptions.referral'), icon: '👥' },
+  { value: 'partner', label: t('contracts.sourceOptions.partner'), icon: '🤝' },
+  { value: 'direct', label: t('contracts.sourceOptions.direct'), icon: '📞' },
+  { value: 'other', label: t('overview.filters.source.other'), icon: '📄' }
 ];
 
 interface SourceMultiSelectProps {
@@ -32,7 +35,9 @@ interface SourceMultiSelectProps {
 
 const SourceMultiSelect = ({ value, onChange }: SourceMultiSelectProps) => {
   const [open, setOpen] = useState(false);
-
+  const { t } = useTranslation('admin');
+  
+  const sources = getSourceConfig(t);
   const selectedSources = sources.filter(source => value.includes(source.value));
   
   const handleToggle = (sourceValue: string) => {
@@ -62,7 +67,7 @@ const SourceMultiSelect = ({ value, onChange }: SourceMultiSelectProps) => {
           <div className="flex items-center gap-1 flex-1 truncate">
             <Globe className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             {selectedSources.length === 0 ? (
-              <span className="text-muted-foreground">Select sources...</span>
+              <span className="text-muted-foreground">{t('overview.filters.source.placeholder')}</span>
             ) : selectedSources.length === 1 ? (
               <div className="flex items-center gap-1">
                 <span>{selectedSources[0].icon}</span>
@@ -70,7 +75,7 @@ const SourceMultiSelect = ({ value, onChange }: SourceMultiSelectProps) => {
               </div>
             ) : (
               <span className="text-sm">
-                {selectedSources.length} selected
+                {selectedSources.length} {t('overview.filters.statusSelect.selected')}
               </span>
             )}
           </div>
@@ -79,16 +84,16 @@ const SourceMultiSelect = ({ value, onChange }: SourceMultiSelectProps) => {
       </PopoverTrigger>
       <PopoverContent className="w-full p-0" align="start">
         <Command>
-          <CommandInput placeholder="Search sources..." />
+          <CommandInput placeholder={t('overview.filters.source.search')} />
           <CommandList>
-            <CommandEmpty>No source found.</CommandEmpty>
+            <CommandEmpty>{t('overview.filters.source.noResults')}</CommandEmpty>
             <CommandGroup>
               <div className="flex items-center justify-between p-2 border-b">
                 <Button variant="ghost" size="sm" onClick={selectAll}>
-                  Select All
+                  {t('overview.filters.statusSelect.selectAll')}
                 </Button>
                 <Button variant="ghost" size="sm" onClick={clearAll}>
-                  Clear All
+                  {t('overview.filters.statusSelect.clearAll')}
                 </Button>
               </div>
               {sources.map((source) => (

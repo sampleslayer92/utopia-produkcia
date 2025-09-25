@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import {
   Popover,
   PopoverContent,
@@ -16,6 +17,7 @@ interface DateRangePickerProps {
 
 const DateRangePicker = ({ value, onChange }: DateRangePickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation('admin');
 
   const handleSelect = (range: { from: Date | undefined; to: Date | undefined } | undefined) => {
     if (range) {
@@ -30,11 +32,11 @@ const DateRangePicker = ({ value, onChange }: DateRangePickerProps) => {
     if (value.from && value.to) {
       return `${format(value.from, 'dd.MM.yyyy')} - ${format(value.to, 'dd.MM.yyyy')}`;
     } else if (value.from) {
-      return `From ${format(value.from, 'dd.MM.yyyy')}`;
+      return `${t('overview.filters.dateRange.from')} ${format(value.from, 'dd.MM.yyyy')}`;
     } else if (value.to) {
-      return `Until ${format(value.to, 'dd.MM.yyyy')}`;
+      return `${t('overview.filters.dateRange.until')} ${format(value.to, 'dd.MM.yyyy')}`;
     }
-    return 'Select date range';
+    return t('overview.filters.dateRange.placeholder');
   };
 
   const clearRange = () => {
@@ -70,7 +72,7 @@ const DateRangePicker = ({ value, onChange }: DateRangePickerProps) => {
             className="w-full"
             onClick={clearRange}
           >
-            Clear
+            {t('overview.filters.dateRange.clear')}
           </Button>
         </div>
       </PopoverContent>
