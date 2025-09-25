@@ -524,7 +524,9 @@
         "highValue": {
           "name": "Vysoká hodnota",
           "description": "Nad €50,000"
-        }
+        },
+        "saveCurrentFilters": "Uložiť aktuálne filtre",
+        "clearPreset": "Vymazať predvoľbu"
       }
     },
     "success": {

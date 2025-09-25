@@ -78,39 +78,39 @@ const AdvancedKanbanToolbar = ({
 
   return (
     <div className="border-b border-border bg-background/80 backdrop-blur-sm">
-      {/* Main toolbar */}
-      <div className="flex items-center justify-between p-3">
-        {/* Left side - View switcher and entity type */}
-        <div className="flex items-center gap-3">
+      {/* Mobile-first responsive layout */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-3">
+        {/* Top row - View switcher and entity type */}
+        <div className="flex items-center justify-between lg:justify-start gap-3 flex-wrap">
           <Tabs 
             value={preferences.viewMode} 
             onValueChange={(value) => onPreferencesChange({ viewMode: value as 'kanban' | 'table' })}
           >
             <TabsList className="grid w-auto grid-cols-2">
-              <TabsTrigger value="kanban" className="flex items-center gap-2">
+              <TabsTrigger value="kanban" className="flex items-center gap-2 px-2 lg:px-3">
                 <LayoutGrid className="h-4 w-4" />
                 <span className="hidden sm:inline">{t('overview.toolbar.kanban')}</span>
               </TabsTrigger>
-              <TabsTrigger value="table" className="flex items-center gap-2">
+              <TabsTrigger value="table" className="flex items-center gap-2 px-2 lg:px-3">
                 <Table2 className="h-4 w-4" />
                 <span className="hidden sm:inline">{t('overview.toolbar.table')}</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
 
-          {/* Entity type filter */}
+          {/* Entity type filter - responsive sizing */}
           <Tabs 
             value={filters.entityType} 
             onValueChange={(value) => onFiltersChange({ ...filters, entityType: value as 'requests' | 'contracts' | 'both' })}
           >
             <TabsList className="grid w-auto grid-cols-3">
-              <TabsTrigger value="both" className="text-xs px-3">
+              <TabsTrigger value="both" className="text-xs px-2 lg:px-3">
                 {t('overview.entityTypes.both')}
               </TabsTrigger>
-              <TabsTrigger value="requests" className="text-xs px-3">
+              <TabsTrigger value="requests" className="text-xs px-2 lg:px-3">
                 {t('overview.entityTypes.requests')}
               </TabsTrigger>
-              <TabsTrigger value="contracts" className="text-xs px-3">
+              <TabsTrigger value="contracts" className="text-xs px-2 lg:px-3">
                 {t('overview.entityTypes.contracts')}
               </TabsTrigger>
             </TabsList>
@@ -121,16 +121,16 @@ const AdvancedKanbanToolbar = ({
           </Badge>
         </div>
 
-        {/* Right side - Search and Actions */}
-        <div className="flex items-center gap-2">
-          {/* Search */}
-          <div className="relative">
+        {/* Bottom row - Search and Actions */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Responsive Search */}
+          <div className="relative flex-1 lg:flex-none">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={t('overview.toolbar.searchPlaceholder')}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              className="pl-9 w-64 h-9"
+              className="pl-9 w-full lg:w-64 h-9"
             />
           </div>
 
@@ -151,7 +151,7 @@ const AdvancedKanbanToolbar = ({
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-96 p-4" align="end">
+            <PopoverContent className="w-80 lg:w-96 p-4" align="end" side="bottom" sideOffset={4}>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium">{t('overview.toolbar.advancedFilters')}</h4>
@@ -227,54 +227,57 @@ const AdvancedKanbanToolbar = ({
             </PopoverContent>
           </Popover>
 
-          {/* Filter Presets */}
-          <FilterPresetDropdown
-            currentPreset={filters.preset}
-            onPresetSelect={(preset) => onFiltersChange({ ...filters, preset })}
-          />
+          {/* Action buttons with better mobile layout */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Filter Presets */}
+            <FilterPresetDropdown
+              currentPreset={filters.preset}
+              onPresetSelect={(preset) => onFiltersChange({ ...filters, preset })}
+            />
 
-          {preferences.viewMode === 'kanban' && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onAddColumn}
-                className="flex items-center gap-2 h-9"
-              >
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('overview.toolbar.addColumn')}</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsStatusModalOpen(true)}
-                className="flex items-center gap-2 h-9"
-              >
-                <Tags className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('overview.toolbar.statuses')}</span>
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onResetToDefault}
-                className="flex items-center gap-2 h-9"
-              >
-                <RotateCcw className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('overview.toolbar.reset')}</span>
-              </Button>
-            </>
-          )}
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-2 h-9"
-          >
-            <Settings className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('overview.toolbar.settings')}</span>
-          </Button>
+            {preferences.viewMode === 'kanban' && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onAddColumn}
+                  className="flex items-center gap-2 h-9"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className="hidden lg:inline">{t('overview.toolbar.addColumn')}</span>
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsStatusModalOpen(true)}
+                  className="flex items-center gap-2 h-9"
+                >
+                  <Tags className="h-4 w-4" />
+                  <span className="hidden lg:inline">{t('overview.toolbar.statuses')}</span>
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onResetToDefault}
+                  className="flex items-center gap-2 h-9"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  <span className="hidden lg:inline">{t('overview.toolbar.reset')}</span>
+                </Button>
+              </>
+            )}
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2 h-9"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="hidden lg:inline">{t('overview.toolbar.settings')}</span>
+            </Button>
+          </div>
         </div>
       </div>
       

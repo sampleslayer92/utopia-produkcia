@@ -176,13 +176,13 @@ const PipedriveKanbanView = ({
       `}>
         <div className={`
           flex gap-4 min-h-full pb-4
-          ${isMobile ? 'flex-col' : 'flex-row'}
+          ${isMobile ? 'overflow-x-auto' : 'flex-row'}
         `}>
           {columns.map((column) => {
             const columnContracts = getContractsForColumn(column.statuses);
             const stats = getColumnStats(columnContracts);
             const isCollapsed = collapsedColumns.has(column.id);
-            const width = isMobile ? '100%' : `${columnWidths[column.id] || 280}px`;
+            const width = isMobile ? '280px' : `${columnWidths[column.id] || 280}px`;
 
             return (
               <PipedriveKanbanColumn
@@ -198,8 +198,9 @@ const PipedriveKanbanView = ({
                 onToggleCollapse={() => toggleColumnCollapse(column.id)}
                 isMobile={isMobile}
                 style={{ 
-                  minWidth: isCollapsed ? '60px' : (isMobile ? '100%' : '280px'),
-                  maxWidth: isMobile ? '100%' : '400px'
+                  minWidth: isCollapsed ? '60px' : '280px',
+                  flexShrink: 0,
+                  maxWidth: isMobile ? '280px' : '400px'
                 }}
               />
             );
